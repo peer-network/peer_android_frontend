@@ -10,11 +10,11 @@ if (isApplication) {
 
 def properties = new Properties()
 
-properties.load(rootProject.file("local.properties").newDataInputStream())
+properties.load(rootProject.file("gradle.properties").newDataInputStream())
 
 def domain = properties.getProperty("peer.namespace")
 if (domain == null) {
-    throw RuntimeException("Application namespace not defined in $rootDir/local.properties")
+    throw RuntimeException("Application namespace not defined in $rootDir/gradle.properties")
 }
 
 android {
