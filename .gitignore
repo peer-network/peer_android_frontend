@@ -1,6 +1,9 @@
 *.iml
-.gradle
-.idea
+build/
+.idea/
+.gradle/
+*.log
+*.apk
+*.keystore
 .DS_Store
-/build
 local.properties
