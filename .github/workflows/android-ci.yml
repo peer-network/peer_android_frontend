@@ -26,8 +26,12 @@ jobs:
           java-version: ${{ env.JAVA_VERSION }}
           distribution: ${{ env.JAVA_DISTRIBUTION }}
 
-      - name: Configuring gradle access permission
-        run: chmod +x gradlew
+      - name: Configuring gradle build and permission
+        run: |
+          chmod +x gradlew
+          echo "sdk.dir=$ANDROID_HOME" > local.properties
+        env:
+          ANDROID_HOME: ${{ secrets.ANDROID_HOME }}
 
       - name: Run unit tests
         run: ./gradlew testDebugUnitTest
