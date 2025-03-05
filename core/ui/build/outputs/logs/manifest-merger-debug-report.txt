@@ -1,0 +1,16 @@
+-- Merging decision tree log ---
+manifest
+ADDED from /Users/constantine/Peer/peer_android_frontend/core/ui/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest4315353323168596028.xml:2:13-83
+INJECTED from /Users/constantine/Peer/peer_android_frontend/core/ui/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest4315353323168596028.xml:2:13-83
+	package
+		INJECTED from /Users/constantine/Peer/peer_android_frontend/core/ui/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest4315353323168596028.xml
+	xmlns:android
+		ADDED from /Users/constantine/Peer/peer_android_frontend/core/ui/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest4315353323168596028.xml:2:23-81
+uses-sdk
+INJECTED from /Users/constantine/Peer/peer_android_frontend/core/ui/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest4315353323168596028.xml reason: use-sdk injection requested
+INJECTED from /Users/constantine/Peer/peer_android_frontend/core/ui/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest4315353323168596028.xml
+INJECTED from /Users/constantine/Peer/peer_android_frontend/core/ui/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest4315353323168596028.xml
+	android:targetSdkVersion
+		INJECTED from /Users/constantine/Peer/peer_android_frontend/core/ui/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest4315353323168596028.xml
+	android:minSdkVersion
+		INJECTED from /Users/constantine/Peer/peer_android_frontend/core/ui/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest4315353323168596028.xml
