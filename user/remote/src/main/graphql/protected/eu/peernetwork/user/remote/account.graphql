@@ -1,0 +1,13 @@
+query Profile($userid: ID) {
+    profile(userid: $userid) {
+        status
+        ResponseCode
+        affectedRows {
+            id
+            slug
+            username
+            img
+            biography
+        }
+    }
+}
