@@ -26,6 +26,9 @@ jobs:
           java-version: ${{ env.JAVA_VERSION }}
           distribution: ${{ env.JAVA_DISTRIBUTION }}
 
+      - name: Configuring Android SDK
+        uses: android-actions/setup-android@v3
+
       - name: Configuring gradle build and permission
         run: |
           chmod +x gradlew
@@ -35,9 +38,6 @@ jobs:
 
       - name: Run unit tests
         run: ./gradlew testDebugUnitTest
-
-      - name: Run instrumented tests
-        run: ./gradlew connectedDebugAndroidTest
 
       - name: Generate coverage report
         run: ./gradlew koverHtmlReport

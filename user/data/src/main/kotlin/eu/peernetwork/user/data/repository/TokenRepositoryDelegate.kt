@@ -33,7 +33,9 @@ class TokenRepositoryDelegate(
     }
 
     override suspend fun refresh(token: String): Token {
-        return api.refresh(token)
+        val refreshedToken = api.refresh(token)
+        onAuthenticationChanged(refreshedToken)
+        return refreshedToken
     }
 
     private companion object {

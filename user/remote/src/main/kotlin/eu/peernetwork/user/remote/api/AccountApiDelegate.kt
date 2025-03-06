@@ -4,10 +4,10 @@ import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.Optional
 import eu.peernetwork.core.remote.extension.getResponse
 import eu.peernetwork.user.data.api.AccountApi
-import eu.peernetwork.user.data.exception.UserNotFoundException
+import eu.peernetwork.user.domain.exception.UserNotFoundException
 import eu.peernetwork.user.domain.model.Account
 import eu.peernetwork.user.remote.mapper.mapToDomain
-import protected.eu.peernetwork.user.remote.ProfileQuery
+import `protected`.eu.peernetwork.user.remote.ProfileQuery
 
 class AccountApiDelegate(
     private val client: ApolloClient
