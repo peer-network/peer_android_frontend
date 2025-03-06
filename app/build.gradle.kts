@@ -38,5 +38,9 @@ dependencies {
     implementation(project(":core:common"))
     implementation(project(":core:ui"))
 
+    implementation(project(":user:domain"))
+    implementation(project(":user:data"))
+    implementation(project(":user:remote"))
+
     ksp(libs.dagger.compiler)
 }

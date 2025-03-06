@@ -9,6 +9,8 @@ compose-compiler = "1.5.1"
 compose-constraintlayout = "1.1.0"
 core-ktx = "1.13.1"
 coroutines = "1.8.0-RC2"
+graphql = "3.8.5"
+gson = "2.12.1"
 dagger = "2.50"
 kover = "0.9.1"
 ksp = "1.9.21-1.0.15"
@@ -34,6 +36,8 @@ core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx
 coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+graphql = { group = "com.apollographql.apollo3", name = "apollo-runtime", version.ref = "graphql" }
+gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 dagger = { group = "com.google.dagger", name = "dagger", version.ref = "dagger" }
 dagger-android = { group = "com.google.dagger", name = "dagger-android", version.ref = "dagger" }
 dagger-compiler = { group = "com.google.dagger", name = "dagger-compiler", version.ref = "dagger" }
@@ -48,6 +52,7 @@ mockk-jvm = { module = "io.mockk:mockk-jvm", version.ref = "mockk-jvm" }
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 androidLibrary = { id = "com.android.library", version.ref = "agp" }
 kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+graphql = { id = "com.apollographql.apollo3", version.ref = "graphql" }
 parcelise = { id = "kotlin-parcelize", version.ref = "kotlin" }
 kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }

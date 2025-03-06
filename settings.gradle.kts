@@ -16,6 +16,15 @@ dependencyResolutionManagement {
 rootProject.name = "Peer Network"
 
 include(":core:common")
+include(":core:remote")
 include(":core:ui")
+
+include(":user:domain")
+include(":user:data")
+include(":user:remote")
+
+include(":social:domain")
+include(":social:data")
+include(":social:remote")
 
 include(":app")
