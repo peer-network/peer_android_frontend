@@ -1,0 +1,6 @@
+mutation UpdateBiography($biography: String!) {
+    updateBiography(biography: $biography) {
+        status
+        ResponseCode
+    }
+}

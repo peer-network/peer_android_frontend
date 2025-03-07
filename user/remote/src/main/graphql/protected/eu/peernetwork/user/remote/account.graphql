@@ -11,3 +11,10 @@ query Profile($userid: ID) {
         }
     }
 }
+
+mutation DeleteAccount($password: String!) {
+    deleteAccount(password: $password) {
+        status
+        ResponseCode
+    }
+}

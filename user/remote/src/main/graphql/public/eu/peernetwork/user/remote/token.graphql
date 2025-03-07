@@ -1,0 +1,8 @@
+mutation RefreshToken($refreshToken: String!) {
+    refreshToken(refreshToken: $refreshToken) {
+        status
+        ResponseCode
+        accessToken
+        refreshToken
+    }
+}

@@ -1,0 +1,6 @@
+mutation UpdateProfilePicture($img: String!) {
+    updateProfilePicture(img: $img) {
+        status
+        ResponseCode
+    }
+}

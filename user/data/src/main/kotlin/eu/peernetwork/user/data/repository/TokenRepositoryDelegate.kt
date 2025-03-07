@@ -9,8 +9,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onSubscription
+import javax.inject.Inject
 
-class TokenRepositoryDelegate(
+class TokenRepositoryDelegate @Inject constructor(
     private val api: TokenApi,
     private val persistence: TokenPersistence
 ) : TokenRepository, AuthenticationApi.Listener {

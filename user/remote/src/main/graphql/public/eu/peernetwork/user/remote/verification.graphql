@@ -1,0 +1,6 @@
+mutation VerifiedAccount($userid: ID!) {
+    verifiedAccount(userid: $userid) {
+        status
+        ResponseCode
+    }
+}
