@@ -5,11 +5,12 @@ import eu.peernetwork.user.data.api.SearchApi
 import eu.peernetwork.user.domain.model.Account
 import eu.peernetwork.user.domain.repository.SearchRepository
 import kotlinx.coroutines.flow.SharedFlow
+import javax.inject.Inject
 
-class SearchRepositoryDelegate(
+class SearchRepositoryDelegate @Inject constructor(
     private val api: SearchApi
 ) : SearchRepository {
-    override fun users(filter: Map<String, Any>, pageable: Pageable): SharedFlow<List<Account>> {
-        return api.users(filter, pageable)
+    override fun findByUsername(username: String, pageable: Pageable): SharedFlow<List<Account>> {
+        TODO("Not yet implemented")
     }
 }

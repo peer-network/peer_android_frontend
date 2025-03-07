@@ -11,6 +11,7 @@ core-ktx = "1.13.1"
 coroutines = "1.8.0-RC2"
 graphql = "3.8.5"
 gson = "2.12.1"
+javax = "1"
 dagger = "2.50"
 kover = "0.9.1"
 ksp = "1.9.21-1.0.15"
@@ -38,6 +39,7 @@ appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "a
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 graphql = { group = "com.apollographql.apollo3", name = "apollo-runtime", version.ref = "graphql" }
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
+javax = { group = "javax.inject", name = "javax.inject", version.ref = "javax" }
 dagger = { group = "com.google.dagger", name = "dagger", version.ref = "dagger" }
 dagger-android = { group = "com.google.dagger", name = "dagger-android", version.ref = "dagger" }
 dagger-compiler = { group = "com.google.dagger", name = "dagger-compiler", version.ref = "dagger" }
