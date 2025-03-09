@@ -19,6 +19,10 @@ include(":core:common")
 include(":core:remote")
 include(":core:ui")
 
+include(":persistence:domain")
+include(":persistence:data")
+include(":persistence:local")
+
 include(":user:domain")
 include(":user:data")
 include(":user:remote")

@@ -11,7 +11,11 @@ class AuthenticationRepositoryDelegate @Inject constructor(
         return api.login(email, password)
     }
 
+    override suspend fun refresh(token: String) {
+        return api.refresh(token)
+    }
+
     override suspend fun logout() {
-        TODO("Not yet implemented")
+        return api.logout()
     }
 }

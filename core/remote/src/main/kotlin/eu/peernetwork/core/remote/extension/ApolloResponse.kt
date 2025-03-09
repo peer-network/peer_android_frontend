@@ -15,10 +15,9 @@ fun<D : Operation.Data> ApolloResponse<D>.getResponse(): D {
     return data ?: throw UndefinedResponseException()
 }
 
-fun<D : Operation.Data> Operation<D>.getError(status: Status?, message: String?): BusinessException? {
-    if (status == Status.SUCCESS) {
-        return null
+fun<D : Operation.Data> ApolloResponse<D>.assertOrThrow(status: String?, message: String?) {
+    if (status?.mapToDomain() != Status.SUCCESS) {
+        throw message?.let { BusinessException(operation.name(), it) }
+            ?: UnknownBusinessException(operation.name(), status ?: Status.UNKNOWN.value)
     }
-    return message?.let { BusinessException(name(), it) }
-        ?: UnknownBusinessException(name(), status?.value ?: Status.UNKNOWN.value)
 }

@@ -162,26 +162,6 @@ internal class AccountApiDelegateTest {
     }
 
     @Test
-    fun `test delete user success`(): Unit = runBlocking {
-        val password = "<test-password>"
-        val mockModel = AccountMock.delete()
-        val mockData = mockk<DeleteAccountMutation.Data>()
-        val operation = mockk<Operation<DeleteAccountMutation.Data>>(relaxed = true)
-        val mockResponse = ApolloResponse.Builder(
-            operation,
-            UUID.randomUUID(),
-            mockData
-        ).build()
-
-        every { mockData.deleteAccount } returns mockModel
-        coEvery { client.mutation(any<DeleteAccountMutation>()).execute() } returns mockResponse
-
-        api.delete(password)
-
-        coVerify { client.mutation(DeleteAccountMutation(password)) }
-    }
-
-    @Test
     fun `test user verification success`(): Unit = runBlocking {
         val code = "<test-code>"
         val mockModel = AccountMock.verification()
@@ -223,6 +203,26 @@ internal class AccountApiDelegateTest {
         }
         assertNull(result)
         coVerify { client.mutation(VerifiedAccountMutation(code)) }
+    }
+
+    @Test
+    fun `test delete user success`(): Unit = runBlocking {
+        val password = "<test-password>"
+        val mockModel = AccountMock.delete()
+        val mockData = mockk<DeleteAccountMutation.Data>()
+        val operation = mockk<Operation<DeleteAccountMutation.Data>>(relaxed = true)
+        val mockResponse = ApolloResponse.Builder(
+            operation,
+            UUID.randomUUID(),
+            mockData
+        ).build()
+
+        every { mockData.deleteAccount } returns mockModel
+        coEvery { client.mutation(any<DeleteAccountMutation>()).execute() } returns mockResponse
+
+        api.delete(password)
+
+        coVerify { client.mutation(DeleteAccountMutation(password)) }
     }
 
     @Test
