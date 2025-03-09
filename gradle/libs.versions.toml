@@ -9,6 +9,7 @@ compose-compiler = "1.5.1"
 compose-constraintlayout = "1.1.0"
 core-ktx = "1.13.1"
 coroutines = "1.8.0-RC2"
+turbine = "1.2.0"
 graphql = "3.8.5"
 gson = "2.12.1"
 javax = "1"
@@ -47,6 +48,7 @@ junit = { group = "junit", name = "junit", version.ref = "junit" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 androidx-test = { module = "androidx.arch.core:core-testing", version.ref = "androidx-test" }
 coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
+turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 mockk = { module = "io.mockk:mockk-common", version.ref = "mockk" }
 mockk-jvm = { module = "io.mockk:mockk-jvm", version.ref = "mockk-jvm" }
 

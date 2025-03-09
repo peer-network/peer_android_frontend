@@ -2,9 +2,8 @@ package eu.peernetwork.user.remote.api
 
 import com.apollographql.apollo3.ApolloClient
 import eu.peernetwork.core.common.model.Pageable
-import eu.peernetwork.core.remote.extension.getError
+import eu.peernetwork.core.remote.extension.assertOrThrow
 import eu.peernetwork.core.remote.extension.getResponse
-import eu.peernetwork.core.remote.extension.mapToDomain
 import eu.peernetwork.user.data.api.SearchApi
 import eu.peernetwork.user.domain.model.Account
 import eu.peernetwork.user.remote.mapper.mapToDomain
@@ -18,10 +17,7 @@ class SearchApiDelegate @Inject constructor(
         val query = SearchuserQuery(username, pageable.offset, pageable.limit)
         val response = client.query(query).execute()
         val data = response.getResponse().searchuser
-        val error = response.operation.getError(data.status.mapToDomain(), data.ResponseCode)
-        if (error != null) {
-            throw error
-        }
+        response.assertOrThrow(data.status, data.ResponseCode)
         return data.affectedRows?.mapNotNull { it?.mapToDomain() } ?: emptyList()
     }
 }

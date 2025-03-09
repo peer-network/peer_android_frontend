@@ -5,5 +5,7 @@ import eu.peernetwork.user.domain.model.Account
 import kotlinx.coroutines.flow.SharedFlow
 
 interface SearchRepository {
-    fun findByUsername(username: String, pageable: Pageable): SharedFlow<List<Account>>
+    fun observe(): SharedFlow<List<Account>>
+
+    suspend fun filterByUsername(username: String, pageable: Pageable)
 }

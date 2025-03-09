@@ -8,7 +8,9 @@ interface AccountRepository {
 
     suspend fun register(detail: AccountDetail): String
 
-    suspend fun update(properties: Map<String, Any>): Account
+    suspend fun update(properties: Map<String, Any>)
+
+    suspend fun update(properties: Map<String, Any>, password: String)
 
     suspend fun changePassword(old: String, new: String)
 
