@@ -2,6 +2,7 @@ package eu.peernetwork.app.module.user
 
 import dagger.Binds
 import dagger.Module
+import eu.peernetwork.user.data.api.AuthenticationApi
 import eu.peernetwork.user.data.repository.AccountRepositoryDelegate
 import eu.peernetwork.user.data.repository.AuthenticationRepositoryDelegate
 import eu.peernetwork.user.data.repository.SearchRepositoryDelegate
@@ -29,4 +30,7 @@ interface UserModule {
 
     @Binds
     fun bindTokenRepository(delegate: TokenRepositoryDelegate): TokenRepository
+
+    @Binds
+    fun bindAuthenticationListener(delegate: TokenRepositoryDelegate): AuthenticationApi.Listener
 }

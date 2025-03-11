@@ -17,8 +17,6 @@ dependencies {
     api(libs.androidx.lifecyle)
     api(libs.androidx.activity.compose)
 
-    api(libs.dagger.android)
-
     api(libs.compose.ui)
     api(libs.compose.ui.graphics)
     api(libs.compose.ui.tooling.preview)
@@ -26,4 +24,8 @@ dependencies {
     api(libs.compose.viewmodel)
     api(libs.compose.livedata)
     api(libs.compose.constraintlayout)
+
+    debugApi(libs.compose.ui.tooling)
+
+    api(libs.dagger.android)
 }
