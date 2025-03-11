@@ -1,5 +1,6 @@
 package eu.peernetwork.core.remote.extension
 
+import com.apollographql.apollo3.ApolloCall
 import com.apollographql.apollo3.api.ApolloResponse
 import com.apollographql.apollo3.api.Operation
 import eu.peernetwork.core.common.exception.BusinessException
@@ -8,7 +9,15 @@ import eu.peernetwork.core.remote.exception.NetworkException
 import eu.peernetwork.core.remote.exception.UndefinedResponseException
 import eu.peernetwork.core.remote.model.Status
 
-fun<D : Operation.Data> ApolloResponse<D>.getResponse(): D {
+suspend fun<D : Operation.Data> ApolloCall<D>.executeOrThrow(): ApolloResponse<D> {
+    try {
+        return execute()
+    } catch (error: Throwable) {
+        throw NetworkException(error.message, error)
+    }
+}
+
+fun<D : Operation.Data> ApolloResponse<D>.getOrThrow(): D {
     if (hasErrors()) {
         throw NetworkException(errors?.first()?.message)
     }

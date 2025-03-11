@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Peer</string>
+
+    <string name="logo">Peer Logo</string>
+    <string name="slogan">Almost like with any social media you can share the content you love, but with Peer, you earn on the side – no fame needed!</string>
+    <string name="login">Login</string>
+    <string name="register">Register</string>
+    <string name="privacy">Privacy Policy</string>
 </resources>

@@ -3,7 +3,10 @@ package eu.peernetwork.app
 import android.content.Context
 import dagger.android.AndroidInjector
 import eu.peernetwork.app.module.core.CoreModule
+import eu.peernetwork.app.module.core.UiModule
 import eu.peernetwork.app.module.user.UserModule
+import eu.peernetwork.app.ui.main.Main
+import eu.peernetwork.core.ui.component.UiComponentProvider
 import javax.inject.Singleton
 
 interface Peer {
@@ -14,8 +17,9 @@ interface Peer {
         dependencies = [Peer::class],
         modules = [
             CoreModule::class,
+            UiModule::class,
             UserModule::class,
         ]
     )
-    interface Component : Peer, AndroidInjector<PeerApplication>
+    interface Component : Peer, AndroidInjector<PeerApplication>, UiComponentProvider, Main
 }
