@@ -16,7 +16,7 @@ interface Home {
 
     class Builder(private val dependency: Home) : UiComponent.DefaultBuilder<Home, Component>() {
         override fun build(context: Context): Component {
-            TODO("Not yet implemented")
+            return DaggerHome_Component.builder().home(dependency).build()
         }
     }
 }

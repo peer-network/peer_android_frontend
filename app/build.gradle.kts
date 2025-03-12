@@ -1,8 +1,11 @@
+plugins {
+    id(libs.plugins.ksp.get().pluginId)
+}
+
 android {
     defaultConfig {
         versionCode = 1
         versionName = "1.0"
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "BASE_URL", "\"https://peer-network.eu/graphql\"")
         vectorDrawables {
@@ -43,6 +46,7 @@ dependencies {
     implementation(project(":user:domain"))
     implementation(project(":user:data"))
     implementation(project(":user:remote"))
+    implementation(project(":user:ui"))
 
     implementation(libs.dagger)
     ksp(libs.dagger.compiler)

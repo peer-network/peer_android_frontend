@@ -6,7 +6,7 @@ import eu.peernetwork.core.ui.exception.UiControllerException
 import javax.inject.Inject
 import javax.inject.Provider
 
-class UiControllerFactory  @Inject constructor(
+class UiViewModelFactory  @Inject constructor(
     private val classToViewModel:
     @JvmSuppressWildcards Map<Class<out ViewModel>, Provider<ViewModel>>
 ) : ViewModelProvider.Factory {

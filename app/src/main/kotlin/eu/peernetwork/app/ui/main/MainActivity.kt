@@ -3,6 +3,7 @@ package eu.peernetwork.app.ui.main
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.lifecycle.ViewModelProvider
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.extension.findBuilder
@@ -24,6 +25,7 @@ class MainActivity : ComponentActivity(), UiComponent.Provider<Main.Component> {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProvider(this, factory)[MainViewModel::class.java]
         setContent {
+            enableEdgeToEdge()
             PeerTheme {
                 MainScreen(
                     component = injector,

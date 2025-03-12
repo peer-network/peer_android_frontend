@@ -2,7 +2,6 @@ def isApplication = ext.has('android') && (ext.get('android') as List<String>).c
 if (isApplication) {
     apply plugin: libs.plugins.androidApplication.get().pluginId
     apply plugin: libs.plugins.kotlinAndroid.get().pluginId
-    apply plugin: libs.plugins.ksp.get().pluginId
 } else {
     apply plugin: libs.plugins.androidLibrary.get().pluginId
     apply plugin: libs.plugins.kotlinAndroid.get().pluginId

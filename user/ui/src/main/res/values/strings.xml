@@ -1,0 +1,8 @@
+<resources>
+    <string name="login_text">Login</string>
+    <string name="register_text">Register</string>
+
+    <string name="email_label">E-mail</string>
+    <string name="username_label">Username</string>
+    <string name="password_label">Password</string>
+</resources>

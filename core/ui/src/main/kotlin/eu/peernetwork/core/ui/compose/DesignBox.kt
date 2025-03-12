@@ -11,15 +11,17 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun FlexBox(
     modifier: Modifier = Modifier,
-    minWidth: Float = 1.0f,
-    minHeight: Float = 1.0f,
+    minWidth: Float = 0.0f,
+    minHeight: Float = 0.0f,
     contentAlignment: Alignment = Alignment.TopStart,
+    propagateMinConstraints: Boolean = false,
     content: @Composable () -> Unit,
 ) {
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
     Box(
         contentAlignment = contentAlignment,
+        propagateMinConstraints = propagateMinConstraints,
         modifier = modifier.defaultMinSize(
                 minWidth = screenWidth * minWidth,
                 minHeight = screenHeight * minHeight

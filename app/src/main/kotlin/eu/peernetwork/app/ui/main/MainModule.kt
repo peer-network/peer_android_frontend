@@ -8,11 +8,11 @@ import dagger.multibindings.IntoMap
 import eu.peernetwork.app.ui.home.Home
 import eu.peernetwork.app.ui.setup.Setup
 import eu.peernetwork.core.ui.annotation.UiBuilder
-import eu.peernetwork.core.ui.annotation.UiController
+import eu.peernetwork.core.ui.annotation.UiViewModel
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.factory.UiBuilderFactory
-import eu.peernetwork.core.ui.factory.UiControllerFactory
+import eu.peernetwork.core.ui.factory.UiViewModelFactory
 
 @Module
 object MainModule {
@@ -22,12 +22,12 @@ object MainModule {
 
     @Provides
     @Main.Scope
-    fun provideViewModelFactory(factory: UiControllerFactory): ViewModelProvider.Factory = factory
+    fun provideViewModelFactory(factory: UiViewModelFactory): ViewModelProvider.Factory = factory
 
     @Provides
     @IntoMap
     @Main.Scope
-    @UiController(MainViewModel::class)
+    @UiViewModel(MainViewModel::class)
     fun viewModel(viewModel: MainViewModel): ViewModel = viewModel
 
     @Main.Scope

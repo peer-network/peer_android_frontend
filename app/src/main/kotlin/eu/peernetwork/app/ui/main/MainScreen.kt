@@ -7,7 +7,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import eu.peernetwork.app.ui.home.HomeScreen
 import eu.peernetwork.app.ui.setup.SetupScreen
-import eu.peernetwork.core.ui.theme.PeerTheme
 
 @Composable
 fun MainScreen(
@@ -21,10 +20,13 @@ fun MainScreen(
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
     when (state) {
+        is MainViewModel.State.Loading -> {}
         is MainViewModel.State.Startup -> {
             SetupScreen(
                 provider = component,
                 viewModelStoreOwner = viewModelStoreOwner,
+                isRegistration = (state as MainViewModel.State.Startup).isRegistration,
+                showRegistration = { viewModel.showRegistration(it) }
             )
         }
         is MainViewModel.State.Authenticated -> HomeScreen()
