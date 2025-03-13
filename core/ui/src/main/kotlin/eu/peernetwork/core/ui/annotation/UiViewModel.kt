@@ -5,4 +5,4 @@ import dagger.MapKey
 import kotlin.reflect.KClass
 
 @MapKey
-annotation class UiController(val key: KClass<out ViewModel>)
+annotation class UiViewModel(val key: KClass<out ViewModel>)

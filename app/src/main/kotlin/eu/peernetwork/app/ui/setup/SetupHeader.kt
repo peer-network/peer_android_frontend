@@ -23,6 +23,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
 import eu.peernetwork.app.R
 import eu.peernetwork.core.ui.extension.annotate
 import eu.peernetwork.core.ui.theme.PeerTheme
@@ -30,7 +31,8 @@ import eu.peernetwork.core.ui.theme.PeerTheme
 @Composable
 fun SetupHeader(
     onLogin: () -> Unit,
-    onRegister: () -> Unit
+    onRegister: () -> Unit,
+    isRegistration: Boolean,
 ) {
     ConstraintLayout(modifier = Modifier.fillMaxWidth()) {
         val appName = stringResource(id = R.string.app_name)
@@ -52,17 +54,18 @@ fun SetupHeader(
                 }
         )
         Text(
-            text = stringResource(id = R.string.slogan)
+            text = stringResource(id = R.string.slogan_text)
                 .annotate(mapOf(appName to SpanStyle(fontWeight = FontWeight.Bold))),
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onBackground,
             style = MaterialTheme.typography.bodyMedium.copy(fontStyle = FontStyle.Italic),
             modifier = Modifier.constrainAs(slogan) {
                 top.linkTo(logo.bottom, margin = 24.dp)
-                start.linkTo(parent.start)
-                end.linkTo(parent.end)
-                bottom.linkTo(divider.top, margin = 8.dp)
-            }.padding(horizontal = 24.dp)
+                start.linkTo(parent.start, margin = 24.dp)
+                end.linkTo(parent.end, margin = 24.dp)
+                bottom.linkTo(divider.top, margin = 16.dp)
+                width = Dimension.fillToConstraints
+            }
         )
         Box(
             modifier = Modifier
@@ -85,8 +88,15 @@ fun SetupHeader(
             }
         ) {
             Text(
-                text = stringResource(id = R.string.login).lowercase(),
-                style = MaterialTheme.typography.bodySmall,
+                text = stringResource(id = eu.peernetwork.user.ui.R.string.login_text).lowercase(),
+                style = MaterialTheme.typography.bodySmall.copy(
+                    color = MaterialTheme.colorScheme.onSurface,
+                    fontWeight = if (isRegistration) {
+                        FontWeight.Normal
+                    } else {
+                        FontWeight.Bold
+                    }
+                ),
             )
         }
         TextButton(
@@ -98,8 +108,15 @@ fun SetupHeader(
             }
         ) {
             Text(
-                text = stringResource(id = R.string.register).lowercase(),
-                style = MaterialTheme.typography.bodySmall,
+                text = stringResource(id = eu.peernetwork.user.ui.R.string.register_text).lowercase(),
+                style = MaterialTheme.typography.bodySmall.copy(
+                    color = MaterialTheme.colorScheme.onSurface,
+                    fontWeight = if (isRegistration) {
+                        FontWeight.Bold
+                    } else {
+                        FontWeight.Normal
+                    }
+                ),
             )
         }
     }
@@ -111,7 +128,8 @@ fun PreviewSetupHeader() {
     PeerTheme {
         SetupHeader(
             onLogin = {},
-            onRegister = {}
+            onRegister = {},
+            isRegistration = false
         )
     }
 }

@@ -26,6 +26,7 @@ include(":persistence:local")
 include(":user:domain")
 include(":user:data")
 include(":user:remote")
+include(":user:ui")
 
 include(":social:domain")
 include(":social:data")

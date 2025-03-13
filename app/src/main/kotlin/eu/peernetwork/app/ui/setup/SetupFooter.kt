@@ -29,9 +29,10 @@ fun SetupFooter(
             modifier = Modifier.padding(horizontal = 24.dp)
         ) {
             Text(
-                text = stringResource(id = R.string.privacy),
+                text = stringResource(id = R.string.privacy_text),
                 style = MaterialTheme.typography.bodySmall.copy(
-                    textDecoration = TextDecoration.Underline
+                    color = MaterialTheme.colorScheme.onSurface,
+                    textDecoration = TextDecoration.Underline,
                 )
             )
         }
