@@ -2,6 +2,8 @@ package eu.peernetwork.app.ui.main
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import app.cash.turbine.test
+import eu.peernetwork.persistence.domain.observable.ObservableBoolean
+import eu.peernetwork.persistence.domain.publishable.PublishableBoolean
 import eu.peernetwork.user.domain.model.Token
 import eu.peernetwork.user.domain.usecase.TokenObserverUsecase
 import io.mockk.every
@@ -9,6 +11,7 @@ import io.mockk.mockk
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
@@ -26,7 +29,13 @@ internal class MainViewModelTest {
 
     private val tokenObserverUsecase = mockk<TokenObserverUsecase>()
 
+    private val observable = mockk<ObservableBoolean>()
+
+    private val publishable = mockk<PublishableBoolean>()
+
     private val tokenObserver = MutableSharedFlow<Token?>(replay = 1)
+
+    private val sessionObserver = MutableSharedFlow<Boolean?>(replay = 1)
 
     private lateinit var viewModel: MainViewModel
 
@@ -36,9 +45,12 @@ internal class MainViewModelTest {
     fun setup() {
         Dispatchers.setMain(dispatcher)
 
-        every { tokenObserverUsecase() } returns tokenObserver
+        sessionObserver.tryEmit(null)
 
-        viewModel = MainViewModel(tokenObserverUsecase)
+        every { tokenObserverUsecase() } returns tokenObserver
+        every { observable(any()) } returns sessionObserver
+
+        viewModel = MainViewModel(tokenObserverUsecase, observable, publishable)
     }
 
     @After
@@ -47,10 +59,30 @@ internal class MainViewModelTest {
     }
 
     @Test
+    fun `test loading state`() = runTest {
+        every { tokenObserverUsecase() } coAnswers {
+            delay(100)
+            tokenObserver
+        }
+        viewModel.state.test {
+            assertEquals(MainViewModel.State.Loading, awaitItem())
+        }
+    }
+
+    @Test
     fun `test setup state`() = runTest {
         tokenObserver.tryEmit(null)
         viewModel.state.test {
-            assertEquals(MainViewModel.State.Startup, awaitItem())
+            assertEquals(MainViewModel.State.Startup(false), awaitItem())
+        }
+    }
+
+    @Test
+    fun `test setup with registration`() = runTest {
+        sessionObserver.tryEmit(true)
+        tokenObserver.tryEmit(null)
+        viewModel.state.test {
+            assertEquals(MainViewModel.State.Startup(true), awaitItem())
         }
     }
 

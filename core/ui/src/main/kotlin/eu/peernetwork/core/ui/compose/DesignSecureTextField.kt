@@ -8,27 +8,23 @@ import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.BasicSecureTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.InputTransformation
 import androidx.compose.foundation.text.input.KeyboardActionHandler
-import androidx.compose.foundation.text.input.OutputTransformation
 import androidx.compose.foundation.text.input.TextFieldDecorator
-import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.TextObfuscationMode
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldColors
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
@@ -47,36 +43,20 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.core.ui.theme.PeerTheme
 
-object DesignTextFieldColors {
-    @Composable
-    internal fun colors(): TextFieldColors {
-        return TextFieldDefaults.colors(
-            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceBright,
-            focusedContainerColor = MaterialTheme.colorScheme.surfaceDim,
-            focusedTextColor = MaterialTheme.colorScheme.surfaceTint,
-            unfocusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
-            focusedPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = .5f),
-            unfocusedPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-    }
-}
-
 @Composable
-fun DesignTextField(
+fun DesignSecureTextField(
     state: TextFieldState,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    readOnly: Boolean = false,
     hasError: Boolean = false,
     durationMillis: Int = 10,
     delayMillis: Int = 0,
     easing: Easing = FastOutSlowInEasing,
+    textObfuscationMode: TextObfuscationMode = TextObfuscationMode.Hidden,
     inputTransformation: InputTransformation? = null,
-    outputTransformation: OutputTransformation? = null,
     textStyle: TextStyle = MaterialTheme.typography.bodyMedium,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     onKeyboardAction: KeyboardActionHandler? = null,
-    lineLimits: TextFieldLineLimits = TextFieldLineLimits.SingleLine,
     onTextLayout: (Density.(getResult: () -> TextLayoutResult?) -> Unit)? = null,
     interactionSource: MutableInteractionSource? = null,
     decorator: TextFieldDecorator? = null,
@@ -84,7 +64,6 @@ fun DesignTextField(
     colors: TextFieldColors = DesignTextFieldColors.colors(),
     shape: Shape = RoundedCornerShape(16.dp),
     contentPadding: PaddingValues = PaddingValues(16.dp),
-    scrollState: ScrollState = rememberScrollState(),
     leading: @Composable (() -> Unit)? = null,
     trailing: @Composable (() -> Unit)? = null,
     error: @Composable (() -> Unit)? = null,
@@ -142,22 +121,19 @@ fun DesignTextField(
             leading = leading,
             trailing = trailing,
         ) {
-            BasicTextField(
+            BasicSecureTextField(
                 state = state,
                 modifier = Modifier.fillMaxWidth(),
                 enabled = enabled,
-                readOnly = readOnly,
                 inputTransformation = inputTransformation,
                 textStyle = textStyle.copy(color = textColor),
                 keyboardOptions = keyboardOptions,
                 onKeyboardAction = onKeyboardAction,
-                lineLimits = lineLimits,
                 onTextLayout = onTextLayout,
                 interactionSource = interactionSource,
                 cursorBrush = cursorBrush,
-                outputTransformation = outputTransformation,
                 decorator = decorator,
-                scrollState = scrollState,
+                textObfuscationMode = textObfuscationMode
             )
             AnimatedVisibility(
                 visible = state.text.isEmpty(),
@@ -178,25 +154,24 @@ fun DesignTextField(
 
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
-fun PreviewDesignTextEditor() {
-    val text = remember { TextFieldState("Hello, world!") }
-    val emptyText = remember { TextFieldState() }
+fun PreviewDesignSecureTextField() {
     PeerTheme {
+        val text = remember { TextFieldState("Password") }
+        val emptyPassword = remember { TextFieldState() }
         Column {
-            DesignTextField(
-                state = emptyText,
-                modifier = Modifier.padding(bottom = 16.dp),
+            DesignSecureTextField(
+                state = emptyPassword,
                 hasError = true,
+                modifier = Modifier
+                    .padding(bottom = 16.dp),
                 error = {
                     Text(
-                        text = "Opppps! Looks like error occured!",
+                        text = "Opppps! Looks like error occurred!",
                         modifier = Modifier.padding(top = 8.dp, start = 16.dp)
                     )
                 }
             ) { Text(text = "Placeholder") }
-            DesignTextField(
-                state = text,
-            ) { Text("Hello, world!") }
+            DesignSecureTextField(state = text)
         }
     }
 }

@@ -24,6 +24,8 @@ import eu.peernetwork.core.ui.compose.DesignButton
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.user.ui.R
+import eu.peernetwork.user.ui.extension.isValidEmail
+import eu.peernetwork.user.ui.extension.isValidInput
 
 @Composable
 fun LoginScreen(
@@ -54,13 +56,15 @@ private fun LoginScaffold(
     error: String? = null,
     onSubmit: (String, String) -> Unit
 ) {
-    val email = remember { TextFieldState("") }
-    val password = remember { TextFieldState("") }
+    val email = remember { TextFieldState() }
+    val password = remember { TextFieldState() }
+    val validate = email.isValidEmail() && password.isValidInput()
     ConstraintLayout(modifier = Modifier.fillMaxWidth()) {
         val (form, cta) = createRefs()
         LoginForm(
             email = email,
             password = password,
+            error = error,
             modifier = Modifier.constrainAs(form) {
                 top.linkTo(parent.top)
                 start.linkTo(parent.start)
@@ -69,6 +73,8 @@ private fun LoginScaffold(
             }
         )
         DesignButton(
+            enabled = !loading && validate,
+            isLoading = loading,
             onClick = { onSubmit(email.text.toString(), password.text.toString()) },
             modifier = Modifier.constrainAs(cta) {
                 top.linkTo(form.bottom, margin = 16.dp)

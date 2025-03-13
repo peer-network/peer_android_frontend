@@ -23,6 +23,8 @@ import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.compose.DesignButton
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.user.ui.R
+import eu.peernetwork.user.ui.extension.isValidEmail
+import eu.peernetwork.user.ui.extension.isValidInput
 
 @Composable
 fun RegistrationScreen(
@@ -43,7 +45,7 @@ fun RegistrationScreen(
         loading = state is RegistrationViewModel.State.Loading,
         error = (state as? RegistrationViewModel.State.Error?)?.error?.message,
     ) { email, username, password ->
-        viewModel.register(email, username, password)
+        viewModel.register(username, email, password)
     }
 }
 
@@ -53,15 +55,17 @@ private fun RegistrationScaffold(
     error: String? = null,
     onSubmit: (String, String, String) -> Unit
 ) {
-    val email = remember { TextFieldState("") }
-    val username = remember { TextFieldState("") }
-    var password = remember { TextFieldState("") }
+    val email = remember { TextFieldState() }
+    val username = remember { TextFieldState() }
+    var password = remember { TextFieldState() }
+    val validate = email.isValidEmail() && username.isValidInput() && password.isValidInput()
     ConstraintLayout(modifier = Modifier.fillMaxWidth()) {
         val (form, cta) = createRefs()
         RegistrationForm(
             email = email,
             username = username,
             password = password,
+            error = error,
             modifier = Modifier.constrainAs(form) {
                 top.linkTo(parent.top)
                 start.linkTo(parent.start)
@@ -70,6 +74,8 @@ private fun RegistrationScaffold(
             }
         )
         DesignButton(
+            enabled = !loading && validate,
+            isLoading = loading,
             onClick = { onSubmit(
                 email.text.toString(),
                 username.text.toString(),

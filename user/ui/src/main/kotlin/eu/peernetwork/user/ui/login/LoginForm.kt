@@ -1,7 +1,9 @@
 package eu.peernetwork.user.ui.login
 
 import android.content.res.Configuration
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.TextObfuscationMode
@@ -14,8 +16,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.constraintlayout.compose.Dimension
+import eu.peernetwork.core.ui.compose.DesignSecureTextField
 import eu.peernetwork.core.ui.compose.DesignTextField
 import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.user.ui.R
@@ -25,9 +26,9 @@ internal fun LoginForm(
     email: TextFieldState,
     password: TextFieldState,
     modifier: Modifier = Modifier,
+    error: String? = null,
 ) {
-    ConstraintLayout(modifier = modifier) {
-        val (emailText, passwordText) = createRefs()
+    Column (modifier = modifier) {
         DesignTextField(
             state = email,
             keyboardOptions = KeyboardOptions(
@@ -35,29 +36,27 @@ internal fun LoginForm(
                 imeAction = ImeAction.Next
             ),
             placeholder = { Text(stringResource(id = R.string.email_label)) },
-            modifier = Modifier.constrainAs(emailText) {
-                top.linkTo(parent.top, margin = 8.dp)
-                start.linkTo(parent.start, margin = 24.dp)
-                end.linkTo(parent.end, margin = 24.dp)
-                bottom.linkTo(passwordText.top)
-                width = Dimension.fillToConstraints
-            }
+            modifier = Modifier.padding(horizontal = 24.dp)
         )
-        DesignTextField(
+        DesignSecureTextField(
             state = password,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Password,
                 imeAction = ImeAction.Done
             ),
+            hasError = error != null,
+            error = { error?.run {
+                Text(
+                    text = this,
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                        .padding(top = 6.dp)
+                )
+            } },
             placeholder = { Text(stringResource(id = R.string.password_label)) },
             textObfuscationMode = TextObfuscationMode.Hidden,
-            modifier = Modifier.constrainAs(passwordText) {
-                top.linkTo(emailText.bottom, margin = 12.dp)
-                start.linkTo(parent.start, margin = 24.dp)
-                end.linkTo(parent.end, margin = 24.dp)
-                bottom.linkTo(parent.bottom, margin = 8.dp)
-                width = Dimension.fillToConstraints
-            }
+            modifier = Modifier
+                .padding(horizontal = 24.dp)
+                .padding(top = 12.dp)
         )
     }
 }
