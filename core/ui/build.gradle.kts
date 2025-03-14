@@ -14,6 +14,7 @@ dependencies {
     api(libs.appcompat)
     api(libs.material)
     api(libs.viewmodel)
+    api(libs.androidx.splash)
     api(libs.androidx.lifecyle)
     api(libs.androidx.activity.compose)
 
@@ -24,6 +25,7 @@ dependencies {
     api(libs.compose.viewmodel)
     api(libs.compose.livedata)
     api(libs.compose.constraintlayout)
+    api(libs.compose.navigation)
 
     debugApi(libs.compose.ui.tooling)
 

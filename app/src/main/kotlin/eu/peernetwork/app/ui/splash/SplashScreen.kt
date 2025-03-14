@@ -1,4 +1,4 @@
-package eu.peernetwork.app.ui.home
+package eu.peernetwork.app.ui.splash
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -7,18 +7,18 @@ import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.theme.PeerTheme
 
 @Composable
-fun HomeScreen(provider: UiComponentProvider) {
+fun SplashScreen(provider: UiComponentProvider) {
     HomeScaffold()
 }
 
 @Composable
 private fun HomeScaffold() {
-    Text("Home screen")
+    Text("Splash screen")
 }
 
 @Preview
 @Composable
-fun PreviewHomeScreen() {
+fun PreviewSplashScreen() {
     PeerTheme {
         HomeScaffold()
     }

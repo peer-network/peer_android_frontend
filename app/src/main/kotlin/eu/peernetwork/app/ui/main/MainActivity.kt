@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.ViewModelProvider
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.extension.findBuilder
@@ -24,6 +25,7 @@ class MainActivity : ComponentActivity(), UiComponent.Provider<Main.Component> {
         injector.inject(this)
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProvider(this, factory)[MainViewModel::class.java]
+        installSplashScreen()
         setContent {
             enableEdgeToEdge()
             PeerTheme {
