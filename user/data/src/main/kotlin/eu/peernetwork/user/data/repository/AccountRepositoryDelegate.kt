@@ -49,6 +49,10 @@ class AccountRepositoryDelegate @Inject constructor(
         return api.changePassword(old, new)
     }
 
+    override suspend fun activate(code: String) {
+        return api.activate(code)
+    }
+
     override suspend fun delete(password: String) {
         return api.delete(password)
     }

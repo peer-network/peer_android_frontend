@@ -2,21 +2,27 @@ package eu.peernetwork.user.ui.registeration
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import dagger.Binds
 import dagger.Module
+import dagger.Provides
 import dagger.multibindings.IntoMap
 import eu.peernetwork.core.ui.annotation.UiViewModel
 import eu.peernetwork.core.ui.factory.UiViewModelFactory
+import javax.inject.Provider
 
 @Module
-interface RegistrationModule {
-    @Binds
+object RegistrationModule {
+    @Provides
     @Registration.Scope
-    fun bindViewModelFactory(factory: UiViewModelFactory): ViewModelProvider.Factory
+    fun provideViewModelFactory(
+        classToViewModel:
+        @JvmSuppressWildcards Map<Class<out ViewModel>, Provider<ViewModel>>
+    ): ViewModelProvider.Factory {
+        return UiViewModelFactory(classToViewModel)
+    }
 
-    @Binds
+    @Provides
     @IntoMap
     @Registration.Scope
     @UiViewModel(RegistrationViewModel::class)
-    fun bindViewModel(viewModel: RegistrationViewModel): ViewModel
+    fun provideViewModel(viewModel: RegistrationViewModel): ViewModel = viewModel
 }

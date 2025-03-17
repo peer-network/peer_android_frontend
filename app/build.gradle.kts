@@ -48,6 +48,11 @@ dependencies {
     implementation(project(":user:remote"))
     implementation(project(":user:ui"))
 
+    implementation(project(":social:domain"))
+    implementation(project(":social:data"))
+    implementation(project(":social:remote"))
+    implementation(project(":social:ui"))
+
     implementation(libs.dagger)
     ksp(libs.dagger.compiler)
 

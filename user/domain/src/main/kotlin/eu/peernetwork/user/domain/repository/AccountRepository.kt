@@ -14,5 +14,7 @@ interface AccountRepository {
 
     suspend fun changePassword(old: String, new: String)
 
+    suspend fun activate(code: String)
+
     suspend fun delete(password: String)
 }

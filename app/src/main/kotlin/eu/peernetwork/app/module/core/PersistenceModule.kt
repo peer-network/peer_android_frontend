@@ -5,9 +5,11 @@ import dagger.Module
 import eu.peernetwork.persistence.data.repository.PreferenceRepositoryDelegate
 import eu.peernetwork.persistence.data.datasource.ObservableDatasource
 import eu.peernetwork.persistence.data.datasource.PublishableDatasource
+import eu.peernetwork.persistence.data.datasource.RetrievableDatasource
 import eu.peernetwork.persistence.domain.repository.PreferenceRepository
 import eu.peernetwork.persistence.local.datasource.ObservableDatasourceDelegate
 import eu.peernetwork.persistence.local.datasource.PublishableDatasourceDelegate
+import eu.peernetwork.persistence.local.datasource.RetrievableDatasourceDelegate
 
 @Module
 internal interface PersistenceModule {
@@ -19,4 +21,7 @@ internal interface PersistenceModule {
 
     @Binds
     fun bindObservableDatasource(delegate: ObservableDatasourceDelegate): ObservableDatasource
+
+    @Binds
+    fun bindRetrievableDatasource(delegate: RetrievableDatasourceDelegate): RetrievableDatasource
 }

@@ -8,11 +8,11 @@ import eu.peernetwork.core.ui.theme.PeerTheme
 
 @Composable
 fun SplashScreen(provider: UiComponentProvider) {
-    HomeScaffold()
+    SplashScaffold()
 }
 
 @Composable
-private fun HomeScaffold() {
+private fun SplashScaffold() {
     Text("Splash screen")
 }
 
@@ -20,6 +20,6 @@ private fun HomeScaffold() {
 @Composable
 fun PreviewSplashScreen() {
     PeerTheme {
-        HomeScaffold()
+        SplashScaffold()
     }
 }

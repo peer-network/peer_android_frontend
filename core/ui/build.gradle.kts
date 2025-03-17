@@ -20,14 +20,13 @@ dependencies {
 
     api(libs.compose.ui)
     api(libs.compose.ui.graphics)
+    api(libs.compose.ui.tooling)
     api(libs.compose.ui.tooling.preview)
     api(libs.compose.material3)
     api(libs.compose.viewmodel)
     api(libs.compose.livedata)
     api(libs.compose.constraintlayout)
     api(libs.compose.navigation)
-
-    debugApi(libs.compose.ui.tooling)
 
     api(libs.dagger.android)
 }

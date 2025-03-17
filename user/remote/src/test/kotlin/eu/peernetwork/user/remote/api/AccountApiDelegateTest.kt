@@ -176,7 +176,7 @@ internal class AccountApiDelegateTest {
         every { mockData.verifiedAccount } returns mockModel
         coEvery { client.mutation(any<VerifiedAccountMutation>()).execute() } returns mockResponse
 
-        api.verify(code)
+        api.activate(code)
 
         coVerify { client.mutation(VerifiedAccountMutation(code)) }
     }
@@ -197,7 +197,7 @@ internal class AccountApiDelegateTest {
         coEvery { client.mutation(any<VerifiedAccountMutation>()).execute() } returns mockResponse
 
         val result = try {
-            api.verify(code)
+            api.activate(code)
         } catch (error: Throwable) {
             null
         }

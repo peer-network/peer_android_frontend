@@ -16,6 +16,9 @@ val PeerAppGray15 = Color(0xFF323232)
 val PeerAppGray25 = Color(0xFF404040)
 val PeerAppWhite = Color(0xFFFFFFFF)
 val PeerAppBlack = Color(0xFF121212)
+val PeerAppYellow = Color(0xFFFFCB67)
+val PeerAppGreen = Color(0xFF4CAF50)
+val PeerAppLightGreen = Color(0xFFAAFF67)
 
 // Error colors
 val PeerAppRed = Color(0xFFFF6767)

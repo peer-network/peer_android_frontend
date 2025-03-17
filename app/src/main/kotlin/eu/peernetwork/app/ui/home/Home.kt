@@ -2,8 +2,11 @@ package eu.peernetwork.app.ui.home
 
 import android.content.Context
 import eu.peernetwork.core.ui.component.UiComponent
+import eu.peernetwork.core.ui.component.UiComponentProvider
+import eu.peernetwork.persistence.domain.provider.PreferenceProvider
+import eu.peernetwork.social.ui.feed.Feed
 
-interface Home {
+interface Home : PreferenceProvider {
     @javax.inject.Scope
     @Retention(AnnotationRetention.RUNTIME)
     annotation class Scope
@@ -11,8 +14,9 @@ interface Home {
     @Scope
     @dagger.Component(
         dependencies = [ Home::class ],
+        modules = [ HomeModule::class ]
     )
-    interface Component : Home
+    interface Component : Home, Feed, UiComponentProvider
 
     class Builder(private val dependency: Home) : UiComponent.DefaultBuilder<Home, Component>() {
         override fun build(context: Context): Component {

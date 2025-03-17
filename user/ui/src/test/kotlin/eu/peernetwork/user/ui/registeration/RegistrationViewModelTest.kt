@@ -2,6 +2,7 @@ package eu.peernetwork.user.ui.registeration
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import app.cash.turbine.test
+import eu.peernetwork.user.domain.usecase.ActivationUsecase
 import eu.peernetwork.user.domain.usecase.RegistrationUsecase
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -25,12 +26,17 @@ internal class RegistrationViewModelTest {
 
     private val usecase = mockk<RegistrationUsecase>()
 
+    private val activationUsecase = mockk<ActivationUsecase>()
+
     private lateinit var viewModel: RegistrationViewModel
 
     @Before
     fun setup() {
         Dispatchers.setMain(dispatcher)
-        viewModel = RegistrationViewModel(usecase)
+
+        coEvery { activationUsecase(any()) } returns Unit
+
+        viewModel = RegistrationViewModel(usecase, activationUsecase)
     }
 
     @Test
@@ -54,6 +60,20 @@ internal class RegistrationViewModelTest {
         viewModel.register("<test-username>", "<test-email>", "<test-password>")
         viewModel.state.test {
             assertEquals(RegistrationViewModel.State.Error(error), awaitItem())
+        }
+    }
+
+    @Test
+    fun `test reset state`() = runTest {
+        val error = RuntimeException("<test-uuid>")
+        coEvery { usecase(any()) } throws error
+        viewModel.register("<test-username>", "<test-email>", "<test-password>")
+        viewModel.state.test {
+            assertEquals(RegistrationViewModel.State.Error(error), awaitItem())
+
+            viewModel.reset()
+
+            assertEquals(RegistrationViewModel.State.Initial, awaitItem())
         }
     }
 }

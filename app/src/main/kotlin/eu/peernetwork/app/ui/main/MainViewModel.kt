@@ -2,30 +2,30 @@ package eu.peernetwork.app.ui.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import eu.peernetwork.persistence.domain.observable.ObservableBoolean
 import eu.peernetwork.persistence.domain.publishable.PublishableBoolean
+import eu.peernetwork.persistence.domain.retrievable.RetrievableBoolean
 import eu.peernetwork.user.domain.model.Token
 import eu.peernetwork.user.domain.usecase.TokenObserverUsecase
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class MainViewModel @Inject constructor(
     tokenObserverUsecase: TokenObserverUsecase,
-    observableBoolean: ObservableBoolean,
+    retrievableBoolean: RetrievableBoolean,
     private val publishableBoolean: PublishableBoolean
 ) : ViewModel() {
     private val tag = this::class.java.name
 
     val state: StateFlow<State> = tokenObserverUsecase()
-        .combine(observableBoolean(tag)) { token, showRegistration ->
+        .map { token ->
             if (token != null) {
                 State.Authenticated(token)
             } else {
-                State.Startup(showRegistration == true)
+                State.Startup(retrievableBoolean(tag) == true)
             }
         }.stateIn(
             scope = viewModelScope,

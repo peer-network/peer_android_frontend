@@ -27,10 +27,12 @@ internal fun LoginForm(
     password: TextFieldState,
     modifier: Modifier = Modifier,
     error: String? = null,
+    enabled: Boolean,
 ) {
     Column (modifier = modifier) {
         DesignTextField(
             state = email,
+            enabled = enabled,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Email,
                 imeAction = ImeAction.Next
@@ -40,12 +42,13 @@ internal fun LoginForm(
         )
         DesignSecureTextField(
             state = password,
+            enabled = enabled,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Password,
                 imeAction = ImeAction.Done
             ),
-            hasError = error != null,
-            error = { error?.run {
+            showLabel = error != null,
+            label = { error?.run {
                 Text(
                     text = this,
                     modifier = Modifier.padding(horizontal = 16.dp)
@@ -70,7 +73,8 @@ fun PreviewLoginForm() {
         LoginForm(
             email = email,
             password = password,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            enabled = true
         )
     }
 }
