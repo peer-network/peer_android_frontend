@@ -2,6 +2,7 @@ package eu.peernetwork.persistence.data.repository
 
 import eu.peernetwork.persistence.data.datasource.PublishableDatasource
 import eu.peernetwork.persistence.data.datasource.ObservableDatasource
+import eu.peernetwork.persistence.data.datasource.RetrievableDatasource
 import eu.peernetwork.persistence.domain.repository.PreferenceRepository
 import eu.peernetwork.persistence.domain.exception.UnsupportedTypeException
 import kotlinx.coroutines.flow.Flow
@@ -11,9 +12,21 @@ import javax.inject.Inject
 class PreferenceRepositoryDelegate @Inject constructor(
     private val observable: ObservableDatasource,
     private val publishable: PublishableDatasource,
+    private val retrievable: RetrievableDatasource
 ) : PreferenceRepository {
     @Suppress("UNCHECKED_CAST")
-    override fun <T> get(key: String, clazz: Class<T>): Flow<T?> {
+    override fun <T> get(key: String, clazz: Class<T>): T? {
+        return when (clazz) {
+            String::class.java -> retrievable.getString(key)
+            Int::class.java -> retrievable.getString(key)
+            Boolean::class.java -> retrievable.getBoolean(key)
+            Long::class.java -> retrievable.getLong(key)
+            else -> throw UnsupportedTypeException(clazz.name)
+        } as T?
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    override fun <T> observe(key: String, clazz: Class<T>): Flow<T?> {
         return when (clazz) {
             String::class.java -> observable.observeString(key)
             Int::class.java -> observable.observeInteger(key)

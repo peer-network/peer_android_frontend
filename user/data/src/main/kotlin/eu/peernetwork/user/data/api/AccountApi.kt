@@ -10,7 +10,7 @@ interface AccountApi {
 
     suspend fun changePassword(old: String, new: String)
 
-    suspend fun verify(code: String)
+    suspend fun activate(code: String)
 
     suspend fun delete(password: String)
 }

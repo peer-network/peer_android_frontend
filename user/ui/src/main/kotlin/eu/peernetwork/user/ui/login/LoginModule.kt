@@ -2,21 +2,27 @@ package eu.peernetwork.user.ui.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import dagger.Binds
 import dagger.Module
+import dagger.Provides
 import dagger.multibindings.IntoMap
 import eu.peernetwork.core.ui.annotation.UiViewModel
 import eu.peernetwork.core.ui.factory.UiViewModelFactory
+import javax.inject.Provider
 
 @Module
-interface LoginModule {
-    @Binds
+object LoginModule {
+    @Provides
     @Login.Scope
-    fun bindViewModelFactory(factory: UiViewModelFactory): ViewModelProvider.Factory
+    fun provideViewModelFactory(
+        classToViewModel:
+        @JvmSuppressWildcards Map<Class<out ViewModel>, Provider<ViewModel>>
+    ): ViewModelProvider.Factory {
+        return UiViewModelFactory(classToViewModel)
+    }
 
-    @Binds
+    @Provides
     @IntoMap
     @Login.Scope
     @UiViewModel(LoginViewModel::class)
-    fun bindViewModel(viewModel: LoginViewModel): ViewModel
+    fun provideViewModel(viewModel: LoginViewModel): ViewModel = viewModel
 }

@@ -8,6 +8,6 @@ class ObservableString @Inject constructor(
     private val repository: PreferenceRepository
 ) : Observable<String> {
     override fun invoke(key: String): Flow<String?> {
-        return repository[key, String::class.java]
+        return repository.observe(key, String::class.java)
     }
 }

@@ -3,10 +3,9 @@ package eu.peernetwork.core.ui.factory
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import eu.peernetwork.core.ui.exception.UiControllerException
-import javax.inject.Inject
 import javax.inject.Provider
 
-class UiViewModelFactory  @Inject constructor(
+class UiViewModelFactory constructor(
     private val classToViewModel:
     @JvmSuppressWildcards Map<Class<out ViewModel>, Provider<ViewModel>>
 ) : ViewModelProvider.Factory {

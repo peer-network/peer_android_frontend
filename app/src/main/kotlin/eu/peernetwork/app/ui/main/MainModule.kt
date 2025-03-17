@@ -13,6 +13,7 @@ import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.factory.UiBuilderFactory
 import eu.peernetwork.core.ui.factory.UiViewModelFactory
+import javax.inject.Provider
 
 @Module
 object MainModule {
@@ -22,7 +23,12 @@ object MainModule {
 
     @Provides
     @Main.Scope
-    fun provideViewModelFactory(factory: UiViewModelFactory): ViewModelProvider.Factory = factory
+    fun provideViewModelFactory(
+        classToViewModel:
+        @JvmSuppressWildcards Map<Class<out ViewModel>, Provider<ViewModel>>
+    ): ViewModelProvider.Factory {
+        return UiViewModelFactory(classToViewModel)
+    }
 
     @Provides
     @IntoMap

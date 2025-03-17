@@ -2,6 +2,7 @@ package eu.peernetwork.user.ui.registeration
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import eu.peernetwork.user.domain.usecase.ActivationUsecase
 import eu.peernetwork.user.domain.usecase.RegistrationUsecase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -11,7 +12,8 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class RegistrationViewModel @Inject constructor(
-    private val registrationUsecase: RegistrationUsecase
+    private val registrationUsecase: RegistrationUsecase,
+    private val activationUsecase: ActivationUsecase,
 ) : ViewModel() {
     private val mutableState = MutableStateFlow<State>(State.Initial)
 
@@ -25,21 +27,23 @@ class RegistrationViewModel @Inject constructor(
         mutableState.tryEmit(State.Loading)
         viewModelScope.launch {
             try {
-                mutableState.tryEmit(
-                    State.Success(
-                        registrationUsecase(
-                            RegistrationUsecase.Parameter(
-                                email = email,
-                                username = username,
-                                password = password
-                            )
-                        )
+                val code = registrationUsecase(
+                    RegistrationUsecase.Parameter(
+                        email = email,
+                        username = username,
+                        password = password
                     )
                 )
+                activationUsecase(code)
+                mutableState.tryEmit(State.Success(code))
             } catch (error: Throwable) {
                 mutableState.tryEmit(State.Error(error))
             }
         }
+    }
+
+    fun reset() {
+        mutableState.tryEmit(State.Initial)
     }
 
     sealed interface State {

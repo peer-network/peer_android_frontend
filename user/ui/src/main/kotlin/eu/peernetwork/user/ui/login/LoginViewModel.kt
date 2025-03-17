@@ -36,6 +36,10 @@ class LoginViewModel @Inject constructor(
         }
     }
 
+    fun reset() {
+        mutableState.tryEmit(State.Initial)
+    }
+
     sealed interface State {
         data object Initial : State
         data object Loading : State

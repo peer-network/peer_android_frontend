@@ -8,6 +8,6 @@ class ObservableInteger @Inject constructor(
     private val repository: PreferenceRepository
 ) : Observable<Int> {
     override fun invoke(key: String): Flow<Int?> {
-        return repository[key, Int::class.java]
+        return repository.observe(key, Int::class.java)
     }
 }

@@ -8,6 +8,7 @@ import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -48,7 +49,7 @@ fun DesignSecureTextField(
     state: TextFieldState,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    hasError: Boolean = false,
+    showLabel: Boolean = false,
     durationMillis: Int = 10,
     delayMillis: Int = 0,
     easing: Easing = FastOutSlowInEasing,
@@ -66,10 +67,11 @@ fun DesignSecureTextField(
     contentPadding: PaddingValues = PaddingValues(16.dp),
     leading: @Composable (() -> Unit)? = null,
     trailing: @Composable (() -> Unit)? = null,
-    error: @Composable (() -> Unit)? = null,
+    label: @Composable (() -> Unit)? = null,
     placeholder: @Composable (() -> Unit)? = null,
 ) {
     var isFocused by remember { mutableStateOf(false) }
+    var obfuscationMode by remember { mutableStateOf(textObfuscationMode) }
     val backgroundColor by animateColorAsState(
         targetValue = if (isFocused) {
             colors.focusedContainerColor
@@ -107,8 +109,8 @@ fun DesignSecureTextField(
         )
     )
     DesignLabel(
-        label = error,
-        visible = hasError,
+        label = label,
+        visible = showLabel,
         textStyle = MaterialTheme.typography.bodySmall.copy(
             color = colors.errorLabelColor
         ),
@@ -119,7 +121,11 @@ fun DesignSecureTextField(
             shape = shape,
             contentPadding = contentPadding,
             leading = leading,
-            trailing = trailing,
+            trailing = trailing ?: {
+                DesignPasswordIcon(textObfuscationMode = obfuscationMode) {
+                    obfuscationMode = it
+                }
+            },
         ) {
             BasicSecureTextField(
                 state = state,
@@ -133,7 +139,7 @@ fun DesignSecureTextField(
                 interactionSource = interactionSource,
                 cursorBrush = cursorBrush,
                 decorator = decorator,
-                textObfuscationMode = textObfuscationMode
+                textObfuscationMode = obfuscationMode
             )
             AnimatedVisibility(
                 visible = state.text.isEmpty(),
@@ -153,6 +159,28 @@ fun DesignSecureTextField(
 }
 
 @Composable
+private fun DesignPasswordIcon(
+    textObfuscationMode: TextObfuscationMode,
+    onClick: (TextObfuscationMode) -> Unit
+) {
+    if (textObfuscationMode == TextObfuscationMode.Hidden) {
+        Text(
+            text = "show",
+            modifier = Modifier.clickable {
+                onClick(TextObfuscationMode.Visible)
+            }
+        )
+    } else {
+        Text(
+            text = "hide",
+            modifier = Modifier.clickable {
+                onClick(TextObfuscationMode.Hidden)
+            }
+        )
+    }
+}
+
+@Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun PreviewDesignSecureTextField() {
     PeerTheme {
@@ -161,10 +189,10 @@ fun PreviewDesignSecureTextField() {
         Column {
             DesignSecureTextField(
                 state = emptyPassword,
-                hasError = true,
+                showLabel = true,
                 modifier = Modifier
                     .padding(bottom = 16.dp),
-                error = {
+                label = {
                     Text(
                         text = "Opppps! Looks like error occurred!",
                         modifier = Modifier.padding(top = 8.dp, start = 16.dp)

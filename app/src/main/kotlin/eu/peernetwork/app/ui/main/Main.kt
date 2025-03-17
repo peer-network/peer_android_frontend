@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import dagger.android.AndroidInjector
 import eu.peernetwork.app.ui.home.Home
 import eu.peernetwork.app.ui.setup.Setup
+import eu.peernetwork.app.ui.splash.Splash
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.persistence.domain.provider.PreferenceProvider
@@ -25,6 +26,7 @@ interface Main : AccountProvider, AuthenticationProvider, PreferenceProvider {
         AndroidInjector<MainActivity>,
         Home,
         Setup,
+        Splash,
         UiComponentProvider {
         fun viewModelFactory(): ViewModelProvider.Factory
     }

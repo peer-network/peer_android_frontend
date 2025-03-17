@@ -66,4 +66,19 @@ internal class LoginViewModelTest {
             assertEquals(LoginViewModel.State.Error(error), awaitItem())
         }
     }
+
+    @Test
+    fun `test reset state`() = runTest {
+        val error = RuntimeException("<test-login-error>")
+        coEvery { loginUsecase(any()) } throws error
+
+        viewModel.login("<test-email>", "<test-password>")
+        viewModel.state.test {
+            assertEquals(LoginViewModel.State.Error(error), awaitItem())
+
+            viewModel.reset()
+
+            assertEquals(LoginViewModel.State.Initial, awaitItem())
+        }
+    }
 }

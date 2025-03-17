@@ -1,15 +1,22 @@
 package eu.peernetwork.user.ui.login
 
 import android.content.res.Configuration
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.ime
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -24,8 +31,8 @@ import eu.peernetwork.core.ui.compose.DesignButton
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.user.ui.R
-import eu.peernetwork.user.ui.extension.isValidEmail
-import eu.peernetwork.user.ui.extension.isValidInput
+import eu.peernetwork.core.ui.extension.isValidEmail
+import eu.peernetwork.core.ui.extension.isValidInput
 
 @Composable
 fun LoginScreen(
@@ -45,6 +52,7 @@ fun LoginScreen(
     LoginScaffold(
         loading = state is LoginViewModel.State.Loading,
         error = (state as? LoginViewModel.State.Error?)?.error?.message,
+        onReset = { viewModel.reset() }
     ) { email, password ->
         viewModel.login(email, password)
     }
@@ -54,17 +62,24 @@ fun LoginScreen(
 private fun LoginScaffold(
     loading: Boolean = false,
     error: String? = null,
+    onReset: (() -> Unit)? = null,
     onSubmit: (String, String) -> Unit
 ) {
     val email = remember { TextFieldState() }
     val password = remember { TextFieldState() }
-    val validate = email.isValidEmail() && password.isValidInput()
-    ConstraintLayout(modifier = Modifier.fillMaxWidth()) {
+    val loadingState = rememberUpdatedState(loading)
+    val errorState = rememberUpdatedState(error)
+    val validate by remember(email, password) { derivedStateOf {
+        email.isValidEmail() && password.isValidInput()
+    } }
+    val imeHeight = WindowInsets.ime.getBottom(LocalDensity.current) / 4
+    ConstraintLayout(modifier = Modifier.fillMaxWidth().padding(bottom = imeHeight.dp)) {
         val (form, cta) = createRefs()
         LoginForm(
             email = email,
             password = password,
-            error = error,
+            error = errorState.value,
+            enabled = !loadingState.value,
             modifier = Modifier.constrainAs(form) {
                 top.linkTo(parent.top)
                 start.linkTo(parent.start)
@@ -73,7 +88,7 @@ private fun LoginScaffold(
             }
         )
         DesignButton(
-            enabled = !loading && validate,
+            enabled = !loadingState.value && validate,
             isLoading = loading,
             onClick = { onSubmit(email.text.toString(), password.text.toString()) },
             modifier = Modifier.constrainAs(cta) {
@@ -92,12 +107,15 @@ private fun LoginScaffold(
             )
         }
     }
+    DisposableEffect(Unit) { onDispose { onReset?.invoke() } }
 }
 
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun PreviewLoginScaffold() {
     PeerTheme {
-        LoginScaffold { email, password -> }
+        LoginScaffold(
+            onReset = {}
+        ) { email, password -> }
     }
 }

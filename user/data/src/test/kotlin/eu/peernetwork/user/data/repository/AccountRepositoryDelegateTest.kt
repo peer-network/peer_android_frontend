@@ -107,6 +107,16 @@ internal class AccountRepositoryDelegateTest {
     }
 
     @Test
+    fun `test activate user`(): Unit = runBlocking {
+        val code = "<test-code>"
+        coEvery { api.activate(any()) } returns Unit
+
+        repository.activate(code)
+
+        coVerify { api.activate(code) }
+    }
+
+    @Test
     fun `test delete user`(): Unit = runBlocking {
         val password = "<test-password>"
         coEvery { api.delete(any()) } returns Unit

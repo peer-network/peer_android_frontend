@@ -5,6 +5,17 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 
+fun<T> SharedPreferences.retrieve(
+    key: String,
+    block: (String) -> T
+): T? {
+    return if (contains(key)) {
+        block(key)
+    } else {
+        null
+    }
+}
+
 fun<T> SharedPreferences.publishOn(
     key: String,
     block: SharedPreferences.Editor.(String) -> T

@@ -51,7 +51,7 @@ class AccountApiDelegate @Inject constructor(
         response.assertOrThrow(data.status, data.ResponseCode)
     }
 
-    override suspend fun verify(code: String) {
+    override suspend fun activate(code: String) {
         val mutation = VerifiedAccountMutation(code)
         val response = client.mutation(mutation).executeOrThrow()
         val data = response.getOrThrow().verifiedAccount

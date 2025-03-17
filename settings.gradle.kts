@@ -31,5 +31,6 @@ include(":user:ui")
 include(":social:domain")
 include(":social:data")
 include(":social:remote")
+include(":social:ui")
 
 include(":app")
