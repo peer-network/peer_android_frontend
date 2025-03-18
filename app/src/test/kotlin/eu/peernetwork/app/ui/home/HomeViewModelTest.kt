@@ -1,10 +1,11 @@
-package eu.peernetwork.social.ui.feed
+package eu.peernetwork.app.ui.home
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import app.cash.turbine.test
-import eu.peernetwork.persistence.domain.observable.ObservableInteger
 import eu.peernetwork.persistence.domain.publishable.PublishableInteger
+import eu.peernetwork.persistence.domain.retrievable.RetrievableInteger
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import junit.framework.TestCase.assertEquals
@@ -19,11 +20,11 @@ import org.junit.Rule
 import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
-internal class FeedViewModelTest {
+internal class HomeViewModelTest {
     @get:Rule
     val instantExecutorRule = InstantTaskExecutorRule()
 
-    private val observableInteger = mockk<ObservableInteger>()
+    private val retrievableInteger = mockk<RetrievableInteger>()
 
     private val publishableInteger = mockk<PublishableInteger>()
 
@@ -31,26 +32,35 @@ internal class FeedViewModelTest {
 
     private val mutableState = MutableStateFlow<Int?>(null)
 
-    private lateinit var viewModel: FeedViewModel
+    private lateinit var viewModel: HomeViewModel
 
     @Before
     fun setup() {
         Dispatchers.setMain(dispatcher)
 
-        every { observableInteger(any()) } returns mutableState
+        every { retrievableInteger(any()) } answers {
+            mutableState.value
+        }
         coEvery { publishableInteger(any(), any()) } answers {
             mutableState.tryEmit(it.invocation.args[1] as Int)
         }
-
-        viewModel = FeedViewModel(observableInteger, publishableInteger)
+        viewModel = HomeViewModel(retrievableInteger, publishableInteger)
     }
 
     @Test
     fun `test feed state`() = runTest {
         val page = 3
-        viewModel.updateFeed(page)
+        mutableState.tryEmit(page)
+        val viewModel = HomeViewModel(retrievableInteger, publishableInteger)
         viewModel.state.test {
-            assertEquals(FeedViewModel.State.Ready(page), awaitItem())
+            assertEquals(HomeViewModel.State.Ready(page), awaitItem())
         }
+    }
+
+    @Test
+    fun `test update feed`() = runTest {
+        val page = 3
+        viewModel.updateFeed(page)
+        coVerify { publishableInteger(any(), page) }
     }
 }

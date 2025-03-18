@@ -53,6 +53,17 @@ internal class PreferenceRepositoryDelegateTest {
     }
 
     @Test
+    fun `get int value from SharedPreferences`() = runTest {
+        val key = "<test-key>"
+        val value = System.currentTimeMillis().toInt()
+        every { retrievable.getInteger(key) } returns value
+
+        val result = persistence.get(key, Int::class.java)
+
+        assertEquals(value, result)
+    }
+
+    @Test
     fun `get boolean value from SharedPreferences`() = runTest {
         val key = "<test-key>"
         val value = true

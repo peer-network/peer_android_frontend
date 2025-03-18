@@ -49,7 +49,7 @@ fun LoginScreen(
         factory = component.viewModelFactory()
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
-    LoginScaffold(
+    LoginContent(
         loading = state is LoginViewModel.State.Loading,
         error = (state as? LoginViewModel.State.Error?)?.error?.message,
         onReset = { viewModel.reset() }
@@ -59,7 +59,7 @@ fun LoginScreen(
 }
 
 @Composable
-private fun LoginScaffold(
+fun LoginContent(
     loading: Boolean = false,
     error: String? = null,
     onReset: (() -> Unit)? = null,
@@ -107,14 +107,14 @@ private fun LoginScaffold(
             )
         }
     }
-    DisposableEffect(Unit) { onDispose { onReset?.invoke() } }
+    DisposableEffect(email) { onDispose { onReset?.invoke() } }
 }
 
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
-fun PreviewLoginScaffold() {
+fun PreviewLoginContent() {
     PeerTheme {
-        LoginScaffold(
+        LoginContent(
             onReset = {}
         ) { email, password -> }
     }

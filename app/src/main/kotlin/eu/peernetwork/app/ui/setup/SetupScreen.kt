@@ -2,7 +2,6 @@ package eu.peernetwork.app.ui.setup
 
 import android.content.res.Configuration
 import androidx.compose.animation.Crossfade
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -55,12 +54,12 @@ fun SetupScreen(
             },
             footer = { SetupFooter(onPrivacy = {}) }
         ) {
-            SetupPager(
+            SetupContent(
                 page = isRegistrationState.toInt(),
                 register = { RegistrationScreen(
                     component,
                     viewModelStoreOwner,
-                    onRegistered = { isRegistrationState = false }
+                    onRegistrationSuccess = { isRegistrationState = false }
                 ) },
                 login = { LoginScreen(component, viewModelStoreOwner) }
             )
@@ -69,14 +68,14 @@ fun SetupScreen(
 }
 
 @Composable
-private fun SetupPager(
+fun SetupContent(
     page: Int,
     register: @Composable () -> Unit,
     login: @Composable () -> Unit,
 ) {
-    val pager = rememberPagerState(pageCount = { 2 }, initialPage = page)
+    val state = rememberPagerState(pageCount = { 2 }, initialPage = page)
     HorizontalPager(
-        state = pager,
+        state = state,
         verticalAlignment = Alignment.Top,
         userScrollEnabled = false
     ) { page ->
@@ -87,29 +86,42 @@ private fun SetupPager(
             }
         }
     }
-    LaunchedEffect(page) { pager.scrollToPage(page) }
+    LaunchedEffect(page) { state.scrollToPage(page) }
 }
 
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun PreviewSetupScreen() {
+    val isRegistration = true
     PeerTheme {
         SetupScaffold(
             header = {
                 SetupHeader(
                     onLogin = {},
                     onRegister = {},
-                    isRegistration = false
+                    isRegistration = isRegistration
                 )
             },
             footer = { SetupFooter(onPrivacy = {}) },
-            modifier = Modifier.background(MaterialTheme.colorScheme.background)
         ) {
-            Text(
-                text = "content",
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth(),
-                color = MaterialTheme.colorScheme.onBackground
+            SetupContent(
+                page = isRegistration.toInt(),
+                register = {
+                    Text(
+                        text = "Register",
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth(),
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                },
+                login = {
+                    Text(
+                        text = "login",
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth(),
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                }
             )
         }
     }

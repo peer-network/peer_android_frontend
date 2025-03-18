@@ -18,7 +18,7 @@ class PreferenceRepositoryDelegate @Inject constructor(
     override fun <T> get(key: String, clazz: Class<T>): T? {
         return when (clazz) {
             String::class.java -> retrievable.getString(key)
-            Int::class.java -> retrievable.getString(key)
+            Int::class.java -> retrievable.getInteger(key)
             Boolean::class.java -> retrievable.getBoolean(key)
             Long::class.java -> retrievable.getLong(key)
             else -> throw UnsupportedTypeException(clazz.name)

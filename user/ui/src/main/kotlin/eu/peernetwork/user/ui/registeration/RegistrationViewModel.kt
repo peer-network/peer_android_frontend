@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@Registration.Scope
 class RegistrationViewModel @Inject constructor(
     private val registrationUsecase: RegistrationUsecase,
     private val activationUsecase: ActivationUsecase,

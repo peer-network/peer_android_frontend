@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@Main.Scope
 class MainViewModel @Inject constructor(
     tokenObserverUsecase: TokenObserverUsecase,
     retrievableBoolean: RetrievableBoolean,
@@ -23,14 +24,14 @@ class MainViewModel @Inject constructor(
     val state: StateFlow<State> = tokenObserverUsecase()
         .map { token ->
             if (token != null) {
-                State.Authenticated(token)
+                State.Home(token)
             } else {
                 State.Startup(retrievableBoolean(tag) == true)
             }
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = State.Loading
+            initialValue = State.Splash
         )
 
     fun showRegistration(show: Boolean) {
@@ -38,8 +39,8 @@ class MainViewModel @Inject constructor(
     }
 
     sealed interface State {
-        data object Loading : State
+        data object Splash : State
         data class Startup(val isRegistration: Boolean) : State
-        data class Authenticated(val token: Token): State
+        data class Home(val token: Token): State
     }
 }
