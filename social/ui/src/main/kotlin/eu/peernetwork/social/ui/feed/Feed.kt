@@ -1,7 +1,6 @@
 package eu.peernetwork.social.ui.feed
 
 import android.content.Context
-import androidx.lifecycle.ViewModelProvider
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.persistence.domain.provider.PreferenceProvider
@@ -19,9 +18,7 @@ interface Feed : PreferenceProvider {
         dependencies = [ Feed::class ],
         modules = [ FeedModule::class ]
     )
-    interface Component : Feed, UiComponentProvider, Music, Video, Photo {
-        fun viewModelFactory(): ViewModelProvider.Factory
-    }
+    interface Component : Feed, UiComponentProvider, Music, Video, Photo
 
     class Builder(private val dependency: Feed) : UiComponent.DefaultBuilder<Feed, Component>() {
         override fun build(context: Context): Component {

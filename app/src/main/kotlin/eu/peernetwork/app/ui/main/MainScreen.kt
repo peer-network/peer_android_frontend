@@ -33,9 +33,9 @@ fun MainScreen(
     }
     LaunchedEffect(state) {
         when(state) {
-            is MainViewModel.State.Loading -> controller.attachIfNecessary("splash")
+            is MainViewModel.State.Splash -> controller.attachIfNecessary("splash")
             is MainViewModel.State.Startup -> controller.attachIfNecessary("startup")
-            is MainViewModel.State.Authenticated -> controller.attach("home")
+            is MainViewModel.State.Home -> controller.attach("home")
         }
     }
     NavHost(navController = controller, startDestination = "splash") {

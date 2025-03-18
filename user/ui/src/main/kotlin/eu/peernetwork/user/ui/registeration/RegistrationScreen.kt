@@ -40,7 +40,7 @@ import eu.peernetwork.core.ui.extension.passwordStrength
 fun RegistrationScreen(
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
-    onRegistered: () -> Unit
+    onRegistrationSuccess: () -> Unit
 ) {
     val context = LocalContext.current
     val component = remember {
@@ -52,27 +52,27 @@ fun RegistrationScreen(
         factory = component.viewModelFactory()
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val isRegistered by remember(state) {
+    val registrationState by remember(state) {
         derivedStateOf {
             state is RegistrationViewModel.State.Success
         }
     }
-    RegistrationScaffold(
+    RegistrationContent(
         loading = state is RegistrationViewModel.State.Loading,
         error = (state as? RegistrationViewModel.State.Error?)?.error?.message,
         onReset = { viewModel.reset() }
     ) { email, username, password ->
         viewModel.register(username, email, password)
     }
-    LaunchedEffect(isRegistered) {
-        if (isRegistered) {
-            onRegistered()
+    LaunchedEffect(registrationState) {
+        if (registrationState) {
+            onRegistrationSuccess()
         }
     }
 }
 
 @Composable
-private fun RegistrationScaffold(
+fun RegistrationContent(
     loading: Boolean = false,
     error: String? = null,
     onReset: (() -> Unit)? = null,
@@ -131,6 +131,6 @@ private fun RegistrationScaffold(
 
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
-fun PreviewRegistrationScaffold() {
-    RegistrationScaffold { email, username, password -> }
+fun PreviewRegistrationContent() {
+    RegistrationContent { email, username, password -> }
 }

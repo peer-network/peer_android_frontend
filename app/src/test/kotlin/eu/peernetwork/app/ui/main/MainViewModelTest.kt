@@ -64,7 +64,7 @@ internal class MainViewModelTest {
             tokenObserver
         }
         viewModel.state.test {
-            assertEquals(MainViewModel.State.Loading, awaitItem())
+            assertEquals(MainViewModel.State.Splash, awaitItem())
         }
     }
 
@@ -91,7 +91,7 @@ internal class MainViewModelTest {
         val token = mockk<Token>()
         tokenObserver.tryEmit(token)
         viewModel.state.test {
-            assertEquals(MainViewModel.State.Authenticated(token), awaitItem())
+            assertEquals(MainViewModel.State.Home(token), awaitItem())
         }
     }
 }

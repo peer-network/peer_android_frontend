@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import eu.peernetwork.core.ui.exception.UiControllerException
 import javax.inject.Provider
 
-class UiViewModelFactory constructor(
+class UiViewModelFactory(
     private val classToViewModel:
     @JvmSuppressWildcards Map<Class<out ViewModel>, Provider<ViewModel>>
 ) : ViewModelProvider.Factory {

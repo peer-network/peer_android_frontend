@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@Login.Scope
 class LoginViewModel @Inject constructor(
     private val loginUsecase: LoginUsecase
 ) : ViewModel() {
