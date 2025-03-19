@@ -5,7 +5,9 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -13,7 +15,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -22,21 +29,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.constraintlayout.compose.Dimension
 import eu.peernetwork.app.R
 import eu.peernetwork.core.ui.extension.annotate
 import eu.peernetwork.core.ui.theme.PeerTheme
 
 @Composable
 fun SetupHeader(
-    onLogin: () -> Unit,
-    onRegister: () -> Unit,
-    isRegistration: Boolean,
+    state: MutableState<Boolean>,
+    modifier: Modifier = Modifier
 ) {
-    ConstraintLayout(modifier = Modifier.fillMaxWidth()) {
-        val appName = stringResource(id = R.string.app_name)
-        val (logo, slogan, divider, login, register) = createRefs()
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         Image(
             painter = if (isSystemInDarkTheme()) {
                 painterResource(id = R.drawable.ic_logo)
@@ -47,77 +52,81 @@ fun SetupHeader(
             modifier = Modifier
                 .padding(top = 24.dp)
                 .height(56.dp)
-                .constrainAs(logo) {
-                    top.linkTo(parent.top)
-                    start.linkTo(parent.start, margin = 24.dp)
-                    end.linkTo(parent.end, margin = 24.dp)
-                }
         )
         Text(
             text = stringResource(id = R.string.slogan_text)
-                .annotate(mapOf(appName to SpanStyle(fontWeight = FontWeight.Bold))),
+                .annotate(mapOf(stringResource(id = R.string.app_name) to SpanStyle(
+                    fontWeight = FontWeight.Bold
+                ))),
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onBackground,
             style = MaterialTheme.typography.bodyMedium.copy(fontStyle = FontStyle.Italic),
-            modifier = Modifier.constrainAs(slogan) {
-                top.linkTo(logo.bottom, margin = 24.dp)
-                start.linkTo(parent.start, margin = 24.dp)
-                end.linkTo(parent.end, margin = 24.dp)
-                bottom.linkTo(divider.top, margin = 16.dp)
-                width = Dimension.fillToConstraints
-            }
-        )
-        Box(
             modifier = Modifier
-                .width(1.dp)
-                .background(MaterialTheme.colorScheme.onSurface)
-                .padding(vertical = 8.dp)
-                .constrainAs(divider) {
-                    top.linkTo(slogan.bottom, margin = 24.dp)
-                    start.linkTo(slogan.start)
-                    end.linkTo(slogan.end)
-                    bottom.linkTo(parent.bottom, margin = 36.dp)
-                }
+                .padding(top = 24.dp, bottom = 8.dp)
+                .padding(horizontal = 24.dp)
         )
-        TextButton(
-            onClick = onLogin,
-            modifier = Modifier.constrainAs(login) {
-                top.linkTo(divider.top)
-                end.linkTo(divider.start, margin = 8.dp)
-                bottom.linkTo(divider.bottom)
+        Row(modifier = Modifier.padding(vertical = 16.dp)) {
+            TextButton(
+                onClick = { state.value = false },
+                modifier = Modifier.padding(end = 8.dp)
+            ) {
+                Box {
+                    Text(
+                        text = stringResource(id = eu.peernetwork.user.ui.R.string.login_text).lowercase(),
+                        style = MaterialTheme.typography.bodySmall.copy(
+                            color = MaterialTheme.colorScheme.onSurface,
+                            fontWeight = FontWeight.Normal
+                        ),
+                        modifier = Modifier.graphicsLayer {
+                            alpha = if (state.value) 1f else 0f
+                        }
+                    )
+                    Text(
+                        text = stringResource(id = eu.peernetwork.user.ui.R.string.login_text).lowercase(),
+                        style = MaterialTheme.typography.bodySmall.copy(
+                            color = MaterialTheme.colorScheme.onSurface,
+                            fontWeight = FontWeight.Bold
+                        ),
+                        modifier = Modifier.graphicsLayer {
+                            alpha = if (state.value) 0f else 1f
+                        }
+                    )
+                }
             }
-        ) {
-            Text(
-                text = stringResource(id = eu.peernetwork.user.ui.R.string.login_text).lowercase(),
-                style = MaterialTheme.typography.bodySmall.copy(
-                    color = MaterialTheme.colorScheme.onSurface,
-                    fontWeight = if (isRegistration) {
-                        FontWeight.Normal
-                    } else {
-                        FontWeight.Bold
-                    }
-                ),
+            Spacer(
+                modifier = Modifier
+                    .width(1.dp)
+                    .height(16.dp)
+                    .background(MaterialTheme.colorScheme.onSurface)
+                    .align(Alignment.CenterVertically)
             )
-        }
-        TextButton(
-            onClick = onRegister,
-            modifier = Modifier.constrainAs(register) {
-                top.linkTo(divider.top)
-                start.linkTo(divider.end, margin = 8.dp)
-                bottom.linkTo(divider.bottom)
+            TextButton(
+                onClick = { state.value = true },
+                modifier = Modifier.padding(start = 8.dp)
+            ) {
+                Box {
+                    Text(
+                        text = stringResource(id = eu.peernetwork.user.ui.R.string.register_text).lowercase(),
+                        style = MaterialTheme.typography.bodySmall.copy(
+                            color = MaterialTheme.colorScheme.onSurface,
+                            fontWeight = FontWeight.Normal
+                        ),
+                        modifier = Modifier.graphicsLayer {
+                            alpha = if (state.value) 0f else 1f
+                        }
+                    )
+                    Text(
+                        text = stringResource(id = eu.peernetwork.user.ui.R.string.register_text).lowercase(),
+                        style = MaterialTheme.typography.bodySmall.copy(
+                            color = MaterialTheme.colorScheme.onSurface,
+                            fontWeight = FontWeight.Bold
+                        ),
+                        modifier = Modifier.graphicsLayer {
+                            alpha = if (state.value) 1f else 0f
+                        }
+                    )
+                }
             }
-        ) {
-            Text(
-                text = stringResource(id = eu.peernetwork.user.ui.R.string.register_text).lowercase(),
-                style = MaterialTheme.typography.bodySmall.copy(
-                    color = MaterialTheme.colorScheme.onSurface,
-                    fontWeight = if (isRegistration) {
-                        FontWeight.Bold
-                    } else {
-                        FontWeight.Normal
-                    }
-                ),
-            )
         }
     }
 }
@@ -126,10 +135,6 @@ fun SetupHeader(
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun PreviewSetupHeader() {
     PeerTheme {
-        SetupHeader(
-            onLogin = {},
-            onRegister = {},
-            isRegistration = false
-        )
+        SetupHeader(state = rememberSaveable { mutableStateOf(true) })
     }
 }
