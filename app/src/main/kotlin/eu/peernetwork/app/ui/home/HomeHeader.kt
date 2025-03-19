@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -92,7 +93,8 @@ fun HomeHeader(
             IconButton(onClick = { onClick(HomeRoute.Comment) }) {
                 Icon(
                     painter = painterResource(id = HomeRoute.Comment.icon),
-                    contentDescription = stringResource(id = HomeRoute.Comment.icon)
+                    contentDescription = stringResource(id = HomeRoute.Comment.icon),
+                    modifier = Modifier.size(32.dp)
                 )
             }
             Box(modifier = Modifier.padding(start = 16.dp))
