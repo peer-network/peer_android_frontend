@@ -59,6 +59,7 @@ fun HomeHeader(
         Row(
             modifier = modifier
                 .wrapContentHeight()
+                .padding(vertical = 8.dp)
                 .windowInsetsPadding(WindowInsets.statusBars),
             verticalAlignment = Alignment.CenterVertically
         ) {

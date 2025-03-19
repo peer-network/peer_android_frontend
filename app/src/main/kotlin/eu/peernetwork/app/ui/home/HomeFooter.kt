@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.Icon
@@ -22,6 +23,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import eu.peernetwork.core.ui.theme.PeerTheme
 
 @Composable
@@ -32,7 +34,6 @@ fun HomeFooter(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .wrapContentHeight()
             .windowInsetsPadding(WindowInsets.navigationBars),
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically
@@ -44,7 +45,7 @@ fun HomeFooter(
                         tint = MaterialTheme.colorScheme.onSurface,
                         painter = painterResource(id = navigation.icon),
                         contentDescription = stringResource(id = navigation.label),
-                        modifier = Modifier.graphicsLayer {
+                        modifier = Modifier.size(32.dp).graphicsLayer {
                             alpha = if (index == state.value) 0f else 1f
                         }
                     )
@@ -52,7 +53,7 @@ fun HomeFooter(
                         tint = MaterialTheme.colorScheme.onBackground,
                         painter = painterResource(id = navigation.activeIcon),
                         contentDescription = stringResource(id = navigation.label),
-                        modifier = Modifier.graphicsLayer {
+                        modifier = Modifier.size(32.dp).graphicsLayer {
                             alpha = if (index == state.value) 1f else 0f
                         }
                     )
