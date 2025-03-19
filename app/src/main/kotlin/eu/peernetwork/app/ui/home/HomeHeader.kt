@@ -45,7 +45,7 @@ import eu.peernetwork.core.ui.theme.PeerTheme
 fun HomeHeader(
     state: MutableState<Int>,
     modifier: Modifier = Modifier,
-    textStyle: TextStyle = MaterialTheme.typography.bodyMedium,
+    textStyle: TextStyle = MaterialTheme.typography.bodyLarge,
     tint: Color = LocalContentColor.current,
     onClick: (HomeRoute) -> Unit = {},
     options: @Composable RowScope.() -> Unit = {},

@@ -32,9 +32,7 @@ fun HomeNavigation(
         }
     }
     LaunchedEffect(navState) {
-        if (navState.path != startDestination) {
-            navController.attachIfNecessary(navState.path)
-        }
+        navController.attachIfNecessary(navState.path)
     }
 }
 

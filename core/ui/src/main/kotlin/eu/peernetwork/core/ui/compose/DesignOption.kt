@@ -26,7 +26,7 @@ fun DesignOption(
     onClick: () -> Unit = {},
     contentPaddingValues: PaddingValues = PaddingValues(horizontal = 6.dp),
     tint: Color = LocalContentColor.current,
-    textStyle: TextStyle = MaterialTheme.typography.labelSmall,
+    textStyle: TextStyle = MaterialTheme.typography.bodySmall,
 ) {
     Row(
         modifier = modifier
