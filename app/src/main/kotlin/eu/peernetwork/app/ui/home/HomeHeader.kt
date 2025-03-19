@@ -2,8 +2,8 @@ package eu.peernetwork.app.ui.home
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
@@ -21,12 +21,20 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -35,63 +43,58 @@ import eu.peernetwork.core.ui.theme.PeerTheme
 
 @Composable
 fun HomeHeader(
-    title: @Composable () -> Unit,
+    state: MutableState<Int>,
     modifier: Modifier = Modifier,
     textStyle: TextStyle = MaterialTheme.typography.bodyMedium,
-    options: @Composable RowScope.() -> Unit = {},
-    actions: @Composable RowScope.() -> Unit = {},
-) {
-    Row(
-        modifier = modifier
-            .wrapContentHeight()
-            .windowInsetsPadding(WindowInsets.statusBars),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Box(modifier = Modifier.padding(start = 24.dp))
-        CompositionLocalProvider(LocalTextStyle provides textStyle.copy(
-            color = MaterialTheme.colorScheme.onBackground
-        )) {
-            title()
-        }
-        Spacer(modifier = Modifier.weight(1f))
-        Row (
-            modifier = Modifier
-                .clip(RoundedCornerShape(4.dp))
-                .background(MaterialTheme.colorScheme.surfaceTint)
-        ) {
-            CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.onBackground) {
-                options()
-            }
-        }
-        CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.onBackground) {
-            actions()
-        }
-        Box(modifier = Modifier.padding(start = 24.dp))
-    }
-}
-
-@Composable
-fun HomeHeaderOption(
-    text: String,
-    painter: Painter,
-    contentDescription: String?,
-    modifier: Modifier = Modifier,
-    contentPaddingValues: PaddingValues = PaddingValues(horizontal = 8.dp),
     tint: Color = LocalContentColor.current,
-    textStyle: TextStyle = MaterialTheme.typography.labelSmall,
+    onClick: (HomeRoute) -> Unit = {},
+    options: @Composable RowScope.() -> Unit = {},
 ) {
-    Row(
-        modifier = Modifier.padding(contentPaddingValues),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Icon(
-            painter = painter,
-            tint = tint,
-            contentDescription = contentDescription,
-            modifier = modifier
+    CompositionLocalProvider(
+        LocalContentColor provides MaterialTheme.colorScheme.onSurface,
+        LocalTextStyle provides textStyle.copy(
+            color = MaterialTheme.colorScheme.onSurface
         )
-        CompositionLocalProvider(LocalTextStyle provides textStyle) {
-            Text(text)
+    ) {
+        Row(
+            modifier = modifier
+                .wrapContentHeight()
+                .windowInsetsPadding(WindowInsets.statusBars),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            val route by remember { derivedStateOf { HomeRoute.get(state.value) } }
+            Box(modifier = Modifier.padding(start = 16.dp))
+            Row(
+                modifier = modifier
+                    .clip(RoundedCornerShape(4.dp))
+                    .clickable(
+                        role = Role.Button,
+                        onClick = { onClick(route) }),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(stringResource(route.label), Modifier.padding(start = 8.dp))
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_caret_down),
+                    tint = tint,
+                    contentDescription = null,
+                    modifier = Modifier.graphicsLayer {
+                        alpha = if (route.hasOptions) 1f else 0f
+                    }
+                )
+            }
+            Spacer(modifier = Modifier.weight(1f))
+            Row (
+                modifier = Modifier
+                    .clip(RoundedCornerShape(4.dp))
+                    .background(MaterialTheme.colorScheme.surface)
+            ) { options() }
+            IconButton(onClick = { onClick(HomeRoute.Comment) }) {
+                Icon(
+                    painter = painterResource(id = HomeRoute.Comment.icon),
+                    contentDescription = stringResource(id = HomeRoute.Comment.icon)
+                )
+            }
+            Box(modifier = Modifier.padding(start = 16.dp))
         }
     }
 }
@@ -100,34 +103,9 @@ fun HomeHeaderOption(
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun PreviewHomeHeader() {
     PeerTheme {
-        HomeHeader(
-            title = {
-                Text("Friends")
-            },
-            options = {
-                HomeHeaderOption(
-                    text = "2",
-                    painter = painterResource(id = R.drawable.ic_chat_outline),
-                    contentDescription = "Action Icon"
-                )
-                HomeHeaderOption(
-                    text = "1",
-                    painter = painterResource(id = R.drawable.ic_chat_outline),
-                    contentDescription = "Action Icon"
-                )
-                HomeHeaderOption(
-                    text = "3",
-                    painter = painterResource(id = R.drawable.ic_chat_outline),
-                    contentDescription = "Action Icon"
-                )
-            }
-        ) {
-            IconButton(onClick = {}) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_chat_outline),
-                    contentDescription = "Action Icon"
-                )
-            }
+        val navigationState = rememberSaveable { mutableIntStateOf(0) }
+        HomeHeader(state = navigationState) {
+            HomeOptions()
         }
     }
 }

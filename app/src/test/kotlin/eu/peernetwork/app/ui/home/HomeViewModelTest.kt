@@ -37,7 +37,6 @@ internal class HomeViewModelTest {
     @Before
     fun setup() {
         Dispatchers.setMain(dispatcher)
-
         every { retrievableInteger(any()) } answers {
             mutableState.value
         }
@@ -48,19 +47,19 @@ internal class HomeViewModelTest {
     }
 
     @Test
-    fun `test feed state`() = runTest {
+    fun `test initialize state`() = runTest {
         val page = 3
         mutableState.tryEmit(page)
         val viewModel = HomeViewModel(retrievableInteger, publishableInteger)
         viewModel.state.test {
-            assertEquals(HomeViewModel.State.Ready(page), awaitItem())
+            assertEquals(HomeViewModel.State.Initialize(page), awaitItem())
         }
     }
 
     @Test
     fun `test update feed`() = runTest {
         val page = 3
-        viewModel.updateFeed(page)
+        viewModel.lastVisited(page)
         coVerify { publishableInteger(any(), page) }
     }
 }

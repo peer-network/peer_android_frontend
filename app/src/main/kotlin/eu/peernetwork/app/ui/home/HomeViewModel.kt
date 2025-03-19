@@ -7,7 +7,6 @@ import eu.peernetwork.persistence.domain.retrievable.RetrievableInteger
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -17,22 +16,23 @@ class HomeViewModel @Inject constructor(
     retrievableInteger: RetrievableInteger,
     private val publishableInteger: PublishableInteger
 ) : ViewModel() {
-    private val tag = this::class.java.name
+    private val mutableState = MutableStateFlow<State>(State.Initialize(retrievableInteger(TAG)))
 
-    val state: StateFlow<State> = MutableStateFlow(retrievableInteger(tag)).map {
-        State.Ready(it ?: 0)
-    }.stateIn(
+    val state: StateFlow<State> = mutableState.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = State.Initialize
+        initialValue = mutableState.value
     )
 
-    fun updateFeed(page: Int) {
-        viewModelScope.launch { publishableInteger(tag, page) }
+    fun lastVisited(page: Int) {
+        viewModelScope.launch { publishableInteger(TAG, page) }
     }
 
-    sealed interface State {
-        data object Initialize: State
-        data class Ready(val page: Int): State
+    sealed class State(val page: Int) {
+        data class Initialize(val current: Int?): State(current ?: 0)
+    }
+
+    internal companion object {
+        val TAG: String = HomeViewModel::class.java.name
     }
 }
