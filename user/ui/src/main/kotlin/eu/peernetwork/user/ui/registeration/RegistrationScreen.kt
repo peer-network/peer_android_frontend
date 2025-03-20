@@ -1,6 +1,7 @@
 package eu.peernetwork.user.ui.registeration
 
 import android.content.res.Configuration
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.ime
@@ -22,8 +23,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.constraintlayout.compose.Dimension
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -35,6 +34,7 @@ import eu.peernetwork.user.ui.R
 import eu.peernetwork.core.ui.extension.isValidEmail
 import eu.peernetwork.core.ui.extension.isValidInput
 import eu.peernetwork.core.ui.extension.passwordStrength
+import eu.peernetwork.core.ui.theme.PeerTheme
 
 @Composable
 fun RegistrationScreen(
@@ -88,20 +88,16 @@ fun RegistrationContent(
         email.isValidEmail() && username.isValidInput() &&
                 (password.passwordStrength().value >= DesignPasswordStrength.STRONG.value)
     } }
-    ConstraintLayout(modifier = Modifier.fillMaxWidth().padding(bottom = imeHeight.dp)) {
-        val (form, cta) = createRefs()
+    Column(
+        modifier = Modifier.fillMaxWidth()
+            .padding(bottom = imeHeight.dp)
+    ) {
         RegistrationForm(
             email = email,
             username = username,
             password = password,
             error = errorState.value,
             enabled = !loadingState.value,
-            modifier = Modifier.constrainAs(form) {
-                top.linkTo(parent.top)
-                start.linkTo(parent.start)
-                end.linkTo(parent.end)
-                width = Dimension.fillToConstraints
-            }
         )
         DesignButton(
             enabled = !loadingState.value && validate,
@@ -110,13 +106,10 @@ fun RegistrationContent(
                 email.text.toString(),
                 username.text.toString(),
                 password.text.toString()) },
-            modifier = Modifier.constrainAs(cta) {
-                top.linkTo(form.bottom, margin = 16.dp)
-                start.linkTo(parent.start, margin = 24.dp)
-                end.linkTo(parent.end, margin = 24.dp)
-                bottom.linkTo(parent.bottom, margin = 24.dp)
-                width = Dimension.fillToConstraints
-            }
+            modifier = Modifier.fillMaxWidth().padding(
+                top = 16.dp,
+                bottom = 24.dp
+            ).padding(horizontal = 24.dp)
         ) {
             Text(
                 text = stringResource(R.string.register_text),
@@ -132,5 +125,7 @@ fun RegistrationContent(
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun PreviewRegistrationContent() {
-    RegistrationContent { email, username, password -> }
+    PeerTheme {
+        RegistrationContent { email, username, password -> }
+    }
 }

@@ -45,7 +45,7 @@ fun MainScreen(
                 provider = component,
                 viewModelStoreOwner = viewModelStoreOwner,
                 isRegistration = isRegistration,
-                showRegistration = { viewModel.showRegistration(it) }
+                onOptionChange = { viewModel.showRegistration(it) }
             )
         }
         composable("home") { HomeScreen(component, viewModelStoreOwner) }

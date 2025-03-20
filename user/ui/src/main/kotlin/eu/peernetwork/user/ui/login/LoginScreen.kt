@@ -1,6 +1,7 @@
 package eu.peernetwork.user.ui.login
 
 import android.content.res.Configuration
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.ime
@@ -21,8 +22,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.constraintlayout.compose.Dimension
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -73,31 +72,24 @@ fun LoginContent(
         email.isValidEmail() && password.isValidInput()
     } }
     val imeHeight = WindowInsets.ime.getBottom(LocalDensity.current) / 4
-    ConstraintLayout(modifier = Modifier.fillMaxWidth().padding(bottom = imeHeight.dp)) {
-        val (form, cta) = createRefs()
+    Column(
+        modifier = Modifier.fillMaxWidth()
+            .padding(bottom = imeHeight.dp)
+    ) {
         LoginForm(
             email = email,
             password = password,
             error = errorState.value,
-            enabled = !loadingState.value,
-            modifier = Modifier.constrainAs(form) {
-                top.linkTo(parent.top)
-                start.linkTo(parent.start)
-                end.linkTo(parent.end)
-                width = Dimension.fillToConstraints
-            }
+            enabled = !loadingState.value
         )
         DesignButton(
             enabled = !loadingState.value && validate,
             isLoading = loading,
             onClick = { onSubmit(email.text.toString(), password.text.toString()) },
-            modifier = Modifier.constrainAs(cta) {
-                top.linkTo(form.bottom, margin = 16.dp)
-                start.linkTo(parent.start, margin = 24.dp)
-                end.linkTo(parent.end, margin = 24.dp)
-                bottom.linkTo(parent.bottom, margin = 24.dp)
-                width = Dimension.fillToConstraints
-            }
+            modifier = Modifier.fillMaxWidth().padding(
+                top = 16.dp,
+                bottom = 24.dp
+            ).padding(horizontal = 24.dp)
         ) {
             Text(
                 text = stringResource(R.string.login_text),

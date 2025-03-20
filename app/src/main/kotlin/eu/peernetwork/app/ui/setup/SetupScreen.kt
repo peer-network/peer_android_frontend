@@ -9,10 +9,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -32,10 +32,10 @@ fun SetupScreen(
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
     isRegistration: Boolean,
-    showRegistration: (Boolean) -> Unit,
+    onOptionChange: (Boolean) -> Unit,
 ) {
     val context = LocalContext.current
-    var isRegistrationState by remember { mutableStateOf(isRegistration) }
+    var isRegistrationState = remember { mutableStateOf(isRegistration) }
     val component = remember {
         provider.builder(Setup.Builder::class.java).build(context)
     }
@@ -43,25 +43,20 @@ fun SetupScreen(
         SetupScaffold(
             header = {
                 SetupHeader(
-                    onLogin = {
-                        isRegistrationState = false
-                        showRegistration(false) },
-                    onRegister = {
-                        isRegistrationState = true
-                        showRegistration(true) },
-                    isRegistration = isRegistrationState
+                    state = isRegistrationState
                 )
             },
             footer = { SetupFooter(onPrivacy = {}) }
         ) {
             SetupContent(
-                page = isRegistrationState.toInt(),
+                page = isRegistrationState,
                 register = { RegistrationScreen(
                     component,
                     viewModelStoreOwner,
-                    onRegistrationSuccess = { isRegistrationState = false }
+                    onRegistrationSuccess = { isRegistrationState.value = false }
                 ) },
-                login = { LoginScreen(component, viewModelStoreOwner) }
+                login = { LoginScreen(component, viewModelStoreOwner) },
+                onOptionChange = onOptionChange
             )
         }
     }
@@ -69,11 +64,12 @@ fun SetupScreen(
 
 @Composable
 fun SetupContent(
-    page: Int,
+    page: MutableState<Boolean>,
     register: @Composable () -> Unit,
     login: @Composable () -> Unit,
+    onOptionChange: (Boolean) -> Unit,
 ) {
-    val state = rememberPagerState(pageCount = { 2 }, initialPage = page)
+    val state = rememberPagerState(pageCount = { 2 }, initialPage = page.value.toInt())
     HorizontalPager(
         state = state,
         verticalAlignment = Alignment.Top,
@@ -86,26 +82,25 @@ fun SetupContent(
             }
         }
     }
-    LaunchedEffect(page) { state.scrollToPage(page) }
+    LaunchedEffect(page.value) {
+        onOptionChange(page.value)
+        state.scrollToPage(page.value.toInt())
+    }
 }
 
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun PreviewSetupScreen() {
-    val isRegistration = true
+    val isRegistration = remember { mutableStateOf(false) }
     PeerTheme {
         SetupScaffold(
             header = {
-                SetupHeader(
-                    onLogin = {},
-                    onRegister = {},
-                    isRegistration = isRegistration
-                )
+                SetupHeader(state = rememberSaveable { mutableStateOf(false) })
             },
             footer = { SetupFooter(onPrivacy = {}) },
         ) {
             SetupContent(
-                page = isRegistration.toInt(),
+                page = isRegistration,
                 register = {
                     Text(
                         text = "Register",
@@ -121,7 +116,8 @@ fun PreviewSetupScreen() {
                         modifier = Modifier.fillMaxWidth(),
                         color = MaterialTheme.colorScheme.onBackground
                     )
-                }
+                },
+                onOptionChange = {}
             )
         }
     }

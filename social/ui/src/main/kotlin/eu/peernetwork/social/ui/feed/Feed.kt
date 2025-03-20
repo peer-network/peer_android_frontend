@@ -3,12 +3,11 @@ package eu.peernetwork.social.ui.feed
 import android.content.Context
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.persistence.domain.provider.PreferenceProvider
 import eu.peernetwork.social.ui.content.music.Music
 import eu.peernetwork.social.ui.content.photo.Photo
 import eu.peernetwork.social.ui.content.video.Video
 
-interface Feed : PreferenceProvider {
+interface Feed {
     @javax.inject.Scope
     @Retention(AnnotationRetention.RUNTIME)
     annotation class Scope
