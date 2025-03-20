@@ -13,7 +13,6 @@ import androidx.navigation.compose.rememberNavController
 import eu.peernetwork.app.ui.home.HomeScreen
 import eu.peernetwork.app.ui.setup.SetupScreen
 import eu.peernetwork.app.ui.splash.SplashScreen
-import eu.peernetwork.core.ui.extension.attach
 import eu.peernetwork.core.ui.extension.attachIfNecessary
 
 @Composable
@@ -35,7 +34,7 @@ fun MainScreen(
         when(state) {
             is MainViewModel.State.Splash -> controller.attachIfNecessary("splash")
             is MainViewModel.State.Startup -> controller.attachIfNecessary("startup")
-            is MainViewModel.State.Home -> controller.attach("home")
+            is MainViewModel.State.Home -> controller.attachIfNecessary("home")
         }
     }
     NavHost(navController = controller, startDestination = "splash") {
