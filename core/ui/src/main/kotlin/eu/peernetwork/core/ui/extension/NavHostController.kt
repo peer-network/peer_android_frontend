@@ -11,9 +11,6 @@ fun NavHostController.attach(destination: String, popUpTo: Int? = null) {
 
 fun NavHostController.attachIfNecessary(destination: String, popUpTo: Int? = null) {
     if (currentDestination?.route != destination) {
-        navigate(destination) {
-            popUpTo(popUpTo ?: graph.id)
-            launchSingleTop = true
-        }
+        attach(destination, popUpTo)
     }
 }
