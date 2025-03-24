@@ -1,0 +1,3 @@
+eu.peernetwork.social.ui
+mipmap test1
+mipmap test2

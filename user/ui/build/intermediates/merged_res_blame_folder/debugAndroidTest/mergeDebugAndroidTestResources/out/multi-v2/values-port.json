@@ -1,0 +1,19 @@
+{
+    "logs": [
+        {
+            "outputFile": "eu.peernetwork.user.ui.test.ui-mergeDebugAndroidTestResources-4:/values-port/values-port.xml",
+            "map": [
+                {
+                    "source": "C:\\Users\\sandr\\.gradle\\caches\\8.9\\transforms\\0895141161ded9f75446c6864b0d1740\\transformed\\appcompat-1.7.0\\res\\values-port\\values-port.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "55",
+                        "endOffsets": "106"
+                    }
+                }
+            ]
+        }
+    ]
+}

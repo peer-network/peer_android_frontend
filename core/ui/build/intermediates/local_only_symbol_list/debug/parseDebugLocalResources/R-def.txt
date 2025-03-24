@@ -1,0 +1,27 @@
+R_DEF: Internal format may change without notice
+local
+color background
+drawable ic_add
+drawable ic_add_outline
+drawable ic_caret_down
+drawable ic_chat
+drawable ic_chat_outline
+drawable ic_dislike
+drawable ic_home
+drawable ic_home_outline
+drawable ic_like
+drawable ic_profile
+drawable ic_profile_outline
+drawable ic_search
+drawable ic_search_outline
+drawable ic_wallet
+drawable ic_wallet_outline
+font poppins_bold
+font poppins_bold_italic
+font poppins_italic
+font poppins_medium
+font poppins_medium_italic
+font poppins_regular
+string loading_text
+style Theme.Peer
+style Theme.Peer.Splash

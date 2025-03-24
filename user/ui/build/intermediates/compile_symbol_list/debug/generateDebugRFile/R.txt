@@ -1,0 +1,5 @@
+int string email_label 0x0
+int string login_text 0x0
+int string password_label 0x0
+int string register_text 0x0
+int string username_label 0x0
