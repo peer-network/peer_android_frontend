@@ -4,12 +4,12 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -28,6 +28,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -42,23 +43,39 @@ private fun PhotoContent(
     username: MutableState<String>,
     userId: MutableState<String>,
     timeStamp: MutableState<String>,
-    content: @Composable () -> Unit,
+    photos: List<Int>,
+    indicatorColors: PhotoCarouselIndicator = PhotoCarouselIndicator.Default,
     avatar: @Composable () -> Unit
 ) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(300.dp)
     ){
         Column {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(270.dp)
             ){
+                PhotoCarousel(
+                    count = photos.size,
+                    colors = indicatorColors
+                ) { page ->
+                    Image(
+                        painter = painterResource(id = photos[page]),
+                        contentDescription = "Content Picture",
+                        modifier = Modifier.fillMaxWidth(),
+                        contentScale = ContentScale.FillWidth,
+                    )
+                }
 
-                content()
-                avatar()
+                Box(
+                    modifier = Modifier.clickable(role = Role.Button) {
+
+                    }
+                ){
+                    avatar()
+                }
+
                 Column(
                     modifier = Modifier
                         .align(Alignment.TopStart)
@@ -67,7 +84,6 @@ private fun PhotoContent(
                     Row(
                         modifier = Modifier
                             .padding(top = 8.dp)
-
                     ) {
                         Text(
                             text = username.value,
@@ -115,9 +131,11 @@ private fun PhotoContent(
                     )
                 }
             }
+
             Box(
                 modifier = Modifier
-                    .fillMaxSize()
+                    .height(30.dp)
+                    .fillMaxWidth()
                     .background(color = Color.Black)
             ) {
                 Row(
@@ -176,18 +194,21 @@ private fun PhotoContent(
 @Composable
 fun PreviewPhotoContent() {
     PeerTheme {
+        val photos = listOf(
+            eu.peernetwork.social.ui.R.mipmap.test1,
+            eu.peernetwork.social.ui.R.mipmap.test2,
+            eu.peernetwork.social.ui.R.mipmap.test1,
+        )
+
         PhotoContent(
             username = remember { mutableStateOf("Sandro") },
             userId = remember { mutableStateOf("#030604") },
             timeStamp = remember { mutableStateOf("2 Hours Ago") },
-            content = {
-                Image(
-                    painter = painterResource(id = eu.peernetwork.social.ui.R.mipmap.test1),
-                    contentDescription = "Content Picutre",
-                    modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop
-                )
-            },
+            photos = photos,
+            indicatorColors = PhotoCarouselIndicator(
+                active = Color.Green,
+                inactive = Color.Gray
+            ),
             avatar = {
                 Image(
                     painter = painterResource(id = eu.peernetwork.social.ui.R.mipmap.test2),
