@@ -1,6 +1,0 @@
-eu.peernetwork.user.ui
-string email_label
-string login_text
-string password_label
-string register_text
-string username_label

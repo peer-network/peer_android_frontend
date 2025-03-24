@@ -1,7 +1,0 @@
-R_DEF: Internal format may change without notice
-local
-string email_label
-string login_text
-string password_label
-string register_text
-string username_label
