@@ -1,0 +1,2 @@
+int mipmap test1 0x0
+int mipmap test2 0x0

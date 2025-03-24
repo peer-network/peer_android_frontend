@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="add_label">New post</string>
+    <string name="app_name">Peer</string>
+    <string name="chat_label">Chat</string>
+    <string name="home_label">Friends</string>
+    <string name="logo">Peer Logo</string>
+    <string name="privacy_text">Privacy Policy</string>
+    <string name="profile_label">Profile</string>
+    <string name="search_label">Search</string>
+    <string name="slogan_text">Almost like with any social media you can share the content you love, but with Peer, you earn on the side – no fame needed!</string>
+    <string name="wallet_label">Wallet</string>
+</resources>

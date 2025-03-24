@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="GradleMigrationSettings" migrationVersion="1" />
+  <component name="GradleSettings">
+    <option name="linkedExternalProjectsSettings">
+      <GradleProjectSettings>
+        <option name="testRunner" value="CHOOSE_PER_TEST" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="gradleJvm" value="#GRADLE_LOCAL_JAVA_HOME" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/core" />
+            <option value="$PROJECT_DIR$/core/common" />
+            <option value="$PROJECT_DIR$/core/remote" />
+            <option value="$PROJECT_DIR$/core/ui" />
+            <option value="$PROJECT_DIR$/persistence" />
+            <option value="$PROJECT_DIR$/persistence/data" />
+            <option value="$PROJECT_DIR$/persistence/domain" />
+            <option value="$PROJECT_DIR$/persistence/local" />
+            <option value="$PROJECT_DIR$/social" />
+            <option value="$PROJECT_DIR$/social/data" />
+            <option value="$PROJECT_DIR$/social/domain" />
+            <option value="$PROJECT_DIR$/social/remote" />
+            <option value="$PROJECT_DIR$/social/ui" />
+            <option value="$PROJECT_DIR$/user" />
+            <option value="$PROJECT_DIR$/user/data" />
+            <option value="$PROJECT_DIR$/user/domain" />
+            <option value="$PROJECT_DIR$/user/remote" />
+            <option value="$PROJECT_DIR$/user/ui" />
+          </set>
+        </option>
+      </GradleProjectSettings>
+    </option>
+  </component>
+</project>
