@@ -17,7 +17,7 @@ import eu.peernetwork.user.ui.model.UiPoint
 import eu.peernetwork.user.ui.user.component.UserPoints
 
 @Composable
-fun UserCouponScreen(
+fun UserPointScreen(
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
 ) {
@@ -31,10 +31,10 @@ fun UserCouponScreen(
         factory = component.viewModelFactory()
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val coupons = remember { mutableStateOf<List<UiPoint>?>(
-        (state as? UserPointViewModel.State.Success?)?.coupons
+    val points = remember { mutableStateOf<List<UiPoint>?>(
+        (state as? UserPointViewModel.State.Success?)?.points
     ) }
-    Crossfade(targetState = coupons.value) {
+    Crossfade(targetState = points.value) {
         when (it) {
             null -> { Box {} }
             else -> UserPoints(it)
@@ -43,9 +43,9 @@ fun UserCouponScreen(
     LaunchedEffect(state) {
         when (state) {
             is UserPointViewModel.State.Initialize -> viewModel.getPoints()
-            is UserPointViewModel.State.Loading -> coupons.value = null
+            is UserPointViewModel.State.Loading -> points.value = null
             is UserPointViewModel.State.Success -> {
-                coupons.value = (state as UserPointViewModel.State.Success).coupons
+                points.value = (state as UserPointViewModel.State.Success).points
             }
             is UserPointViewModel.State.Error -> {}
         }

@@ -37,7 +37,7 @@ class UserPointViewModel @Inject constructor(
     sealed interface State {
         data object Initialize : State
         data object Loading : State
-        data class Success(val coupons: List<UiPoint>) : State
+        data class Success(val points: List<UiPoint>) : State
         data class Error(val error: Throwable) : State
     }
 }
