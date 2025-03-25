@@ -26,7 +26,7 @@ import eu.peernetwork.app.ui.feed.FeedScreen
 import eu.peernetwork.app.ui.profile.flow.ProfileScreen
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.compose.DesignToolbarTitle
-import eu.peernetwork.user.ui.user.point.UserCouponScreen
+import eu.peernetwork.user.ui.user.point.UserPointScreen
 
 @Composable
 fun HomeScreen(
@@ -47,7 +47,7 @@ fun HomeScreen(
     val titleState = remember { mutableStateOf(DesignToolbarTitle(HomeRoute.get(state.page).label)) }
     val navigationState = rememberSaveable { mutableIntStateOf(state.page) }
     HomeScaffold(
-        header = { HomeHeader(titleState) { UserCouponScreen(component, viewModelStoreOwner) } },
+        header = { HomeHeader(titleState) { UserPointScreen(component, viewModelStoreOwner) } },
         footer = { HomeFooter(navigationState) }
     ) {
         HomeNavigation(

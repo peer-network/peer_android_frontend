@@ -34,7 +34,7 @@ internal class UserPointViewModelTest {
     }
 
     @Test
-    fun `test get authenticated user success`() = runTest {
+    fun `test get user point success`() = runTest {
         coEvery { usecase() } coAnswers {
             delay(100)
             listOf()
@@ -47,7 +47,7 @@ internal class UserPointViewModelTest {
     }
 
     @Test
-    fun `test get authenticated user error`() = runTest {
+    fun `test get user point error`() = runTest {
         val error = RuntimeException()
         coEvery { usecase() } coAnswers {
             delay(100)
