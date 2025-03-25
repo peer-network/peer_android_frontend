@@ -1,12 +1,12 @@
 package eu.peernetwork.user.domain.repository
 
+import eu.peernetwork.user.domain.model.UserDetail
 import eu.peernetwork.user.domain.model.Account
-import eu.peernetwork.user.domain.model.AccountDetail
 
 interface AccountRepository {
     suspend fun get(id: String): Account
 
-    suspend fun register(detail: AccountDetail): String
+    suspend fun register(detail: UserDetail): String
 
     suspend fun update(properties: Map<String, Any>)
 

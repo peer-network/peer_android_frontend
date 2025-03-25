@@ -1,6 +1,7 @@
 package eu.peernetwork.app.ui.setup
 
 import android.content.Context
+import androidx.lifecycle.ViewModelProvider
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.persistence.domain.provider.PreferenceProvider
@@ -19,7 +20,9 @@ interface Setup : AccountProvider, AuthenticationProvider, PreferenceProvider {
         dependencies = [ Setup::class ],
         modules = [ SetupModule::class ]
     )
-    interface Component : Setup, Login, Registration, UiComponentProvider
+    interface Component : Setup, Login, Registration, UiComponentProvider {
+        fun viewModelFactory(): ViewModelProvider.Factory
+    }
 
     class Builder(private val dependency: Setup) : UiComponent.DefaultBuilder<Setup, Component>() {
         override fun build(context: Context): Component {

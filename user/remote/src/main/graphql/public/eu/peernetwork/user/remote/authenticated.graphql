@@ -1,0 +1,5 @@
+query Hello {
+    hello {
+        currentuserid
+    }
+}

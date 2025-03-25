@@ -6,4 +6,5 @@ data class Account(
     val username: String,
     val bio: String,
     val imageUrl: String,
+    val overview: Overview
 )

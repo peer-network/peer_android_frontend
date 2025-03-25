@@ -14,3 +14,9 @@ fun NavHostController.attachIfNecessary(destination: String, popUpTo: Int? = nul
         attach(destination, popUpTo)
     }
 }
+
+fun NavHostController.navigateIfNecessary(destination: String) {
+    if (currentDestination?.route != destination) {
+        navigate(destination)
+    }
+}

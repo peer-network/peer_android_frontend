@@ -2,11 +2,12 @@ package eu.peernetwork.app.ui.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import eu.peernetwork.persistence.domain.observable.ObservableInteger
 import eu.peernetwork.persistence.domain.publishable.PublishableInteger
 import eu.peernetwork.persistence.domain.retrievable.RetrievableInteger
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -14,14 +15,15 @@ import javax.inject.Inject
 @Home.Scope
 class HomeViewModel @Inject constructor(
     retrievableInteger: RetrievableInteger,
+    observableInteger: ObservableInteger,
     private val publishableInteger: PublishableInteger
 ) : ViewModel() {
-    private val mutableState = MutableStateFlow<State>(State.Initialize(retrievableInteger(TAG)))
-
-    val state: StateFlow<State> = mutableState.stateIn(
+    val state: StateFlow<State> = observableInteger(TAG).map {
+        State.Initialize(retrievableInteger(TAG))
+    }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = mutableState.value
+        initialValue = State.Initialize(retrievableInteger(TAG))
     )
 
     fun lastVisited(page: Int) {

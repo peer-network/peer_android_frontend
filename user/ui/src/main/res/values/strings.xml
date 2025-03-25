@@ -5,4 +5,11 @@
     <string name="email_label">E-mail</string>
     <string name="username_label">Username</string>
     <string name="password_label">Password</string>
+
+    <string name="post_label">posts</string>
+    <string name="follower_label">followers</string>
+    <string name="following_label">following</string>
+    <string name="peers_label">peers</string>
+
+    <string name="empty_description_message">Biography unavailable</string>
 </resources>

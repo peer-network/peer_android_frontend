@@ -31,8 +31,6 @@ type Query {
 
   follows(userid: ID, offset: Int, limit: Int): UserFollows!
 
-  followrelations(userid: ID, offset: Int, limit: Int): RelationsFollow!
-
   friends(offset: Int, limit: Int): UserFriends!
 
   getuserinfo: GetUserinforesponse!
@@ -43,7 +41,7 @@ type Query {
 
   getcommentinfo(commentid: ID!): GetCommentinforesponse!
 
-  parentcomments(parent: ID!): CommentResponse!
+  parentcomments(parent: ID!, offset: Int, limit: Int): CommentResponse!
 
   tags(offset: Int, limit: Int): TagSearchResponse!
 
@@ -64,6 +62,8 @@ type Query {
   fetchpayslog(day: DayType!, offset: Int, limit: Int): UserLogWins!
 
   blockedlist(offset: Int, limit: Int): UserBlocked!
+
+  callusermove: StandardResponse!
 }
 
 """
@@ -92,7 +92,7 @@ type Mutation {
 
   userFollow(userid: ID!): setFollowUseresponse!
 
-  userBlock(userid: ID!): setBlockUseresponse!
+  userBlock(userid: ID!): DefaultResponse!
 
   deleteAccount(password: String!): DefaultResponse!
 
@@ -118,13 +118,11 @@ type Mutation {
 
   deletePost(id: ID!): DefaultResponse!
 
-  contactus(name: String!, email: String!, message: String!): StandardResponse!
-
   createPost(action: PostenType!, input: CreatePostInput!): PostResponse!
 
-  createComment(action: CommentsType!, input: CreateCommentInput!): StandardResponse!
+  createComment(action: CommentsType!, postid: ID!, parentid: ID, content: String!): CommentResponse!
 
-  resolveActionPost(postid: ID!, action: ActionType!): StandardResponse!
+  resolveActionPost(action: ActionType!, postid: ID!): DefaultResponse!
 }
 
 scalar Decimal
@@ -155,6 +153,16 @@ enum PostenType {
 
 enum CommentsType {
   COMMENT
+}
+
+enum ContenType {
+  image
+
+  audio
+
+  video
+
+  text
 }
 
 enum FilterType {
@@ -211,16 +219,6 @@ enum DayType {
   Y0
 }
 
-type GenericResponse {
-  status: String!
-
-  counter: Int!
-
-  ResponseCode: String
-
-  affectedRows: DATEN
-}
-
 type StandardResponse {
   status: String!
 
@@ -234,17 +232,19 @@ type HelloResponse {
 }
 
 type LogWins {
+  from: String
+
   token: String
 
   userid: String
 
   postid: String
 
-  fromid: String
-
-  gems: Decimal
+  action: String
 
   numbers: Decimal
+
+  createdat: String
 }
 
 type UserLogWins {
@@ -292,11 +292,13 @@ type GetUserInfo {
 
   amountposts: Int!
 
-  amounttrending: Int!
+  amountblocked: Int!
 
   amountfollower: Int!
 
   amountfollowed: Int!
+
+  amountfriends: Int!
 
   updatedat: Date
 }
@@ -386,21 +388,17 @@ type ChatParticipant {
 
   username: String!
 
+  slug: Int!
+
   hasaccess: Int!
 }
 
 type setFollowUseresponse {
   status: String!
 
+  ResponseCode: String
+
   isfollowing: Boolean
-
-  ResponseCode: String
-}
-
-type setBlockUseresponse {
-  status: String!
-
-  ResponseCode: String
 }
 
 type ProfilPostMed {
@@ -417,14 +415,6 @@ type ProfilPostMed {
 
 type DefaultResponse {
   status: String!
-
-  ResponseCode: String
-}
-
-type ToggleResponse {
-  status: String!
-
-  isSaved: Boolean
 
   ResponseCode: String
 }
@@ -498,6 +488,8 @@ type Userinfo {
 
   username: String
 
+  slug: Int
+
   biography: String
 
   updatedat: Date!
@@ -544,17 +536,19 @@ type Profile {
 
   biography: String
 
-  amountposts: Int
-
-  amounttrending: Int
-
   isfollowed: Boolean
 
   isfollowing: Boolean
 
+  amountposts: Int
+
+  amounttrending: Int
+
   amountfollowed: Int
 
   amountfollower: Int
+
+  amountfriends: Int!
 
   imageposts: [ProfilPostMed!]
 
@@ -576,31 +570,15 @@ type ProfileInfo {
 type ProfilUser {
   id: ID!
 
-  username: String!
+  username: String
+
+  slug: Int
 
   img: String
 
   isfollowed: Boolean
 
   isfollowing: Boolean
-}
-
-type FollowRelations {
-  followers: [ProfilUser!]
-
-  following: [ProfilUser!]
-
-  friends: [ProfilUser!]
-}
-
-type RelationsFollow {
-  status: String
-
-  counter: Int!
-
-  ResponseCode: String
-
-  affectedRows: FollowRelations
 }
 
 type Followes {
@@ -619,16 +597,22 @@ type UserFollows {
   affectedRows: Followes
 }
 
-type Blocked {
-  blockerid: [ProfilUser!]
+type BlockedUser {
+  blockerid: String
 
-  blockedid: [ProfilUser!]
+  blockedid: String
+
+  createdat: Date
+}
+
+type Blocked {
+  blockerid: [BlockedUser!]
+
+  blockedid: [BlockedUser!]
 }
 
 type UserBlocked {
   status: String
-
-  counter: Int!
 
   ResponseCode: String
 
@@ -664,7 +648,7 @@ type PostResponse {
 
   ResponseCode: String
 
-  affectedRows: Post!
+  affectedRows: Post
 }
 
 type GetAllPostResponse {
@@ -730,11 +714,11 @@ type Comment {
 
   content: String!
 
+  createdat: Date!
+
   amountlikes: Int!
 
   isliked: Boolean!
-
-  createdat: Date!
 
   user: ProfilUser!
 }
@@ -749,32 +733,6 @@ type CommentResponse {
   affectedRows: [Comment]
 }
 
-type Wallet {
-  token: String!
-
-  userid: ID!
-
-  postid: ID!
-
-  fromid: ID!
-
-  numbers: Decimal!
-
-  whereby: Int!
-
-  createdat: Date!
-}
-
-type UserWallet {
-  status: String!
-
-  counter: Int!
-
-  ResponseCode: String
-
-  affectedRows: [Wallet]
-}
-
 input RegisterInput {
   email: String!
 
@@ -786,23 +744,15 @@ input RegisterInput {
 input CreatePostInput {
   title: String!
 
-  media: String!
+  mediadescription: String
 
-  cover: String
+  contenttype: ContenType!
 
-  mediadescription: String!
+  media: [String!]
 
-  contenttype: String!
+  cover: [String!]
 
   tags: [String!]
-}
-
-input CreateCommentInput {
-  postid: ID!
-
-  parentid: ID
-
-  content: String!
 }
 
 input CreateChatInput {

@@ -1,6 +1,4 @@
-plugins {
-    id(libs.plugins.ksp.get().pluginId)
-}
+plugins { id(libs.plugins.ksp.get().pluginId) }
 
 android {
     buildFeatures {

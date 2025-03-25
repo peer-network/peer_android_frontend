@@ -3,9 +3,10 @@ package eu.peernetwork.user.data.repository
 import eu.peernetwork.core.common.exception.AuthorizationException
 import eu.peernetwork.user.data.api.AccountApi
 import eu.peernetwork.user.data.api.SettingsApi
+import eu.peernetwork.user.data.mapper.mapToDomain
 import eu.peernetwork.user.data.provider.SettingsProvider
+import eu.peernetwork.user.domain.model.UserDetail
 import eu.peernetwork.user.domain.model.Account
-import eu.peernetwork.user.domain.model.AccountDetail
 import eu.peernetwork.user.domain.repository.AccountRepository
 import javax.inject.Inject
 
@@ -14,10 +15,10 @@ class AccountRepositoryDelegate @Inject constructor(
     private val provider: SettingsProvider
 ) : AccountRepository {
     override suspend fun get(id: String): Account {
-        return api.get(id)
+        return api.get(id).mapToDomain()
     }
 
-    override suspend fun register(detail: AccountDetail): String {
+    override suspend fun register(detail: UserDetail): String {
         return api.register(detail)
     }
 
