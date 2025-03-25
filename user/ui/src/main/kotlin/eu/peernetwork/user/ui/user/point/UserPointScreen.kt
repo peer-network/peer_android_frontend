@@ -14,7 +14,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.user.ui.model.UiPoint
-import eu.peernetwork.user.ui.user.component.UserPoints
 
 @Composable
 fun UserPointScreen(
@@ -37,7 +36,7 @@ fun UserPointScreen(
     Crossfade(targetState = points.value) {
         when (it) {
             null -> { Box {} }
-            else -> UserPoints(it)
+            else -> UserPointBadge(it)
         }
     }
     LaunchedEffect(state) {
