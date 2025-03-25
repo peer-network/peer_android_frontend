@@ -1,4 +1,4 @@
-package eu.peernetwork.user.ui.user.component
+package eu.peernetwork.user.ui.user.point
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -13,11 +13,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.core.ui.compose.DesignOption
 import eu.peernetwork.user.ui.model.UiPoint
-import eu.peernetwork.user.ui.user.point.UserPointModel
 import kotlin.collections.forEach
 
 @Composable
-fun UserPoints(points: List<UiPoint> = listOf()) {
+fun UserPointBadge(points: List<UiPoint> = listOf()) {
     Column {
         Row (
             modifier = Modifier
