@@ -1,8 +1,8 @@
-package eu.peernetwork.user.ui.user.coupon
+package eu.peernetwork.user.ui.user.point
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import app.cash.turbine.test
-import eu.peernetwork.user.domain.usecase.CouponUsecase
+import eu.peernetwork.user.domain.usecase.PointUsecase
 import io.mockk.coEvery
 import io.mockk.mockk
 import junit.framework.TestCase.assertEquals
@@ -17,20 +17,20 @@ import org.junit.Rule
 import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
-internal class UserCouponViewModelTest {
+internal class UserPointViewModelTest {
     @get:Rule
     val instantExecutorRule = InstantTaskExecutorRule()
 
     private val dispatcher = UnconfinedTestDispatcher()
 
-    private val usecase = mockk<CouponUsecase>()
+    private val usecase = mockk<PointUsecase>()
 
-    private lateinit var viewModel: UserCouponViewModel
+    private lateinit var viewModel: UserPointViewModel
 
     @Before
     fun setup() {
         Dispatchers.setMain(dispatcher)
-        viewModel = UserCouponViewModel(usecase)
+        viewModel = UserPointViewModel(usecase)
     }
 
     @Test
@@ -39,10 +39,10 @@ internal class UserCouponViewModelTest {
             delay(100)
             listOf()
         }
-        viewModel.getCoupons()
+        viewModel.getPoints()
         viewModel.state.test {
-            assertEquals(UserCouponViewModel.State.Loading, awaitItem())
-            assertEquals(UserCouponViewModel.State.Success(listOf()), awaitItem())
+            assertEquals(UserPointViewModel.State.Loading, awaitItem())
+            assertEquals(UserPointViewModel.State.Success(listOf()), awaitItem())
         }
     }
 
@@ -53,10 +53,10 @@ internal class UserCouponViewModelTest {
             delay(100)
             throw error
         }
-        viewModel.getCoupons()
+        viewModel.getPoints()
         viewModel.state.test {
-            assertEquals(UserCouponViewModel.State.Loading, awaitItem())
-            assertEquals(UserCouponViewModel.State.Error(error), awaitItem())
+            assertEquals(UserPointViewModel.State.Loading, awaitItem())
+            assertEquals(UserPointViewModel.State.Error(error), awaitItem())
         }
     }
 }

@@ -1,4 +1,4 @@
-package eu.peernetwork.user.ui.user.coupon
+package eu.peernetwork.user.ui.user.point
 
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Box
@@ -13,8 +13,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.extension.builder
-import eu.peernetwork.user.ui.model.UiCoupon
-import eu.peernetwork.user.ui.user.component.UserCoupons
+import eu.peernetwork.user.ui.model.UiPoint
+import eu.peernetwork.user.ui.user.component.UserPoints
 
 @Composable
 fun UserCouponScreen(
@@ -23,31 +23,31 @@ fun UserCouponScreen(
 ) {
     val context = LocalContext.current
     val component = remember {
-        provider.builder(UserCoupon.Builder::class.java).build(context)
+        provider.builder(UserPoint.Builder::class.java).build(context)
     }
     val viewModel = viewModel(
-        modelClass = UserCouponViewModel::class.java,
+        modelClass = UserPointViewModel::class.java,
         viewModelStoreOwner = viewModelStoreOwner,
         factory = component.viewModelFactory()
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val coupons = remember { mutableStateOf<List<UiCoupon>?>(
-        (state as? UserCouponViewModel.State.Success?)?.coupons
+    val coupons = remember { mutableStateOf<List<UiPoint>?>(
+        (state as? UserPointViewModel.State.Success?)?.coupons
     ) }
     Crossfade(targetState = coupons.value) {
         when (it) {
             null -> { Box {} }
-            else -> UserCoupons(it)
+            else -> UserPoints(it)
         }
     }
     LaunchedEffect(state) {
         when (state) {
-            is UserCouponViewModel.State.Initialize -> viewModel.getCoupons()
-            is UserCouponViewModel.State.Loading -> coupons.value = null
-            is UserCouponViewModel.State.Success -> {
-                coupons.value = (state as UserCouponViewModel.State.Success).coupons
+            is UserPointViewModel.State.Initialize -> viewModel.getPoints()
+            is UserPointViewModel.State.Loading -> coupons.value = null
+            is UserPointViewModel.State.Success -> {
+                coupons.value = (state as UserPointViewModel.State.Success).coupons
             }
-            is UserCouponViewModel.State.Error -> {}
+            is UserPointViewModel.State.Error -> {}
         }
     }
 }

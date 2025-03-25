@@ -24,6 +24,7 @@ internal val LightScheme = lightColorScheme(
     secondary = AccentColor,
     background = White,
     surface = White,
+    surfaceVariant = White70,
     onPrimary = White,
     onSecondary = White,
     onBackground = Black,

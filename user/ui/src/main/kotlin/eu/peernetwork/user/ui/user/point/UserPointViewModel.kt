@@ -1,10 +1,10 @@
-package eu.peernetwork.user.ui.user.coupon
+package eu.peernetwork.user.ui.user.point
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import eu.peernetwork.user.domain.usecase.CouponUsecase
+import eu.peernetwork.user.domain.usecase.PointUsecase
 import eu.peernetwork.user.ui.mapper.mapFromDomain
-import eu.peernetwork.user.ui.model.UiCoupon
+import eu.peernetwork.user.ui.model.UiPoint
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -12,8 +12,8 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class UserCouponViewModel @Inject constructor(
-    private val usecase: CouponUsecase
+class UserPointViewModel @Inject constructor(
+    private val usecase: PointUsecase
 ) : ViewModel() {
     private val mutableState = MutableStateFlow<State>(State.Loading)
 
@@ -23,7 +23,7 @@ class UserCouponViewModel @Inject constructor(
         initialValue = State.Initialize
     )
 
-    fun getCoupons() {
+    fun getPoints() {
         mutableState.tryEmit(State.Loading)
         viewModelScope.launch {
             try {
@@ -37,7 +37,7 @@ class UserCouponViewModel @Inject constructor(
     sealed interface State {
         data object Initialize : State
         data object Loading : State
-        data class Success(val coupons: List<UiCoupon>) : State
+        data class Success(val coupons: List<UiPoint>) : State
         data class Error(val error: Throwable) : State
     }
 }

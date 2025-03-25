@@ -41,7 +41,7 @@ internal class ResourceApiDelegateTest {
     }
 
     @Test
-    fun `test user coupon`(): Unit = runBlocking {
+    fun `test user point`(): Unit = runBlocking {
         val name = "<test-name>"
         val user = DailyfreestatusQuery.Dailyfreestatus(
             status = Status.SUCCESS.value,
@@ -65,9 +65,9 @@ internal class ResourceApiDelegateTest {
         every { mockData.dailyfreestatus } returns user
         coEvery { apolloClient.query(any<DailyfreestatusQuery>()).execute() } returns mockResponse
 
-        val result = api.coupons()
+        val result = api.points()
 
-        assertEquals(result.first().name, name)
+        assertEquals(result.first().type, name)
     }
 
     @Test

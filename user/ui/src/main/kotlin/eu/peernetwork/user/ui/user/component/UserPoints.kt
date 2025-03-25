@@ -12,22 +12,22 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.core.ui.compose.DesignOption
-import eu.peernetwork.user.ui.model.UiCoupon
-import eu.peernetwork.user.ui.user.coupon.UserCouponModel
+import eu.peernetwork.user.ui.model.UiPoint
+import eu.peernetwork.user.ui.user.point.UserPointModel
 import kotlin.collections.forEach
 
 @Composable
-fun UserCoupons(coupons: List<UiCoupon> = listOf()) {
+fun UserPoints(points: List<UiPoint> = listOf()) {
     Column {
         Row (
             modifier = Modifier
                 .clip(RoundedCornerShape(4.dp))
                 .background(MaterialTheme.colorScheme.tertiaryContainer)
         ) {
-            coupons.forEach { coupon ->
-                UserCouponModel.MAP[coupon.name]?.let { model ->
+            points.forEach { point ->
+                UserPointModel.MAP[point.name]?.let { model ->
                     DesignOption(
-                        text = coupon.available.toString(),
+                        text = point.available.toString(),
                         painter = painterResource(id = model.icon),
                         contentDescription = stringResource(model.label),
                         onClick = {  }
