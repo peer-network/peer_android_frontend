@@ -1,7 +1,7 @@
 package eu.peernetwork.user.domain.model
 
-data class Coupon(
-    val name: String,
+data class Point(
+    val type: String,
     val used: Int,
     val available: Int
 )

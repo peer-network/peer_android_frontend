@@ -10,7 +10,7 @@ import eu.peernetwork.app.ui.feed.Feed
 import eu.peernetwork.core.common.provider.CoreProvider
 import eu.peernetwork.user.domain.provider.AccountProvider
 import eu.peernetwork.user.domain.provider.AuthenticationProvider
-import eu.peernetwork.user.ui.user.coupon.UserCoupon
+import eu.peernetwork.user.ui.user.point.UserPoint
 
 interface Home : CoreProvider, AccountProvider, AuthenticationProvider, PreferenceProvider {
     @javax.inject.Scope
@@ -22,7 +22,7 @@ interface Home : CoreProvider, AccountProvider, AuthenticationProvider, Preferen
         dependencies = [ Home::class ],
         modules = [ HomeModule::class ]
     )
-    interface Component : Home, Feed, Profile, UiComponentProvider, UserCoupon {
+    interface Component : Home, Feed, Profile, UiComponentProvider, UserPoint {
         fun viewModelFactory(): ViewModelProvider.Factory
     }
 

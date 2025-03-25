@@ -1,11 +1,11 @@
 package eu.peernetwork.user.ui.mapper
 
-import eu.peernetwork.user.domain.model.Coupon
-import eu.peernetwork.user.ui.model.UiCoupon
+import eu.peernetwork.user.domain.model.Point
+import eu.peernetwork.user.ui.model.UiPoint
 
-fun Coupon.mapFromDomain(): UiCoupon {
-    return UiCoupon(
-        name = name,
+fun Point.mapFromDomain(): UiPoint {
+    return UiPoint(
+        name = type,
         used = used,
         available = available
     )

@@ -1,4 +1,4 @@
-package eu.peernetwork.user.ui.user.coupon
+package eu.peernetwork.user.ui.user.point
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -10,9 +10,9 @@ import eu.peernetwork.core.ui.factory.UiViewModelFactory
 import javax.inject.Provider
 
 @Module
-object UserCouponModule {
+object UserPointModule {
     @Provides
-    @UserCoupon.Scope
+    @UserPoint.Scope
     fun provideViewModelFactory(
         classToViewModel:
         @JvmSuppressWildcards Map<Class<out ViewModel>, Provider<ViewModel>>
@@ -22,7 +22,7 @@ object UserCouponModule {
 
     @Provides
     @IntoMap
-    @UserCoupon.Scope
-    @UiViewModel(UserCouponViewModel::class)
-    fun provideViewModel(viewModel: UserCouponViewModel): ViewModel = viewModel
+    @UserPoint.Scope
+    @UiViewModel(UserPointViewModel::class)
+    fun provideViewModel(viewModel: UserPointViewModel): ViewModel = viewModel
 }

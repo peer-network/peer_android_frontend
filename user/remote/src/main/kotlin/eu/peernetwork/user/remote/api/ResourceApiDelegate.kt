@@ -7,7 +7,7 @@ import eu.peernetwork.core.remote.extension.executeOrThrow
 import eu.peernetwork.core.remote.extension.getOrThrow
 import eu.peernetwork.user.data.api.ResourceApi
 import eu.peernetwork.user.domain.exception.ResourceNotFoundException
-import eu.peernetwork.user.domain.model.Coupon
+import eu.peernetwork.user.domain.model.Point
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import protected.eu.peernetwork.user.remote.DailyfreestatusQuery
@@ -19,13 +19,13 @@ class ResourceApiDelegate @Inject constructor(
     private val client: OkHttpClient,
     private val apolloClient: ApolloClient
 ) : ResourceApi {
-    override suspend fun coupons(): List<Coupon> {
+    override suspend fun points(): List<Point> {
         val response = apolloClient.query(DailyfreestatusQuery()).executeOrThrow()
         val data = response.getOrThrow().dailyfreestatus
         response.assertOrThrow(data.status, data.ResponseCode)
         return data.affectedRows?.mapNotNull {
-            Coupon(
-                name = it!!.name,
+            Point(
+                type = it!!.name,
                 used = it.used,
                 available = it.available
             )

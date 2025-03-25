@@ -26,7 +26,7 @@ import eu.peernetwork.app.ui.feed.FeedScreen
 import eu.peernetwork.app.ui.profile.flow.ProfileScreen
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.compose.DesignToolbarTitle
-import eu.peernetwork.user.ui.user.coupon.UserCouponScreen
+import eu.peernetwork.user.ui.user.point.UserCouponScreen
 
 @Composable
 fun HomeScreen(

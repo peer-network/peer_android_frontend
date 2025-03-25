@@ -13,7 +13,7 @@ import eu.peernetwork.core.ui.factory.UiBuilderFactory
 import eu.peernetwork.core.ui.factory.UiViewModelFactory
 import eu.peernetwork.app.ui.feed.Feed
 import eu.peernetwork.app.ui.profile.flow.Profile
-import eu.peernetwork.user.ui.user.coupon.UserCoupon
+import eu.peernetwork.user.ui.user.point.UserPoint
 import javax.inject.Provider
 
 @Module
@@ -56,8 +56,8 @@ object HomeModule {
     @Home.Scope
     @Provides
     @IntoMap
-    @UiBuilder(UserCoupon.Builder::class)
+    @UiBuilder(UserPoint.Builder::class)
     fun provideCouponBuilder(component: Home.Component): UiComponent.Builder {
-        return UserCoupon.Builder(component)
+        return UserPoint.Builder(component)
     }
 }
