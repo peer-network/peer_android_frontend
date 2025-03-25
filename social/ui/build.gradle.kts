@@ -15,6 +15,7 @@ dependencies {
     implementation(project(":core:common"))
     implementation(project(":core:ui"))
 
+    implementation(project(":persistence:domain"))
     implementation(project(":social:domain"))
 
     implementation(libs.dagger)

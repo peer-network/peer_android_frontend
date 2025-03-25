@@ -21,6 +21,15 @@ internal class AuthenticationRepositoryDelegateTest {
     }
 
     @Test
+    fun `test authenticated user`(): Unit = runBlocking {
+        val id = "<test-current-user-id>"
+        coEvery { api.authenticated() } returns id
+        val result = repository.authenticated()
+        assertEquals(result, id)
+        coVerify { api.authenticated() }
+    }
+
+    @Test
     fun `test user login`(): Unit = runBlocking {
         val email = "<test-email>"
         val password = "<test-password>"

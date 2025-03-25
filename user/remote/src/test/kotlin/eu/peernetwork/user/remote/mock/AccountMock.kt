@@ -1,7 +1,7 @@
 package eu.peernetwork.user.remote.mock
 
 import eu.peernetwork.core.remote.model.Status
-import eu.peernetwork.user.domain.model.AccountDetail
+import eu.peernetwork.user.domain.model.UserDetail
 import protected.eu.peernetwork.user.remote.DeleteAccountMutation
 import protected.eu.peernetwork.user.remote.ProfileQuery
 import protected.eu.peernetwork.user.remote.UpdatePasswordMutation
@@ -9,8 +9,8 @@ import public.eu.peernetwork.user.remote.RegisterMutation
 import public.eu.peernetwork.user.remote.VerifiedAccountMutation
 
 object AccountMock {
-    fun user(): AccountDetail {
-        return AccountDetail(
+    fun user(): UserDetail {
+        return UserDetail(
             email = "<test-status>",
             username = "<test-status>",
             password = "<test-status>"
@@ -26,7 +26,11 @@ object AccountMock {
                 username = "<test-username>",
                 slug = System.currentTimeMillis().toInt(),
                 img = "<test-img>",
-                biography = "<test-biography>"
+                biography = "<test-biography>",
+                amountfollowed = 0,
+                amountposts = 0,
+                amountfollower = 0,
+                amountfriends = 0
             )
         )
     }

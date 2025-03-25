@@ -27,6 +27,7 @@ dependencies {
     api(libs.compose.livedata)
     api(libs.compose.constraintlayout)
     api(libs.compose.navigation)
+    api(libs.compose.coil)
 
     api(libs.dagger.android)
 }

@@ -1,0 +1,5 @@
+<resources>
+    <string name="photo_label">Photo</string>
+    <string name="video_label">Video</string>
+    <string name="music_label">Music</string>
+</resources>

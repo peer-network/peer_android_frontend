@@ -2,9 +2,10 @@ package eu.peernetwork.user.data.repository
 
 import eu.peernetwork.user.data.api.AccountApi
 import eu.peernetwork.user.data.api.SettingsApi
+import eu.peernetwork.user.data.mapper.mapToDomain
+import eu.peernetwork.user.data.model.AccountModel
 import eu.peernetwork.user.data.provider.SettingsProvider
-import eu.peernetwork.user.domain.model.Account
-import eu.peernetwork.user.domain.model.AccountDetail
+import eu.peernetwork.user.domain.model.UserDetail
 import eu.peernetwork.user.domain.repository.AccountRepository
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -30,19 +31,29 @@ internal class AccountRepositoryDelegateTest {
     @Test
     fun `test get user by id`(): Unit = runBlocking {
         val id = "<test-id>"
-        val mockResponse = mockk<Account>()
+        val mockResponse = AccountModel(
+            id = "<test-id>",
+            username = "<test-username>",
+            slug = System.currentTimeMillis().toInt(),
+            imageUrl = "<test-img>",
+            biography = "<test-biography>",
+            followed = 0,
+            posts = 0,
+            follower = 0,
+            peers = 0
+        )
         coEvery { api.get(any()) } returns mockResponse
 
         val result = repository.get(id)
 
         coVerify { api.get(id) }
-        assertEquals(mockResponse, result)
+        assertEquals(mockResponse.mapToDomain(), result)
     }
 
     @Test
     fun `test register user`(): Unit = runBlocking {
         val mockResponse = "<test-user-id>"
-        val mockUser = mockk<AccountDetail>()
+        val mockUser = mockk<UserDetail>()
         coEvery { api.register(any()) } returns mockResponse
 
         val result = repository.register(mockUser)

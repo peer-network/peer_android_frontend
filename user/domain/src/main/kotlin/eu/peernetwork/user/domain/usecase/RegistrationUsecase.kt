@@ -1,16 +1,16 @@
 package eu.peernetwork.user.domain.usecase
 
-import eu.peernetwork.core.common.usecase.ParameterizedSuspendUseCase
-import eu.peernetwork.user.domain.model.AccountDetail
+import eu.peernetwork.core.common.usecase.ParameterizedSuspendableUseCase
+import eu.peernetwork.user.domain.model.UserDetail
 import eu.peernetwork.user.domain.repository.AccountRepository
 import javax.inject.Inject
 
 class RegistrationUsecase @Inject constructor(
     private val repository: AccountRepository
-) : ParameterizedSuspendUseCase<RegistrationUsecase.Parameter, String> {
+) : ParameterizedSuspendableUseCase<RegistrationUsecase.Parameter, String> {
     override suspend fun invoke(param: Parameter): String {
         return repository.register(
-            AccountDetail(
+            UserDetail(
                 email = param.email,
                 username = param.username,
                 password = param.password

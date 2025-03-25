@@ -2,10 +2,10 @@ package eu.peernetwork.app.ui.home
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import app.cash.turbine.test
+import eu.peernetwork.persistence.domain.observable.ObservableInteger
 import eu.peernetwork.persistence.domain.publishable.PublishableInteger
 import eu.peernetwork.persistence.domain.retrievable.RetrievableInteger
 import io.mockk.coEvery
-import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import junit.framework.TestCase.assertEquals
@@ -28,6 +28,8 @@ internal class HomeViewModelTest {
 
     private val publishableInteger = mockk<PublishableInteger>()
 
+    private val observableInteger = mockk<ObservableInteger>()
+
     private val dispatcher = UnconfinedTestDispatcher()
 
     private val mutableState = MutableStateFlow<Int?>(null)
@@ -37,20 +39,21 @@ internal class HomeViewModelTest {
     @Before
     fun setup() {
         Dispatchers.setMain(dispatcher)
+        every { observableInteger(any()) } returns mutableState
         every { retrievableInteger(any()) } answers {
             mutableState.value
         }
         coEvery { publishableInteger(any(), any()) } answers {
             mutableState.tryEmit(it.invocation.args[1] as Int)
         }
-        viewModel = HomeViewModel(retrievableInteger, publishableInteger)
+        viewModel = HomeViewModel(retrievableInteger, observableInteger, publishableInteger)
     }
 
     @Test
     fun `test initialize state`() = runTest {
         val page = 3
         mutableState.tryEmit(page)
-        val viewModel = HomeViewModel(retrievableInteger, publishableInteger)
+        val viewModel = HomeViewModel(retrievableInteger, observableInteger, publishableInteger)
         viewModel.state.test {
             assertEquals(HomeViewModel.State.Initialize(page), awaitItem())
         }
@@ -58,8 +61,10 @@ internal class HomeViewModelTest {
 
     @Test
     fun `test update feed`() = runTest {
-        val page = 3
+        val page = 5
         viewModel.lastVisited(page)
-        coVerify { publishableInteger(any(), page) }
+        viewModel.state.test {
+            assertEquals(HomeViewModel.State.Initialize(page), awaitItem())
+        }
     }
 }

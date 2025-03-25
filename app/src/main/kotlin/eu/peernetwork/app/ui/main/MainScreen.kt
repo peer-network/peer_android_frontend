@@ -3,7 +3,6 @@ package eu.peernetwork.app.ui.main
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -27,9 +26,6 @@ fun MainScreen(
         factory = component.viewModelFactory()
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val isRegistration = remember(state) {
-        (state as? MainViewModel.State.Startup?)?.isRegistration == true
-    }
     LaunchedEffect(state) {
         when(state) {
             is MainViewModel.State.Splash -> controller.attachIfNecessary("splash")
@@ -42,9 +38,7 @@ fun MainScreen(
         composable("startup") {
             SetupScreen(
                 provider = component,
-                viewModelStoreOwner = viewModelStoreOwner,
-                isRegistration = isRegistration,
-                onOptionChange = { viewModel.showRegistration(it) }
+                viewModelStoreOwner = viewModelStoreOwner
             )
         }
         composable("home") { HomeScreen(component, viewModelStoreOwner) }

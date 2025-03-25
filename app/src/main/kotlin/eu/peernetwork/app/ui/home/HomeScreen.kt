@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
@@ -21,7 +22,11 @@ import androidx.navigation.compose.rememberNavController
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.theme.PeerTheme
-import eu.peernetwork.social.ui.feed.FeedScreen
+import eu.peernetwork.app.ui.feed.FeedScreen
+import eu.peernetwork.app.ui.profile.flow.ProfileScreen
+import eu.peernetwork.core.ui.R
+import eu.peernetwork.core.ui.compose.DesignToolbarTitle
+import eu.peernetwork.user.ui.user.coupon.UserCouponScreen
 
 @Composable
 fun HomeScreen(
@@ -39,39 +44,43 @@ fun HomeScreen(
     )
     val controller = rememberNavController()
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val titleState = remember { mutableStateOf(DesignToolbarTitle(HomeRoute.get(state.page).label)) }
     val navigationState = rememberSaveable { mutableIntStateOf(state.page) }
     HomeScaffold(
-        header = { HomeHeader(state = navigationState) { HomeOptions() } },
+        header = { HomeHeader(titleState) { UserCouponScreen(component, viewModelStoreOwner) } },
         footer = { HomeFooter(navigationState) }
     ) {
         HomeNavigation(
             state = navigationState,
+            onNavigate = { viewModel.lastVisited(it) },
             navController = controller
         ) {
             when(it) {
-                is HomeRoute.Home -> FeedScreen(
-                    page = 0,
-                    onNavigate = { },
+                is HomeRoute.Home -> FeedScreen(titleState, component, viewModelStoreOwner)
+                is HomeRoute.Profile -> ProfileScreen(
+                    titleState,
                     component,
                     viewModelStoreOwner
                 )
-                else -> Box(modifier = Modifier.fillMaxSize())
+                else -> Box(modifier = Modifier.fillMaxSize()) {
+                    LaunchedEffect(Unit) {
+                        titleState.value = DesignToolbarTitle(it.label)
+                    }
+                }
             }
         }
-    }
-    LaunchedEffect(navigationState.intValue) {
-        viewModel.lastVisited(navigationState.intValue)
     }
 }
 
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun PreviewHomeScreen() {
-    val navigationState = rememberSaveable { mutableIntStateOf(0) }
     PeerTheme {
         HomeScaffold(
-            header = { HomeHeader(state = navigationState) },
-            footer = { HomeFooter(navigationState) }
+            header = { HomeHeader(remember {
+                mutableStateOf(DesignToolbarTitle(R.string.home_label, {}))
+            }) { } },
+            footer = { HomeFooter(remember { mutableIntStateOf(0) }) }
         ) {
             Text(
                 text = "",

@@ -1,10 +1,10 @@
 package eu.peernetwork.user.remote.mapper
 
-import eu.peernetwork.user.domain.model.Account
+import eu.peernetwork.user.domain.model.User
 import protected.eu.peernetwork.user.remote.SearchuserQuery
 
-fun SearchuserQuery.AffectedRow.mapToDomain(): Account {
-    return Account(
+fun SearchuserQuery.AffectedRow.mapToDomain(): User {
+    return User(
         id = id!!,
         slug = slug!!,
         username = username ?: "",

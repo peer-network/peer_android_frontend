@@ -2,7 +2,7 @@ package eu.peernetwork.user.data.repository
 
 import eu.peernetwork.core.common.model.Pageable
 import eu.peernetwork.user.data.api.SearchApi
-import eu.peernetwork.user.domain.model.Account
+import eu.peernetwork.user.domain.model.User
 import eu.peernetwork.user.domain.repository.SearchRepository
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -27,7 +27,7 @@ internal class SearchRepositoryDelegateTest {
     fun `test filter users by username`(): Unit = runBlocking {
         val username = "<test-username>"
         val pageable = mockk<Pageable>()
-        val expectedUsers = listOf(mockk<Account>())
+        val expectedUsers = listOf(mockk<User>())
 
         coEvery { api.findByUsername(username, pageable) } returns expectedUsers
 

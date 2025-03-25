@@ -2,12 +2,17 @@ package eu.peernetwork.app.ui.home
 
 import android.content.Context
 import androidx.lifecycle.ViewModelProvider
+import eu.peernetwork.app.ui.profile.flow.Profile
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.persistence.domain.provider.PreferenceProvider
-import eu.peernetwork.social.ui.feed.Feed
+import eu.peernetwork.app.ui.feed.Feed
+import eu.peernetwork.core.common.provider.CoreProvider
+import eu.peernetwork.user.domain.provider.AccountProvider
+import eu.peernetwork.user.domain.provider.AuthenticationProvider
+import eu.peernetwork.user.ui.user.coupon.UserCoupon
 
-interface Home : PreferenceProvider {
+interface Home : CoreProvider, AccountProvider, AuthenticationProvider, PreferenceProvider {
     @javax.inject.Scope
     @Retention(AnnotationRetention.RUNTIME)
     annotation class Scope
@@ -17,7 +22,7 @@ interface Home : PreferenceProvider {
         dependencies = [ Home::class ],
         modules = [ HomeModule::class ]
     )
-    interface Component : Home, Feed, UiComponentProvider {
+    interface Component : Home, Feed, Profile, UiComponentProvider, UserCoupon {
         fun viewModelFactory(): ViewModelProvider.Factory
     }
 
