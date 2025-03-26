@@ -1,4 +1,4 @@
-package eu.peernetwork.user.ui.user.component
+package eu.peernetwork.user.ui.user.compose
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
@@ -31,12 +31,6 @@ fun UserOverview(
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         UserOverviewItem(
-            title = { Text("${overview.posts}") },
-            subTitle = { Text(stringResource(eu.peernetwork.user.ui.R.string.post_label)) },
-            modifier = Modifier.padding(horizontal = 8.dp),
-            horizontalAlignment = Alignment.Start
-        )
-        UserOverviewItem(
             title = { Text("${overview.followers}") },
             subTitle = { Text(stringResource(eu.peernetwork.user.ui.R.string.follower_label)) },
             modifier = Modifier.padding(horizontal = 8.dp),
@@ -51,6 +45,12 @@ fun UserOverview(
         UserOverviewItem(
             title = { Text("${overview.peers}") },
             subTitle = { Text(stringResource(eu.peernetwork.user.ui.R.string.peers_label)) },
+            modifier = Modifier.padding(horizontal = 8.dp),
+            horizontalAlignment = Alignment.Start
+        )
+        UserOverviewItem(
+            title = { Text("${overview.posts}") },
+            subTitle = { Text(stringResource(eu.peernetwork.user.ui.R.string.post_label)) },
             modifier = Modifier.padding(horizontal = 8.dp),
             horizontalAlignment = Alignment.Start
         )

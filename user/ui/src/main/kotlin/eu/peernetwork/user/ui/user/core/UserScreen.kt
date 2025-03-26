@@ -27,9 +27,9 @@ import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.user.ui.model.UiAccount
 import eu.peernetwork.user.ui.model.UiOverview
-import eu.peernetwork.user.ui.user.component.UserAvatar
-import eu.peernetwork.user.ui.user.component.UserDetail
-import eu.peernetwork.user.ui.user.component.UserOverview
+import eu.peernetwork.user.ui.user.compose.UserAvatar
+import eu.peernetwork.user.ui.user.compose.UserDetail
+import eu.peernetwork.user.ui.user.compose.UserOverview
 
 @Composable
 fun UserScreen(
