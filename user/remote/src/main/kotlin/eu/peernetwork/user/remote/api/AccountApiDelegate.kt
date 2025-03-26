@@ -6,10 +6,10 @@ import eu.peernetwork.core.remote.extension.assertOrThrow
 import eu.peernetwork.core.remote.extension.executeOrThrow
 import eu.peernetwork.core.remote.extension.getOrThrow
 import eu.peernetwork.user.data.api.AccountApi
+import eu.peernetwork.user.data.model.AccountModel
 import eu.peernetwork.user.domain.exception.AccountNotFoundException
 import eu.peernetwork.user.domain.exception.UserRegistrationException
-import eu.peernetwork.user.domain.model.Account
-import eu.peernetwork.user.domain.model.AccountDetail
+import eu.peernetwork.user.domain.model.UserDetail
 import eu.peernetwork.user.remote.mapper.mapToDomain
 import protected.eu.peernetwork.user.remote.DeleteAccountMutation
 import `protected`.eu.peernetwork.user.remote.ProfileQuery
@@ -17,19 +17,22 @@ import protected.eu.peernetwork.user.remote.UpdatePasswordMutation
 import public.eu.peernetwork.user.remote.RegisterMutation
 import public.eu.peernetwork.user.remote.VerifiedAccountMutation
 import javax.inject.Inject
+import javax.inject.Named
 
 class AccountApiDelegate @Inject constructor(
+    @Named("mediaUrl") private val url: String,
     private val client: ApolloClient
 ) : AccountApi {
-    override suspend fun get(id: String): Account {
+    override suspend fun get(id: String): AccountModel {
         val query = ProfileQuery(Optional.present(id))
         val response = client.query(query).executeOrThrow()
         val data = response.getOrThrow().profile
         response.assertOrThrow(data.status, data.ResponseCode)
-        return data.affectedRows?.mapToDomain() ?: throw AccountNotFoundException()
+        val account = data.affectedRows?.mapToDomain()
+        return account?.copy(imageUrl = "$url${account.imageUrl}") ?: throw AccountNotFoundException()
     }
 
-    override suspend fun register(detail: AccountDetail): String {
+    override suspend fun register(detail: UserDetail): String {
         val mutation = RegisterMutation(
             email = detail.email,
             username = detail.username,

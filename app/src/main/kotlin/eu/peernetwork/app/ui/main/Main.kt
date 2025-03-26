@@ -6,13 +6,14 @@ import dagger.android.AndroidInjector
 import eu.peernetwork.app.ui.home.Home
 import eu.peernetwork.app.ui.setup.Setup
 import eu.peernetwork.app.ui.splash.Splash
+import eu.peernetwork.core.common.provider.CoreProvider
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.persistence.domain.provider.PreferenceProvider
 import eu.peernetwork.user.domain.provider.AccountProvider
 import eu.peernetwork.user.domain.provider.AuthenticationProvider
 
-interface Main : AccountProvider, AuthenticationProvider, PreferenceProvider {
+interface Main : CoreProvider, AccountProvider, AuthenticationProvider, PreferenceProvider {
     @javax.inject.Scope
     @Retention(AnnotationRetention.RUNTIME)
     annotation class Scope

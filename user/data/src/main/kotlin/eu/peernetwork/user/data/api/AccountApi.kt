@@ -1,12 +1,12 @@
 package eu.peernetwork.user.data.api
 
-import eu.peernetwork.user.domain.model.Account
-import eu.peernetwork.user.domain.model.AccountDetail
+import eu.peernetwork.user.data.model.AccountModel
+import eu.peernetwork.user.domain.model.UserDetail
 
 interface AccountApi {
-    suspend fun get(id: String): Account
+    suspend fun get(id: String): AccountModel
 
-    suspend fun register(detail: AccountDetail): String
+    suspend fun register(detail: UserDetail): String
 
     suspend fun changePassword(old: String, new: String)
 

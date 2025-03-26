@@ -15,7 +15,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ChainStyle
 import androidx.constraintlayout.compose.ConstraintLayout
-import eu.peernetwork.core.ui.compose.FlexBox
+import eu.peernetwork.core.ui.compose.DesignBox
 import eu.peernetwork.core.ui.theme.PeerTheme
 
 @Composable
@@ -36,7 +36,7 @@ fun SetupScaffold(
                 bottom.linkTo(sectionTag.top)
             },
         ) { header() }
-        FlexBox(
+        DesignBox(
             minHeight = 0.45f,
             contentAlignment = Alignment.TopCenter,
             modifier = Modifier.constrainAs(sectionTag) {

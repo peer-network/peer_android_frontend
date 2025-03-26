@@ -7,7 +7,6 @@ android {
         versionCode = 1
         versionName = "1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        buildConfigField("String", "BASE_URL", "\"https://peer-network.eu/graphql\"")
         vectorDrawables {
             useSupportLibrary = true
         }
@@ -17,11 +16,15 @@ android {
             isMinifyEnabled = false
             applicationIdSuffix = ".debug"
             versionNameSuffix = "-DEBUG"
+            buildConfigField("String", "BASE_URL", "\"https://getpeer.eu\"")
+            buildConfigField("String", "MEDIA_URL", "\"https://media.getpeer.eu\"")
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
         release {
             isMinifyEnabled = true
             isShrinkResources = true
+            buildConfigField("String", "BASE_URL", "\"https://peernetwork.eu\"")
+            buildConfigField("String", "MEDIA_URL", "\"https://media.peernetwork.eu\"")
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }

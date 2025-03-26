@@ -18,6 +18,7 @@ import io.mockk.slot
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
+import public.eu.peernetwork.user.remote.HelloQuery
 import public.eu.peernetwork.user.remote.LoginMutation
 import public.eu.peernetwork.user.remote.RefreshTokenMutation
 import java.util.UUID
@@ -34,6 +35,26 @@ internal class AuthenticationApiDelegateTest {
     @Before
     fun setup() {
         api = AuthenticationApiDelegate(client, listener)
+    }
+
+    @Test
+    fun `test authenticated user`(): Unit = runBlocking {
+        val id = "<test-current-user-id>"
+        val user = HelloQuery.Hello(id)
+        val mockData = mockk<HelloQuery.Data>()
+        val operation = mockk<Operation<HelloQuery.Data>>(relaxed = true)
+        val mockResponse = ApolloResponse.Builder(
+            operation,
+            UUID.randomUUID(),
+            mockData
+        ).build()
+
+        every { mockData.hello } returns user
+        coEvery { client.query(any<HelloQuery>()).execute() } returns mockResponse
+
+        val result = api.authenticated()
+
+        assertEquals(result, id)
     }
 
     @Test

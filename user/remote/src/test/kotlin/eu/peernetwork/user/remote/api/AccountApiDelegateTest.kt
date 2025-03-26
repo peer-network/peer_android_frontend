@@ -23,13 +23,15 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
 internal class AccountApiDelegateTest {
+    private val url = "http://locahost"
+
     private val client = mockk<ApolloClient>()
 
     private lateinit var api: AccountApi
 
     @Before
     fun setup() {
-        api = AccountApiDelegate(client)
+        api = AccountApiDelegate(url, client)
     }
 
     @Test

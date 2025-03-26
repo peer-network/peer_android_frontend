@@ -5,13 +5,29 @@ import dagger.Module
 import dagger.Provides
 import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.user.remote.interceptor.JwtInterceptor
+import okhttp3.OkHttpClient
+import javax.inject.Named
 
 @Module
 internal object NetworkModule {
     @Provides
-    fun provideApolloClient(jwtInterceptor: JwtInterceptor): ApolloClient {
+    @Named("baseUrl")
+    fun provideBaseUrl(): String = BuildConfig.BASE_URL
+
+    @Provides
+    @Named("mediaUrl")
+    fun provideMediaUrl(): String = BuildConfig.MEDIA_URL
+
+    @Provides
+    fun provideOkHttpClient(): OkHttpClient = OkHttpClient()
+
+    @Provides
+    fun provideApolloClient(
+        @Named("baseUrl") baseUrl: String,
+        jwtInterceptor: JwtInterceptor
+    ): ApolloClient {
         return ApolloClient.Builder()
-            .serverUrl(BuildConfig.BASE_URL)
+            .serverUrl("$baseUrl/graphql")
             .addInterceptor(jwtInterceptor)
             .build()
     }

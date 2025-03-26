@@ -2,8 +2,6 @@ package eu.peernetwork.app.ui.main
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import app.cash.turbine.test
-import eu.peernetwork.persistence.domain.publishable.PublishableBoolean
-import eu.peernetwork.persistence.domain.retrievable.RetrievableBoolean
 import eu.peernetwork.user.domain.model.Token
 import eu.peernetwork.user.domain.usecase.TokenObserverUsecase
 import io.mockk.every
@@ -29,13 +27,7 @@ internal class MainViewModelTest {
 
     private val tokenObserverUsecase = mockk<TokenObserverUsecase>()
 
-    private val retrievableBoolean = mockk<RetrievableBoolean>()
-
-    private val publishable = mockk<PublishableBoolean>()
-
     private val tokenObserver = MutableSharedFlow<Token?>(replay = 1)
-
-    private val sessionObserver = MutableSharedFlow<Boolean?>(replay = 1)
 
     private lateinit var viewModel: MainViewModel
 
@@ -45,11 +37,9 @@ internal class MainViewModelTest {
     fun setup() {
         Dispatchers.setMain(dispatcher)
 
-        sessionObserver.tryEmit(null)
-
         every { tokenObserverUsecase() } returns tokenObserver
 
-        viewModel = MainViewModel(tokenObserverUsecase, retrievableBoolean, publishable)
+        viewModel = MainViewModel(tokenObserverUsecase)
     }
 
     @After
@@ -71,18 +61,8 @@ internal class MainViewModelTest {
     @Test
     fun `test setup state`() = runTest {
         tokenObserver.tryEmit(null)
-        every { retrievableBoolean(any()) } returns false
         viewModel.state.test {
-            assertEquals(MainViewModel.State.Startup(false), awaitItem())
-        }
-    }
-
-    @Test
-    fun `test setup with registration`() = runTest {
-        tokenObserver.tryEmit(null)
-        every { retrievableBoolean(any()) } returns true
-        viewModel.state.test {
-            assertEquals(MainViewModel.State.Startup(true), awaitItem())
+            assertEquals(MainViewModel.State.Startup, awaitItem())
         }
     }
 

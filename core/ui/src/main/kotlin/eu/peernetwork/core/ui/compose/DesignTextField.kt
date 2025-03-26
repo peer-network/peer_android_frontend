@@ -51,12 +51,12 @@ object DesignTextFieldColors {
     @Composable
     internal fun colors(): TextFieldColors {
         return TextFieldDefaults.colors(
-            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceBright,
-            focusedContainerColor = MaterialTheme.colorScheme.surfaceDim,
-            focusedTextColor = MaterialTheme.colorScheme.surfaceTint,
-            unfocusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
-            focusedPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = .5f),
-            unfocusedPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            unfocusedContainerColor = MaterialTheme.colorScheme.tertiaryContainer,
+            focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+            focusedTextColor = MaterialTheme.colorScheme.onBackground,
+            unfocusedTextColor = MaterialTheme.colorScheme.tertiary,
+            focusedPlaceholderColor = MaterialTheme.colorScheme.tertiary,
+            unfocusedPlaceholderColor = MaterialTheme.colorScheme.onBackground,
         )
     }
 }

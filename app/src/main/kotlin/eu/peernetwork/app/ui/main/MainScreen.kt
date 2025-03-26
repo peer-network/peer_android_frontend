@@ -3,7 +3,6 @@ package eu.peernetwork.app.ui.main
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -13,7 +12,6 @@ import androidx.navigation.compose.rememberNavController
 import eu.peernetwork.app.ui.home.HomeScreen
 import eu.peernetwork.app.ui.setup.SetupScreen
 import eu.peernetwork.app.ui.splash.SplashScreen
-import eu.peernetwork.core.ui.extension.attach
 import eu.peernetwork.core.ui.extension.attachIfNecessary
 
 @Composable
@@ -28,14 +26,11 @@ fun MainScreen(
         factory = component.viewModelFactory()
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val isRegistration = remember(state) {
-        (state as? MainViewModel.State.Startup?)?.isRegistration == true
-    }
     LaunchedEffect(state) {
         when(state) {
             is MainViewModel.State.Splash -> controller.attachIfNecessary("splash")
             is MainViewModel.State.Startup -> controller.attachIfNecessary("startup")
-            is MainViewModel.State.Home -> controller.attach("home")
+            is MainViewModel.State.Home -> controller.attachIfNecessary("home")
         }
     }
     NavHost(navController = controller, startDestination = "splash") {
@@ -43,9 +38,7 @@ fun MainScreen(
         composable("startup") {
             SetupScreen(
                 provider = component,
-                viewModelStoreOwner = viewModelStoreOwner,
-                isRegistration = isRegistration,
-                onOptionChange = { viewModel.showRegistration(it) }
+                viewModelStoreOwner = viewModelStoreOwner
             )
         }
         composable("home") { HomeScreen(component, viewModelStoreOwner) }

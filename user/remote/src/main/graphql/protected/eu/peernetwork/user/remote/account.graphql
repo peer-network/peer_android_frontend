@@ -8,6 +8,10 @@ query Profile($userid: ID) {
             username
             img
             biography
+            amountfollowed
+            amountfollower
+            amountposts
+            amountfriends
         }
     }
 }

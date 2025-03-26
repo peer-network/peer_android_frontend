@@ -9,8 +9,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.MutableIntState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -19,10 +20,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.ViewModelStoreOwner
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.compose.DesignContainer
 import eu.peernetwork.core.ui.extension.builder
-import eu.peernetwork.core.ui.extension.toInt
 import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.user.ui.login.LoginScreen
 import eu.peernetwork.user.ui.registeration.RegistrationScreen
@@ -30,33 +32,33 @@ import eu.peernetwork.user.ui.registeration.RegistrationScreen
 @Composable
 fun SetupScreen(
     provider: UiComponentProvider,
-    viewModelStoreOwner: ViewModelStoreOwner,
-    isRegistration: Boolean,
-    onOptionChange: (Boolean) -> Unit,
+    viewModelStoreOwner: ViewModelStoreOwner
 ) {
     val context = LocalContext.current
-    var isRegistrationState = remember { mutableStateOf(isRegistration) }
     val component = remember {
         provider.builder(Setup.Builder::class.java).build(context)
     }
+    val viewModel = viewModel(
+        modelClass = SetupViewModel::class.java,
+        viewModelStoreOwner = viewModelStoreOwner,
+        factory = component.viewModelFactory()
+    )
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    val contentState = rememberSaveable { mutableIntStateOf(state.page) }
     DesignContainer {
         SetupScaffold(
-            header = {
-                SetupHeader(
-                    state = isRegistrationState
-                )
-            },
+            header = { SetupHeader(state = contentState) },
             footer = { SetupFooter(onPrivacy = {}) }
         ) {
             SetupContent(
-                page = isRegistrationState,
+                state = contentState,
                 register = { RegistrationScreen(
                     component,
                     viewModelStoreOwner,
-                    onRegistrationSuccess = { isRegistrationState.value = false }
+                    onRegistrationSuccess = { contentState.intValue = 0 }
                 ) },
                 login = { LoginScreen(component, viewModelStoreOwner) },
-                onOptionChange = onOptionChange
+                onOptionChange = { viewModel.lastVisited(it) }
             )
         }
     }
@@ -64,14 +66,14 @@ fun SetupScreen(
 
 @Composable
 fun SetupContent(
-    page: MutableState<Boolean>,
+    state: MutableIntState,
     register: @Composable () -> Unit,
     login: @Composable () -> Unit,
-    onOptionChange: (Boolean) -> Unit,
+    onOptionChange: (Int) -> Unit,
 ) {
-    val state = rememberPagerState(pageCount = { 2 }, initialPage = page.value.toInt())
+    val contentState = rememberPagerState(pageCount = { 2 }, initialPage = state.intValue)
     HorizontalPager(
-        state = state,
+        state = contentState,
         verticalAlignment = Alignment.Top,
         userScrollEnabled = false
     ) { page ->
@@ -82,25 +84,25 @@ fun SetupContent(
             }
         }
     }
-    LaunchedEffect(page.value) {
-        onOptionChange(page.value)
-        state.scrollToPage(page.value.toInt())
+    LaunchedEffect(state.intValue) {
+        state.intValue.run {
+            onOptionChange(this)
+            contentState.scrollToPage(this)
+        }
     }
 }
 
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun PreviewSetupScreen() {
-    val isRegistration = remember { mutableStateOf(false) }
+    val state = rememberSaveable { mutableIntStateOf(1) }
     PeerTheme {
         SetupScaffold(
-            header = {
-                SetupHeader(state = rememberSaveable { mutableStateOf(false) })
-            },
+            header = { SetupHeader(state = state) },
             footer = { SetupFooter(onPrivacy = {}) },
         ) {
             SetupContent(
-                page = isRegistration,
+                state = state,
                 register = {
                     Text(
                         text = "Register",

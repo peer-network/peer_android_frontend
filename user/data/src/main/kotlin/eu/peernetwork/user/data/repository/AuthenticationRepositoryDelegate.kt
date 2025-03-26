@@ -7,6 +7,10 @@ import javax.inject.Inject
 class AuthenticationRepositoryDelegate @Inject constructor(
     private val api: AuthenticationApi
 ) : AuthenticationRepository {
+    override suspend fun authenticated(): String {
+        return api.authenticated()
+    }
+
     override suspend fun login(email: String, password: String): String {
         return api.login(email, password)
     }

@@ -15,8 +15,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.MutableIntState
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,7 +35,7 @@ import eu.peernetwork.core.ui.theme.PeerTheme
 
 @Composable
 fun SetupHeader(
-    state: MutableState<Boolean>,
+    state: MutableIntState,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -55,9 +55,9 @@ fun SetupHeader(
         )
         Text(
             text = stringResource(id = R.string.slogan_text)
-                .annotate(mapOf(stringResource(id = R.string.app_name) to SpanStyle(
+                .annotate(stringResource(id = R.string.app_name), SpanStyle(
                     fontWeight = FontWeight.Bold
-                ))),
+                )),
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onBackground,
             style = MaterialTheme.typography.bodyMedium.copy(fontStyle = FontStyle.Italic),
@@ -67,7 +67,7 @@ fun SetupHeader(
         )
         Row(modifier = Modifier.padding(vertical = 16.dp)) {
             TextButton(
-                onClick = { state.value = false },
+                onClick = { state.intValue = 0 },
                 modifier = Modifier.padding(end = 8.dp)
             ) {
                 Box {
@@ -78,7 +78,7 @@ fun SetupHeader(
                             fontWeight = FontWeight.Normal
                         ),
                         modifier = Modifier.graphicsLayer {
-                            alpha = if (state.value) 1f else 0f
+                            alpha = if (state.intValue == 0) 0f else 1f
                         }
                     )
                     Text(
@@ -88,7 +88,7 @@ fun SetupHeader(
                             fontWeight = FontWeight.Bold
                         ),
                         modifier = Modifier.graphicsLayer {
-                            alpha = if (state.value) 0f else 1f
+                            alpha = if (state.intValue == 0) 1f else 0f
                         }
                     )
                 }
@@ -101,7 +101,7 @@ fun SetupHeader(
                     .align(Alignment.CenterVertically)
             )
             TextButton(
-                onClick = { state.value = true },
+                onClick = { state.intValue = 1 },
                 modifier = Modifier.padding(start = 8.dp)
             ) {
                 Box {
@@ -112,7 +112,7 @@ fun SetupHeader(
                             fontWeight = FontWeight.Normal
                         ),
                         modifier = Modifier.graphicsLayer {
-                            alpha = if (state.value) 0f else 1f
+                            alpha = if (state.intValue == 0) 1f else 0f
                         }
                     )
                     Text(
@@ -122,7 +122,7 @@ fun SetupHeader(
                             fontWeight = FontWeight.Bold
                         ),
                         modifier = Modifier.graphicsLayer {
-                            alpha = if (state.value) 1f else 0f
+                            alpha = if (state.intValue == 0) 0f else 1f
                         }
                     )
                 }
@@ -135,6 +135,6 @@ fun SetupHeader(
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun PreviewSetupHeader() {
     PeerTheme {
-        SetupHeader(state = rememberSaveable { mutableStateOf(true) })
+        SetupHeader(state = rememberSaveable { mutableIntStateOf(0) })
     }
 }

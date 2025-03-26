@@ -1,0 +1,11 @@
+query Dailyfreestatus {
+    dailyfreestatus {
+        status
+        ResponseCode
+        affectedRows {
+            name
+            used
+            available
+        }
+    }
+}
