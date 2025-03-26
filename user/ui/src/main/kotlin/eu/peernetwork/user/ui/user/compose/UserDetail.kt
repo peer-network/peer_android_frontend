@@ -1,4 +1,4 @@
-package eu.peernetwork.user.ui.user.component
+package eu.peernetwork.user.ui.user.compose
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
