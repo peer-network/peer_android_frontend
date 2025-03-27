@@ -13,10 +13,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ButtonElevation
 import androidx.compose.material3.LocalContentColor
@@ -46,6 +46,12 @@ fun DesignButton(
     enabled: Boolean = true,
     isLoading: Boolean = false,
     shape: Shape = RoundedCornerShape(16.dp),
+    colors: ButtonColors = ButtonDefaults.buttonColors(
+        containerColor = Color.Transparent,
+        disabledContainerColor = Color.Transparent,
+        contentColor = MaterialTheme.colorScheme.onPrimary,
+        disabledContentColor = MaterialTheme.colorScheme.tertiary
+    ),
     elevation: ButtonElevation? = ButtonDefaults.buttonElevation(),
     border: BorderStroke? = null,
     durationMillis: Int = 1000,
@@ -65,15 +71,11 @@ fun DesignButton(
     Button(
         onClick = clickHandler,
         modifier = modifier
-            .height(48.dp)
             .clip(shape)
             .background(brush = gradient),
         enabled = enabled,
         shape = shape,
-        colors = ButtonDefaults.buttonColors(
-            containerColor = Color.Transparent,
-            disabledContainerColor = Color.Transparent
-        ),
+        colors = colors,
         elevation = elevation,
         border = border,
         contentPadding = contentPadding,

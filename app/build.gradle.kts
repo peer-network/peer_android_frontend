@@ -26,6 +26,7 @@ android {
             buildConfigField("String", "BASE_URL", "\"https://peernetwork.eu\"")
             buildConfigField("String", "MEDIA_URL", "\"https://media.peernetwork.eu\"")
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
     buildFeatures {

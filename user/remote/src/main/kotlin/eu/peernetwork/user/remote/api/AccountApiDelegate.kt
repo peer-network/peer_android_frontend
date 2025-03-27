@@ -29,7 +29,9 @@ class AccountApiDelegate @Inject constructor(
         val data = response.getOrThrow().profile
         response.assertOrThrow(data.status, data.ResponseCode)
         val account = data.affectedRows?.mapToDomain()
-        return account?.copy(imageUrl = "$url${account.imageUrl}") ?: throw AccountNotFoundException()
+        return account?.copy(
+            imageUrl = "$url${account.imageUrl}?q=${System.currentTimeMillis()}"
+        ) ?: throw AccountNotFoundException()
     }
 
     override suspend fun register(detail: UserDetail): String {

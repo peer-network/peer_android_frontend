@@ -97,8 +97,7 @@ fun UserContent(
         options = {
             UserOverview(
                 overview = account.overview,
-                modifier = Modifier.padding(end = 8.dp)
-                    .fillMaxWidth()
+                modifier = Modifier.fillMaxWidth()
             )
         }
     ) {

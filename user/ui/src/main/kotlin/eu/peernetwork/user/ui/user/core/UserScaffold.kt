@@ -45,7 +45,7 @@ fun UserScaffold(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 12.dp, bottom = 4.dp)
+                    .padding(top = 8.dp, bottom = 4.dp)
             ) { options?.invoke() }
         }) { Box(modifier = Modifier
         .weight(1f)

@@ -13,7 +13,10 @@ dependencies {
     implementation(project(":core:common"))
     implementation(project(":core:ui"))
 
+    implementation(project(":persistence:domain"))
     implementation(project(":user:domain"))
+
+    implementation(libs.ucrop)
 
     implementation(libs.dagger)
     ksp(libs.dagger.compiler)
