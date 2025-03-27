@@ -4,19 +4,20 @@ import dagger.Binds
 import dagger.MapKey
 import dagger.Module
 import dagger.multibindings.IntoMap
+import eu.peernetwork.app.api.AvatarApi
+import eu.peernetwork.app.api.BiographyApi
 import eu.peernetwork.user.data.api.SettingsApi
 import eu.peernetwork.user.data.provider.SettingsProvider
-import eu.peernetwork.user.remote.api.AvatarSettingsApi
-import eu.peernetwork.user.remote.api.BiographySettingsApi
 import eu.peernetwork.user.remote.api.EmailSettingsApi
 import eu.peernetwork.user.remote.api.UsernameSettingsApi
 import eu.peernetwork.user.remote.provider.SettingsProviderDelegate
+import eu.peernetwork.user.ui.user.settings.UserSettingsModel
 
 @Module
 internal interface SettingsModule {
     @Binds
     @IntoMap
-    @Settings("username")
+    @Settings(UserSettingsModel.USERNAME)
     fun bindUsernameSettingsApi(api: UsernameSettingsApi): SettingsApi<*>
 
     @Binds
@@ -26,13 +27,13 @@ internal interface SettingsModule {
 
     @Binds
     @IntoMap
-    @Settings("bio")
-    fun bindBiographySettingsApi(api: BiographySettingsApi): SettingsApi<*>
+    @Settings(UserSettingsModel.BIO)
+    fun bindBiographySettingsApi(api: BiographyApi): SettingsApi<*>
 
     @Binds
     @IntoMap
-    @Settings("avatar")
-    fun bindAvatarSettingsApi(api: AvatarSettingsApi): SettingsApi<*>
+    @Settings(UserSettingsModel.AVATAR)
+    fun bindBiographyApi(api: AvatarApi): SettingsApi<*>
 
     @Binds
     fun bindSettingsProvider(delegate: SettingsProviderDelegate): SettingsProvider

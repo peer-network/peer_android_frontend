@@ -10,6 +10,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -35,6 +36,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Brush
@@ -55,8 +57,8 @@ object DesignTextFieldColors {
             focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
             focusedTextColor = MaterialTheme.colorScheme.onBackground,
             unfocusedTextColor = MaterialTheme.colorScheme.tertiary,
-            focusedPlaceholderColor = MaterialTheme.colorScheme.tertiary,
-            unfocusedPlaceholderColor = MaterialTheme.colorScheme.onBackground,
+            focusedPlaceholderColor = MaterialTheme.colorScheme.surfaceDim,
+            unfocusedPlaceholderColor = MaterialTheme.colorScheme.surfaceTint,
         )
     }
 }
@@ -78,6 +80,8 @@ fun DesignTextField(
     onKeyboardAction: KeyboardActionHandler? = null,
     lineLimits: TextFieldLineLimits = TextFieldLineLimits.SingleLine,
     onTextLayout: (Density.(getResult: () -> TextLayoutResult?) -> Unit)? = null,
+    horizontalArrangement: Arrangement.Horizontal = Arrangement.Start,
+    verticalAlignment: Alignment.Vertical = Alignment.CenterVertically,
     interactionSource: MutableInteractionSource? = null,
     decorator: TextFieldDecorator? = null,
     cursorBrush: Brush = SolidColor(MaterialTheme.colorScheme.primary),
@@ -141,6 +145,8 @@ fun DesignTextField(
             contentPadding = contentPadding,
             leading = leading,
             trailing = trailing,
+            horizontalArrangement = horizontalArrangement,
+            verticalAlignment = verticalAlignment
         ) {
             BasicTextField(
                 state = state,

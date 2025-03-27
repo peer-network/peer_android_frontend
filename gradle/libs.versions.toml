@@ -25,6 +25,7 @@ mockk = "1.12.4"
 mockk-jvm = "1.13.2"
 appcompat = "1.7.0"
 material = "1.12.0"
+ucrop = "2.2.9"
 
 [libraries]
 androidx-splash = { module = "androidx.core:core-splashscreen", version.ref = "androidx-splash" }
@@ -45,6 +46,7 @@ core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx
 coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+ucrop = { module = "com.github.yalantis:ucrop", version.ref = "ucrop" }
 graphql = { group = "com.apollographql.apollo3", name = "apollo-runtime", version.ref = "graphql" }
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 javax = { group = "javax.inject", name = "javax.inject", version.ref = "javax" }
