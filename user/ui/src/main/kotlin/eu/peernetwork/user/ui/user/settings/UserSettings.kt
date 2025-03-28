@@ -2,12 +2,10 @@ package eu.peernetwork.user.ui.user.settings
 
 import android.content.Context
 import androidx.lifecycle.ViewModelProvider
-import eu.peernetwork.core.common.provider.CoreProvider
 import eu.peernetwork.core.ui.component.UiComponent
-import eu.peernetwork.user.domain.provider.AccountProvider
-import eu.peernetwork.user.domain.provider.AuthenticationProvider
+import eu.peernetwork.user.ui.provider.UserProvider
 
-interface UserSettings : CoreProvider, AccountProvider, AuthenticationProvider {
+interface UserSettings : UserProvider {
     @javax.inject.Scope
     @Retention(AnnotationRetention.RUNTIME)
     annotation class Scope

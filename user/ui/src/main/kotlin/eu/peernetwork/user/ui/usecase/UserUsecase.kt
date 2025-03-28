@@ -1,6 +1,6 @@
 package eu.peernetwork.user.ui.usecase
 
-import eu.peernetwork.core.common.provider.DispatcherProvider
+import eu.peernetwork.core.common.concurrent.Dispatcher
 import eu.peernetwork.core.common.usecase.ParameterizedSuspendableUseCase
 import eu.peernetwork.user.domain.model.Account
 import eu.peernetwork.user.domain.usecase.DescriptionUsecase
@@ -10,7 +10,7 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class UserUsecase @Inject constructor(
-    private val dispatcher: DispatcherProvider,
+    private val dispatcher: Dispatcher,
     private val descriptionUsecase: DescriptionUsecase,
 ) : ParameterizedSuspendableUseCase<Account, UiAccount?> {
     override suspend fun invoke(param: Account): UiAccount {

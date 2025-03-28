@@ -1,6 +1,6 @@
 package eu.peernetwork.user.ui.usecase
 
-import eu.peernetwork.core.common.provider.DispatcherProvider
+import eu.peernetwork.core.common.concurrent.Dispatcher
 import eu.peernetwork.core.common.usecase.ObservableUseCase
 import eu.peernetwork.user.domain.interactor.AuthenticationInteractor
 import eu.peernetwork.user.ui.model.UiAccount
@@ -10,7 +10,7 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class ObserveAuthUserUsecase @Inject constructor(
-    private val dispatcher: DispatcherProvider,
+    private val dispatcher: Dispatcher,
     private val interactor: AuthenticationInteractor,
     private val userUsecase: UserUsecase,
 ) : ObservableUseCase<UiAccount?> {

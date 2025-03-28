@@ -8,6 +8,7 @@
     <string name="email_label">E-mail</string>
     <string name="username_label">Username</string>
     <string name="password_label">Password</string>
+    <string name="description_label">Description</string>
 
     <string name="post_label">Posts</string>
     <string name="follower_label">Followers</string>
@@ -17,4 +18,5 @@
     <string name="description_placeholder">Write a description to your profile…</string>
 
     <string name="empty_description_message">Biography unavailable</string>
+    <string name="unknown_error_message">Oops! Unknown error occurred.</string>
 </resources>

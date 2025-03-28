@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -38,10 +37,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.core.ui.R
@@ -66,8 +64,9 @@ fun DesignOutlinedButton(
     easing: Easing = FastOutSlowInEasing,
     contentPadding: PaddingValues = ButtonDefaults.TextButtonContentPadding,
     interactionSource: MutableInteractionSource? = null,
-    content: @Composable () -> Unit,
-    ) {
+    textStyle: TextStyle = MaterialTheme.typography.bodyMedium,
+    content: @Composable () -> Unit
+) {
     val onClickState by rememberUpdatedState(onClick)
     val clickHandler = remember { { if (!isLoading) onClickState() } }
     OutlinedButton(
@@ -82,7 +81,6 @@ fun DesignOutlinedButton(
         interactionSource = interactionSource,
     ) {
         if (isLoading) {
-            val color = Color.DarkGray
             val infiniteTransition = rememberInfiniteTransition()
             val alpha by infiniteTransition.animateFloat(
                 initialValue = 1f,
@@ -95,11 +93,7 @@ fun DesignOutlinedButton(
             Text(
                 text = stringResource(id = R.string.loading_text),
                 modifier = Modifier.graphicsLayer { this.alpha = alpha },
-                color = color,
-                style = MaterialTheme.typography.bodyMedium.copy(
-                    fontWeight = FontWeight.Bold,
-                    color = color
-                )
+                style = textStyle
             )
         } else {
             content()

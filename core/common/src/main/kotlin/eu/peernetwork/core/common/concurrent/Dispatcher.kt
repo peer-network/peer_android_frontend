@@ -1,9 +1,13 @@
-package eu.peernetwork.core.common.provider
+package eu.peernetwork.core.common.concurrent
 
 import kotlinx.coroutines.CoroutineDispatcher
 
-interface DispatcherProvider {
+interface Dispatcher {
     val io: CoroutineDispatcher
     val main: CoroutineDispatcher
     val default: CoroutineDispatcher
+
+    interface Provider {
+        fun dispatcher(): Dispatcher
+    }
 }

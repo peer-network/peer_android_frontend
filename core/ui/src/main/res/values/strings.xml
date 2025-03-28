@@ -1,5 +1,5 @@
 <resources>
-    <string name="loading_text">Please wait…</string>
+    <string name="loading_text">Loading…</string>
 
     <string name="home_label">Friends</string>
     <string name="search_label">Search</string>

@@ -7,12 +7,10 @@ import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.persistence.domain.provider.PreferenceProvider
 import eu.peernetwork.app.ui.feed.Feed
-import eu.peernetwork.core.common.provider.CoreProvider
-import eu.peernetwork.user.domain.provider.AccountProvider
-import eu.peernetwork.user.domain.provider.AuthenticationProvider
+import eu.peernetwork.user.ui.provider.UserProvider
 import eu.peernetwork.user.ui.user.point.UserPoint
 
-interface Home : CoreProvider, AccountProvider, AuthenticationProvider, PreferenceProvider {
+interface Home : UserProvider, PreferenceProvider {
     @javax.inject.Scope
     @Retention(AnnotationRetention.RUNTIME)
     annotation class Scope
