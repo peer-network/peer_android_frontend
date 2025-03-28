@@ -2,14 +2,13 @@ package eu.peernetwork.app.ui.profile.flow
 
 import android.content.Context
 import eu.peernetwork.app.ui.profile.preview.ProfilePreview
-import eu.peernetwork.core.common.provider.CoreProvider
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.user.domain.provider.AccountProvider
-import eu.peernetwork.user.domain.provider.AuthenticationProvider
+import eu.peernetwork.persistence.domain.provider.PreferenceProvider
+import eu.peernetwork.user.ui.provider.UserProvider
 import eu.peernetwork.user.ui.user.settings.UserSettings
 
-interface Profile : CoreProvider, AccountProvider, AuthenticationProvider {
+interface Profile : UserProvider, PreferenceProvider {
     @javax.inject.Scope
     @Retention(AnnotationRetention.RUNTIME)
     annotation class Scope

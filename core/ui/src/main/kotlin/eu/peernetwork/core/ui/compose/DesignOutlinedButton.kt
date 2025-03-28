@@ -16,11 +16,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ButtonElevation
 import androidx.compose.material3.Icon
@@ -37,10 +37,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.core.ui.R
@@ -52,39 +51,36 @@ fun DesignOutlinedButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     isLoading: Boolean = false,
-    shape: Shape = RoundedCornerShape(22.dp),
+    shape: Shape = RoundedCornerShape(16.dp),
     elevation: ButtonElevation? = ButtonDefaults.buttonElevation(),
     durationMillis: Int = 1000,
-    border: BorderStroke = BorderStroke(1.dp, Color.DarkGray),
+    colors: ButtonColors = ButtonDefaults.buttonColors(
+        containerColor = Color.Transparent,
+        disabledContainerColor = Color.Transparent,
+        contentColor = MaterialTheme.colorScheme.tertiary,
+        disabledContentColor = MaterialTheme.colorScheme.surfaceTint
+    ),
+    border: BorderStroke = BorderStroke(1.dp, MaterialTheme.colorScheme.surfaceTint),
     easing: Easing = FastOutSlowInEasing,
     contentPadding: PaddingValues = ButtonDefaults.TextButtonContentPadding,
     interactionSource: MutableInteractionSource? = null,
-    icon: Painter? = null,
-    content: @Composable () -> Unit,
-    ) {
-
+    textStyle: TextStyle = MaterialTheme.typography.bodyMedium,
+    content: @Composable () -> Unit
+) {
     val onClickState by rememberUpdatedState(onClick)
     val clickHandler = remember { { if (!isLoading) onClickState() } }
-
     OutlinedButton(
         onClick = clickHandler,
-        modifier = modifier
-            .height(44.dp)
-            .clip(shape),
+        modifier = modifier.clip(shape),
         enabled = enabled,
         shape = shape,
-        colors = ButtonDefaults.buttonColors(
-            containerColor = Color.Transparent,
-            disabledContainerColor = Color.Transparent,
-            contentColor = Color.DarkGray
-        ),
+        colors = colors,
         elevation = elevation,
         border = border,
         contentPadding = contentPadding,
         interactionSource = interactionSource,
     ) {
         if (isLoading) {
-            val color = Color.DarkGray
             val infiniteTransition = rememberInfiniteTransition()
             val alpha by infiniteTransition.animateFloat(
                 initialValue = 1f,
@@ -97,11 +93,7 @@ fun DesignOutlinedButton(
             Text(
                 text = stringResource(id = R.string.loading_text),
                 modifier = Modifier.graphicsLayer { this.alpha = alpha },
-                color = color,
-                style = MaterialTheme.typography.bodyMedium.copy(
-                    fontWeight = FontWeight.Bold,
-                    color = color
-                )
+                style = textStyle
             )
         } else {
             content()
@@ -117,7 +109,6 @@ fun PreviewDesignOutlinedButton() {
             DesignOutlinedButton(
                 onClick = {},
                 modifier = Modifier.padding(top = 16.dp),
-                icon = painterResource(id = R.drawable.ic_like)
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -138,7 +129,6 @@ fun PreviewDesignOutlinedButton() {
                 onClick = {},
                 isLoading = true,
                 modifier = Modifier.padding(top = 16.dp),
-                icon = painterResource(id = R.drawable.ic_add)
             ) {
                 Text("Follow")
             }

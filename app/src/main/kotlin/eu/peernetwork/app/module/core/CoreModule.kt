@@ -6,7 +6,7 @@ import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
 import eu.peernetwork.app.BuildConfig
-import eu.peernetwork.core.common.provider.DispatcherProvider
+import eu.peernetwork.core.common.concurrent.Dispatcher
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 
@@ -24,8 +24,8 @@ object CoreModule {
     }
 
     @Provides
-    fun provideDispatcher(): DispatcherProvider {
-        return object : DispatcherProvider {
+    fun provideDispatcher(): Dispatcher {
+        return object : Dispatcher {
             override val io: CoroutineDispatcher = Dispatchers.IO
             override val main: CoroutineDispatcher = Dispatchers.Main
             override val default: CoroutineDispatcher = Dispatchers.Default

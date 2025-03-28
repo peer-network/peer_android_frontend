@@ -35,7 +35,7 @@ fun UserPointScreen(
     ) }
     Crossfade(targetState = points.value) {
         when (it) {
-            null -> { Box {} }
+            null -> Box {}
             else -> UserPointBadge(it)
         }
     }

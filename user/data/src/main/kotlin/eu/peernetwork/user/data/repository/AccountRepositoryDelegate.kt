@@ -14,8 +14,8 @@ class AccountRepositoryDelegate @Inject constructor(
     private val api: AccountApi,
     private val provider: SettingsProvider
 ) : AccountRepository {
-    override suspend fun get(id: String): Account {
-        return api.get(id).mapToDomain()
+    override suspend fun get(id: String, refresh: Boolean): Account {
+        return api.get(id, refresh).mapToDomain()
     }
 
     override suspend fun register(detail: UserDetail): String {

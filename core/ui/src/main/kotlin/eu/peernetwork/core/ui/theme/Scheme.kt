@@ -10,12 +10,17 @@ internal val DarkScheme = darkColorScheme(
     background = Gray5,
     surface = Gray5,
     surfaceVariant = Gray10,
+    surfaceDim = Gray60,
+    surfaceTint = Gray50,
     onPrimary = White,
     onSecondary = Black,
     onBackground = White,
     onSurface = White,
     onTertiary = Gray5,
     tertiaryContainer = Gray,
+    error = PeerAppDarkRed,
+    errorContainer = PeerAppRed,
+    onError = White
 )
 
 internal val LightScheme = lightColorScheme(
@@ -25,10 +30,15 @@ internal val LightScheme = lightColorScheme(
     background = White,
     surface = White,
     surfaceVariant = White70,
+    surfaceDim = Gray60,
+    surfaceTint = Gray50,
     onPrimary = White,
     onSecondary = White,
     onBackground = Black,
     onSurface = Black,
     onTertiary = LightGray,
     tertiaryContainer = White80,
+    error = PeerAppDarkRed,
+    errorContainer = PeerAppRed,
+    onError = White
 )
