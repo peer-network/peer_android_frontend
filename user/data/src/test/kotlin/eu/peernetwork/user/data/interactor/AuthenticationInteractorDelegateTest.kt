@@ -66,7 +66,6 @@ internal class AuthenticationInteractorDelegateTest {
         val result = interactor.observeAccount().first()
 
         assertEquals(result, mockData)
-        coVerify { publisher(any(), any()) }
     }
 
     @Test

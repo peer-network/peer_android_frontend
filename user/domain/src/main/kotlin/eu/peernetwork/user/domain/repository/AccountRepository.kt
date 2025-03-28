@@ -4,7 +4,7 @@ import eu.peernetwork.user.domain.model.UserDetail
 import eu.peernetwork.user.domain.model.Account
 
 interface AccountRepository {
-    suspend fun get(id: String): Account
+    suspend fun get(id: String, refresh: Boolean = false): Account
 
     suspend fun register(detail: UserDetail): String
 

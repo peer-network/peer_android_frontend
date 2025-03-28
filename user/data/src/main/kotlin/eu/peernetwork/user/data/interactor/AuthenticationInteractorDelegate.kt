@@ -24,8 +24,8 @@ class AuthenticationInteractorDelegate @Inject constructor(
         gson.fromJson(it, Account::class.java)
     }
 
-    override suspend fun getCurrentAccount(): Account {
-        return repository.get(authenticationRepository.authenticated()).also {
+    override suspend fun getCurrentAccount(refresh: Boolean): Account {
+        return repository.get(authenticationRepository.authenticated(), refresh).also {
             publisher(tag, gson.toJson(it))
         }
     }

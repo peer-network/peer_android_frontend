@@ -23,15 +23,18 @@ class AccountApiDelegate @Inject constructor(
     @Named("mediaUrl") private val url: String,
     private val client: ApolloClient
 ) : AccountApi {
-    override suspend fun get(id: String): AccountModel {
+    override suspend fun get(id: String, refresh: Boolean): AccountModel {
         val query = ProfileQuery(Optional.present(id))
         val response = client.query(query).executeOrThrow()
         val data = response.getOrThrow().profile
         response.assertOrThrow(data.status, data.ResponseCode)
-        val account = data.affectedRows?.mapToDomain()
-        return account?.copy(
-            imageUrl = "$url${account.imageUrl}?q=${System.currentTimeMillis()}"
-        ) ?: throw AccountNotFoundException()
+        val account = data.affectedRows?.mapToDomain() ?: throw AccountNotFoundException()
+        val image = if (!refresh) {
+            "$url${account.imageUrl}"
+        } else {
+            "$url${account.imageUrl}?q=${System.currentTimeMillis()}"
+        }
+        return account.copy(imageUrl = image)
     }
 
     override suspend fun register(detail: UserDetail): String {
