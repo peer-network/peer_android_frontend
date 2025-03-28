@@ -54,7 +54,6 @@ fun DesignBottomSheet(
     )
     val scaffoldState = rememberBottomSheetScaffoldState(bottomSheetState = sheetState)
     val coroutineScope = rememberCoroutineScope()
-
     BottomSheetScaffold(
         scaffoldState = scaffoldState,
         sheetPeekHeight = sheetPeekHeight,
@@ -64,9 +63,7 @@ fun DesignBottomSheet(
                     .fillMaxWidth()
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
-            ) {
-                sheetContent()
-            }
+            ) { sheetContent() }
         },
         sheetSwipeEnabled = true,
         sheetDragHandle = {
@@ -87,10 +84,7 @@ fun DesignBottomSheet(
                 )
             }
         }
-    ) {
-        scaffoldContent()
-    }
-
+    ) { scaffoldContent() }
     LaunchedEffect(showSheet.value) {
         coroutineScope.launch {
             if (showSheet.value) {
@@ -100,7 +94,6 @@ fun DesignBottomSheet(
             }
         }
     }
-
     LaunchedEffect(scaffoldState.bottomSheetState.currentValue) {
         if (scaffoldState.bottomSheetState.currentValue == SheetValue.Hidden) {
             onDismissRequest()
@@ -114,7 +107,6 @@ fun PreviewDesignBottomSheet() {
     PeerTheme {
         var showSheet = remember { mutableStateOf(false) }
         val coroutineScope = rememberCoroutineScope()
-
         DesignBottomSheet(
             showSheet = showSheet,
             onDismissRequest = { showSheet.value = false },
