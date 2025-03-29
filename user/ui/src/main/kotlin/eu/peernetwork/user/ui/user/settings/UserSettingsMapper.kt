@@ -9,3 +9,15 @@ fun UiAccount.mapToModels(): List<UserSettingsModel> {
         UserSettingsModel.Description(bio ?: "")
     )
 }
+
+fun UiAccount.isPasswordRequired(model: List<UserSettingsModel>): Boolean {
+    val mapper = mapToModels().associateBy { it.name }
+    model.forEach {
+        if (mapper[it.name]?.value != it.value) {
+            if (it.protected) {
+                return true
+            }
+        }
+    }
+    return false
+}

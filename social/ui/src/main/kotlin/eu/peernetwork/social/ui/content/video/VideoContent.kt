@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -55,6 +56,7 @@ import eu.peernetwork.core.ui.compose.DesignOptionPosition
 import eu.peernetwork.core.ui.compose.DesignOutlinedButton
 import eu.peernetwork.core.ui.theme.PeerTheme
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VideoContent(
     username: MutableState<String>,
@@ -350,10 +352,11 @@ fun VideoContent(
     }
     if (showDescriptionSheet.value) {
         DesignBottomSheet(
+            tag = "videoBottomSheet",
             showSheet = showDescriptionSheet,
             onDismissRequest = { showDescriptionSheet.value = false },
             sheetPeekHeight = 300.dp,
-            sheetContent = {
+            content = {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -371,7 +374,6 @@ fun VideoContent(
                     )
                 }
             },
-            scaffoldContent = {}
         )
     }
 }

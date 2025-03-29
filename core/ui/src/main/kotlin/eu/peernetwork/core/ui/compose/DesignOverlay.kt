@@ -1,6 +1,11 @@
 package eu.peernetwork.core.ui.compose
 
-import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.AnimationConstants.DefaultDurationMillis
+import androidx.compose.animation.core.Easing
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,12 +15,18 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
@@ -36,7 +47,9 @@ interface DesignOverlayController {
 private interface DesignOverlayRegistry {
     fun get(tag: String): @Composable (() -> Unit)?
 
-    fun register(tag: String, zIndex: Float, show: Boolean, content: @Composable () -> Unit)
+    fun register(tag: String, zIndex: Float, visible: Boolean, content: @Composable () -> Unit)
+
+    fun clear(tag: String)
 }
 
 @Composable
@@ -65,18 +78,22 @@ fun DesignOverlay(modifier: Modifier = Modifier, content: @Composable () -> Unit
             override fun register(
                 tag: String,
                 zIndex: Float,
-                show: Boolean,
+                visible: Boolean,
                 content: @Composable (() -> Unit)
             ) {
-                require(!registry.containsKey(tag)) { "Tag $tag already registered" }
                 registry[tag] = zIndex to content
-                if (show) {
+                if (visible) {
                     routes.add(tag)
                 }
             }
 
             override fun get(tag: String): @Composable (() -> Unit)? {
                 return registry[tag]?.second
+            }
+
+            override fun clear(tag: String) {
+                routes.remove(tag)
+                registry.remove(tag)
             }
         }
     }
@@ -86,12 +103,10 @@ fun DesignOverlay(modifier: Modifier = Modifier, content: @Composable () -> Unit
     ) {
         Box(modifier) {
             content()
-            Crossfade(targetState = routes.lastOrNull()) { tag ->
-                tag?.let {
-                    key(it) {
-                        Box(Modifier.zIndex(registry[it]?.first ?: 1f)) {
-                            registry[it]?.second?.invoke()
-                        }
+            routes.filterNotNull().forEach { tag ->
+                key(tag) {
+                    Box(Modifier.zIndex(registry[tag]?.first ?: 1f)) {
+                        registry[tag]?.second?.invoke()
                     }
                 }
             }
@@ -102,18 +117,52 @@ fun DesignOverlay(modifier: Modifier = Modifier, content: @Composable () -> Unit
 @Composable
 fun DesignOverlayHost(
     tag: String,
-    show: Boolean = false,
-    builder: DesignOverlayBuilder.() -> Unit
+    visible: Boolean = false,
+    builder: DesignOverlayBuilder.() -> Unit,
 ) {
     val overlayRegistry = LocalDesignOverlayRegistry.current
     val overlayBuilder = remember {
         object : DesignOverlayBuilder {
             override fun overlay(zIndex: Float, content: @Composable () -> Unit) {
-                overlayRegistry.register(tag, zIndex, show, content)
+                overlayRegistry.register(tag, zIndex, visible, content)
             }
         }
     }
     builder(overlayBuilder)
+    DisposableEffect(Unit) {
+        onDispose {
+            overlayRegistry.clear(tag)
+        }
+    }
+}
+
+@Composable
+fun DesignOverlayBackground(
+    state: State<Boolean>,
+    modifier: Modifier = Modifier,
+    durationMillis: Int = DefaultDurationMillis,
+    delayMillis: Int = 0,
+    easing: Easing = FastOutSlowInEasing
+) {
+    val alpha by animateFloatAsState(
+        targetValue = if (state.value) 1f else 0f,
+        animationSpec = tween(
+            delayMillis = delayMillis,
+            durationMillis = durationMillis,
+            easing = easing
+        ),
+        label = "overlayAlphaAnimation"
+    )
+    Box(modifier = Modifier.graphicsLayer { this.alpha = alpha }) {
+        Box(modifier = modifier.graphicsLayer {
+            scaleX = if (state.value) {
+                1f
+            } else {
+                0f
+            }
+            scaleY = scaleX
+        }.pointerInput(Unit) {})
+    }
 }
 
 val LocalDesignOverlayController = staticCompositionLocalOf<DesignOverlayController> {
@@ -135,15 +184,22 @@ fun PreviewDesignOverlay() {
     PeerTheme {
         DesignOverlay(modifier = Modifier.fillMaxSize()) {
             val tag = "peer"
+            val state = remember { mutableStateOf(false) }
             val controller = rememberDesignOverlayController()
             Column {
                 Button(onClick = {
                     if (controller.isVisible(tag)) {
+                        state.value = false
                         controller.dismiss(tag)
                     } else {
+                        state.value = true
                         controller.show(tag)
                     }
                 }) { Text("toggle overlay") }
+                DesignOverlayBackground(
+                    state = state,
+                    modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)
+                )
                 DesignOverlayHost(tag, false) {
                     overlay {
                         Text("Hello, world!",

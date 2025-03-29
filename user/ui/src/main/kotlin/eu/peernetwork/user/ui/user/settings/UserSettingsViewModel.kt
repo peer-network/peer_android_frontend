@@ -44,8 +44,7 @@ class UserSettingsViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 handleUpdate(account, update, password)
-                refreshUsecase()
-                mutableState.tryEmit(State.Initial)
+                mutableState.tryEmit(State.Content(refreshUsecase()))
             } catch (error: Throwable) {
                 mutableState.tryEmit(State.Failure(error))
             }
@@ -56,11 +55,11 @@ class UserSettingsViewModel @Inject constructor(
 
     private suspend fun handleUpdate(
         account: UiAccount,
-        update: List<UserSettingsModel>,
+        model: List<UserSettingsModel>,
         password: String
     ) {
         val mapper = account.mapToModels().associateBy { it.name }
-        update.forEach {
+        model.forEach {
             if (mapper[it.name]?.value != it.value) {
                 it.value?.let { value ->
                     if (it.protected) {
@@ -79,7 +78,7 @@ class UserSettingsViewModel @Inject constructor(
         data object Loading : State
         data class Content(
             val account: UiAccount,
-            val processing: Boolean,
+            val processing: Boolean = false,
             val error: Throwable? = null
         ) : State
         data class Failure(val error: Throwable) : State
