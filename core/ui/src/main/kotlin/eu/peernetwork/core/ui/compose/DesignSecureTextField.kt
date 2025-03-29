@@ -33,6 +33,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Shape
@@ -61,6 +63,7 @@ fun DesignSecureTextField(
     onTextLayout: (Density.(getResult: () -> TextLayoutResult?) -> Unit)? = null,
     interactionSource: MutableInteractionSource? = null,
     decorator: TextFieldDecorator? = null,
+    focusRequester: FocusRequester = FocusRequester(),
     cursorBrush: Brush = SolidColor(MaterialTheme.colorScheme.primary),
     colors: TextFieldColors = DesignTextFieldColors.colors(),
     shape: Shape = RoundedCornerShape(16.dp),
@@ -129,7 +132,8 @@ fun DesignSecureTextField(
         ) {
             BasicSecureTextField(
                 state = state,
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth()
+                    .focusRequester(focusRequester),
                 enabled = enabled,
                 inputTransformation = inputTransformation,
                 textStyle = textStyle.copy(color = textColor),
