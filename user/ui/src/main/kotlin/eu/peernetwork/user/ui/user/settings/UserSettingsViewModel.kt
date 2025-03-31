@@ -2,9 +2,13 @@ package eu.peernetwork.user.ui.user.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import eu.peernetwork.user.domain.usecase.DeactivationUsecase
+import eu.peernetwork.user.domain.usecase.LogoutUsecase
 import eu.peernetwork.user.domain.usecase.ProtectedSettingsUsecase
 import eu.peernetwork.user.domain.usecase.SettingsUsecase
+import eu.peernetwork.user.ui.mapper.mapToModels
 import eu.peernetwork.user.ui.model.UiAccount
+import eu.peernetwork.user.ui.model.UiSettings
 import eu.peernetwork.user.ui.usecase.ObserveAuthUserUsecase
 import eu.peernetwork.user.ui.usecase.ProfileRefreshUsecase
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,7 +24,9 @@ class UserSettingsViewModel @Inject constructor(
     private val refreshUsecase: ProfileRefreshUsecase,
     private val settingsUsecase: SettingsUsecase,
     private val protectedSettingsUsecase: ProtectedSettingsUsecase,
-    observerUsecase: ObserveAuthUserUsecase
+    observerUsecase: ObserveAuthUserUsecase,
+    private val logoutUsecase: LogoutUsecase,
+    private val deactivationUsecase: DeactivationUsecase,
 ) : ViewModel() {
     private val mutableState = MutableStateFlow<State>(State.Initial)
 
@@ -39,13 +45,12 @@ class UserSettingsViewModel @Inject constructor(
         initialValue = State.Initial
     )
 
-    fun update(account: UiAccount, update: List<UserSettingsModel>, password: String) {
+    fun update(account: UiAccount, update: List<UiSettings>, password: String) {
         mutableState.tryEmit(State.Loading)
         viewModelScope.launch {
             try {
                 handleUpdate(account, update, password)
-                refreshUsecase()
-                mutableState.tryEmit(State.Initial)
+                mutableState.tryEmit(State.Content(refreshUsecase()))
             } catch (error: Throwable) {
                 mutableState.tryEmit(State.Failure(error))
             }
@@ -56,11 +61,11 @@ class UserSettingsViewModel @Inject constructor(
 
     private suspend fun handleUpdate(
         account: UiAccount,
-        update: List<UserSettingsModel>,
+        model: List<UiSettings>,
         password: String
     ) {
         val mapper = account.mapToModels().associateBy { it.name }
-        update.forEach {
+        model.forEach {
             if (mapper[it.name]?.value != it.value) {
                 it.value?.let { value ->
                     if (it.protected) {
@@ -74,12 +79,37 @@ class UserSettingsViewModel @Inject constructor(
         }
     }
 
+    fun logout() {
+        mutableState.tryEmit(State.Loading)
+        viewModelScope.launch {
+            try {
+                logoutUsecase()
+                mutableState.tryEmit(State.Initial)
+            } catch (error: Throwable) {
+                mutableState.tryEmit(State.Failure(error))
+            }
+        }
+    }
+
+    fun deactivate(password: String) {
+        mutableState.tryEmit(State.Loading)
+        viewModelScope.launch {
+            try {
+                deactivationUsecase(password)
+                logoutUsecase()
+                mutableState.tryEmit(State.Initial)
+            } catch (error: Throwable) {
+                mutableState.tryEmit(State.Failure(error))
+            }
+        }
+    }
+
     sealed interface State {
         data object Initial : State
         data object Loading : State
         data class Content(
             val account: UiAccount,
-            val processing: Boolean,
+            val processing: Boolean = false,
             val error: Throwable? = null
         ) : State
         data class Failure(val error: Throwable) : State

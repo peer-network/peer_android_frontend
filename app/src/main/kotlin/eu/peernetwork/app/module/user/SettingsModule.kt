@@ -11,13 +11,13 @@ import eu.peernetwork.user.data.provider.SettingsProvider
 import eu.peernetwork.user.remote.api.EmailSettingsApi
 import eu.peernetwork.user.remote.api.UsernameSettingsApi
 import eu.peernetwork.user.remote.provider.SettingsProviderDelegate
-import eu.peernetwork.user.ui.user.settings.UserSettingsModel
+import eu.peernetwork.user.ui.model.UiSettings
 
 @Module
 internal interface SettingsModule {
     @Binds
     @IntoMap
-    @Settings(UserSettingsModel.USERNAME)
+    @Settings(UiSettings.USERNAME)
     fun bindUsernameSettingsApi(api: UsernameSettingsApi): SettingsApi<*>
 
     @Binds
@@ -27,12 +27,12 @@ internal interface SettingsModule {
 
     @Binds
     @IntoMap
-    @Settings(UserSettingsModel.BIO)
+    @Settings(UiSettings.BIO)
     fun bindBiographySettingsApi(api: BiographyApi): SettingsApi<*>
 
     @Binds
     @IntoMap
-    @Settings(UserSettingsModel.AVATAR)
+    @Settings(UiSettings.AVATAR)
     fun bindBiographyApi(api: AvatarApi): SettingsApi<*>
 
     @Binds

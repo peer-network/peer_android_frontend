@@ -3,10 +3,11 @@ package eu.peernetwork.app.ui.main
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModelProvider
 import eu.peernetwork.core.ui.component.UiComponent
+import eu.peernetwork.core.ui.compose.DesignOverlay
 import eu.peernetwork.core.ui.extension.findBuilder
 import eu.peernetwork.core.ui.theme.PeerTheme
 import javax.inject.Inject
@@ -26,13 +27,15 @@ class MainActivity : ComponentActivity(), UiComponent.Provider<Main.Component> {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProvider(this, factory)[MainViewModel::class.java]
         installSplashScreen()
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
-            enableEdgeToEdge()
             PeerTheme {
-                MainScreen(
-                    component = injector,
-                    viewModelStoreOwner = this
-                )
+                DesignOverlay {
+                    MainScreen(
+                        component = injector,
+                        viewModelStoreOwner = this
+                    )
+                }
             }
         }
     }

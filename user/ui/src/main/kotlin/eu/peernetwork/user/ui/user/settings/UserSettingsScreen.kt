@@ -4,24 +4,21 @@ import android.content.res.Configuration
 import android.net.Uri
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -36,9 +33,13 @@ import eu.peernetwork.core.ui.compose.DesignOutlinedButton
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.user.ui.R
+import eu.peernetwork.user.ui.mapper.isPasswordRequired
+import eu.peernetwork.user.ui.mapper.mapToModels
 import eu.peernetwork.user.ui.model.UiAccount
 import eu.peernetwork.user.ui.model.UiOverview
-import eu.peernetwork.user.ui.user.settings.UserSettingsViewModel.State
+import eu.peernetwork.user.ui.model.UiSettings
+import eu.peernetwork.user.ui.user.compose.LogoutSheet
+import eu.peernetwork.user.ui.user.compose.PasswordSheet
 
 @Composable
 fun UserSettingsScreen(
@@ -55,87 +56,77 @@ fun UserSettingsScreen(
         factory = component.viewModelFactory()
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val content = remember { derivedStateOf { state as? State.Content? } }
-    val account = remember { derivedStateOf { content.value?.account } }
+    val content = remember { derivedStateOf { state as? UserSettingsViewModel.State.Content? } }
     val error = remember { derivedStateOf { content.value?.error } }
     val isLoading = remember { derivedStateOf { content.value?.processing == true } }
-    if(account.value != null) {
+    content.value?.account?.let {
         UserSettingsContent(
-            account = account.value!!,
+            account = it,
             isLoading = isLoading,
             error = error,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 24.dp),
+            requiresPassword = { models -> it.isPasswordRequired(models) },
+            onLogout = { viewModel.logout() },
+            onDeactivate = { viewModel.deactivate(it) }
         ) { model, password ->
-            viewModel.update(account.value!!, model, password ?: "")
+            viewModel.update(it, model, password ?: "")
         }
     }
     LaunchedEffect(Unit) { viewModel.reset() }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UserSettingsContent(
     account: UiAccount,
-    isLoading: androidx.compose.runtime.State<Boolean>,
+    isLoading: State<Boolean>,
     modifier: Modifier = Modifier,
-    error: androidx.compose.runtime.State<Throwable?>,
-    onSubmit: (List<UserSettingsModel>, String?) -> Unit,
+    error: State<Throwable?>,
+    requiresPassword: (List<UiSettings>) -> Boolean = { false },
+    onLogout: () -> Unit = {},
+    onDeactivate: (String) -> Unit = {},
+    onSubmit: (List<UiSettings>, String?) -> Unit,
 ) {
-    val state = remember { mutableStateOf(account) }
     val image = remember { mutableStateOf<Uri?>(null) }
     val username = remember { TextFieldState(account.username) }
     val bio = remember { TextFieldState(account.bio ?: "") }
+    var showPassword = remember { mutableStateOf(false) }
+    var showLogout = remember { mutableStateOf(false) }
+    var showDeactivation = remember { mutableStateOf(false) }
     val fields = remember { derivedStateOf {
         listOf(
-            UserSettingsModel.Avatar(image.value),
-            UserSettingsModel.Username(username.text.trim().toString()),
-            UserSettingsModel.Description(bio.text.trim().toString()),
+            UiSettings.Avatar(image.value),
+            UiSettings.Username(username.text.trim().toString()),
+            UiSettings.Description(bio.text.trim().toString()),
         )
     } }
     Column(modifier = modifier) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            UserSettingsAvatar(
-                name = account.username,
-                imageUrl = state.value.imageUrl,
-                onChange = { image.value = it }
-            )
-            Spacer(modifier = Modifier.weight(1f))
-            DesignOutlinedButton(
-                onClick = {
-                    if (!fields.value.none { it.protected }) {
-                        onSubmit(fields.value, "")
-                    } else {
-                        onSubmit(fields.value, null)
-                    }
-                    image.value = null },
-                isLoading = isLoading.value,
-                shape = RoundedCornerShape(8.dp),
-                textStyle = MaterialTheme.typography.bodySmall,
-                enabled = !isLoading.value && fields.value != account.mapToModels(),
-                contentPadding = PaddingValues(vertical = 4.dp, horizontal = 32.dp),
-                modifier = Modifier
-                    .padding(start = 4.dp)
-                    .height(28.dp),
-                content = {
-                    Text(
-                        text = stringResource(R.string.save_text),
-                        style = MaterialTheme.typography.bodySmall
-                    )
+        UserSettingsHeader(
+            account = account,
+            isLoading = isLoading.value,
+            enabled = !isLoading.value && fields.value != account.mapToModels(),
+            onChange = { image.value = it },
+            onSubmit = {
+                if (!requiresPassword(fields.value)) {
+                    onSubmit(fields.value, null)
+                } else {
+                    showPassword.value = true
                 }
-            )
-        }
+                image.value = null },
+        )
         UserSettingsForm(username, bio, isLoading, error)
         Row(modifier = Modifier.padding(top = 16.dp)) {
             DesignOutlinedButton(
-                onClick = {},
+                onClick = { showLogout.value = true },
                 modifier = Modifier
                     .weight(1f)
                     .padding(end = 6.dp),
                 content = { Text(stringResource(R.string.logout_text)) }
             )
             DesignOutlinedButton(
-                onClick = {},
+                onClick = { showDeactivation.value = true },
                 modifier = Modifier
                     .weight(1f)
                     .padding(start = 6.dp),
@@ -148,6 +139,18 @@ fun UserSettingsContent(
                     disabledContentColor = MaterialTheme.colorScheme.errorContainer
                 )
             )
+        }
+        PasswordSheet(showDeactivation, label = stringResource(R.string.deactivate_text)) {
+            showDeactivation.value = false
+            onDeactivate(it)
+        }
+        LogoutSheet(showLogout) {
+            showLogout.value = false
+            onLogout()
+        }
+        PasswordSheet(showPassword, label = stringResource(R.string.confirmation_label)) {
+            showPassword.value = false
+            onSubmit(fields.value, it)
         }
     }
 }
