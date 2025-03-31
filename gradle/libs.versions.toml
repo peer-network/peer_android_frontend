@@ -26,6 +26,7 @@ mockk-jvm = "1.13.2"
 appcompat = "1.7.0"
 material = "1.12.0"
 ucrop = "2.2.9"
+room = "2.6.1"
 
 [libraries]
 androidx-splash = { module = "androidx.core:core-splashscreen", version.ref = "androidx-splash" }
@@ -60,6 +61,7 @@ coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", ve
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 mockk = { module = "io.mockk:mockk-common", version.ref = "mockk" }
 mockk-jvm = { module = "io.mockk:mockk-jvm", version.ref = "mockk-jvm" }
+room = { module = "androidx.room:room-runtime", version.ref = "room" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

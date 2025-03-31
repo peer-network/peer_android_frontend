@@ -18,6 +18,7 @@ rootProject.name = "Peer Network"
 
 include(":core:common")
 include(":core:remote")
+include(":core:local")
 include(":core:ui")
 
 include(":persistence:domain")
