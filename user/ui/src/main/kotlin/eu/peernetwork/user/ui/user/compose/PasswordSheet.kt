@@ -46,6 +46,7 @@ import kotlinx.coroutines.delay
 @Composable
 fun PasswordSheet(
     state: MutableState<Boolean>,
+    label: String,
     initialValue: SheetValue = SheetValue.Hidden,
     onSubmit: (String) -> Unit = {}
 ) {
@@ -53,10 +54,10 @@ fun PasswordSheet(
     val password = remember { TextFieldState() }
     DesignBottomSheet(
         showSheet = state,
-        tag = "passwordSheet",
+        tag = label,
         onDismissRequest = { state.value = false },
         initialValue = initialValue,
-        color = MaterialTheme.colorScheme.surfaceVariant,
+        color = MaterialTheme.colorScheme.surfaceContainerLow,
         background = {
             DesignOverlayBackground(
                 state = state,
@@ -89,7 +90,7 @@ fun PasswordSheet(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    text = stringResource(R.string.confirmation_label),
+                    text = label,
                     style = MaterialTheme.typography.bodyMedium.copy(
                         fontWeight = FontWeight.Bold
                     )
@@ -117,6 +118,7 @@ fun PreviewPasswordSheet() {
         DesignOverlay {
             PasswordSheet(
                 state = state,
+                label = stringResource(R.string.confirmation_label),
                 initialValue = SheetValue.Expanded
             )
         }

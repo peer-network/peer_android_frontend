@@ -35,14 +35,14 @@ import eu.peernetwork.user.ui.R
 fun LogoutSheet(
     state: MutableState<Boolean>,
     initialValue: SheetValue = SheetValue.Hidden,
-    onSubmit: (Boolean) -> Unit = {}
+    onLogout: () -> Unit = {}
 ) {
     DesignBottomSheet(
         showSheet = state,
         tag = "logoutSheet",
         onDismissRequest = { state.value = false },
         initialValue = initialValue,
-        color = MaterialTheme.colorScheme.surfaceVariant,
+        color = MaterialTheme.colorScheme.surfaceContainerLow,
         background = {
             DesignOverlayBackground(
                 state = state,
@@ -57,14 +57,22 @@ fun LogoutSheet(
                 .verticalScroll(rememberScrollState())
                 .padding(24.dp)
         ) {
+            Text(
+                stringResource(R.string.logout_message),
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    color = MaterialTheme.colorScheme.tertiary
+                ),
+                modifier = Modifier.fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+            )
             Spacer(modifier = Modifier.height(16.dp))
             DesignButton(
                 enabled = state.value,
-                onClick = { onSubmit(true) },
+                onClick = onLogout,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    text = stringResource(R.string.confirmation_label),
+                    text = stringResource(R.string.logout_text),
                     style = MaterialTheme.typography.bodyMedium.copy(
                         fontWeight = FontWeight.Bold
                     )
@@ -81,7 +89,10 @@ fun LogoutSheet(
 fun PreviewLogoutSheet() {
     PeerTheme {
         DesignOverlay {
-            LogoutSheet(state = remember { mutableStateOf(true) })
+            LogoutSheet(
+                state = remember { mutableStateOf(true) },
+                initialValue = SheetValue.Expanded
+            )
         }
     }
 }

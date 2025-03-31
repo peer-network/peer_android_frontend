@@ -38,6 +38,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Shape
@@ -78,6 +80,7 @@ fun DesignTextField(
     textStyle: TextStyle = MaterialTheme.typography.bodyMedium,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     onKeyboardAction: KeyboardActionHandler? = null,
+    focusRequester: FocusRequester = FocusRequester(),
     lineLimits: TextFieldLineLimits = TextFieldLineLimits.SingleLine,
     onTextLayout: (Density.(getResult: () -> TextLayoutResult?) -> Unit)? = null,
     horizontalArrangement: Arrangement.Horizontal = Arrangement.Start,
@@ -150,7 +153,8 @@ fun DesignTextField(
         ) {
             BasicTextField(
                 state = state,
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth()
+                    .focusRequester(focusRequester),
                 enabled = enabled,
                 readOnly = readOnly,
                 inputTransformation = inputTransformation,
