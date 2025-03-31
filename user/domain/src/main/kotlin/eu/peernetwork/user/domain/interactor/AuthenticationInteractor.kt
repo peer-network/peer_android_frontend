@@ -7,4 +7,6 @@ interface AuthenticationInteractor {
     fun observeAccount(): Flow<Account?>
 
     suspend fun getCurrentAccount(refresh: Boolean = false): Account
+
+    suspend fun logout()
 }

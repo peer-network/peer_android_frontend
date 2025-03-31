@@ -7,16 +7,20 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.core.ui.compose.DesignTextField
@@ -27,9 +31,13 @@ import eu.peernetwork.user.ui.R
 fun ColumnScope.UserSettingsForm(
     username: TextFieldState,
     bio: TextFieldState,
-    isLoading: androidx.compose.runtime.State<Boolean>,
-    error: androidx.compose.runtime.State<Throwable?>,
+    isLoading: State<Boolean>,
+    error: State<Throwable?>,
+    maxText: Int = 500,
 ) {
+    val isValidLength = remember { derivedStateOf {
+        bio.text.length <= maxText
+    } }
     Box(contentAlignment = Alignment.BottomEnd) {
         DesignTextField(
             bio,
@@ -39,6 +47,7 @@ fun ColumnScope.UserSettingsForm(
                 end = 16.dp,
                 bottom = 36.dp,
             ),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
             enabled = !isLoading.value,
             verticalAlignment = Alignment.Top,
             lineLimits = TextFieldLineLimits.MultiLine(),
@@ -56,10 +65,14 @@ fun ColumnScope.UserSettingsForm(
             }
         ) { Text(text = stringResource(R.string.description_placeholder)) }
         Text(
-            text = "${bio.text.length}/500",
+            text = "${bio.text.length}/$maxText",
             modifier = Modifier.padding(16.dp),
             style = MaterialTheme.typography.bodySmall.copy(
-                color = MaterialTheme.colorScheme.surfaceDim
+                color = if (isValidLength.value) {
+                    MaterialTheme.colorScheme.surfaceDim
+                } else {
+                    MaterialTheme.colorScheme.error
+                }
             )
         )
     }

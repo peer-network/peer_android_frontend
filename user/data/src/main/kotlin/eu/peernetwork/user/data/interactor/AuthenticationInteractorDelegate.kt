@@ -29,4 +29,9 @@ class AuthenticationInteractorDelegate @Inject constructor(
             publisher(tag, gson.toJson(it))
         }
     }
+
+    override suspend fun logout() {
+        publisher(tag, null)
+        authenticationRepository.logout()
+    }
 }

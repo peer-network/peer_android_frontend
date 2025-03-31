@@ -2,12 +2,16 @@ package eu.peernetwork.user.ui.user.settings
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import app.cash.turbine.test
+import eu.peernetwork.user.domain.usecase.DeactivationUsecase
+import eu.peernetwork.user.domain.usecase.LogoutUsecase
 import eu.peernetwork.user.domain.usecase.ProtectedSettingsUsecase
 import eu.peernetwork.user.domain.usecase.SettingsUsecase
 import eu.peernetwork.user.ui.model.UiAccount
+import eu.peernetwork.user.ui.model.UiSettings
 import eu.peernetwork.user.ui.usecase.ObserveAuthUserUsecase
 import eu.peernetwork.user.ui.usecase.ProfileRefreshUsecase
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
@@ -39,6 +43,10 @@ internal class UserSettingsViewModelTest {
 
     private val observeAuthUserUsecase = mockk<ObserveAuthUserUsecase>()
 
+    private val logoutUsecase = mockk<LogoutUsecase>()
+
+    private val deactivationUsecase = mockk<DeactivationUsecase>()
+
     private lateinit var viewModel: UserSettingsViewModel
 
     @Before
@@ -51,14 +59,16 @@ internal class UserSettingsViewModelTest {
             profileRefreshUsecase,
             settingsUsecase,
             protectedSettingsUsecase,
-            observeAuthUserUsecase
+            observeAuthUserUsecase,
+            logoutUsecase,
+            deactivationUsecase
         )
     }
 
     @Test
     fun `test update protected user detail success`() = runTest {
         val account = mockk<UiAccount>(relaxed = true)
-        val model = mockk<UserSettingsModel>(relaxed = true)
+        val model = mockk<UiSettings>(relaxed = true)
         val password = "<test-password>"
 
         coEvery { model.protected } returns true
@@ -80,7 +90,7 @@ internal class UserSettingsViewModelTest {
     fun `test update protected user detail error`() = runTest {
         val error = RuntimeException()
         val account = mockk<UiAccount>(relaxed = true)
-        val model = mockk<UserSettingsModel>(relaxed = true)
+        val model = mockk<UiSettings>(relaxed = true)
         val password = "<test-password>"
 
         coEvery { settingsUsecase(any()) } coAnswers {
@@ -98,7 +108,7 @@ internal class UserSettingsViewModelTest {
     @Test
     fun `test update un protected user detail success`() = runTest {
         val account = mockk<UiAccount>(relaxed = true)
-        val model = mockk<UserSettingsModel>(relaxed = true)
+        val model = mockk<UiSettings>(relaxed = true)
         val password = "<test-password>"
 
         coEvery { settingsUsecase(any()) } returns Unit
@@ -113,5 +123,35 @@ internal class UserSettingsViewModelTest {
             assertEquals(UserSettingsViewModel.State.Loading, awaitItem())
             assertEquals(UserSettingsViewModel.State.Content(account, false), awaitItem())
         }
+    }
+
+    @Test
+    fun `test logout user success`() = runTest {
+        coEvery { logoutUsecase() } coAnswers {
+            delay(100)
+            user.tryEmit(null)
+        }
+        viewModel.logout()
+        viewModel.state.test {
+            assertEquals(UserSettingsViewModel.State.Loading, awaitItem())
+            assertEquals(UserSettingsViewModel.State.Initial, awaitItem())
+        }
+        coVerify { logoutUsecase() }
+    }
+
+    @Test
+    fun `test deactivate user success`() = runTest {
+        val password = "<test-password>"
+        coEvery { deactivationUsecase(any()) } returns Unit
+        coEvery { logoutUsecase() } coAnswers {
+            delay(100)
+            user.tryEmit(null)
+        }
+        viewModel.deactivate(password)
+        viewModel.state.test {
+            assertEquals(UserSettingsViewModel.State.Loading, awaitItem())
+            assertEquals(UserSettingsViewModel.State.Initial, awaitItem())
+        }
+        coVerify { deactivationUsecase(password) }
     }
 }

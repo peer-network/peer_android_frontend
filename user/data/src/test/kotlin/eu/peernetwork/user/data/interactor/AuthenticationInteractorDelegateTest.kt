@@ -91,4 +91,14 @@ internal class AuthenticationInteractorDelegateTest {
         assertEquals(result, mockData)
         coVerify { publisher(any(), any()) }
     }
+
+    @Test
+    fun `test logout user`(): Unit = runBlocking {
+        coEvery { authenticationRepository.logout() } returns Unit
+
+        interactor.logout()
+
+        coVerify { publisher(any(), null) }
+        coVerify { authenticationRepository.logout() }
+    }
 }

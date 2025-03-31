@@ -9,6 +9,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -48,9 +49,9 @@ fun UserScreen(
         factory = component.viewModelFactory()
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val account = remember { mutableStateOf<UiAccount?>(
+    val account = remember { derivedStateOf {
         (state as? UserViewModel.State.Success?)?.account
-    ) }
+    } }
     Crossfade(targetState = account.value) {
         when (it) {
             null -> UserSkeleton(modifier = modifier.padding(end = 8.dp))
@@ -61,15 +62,8 @@ fun UserScreen(
             )
         }
     }
-    LaunchedEffect(state) {
-        when(state) {
-            is UserViewModel.State.Initialize -> viewModel.getAccount()
-            is UserViewModel.State.Loading -> account.value = null
-            is UserViewModel.State.Success -> {
-                account.value = (state as UserViewModel.State.Success).account
-            }
-            is UserViewModel.State.Error -> {}
-        }
+    LaunchedEffect(account.value) {
+        if (account.value == null) { viewModel.getAccount() }
     }
 }
 
