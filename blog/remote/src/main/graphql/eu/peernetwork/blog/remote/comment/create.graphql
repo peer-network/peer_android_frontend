@@ -1,0 +1,7 @@
+mutation CreateComment {
+    createComment(action: null, postid: null, content: null) {
+        status
+        counter
+        ResponseCode
+    }
+}

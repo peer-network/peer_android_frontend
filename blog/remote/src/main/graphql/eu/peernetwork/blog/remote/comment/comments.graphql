@@ -1,0 +1,7 @@
+query GetComments {
+    getallposts {
+        status
+        counter
+        ResponseCode
+    }
+}
