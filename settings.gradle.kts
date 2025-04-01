@@ -24,10 +24,20 @@ include(":persistence:domain")
 include(":persistence:data")
 include(":persistence:local")
 
+include(":media:domain")
+include(":media:data")
+include(":media:local")
+include(":media:ui")
+
 include(":user:domain")
 include(":user:data")
 include(":user:remote")
 include(":user:ui")
+
+include(":blog:domain")
+include(":blog:data")
+include(":blog:remote")
+include(":blog:ui")
 
 include(":social:domain")
 include(":social:data")

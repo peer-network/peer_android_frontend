@@ -1,6 +1,4 @@
-plugins {
-    id(libs.plugins.ksp.get().pluginId)
-}
+plugins { id(libs.plugins.ksp.get().pluginId) }
 
 android {
     buildFeatures {
@@ -18,7 +16,7 @@ dependencies {
     implementation(project(":core:common"))
     implementation(project(":core:ui"))
 
-    implementation(project(":social:domain"))
+    implementation(project(":media:domain"))
 
     implementation(libs.dagger)
     ksp(libs.dagger.compiler)

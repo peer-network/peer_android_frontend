@@ -1,6 +1,4 @@
-plugins {
-    id(libs.plugins.ksp.get().pluginId)
-}
+plugins { id(libs.plugins.ksp.get().pluginId) }
 
 android {
     buildFeatures {
@@ -12,16 +10,10 @@ android {
 }
 
 dependencies {
-    implementation(libs.media3)
-    implementation(libs.media3.ui)
-
     implementation(project(":core:common"))
-    implementation(project(":core:ui"))
 
-    implementation(project(":social:domain"))
-
-    implementation(libs.dagger)
-    ksp(libs.dagger.compiler)
+    implementation(project(":media:domain"))
+    implementation(project(":media:data"))
 
     testImplementation(libs.junit)
     testImplementation(libs.kotlin.test)

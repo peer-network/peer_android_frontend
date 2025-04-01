@@ -1,0 +1,6 @@
+mutation LikeComment($commentid: ID!) {
+    likeComment(commentid: $commentid) {
+        status
+        ResponseCode
+    }
+}

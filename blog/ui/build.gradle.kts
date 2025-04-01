@@ -12,12 +12,10 @@ android {
 }
 
 dependencies {
-    implementation(libs.media3)
-    implementation(libs.media3.ui)
-
     implementation(project(":core:common"))
     implementation(project(":core:ui"))
 
+    implementation(project(":persistence:domain"))
     implementation(project(":social:domain"))
 
     implementation(libs.dagger)

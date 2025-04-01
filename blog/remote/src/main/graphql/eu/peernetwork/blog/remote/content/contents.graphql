@@ -1,0 +1,37 @@
+query Getallposts(
+    $filter: [FilterType!],
+    $sort: SortType,
+    $userId: ID,
+    $postId: ID,
+    $offset: Int
+    $limit: Int
+) {
+    getallposts(
+        filterBy: $filter,
+        sortBy: $sort,
+        userid: $userId,
+        postid: $postId,
+        postLimit: $limit,
+        postOffset: $offset
+    ) {
+        status
+        counter
+        ResponseCode
+        affectedRows {
+            id
+            title
+            mediadescription
+            isliked
+            isviewed
+            isdisliked
+            amountlikes
+            amountdislikes
+            amountviews
+            amountcomments
+            media
+            cover
+            contenttype
+            createdat
+        }
+    }
+}
