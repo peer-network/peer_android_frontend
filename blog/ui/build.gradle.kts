@@ -12,9 +12,6 @@ android {
 }
 
 dependencies {
-    implementation("androidx.media3:media3-exoplayer:1.2.0")
-    implementation("androidx.media3:media3-ui:1.2.0")
-
     implementation(project(":core:common"))
     implementation(project(":core:ui"))
 

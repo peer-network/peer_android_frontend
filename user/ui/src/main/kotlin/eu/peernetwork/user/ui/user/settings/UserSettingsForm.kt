@@ -84,7 +84,11 @@ fun ColumnScope.UserSettingsForm(
         error = {
             error.value?.let {
                 Text(
-                    text = it.message ?: stringResource(R.string.unknown_error_message),
+                    text = if (it.message.isNullOrEmpty()) {
+                        stringResource(R.string.unknown_error_message)
+                    } else {
+                        it.message!!
+                    },
                     modifier = Modifier.padding(top = 8.dp, start = 16.dp)
                 )
             }

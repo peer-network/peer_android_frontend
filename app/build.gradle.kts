@@ -52,6 +52,16 @@ dependencies {
     implementation(project(":user:remote"))
     implementation(project(":user:ui"))
 
+    implementation(project(":media:domain"))
+    implementation(project(":media:data"))
+    implementation(project(":media:local"))
+    implementation(project(":media:ui"))
+
+    implementation(project(":blog:domain"))
+    implementation(project(":blog:data"))
+    implementation(project(":blog:remote"))
+    implementation(project(":blog:ui"))
+
     implementation(project(":social:domain"))
     implementation(project(":social:data"))
     implementation(project(":social:remote"))

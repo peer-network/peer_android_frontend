@@ -1,6 +1,6 @@
 package eu.peernetwork.blog.domain.model
 
-enum class Criteria {
+enum class Sort {
     NEW,
     TREND,
 }

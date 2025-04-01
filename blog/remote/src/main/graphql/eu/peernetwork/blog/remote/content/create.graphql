@@ -2,7 +2,7 @@ mutation CreatePost(
     $action: PostenType!,
     $title: String!,
     $description: String,
-    $type: ContenType,
+    $contentType: ContenType!,
     $media: [String!],
     $cover: [String!],
     $tags: [String!],
@@ -10,7 +10,7 @@ mutation CreatePost(
     createPost(action: $action, input: {
         title: $title,
         mediadescription: $description,
-        contenttype: $type,
+        contenttype: $contentType,
         media: $media,
         cover: $cover,
         tags: $tags }
@@ -30,8 +30,8 @@ mutation CreatePost(
             amountcomments
             media
             cover
+            contenttype
             createdat
         }
     }
 }
-

@@ -1,28 +1,74 @@
 package eu.peernetwork.blog.remote.api
 
 import com.apollographql.apollo3.ApolloClient
+import com.apollographql.apollo3.api.Optional
 import eu.peernetwork.blog.data.api.ContentApi
+import eu.peernetwork.blog.domain.exception.ContentException
 import eu.peernetwork.blog.domain.model.Content
 import eu.peernetwork.blog.domain.model.Draft
 import eu.peernetwork.blog.domain.model.Filter
+import eu.peernetwork.blog.remote.content.CreatePostMutation
+import eu.peernetwork.blog.remote.content.GetallpostsQuery
+import eu.peernetwork.blog.remote.mapper.mapFromDomain
+import eu.peernetwork.blog.remote.mapper.mapToDomain
+import eu.peernetwork.blog.remote.mapper.mapToFilter
+import eu.peernetwork.blog.remote.mapper.mapToSortType
 import eu.peernetwork.core.common.model.Pageable
+import eu.peernetwork.core.remote.extension.assertOrThrow
+import eu.peernetwork.core.remote.extension.executeOrThrow
+import eu.peernetwork.core.remote.extension.getOrThrow
+import type.PostenType
 import javax.inject.Inject
 
 class ContentApiDelegate @Inject constructor(
     private val client: ApolloClient
 ) : ContentApi {
-    override suspend fun get(
-        filter: Filter,
-        page: Pageable
-    ): List<Content> {
-        TODO("Not yet implemented")
+    override suspend fun get(filter: Filter, page: Pageable): List<Content> {
+        val post = filter.postId?.let { Optional.present(it) } ?: Optional.absent()
+        val sortBy = filter.mapToSortType()?.let {
+            Optional.present(it)
+        } ?: Optional.absent()
+        val filterBy = if (filter.type.isEmpty()) {
+            Optional.absent()
+        } else {
+            Optional.present(filter.type.map { it.mapToFilter() })
+        }
+        val query = GetallpostsQuery(
+            filter = filterBy,
+            sort = sortBy,
+            postId = post,
+            offset = Optional.present(page.offset),
+            limit = Optional.present(page.limit)
+        )
+        val response = client.query(query).executeOrThrow()
+        val data = response.getOrThrow().getallposts
+        val contents = data.affectedRows?.map { it.mapToDomain() }
+        response.assertOrThrow(data.status, data.ResponseCode)
+        return contents ?: emptyList()
     }
 
     override suspend fun create(
         draft: Draft,
-        media: String,
-        cover: String
+        media: List<String>,
+        cover: String?
     ): Content {
-        TODO("Not yet implemented")
+        val mutation = CreatePostMutation(
+            action = PostenType.POST,
+            title = draft.title,
+            description = Optional.presentIfNotNull(draft.description),
+            contentType = draft.type.mapFromDomain(),
+            media = if (media.isEmpty()) {
+                Optional.absent()
+            } else { Optional.present(media) },
+            cover = Optional.presentIfNotNull(cover?.let { listOf(it) }),
+            tags = if (draft.tags.isEmpty()) {
+                Optional.absent()
+            } else { Optional.present(draft.tags) }
+        )
+        val response = client.mutation(mutation).executeOrThrow()
+        val data = response.getOrThrow().createPost
+        val content = data.affectedRows?.mapToDomain()
+        response.assertOrThrow(data.status, data.ResponseCode)
+        return content ?: throw ContentException()
     }
 }

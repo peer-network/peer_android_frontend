@@ -4,7 +4,7 @@ import eu.peernetwork.blog.remote.content.CreatePostMutation
 import eu.peernetwork.blog.remote.content.GetallpostsQuery
 import eu.peernetwork.core.remote.model.Status
 
-object ContentMocker {
+object ContentMock {
     fun content(): CreatePostMutation.CreatePost {
         return CreatePostMutation.CreatePost(
             status = Status.SUCCESS.value,

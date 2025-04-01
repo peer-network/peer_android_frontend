@@ -1,6 +1,4 @@
-plugins {
-    id(libs.plugins.graphql.get().pluginId)
-}
+plugins { id(libs.plugins.graphql.get().pluginId) }
 
 apollo {
     service("public") {

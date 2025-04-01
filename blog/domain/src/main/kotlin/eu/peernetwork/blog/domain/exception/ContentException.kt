@@ -1,4 +1,3 @@
 package eu.peernetwork.blog.domain.exception
 
-class ContentException {
-}
+class ContentException : Throwable()

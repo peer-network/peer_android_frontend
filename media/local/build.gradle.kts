@@ -10,16 +10,10 @@ android {
 }
 
 dependencies {
-    implementation(libs.media3)
-    implementation(libs.media3.ui)
-
     implementation(project(":core:common"))
-    implementation(project(":core:ui"))
 
     implementation(project(":media:domain"))
-
-    implementation(libs.dagger)
-    ksp(libs.dagger.compiler)
+    implementation(project(":media:data"))
 
     testImplementation(libs.junit)
     testImplementation(libs.kotlin.test)

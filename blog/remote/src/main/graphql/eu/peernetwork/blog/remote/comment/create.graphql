@@ -1,7 +1,24 @@
-mutation CreateComment {
-    createComment(action: null, postid: null, content: null) {
+mutation CreateComment($action: CommentsType!, $postId: ID!, $content: String!) {
+    createComment(action: $action, postid: $postId, content: $content) {
         status
         counter
         ResponseCode
+        affectedRows {
+            commentid
+            postid
+            parentid
+            content
+            createdat
+            amountlikes
+            isliked
+            user {
+                id
+                username
+                slug
+                img
+                isfollowed
+                isfollowing
+            }
+        }
     }
 }
