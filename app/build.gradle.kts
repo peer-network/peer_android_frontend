@@ -68,6 +68,8 @@ dependencies {
     implementation(project(":social:remote"))
     implementation(project(":social:ui"))
 
+    implementation(libs.permissions)
+
     implementation(libs.dagger)
     ksp(libs.dagger.compiler)
 

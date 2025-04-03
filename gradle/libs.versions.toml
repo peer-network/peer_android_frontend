@@ -5,7 +5,6 @@ compose-material3 = "1.3.1"
 androidx-splash = "1.0.1"
 androidx-lifecyle = "2.8.7"
 androidx-activity-compose = "1.10.1"
-androidx-paging = "3.3.6"
 compose-livedata = "1.7.8"
 compose-compiler = "1.5.1"
 compose-constraintlayout = "1.1.1"
@@ -27,14 +26,12 @@ mockk-jvm = "1.13.2"
 appcompat = "1.7.0"
 material = "1.12.0"
 ucrop = "2.2.9"
-media3 = "1.2.0"
+permissions = "0.28.0"
 
 [libraries]
 androidx-splash = { module = "androidx.core:core-splashscreen", version.ref = "androidx-splash" }
 androidx-lifecyle = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "androidx-lifecyle" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity-compose" }
-androidx-paging = { module = "androidx.paging:paging-runtime", version.ref = "androidx-paging" }
-compose-paging = { module = "androidx.paging:paging-compose", version.ref = "androidx-paging" }
 compose-ui = { group = "androidx.compose.ui", name = "ui" }
 compose-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
 compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
@@ -49,8 +46,6 @@ viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
 coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
-media3 = { module = "androidx.media3:media3-exoplayer", version.ref = "media3" }
-media3-ui = { module = "androidx.media3:media3-ui", version.ref = "media3" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 ucrop = { module = "com.github.yalantis:ucrop", version.ref = "ucrop" }
 graphql = { group = "com.apollographql.apollo3", name = "apollo-runtime", version.ref = "graphql" }
@@ -66,11 +61,13 @@ coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", ve
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 mockk = { module = "io.mockk:mockk-common", version.ref = "mockk" }
 mockk-jvm = { module = "io.mockk:mockk-jvm", version.ref = "mockk-jvm" }
+permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "permissions" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 androidLibrary = { id = "com.android.library", version.ref = "agp" }
 kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 graphql = { id = "com.apollographql.apollo3", version.ref = "graphql" }
+parcelise = { id = "kotlin-parcelize", version.ref = "kotlin" }
 kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }

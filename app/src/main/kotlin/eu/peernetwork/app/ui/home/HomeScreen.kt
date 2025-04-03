@@ -20,6 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
+import eu.peernetwork.app.ui.creator.CreatorScreen
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.theme.PeerTheme
@@ -80,6 +81,7 @@ fun HomeScreen(provider: UiComponentProvider) {
                     component,
                     owner
                 )
+                is HomeRoute.Add -> { CreatorScreen() }
                 else -> Box(modifier = Modifier.fillMaxSize()) {
                     LaunchedEffect(Unit) {
                         title.value = DesignToolbarTitle(it.label)
