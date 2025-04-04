@@ -5,6 +5,7 @@ import com.apollographql.apollo3.api.ApolloResponse
 import com.apollographql.apollo3.api.Operation
 import eu.peernetwork.blog.data.api.EngagementApi
 import eu.peernetwork.blog.domain.model.Engagement
+import eu.peernetwork.blog.remote.engagement.DailyfreestatusQuery
 import eu.peernetwork.blog.remote.engagement.LikeCommentMutation
 import eu.peernetwork.blog.remote.engagement.ReportCommentMutation
 import eu.peernetwork.blog.remote.engagement.ResolveActionPostMutation
@@ -19,6 +20,7 @@ import org.junit.Before
 import org.junit.Test
 import type.ActionType
 import java.util.UUID
+import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
 internal class EngagementApiDelegateTest {
@@ -29,6 +31,36 @@ internal class EngagementApiDelegateTest {
     @Before
     fun setup() {
         api = EngagementApiDelegate(client)
+    }
+
+    @Test
+    fun `test user point`(): Unit = runBlocking {
+        val name = "<test-name>"
+        val user = DailyfreestatusQuery.Dailyfreestatus(
+            status = Status.SUCCESS.value,
+            ResponseCode = "<test-response-code>",
+            affectedRows = listOf(
+                DailyfreestatusQuery.AffectedRow(
+                    name = name,
+                    used = 0,
+                    available = 0
+                )
+            )
+        )
+        val mockData = mockk<DailyfreestatusQuery.Data>()
+        val operation = mockk<Operation<DailyfreestatusQuery.Data>>(relaxed = true)
+        val mockResponse = ApolloResponse.Builder(
+            operation,
+            UUID.randomUUID(),
+            mockData
+        ).build()
+
+        every { mockData.dailyfreestatus } returns user
+        coEvery { client.query(any<DailyfreestatusQuery>()).execute() } returns mockResponse
+
+        val result = api.points()
+
+        assertEquals(result.first().type, name)
     }
 
     @Test

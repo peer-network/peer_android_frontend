@@ -1,7 +1,7 @@
-package eu.peernetwork.user.ui.mapper
+package eu.peernetwork.blog.ui.mapper
 
-import eu.peernetwork.user.domain.model.Point
-import eu.peernetwork.user.ui.model.UiPoint
+import eu.peernetwork.blog.domain.model.Point
+import eu.peernetwork.blog.ui.model.UiPoint
 
 fun Point.mapFromDomain(): UiPoint {
     return UiPoint(

@@ -3,6 +3,8 @@ package eu.peernetwork.blog.remote.api
 import com.apollographql.apollo3.ApolloClient
 import eu.peernetwork.blog.data.api.EngagementApi
 import eu.peernetwork.blog.domain.model.Engagement
+import eu.peernetwork.blog.domain.model.Point
+import eu.peernetwork.blog.remote.engagement.DailyfreestatusQuery
 import eu.peernetwork.blog.remote.engagement.LikeCommentMutation
 import eu.peernetwork.blog.remote.engagement.ReportCommentMutation
 import eu.peernetwork.blog.remote.engagement.ResolveActionPostMutation
@@ -15,6 +17,19 @@ import javax.inject.Inject
 class EngagementApiDelegate @Inject constructor(
     private val client: ApolloClient
 ) : EngagementApi {
+    override suspend fun points(): List<Point> {
+        val response = client.query(DailyfreestatusQuery()).executeOrThrow()
+        val data = response.getOrThrow().dailyfreestatus
+        response.assertOrThrow(data.status, data.ResponseCode)
+        return data.affectedRows?.mapNotNull {
+            Point(
+                type = it!!.name,
+                used = it.used,
+                available = it.available
+            )
+        } ?: emptyList()
+    }
+
     override suspend fun post(id: String, engagement: Engagement.Content) {
         val mutation = ResolveActionPostMutation(engagement.mapToAction(), id)
         val response = client.mutation(mutation).executeOrThrow()

@@ -7,9 +7,9 @@ import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.persistence.domain.provider.PreferenceProvider
 import eu.peernetwork.app.ui.feed.Feed
+import eu.peernetwork.blog.ui.point.BlogPoint
 import eu.peernetwork.blog.ui.provider.BlogProvider
 import eu.peernetwork.user.ui.provider.UserProvider
-import eu.peernetwork.user.ui.user.point.UserPoint
 
 interface Home : UserProvider, PreferenceProvider, BlogProvider {
     @javax.inject.Scope
@@ -21,7 +21,7 @@ interface Home : UserProvider, PreferenceProvider, BlogProvider {
         dependencies = [ Home::class ],
         modules = [ HomeModule::class ]
     )
-    interface Component : Home, Feed, Profile, UiComponentProvider, UserPoint {
+    interface Component : Home, Feed, Profile, UiComponentProvider, BlogPoint {
         fun viewModelFactory(): ViewModelProvider.Factory
     }
 

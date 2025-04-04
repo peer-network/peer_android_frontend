@@ -1,4 +1,4 @@
-package eu.peernetwork.user.ui.user.point
+package eu.peernetwork.blog.ui.point
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -11,8 +11,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import eu.peernetwork.blog.ui.model.UiPoint
 import eu.peernetwork.core.ui.design.compose.DesignOption
-import eu.peernetwork.user.ui.model.UiPoint
 import kotlin.collections.forEach
 
 @Composable
@@ -24,7 +24,7 @@ fun UserPointBadge(points: List<UiPoint> = listOf()) {
                 .background(MaterialTheme.colorScheme.tertiaryContainer)
         ) {
             points.forEach { point ->
-                UserPointModel.MAP[point.name]?.let { model ->
+                BlogPointModel.MAP[point.name]?.let { model ->
                     DesignOption(
                         text = point.available.toString(),
                         painter = painterResource(id = model.icon),

@@ -1,4 +1,4 @@
-package eu.peernetwork.user.ui.user.core
+package eu.peernetwork.user.ui.user
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background

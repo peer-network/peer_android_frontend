@@ -5,6 +5,7 @@ import app.cash.turbine.test
 import eu.peernetwork.user.ui.model.UiAccount
 import eu.peernetwork.user.ui.usecase.ObserveAuthUserUsecase
 import eu.peernetwork.user.ui.usecase.ProfileUsecase
+import eu.peernetwork.user.ui.user.UserViewModel
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk

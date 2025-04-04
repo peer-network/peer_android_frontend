@@ -9,7 +9,7 @@ import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.persistence.domain.provider.PreferenceProvider
 import eu.peernetwork.user.ui.provider.UserProvider
-import eu.peernetwork.user.ui.user.core.User
+import eu.peernetwork.user.ui.user.User
 
 interface ProfilePreview : UserProvider, PreferenceProvider, BlogProvider {
     @javax.inject.Scope

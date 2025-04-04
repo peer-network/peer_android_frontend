@@ -1,12 +1,7 @@
 package eu.peernetwork.user.remote.api
 
-import com.apollographql.apollo3.ApolloClient
-import com.apollographql.apollo3.api.ApolloResponse
-import com.apollographql.apollo3.api.Operation
 import eu.peernetwork.core.remote.exception.NetworkException
-import eu.peernetwork.core.remote.model.Status
 import eu.peernetwork.user.data.api.ResourceApi
-import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
@@ -16,8 +11,6 @@ import okhttp3.Response
 import okhttp3.ResponseBody
 import org.junit.Before
 import org.junit.Test
-import protected.eu.peernetwork.user.remote.DailyfreestatusQuery
-import java.util.UUID
 import kotlin.test.assertEquals
 
 internal class ResourceApiDelegateTest {
@@ -31,43 +24,11 @@ internal class ResourceApiDelegateTest {
 
     private val client = mockk<OkHttpClient>()
 
-    private val apolloClient = mockk<ApolloClient>()
-
     private lateinit var api: ResourceApi
 
     @Before
     fun setup() {
-        api = ResourceApiDelegate(url, client, apolloClient)
-    }
-
-    @Test
-    fun `test user point`(): Unit = runBlocking {
-        val name = "<test-name>"
-        val user = DailyfreestatusQuery.Dailyfreestatus(
-            status = Status.SUCCESS.value,
-            ResponseCode = "<test-response-code>",
-            affectedRows = listOf(
-                DailyfreestatusQuery.AffectedRow(
-                    name = name,
-                    used = 0,
-                    available = 0
-                )
-            )
-        )
-        val mockData = mockk<DailyfreestatusQuery.Data>()
-        val operation = mockk<Operation<DailyfreestatusQuery.Data>>(relaxed = true)
-        val mockResponse = ApolloResponse.Builder(
-            operation,
-            UUID.randomUUID(),
-            mockData
-        ).build()
-
-        every { mockData.dailyfreestatus } returns user
-        coEvery { apolloClient.query(any<DailyfreestatusQuery>()).execute() } returns mockResponse
-
-        val result = api.points()
-
-        assertEquals(result.first().type, name)
+        api = ResourceApiDelegate(url, client)
     }
 
     @Test

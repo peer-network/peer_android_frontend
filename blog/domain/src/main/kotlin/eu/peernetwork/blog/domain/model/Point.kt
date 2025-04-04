@@ -1,4 +1,4 @@
-package eu.peernetwork.user.domain.model
+package eu.peernetwork.blog.domain.model
 
 data class Point(
     val type: String,

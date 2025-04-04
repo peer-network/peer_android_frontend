@@ -26,11 +26,11 @@ import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.app.ui.feed.FeedScreen
 import eu.peernetwork.app.ui.profile.core.ProfileScreen
+import eu.peernetwork.blog.ui.point.UserPointScreen
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.design.compose.DesignToolbarTitle
 import eu.peernetwork.core.ui.design.view.DesignStatefulContent
 import eu.peernetwork.core.ui.design.view.DesignStatefulContentState
-import eu.peernetwork.user.ui.user.point.UserPointScreen
 
 @Composable
 fun HomeScreen(

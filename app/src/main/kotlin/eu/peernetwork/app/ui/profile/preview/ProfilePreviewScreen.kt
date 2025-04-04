@@ -25,8 +25,8 @@ import eu.peernetwork.blog.ui.post.video.VideoScreen
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.theme.PeerTheme
-import eu.peernetwork.user.ui.user.core.UserEvent
-import eu.peernetwork.user.ui.user.core.UserScreen
+import eu.peernetwork.user.ui.user.UserEvent
+import eu.peernetwork.user.ui.user.UserScreen
 
 @Composable
 fun ProfilePreviewScreen(

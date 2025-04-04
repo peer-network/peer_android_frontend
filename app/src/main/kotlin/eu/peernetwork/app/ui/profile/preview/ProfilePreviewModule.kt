@@ -10,8 +10,7 @@ import eu.peernetwork.core.ui.annotation.UiBuilder
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.factory.UiBuilderFactory
-import eu.peernetwork.user.ui.user.core.User
-import javax.inject.Provider
+import eu.peernetwork.user.ui.user.User
 
 @Module
 object ProfilePreviewModule {

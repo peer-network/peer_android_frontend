@@ -1,10 +1,10 @@
-package eu.peernetwork.user.ui.user.point
+package eu.peernetwork.blog.ui.point
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import eu.peernetwork.user.domain.usecase.PointUsecase
-import eu.peernetwork.user.ui.mapper.mapFromDomain
-import eu.peernetwork.user.ui.model.UiPoint
+import eu.peernetwork.blog.domain.usecase.PointUsecase
+import eu.peernetwork.blog.ui.mapper.mapFromDomain
+import eu.peernetwork.blog.ui.model.UiPoint
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class UserPointViewModel @Inject constructor(
+class BlogPointViewModel @Inject constructor(
     private val usecase: PointUsecase
 ) : ViewModel() {
     private val mutableState = MutableStateFlow<State>(State.Loading)
