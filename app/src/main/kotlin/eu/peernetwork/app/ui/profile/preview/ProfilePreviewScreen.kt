@@ -59,7 +59,7 @@ fun ProfilePreviewScreen(
     ) { offset ->
         when (offset) {
             0 -> PhotoScreen(userId, BuildConfig.PAGING_LIMIT, component, viewModelStoreOwner)
-            1 -> VideoScreen(component, viewModelStoreOwner)
+            1 -> VideoScreen(userId, BuildConfig.PAGING_LIMIT, component, viewModelStoreOwner)
             2 -> MusicScreen(component, viewModelStoreOwner)
         }
     }

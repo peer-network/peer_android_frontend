@@ -9,6 +9,7 @@ fun CreatePostMutation.AffectedRows.mapToDomain(): Content {
     return Content(
         id = id,
         title = title,
+        description = mediadescription,
         media = media,
         author = Author(
             id = user.id,
@@ -26,6 +27,7 @@ fun GetallpostsQuery.AffectedRow.mapToDomain(): Content {
         id = id,
         title = title,
         media = media,
+        description = mediadescription,
         author = Author(
             id = user.id,
             slug = user.slug!!,

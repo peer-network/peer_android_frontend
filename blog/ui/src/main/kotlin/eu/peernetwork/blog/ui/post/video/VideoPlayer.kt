@@ -1,8 +1,7 @@
-package eu.peernetwork.blog.ui.post.video
+package eu.peernetwork.social.ui.content.video
 
 import android.net.Uri
 import android.view.ViewGroup
-import androidx.annotation.OptIn
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,52 +14,77 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.MediaItem
-import androidx.media3.common.util.UnstableApi
+import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
+import kotlinx.coroutines.delay
 
-@OptIn(UnstableApi::class)
 @Composable
 fun VideoPlayer(
     videoUri: Uri?,
     modifier: Modifier = Modifier,
     isPlaying: Boolean = true,
     onVideoClick: () -> Unit = {},
-    playerRef: MutableState<ExoPlayer?> = mutableStateOf(null)
+    playerRef: MutableState<ExoPlayer?> = mutableStateOf(null),
+    trimStartMs: Long = 0L,
+    trimEndMs: Long = Long.MAX_VALUE,
+    onPositionChanged: (Long) -> Unit = {},
+    onDurationChanged: (Long) -> Unit = {},
+    onTrimChanged: (Long, Long) -> Unit = { _, _ -> }
 ) {
     val context = LocalContext.current
-    val currentUri by rememberUpdatedState(videoUri)
     val exoPlayer = remember {
         ExoPlayer.Builder(context)
             .setAudioAttributes(AudioAttributes.DEFAULT, true)
             .setHandleAudioBecomingNoisy(true)
-            .build().apply {
-                repeatMode = ExoPlayer.REPEAT_MODE_ONE
-            }.also {
+            .build().also {
+                it.repeatMode = Player.REPEAT_MODE_ONE
                 playerRef.value = it
             }
     }
-    LaunchedEffect(currentUri) {
-        currentUri?.let { uri ->
-            exoPlayer.setMediaItem(MediaItem.fromUri(uri))
+
+    LaunchedEffect(videoUri) {
+        if (videoUri != null) {
+            exoPlayer.stop()
+            exoPlayer.clearMediaItems()
+            exoPlayer.setMediaItem(MediaItem.fromUri(videoUri))
             exoPlayer.prepare()
+            while (exoPlayer.duration <= 0) {
+                delay(100)
+            }
+            onDurationChanged(exoPlayer.duration)
             exoPlayer.playWhenReady = isPlaying
         }
     }
     LaunchedEffect(isPlaying) {
         exoPlayer.playWhenReady = isPlaying
     }
+    LaunchedEffect(isPlaying) {
+        while (isPlaying) {
+            delay(100)
+            val pos = exoPlayer.currentPosition
+            onPositionChanged(pos)
+            if (pos >= trimEndMs) {
+                exoPlayer.seekTo(trimStartMs)
+            }
+        }
+    }
+    LaunchedEffect(trimStartMs, trimEndMs) {
+        if (exoPlayer.currentPosition < trimStartMs || exoPlayer.currentPosition > trimEndMs) {
+            exoPlayer.seekTo(trimStartMs)
+        }
+    }
+
     DisposableEffect(Unit) {
         onDispose {
             exoPlayer.release()
-            playerRef.value = null
         }
     }
     Box(
         modifier = modifier
             .background(Color.Black)
     ) {
-        if (currentUri != null) {
+        if (videoUri != null) {
             AndroidView(
                 factory = { ctx ->
                     PlayerView(ctx).apply {

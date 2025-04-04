@@ -1,22 +1,29 @@
 package eu.peernetwork.blog.ui.post.video
 
 import android.content.Context
+import androidx.lifecycle.ViewModelProvider
+import eu.peernetwork.blog.ui.post.photo.DaggerPhoto_Component
+import eu.peernetwork.blog.ui.post.photo.PhotoModule
+import eu.peernetwork.blog.ui.provider.BlogProvider
 import eu.peernetwork.core.ui.component.UiComponent
 
-interface Video {
+interface Video : BlogProvider {
     @javax.inject.Scope
     @Retention(AnnotationRetention.RUNTIME)
     annotation class Scope
 
     @Scope
     @dagger.Component(
-        dependencies = [Video::class ]
+        dependencies = [Video::class ],
+        modules = [ VideoModule::class ]
     )
-    interface Component : Video
+    interface Component : Video {
+        fun viewModelFactory(): ViewModelProvider.Factory
+    }
 
     class Builder(private val dependency: Video) : UiComponent.DefaultBuilder<Video, Component>() {
         override fun build(context: Context): Component {
-            TODO("Not yet implemented")
+            return DaggerVideo_Component.builder().video(dependency).build()
         }
     }
 }

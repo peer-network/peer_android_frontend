@@ -3,16 +3,11 @@ package eu.peernetwork.blog.ui.model
 import androidx.compose.runtime.Immutable
 
 @Immutable
-data class UiPost(
+data class UiVideo(
     val id: String,
     val title: String,
+    val description: String,
     val media: String,
     val author: UiAuthor,
-    val type: Type,
     val createdAt: Long
-) {
-    enum class Type {
-        IMAGE,
-        TEXT
-    }
-}
+)

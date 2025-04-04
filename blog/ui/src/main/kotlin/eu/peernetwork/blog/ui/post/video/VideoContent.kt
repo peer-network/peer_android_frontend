@@ -23,6 +23,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -43,12 +44,15 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.media3.common.Player
+import androidx.media3.exoplayer.ExoPlayer
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.design.compose.DesignBottomSheet
 import eu.peernetwork.core.ui.design.compose.DesignOption
 import eu.peernetwork.core.ui.design.compose.DesignOptionPosition
 import eu.peernetwork.core.ui.design.compose.DesignOutlinedButton
 import eu.peernetwork.core.ui.theme.PeerTheme
+import eu.peernetwork.social.ui.content.video.VideoPlayer
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -64,33 +68,33 @@ fun VideoContent(
     modifier: Modifier = Modifier
 ) {
     var isPlaying by remember { mutableStateOf(true) }
-//    val playerRef = remember { mutableStateOf<ExoPlayer?>(null) }
+    val playerRef = remember { mutableStateOf<ExoPlayer?>(null) }
     var progress by remember { mutableFloatStateOf(0f) }
     var totalDuration by remember { mutableLongStateOf(0L) }
     var isSeeking by remember { mutableStateOf(false) }
     val showDescriptionSheet = remember { mutableStateOf(false) }
     val lineCount = remember { mutableIntStateOf(0) }
     var isFullscreen by remember { mutableStateOf(false) }
-//    LaunchedEffect(playerRef.value) {
-//        playerRef.value?.addListener(object : Player.Listener {
-//            override fun onEvents(player: Player, events: Player.Events) {
-//                super.onEvents(player, events)
-//                totalDuration = player.duration.coerceAtLeast(0L)
-//                progress = if (totalDuration > 0) {
-//                    player.currentPosition.toFloat() / totalDuration.toFloat()
-//                } else 0f
-//            }
-//        })
-//    }
+    LaunchedEffect(playerRef.value) {
+        playerRef.value?.addListener(object : Player.Listener {
+            override fun onEvents(player: Player, events: Player.Events) {
+                super.onEvents(player, events)
+                totalDuration = player.duration.coerceAtLeast(0L)
+                progress = if (totalDuration > 0) {
+                    player.currentPosition.toFloat() / totalDuration.toFloat()
+                } else 0f
+            }
+        })
+    }
     Box(modifier = modifier.fillMaxSize()) {
-//        VideoPlayer(
-//            videoUri = video,
-//            modifier = Modifier
-//                .fillMaxSize()
-//                .clickable { isPlaying = !isPlaying; onVideoClick() },
-//            isPlaying = isPlaying,
-//            playerRef = playerRef
-//        )
+        VideoPlayer(
+            videoUri = video,
+            modifier = Modifier
+                .fillMaxSize()
+                .clickable { isPlaying = !isPlaying; onVideoClick() },
+            isPlaying = isPlaying,
+            playerRef = playerRef
+        )
         if (!isPlaying) {
             Box(
                 modifier = Modifier
