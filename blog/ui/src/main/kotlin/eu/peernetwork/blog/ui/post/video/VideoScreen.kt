@@ -1,10 +1,15 @@
 package eu.peernetwork.blog.ui.post.video
 
+import android.content.Context
+import android.graphics.Bitmap
+import android.media.MediaMetadataRetriever
 import android.net.Uri
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,6 +20,14 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -23,9 +36,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -47,6 +62,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import androidx.core.net.toUri
 import androidx.paging.compose.LazyPagingItems
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 @Composable
 fun VideoScreen(
@@ -66,8 +83,6 @@ fun VideoScreen(
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
     val data = viewModel.observe().collectAsStateWithLifecycle()
-
-    // State for view mode and selected video
     val showDetailView = remember { mutableStateOf(false) }
     val selectedVideo = remember { mutableStateOf<UiVideo?>(null) }
     val currentTime = remember { mutableLongStateOf(System.currentTimeMillis()) }
@@ -130,9 +145,9 @@ private fun VideoGridView(
     LazyVerticalGrid(
         columns = GridCells.Fixed(3),
         modifier = modifier.fillMaxSize(),
-        contentPadding = PaddingValues(4.dp),
-        verticalArrangement = Arrangement.spacedBy(4.dp),
-        horizontalArrangement = Arrangement.spacedBy(4.dp)
+        contentPadding = PaddingValues(2.dp),
+        verticalArrangement = Arrangement.spacedBy(2.dp),
+        horizontalArrangement = Arrangement.spacedBy(2.dp)
     ) {
         items(items.itemCount) { index ->
             items[index]?.let { video ->
@@ -153,48 +168,90 @@ private fun VideoGridItem(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
+    var thumbnailBitmap by remember { mutableStateOf<Bitmap?>(null) }
+    var isLoading by remember { mutableStateOf(true) }
+    var hasError by remember { mutableStateOf(false) }
+    var videoDuration by remember { mutableStateOf("--:--") }
+
+    LaunchedEffect(video.media) {
+        isLoading = true
+        hasError = false
+        thumbnailBitmap = withContext(Dispatchers.IO) {
+            try {
+                getVideoThumbnail(context, video.media.toUri())
+            } catch (e: Exception) {
+                hasError = true
+                null
+            } finally {
+                isLoading = false
+            }
+        }
+    }
+
+    LaunchedEffect(video.media) {
+        withContext(Dispatchers.IO) {
+            try {
+                videoDuration = getVideoDuration(context, video.media.toUri())
+            } catch (e: Exception) {
+                videoDuration = "--:--"
+            }
+        }
+    }
+
     Box(
         modifier = modifier
             .aspectRatio(1f)
             .clickable(onClick = onClick)
             .padding(2.dp)
     ) {
-        // Thumbnail
-        AsyncImage(
-            model = video.media.toUri(), // Ensure this is the thumbnail URL
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier.fillMaxSize()
-        )
-
-        // Timestamp overlay
-        Box(
-            modifier = Modifier
-                .align(Alignment.BottomStart)
-                .background(Color.Black.copy(alpha = 0.7f))
-                .padding(horizontal = 4.dp, vertical = 2.dp)
-        ) {
-            Text(
-                text = video.createdAt.formatTimeAgo(currentTime),
-                color = Color.White,
-                fontSize = 10.sp
-            )
-        }
-
-        // Play icon overlay
-        Box(
-            modifier = Modifier
-                .align(Alignment.Center)
-                .size(36.dp)
-                .background(Color.Black.copy(alpha = 0.5f),
+        when {
+            isLoading -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.LightGray),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(modifier = Modifier.size(20.dp))
+                }
+            }
+            thumbnailBitmap != null -> {
+                Image(
+                    bitmap = thumbnailBitmap!!.asImageBitmap(),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
+            else -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.DarkGray),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
                         Icons.Default.PlayArrow,
-                        contentDescription = "Play",
-                        tint = Color.White,
-                        modifier = Modifier.size(24.dp)
+                        contentDescription = "Error loading thumbnail",
+                        tint = Color.White
+                    )
                 }
+            }
+        }
+
+        Box(
+            modifier = Modifier
+                .align(Alignment.BottomStart)
+                .background(Color.Transparent)
+                .padding(horizontal = 4.dp, vertical = 2.dp)
+        ) {
+            Text(
+                text = videoDuration,
+                color = Color.White,
+                fontSize = 12.sp
+            )
+        }
     }
 }
 
@@ -205,39 +262,88 @@ private fun VideoDetailView(
     onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column(modifier = modifier.fillMaxSize()) {
-        // Back button
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Black.copy(alpha = 0.9f))
+    ) {
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(top = 48.dp)
+        ) {
+            VideoContent(
+                username = remember { mutableStateOf(video.author.username) },
+                userId = remember { mutableStateOf(video.author.slug.toString()) },
+                timeStamp = remember { mutableStateOf(video.createdAt.formatTimeAgo(currentTime)) },
+                descriptionText = remember { mutableStateOf(video.description) },
+                isFullscreen = remember { mutableStateOf(true) },
+                video = video.media.toUri(),
+                avatar = {
+                    AsyncImage(
+                        model = video.author.imageUrl,
+                        contentDescription = null,
+                        modifier = Modifier.size(40.dp))
+                },
+                modifier = Modifier
+                    .fillMaxSize()
+                    .weight(1f)
+            )
+        }
         IconButton(
             onClick = onBack,
-            modifier = Modifier.padding(8.dp)
-        ) {
-            Icon(Icons.Default.ArrowBack, contentDescription = "Back")
-        }
-
-        // Your existing video content
-        val username = remember { mutableStateOf(video.author.username) }
-        val userId = remember { mutableStateOf(video.author.slug.toString()) }
-        val timeStamp = remember { mutableStateOf(video.createdAt.formatTimeAgo(currentTime)) }
-        val descriptionText = remember { mutableStateOf(video.description) }
-        val isFullscreen = remember { mutableStateOf(false) }
-
-        VideoContent(
-            username = username,
-            userId = userId,
-            timeStamp = timeStamp,
-            descriptionText = descriptionText,
-            isFullscreen = isFullscreen,
-            video = video.media.toUri(),
-            avatar = {
-                AsyncImage(
-                    model = video.author.imageUrl,
-                    contentDescription = null,
-                    modifier = Modifier.size(40.dp)
-                )
-            },
             modifier = Modifier
-                .fillMaxWidth()
-                .height(400.dp)
-        )
+                .padding(16.dp)
+                .size(48.dp)
+                .background(Color.Black.copy(alpha = 0.5f), CircleShape)
+        ) {
+            Icon(
+                Icons.Default.ArrowBack,
+                contentDescription = "Back",
+                tint = Color.White,
+                modifier = Modifier.size(24.dp)
+            )
+        }
     }
+}
+
+fun getVideoThumbnail(context: Context, uri: Uri): Bitmap? {
+    val retriever = MediaMetadataRetriever()
+    return try {
+        try {
+            retriever.setDataSource(context, uri)
+        } catch (e: IllegalArgumentException) {
+            retriever.setDataSource(uri.toString())
+        }
+        retriever.frameAtTime ?: retriever.getFrameAtTime(1000000)
+    } catch (e: Exception) {
+        null
+    } finally {
+        retriever.release()
+    }
+}
+
+private fun getVideoDuration(context: Context, uri: Uri): String {
+    val retriever = MediaMetadataRetriever()
+    return try {
+        try {
+            retriever.setDataSource(context, uri)
+        } catch (e: IllegalArgumentException) {
+            retriever.setDataSource(uri.toString())
+        }
+        val durationMs = retriever.extractMetadata(
+            MediaMetadataRetriever.METADATA_KEY_DURATION
+        )?.toLongOrNull() ?: 0L
+        formatDuration(durationMs)
+    } catch (e: Exception) {
+        "--:--"
+    } finally {
+        retriever.release()
+    }
+}
+
+private fun formatDuration(durationMs: Long): String {
+    val seconds = (durationMs / 1000) % 60
+    val minutes = (durationMs / (1000 * 60)) % 60
+    return String.format("%02d:%02d", minutes, seconds)
 }
