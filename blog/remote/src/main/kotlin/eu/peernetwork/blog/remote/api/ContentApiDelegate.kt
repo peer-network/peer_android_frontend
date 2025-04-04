@@ -2,11 +2,14 @@ package eu.peernetwork.blog.remote.api
 
 import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.Optional
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import eu.peernetwork.blog.data.api.ContentApi
 import eu.peernetwork.blog.domain.exception.ContentException
 import eu.peernetwork.blog.domain.model.Content
 import eu.peernetwork.blog.domain.model.Draft
 import eu.peernetwork.blog.domain.model.Filter
+import eu.peernetwork.blog.domain.model.Media
 import eu.peernetwork.blog.remote.content.CreatePostMutation
 import eu.peernetwork.blog.remote.content.GetallpostsQuery
 import eu.peernetwork.blog.remote.mapper.mapFromDomain
@@ -20,9 +23,12 @@ import eu.peernetwork.core.remote.extension.executeOrThrow
 import eu.peernetwork.core.remote.extension.getOrThrow
 import type.PostenType
 import javax.inject.Inject
+import javax.inject.Named
 
 class ContentApiDelegate @Inject constructor(
-    private val client: ApolloClient
+    private val gson: Gson,
+    @Named("mediaUrl") private val url: String,
+    private val client: ApolloClient,
 ) : ContentApi {
     override suspend fun get(filter: Filter, page: Pageable): Page<Content> {
         val post = filter.postId?.let { Optional.present(it) } ?: Optional.absent()
@@ -45,7 +51,12 @@ class ContentApiDelegate @Inject constructor(
         )
         val response = client.query(query).executeOrThrow()
         val data = response.getOrThrow().getallposts
-        val contents = data.affectedRows?.map { it.mapToDomain() }
+        val contents = data.affectedRows?.map {
+            it.mapToDomain(gson.fromJson<List<Media>>(
+                it.media,
+                object : TypeToken<List<Media>>() {}.type
+            ).map { it.copy(path = "$url${it.path}") })
+        }
         response.assertOrThrow(data.status, data.ResponseCode)
         return Page(
             count = data.counter,
@@ -68,7 +79,12 @@ class ContentApiDelegate @Inject constructor(
         )
         val response = client.mutation(mutation).executeOrThrow()
         val data = response.getOrThrow().createPost
-        val content = data.affectedRows?.mapToDomain()
+        val content = data.affectedRows?.mapToDomain(
+            gson.fromJson<List<Media>>(
+                data.affectedRows.media,
+                object : TypeToken<List<Media>>() {}.type
+            ).map { it.copy(path = "$url${it.path}") }
+        )
         response.assertOrThrow(data.status, data.ResponseCode)
         return content ?: throw ContentException()
     }

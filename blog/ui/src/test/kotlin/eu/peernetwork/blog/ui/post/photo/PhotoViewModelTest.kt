@@ -46,7 +46,7 @@ internal class PhotoViewModelTest {
         val mockData = UiPost(
             id = "<test-id>",
             title = "<test-title>",
-            media = "<test-title>",
+            media = mockk(),
             type = UiPost.Type.IMAGE,
             createdAt = System.currentTimeMillis(),
             author = UiAuthor(

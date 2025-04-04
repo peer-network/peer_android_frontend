@@ -117,9 +117,11 @@ fun HomeContainer(
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun PreviewHomeScreen() {
     PeerTheme {
-        HomeScaffold(
-            header = { HomeHeader(remember { mutableStateOf(DesignToolbarTitle(R.string.home_label)) }) { } },
-            footer = { HomeFooter(remember { mutableIntStateOf(0) }) }
+        HomeContainer(
+            title = remember { mutableStateOf(DesignToolbarTitle(R.string.home_label) {}) },
+            index = 0,
+            onNavigate = {},
+            options = {}
         ) {
             Text(
                 text = "",

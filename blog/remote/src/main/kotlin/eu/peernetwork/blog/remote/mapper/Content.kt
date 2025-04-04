@@ -2,10 +2,11 @@ package eu.peernetwork.blog.remote.mapper
 
 import eu.peernetwork.blog.domain.model.Author
 import eu.peernetwork.blog.domain.model.Content
+import eu.peernetwork.blog.domain.model.Media
 import eu.peernetwork.blog.remote.content.CreatePostMutation
 import eu.peernetwork.blog.remote.content.GetallpostsQuery
 
-fun CreatePostMutation.AffectedRows.mapToDomain(): Content {
+fun CreatePostMutation.AffectedRows.mapToDomain(media: List<Media>): Content {
     return Content(
         id = id,
         title = title,
@@ -22,7 +23,7 @@ fun CreatePostMutation.AffectedRows.mapToDomain(): Content {
     )
 }
 
-fun GetallpostsQuery.AffectedRow.mapToDomain(): Content {
+fun GetallpostsQuery.AffectedRow.mapToDomain(media: List<Media>): Content {
     return Content(
         id = id,
         title = title,

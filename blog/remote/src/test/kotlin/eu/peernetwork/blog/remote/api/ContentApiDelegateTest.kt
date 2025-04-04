@@ -4,6 +4,7 @@ import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.ApolloResponse
 import com.apollographql.apollo3.api.Operation
 import com.apollographql.apollo3.api.Optional
+import com.google.gson.Gson
 import eu.peernetwork.blog.data.api.ContentApi
 import eu.peernetwork.blog.domain.model.Content
 import eu.peernetwork.blog.domain.model.Draft
@@ -30,13 +31,17 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 
 internal class ContentApiDelegateTest {
+    private val gson = Gson()
+
     private val client = mockk<ApolloClient>()
+
+    private val url = "http://locahost"
 
     private lateinit var api: ContentApi
 
     @Before
     fun setup() {
-        api = ContentApiDelegate(client)
+        api = ContentApiDelegate(gson, url, client)
     }
 
     @Test

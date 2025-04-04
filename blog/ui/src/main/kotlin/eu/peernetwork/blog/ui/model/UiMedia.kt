@@ -1,13 +1,12 @@
 package eu.peernetwork.blog.ui.model
 
+import androidx.compose.runtime.Immutable
+
+@Immutable
 data class UiMedia(
     val path: String,
     val options: Options
 ) {
-    data class Options(
-        val size: String,
-        val duration: String,
-        val ratio: String,
-        val resolution: String
-    )
+    @Immutable
+    data class Options(val size: String)
 }
