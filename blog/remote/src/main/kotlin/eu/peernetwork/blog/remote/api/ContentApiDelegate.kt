@@ -13,6 +13,7 @@ import eu.peernetwork.blog.remote.mapper.mapFromDomain
 import eu.peernetwork.blog.remote.mapper.mapToDomain
 import eu.peernetwork.blog.remote.mapper.mapToFilter
 import eu.peernetwork.blog.remote.mapper.mapToSortType
+import eu.peernetwork.core.common.model.Page
 import eu.peernetwork.core.common.model.Pageable
 import eu.peernetwork.core.remote.extension.assertOrThrow
 import eu.peernetwork.core.remote.extension.executeOrThrow
@@ -23,8 +24,9 @@ import javax.inject.Inject
 class ContentApiDelegate @Inject constructor(
     private val client: ApolloClient
 ) : ContentApi {
-    override suspend fun get(filter: Filter, page: Pageable): List<Content> {
+    override suspend fun get(filter: Filter, page: Pageable): Page<Content> {
         val post = filter.postId?.let { Optional.present(it) } ?: Optional.absent()
+        val author = filter.author?.let { Optional.present(it) } ?: Optional.absent()
         val sortBy = filter.mapToSortType()?.let {
             Optional.present(it)
         } ?: Optional.absent()
@@ -37,6 +39,7 @@ class ContentApiDelegate @Inject constructor(
             filter = filterBy,
             sort = sortBy,
             postId = post,
+            userId = author,
             offset = Optional.present(page.offset),
             limit = Optional.present(page.limit)
         )
@@ -44,23 +47,21 @@ class ContentApiDelegate @Inject constructor(
         val data = response.getOrThrow().getallposts
         val contents = data.affectedRows?.map { it.mapToDomain() }
         response.assertOrThrow(data.status, data.ResponseCode)
-        return contents ?: emptyList()
+        return Page(
+            count = data.counter,
+            offset = page.offset,
+            items = contents ?: emptyList()
+        )
     }
 
-    override suspend fun create(
-        draft: Draft,
-        media: List<String>,
-        cover: String?
-    ): Content {
+    override suspend fun create(draft: Draft): Content {
         val mutation = CreatePostMutation(
             action = PostenType.POST,
             title = draft.title,
             description = Optional.presentIfNotNull(draft.description),
             contentType = draft.type.mapFromDomain(),
-            media = if (media.isEmpty()) {
-                Optional.absent()
-            } else { Optional.present(media) },
-            cover = Optional.presentIfNotNull(cover?.let { listOf(it) }),
+            media = draft.getMedia(),
+            cover = draft.getCover(),
             tags = if (draft.tags.isEmpty()) {
                 Optional.absent()
             } else { Optional.present(draft.tags) }
@@ -70,5 +71,23 @@ class ContentApiDelegate @Inject constructor(
         val content = data.affectedRows?.mapToDomain()
         response.assertOrThrow(data.status, data.ResponseCode)
         return content ?: throw ContentException()
+    }
+
+    private fun Draft.getMedia(): Optional<List<String>> {
+        return when (type) {
+            Draft.Type.Text -> Optional.absent<List<String>>()
+            is Draft.Type.Video -> Optional.present((type as Draft.Type.Video).files)
+            is Draft.Type.Audio -> Optional.present((type as Draft.Type.Audio).files)
+            is Draft.Type.Image -> Optional.present((type as Draft.Type.Image).files)
+        }
+    }
+
+    private fun Draft.getCover(): Optional<List<String>> {
+        return when (type) {
+            Draft.Type.Text -> Optional.absent<List<String>>()
+            is Draft.Type.Video -> Optional.absent<List<String>>()
+            is Draft.Type.Audio -> Optional.present(listOf((type as Draft.Type.Audio).cover))
+            is Draft.Type.Image -> Optional.absent<List<String>>()
+        }
     }
 }

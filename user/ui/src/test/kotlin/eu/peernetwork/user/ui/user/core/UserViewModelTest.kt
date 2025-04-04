@@ -44,6 +44,21 @@ internal class UserViewModelTest {
     }
 
     @Test
+    fun `test get authenticated user if not retrieved`() = runTest {
+        val mockData = mockk<UiAccount>(relaxed = true)
+        coEvery { usecase() } coAnswers {
+            delay(100)
+            user.tryEmit(mockData)
+            mockData
+        }
+        viewModel.initialize()
+        viewModel.state.test {
+            assertEquals(UserViewModel.State.Loading, awaitItem())
+            assertEquals(UserViewModel.State.Success(mockData), awaitItem())
+        }
+    }
+
+    @Test
     fun `test get authenticated user success`() = runTest {
         val mockData = mockk<UiAccount>(relaxed = true)
         coEvery { usecase() } coAnswers {

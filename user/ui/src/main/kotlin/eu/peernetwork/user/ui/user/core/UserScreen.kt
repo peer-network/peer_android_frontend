@@ -1,17 +1,14 @@
 package eu.peernetwork.user.ui.user.core
 
 import android.content.res.Configuration
-import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -28,9 +25,12 @@ import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.user.ui.model.UiAccount
 import eu.peernetwork.user.ui.model.UiOverview
-import eu.peernetwork.user.ui.user.compose.UserAvatar
-import eu.peernetwork.user.ui.user.compose.UserDetail
-import eu.peernetwork.user.ui.user.compose.UserOverview
+import eu.peernetwork.core.ui.design.compose.DesignAsyncImage
+import eu.peernetwork.core.ui.design.compose.DesignTitle
+import eu.peernetwork.core.ui.design.view.DesignErrorDetail
+import eu.peernetwork.core.ui.design.view.DesignStatefulContent
+import eu.peernetwork.core.ui.design.view.DesignStatefulContentState
+import eu.peernetwork.user.ui.compose.UserOverview
 
 @Composable
 fun UserScreen(
@@ -49,21 +49,42 @@ fun UserScreen(
         factory = component.viewModelFactory()
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val account = remember { derivedStateOf {
-        (state as? UserViewModel.State.Success?)?.account
+    val derivedState = remember { derivedStateOf {
+        when(state) {
+            UserViewModel.State.Empty -> DesignStatefulContentState.Empty
+            UserViewModel.State.Loading -> DesignStatefulContentState.Loading
+            is UserViewModel.State.Success -> {
+                DesignStatefulContentState.Success(
+                    (state as UserViewModel.State.Success).account
+                )
+            }
+            is UserViewModel.State.Error -> {
+                DesignStatefulContentState.Error(
+                    (state as UserViewModel.State.Error).error
+                )
+            }
+        }
     } }
-    Crossfade(targetState = account.value) {
-        when (it) {
-            null -> UserSkeleton(modifier = modifier.padding(end = 8.dp))
-            else -> UserContent(
-                modifier = modifier,
-                account = it,
-                onEvent = onEvent
+    DesignStatefulContent<UiAccount>(
+        state = derivedState,
+        refresh = { viewModel.initialize() },
+        placeholder = { UserSkeleton(modifier = modifier.padding(end = 8.dp)) },
+        errorContent = {
+            DesignErrorDetail(
+                error = it,
+                modifier = Modifier.padding(
+                    horizontal = 24.dp,
+                    vertical = 8.dp
+                ),
+                onRetry = { viewModel.getAccount() }
             )
         }
-    }
-    LaunchedEffect(account.value) {
-        if (account.value == null) { viewModel.getAccount() }
+    ) {
+        UserContent(
+            modifier = modifier,
+            account = it,
+            onEvent = onEvent
+        )
     }
 }
 
@@ -73,10 +94,14 @@ fun UserContent(
     onEvent: (UserEvent) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var accountState = remember { mutableStateOf<UiAccount>(account) }
+    val emptyDescription = stringResource(eu.peernetwork.user.ui.R.string.empty_description_message)
+    var username = remember { derivedStateOf { account.username } }
+    var slug = remember { derivedStateOf { account.slug.toString() } }
+    var imageUrl = remember { derivedStateOf { account.imageUrl } }
+    var biography = remember { derivedStateOf { account.bio ?: emptyDescription } }
     UserScaffold(
         modifier = modifier,
-        avatar = { UserAvatar(account.username, account.imageUrl) },
+        avatar = { DesignAsyncImage(username, imageUrl) },
         actions = {
             IconButton(onClick = {
                 onEvent(UserEvent.Settings)
@@ -94,13 +119,7 @@ fun UserContent(
                 modifier = Modifier.fillMaxWidth()
             )
         }
-    ) {
-        UserDetail(
-            accountState.value.slug,
-            accountState.value.username,
-            accountState.value.bio
-        )
-    }
+    ) { DesignTitle(username, slug, biography) }
 }
 
 @Composable

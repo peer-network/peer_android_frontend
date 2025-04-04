@@ -5,7 +5,7 @@ import com.apollographql.apollo3.api.ApolloResponse
 import com.apollographql.apollo3.api.Operation
 import com.apollographql.apollo3.api.Optional
 import eu.peernetwork.blog.data.api.ContentApi
-import eu.peernetwork.blog.domain.model.ContentType
+import eu.peernetwork.blog.domain.model.Content
 import eu.peernetwork.blog.domain.model.Draft
 import eu.peernetwork.blog.domain.model.Filter
 import eu.peernetwork.blog.remote.content.CreatePostMutation
@@ -58,8 +58,8 @@ internal class ContentApiDelegateTest {
 
         val result = api.get(filter, page)
 
-        assertNotNull(result.first())
-        assertEquals(result.first().id, content.affectedRows?.first()?.id)
+        assertNotNull(result.items.first())
+        assertEquals(result.items.first().id, content.affectedRows?.first()?.id)
 
         verify { client.query(GetallpostsQuery(
             postId = Optional.present(postId),
@@ -71,7 +71,7 @@ internal class ContentApiDelegateTest {
     @Test
     fun `test filter by image`(): Unit = runBlocking {
         val page = Pageable(0, 1)
-        val filter = Filter(type = setOf(ContentType.IMAGE))
+        val filter = Filter(type = setOf(Content.Type.IMAGE))
         val content = ContentMock.contents()
         val mockData = mockk<GetallpostsQuery.Data>()
         val operation = mockk<Operation<GetallpostsQuery.Data>>(relaxed = true)
@@ -86,8 +86,8 @@ internal class ContentApiDelegateTest {
 
         val result = api.get(filter, page)
 
-        assertNotNull(result.first())
-        assertEquals(result.first().id, content.affectedRows?.first()?.id)
+        assertNotNull(result.items.first())
+        assertEquals(result.items.first().id, content.affectedRows?.first()?.id)
 
         verify { client.query(GetallpostsQuery(
             filter = Optional.present(listOf(FilterType.IMAGE)),
@@ -114,8 +114,8 @@ internal class ContentApiDelegateTest {
 
         val result = api.get(filter, page)
 
-        assertNotNull(result.first())
-        assertEquals(result.first().id, content.affectedRows?.first()?.id)
+        assertNotNull(result.items.first())
+        assertEquals(result.items.first().id, content.affectedRows?.first()?.id)
 
         verify { client.query(GetallpostsQuery(
             sort = Optional.present(SortType.NEWEST),
@@ -127,7 +127,7 @@ internal class ContentApiDelegateTest {
     @Test
     fun `test filter error state`(): Unit = runBlocking {
         val page = Pageable(0, 1)
-        val filter = Filter(type = setOf(ContentType.IMAGE))
+        val filter = Filter(type = setOf(Content.Type.IMAGE))
         val content = ContentMock.contents().copy(status = Status.ERROR.value)
         val mockData = mockk<GetallpostsQuery.Data>()
         val operation = mockk<Operation<GetallpostsQuery.Data>>(relaxed = true)
@@ -142,7 +142,7 @@ internal class ContentApiDelegateTest {
 
         val result = try {
             api.get(filter, page)
-        } catch (error: Throwable) {
+        } catch (_: Throwable) {
             null
         }
         assertNull(result)
@@ -166,9 +166,9 @@ internal class ContentApiDelegateTest {
             title = "<test-title>",
             description = "<test-description>",
             tags = listOf("<test-tag>"),
-            type = ContentType.TEXT,
+            type = Draft.Type.Text,
         )
-        val result = api.create(draft, listOf())
+        val result = api.create(draft)
 
         assertEquals(result.id, content.affectedRows?.id)
 
@@ -199,11 +199,11 @@ internal class ContentApiDelegateTest {
             title = "<test-title>",
             description = "<test-description>",
             tags = listOf("<test-tag>"),
-            type = ContentType.TEXT,
+            type = Draft.Type.Text,
         )
         val result = try {
-            api.create(draft, listOf())
-        } catch (error: Throwable) {
+            api.create(draft)
+        } catch (_: Throwable) {
             null
         }
         assertNull(result)
@@ -229,9 +229,9 @@ internal class ContentApiDelegateTest {
             title = "<test-title>",
             description = "<test-description>",
             tags = listOf("<test-tag>"),
-            type = ContentType.AUDIO,
+            type = Draft.Type.Audio(listOf(media), cover),
         )
-        val result = api.create(draft, listOf(media), cover)
+        val result = api.create(draft)
 
         assertEquals(result.id, content.affectedRows?.id)
 

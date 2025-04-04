@@ -11,7 +11,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import eu.peernetwork.core.ui.compose.DesignOption
+import eu.peernetwork.core.ui.design.compose.DesignOption
 import eu.peernetwork.user.ui.model.UiPoint
 import kotlin.collections.forEach
 

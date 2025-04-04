@@ -1,8 +1,9 @@
 package eu.peernetwork.blog.domain.model
 
 data class Filter(
-    val type: Set<ContentType> = emptySet(),
+    val type: Set<Content.Type> = emptySet(),
     val postId: String? = null,
+    val author: String? = null,
     val criteria: Criteria? = null,
 ) {
     sealed interface Criteria {

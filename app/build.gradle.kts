@@ -10,6 +10,7 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+        buildConfigField("int", "PAGING_LIMIT", "20")
     }
     buildTypes {
         debug {

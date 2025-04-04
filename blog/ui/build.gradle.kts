@@ -15,8 +15,10 @@ dependencies {
     implementation(project(":core:common"))
     implementation(project(":core:ui"))
 
-    implementation(project(":persistence:domain"))
-    implementation(project(":social:domain"))
+    implementation(project(":blog:domain"))
+
+    implementation(libs.media3)
+    implementation(libs.media3.ui)
 
     implementation(libs.dagger)
     ksp(libs.dagger.compiler)

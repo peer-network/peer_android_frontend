@@ -51,8 +51,8 @@ internal class CommentApiDelegateTest {
 
         val result = api.getAll(id, page)
 
-        assertNotNull(result.first())
-        assertEquals(result.first().id, content.affectedRows?.first()?.comments?.first()?.commentid)
+        assertNotNull(result.items.first())
+        assertEquals(result.items.first().id, content.affectedRows?.first()?.comments?.first()?.commentid)
 
         verify { client.query(GetCommentsQuery(
             postId = Optional.present(id),

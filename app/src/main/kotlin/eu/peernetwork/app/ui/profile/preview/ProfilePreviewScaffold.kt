@@ -48,8 +48,7 @@ fun ProfilePreviewScaffold(
                 thickness = 1.dp
             )
         }
-        Box(modifier = Modifier.fillMaxWidth()
-            .weight(1f)) { content() }
+        Box(modifier = Modifier.fillMaxWidth().weight(1f)) { content() }
     }
 }
 

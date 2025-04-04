@@ -6,34 +6,45 @@ import eu.peernetwork.user.ui.model.UiAccount
 import eu.peernetwork.user.ui.usecase.ObserveAuthUserUsecase
 import eu.peernetwork.user.ui.usecase.ProfileUsecase
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @User.Scope
 class UserViewModel @Inject constructor(
     private val usecase: ProfileUsecase,
-    observerUsecase: ObserveAuthUserUsecase
+    private val observerUsecase: ObserveAuthUserUsecase
 ) : ViewModel() {
-    private val mutableState = MutableStateFlow<State>(State.Initialize)
+    private val mutableState = MutableStateFlow<State>(State.Empty)
 
-    val state: StateFlow<State> = mutableState
-        .combine(observerUsecase()) { state, account ->
-            account?.let { State.Success(it) } ?: state
-        }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = State.Initialize
-    )
+    val state: StateFlow<State> = mutableState.asStateFlow()
+
+    init {
+        viewModelScope.launch {
+            observerUsecase().collectLatest {
+                if (it != null) {
+                    mutableState.tryEmit(State.Success(it))
+                }
+            }
+        }
+    }
+
+    fun initialize() {
+        viewModelScope.launch {
+            if (observerUsecase().firstOrNull { it == null } == null) {
+                getAccount()
+            }
+        }
+    }
 
     fun getAccount() {
         mutableState.tryEmit(State.Loading)
         viewModelScope.launch {
             try {
-                usecase()
+                mutableState.tryEmit(State.Success(usecase()))
             } catch (error: Throwable) {
                 mutableState.tryEmit(State.Error(error))
             }
@@ -41,7 +52,7 @@ class UserViewModel @Inject constructor(
     }
 
     sealed interface State {
-        data object Initialize : State
+        data object Empty : State
         data object Loading : State
         data class Success(val account: UiAccount) : State
         data class Error(val error: Throwable) : State

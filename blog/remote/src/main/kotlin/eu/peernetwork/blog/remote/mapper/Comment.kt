@@ -12,6 +12,7 @@ fun GetCommentsQuery.AffectedRow.mapToDomain(): List<Comment> {
             content = it.content,
             author = Author(
                 id = it.user.id,
+                slug = it.user.slug!!,
                 username = it.user.username!!,
                 imageUrl = it.user.img!!
             )
@@ -25,6 +26,7 @@ fun CreateCommentMutation.AffectedRow.mapToDomain(): Comment {
         content = content,
         author = Author(
             id = user.id,
+            slug = user.slug!!,
             username = user.username!!,
             imageUrl = user.img!!
         )

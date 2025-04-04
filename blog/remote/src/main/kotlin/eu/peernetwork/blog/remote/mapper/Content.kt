@@ -1,5 +1,6 @@
 package eu.peernetwork.blog.remote.mapper
 
+import eu.peernetwork.blog.domain.model.Author
 import eu.peernetwork.blog.domain.model.Content
 import eu.peernetwork.blog.remote.content.CreatePostMutation
 import eu.peernetwork.blog.remote.content.GetallpostsQuery
@@ -8,6 +9,14 @@ fun CreatePostMutation.AffectedRows.mapToDomain(): Content {
     return Content(
         id = id,
         title = title,
+        media = media,
+        author = Author(
+            id = user.id,
+            slug = user.slug!!,
+            username = user.username!!,
+            imageUrl = user.img!!
+        ),
+        createdAt = createdat.toString().toTimestamp(),
         type = contenttype.mapToDomain()
     )
 }
@@ -16,6 +25,14 @@ fun GetallpostsQuery.AffectedRow.mapToDomain(): Content {
     return Content(
         id = id,
         title = title,
+        media = media,
+        author = Author(
+            id = user.id,
+            slug = user.slug!!,
+            username = user.username!!,
+            imageUrl = user.img!!
+        ),
+        createdAt = createdat.toString().toTimestamp(),
         type = contenttype.mapToDomain()
     )
 }

@@ -32,6 +32,14 @@ mutation CreatePost(
             cover
             contenttype
             createdat
+            user {
+                id
+                username
+                slug
+                img
+                isfollowed
+                isfollowing
+            }
         }
     }
 }

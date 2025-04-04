@@ -12,7 +12,7 @@ import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.factory.UiBuilderFactory
 import eu.peernetwork.core.ui.factory.UiViewModelFactory
 import eu.peernetwork.app.ui.feed.Feed
-import eu.peernetwork.app.ui.profile.flow.Profile
+import eu.peernetwork.app.ui.profile.core.Profile
 import eu.peernetwork.user.ui.user.point.UserPoint
 import javax.inject.Provider
 

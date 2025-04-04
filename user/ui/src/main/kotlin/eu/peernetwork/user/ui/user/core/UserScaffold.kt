@@ -17,8 +17,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import eu.peernetwork.core.ui.compose.DesignAvatar
-import eu.peernetwork.core.ui.compose.DesignDetail
+import eu.peernetwork.core.ui.design.compose.DesignAvatar
+import eu.peernetwork.core.ui.design.compose.DesignDetail
 import eu.peernetwork.core.ui.theme.PeerTheme
 
 @Composable
@@ -68,7 +68,6 @@ fun UserSkeleton(modifier: Modifier = Modifier) {
         }
     ) {
         Box(modifier = Modifier.width(100.dp)
-            .padding(bottom = 8.dp)
             .height(8.dp)
             .background(MaterialTheme.colorScheme.tertiaryContainer))
         Box(modifier = Modifier.width(160.dp)
@@ -95,7 +94,7 @@ fun PreviewUserScaffold() {
                     Text(text = "icon")
                 },
                 options = {
-                    Text(text = "Overview")
+                    Text(text = "Overview", modifier = Modifier.padding(start = 8.dp))
                 }
             ) {
                 Column {

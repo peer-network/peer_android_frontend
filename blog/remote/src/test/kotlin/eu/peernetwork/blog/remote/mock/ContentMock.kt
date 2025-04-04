@@ -23,7 +23,15 @@ object ContentMock {
                 media = "<test-media>",
                 cover = "<test-cover>",
                 contenttype = "<test-contenttype>",
-                createdat = "<test-createdat>"
+                createdat = "2025-03-24 00:05:09.334000",
+                user = CreatePostMutation.User(
+                    id = "<test-userid>",
+                    username = "<test-username>",
+                    img = "<test-avatar>",
+                    slug = 0,
+                    isfollowed = false,
+                    isfollowing = false
+                )
             )
         )
     }
@@ -48,7 +56,15 @@ object ContentMock {
                     media = "<test-media>",
                     cover = "<test-cover>",
                     contenttype = "<test-contenttype>",
-                    createdat = "<test-createdat>"
+                    createdat = "2025-03-24 00:05:09.334000",
+                    user = GetallpostsQuery.User(
+                        id = "<test-userid>",
+                        username = "<test-username>",
+                        img = "<test-avatar>",
+                        slug = 0,
+                        isfollowed = false,
+                        isfollowing = false
+                    )
                 )
             )
         )

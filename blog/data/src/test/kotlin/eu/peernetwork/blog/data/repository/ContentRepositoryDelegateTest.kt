@@ -2,10 +2,10 @@ package eu.peernetwork.blog.data.repository
 
 import eu.peernetwork.blog.data.api.ContentApi
 import eu.peernetwork.blog.domain.model.Content
-import eu.peernetwork.blog.domain.model.ContentType
 import eu.peernetwork.blog.domain.model.Draft
 import eu.peernetwork.blog.domain.model.Filter
 import eu.peernetwork.blog.domain.repository.ContentRepository
+import eu.peernetwork.core.common.model.Page
 import eu.peernetwork.core.common.model.Pageable
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -29,10 +29,21 @@ internal class ContentRepositoryDelegateTest {
     fun `test get content by id`(): Unit = runBlocking {
         val id = "<test-id>"
         val mock = mockk<Content>()
-        coEvery { api.get(any(), any()) } returns listOf(mock)
+        coEvery { api.get(any(), any()) } returns Page(1, 0, listOf(mock))
         val result = repository.get(id)
         assertEquals(result, mock)
         coVerify { api.get(Filter(postId = id), Pageable(0, 1)) }
+    }
+
+    @Test
+    fun `test get content by author`(): Unit = runBlocking {
+        val author = "<test-author>"
+        val page = Pageable(0, 1)
+        val mock = mockk<Content>()
+        coEvery { api.get(any(), any()) } returns Page(1, 0, listOf(mock))
+        val result = repository.getAll(Filter(author = author), page)
+        assertEquals(result.items.first(), mock)
+        coVerify { api.get(Filter(author = author), page) }
     }
 
     @Test
@@ -41,9 +52,9 @@ internal class ContentRepositoryDelegateTest {
         val page = Pageable(0, 1)
         val filter = Filter(postId = id)
         val mock = mockk<Content>()
-        coEvery { api.get(any(), any()) } returns listOf(mock)
+        coEvery { api.get(any(), any()) } returns Page(1, 0, listOf(mock))
         val result = repository.getAll(filter, page)
-        assertEquals(result, listOf(mock))
+        assertEquals(result.items, listOf(mock))
         coVerify { api.get(Filter(postId = id), page) }
     }
 
@@ -51,10 +62,11 @@ internal class ContentRepositoryDelegateTest {
     fun `test create text contents`(): Unit = runBlocking {
         val mock = mockk<Content>()
         val draft = mockk<Draft>()
-        coEvery { api.create(any(), any(), any()) } returns mock
-        val result = repository.create(draft, ContentType.Text)
+        coEvery { draft.type } returns Draft.Type.Text
+        coEvery { api.create(any()) } returns mock
+        val result = repository.create(draft)
         assertEquals(result, mock)
-        coVerify { api.create(draft, listOf()) }
+        coVerify { api.create(draft) }
     }
 
     @Test
@@ -62,10 +74,11 @@ internal class ContentRepositoryDelegateTest {
         val mock = mockk<Content>()
         val draft = mockk<Draft>()
         val video = "http://localhost/test-video-url"
-        coEvery { api.create(any(), any(), any()) } returns mock
-        val result = repository.create(draft, ContentType.Video(listOf(video)))
+        coEvery { draft.type } returns Draft.Type.Video(listOf(video))
+        coEvery { api.create(any()) } returns mock
+        val result = repository.create(draft)
         assertEquals(result, mock)
-        coVerify { api.create(draft, listOf(video)) }
+        coVerify { api.create(draft) }
     }
 
     @Test
@@ -73,10 +86,11 @@ internal class ContentRepositoryDelegateTest {
         val mock = mockk<Content>()
         val draft = mockk<Draft>()
         val image = "http://localhost/test-image-url"
-        coEvery { api.create(any(), any(), any()) } returns mock
-        val result = repository.create(draft, ContentType.Image(listOf(image)))
+        coEvery { draft.type } returns Draft.Type.Image(listOf(image))
+        coEvery { api.create(any()) } returns mock
+        val result = repository.create(draft)
         assertEquals(result, mock)
-        coVerify { api.create(draft, listOf(image)) }
+        coVerify { api.create(draft) }
     }
 
     @Test
@@ -85,9 +99,10 @@ internal class ContentRepositoryDelegateTest {
         val draft = mockk<Draft>()
         val audio = "http://localhost/test-audio-url"
         val cover = "http://localhost/test-audio-cover"
-        coEvery { api.create(any(), any(), any()) } returns mock
-        val result = repository.create(draft, ContentType.Audio(listOf(audio), cover))
+        coEvery { draft.type } returns Draft.Type.Audio(listOf(audio), cover)
+        coEvery { api.create(any()) } returns mock
+        val result = repository.create(draft)
         assertEquals(result, mock)
-        coVerify { api.create(draft, listOf(audio), cover) }
+        coVerify { api.create(draft) }
     }
 }

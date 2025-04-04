@@ -1,16 +1,17 @@
 package eu.peernetwork.app.ui.profile.preview
 
 import android.content.Context
+import eu.peernetwork.blog.ui.post.music.Music
+import eu.peernetwork.blog.ui.post.photo.Photo
+import eu.peernetwork.blog.ui.post.video.Video
+import eu.peernetwork.blog.ui.provider.BlogProvider
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.persistence.domain.provider.PreferenceProvider
-import eu.peernetwork.social.ui.content.music.Music
-import eu.peernetwork.social.ui.content.photo.Photo
-import eu.peernetwork.social.ui.content.video.Video
 import eu.peernetwork.user.ui.provider.UserProvider
 import eu.peernetwork.user.ui.user.core.User
 
-interface ProfilePreview : UserProvider, PreferenceProvider {
+interface ProfilePreview : UserProvider, PreferenceProvider, BlogProvider {
     @javax.inject.Scope
     @Retention(AnnotationRetention.RUNTIME)
     annotation class Scope

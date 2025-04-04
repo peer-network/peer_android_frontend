@@ -12,9 +12,6 @@ android {
 }
 
 dependencies {
-    implementation(libs.media3)
-    implementation(libs.media3.ui)
-
     implementation(project(":core:common"))
     implementation(project(":core:ui"))
 

@@ -8,6 +8,7 @@ import eu.peernetwork.blog.domain.model.Comment
 import eu.peernetwork.blog.remote.comment.CreateCommentMutation
 import eu.peernetwork.blog.remote.comment.GetCommentsQuery
 import eu.peernetwork.blog.remote.mapper.mapToDomain
+import eu.peernetwork.core.common.model.Page
 import eu.peernetwork.core.common.model.Pageable
 import eu.peernetwork.core.remote.extension.assertOrThrow
 import eu.peernetwork.core.remote.extension.executeOrThrow
@@ -18,7 +19,7 @@ import javax.inject.Inject
 class CommentApiDelegate @Inject constructor(
     private val client: ApolloClient
 ) : CommentApi {
-    override suspend fun getAll(id: String, page: Pageable): List<Comment> {
+    override suspend fun getAll(id: String, page: Pageable): Page<Comment> {
         val query = GetCommentsQuery(
             postId = Optional.present(id),
             offset = Optional.present(page.offset),
@@ -28,7 +29,11 @@ class CommentApiDelegate @Inject constructor(
         val data = response.getOrThrow().getallposts
         val contents = data.affectedRows?.map { it.mapToDomain() }
         response.assertOrThrow(data.status, data.ResponseCode)
-        return contents?.firstOrNull() ?: emptyList()
+        return Page(
+            count = data.counter,
+            offset = page.offset,
+            items = contents?.firstOrNull() ?: emptyList()
+        )
     }
 
     override suspend fun comment(postId: String, text: String): Comment {

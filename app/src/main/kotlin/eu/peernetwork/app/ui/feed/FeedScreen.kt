@@ -21,14 +21,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import eu.peernetwork.blog.ui.timeline.music.MusicScreen
+import eu.peernetwork.blog.ui.timeline.photo.PhotoScreen
+import eu.peernetwork.blog.ui.timeline.video.VideoScreen
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.compose.DesignToolbarTitle
+import eu.peernetwork.core.ui.design.compose.DesignToolbarTitle
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.theme.PeerTheme
-import eu.peernetwork.social.ui.timeline.music.MusicScreen
-import eu.peernetwork.social.ui.timeline.photo.PhotoScreen
-import eu.peernetwork.social.ui.timeline.video.VideoScreen
 
 @Composable
 fun FeedScreen(

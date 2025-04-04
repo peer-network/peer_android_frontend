@@ -5,15 +5,15 @@ import androidx.lifecycle.ViewModelProvider
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
+import eu.peernetwork.blog.ui.timeline.music.Music
+import eu.peernetwork.blog.ui.timeline.photo.Photo
+import eu.peernetwork.blog.ui.timeline.video.Video
 import eu.peernetwork.core.ui.annotation.UiBuilder
 import eu.peernetwork.core.ui.annotation.UiViewModel
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.factory.UiBuilderFactory
 import eu.peernetwork.core.ui.factory.UiViewModelFactory
-import eu.peernetwork.social.ui.timeline.music.Music
-import eu.peernetwork.social.ui.timeline.photo.Photo
-import eu.peernetwork.social.ui.timeline.video.Video
 import javax.inject.Provider
 
 @Module

@@ -2,12 +2,12 @@ package eu.peernetwork.app.ui.feed
 
 import android.content.Context
 import androidx.lifecycle.ViewModelProvider
+import eu.peernetwork.blog.ui.timeline.music.Music
+import eu.peernetwork.blog.ui.timeline.photo.Photo
+import eu.peernetwork.blog.ui.timeline.video.Video
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.persistence.domain.provider.PreferenceProvider
-import eu.peernetwork.social.ui.timeline.music.Music
-import eu.peernetwork.social.ui.timeline.photo.Photo
-import eu.peernetwork.social.ui.timeline.video.Video
 
 interface Feed : PreferenceProvider {
     @javax.inject.Scope

@@ -10,6 +10,8 @@ android {
 }
 
 dependencies {
+    implementation(project(":core:common"))
+
     api(libs.core.ktx)
     api(libs.appcompat)
     api(libs.material)
@@ -28,6 +30,9 @@ dependencies {
     api(libs.compose.constraintlayout)
     api(libs.compose.navigation)
     api(libs.compose.coil)
+
+    api(libs.androidx.paging)
+    api(libs.compose.paging)
 
     api(libs.dagger.android)
 }

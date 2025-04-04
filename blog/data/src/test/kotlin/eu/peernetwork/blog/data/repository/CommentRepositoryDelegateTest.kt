@@ -3,6 +3,7 @@ package eu.peernetwork.blog.data.repository
 import eu.peernetwork.blog.data.api.CommentApi
 import eu.peernetwork.blog.domain.model.Comment
 import eu.peernetwork.blog.domain.repository.CommentRepository
+import eu.peernetwork.core.common.model.Page
 import eu.peernetwork.core.common.model.Pageable
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -28,11 +29,11 @@ internal class CommentRepositoryDelegateTest {
         val page = Pageable(0, 1)
         val mock = mockk<Comment>()
 
-        coEvery { api.getAll(any(), any()) } returns listOf(mock)
+        coEvery { api.getAll(any(), any()) } returns Page(1, 0, listOf(mock))
 
         val result = repository.getAll(id, page)
 
-        assertEquals(result.first(), mock)
+        assertEquals(result.items.first(), mock)
         coVerify { api.getAll(id, page) }
     }
 

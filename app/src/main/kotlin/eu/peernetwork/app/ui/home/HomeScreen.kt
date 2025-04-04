@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -23,9 +25,11 @@ import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.app.ui.feed.FeedScreen
-import eu.peernetwork.app.ui.profile.flow.ProfileScreen
+import eu.peernetwork.app.ui.profile.core.ProfileScreen
 import eu.peernetwork.core.ui.R
-import eu.peernetwork.core.ui.compose.DesignToolbarTitle
+import eu.peernetwork.core.ui.design.compose.DesignToolbarTitle
+import eu.peernetwork.core.ui.design.view.DesignStatefulContent
+import eu.peernetwork.core.ui.design.view.DesignStatefulContentState
 import eu.peernetwork.user.ui.user.point.UserPointScreen
 
 @Composable
@@ -42,29 +46,45 @@ fun HomeScreen(
         viewModelStoreOwner = viewModelStoreOwner,
         factory = component.viewModelFactory()
     )
-    val controller = rememberNavController()
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val titleState = remember { mutableStateOf(DesignToolbarTitle(HomeRoute.get(state.page).label)) }
-    val navigationState = rememberSaveable { mutableIntStateOf(state.page) }
-    HomeScaffold(
-        header = { HomeHeader(titleState) { UserPointScreen(component, viewModelStoreOwner) } },
-        footer = { HomeFooter(navigationState) }
-    ) {
-        HomeNavigation(
-            state = navigationState,
+    val derivedState = remember { derivedStateOf {
+        when(state) {
+            HomeViewModel.State.Empty -> DesignStatefulContentState.Empty
+            HomeViewModel.State.Loading -> DesignStatefulContentState.Loading
+            is HomeViewModel.State.Success -> {
+                val data = (state as HomeViewModel.State.Success)
+                DesignStatefulContentState.Success(Pair(data.userId, data.lastVisitedPage))
+            }
+            is HomeViewModel.State.Error -> {
+                DesignStatefulContentState.Error((state as HomeViewModel.State.Error).error)
+            }
+        }
+    } }
+    DesignStatefulContent<Pair<String, Int>>(
+        state = derivedState,
+        refresh = { viewModel() },
+        modifier = Modifier.fillMaxSize()
+    ) { data ->
+        val title = remember {
+            mutableStateOf(DesignToolbarTitle(HomeRoute.get(data.second).label))
+        }
+        HomeContainer(
+            title = title,
+            index = data.second,
             onNavigate = { viewModel.lastVisited(it) },
-            navController = controller
+            options = { UserPointScreen(component, viewModelStoreOwner) }
         ) {
             when(it) {
-                is HomeRoute.Home -> FeedScreen(titleState, component, viewModelStoreOwner)
+                is HomeRoute.Home -> FeedScreen(title, component, viewModelStoreOwner)
                 is HomeRoute.Profile -> ProfileScreen(
-                    titleState,
+                    data.first,
+                    title,
                     component,
                     viewModelStoreOwner
                 )
                 else -> Box(modifier = Modifier.fillMaxSize()) {
                     LaunchedEffect(Unit) {
-                        titleState.value = DesignToolbarTitle(it.label)
+                        title.value = DesignToolbarTitle(it.label)
                     }
                 }
             }
@@ -73,13 +93,34 @@ fun HomeScreen(
 }
 
 @Composable
+fun HomeContainer(
+    title: MutableState<DesignToolbarTitle>,
+    index: Int,
+    onNavigate: (Int) -> Unit,
+    options: @Composable () -> Unit,
+    content: @Composable (HomeRoute) -> Unit
+) {
+    val controller = rememberNavController()
+    val navigationState = rememberSaveable { mutableIntStateOf(index) }
+    HomeScaffold(
+        header = { HomeHeader(title, options = options) },
+        footer = { HomeFooter(navigationState) }
+    ) {
+        HomeNavigation(
+            state = navigationState,
+            onNavigate = onNavigate,
+            navController = controller,
+            content = content
+        )
+    }
+}
+
+@Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun PreviewHomeScreen() {
     PeerTheme {
         HomeScaffold(
-            header = { HomeHeader(remember {
-                mutableStateOf(DesignToolbarTitle(R.string.home_label, {}))
-            }) { } },
+            header = { HomeHeader(remember { mutableStateOf(DesignToolbarTitle(R.string.home_label)) }) { } },
             footer = { HomeFooter(remember { mutableIntStateOf(0) }) }
         ) {
             Text(

@@ -20,5 +20,4 @@
 
     <string name="logout_message">Do you really want to log out?</string>
     <string name="empty_description_message">Biography unavailable</string>
-    <string name="unknown_error_message">Oops! Unknown network error occurred.</string>
 </resources>

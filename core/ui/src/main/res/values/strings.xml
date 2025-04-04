@@ -10,4 +10,8 @@
     <string name="like_label">Likes</string>
     <string name="comment_label">Comments</string>
     <string name="settings_label">Settings</string>
+    <string name="retry_label">Try again</string>
+    <string name="error_label">Error</string>
+
+    <string name="unknown_error_message">Oops! Unknown network error occurred.</string>
 </resources>

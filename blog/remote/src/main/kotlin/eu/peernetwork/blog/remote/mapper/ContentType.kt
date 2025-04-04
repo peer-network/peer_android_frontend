@@ -1,43 +1,33 @@
 package eu.peernetwork.blog.remote.mapper
 
-import eu.peernetwork.blog.domain.model.ContentType
+import eu.peernetwork.blog.domain.model.Content.Type
+import eu.peernetwork.blog.domain.model.Draft
 import type.ContenType
 import type.FilterType
 
-fun ContentType.mapToFilter(): FilterType {
+fun Type.mapToFilter(): FilterType {
     return when(this) {
-        ContentType.VIDEO -> FilterType.VIDEO
-        ContentType.AUDIO -> FilterType.AUDIO
-        ContentType.IMAGE -> FilterType.IMAGE
-        ContentType.TEXT -> FilterType.TEXT
+        Type.TEXT -> FilterType.TEXT
+        Type.AUDIO -> FilterType.AUDIO
+        Type.IMAGE -> FilterType.IMAGE
+        Type.VIDEO -> FilterType.VIDEO
     }
 }
 
-fun ContenType.mapToDomain(): ContentType {
+fun Draft.Type.mapFromDomain(): ContenType {
     return when(this) {
-        ContenType.video -> ContentType.VIDEO
-        ContenType.audio -> ContentType.AUDIO
-        ContenType.image -> ContentType.IMAGE
-        ContenType.text -> ContentType.TEXT
-        else -> ContentType.TEXT
+        is Draft.Type.Video -> ContenType.video
+        is Draft.Type.Audio -> ContenType.audio
+        is Draft.Type.Image -> ContenType.image
+        Draft.Type.Text -> ContenType.text
     }
 }
 
-fun ContentType.mapFromDomain(): ContenType {
+fun String.mapToDomain(): Type {
     return when(this) {
-        ContentType.VIDEO -> ContenType.video
-        ContentType.AUDIO -> ContenType.audio
-        ContentType.IMAGE -> ContenType.image
-        ContentType.TEXT -> ContenType.text
-    }
-}
-
-fun String.mapToDomain(): ContentType {
-    return when(this) {
-        "video" -> ContentType.VIDEO
-        "audio" -> ContentType.AUDIO
-        "image" -> ContentType.IMAGE
-        "text" -> ContentType.TEXT
-        else -> ContentType.TEXT
+        "video" -> Type.VIDEO
+        "audio" -> Type.AUDIO
+        "image" -> Type.IMAGE
+        else -> Type.TEXT
     }
 }

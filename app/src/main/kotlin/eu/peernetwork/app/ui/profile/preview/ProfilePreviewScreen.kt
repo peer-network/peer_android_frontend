@@ -1,7 +1,6 @@
 package eu.peernetwork.app.ui.profile.preview
 
 import android.content.res.Configuration
-import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
@@ -19,17 +18,19 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
+import eu.peernetwork.app.BuildConfig
+import eu.peernetwork.blog.ui.post.music.MusicScreen
+import eu.peernetwork.blog.ui.post.photo.PhotoScreen
+import eu.peernetwork.blog.ui.post.video.VideoScreen
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.theme.PeerTheme
-import eu.peernetwork.social.ui.content.music.MusicScreen
-import eu.peernetwork.social.ui.content.photo.PhotoScreen
-import eu.peernetwork.social.ui.content.video.VideoScreen
 import eu.peernetwork.user.ui.user.core.UserEvent
 import eu.peernetwork.user.ui.user.core.UserScreen
 
 @Composable
 fun ProfilePreviewScreen(
+    userId: String,
     onSettings: () -> Unit,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
@@ -39,13 +40,13 @@ fun ProfilePreviewScreen(
         provider.builder(ProfilePreview.Builder::class.java).build(context)
     }
     val pageState = rememberSaveable { mutableIntStateOf(0) }
-    ProfilePreviewScaffold(
+    ProfilePreviewContent(
+        state = pageState,
         header = {
             UserScreen(
                 onEvent = {
-                    when (it) {
-                        is UserEvent.Settings -> onSettings()
-                        else -> {}
+                    if (it is UserEvent.Settings) {
+                        onSettings()
                     }
                 },
                 provider = component,
@@ -53,60 +54,45 @@ fun ProfilePreviewScreen(
                 modifier = Modifier.padding(
                     bottom = 8.dp
                 ).padding(end = 16.dp, start = 24.dp)
-
             )
-        },
-    ) {
-        ProfileDetailContent(
-            state = pageState,
-            photo = { PhotoScreen(component, viewModelStoreOwner) },
-            video = { VideoScreen(component, viewModelStoreOwner) },
-            music = { MusicScreen(component, viewModelStoreOwner) }
-        )
+        }
+    ) { offset ->
+        when (offset) {
+            0 -> PhotoScreen(userId, BuildConfig.PAGING_LIMIT, component, viewModelStoreOwner)
+            1 -> VideoScreen(component, viewModelStoreOwner)
+            2 -> MusicScreen(component, viewModelStoreOwner)
+        }
     }
 }
 
 @Composable
-fun ProfileDetailContent(
+fun ProfilePreviewContent(
     state: MutableIntState,
     modifier: Modifier = Modifier,
     onNavigate: (Int) -> Unit = {},
-    photo: @Composable () -> Unit,
-    video: @Composable () -> Unit,
-    music: @Composable () -> Unit,
+    header: @Composable () -> Unit,
+    content: @Composable (Int) -> Unit
 ) {
     val pageState = rememberPagerState(pageCount = { 3 }, initialPage = state.intValue)
-    HorizontalPager(
-        state = pageState,
-        modifier = modifier,
-        verticalAlignment = Alignment.Top,
-    ) { page ->
-        Crossfade(targetState = page) { targetPage ->
-            when (targetPage) {
-                0 -> photo()
-                1 -> video()
-                2 -> music()
-            }
-        }
+    ProfilePreviewScaffold(header = header) {
+        HorizontalPager(
+            state = pageState,
+            modifier = modifier,
+            verticalAlignment = Alignment.Top,
+        ) { page -> content(page) }
+        LaunchedEffect(pageState.currentPage) { onNavigate(pageState.currentPage) }
     }
-    LaunchedEffect(pageState.currentPage) { onNavigate(pageState.currentPage) }
 }
 
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun PreviewProfilePreview() {
-    val state = rememberSaveable { mutableIntStateOf(0) }
     PeerTheme {
         ProfilePreviewScaffold(
             modifier = Modifier.fillMaxSize(),
-            header = { Text("Profile") },
+            header = { Text("Header") },
             content = {
-                ProfileDetailContent(
-                    state = state,
-                    photo = { Text("Photo") },
-                    video = { Text("Video") },
-                    music = { Text("Music") }
-                )
+                Text("Content")
             },
         )
     }
