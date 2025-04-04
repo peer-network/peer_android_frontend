@@ -26,7 +26,8 @@ fun HomeScaffold(
         topBar = { header() },
         bottomBar = { footer() }
     ) { padding ->
-        Box(modifier = Modifier.padding(padding)) { content() }
+        Box(modifier = Modifier.padding(padding)
+        ) { content() }
     }
 }
 

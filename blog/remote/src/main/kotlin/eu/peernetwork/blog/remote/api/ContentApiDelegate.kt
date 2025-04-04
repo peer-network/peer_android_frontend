@@ -52,7 +52,7 @@ class ContentApiDelegate @Inject constructor(
         val response = client.query(query).executeOrThrow()
         val data = response.getOrThrow().getallposts
         val contents = data.affectedRows?.map {
-            it.mapToDomain(gson.fromJson<List<Media>>(
+            it.mapToDomain(url, gson.fromJson<List<Media>>(
                 it.media,
                 object : TypeToken<List<Media>>() {}.type
             ).map { it.copy(path = "$url${it.path}") })
@@ -80,7 +80,7 @@ class ContentApiDelegate @Inject constructor(
         val response = client.mutation(mutation).executeOrThrow()
         val data = response.getOrThrow().createPost
         val content = data.affectedRows?.mapToDomain(
-            gson.fromJson<List<Media>>(
+            url, gson.fromJson<List<Media>>(
                 data.affectedRows.media,
                 object : TypeToken<List<Media>>() {}.type
             ).map { it.copy(path = "$url${it.path}") }

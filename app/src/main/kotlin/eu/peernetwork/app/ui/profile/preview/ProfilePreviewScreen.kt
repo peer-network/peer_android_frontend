@@ -74,10 +74,9 @@ fun ProfilePreviewContent(
     content: @Composable (Int) -> Unit
 ) {
     val pageState = rememberPagerState(pageCount = { 3 }, initialPage = state.intValue)
-    ProfilePreviewScaffold(header = header) {
+    ProfilePreviewScaffold(header = header, modifier = modifier) {
         HorizontalPager(
             state = pageState,
-            modifier = modifier,
             verticalAlignment = Alignment.Top,
         ) { page -> content(page) }
         LaunchedEffect(pageState.currentPage) { onNavigate(pageState.currentPage) }
