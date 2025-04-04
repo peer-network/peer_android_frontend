@@ -22,7 +22,7 @@ import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-@OptIn(ExperimentalCoroutinesApi::class)
+@OptIn(ExperimentalCoroutinesApi::class) a
 internal class PhotoViewModelTest {
     @get:Rule
     val instantExecutorRule = InstantTaskExecutorRule()
@@ -46,7 +46,7 @@ internal class PhotoViewModelTest {
         val mockData = UiPost(
             id = "<test-id>",
             title = "<test-title>",
-            media = "<test-title>",
+            media = mockk(),
             type = UiPost.Type.IMAGE,
             createdAt = System.currentTimeMillis(),
             author = UiAuthor(

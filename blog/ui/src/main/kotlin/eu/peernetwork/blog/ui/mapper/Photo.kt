@@ -7,7 +7,7 @@ fun Content.mapToPhoto(): UiPost {
     return UiPost(
         id = id,
         title = title,
-        media = media,
+        media = media.map { it.mapFromDomain() },
         author = author.mapFromDomain(),
         type = type.mapFromDomain(),
         createdAt = createdAt
