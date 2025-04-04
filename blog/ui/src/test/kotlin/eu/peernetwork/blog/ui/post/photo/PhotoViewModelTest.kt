@@ -22,7 +22,7 @@ import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-@OptIn(ExperimentalCoroutinesApi::class) a
+@OptIn(ExperimentalCoroutinesApi::class)
 internal class PhotoViewModelTest {
     @get:Rule
     val instantExecutorRule = InstantTaskExecutorRule()
