@@ -25,6 +25,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
@@ -57,10 +58,10 @@ import eu.peernetwork.social.ui.content.video.VideoPlayer
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VideoContent(
-    username: MutableState<String>,
-    userId: MutableState<String>,
-    timeStamp: MutableState<String>,
-    descriptionText: MutableState<String>,
+    username: State<String>,
+    userId: State<String>,
+    timeStamp: State<String>,
+    descriptionText: State<String>,
     isFullscreen: MutableState<Boolean>,
     video: Uri,
     onVideoClick: () -> Unit = {},
