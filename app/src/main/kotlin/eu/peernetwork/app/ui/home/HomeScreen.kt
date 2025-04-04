@@ -17,7 +17,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
@@ -28,22 +27,21 @@ import eu.peernetwork.app.ui.feed.FeedScreen
 import eu.peernetwork.app.ui.profile.core.ProfileScreen
 import eu.peernetwork.blog.ui.point.UserPointScreen
 import eu.peernetwork.core.ui.R
+import eu.peernetwork.core.ui.annotation.UiViewModel
 import eu.peernetwork.core.ui.design.compose.DesignToolbarTitle
-import eu.peernetwork.core.ui.design.view.DesignStatefulContent
-import eu.peernetwork.core.ui.design.view.DesignStatefulContentState
+import eu.peernetwork.core.ui.design.component.DesignStatefulContent
+import eu.peernetwork.core.ui.design.component.DesignStatefulContentState
 
 @Composable
-fun HomeScreen(
-    provider: UiComponentProvider,
-    viewModelStoreOwner: ViewModelStoreOwner,
-) {
+fun HomeScreen(provider: UiComponentProvider) {
+    val owner = remember { UiViewModel.Owner() }
     val context = LocalContext.current
     val component = remember {
         provider.builder(Home.Builder::class.java).build(context)
     }
     val viewModel = viewModel(
         modelClass = HomeViewModel::class.java,
-        viewModelStoreOwner = viewModelStoreOwner,
+        viewModelStoreOwner = owner,
         factory = component.viewModelFactory()
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -72,15 +70,15 @@ fun HomeScreen(
             title = title,
             index = data.second,
             onNavigate = { viewModel.lastVisited(it) },
-            options = { UserPointScreen(component, viewModelStoreOwner) }
+            options = { UserPointScreen(component, owner) }
         ) {
             when(it) {
-                is HomeRoute.Home -> FeedScreen(title, component, viewModelStoreOwner)
+                is HomeRoute.Home -> FeedScreen(title, component, owner)
                 is HomeRoute.Profile -> ProfileScreen(
                     data.first,
                     title,
                     component,
-                    viewModelStoreOwner
+                    owner
                 )
                 else -> Box(modifier = Modifier.fillMaxSize()) {
                     LaunchedEffect(Unit) {

@@ -28,10 +28,11 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import eu.peernetwork.core.ui.annotation.UiViewModel
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.compose.DesignOutlinedButton
-import eu.peernetwork.core.ui.design.view.DesignStatefulContent
-import eu.peernetwork.core.ui.design.view.DesignStatefulContentState
+import eu.peernetwork.core.ui.design.component.DesignStatefulContent
+import eu.peernetwork.core.ui.design.component.DesignStatefulContentState
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.user.ui.R
@@ -46,7 +47,7 @@ import eu.peernetwork.user.ui.compose.PasswordSheet
 @Composable
 fun UserSettingsScreen(
     provider: UiComponentProvider,
-    viewModelStoreOwner: ViewModelStoreOwner,
+    viewModelStoreOwner: ViewModelStoreOwner = UiViewModel.Owner(),
 ) {
     val context = LocalContext.current
     val component = remember {
