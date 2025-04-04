@@ -1,4 +1,4 @@
-package eu.peernetwork.user.ui.user.core
+package eu.peernetwork.user.ui.user
 
 sealed interface UserEvent {
     data object Settings : UserEvent

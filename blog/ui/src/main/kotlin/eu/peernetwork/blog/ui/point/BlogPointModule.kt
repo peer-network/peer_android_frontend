@@ -1,4 +1,4 @@
-package eu.peernetwork.user.ui.user.point
+package eu.peernetwork.blog.ui.point
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -10,9 +10,9 @@ import eu.peernetwork.core.ui.factory.UiViewModelFactory
 import javax.inject.Provider
 
 @Module
-object UserPointModule {
+object BlogPointModule {
     @Provides
-    @UserPoint.Scope
+    @BlogPoint.Scope
     fun provideViewModelFactory(
         classToViewModel:
         @JvmSuppressWildcards Map<Class<out ViewModel>, Provider<ViewModel>>
@@ -22,7 +22,7 @@ object UserPointModule {
 
     @Provides
     @IntoMap
-    @UserPoint.Scope
-    @UiViewModel(UserPointViewModel::class)
-    fun provideViewModel(viewModel: UserPointViewModel): ViewModel = viewModel
+    @BlogPoint.Scope
+    @UiViewModel(BlogPointViewModel::class)
+    fun provideViewModel(viewModel: BlogPointViewModel): ViewModel = viewModel
 }

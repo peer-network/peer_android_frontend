@@ -1,4 +1,4 @@
-package eu.peernetwork.user.ui.user.core
+package eu.peernetwork.user.ui.user
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -27,9 +27,9 @@ import eu.peernetwork.user.ui.model.UiAccount
 import eu.peernetwork.user.ui.model.UiOverview
 import eu.peernetwork.core.ui.design.compose.DesignAsyncImage
 import eu.peernetwork.core.ui.design.compose.DesignTitle
-import eu.peernetwork.core.ui.design.view.DesignErrorDetail
-import eu.peernetwork.core.ui.design.view.DesignStatefulContent
-import eu.peernetwork.core.ui.design.view.DesignStatefulContentState
+import eu.peernetwork.core.ui.design.component.DesignErrorDetail
+import eu.peernetwork.core.ui.design.component.DesignStatefulContent
+import eu.peernetwork.core.ui.design.component.DesignStatefulContentState
 import eu.peernetwork.user.ui.compose.UserOverview
 
 @Composable

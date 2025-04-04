@@ -22,8 +22,8 @@ import eu.peernetwork.blog.ui.compose.PostScaffold
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.core.common.model.Pageable
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.view.DesignStatefulContent
-import eu.peernetwork.core.ui.design.view.DesignStatefulContentState
+import eu.peernetwork.core.ui.design.component.DesignStatefulContent
+import eu.peernetwork.core.ui.design.component.DesignStatefulContentState
 import eu.peernetwork.core.ui.extension.builder
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow

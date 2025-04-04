@@ -2,6 +2,7 @@ package eu.peernetwork.blog.data.repository
 
 import eu.peernetwork.blog.data.api.EngagementApi
 import eu.peernetwork.blog.domain.model.Engagement
+import eu.peernetwork.blog.domain.model.Point
 import eu.peernetwork.blog.domain.repository.EngagementRepository
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -18,6 +19,14 @@ internal class EngagementRepositoryDelegateTest {
     @Before
     fun setup() {
         repository = EngagementRepositoryDelegate(api)
+    }
+
+    @Test
+    fun `test engagement point`(): Unit = runBlocking {
+        val point = mockk<Point>()
+        coEvery { api.points() } returns listOf(point)
+        repository.points()
+        coVerify { api.points() }
     }
 
     @Test

@@ -1,4 +1,4 @@
-package eu.peernetwork.user.ui.model
+package eu.peernetwork.blog.ui.model
 
 import androidx.compose.runtime.Immutable
 

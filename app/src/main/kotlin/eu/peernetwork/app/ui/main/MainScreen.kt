@@ -41,6 +41,6 @@ fun MainScreen(
                 viewModelStoreOwner = viewModelStoreOwner
             )
         }
-        composable("home") { HomeScreen(component, viewModelStoreOwner) }
+        composable("home") { HomeScreen(component) }
     }
 }

@@ -1,8 +1,9 @@
-package eu.peernetwork.user.ui.user.point
+package eu.peernetwork.blog.ui.post.point
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import app.cash.turbine.test
-import eu.peernetwork.user.domain.usecase.PointUsecase
+import eu.peernetwork.blog.domain.usecase.PointUsecase
+import eu.peernetwork.blog.ui.point.BlogPointViewModel
 import io.mockk.coEvery
 import io.mockk.mockk
 import junit.framework.TestCase.assertEquals
@@ -17,7 +18,7 @@ import org.junit.Rule
 import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
-internal class UserPointViewModelTest {
+internal class BlogPointViewModelTest {
     @get:Rule
     val instantExecutorRule = InstantTaskExecutorRule()
 
@@ -25,12 +26,12 @@ internal class UserPointViewModelTest {
 
     private val usecase = mockk<PointUsecase>()
 
-    private lateinit var viewModel: UserPointViewModel
+    private lateinit var viewModel: BlogPointViewModel
 
     @Before
     fun setup() {
         Dispatchers.setMain(dispatcher)
-        viewModel = UserPointViewModel(usecase)
+        viewModel = BlogPointViewModel(usecase)
     }
 
     @Test
@@ -41,8 +42,8 @@ internal class UserPointViewModelTest {
         }
         viewModel.getPoints()
         viewModel.state.test {
-            assertEquals(UserPointViewModel.State.Loading, awaitItem())
-            assertEquals(UserPointViewModel.State.Success(listOf()), awaitItem())
+            assertEquals(BlogPointViewModel.State.Loading, awaitItem())
+            assertEquals(BlogPointViewModel.State.Success(listOf()), awaitItem())
         }
     }
 
@@ -55,8 +56,8 @@ internal class UserPointViewModelTest {
         }
         viewModel.getPoints()
         viewModel.state.test {
-            assertEquals(UserPointViewModel.State.Loading, awaitItem())
-            assertEquals(UserPointViewModel.State.Error(error), awaitItem())
+            assertEquals(BlogPointViewModel.State.Loading, awaitItem())
+            assertEquals(BlogPointViewModel.State.Error(error), awaitItem())
         }
     }
 }
