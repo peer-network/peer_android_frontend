@@ -1,11 +1,11 @@
 package eu.peernetwork.app.ui.home
 
 import android.content.res.Configuration
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -13,22 +13,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import eu.peernetwork.core.ui.R
+import eu.peernetwork.core.ui.design.compose.DesignScaffold
 import eu.peernetwork.core.ui.design.compose.DesignToolbarTitle
 import eu.peernetwork.core.ui.theme.PeerTheme
 
 @Composable
 fun HomeScaffold(
-    header: @Composable () -> Unit,
-    footer: @Composable () -> Unit,
+    header: @Composable (State<Float>) -> Unit,
+    footer: @Composable (State<Float>) -> Unit,
     content: @Composable () -> Unit,
 ) {
-    Scaffold(
-        topBar = { header() },
-        bottomBar = { footer() }
-    ) { padding ->
-        Box(modifier = Modifier.padding(padding)
-        ) { content() }
-    }
+    DesignScaffold(
+        alwaysReturn = true,
+        header = header,
+        footer = footer,
+        modifier = Modifier.statusBarsPadding()
+            .navigationBarsPadding()
+    ) { content() }
 }
 
 @Composable

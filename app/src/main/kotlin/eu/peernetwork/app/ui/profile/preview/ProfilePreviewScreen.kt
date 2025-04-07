@@ -9,6 +9,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableIntState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -70,11 +71,15 @@ fun ProfilePreviewContent(
     state: MutableIntState,
     modifier: Modifier = Modifier,
     onNavigate: (Int) -> Unit = {},
-    header: @Composable () -> Unit,
+    header: @Composable (State<Float>) -> Unit,
     content: @Composable (Int) -> Unit
 ) {
     val pageState = rememberPagerState(pageCount = { 3 }, initialPage = state.intValue)
-    ProfilePreviewScaffold(header = header, modifier = modifier) {
+    ProfilePreviewScaffold(
+        header = header,
+        modifier = modifier,
+        pagerState = pageState
+    ) {
         HorizontalPager(
             state = pageState,
             verticalAlignment = Alignment.Top,
@@ -90,6 +95,7 @@ fun PreviewProfilePreview() {
         ProfilePreviewScaffold(
             modifier = Modifier.fillMaxSize(),
             header = { Text("Header") },
+            pagerState = rememberPagerState { 0 },
             content = {
                 Text("Content")
             },

@@ -2,9 +2,14 @@ package eu.peernetwork.app.ui.feed
 
 import android.content.res.Configuration
 import androidx.compose.animation.Crossfade
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -17,7 +22,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -26,6 +34,7 @@ import eu.peernetwork.blog.ui.timeline.photo.PhotoScreen
 import eu.peernetwork.blog.ui.timeline.video.VideoScreen
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.component.UiComponentProvider
+import eu.peernetwork.core.ui.design.compose.DesignTab
 import eu.peernetwork.core.ui.design.compose.DesignToolbarTitle
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.theme.PeerTheme
@@ -70,16 +79,28 @@ fun FeedContent(
     music: @Composable () -> Unit,
 ) {
     val pageState = rememberPagerState(pageCount = { 3 }, initialPage = state.intValue)
-    HorizontalPager(
-        state = pageState,
-        modifier = modifier,
-        verticalAlignment = Alignment.Top,
-    ) { page ->
-        Crossfade(targetState = page) { targetPage ->
-            when (targetPage) {
-                0 -> photo()
-                1 -> video()
-                2 -> music()
+    Column {
+        DesignTab(pageState) { index ->
+            FeedMedia.ROUTES[index].let {
+                Icon(
+                    painter = painterResource(id = it.id),
+                    contentDescription = it.label?.let { stringResource(it) },
+                    tint = MaterialTheme.colorScheme.tertiary,
+                    modifier = Modifier.padding(vertical = 8.dp).size(28.dp)
+                )
+            }
+        }
+        HorizontalPager(
+            state = pageState,
+            modifier = modifier,
+            verticalAlignment = Alignment.Top,
+        ) { page ->
+            Crossfade(targetState = page) { targetPage ->
+                when (targetPage) {
+                    0 -> photo()
+                    1 -> video()
+                    2 -> music()
+                }
             }
         }
     }
