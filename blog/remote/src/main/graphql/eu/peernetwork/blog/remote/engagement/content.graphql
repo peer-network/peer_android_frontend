@@ -1,0 +1,6 @@
+mutation ResolveActionPost($action: ActionType!, $postid: ID!) {
+    resolveActionPost(action: $action, postid: $postid) {
+        status
+        ResponseCode
+    }
+}

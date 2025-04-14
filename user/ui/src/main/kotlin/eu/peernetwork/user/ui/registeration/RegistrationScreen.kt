@@ -27,8 +27,8 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.compose.DesignButton
-import eu.peernetwork.core.ui.compose.DesignPasswordStrength
+import eu.peernetwork.core.ui.design.compose.DesignButton
+import eu.peernetwork.core.ui.design.compose.DesignPasswordStrength
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.user.ui.R
 import eu.peernetwork.core.ui.extension.isValidEmail

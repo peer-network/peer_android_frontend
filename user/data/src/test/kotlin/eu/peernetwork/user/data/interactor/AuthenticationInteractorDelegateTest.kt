@@ -3,6 +3,7 @@ package eu.peernetwork.user.data.interactor
 import com.google.gson.Gson
 import eu.peernetwork.persistence.domain.observable.ObservableString
 import eu.peernetwork.persistence.domain.publishable.PublishableString
+import eu.peernetwork.persistence.domain.retrievable.RetrievableString
 import eu.peernetwork.user.domain.interactor.AuthenticationInteractor
 import eu.peernetwork.user.domain.model.Account
 import eu.peernetwork.user.domain.model.Overview
@@ -25,6 +26,8 @@ internal class AuthenticationInteractorDelegateTest {
 
     private val observable = mockk<ObservableString>(relaxed = true)
 
+    private val retrievable = mockk<RetrievableString>(relaxed = true)
+
     private val publisher = mockk<PublishableString>(relaxed = true)
 
     private val accountRepository = mockk<AccountRepository>()
@@ -39,9 +42,51 @@ internal class AuthenticationInteractorDelegateTest {
             gson,
             publisher,
             observable,
+            retrievable,
             accountRepository,
             authenticationRepository
         )
+    }
+
+    @Test
+    fun `test get authenticated user id`(): Unit = runBlocking {
+        val user = "<test-user>"
+        every { retrievable(any()) } returns null
+        coEvery { authenticationRepository.authenticated() } returns user
+        val result = interactor.get()
+        assertEquals(result, user)
+    }
+
+    @Test
+    fun `test get cached authenticated user id`(): Unit = runBlocking {
+        val user = "<test-user>"
+        every { retrievable(any()) } returns user
+        val result = interactor.get()
+        assertEquals(result, user)
+    }
+
+    @Test
+    fun `test get authenticated account`(): Unit = runBlocking {
+        val mockData = Account(
+            id = "<test-id>",
+            slug = 0,
+            username = "<test-username>",
+            bio = "<test-bio>",
+            imageUrl = "<test-image-url>",
+            overview = Overview(
+                posts = 0,
+                peers = 0,
+                followed = 0,
+                followers = 0
+            )
+        )
+        coEvery { accountRepository.get(any()) } returns mockData
+        coEvery { authenticationRepository.authenticated() } returns mockData.id
+
+        val result = interactor.getCurrentAccount()
+
+        assertEquals(result, mockData)
+        coVerify { publisher(any(), any()) }
     }
 
     @Test
@@ -66,30 +111,6 @@ internal class AuthenticationInteractorDelegateTest {
         val result = interactor.observeAccount().first()
 
         assertEquals(result, mockData)
-    }
-
-    @Test
-    fun `test get authenticated user`(): Unit = runBlocking {
-        val mockData = Account(
-            id = "<test-id>",
-            slug = 0,
-            username = "<test-username>",
-            bio = "<test-bio>",
-            imageUrl = "<test-image-url>",
-            overview = Overview(
-                posts = 0,
-                peers = 0,
-                followed = 0,
-                followers = 0
-            )
-        )
-        coEvery { accountRepository.get(any()) } returns mockData
-        coEvery { authenticationRepository.authenticated() } returns mockData.id
-
-        val result = interactor.getCurrentAccount()
-
-        assertEquals(result, mockData)
-        coVerify { publisher(any(), any()) }
     }
 
     @Test

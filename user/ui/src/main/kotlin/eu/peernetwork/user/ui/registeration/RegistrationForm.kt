@@ -17,9 +17,9 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import eu.peernetwork.core.ui.compose.DesignPassword
-import eu.peernetwork.core.ui.compose.DesignPasswordIndicator
-import eu.peernetwork.core.ui.compose.DesignTextField
+import eu.peernetwork.core.ui.design.compose.DesignPassword
+import eu.peernetwork.core.ui.design.compose.DesignPasswordIndicator
+import eu.peernetwork.core.ui.design.compose.DesignTextField
 import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.user.ui.R
 
@@ -76,11 +76,11 @@ fun RegistrationForm(
             indicator = {
                 DesignPasswordIndicator(
                     state = password,
-                    space = 16.dp,
-                    width = 28.dp,
+                    space = 8.dp,
+                    width = 24.dp,
                     modifier = Modifier
                         .padding(horizontal = 16.dp)
-                        .padding(top = 12.dp).height(4.dp)
+                        .padding(top = 8.dp).height(2.dp)
                 )
             },
             placeholder = { Text(stringResource(id = R.string.password_label)) },

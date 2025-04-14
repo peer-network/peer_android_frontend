@@ -32,6 +32,10 @@ class TokenRepositoryDelegate @Inject constructor(
         publisher(TAG, token?.let { gson.toJson(it) })
     }
 
+    override suspend fun clear() {
+        publisher(TAG, null)
+    }
+
     private companion object {
         val TAG: String = TokenRepositoryDelegate::class.java.name
     }

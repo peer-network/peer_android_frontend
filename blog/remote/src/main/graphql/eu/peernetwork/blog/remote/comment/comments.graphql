@@ -1,0 +1,35 @@
+query GetComments(
+    $postId: ID,
+    $offset: Int
+    $limit: Int
+) {
+    getallposts(
+        postid: $postId,
+        commentLimit: $limit,
+        commentOffset: $offset
+    ) {
+        status
+        counter
+        ResponseCode
+        affectedRows {
+            amountcomments
+            comments {
+                commentid
+                postid
+                parentid
+                content
+                createdat
+                amountlikes
+                isliked
+                user {
+                    id
+                    username
+                    slug
+                    img
+                    isfollowed
+                    isfollowing
+                }
+            }
+        }
+    }
+}

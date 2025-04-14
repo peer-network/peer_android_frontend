@@ -1,7 +1,6 @@
 package eu.peernetwork.user.data.repository
 
 import eu.peernetwork.user.data.api.ResourceApi
-import eu.peernetwork.user.domain.model.Point
 import eu.peernetwork.user.domain.repository.ResourceRepository
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -18,14 +17,6 @@ class ResourceRepositoryDelegateTest {
     @Before
     fun setup() {
         repository = ResourceRepositoryDelegate(api)
-    }
-
-    @Test
-    fun `test user point`(): Unit = runBlocking {
-        val mockData = mockk<Point>()
-        coEvery { api.points() } returns listOf(mockData)
-        val result = repository.points()
-        assertEquals(result.first(), mockData)
     }
 
     @Test

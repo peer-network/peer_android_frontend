@@ -2,16 +2,18 @@ package eu.peernetwork.app.ui.home
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import app.cash.turbine.test
-import eu.peernetwork.persistence.domain.observable.ObservableInteger
 import eu.peernetwork.persistence.domain.publishable.PublishableInteger
 import eu.peernetwork.persistence.domain.retrievable.RetrievableInteger
+import eu.peernetwork.persistence.domain.retrievable.RetrievableString
+import eu.peernetwork.user.domain.usecase.PrincipalUsecase
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
@@ -24,38 +26,54 @@ internal class HomeViewModelTest {
     @get:Rule
     val instantExecutorRule = InstantTaskExecutorRule()
 
+    private val principalUsecase = mockk<PrincipalUsecase>()
+
+    private val retrievableString = mockk<RetrievableString>()
+
     private val retrievableInteger = mockk<RetrievableInteger>()
 
-    private val publishableInteger = mockk<PublishableInteger>()
-
-    private val observableInteger = mockk<ObservableInteger>()
+    private val publishableInteger = mockk<PublishableInteger>(relaxed = true)
 
     private val dispatcher = UnconfinedTestDispatcher()
-
-    private val mutableState = MutableStateFlow<Int?>(null)
 
     private lateinit var viewModel: HomeViewModel
 
     @Before
     fun setup() {
         Dispatchers.setMain(dispatcher)
-        every { observableInteger(any()) } returns mutableState
-        every { retrievableInteger(any()) } answers {
-            mutableState.value
-        }
-        coEvery { publishableInteger(any(), any()) } answers {
-            mutableState.tryEmit(it.invocation.args[1] as Int)
-        }
-        viewModel = HomeViewModel(retrievableInteger, observableInteger, publishableInteger)
+        viewModel = HomeViewModel(
+            principalUsecase,
+            retrievableInteger,
+            publishableInteger
+        )
     }
 
     @Test
-    fun `test initialize state`() = runTest {
+    fun `test initialize state success`() = runTest {
         val page = 3
-        mutableState.tryEmit(page)
-        val viewModel = HomeViewModel(retrievableInteger, observableInteger, publishableInteger)
+        val user = "<test-user>"
+        every { retrievableString(any()) } returns null
+        every { retrievableInteger(any()) } returns page
+        coEvery { principalUsecase() } coAnswers {
+            delay(100)
+            user
+        }
+        viewModel()
         viewModel.state.test {
-            assertEquals(HomeViewModel.State.Initialize(page), awaitItem())
+            assertEquals(HomeViewModel.State.Loading, awaitItem())
+            assertEquals(HomeViewModel.State.Success(user, page), awaitItem())
+        }
+    }
+
+    @Test
+    fun `test initialize state error`() = runTest {
+        val error = RuntimeException("<test-error>")
+        every { retrievableString(any()) } returns null
+        every { retrievableInteger(any()) } returns null
+        coEvery { principalUsecase() } throws error
+        viewModel()
+        viewModel.state.test {
+            assertEquals(HomeViewModel.State.Error(error), awaitItem())
         }
     }
 
@@ -63,8 +81,6 @@ internal class HomeViewModelTest {
     fun `test update feed`() = runTest {
         val page = 5
         viewModel.lastVisited(page)
-        viewModel.state.test {
-            assertEquals(HomeViewModel.State.Initialize(page), awaitItem())
-        }
+        coVerify { publishableInteger(HomeViewModel.TAG, page) }
     }
 }

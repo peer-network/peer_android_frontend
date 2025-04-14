@@ -1,6 +1,6 @@
 package eu.peernetwork.user.ui.usecase
 
-import eu.peernetwork.core.common.concurrent.Dispatcher
+import eu.peernetwork.core.common.provider.Dispatcher
 import eu.peernetwork.core.common.usecase.ObservableUseCase
 import eu.peernetwork.user.domain.interactor.AuthenticationInteractor
 import eu.peernetwork.user.ui.model.UiAccount

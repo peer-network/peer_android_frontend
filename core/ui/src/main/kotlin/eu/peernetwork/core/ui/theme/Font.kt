@@ -9,6 +9,8 @@ import eu.peernetwork.core.ui.R
 val Poppins = FontFamily(
     Font(R.font.poppins_regular, FontWeight.Normal),
     Font(R.font.poppins_italic, FontWeight.Normal, FontStyle.Italic),
+    Font(R.font.poppins_semi_bold, FontWeight.SemiBold),
+    Font(R.font.poppins_semi_bold_italic, FontWeight.SemiBold, FontStyle.Italic),
     Font(R.font.poppins_medium, FontWeight.Medium),
     Font(R.font.poppins_medium_italic, FontWeight.Medium, FontStyle.Italic),
     Font(R.font.poppins_bold, FontWeight.Bold),

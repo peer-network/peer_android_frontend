@@ -3,14 +3,14 @@ package eu.peernetwork.app.ui.profile.preview
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
+import eu.peernetwork.blog.ui.post.music.Music
+import eu.peernetwork.blog.ui.post.photo.Photo
+import eu.peernetwork.blog.ui.post.video.Video
 import eu.peernetwork.core.ui.annotation.UiBuilder
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.factory.UiBuilderFactory
-import eu.peernetwork.social.ui.content.music.Music
-import eu.peernetwork.social.ui.content.photo.Photo
-import eu.peernetwork.social.ui.content.video.Video
-import eu.peernetwork.user.ui.user.core.User
+import eu.peernetwork.user.ui.user.User
 
 @Module
 object ProfilePreviewModule {
