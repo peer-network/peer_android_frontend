@@ -3,11 +3,12 @@ package eu.peernetwork.app.ui.main
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.runtime.DisposableEffect
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModelProvider
 import eu.peernetwork.core.ui.component.UiComponent
-import eu.peernetwork.core.ui.compose.DesignOverlay
+import eu.peernetwork.core.ui.design.compose.DesignOverlay
 import eu.peernetwork.core.ui.extension.findBuilder
 import eu.peernetwork.core.ui.theme.PeerTheme
 import javax.inject.Inject
@@ -35,6 +36,12 @@ class MainActivity : ComponentActivity(), UiComponent.Provider<Main.Component> {
                         component = injector,
                         viewModelStoreOwner = this
                     )
+                }
+                DisposableEffect(Unit) {
+                    onDispose {
+                        injector.videoProvider().preview.dispose()
+                        injector.videoProvider().timeline.dispose()
+                    }
                 }
             }
         }

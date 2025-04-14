@@ -2,7 +2,7 @@ package eu.peernetwork.core.ui.extension
 
 import android.util.Patterns
 import androidx.compose.foundation.text.input.TextFieldState
-import eu.peernetwork.core.ui.compose.DesignPasswordStrength
+import eu.peernetwork.core.ui.design.compose.DesignPasswordStrength
 
 fun TextFieldState.isValidEmail(): Boolean {
     return Patterns.EMAIL_ADDRESS.matcher(text).matches()

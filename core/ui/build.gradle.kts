@@ -10,6 +10,8 @@ android {
 }
 
 dependencies {
+    implementation(project(":core:common"))
+
     api(libs.core.ktx)
     api(libs.appcompat)
     api(libs.material)
@@ -24,10 +26,14 @@ dependencies {
     api(libs.compose.ui.tooling.preview)
     api(libs.compose.material3)
     api(libs.compose.viewmodel)
-    api(libs.compose.livedata)
     api(libs.compose.constraintlayout)
     api(libs.compose.navigation)
     api(libs.compose.coil)
+
+    api(libs.androidx.paging)
+    api(libs.compose.paging)
+
+    api(libs.pullrefresh)
 
     api(libs.dagger.android)
 }

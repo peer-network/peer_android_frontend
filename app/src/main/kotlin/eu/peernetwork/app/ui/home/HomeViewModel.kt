@@ -2,36 +2,49 @@ package eu.peernetwork.app.ui.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import eu.peernetwork.persistence.domain.observable.ObservableInteger
 import eu.peernetwork.persistence.domain.publishable.PublishableInteger
 import eu.peernetwork.persistence.domain.retrievable.RetrievableInteger
-import kotlinx.coroutines.flow.SharingStarted
+import eu.peernetwork.user.domain.usecase.PrincipalUsecase
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @Home.Scope
 class HomeViewModel @Inject constructor(
-    retrievableInteger: RetrievableInteger,
-    observableInteger: ObservableInteger,
-    private val publishableInteger: PublishableInteger
+    private val usecase: PrincipalUsecase,
+    private val retrievableInteger: RetrievableInteger,
+    private val publishableInteger: PublishableInteger,
 ) : ViewModel() {
-    val state: StateFlow<State> = observableInteger(TAG).map {
-        State.Initialize(retrievableInteger(TAG))
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = State.Initialize(retrievableInteger(TAG))
-    )
+    private val mutableState = MutableStateFlow<State>(State.Empty)
+
+    val state: StateFlow<State> = mutableState.asStateFlow()
+
+    operator fun invoke() {
+        mutableState.tryEmit(State.Loading)
+        viewModelScope.launch {
+            try {
+                val lastVisitedPage = retrievableInteger(TAG) ?: 0
+                mutableState.tryEmit(State.Success(usecase(), lastVisitedPage))
+            } catch (error: Throwable) {
+                mutableState.tryEmit(State.Error(error))
+            }
+        }
+    }
 
     fun lastVisited(page: Int) {
         viewModelScope.launch { publishableInteger(TAG, page) }
     }
 
-    sealed class State(val page: Int) {
-        data class Initialize(val current: Int?): State(current ?: 0)
+    sealed interface State {
+        data object Empty : State
+        data object Loading : State
+        data class Success(
+            val userId: String,
+            val lastVisitedPage: Int
+        ) : State
+        data class Error(val error: Throwable) : State
     }
 
     internal companion object {

@@ -18,8 +18,8 @@ import eu.peernetwork.user.domain.repository.TokenRepository
 
 @Module(
     includes = [
-        ApiModule::class,
-        SettingsModule::class
+        UserApiModule::class,
+        UserSettingsModule::class
     ]
 )
 interface UserModule {

@@ -8,6 +8,18 @@
     <string name="profile_label">Profile</string>
     <string name="chat_label">Chat</string>
     <string name="like_label">Likes</string>
+    <string name="dislike_label">Dislikes</string>
     <string name="comment_label">Comments</string>
     <string name="settings_label">Settings</string>
+    <string name="retry_label">Try again</string>
+    <string name="error_label">Error</string>
+
+    <string name="text_label">Text</string>
+    <string name="photo_label">Photo</string>
+    <string name="video_label">Video</string>
+    <string name="music_label">Music</string>
+
+    <string name="refresh_message">Pull down to refresh</string>
+    <string name="empty_message">No content available</string>
+    <string name="unknown_error_message">Oops! Unknown network error occurred.</string>
 </resources>

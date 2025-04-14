@@ -12,8 +12,9 @@ import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.factory.UiBuilderFactory
 import eu.peernetwork.core.ui.factory.UiViewModelFactory
 import eu.peernetwork.app.ui.feed.Feed
-import eu.peernetwork.app.ui.profile.flow.Profile
-import eu.peernetwork.user.ui.user.point.UserPoint
+import eu.peernetwork.app.ui.profile.core.Profile
+import eu.peernetwork.blog.ui.creator.Creator
+import eu.peernetwork.blog.ui.point.BlogPoint
 import javax.inject.Provider
 
 @Module
@@ -56,8 +57,16 @@ object HomeModule {
     @Home.Scope
     @Provides
     @IntoMap
-    @UiBuilder(UserPoint.Builder::class)
+    @UiBuilder(BlogPoint.Builder::class)
     fun provideCouponBuilder(component: Home.Component): UiComponent.Builder {
-        return UserPoint.Builder(component)
+        return BlogPoint.Builder(component)
+    }
+
+    @Home.Scope
+    @Provides
+    @IntoMap
+    @UiBuilder(Creator.Builder::class)
+    fun provideCreatorBuilder(component: Home.Component): UiComponent.Builder {
+        return Creator.Builder(component)
     }
 }

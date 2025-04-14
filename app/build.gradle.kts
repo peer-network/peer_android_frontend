@@ -1,6 +1,4 @@
-plugins {
-    id(libs.plugins.ksp.get().pluginId)
-}
+plugins { id(libs.plugins.ksp.get().pluginId) }
 
 android {
     defaultConfig {
@@ -10,6 +8,7 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+        buildConfigField("int", "PAGING_LIMIT", "20")
     }
     buildTypes {
         debug {
@@ -51,6 +50,14 @@ dependencies {
     implementation(project(":user:data"))
     implementation(project(":user:remote"))
     implementation(project(":user:ui"))
+
+    implementation(project(":media:core"))
+    implementation(project(":media:ui"))
+
+    implementation(project(":blog:domain"))
+    implementation(project(":blog:data"))
+    implementation(project(":blog:remote"))
+    implementation(project(":blog:ui"))
 
     implementation(project(":social:domain"))
     implementation(project(":social:data"))

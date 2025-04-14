@@ -6,13 +6,15 @@ import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
 import eu.peernetwork.app.BuildConfig
-import eu.peernetwork.core.common.concurrent.Dispatcher
+import eu.peernetwork.core.common.provider.Dispatcher
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 
 @Module(includes = [
     NetworkModule::class,
-    PersistenceModule::class
+    PersistenceModule::class,
+    UsecaseModule::class,
+    MediaModule::class,
 ])
 object CoreModule {
     @Provides

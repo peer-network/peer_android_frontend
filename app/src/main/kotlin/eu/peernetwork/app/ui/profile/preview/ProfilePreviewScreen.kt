@@ -1,7 +1,6 @@
 package eu.peernetwork.app.ui.profile.preview
 
 import android.content.res.Configuration
-import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
@@ -10,7 +9,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableIntState
+import androidx.compose.runtime.State
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -19,17 +21,23 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
+import eu.peernetwork.app.BuildConfig
+import eu.peernetwork.blog.ui.post.music.MusicScreen
+import eu.peernetwork.blog.ui.post.photo.PhotoScreen
+import eu.peernetwork.blog.ui.post.video.VideoScreen
 import eu.peernetwork.core.ui.component.UiComponentProvider
+import eu.peernetwork.core.ui.design.component.DesignRefreshErrorContent
+import eu.peernetwork.core.ui.design.component.DesignRefreshableContent
+import eu.peernetwork.core.ui.design.component.DesignStatefulContentState
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.theme.PeerTheme
-import eu.peernetwork.social.ui.content.music.MusicScreen
-import eu.peernetwork.social.ui.content.photo.PhotoScreen
-import eu.peernetwork.social.ui.content.video.VideoScreen
-import eu.peernetwork.user.ui.user.core.UserEvent
-import eu.peernetwork.user.ui.user.core.UserScreen
+import eu.peernetwork.media.core.model.MimeType
+import eu.peernetwork.user.ui.user.UserEvent
+import eu.peernetwork.user.ui.user.UserScreen
 
 @Composable
 fun ProfilePreviewScreen(
+    userId: String,
     onSettings: () -> Unit,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
@@ -39,74 +47,111 @@ fun ProfilePreviewScreen(
         provider.builder(ProfilePreview.Builder::class.java).build(context)
     }
     val pageState = rememberSaveable { mutableIntStateOf(0) }
-    ProfilePreviewScaffold(
-        header = {
-            UserScreen(
-                onEvent = {
-                    when (it) {
-                        is UserEvent.Settings -> onSettings()
-                        else -> {}
-                    }
-                },
-                provider = component,
-                viewModelStoreOwner = viewModelStoreOwner,
-                modifier = Modifier.padding(
-                    bottom = 8.dp
-                ).padding(end = 16.dp, start = 24.dp)
-
-            )
-        },
+    var errorState = remember { mutableStateOf<Throwable?>(null) }
+    var isProfileRefreshing = remember { mutableStateOf(false) }
+    var isImageRefreshing = remember { mutableStateOf(false) }
+    var isVideoRefreshing = remember { mutableStateOf(false) }
+    val derivedState = remember { derivedStateOf {
+        if (isImageRefreshing.value && isProfileRefreshing.value
+            && isVideoRefreshing.value) {
+            DesignStatefulContentState.Loading
+        } else {
+            DesignStatefulContentState.Success(Unit)
+        }
+    } }
+    DesignRefreshableContent<Unit>(
+        state = derivedState,
+        modifier = Modifier.fillMaxSize(),
+        onRefresh = {
+            isImageRefreshing.value = true
+            isVideoRefreshing.value = true
+            isProfileRefreshing.value = true
+        }
     ) {
-        ProfileDetailContent(
+        ProfilePreviewContent(
             state = pageState,
-            photo = { PhotoScreen(component, viewModelStoreOwner) },
-            video = { VideoScreen(component, viewModelStoreOwner) },
-            music = { MusicScreen(component, viewModelStoreOwner) }
-        )
+            errorState = errorState,
+            header = {
+                UserScreen(
+                    errorState = errorState,
+                    loadState = isProfileRefreshing,
+                    onEvent = {
+                        if (it is UserEvent.Settings) {
+                            onSettings()
+                        }
+                    },
+                    provider = component,
+                    viewModelStoreOwner = viewModelStoreOwner,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                        .padding(end = 16.dp, start = 24.dp)
+                )
+            }
+        ) { offset ->
+            when (offset) {
+                0 -> PhotoScreen(
+                    userId,
+                    BuildConfig.PAGING_LIMIT,
+                    isImageRefreshing,
+                    component,
+                    viewModelStoreOwner
+                )
+                1 -> VideoScreen(
+                    userId,
+                    BuildConfig.PAGING_LIMIT,
+                    isVideoRefreshing,
+                    component,
+                    viewModelStoreOwner
+                )
+                2 -> MusicScreen(component, viewModelStoreOwner)
+            }
+        }
     }
 }
 
 @Composable
-fun ProfileDetailContent(
+fun ProfilePreviewContent(
     state: MutableIntState,
+    errorState: State<Throwable?>,
     modifier: Modifier = Modifier,
     onNavigate: (Int) -> Unit = {},
-    photo: @Composable () -> Unit,
-    video: @Composable () -> Unit,
-    music: @Composable () -> Unit,
+    header: @Composable (State<Float>) -> Unit,
+    content: @Composable (Int) -> Unit
 ) {
-    val pageState = rememberPagerState(pageCount = { 3 }, initialPage = state.intValue)
-    HorizontalPager(
-        state = pageState,
+    val pageState = rememberPagerState(
+        pageCount = { MimeType.TYPES.size },
+        initialPage = state.intValue
+    )
+    ProfilePreviewScaffold(
+        header = header,
         modifier = modifier,
-        verticalAlignment = Alignment.Top,
-    ) { page ->
-        Crossfade(targetState = page) { targetPage ->
-            when (targetPage) {
-                0 -> photo()
-                1 -> video()
-                2 -> music()
-            }
+        pagerState = pageState
+    ) {
+        if (errorState.value == null) {
+            HorizontalPager(
+                state = pageState,
+                verticalAlignment = Alignment.Top,
+            ) { page -> content(page) }
+        } else {
+            DesignRefreshErrorContent(
+                errorState.value!!,
+                modifier = Modifier.fillMaxSize()
+                    .padding(bottom = 72.dp)
+            )
         }
+        LaunchedEffect(pageState.currentPage) { onNavigate(pageState.currentPage) }
     }
-    LaunchedEffect(pageState.currentPage) { onNavigate(pageState.currentPage) }
 }
 
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun PreviewProfilePreview() {
-    val state = rememberSaveable { mutableIntStateOf(0) }
     PeerTheme {
         ProfilePreviewScaffold(
             modifier = Modifier.fillMaxSize(),
-            header = { Text("Profile") },
+            header = { Text("Header") },
+            pagerState = rememberPagerState { 0 },
             content = {
-                ProfileDetailContent(
-                    state = state,
-                    photo = { Text("Photo") },
-                    video = { Text("Video") },
-                    music = { Text("Music") }
-                )
+                Text("Content")
             },
         )
     }

@@ -6,6 +6,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -15,56 +18,74 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
+import eu.peernetwork.blog.ui.creator.CreatorScreen
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.app.ui.feed.FeedScreen
-import eu.peernetwork.app.ui.profile.flow.ProfileScreen
+import eu.peernetwork.app.ui.profile.core.ProfileScreen
+import eu.peernetwork.blog.ui.point.UserPointScreen
 import eu.peernetwork.core.ui.R
-import eu.peernetwork.core.ui.compose.DesignToolbarTitle
-import eu.peernetwork.user.ui.user.point.UserPointScreen
+import eu.peernetwork.core.ui.annotation.UiViewModel
+import eu.peernetwork.core.ui.design.compose.DesignToolbarTitle
+import eu.peernetwork.core.ui.design.component.DesignStatefulContent
+import eu.peernetwork.core.ui.design.component.DesignStatefulContentState
 
 @Composable
-fun HomeScreen(
-    provider: UiComponentProvider,
-    viewModelStoreOwner: ViewModelStoreOwner,
-) {
+fun HomeScreen(provider: UiComponentProvider) {
+    val owner = remember { UiViewModel.Owner() }
     val context = LocalContext.current
     val component = remember {
         provider.builder(Home.Builder::class.java).build(context)
     }
     val viewModel = viewModel(
         modelClass = HomeViewModel::class.java,
-        viewModelStoreOwner = viewModelStoreOwner,
+        viewModelStoreOwner = owner,
         factory = component.viewModelFactory()
     )
-    val controller = rememberNavController()
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val titleState = remember { mutableStateOf(DesignToolbarTitle(HomeRoute.get(state.page).label)) }
-    val navigationState = rememberSaveable { mutableIntStateOf(state.page) }
-    HomeScaffold(
-        header = { HomeHeader(titleState) { UserPointScreen(component, viewModelStoreOwner) } },
-        footer = { HomeFooter(navigationState) }
-    ) {
-        HomeNavigation(
-            state = navigationState,
+    val derivedState = remember { derivedStateOf {
+        when(state) {
+            HomeViewModel.State.Empty -> DesignStatefulContentState.Empty
+            HomeViewModel.State.Loading -> DesignStatefulContentState.Loading
+            is HomeViewModel.State.Success -> {
+                val data = (state as HomeViewModel.State.Success)
+                DesignStatefulContentState.Success(Pair(data.userId, data.lastVisitedPage))
+            }
+            is HomeViewModel.State.Error -> {
+                DesignStatefulContentState.Error((state as HomeViewModel.State.Error).error)
+            }
+        }
+    } }
+    DesignStatefulContent<Pair<String, Int>>(
+        state = derivedState,
+        refresh = { viewModel() },
+        modifier = Modifier.fillMaxSize()
+    ) { data ->
+        val title = remember {
+            mutableStateOf(DesignToolbarTitle(HomeRoute.get(data.second).label))
+        }
+        HomeContainer(
+            title = title,
+            index = data.second,
             onNavigate = { viewModel.lastVisited(it) },
-            navController = controller
-        ) {
-            when(it) {
-                is HomeRoute.Home -> FeedScreen(titleState, component, viewModelStoreOwner)
+            options = { UserPointScreen(component, owner) }
+        ) { state, route ->
+            when(route) {
+                is HomeRoute.Home -> FeedScreen(title, component, owner)
                 is HomeRoute.Profile -> ProfileScreen(
-                    titleState,
+                    data.first,
+                    title,
                     component,
-                    viewModelStoreOwner
+                    owner
                 )
+                is HomeRoute.Add -> CreatorScreen(title, component, owner)
                 else -> Box(modifier = Modifier.fillMaxSize()) {
                     LaunchedEffect(Unit) {
-                        titleState.value = DesignToolbarTitle(it.label)
+                        title.value = DesignToolbarTitle(route.label)
                     }
                 }
             }
@@ -73,15 +94,38 @@ fun HomeScreen(
 }
 
 @Composable
+fun HomeContainer(
+    title: MutableState<DesignToolbarTitle>,
+    index: Int,
+    onNavigate: (Int) -> Unit,
+    options: @Composable () -> Unit,
+    content: @Composable (State<Float>, HomeRoute) -> Unit
+) {
+    val controller = rememberNavController()
+    val navigationState = rememberSaveable { mutableIntStateOf(index) }
+    HomeScaffold(
+        header = { HomeHeader(title, options = options) },
+        footer = { HomeFooter(navigationState) }
+    ) { state ->
+        HomeNavigation(
+            state = navigationState,
+            onNavigate = onNavigate,
+            navController = controller,
+            content = { content(state, it) }
+        )
+    }
+}
+
+@Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun PreviewHomeScreen() {
     PeerTheme {
-        HomeScaffold(
-            header = { HomeHeader(remember {
-                mutableStateOf(DesignToolbarTitle(R.string.home_label, {}))
-            }) { } },
-            footer = { HomeFooter(remember { mutableIntStateOf(0) }) }
-        ) {
+        HomeContainer(
+            title = remember { mutableStateOf(DesignToolbarTitle(R.string.home_label) {}) },
+            index = 0,
+            onNavigate = {},
+            options = {}
+        ) { state, route ->
             Text(
                 text = "",
                 textAlign = TextAlign.Center

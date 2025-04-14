@@ -15,7 +15,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ChainStyle
 import androidx.constraintlayout.compose.ConstraintLayout
-import eu.peernetwork.core.ui.compose.DesignBox
+import eu.peernetwork.core.ui.design.compose.DesignBox
 import eu.peernetwork.core.ui.theme.PeerTheme
 
 @Composable
