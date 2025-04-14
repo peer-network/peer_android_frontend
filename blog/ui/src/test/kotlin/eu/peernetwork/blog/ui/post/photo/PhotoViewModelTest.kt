@@ -57,7 +57,8 @@ internal class PhotoViewModelTest {
             createdAt = System.currentTimeMillis(),
             description = "<test-description>",
             likes = 0,
-            dislikes = 0
+            dislikes = 0,
+            comment = 0
         )
         val mockPagingData = PagingData.from(listOf(mockData))
 
