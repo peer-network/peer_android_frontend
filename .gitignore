@@ -1,5 +1,6 @@
 *.iml
 build/
+release/
 .idea/
 .gradle/
 *.log
