@@ -2,10 +2,10 @@ package eu.peernetwork.blog.ui.post.video
 
 import android.content.Context
 import androidx.lifecycle.ViewModelProvider
-import eu.peernetwork.blog.ui.post.photo.DaggerPhoto_Component
-import eu.peernetwork.blog.ui.post.photo.PhotoModule
+import eu.peernetwork.blog.ui.engagement.Engagement
 import eu.peernetwork.blog.ui.provider.BlogProvider
 import eu.peernetwork.core.ui.component.UiComponent
+import eu.peernetwork.core.ui.component.UiComponentProvider
 
 interface Video : BlogProvider {
     @javax.inject.Scope
@@ -17,7 +17,7 @@ interface Video : BlogProvider {
         dependencies = [Video::class ],
         modules = [ VideoModule::class ]
     )
-    interface Component : Video {
+    interface Component : Video, Engagement, UiComponentProvider {
         fun viewModelFactory(): ViewModelProvider.Factory
     }
 

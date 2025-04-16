@@ -24,6 +24,7 @@ import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.compose.PostListItem
 import eu.peernetwork.blog.ui.compose.PostPageSkeleton
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
+import eu.peernetwork.blog.ui.mapper.mapToEngagement
 import eu.peernetwork.core.common.model.Pageable
 import eu.peernetwork.core.ui.design.component.DesignStatefulContentState
 import eu.peernetwork.blog.ui.mapper.mapToProperty
@@ -70,7 +71,7 @@ fun PhotoScreen(
             }
         }
     }
-    var selectedPostId = remember { mutableStateOf<String?>(null) }
+    var selectedPost = remember { mutableStateOf<String?>(null) }
     DesignPagingContent<UiPost>(
         state = derivedState,
         onRefresh = { viewModel.load(Pageable(0, postLimit)) },
@@ -102,8 +103,8 @@ fun PhotoScreen(
                             position = index,
                             state = currentTime,
                             engagements = {
-                                EngagementScreen(post, component, viewModelStoreOwner) {
-
+                                EngagementScreen(post.mapToEngagement(), component, viewModelStoreOwner) {
+                                    selectedPost.value = post.id
                                 } },
                             content = {
                                 val media = post.media.first()
@@ -122,5 +123,5 @@ fun PhotoScreen(
             }
         }
     }
-    CommentBottomSheet(selectedPostId)
+    CommentBottomSheet(selectedPost, postLimit, component, viewModelStoreOwner)
 }

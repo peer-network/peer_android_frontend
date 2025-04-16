@@ -22,7 +22,7 @@ import eu.peernetwork.core.ui.design.compose.DesignTab
 import eu.peernetwork.core.ui.theme.PeerTheme
 
 @Composable
-fun ProfilePreviewScaffold(
+fun PreviewScaffold(
     pagerState: PagerState,
     modifier: Modifier = Modifier,
     header: @Composable (State<Float>) -> Unit,
@@ -48,9 +48,9 @@ fun ProfilePreviewScaffold(
 
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
-fun PreviewProfilePreviewScaffold() {
+fun PreviewPreviewScaffold() {
     PeerTheme {
-        ProfilePreviewScaffold(
+        PreviewScaffold(
             pagerState = rememberPagerState(pageCount = {0}),
             modifier = Modifier.fillMaxSize(),
             header = { Text("Header") },

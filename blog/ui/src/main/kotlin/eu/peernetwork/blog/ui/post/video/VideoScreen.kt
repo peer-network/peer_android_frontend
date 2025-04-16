@@ -24,11 +24,13 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.LoadState
+import eu.peernetwork.blog.ui.comment.CommentBottomSheet
 import eu.peernetwork.blog.ui.model.UiVideo
 import eu.peernetwork.blog.ui.compose.MediaPostCard
 import eu.peernetwork.blog.ui.compose.PostSummary
-import eu.peernetwork.blog.ui.compose.PostIcon
-import eu.peernetwork.blog.ui.model.UiAction
+import eu.peernetwork.blog.ui.compose.PostPageSkeleton
+import eu.peernetwork.blog.ui.engagement.EngagementScreen
+import eu.peernetwork.blog.ui.mapper.mapToEngagement
 import eu.peernetwork.blog.ui.post.photo.formatTimeAgo
 import eu.peernetwork.core.common.model.Pageable
 import eu.peernetwork.core.ui.component.UiComponentProvider
@@ -71,9 +73,11 @@ fun VideoScreen(
             }
         }
     } }
-    var position = remember { mutableStateOf<Int?>(null) }
+    var selectedClip = remember { mutableStateOf<Int?>(null) }
+    var selectedPost = remember { mutableStateOf<String?>(null) }
     DesignPagingContent<UiVideo>(
         state = derivedState,
+        placeholder = { PostPageSkeleton() },
         onRefresh = { viewModel.load(author, Pageable(0, postLimit)) }
     ) { contentState, lazyPagingItems ->
         LazyColumn(modifier = Modifier.fillMaxSize()) {
@@ -90,14 +94,14 @@ fun VideoScreen(
                             PostSummary(post.author.username, post.title, post.description)
                         },
                         engagements = {
-                            PostIcon(UiAction.Like, post.likes.toString(), onClick = {})
-                            PostIcon(UiAction.Dislike, post.dislikes.toString(), onClick = {})
-                            PostIcon(UiAction.Comment, post.dislikes.toString(), onClick = {})
+                            EngagementScreen(post.mapToEngagement(), component, viewModelStoreOwner) {
+                                selectedPost.value = post.id
+                            }
                         }
                     ) {
                         Box(modifier = Modifier.clickable(
                             role = Role.Button,
-                            onClick = { position.value = index }
+                            onClick = { selectedClip.value = index }
                         )) {
                             component.videoThumbnail()(
                                 Modifier,
@@ -118,7 +122,8 @@ fun VideoScreen(
                 loadState.value = false
             }
         }
-        VideoDialog(author, postLimit, position, provider, viewModelStoreOwner)
+        VideoDialog(author, postLimit, selectedClip, provider, viewModelStoreOwner)
+        CommentBottomSheet(selectedPost, postLimit, component, viewModelStoreOwner)
     }
     LaunchedEffect(Unit) {
         while (true) {

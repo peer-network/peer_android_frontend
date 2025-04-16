@@ -13,40 +13,40 @@ import eu.peernetwork.core.ui.factory.UiBuilderFactory
 import eu.peernetwork.user.ui.user.User
 
 @Module
-object ProfilePreviewModule {
+object PreviewModule {
     @Provides
-    @ProfilePreview.Scope
+    @Preview.Scope
     fun provideBuilderFactory(factory: UiBuilderFactory): UiComponentProvider.Factory = factory
 
-    @ProfilePreview.Scope
+    @Preview.Scope
     @Provides
     @IntoMap
     @UiBuilder(User.Builder::class)
-    fun provideUserBuilder(component: ProfilePreview.Component): UiComponent.Builder {
+    fun provideUserBuilder(component: Preview.Component): UiComponent.Builder {
         return User.Builder(component)
     }
 
-    @ProfilePreview.Scope
+    @Preview.Scope
     @Provides
     @IntoMap
     @UiBuilder(Photo.Builder::class)
-    fun providePhotoBuilder(component: ProfilePreview.Component): UiComponent.Builder {
+    fun providePhotoBuilder(component: Preview.Component): UiComponent.Builder {
         return Photo.Builder(component)
     }
 
-    @ProfilePreview.Scope
+    @Preview.Scope
     @Provides
     @IntoMap
     @UiBuilder(Video.Builder::class)
-    fun provideVideoBuilder(component: ProfilePreview.Component): UiComponent.Builder {
+    fun provideVideoBuilder(component: Preview.Component): UiComponent.Builder {
         return Video.Builder(component)
     }
 
-    @ProfilePreview.Scope
+    @Preview.Scope
     @Provides
     @IntoMap
     @UiBuilder(Music.Builder::class)
-    fun provideMusicBuilder(component: ProfilePreview.Component): UiComponent.Builder {
+    fun provideMusicBuilder(component: Preview.Component): UiComponent.Builder {
         return Music.Builder(component)
     }
 }

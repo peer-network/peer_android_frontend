@@ -48,11 +48,11 @@ fun<T : Any> DesignPagingContent(
                 ) },
     ) { flow ->
         val lazyPagingItems = flow.collectAsLazyPagingItems()
-        val contentState = remember(state.value) { derivedStateOf {
-            if (lazyPagingItems.itemCount > 0) {
-                DesignStatefulContentState.Success(lazyPagingItems)
-            } else if (lazyPagingItems.loadState.refresh is LoadState.Error) {
+        val contentState = remember(lazyPagingItems.loadState.refresh) { derivedStateOf {
+            if (lazyPagingItems.loadState.refresh is LoadState.Error) {
                 DesignStatefulContentState.Error((lazyPagingItems.loadState.refresh as LoadState.Error).error)
+            } else if (lazyPagingItems.itemCount > 0) {
+                DesignStatefulContentState.Success(lazyPagingItems)
             } else if (lazyPagingItems.loadState.refresh is LoadState.Loading) {
                 DesignStatefulContentState.Loading
             } else if (state.value is DesignStatefulContentState.Success<*>) {

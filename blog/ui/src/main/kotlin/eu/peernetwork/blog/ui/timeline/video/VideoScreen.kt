@@ -22,9 +22,9 @@ import eu.peernetwork.blog.ui.comment.CommentBottomSheet
 import eu.peernetwork.blog.ui.model.UiVideo
 import eu.peernetwork.blog.ui.compose.MediaPostCard
 import eu.peernetwork.blog.ui.compose.PostSummary
-import eu.peernetwork.blog.ui.compose.PostIcon
 import eu.peernetwork.blog.ui.compose.PostPageSkeleton
-import eu.peernetwork.blog.ui.model.UiAction
+import eu.peernetwork.blog.ui.engagement.EngagementScreen
+import eu.peernetwork.blog.ui.mapper.mapToEngagement
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.post.photo.formatTimeAgo
 import eu.peernetwork.core.ui.design.component.DesignPagingContent
@@ -70,7 +70,7 @@ fun VideoScreen(
             currentTime.longValue = System.currentTimeMillis()
         }
     }
-    var position = remember { mutableStateOf<Int?>(null) }
+    var selectedClip = remember { mutableStateOf<Int?>(null) }
     var selectedPostId = remember { mutableStateOf<String?>(null) }
     DesignPagingContent<UiVideo>(
         state = derivedState,
@@ -105,15 +105,15 @@ fun VideoScreen(
                                 PostSummary(post.author.username, post.title, post.description)
                             },
                             engagements = {
-                                PostIcon(UiAction.Like, post.likes.toString(), onClick = { })
-                                PostIcon(UiAction.Dislike, post.dislikes.toString(), onClick = { })
-                                PostIcon(UiAction.Comment, post.comment.toString(), onClick = { })
+                                EngagementScreen(post.mapToEngagement(), component, viewModelStoreOwner) {
+                                    selectedPostId.value = post.id
+                                }
                             },
                             modifier = Modifier.padding(bottom = 16.dp)
                         ) {
                             Box(modifier = Modifier.clickable(
                                 role = Role.Button,
-                                onClick = { position.value = index }
+                                onClick = { selectedClip.value = index }
                             )) {
                                 component.videoThumbnail()(
                                     Modifier,
@@ -129,7 +129,7 @@ fun VideoScreen(
                 item { Spacer(modifier = Modifier.height(56.dp)) }
             }
         }
-        VideoDialog(postLimit, position, provider, viewModelStoreOwner)
-        CommentBottomSheet(selectedPostId)
+        VideoDialog(postLimit, selectedClip, provider, viewModelStoreOwner)
+        CommentBottomSheet(selectedPostId, postLimit, component, viewModelStoreOwner)
     }
 }

@@ -127,6 +127,7 @@ fun UserSettingsContent(
     Column(modifier = modifier) {
         SettingsHeader(
             account = account,
+            modifier = Modifier.padding(top = 8.dp),
             isLoading = isLoading.value,
             enabled = !isLoading.value && fields.value != account.mapToModels(),
             onChange = { image.value = it },

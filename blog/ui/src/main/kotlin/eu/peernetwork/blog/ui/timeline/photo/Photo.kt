@@ -18,7 +18,7 @@ interface Photo : BlogProvider {
         dependencies = [Photo::class],
         modules = [PhotoModule::class]
     )
-    interface Component : Photo, UiComponentProvider, Engagement {
+    interface Component : Photo, UiComponentProvider, Engagement, Comment {
         fun viewModelFactory(): ViewModelProvider.Factory
     }
 

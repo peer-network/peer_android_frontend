@@ -1,6 +1,5 @@
 package eu.peernetwork.blog.ui.timeline.video
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,7 +18,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,12 +32,10 @@ import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
 import dev.materii.pullrefresh.DragRefreshLayout
 import dev.materii.pullrefresh.rememberPullRefreshState
-import eu.peernetwork.blog.domain.model.Engagement
 import eu.peernetwork.blog.ui.comment.CommentScreen
 import eu.peernetwork.blog.ui.compose.DialogPostCard
 import eu.peernetwork.blog.ui.compose.PostIcon
 import eu.peernetwork.blog.ui.compose.PostSummary
-import eu.peernetwork.blog.ui.engagement.EngagementViewModel
 import eu.peernetwork.blog.ui.model.UiAction
 import eu.peernetwork.blog.ui.model.UiVideo
 import eu.peernetwork.blog.ui.post.photo.formatTimeAgo
@@ -53,7 +49,6 @@ import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.media.core.renderer.VideoPlayer
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -72,14 +67,8 @@ fun VideoDialog(
         viewModelStoreOwner = viewModelStoreOwner,
         factory = component.viewModelFactory()
     )
-    val engagementViewModel = viewModel(
-        modelClass = EngagementViewModel::class.java,
-        viewModelStoreOwner = viewModelStoreOwner,
-        factory = component.viewModelFactory()
-    )
     val state by viewModel.state.collectAsStateWithLifecycle()
     val isVisible = remember { derivedStateOf { initialPage.value != null } }
-    val coroutineScope = rememberCoroutineScope()
     val derivedState = remember {
         derivedStateOf {
             when (state) {
@@ -181,14 +170,10 @@ fun VideoDialog(
                                 ) {
                                     Column(horizontalAlignment = Alignment.End, modifier = Modifier.padding(bottom = 36.dp, end = 16.dp)) {
                                         PostIcon(UiAction.Like, post.likes.toString(), position = false, onClick = {
-                                            coroutineScope.launch {
-                                                engagementViewModel.create(post.id, Engagement.Content.Like)
-                                            }
+
                                         }, color = MaterialTheme.colorScheme.onSecondary)
                                         PostIcon(UiAction.Dislike, post.dislikes.toString(), position = false, onClick = {
-                                            coroutineScope.launch {
-                                                engagementViewModel.create(post.id, Engagement.Content.Dislike)
-                                            }
+
                                         }, color = MaterialTheme.colorScheme.onSecondary)
                                         PostIcon(UiAction.Comment, post.comment.toString(), position = false, onClick = {
                                             selectedPostId.value = post.id
@@ -205,11 +190,6 @@ fun VideoDialog(
                     }
                 }
             }
-        }
-    }
-    BackHandler(enabled = isVisible.value) {
-        coroutineScope.launch {
-            initialPage.value = null
         }
     }
 }

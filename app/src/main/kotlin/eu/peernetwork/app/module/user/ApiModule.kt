@@ -12,7 +12,7 @@ import eu.peernetwork.user.remote.api.ResourceApiDelegate
 import eu.peernetwork.user.remote.api.SearchApiDelegate
 
 @Module
-internal interface UserApiModule {
+internal interface ApiModule {
     @Binds
     fun bindAccountApi(delegate: AccountApiDelegate): AccountApi
 

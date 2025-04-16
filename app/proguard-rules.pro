@@ -27,7 +27,6 @@
 -keep class com.apollographql.** { *; }
 -keep class * implements com.apollographql.apollo3.api.Operation { *; }
 
-# Keep Kotlin data classes (in case you're using Kotlin codegen)
 -keepclassmembers class ** {
     <init>(...);
     <fields>;

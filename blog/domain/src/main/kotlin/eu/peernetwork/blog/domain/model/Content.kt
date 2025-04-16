@@ -10,6 +10,8 @@ data class Content(
     val createdAt: Long,
     val likes: Int,
     val dislikes: Int,
+    val isLiked: Boolean,
+    val isDisliked: Boolean,
     val comment: Int
 ) {
     enum class Type {

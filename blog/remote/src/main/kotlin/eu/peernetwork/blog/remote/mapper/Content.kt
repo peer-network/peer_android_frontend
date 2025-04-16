@@ -21,6 +21,8 @@ fun CreatePostMutation.AffectedRows.mapToDomain(url: String, media: List<Media>)
         createdAt = createdat.toString().toTimestamp(),
         type = contenttype.mapToDomain(),
         likes = amountlikes,
+        isLiked = isliked,
+        isDisliked = isdisliked,
         dislikes = amountdislikes,
         comment = amountcomments
     )
@@ -41,6 +43,8 @@ fun GetallpostsQuery.AffectedRow.mapToDomain(url: String, media: List<Media>): C
         createdAt = createdat.toString().toTimestamp(),
         type = contenttype.mapToDomain(),
         likes = amountlikes,
+        isLiked = isliked,
+        isDisliked = isdisliked,
         dislikes = amountdislikes,
         comment = amountcomments
     )

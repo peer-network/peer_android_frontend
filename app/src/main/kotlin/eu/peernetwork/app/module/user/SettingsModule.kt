@@ -14,7 +14,7 @@ import eu.peernetwork.user.remote.provider.SettingsProviderDelegate
 import eu.peernetwork.user.ui.model.UiSettings
 
 @Module
-internal interface UserSettingsModule {
+internal interface SettingsModule {
     @Binds
     @IntoMap
     @Settings(UiSettings.USERNAME)

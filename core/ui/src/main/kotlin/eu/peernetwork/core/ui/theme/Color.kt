@@ -16,6 +16,7 @@ val White80 = Color(0xFFF1F1F1)
 val LightGray = Color(0xFFB3B3B3)
 val PrimaryColor = Color(0xFF0069FF)
 val AccentColor = Color(0xFF77AFFF)
+val LightAccentColor = Color(0xFFBBD7FF)
 
 val PeerAppGray85 = Color(0xFFE5E5E5)
 val PeerAppYellow = Color(0xFFFFCB67)

@@ -3,6 +3,7 @@ package eu.peernetwork.blog.ui.timeline.video
 import android.content.Context
 import androidx.lifecycle.ViewModelProvider
 import eu.peernetwork.blog.ui.comment.Comment
+import eu.peernetwork.blog.ui.engagement.Engagement
 import eu.peernetwork.blog.ui.provider.BlogProvider
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
@@ -17,7 +18,7 @@ interface Video : BlogProvider {
         dependencies = [Video::class],
         modules = [VideoModule::class]
     )
-    interface Component : Video, Comment, UiComponentProvider {
+    interface Component : Video, Comment, Engagement, UiComponentProvider {
         fun viewModelFactory(): ViewModelProvider.Factory
     }
 

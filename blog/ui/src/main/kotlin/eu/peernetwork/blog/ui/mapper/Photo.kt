@@ -1,6 +1,7 @@
 package eu.peernetwork.blog.ui.mapper
 
 import eu.peernetwork.blog.domain.model.Content
+import eu.peernetwork.blog.ui.model.UiEngagement
 import eu.peernetwork.blog.ui.model.UiPost
 
 fun Content.mapToPhoto(): UiPost {
@@ -13,6 +14,8 @@ fun Content.mapToPhoto(): UiPost {
         type = type.mapFromDomain(),
         createdAt = createdAt,
         likes = likes,
+        isLiked = isLiked,
+        isDisliked = isDisliked,
         dislikes = dislikes,
         comment = comment
     )
@@ -24,4 +27,15 @@ fun Content.Type.mapFromDomain():  UiPost.Type {
         Content.Type.IMAGE -> UiPost.Type.IMAGE
         else -> UiPost.Type.TEXT
     }
+}
+
+fun UiPost.mapToEngagement(): UiEngagement {
+    return UiEngagement(
+        id = id,
+        likes = likes,
+        dislikes = dislikes,
+        isLiked = isLiked,
+        isDisliked = isDisliked,
+        comment = comment
+    )
 }

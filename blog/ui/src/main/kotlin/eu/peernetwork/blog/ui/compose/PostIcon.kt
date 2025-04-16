@@ -20,9 +20,10 @@ import eu.peernetwork.core.ui.design.compose.DesignTextButton
 @Composable
 fun PostIcon(
     action: UiAction,
-    value: String, onClick: (UiAction) -> Unit,
+    value: String,
+    position: Boolean = true,
     color: Color = MaterialTheme.colorScheme.tertiary,
-    position: Boolean = true
+    onClick: (UiAction) -> Unit,
 ) {
     DesignTextButton(
         onClick = { onClick(action) },

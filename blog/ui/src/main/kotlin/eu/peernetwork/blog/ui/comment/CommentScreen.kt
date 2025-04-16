@@ -73,7 +73,6 @@ fun CommentScreen(
     )
     val state = viewModel.state.collectAsStateWithLifecycle()
     val currentTime = remember { mutableLongStateOf(System.currentTimeMillis()) }
-
     LaunchedEffect(Unit) {
         while (true) {
             delay(60_000L)
@@ -105,7 +104,6 @@ fun CommentScreen(
         val items = flow.collectAsLazyPagingItems()
         val commentState = remember { TextFieldState() }
         val focusRequester = remember { FocusRequester() }
-
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -145,7 +143,6 @@ fun CommentScreen(
                 }
             }
         }
-
         Row(
             modifier = Modifier
                 .fillMaxWidth()

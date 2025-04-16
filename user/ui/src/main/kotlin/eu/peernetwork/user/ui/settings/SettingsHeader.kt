@@ -50,12 +50,16 @@ import java.io.File
 @Composable
 fun SettingsHeader(
     account: UiAccount,
+    modifier: Modifier = Modifier,
     enabled: Boolean = true,
     isLoading: Boolean = false,
     onChange: (Uri?) -> Unit,
     onSubmit: () -> Unit,
 ) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
         UserSettingsAvatar(
             name = account.username,
             imageUrl = account.imageUrl,

@@ -10,7 +10,7 @@ import eu.peernetwork.blog.remote.api.ContentApiDelegate
 import eu.peernetwork.blog.remote.api.EngagementApiDelegate
 
 @Module
-interface BlogApiModule {
+interface ApiModule {
     @Binds
     fun bindContentApiApi(delegate: ContentApiDelegate): ContentApi
 

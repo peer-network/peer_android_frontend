@@ -43,20 +43,15 @@ fun ProfilePreviewScreen(
 ) {
     val context = LocalContext.current
     val component = remember {
-        provider.builder(ProfilePreview.Builder::class.java).build(context)
+        provider.builder(
+            eu.peernetwork.app.ui.profile.preview.Preview.Builder::class.java
+        ).build(context)
     }
     val pageState = rememberSaveable { mutableIntStateOf(0) }
     var isProfileRefreshing = remember { mutableStateOf(false) }
     var isImageRefreshing = remember { mutableStateOf(false) }
     var isVideoRefreshing = remember { mutableStateOf(false) }
-    val derivedState = remember { derivedStateOf {
-        if (isImageRefreshing.value && isProfileRefreshing.value
-            && isVideoRefreshing.value) {
-            DesignStatefulContentState.Loading
-        } else {
-            DesignStatefulContentState.Success(Unit)
-        }
-    } }
+    val derivedState = remember { derivedStateOf { DesignStatefulContentState.Success(Unit) } }
     DesignRefreshableContent<Unit>(
         state = derivedState,
         modifier = Modifier.fillMaxSize(),
@@ -116,7 +111,7 @@ fun ProfilePreviewContent(
         pageCount = { MimeType.TYPES.size },
         initialPage = state.intValue
     )
-    ProfilePreviewScaffold(
+    PreviewScaffold(
         header = header,
         modifier = modifier,
         pagerState = pageState
@@ -133,7 +128,7 @@ fun ProfilePreviewContent(
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun PreviewProfilePreview() {
     PeerTheme {
-        ProfilePreviewScaffold(
+        PreviewScaffold(
             modifier = Modifier.fillMaxSize(),
             header = { Text("Header") },
             pagerState = rememberPagerState { 0 },

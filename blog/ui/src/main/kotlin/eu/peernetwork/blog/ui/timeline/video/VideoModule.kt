@@ -6,7 +6,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
 import eu.peernetwork.blog.ui.comment.Comment
-import eu.peernetwork.blog.ui.engagement.EngagementViewModel
+import eu.peernetwork.blog.ui.engagement.Engagement
 import eu.peernetwork.core.ui.annotation.UiBuilder
 import eu.peernetwork.core.ui.annotation.UiViewModel
 import eu.peernetwork.core.ui.component.UiComponent
@@ -38,14 +38,16 @@ object VideoModule {
     @Provides
     @IntoMap
     @Video.Scope
-    @UiViewModel(EngagementViewModel::class)
-    fun engagementsViewModel(viewModel: EngagementViewModel): ViewModel = viewModel
+    @UiBuilder(Comment.Builder::class)
+    fun provideCommentBuilder(video: Video.Component): UiComponent.Builder {
+        return Comment.Builder(video)
+    }
 
     @Provides
     @IntoMap
     @Video.Scope
-    @UiBuilder(Comment.Builder::class)
-    fun provideCommentBuilder(video: Video.Component): UiComponent.Builder {
-        return Comment.Builder(video)
+    @UiBuilder(Engagement.Builder::class)
+    fun provideEngagementBuilder(component: Video.Component): UiComponent.Builder {
+        return Engagement.Builder(component)
     }
 }

@@ -12,6 +12,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -20,9 +21,12 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.LoadState
+import eu.peernetwork.blog.ui.comment.CommentBottomSheet
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.compose.PostListItem
+import eu.peernetwork.blog.ui.compose.PostPageSkeleton
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
+import eu.peernetwork.blog.ui.mapper.mapToEngagement
 import eu.peernetwork.blog.ui.mapper.mapToProperty
 import eu.peernetwork.core.common.model.Pageable
 import eu.peernetwork.core.ui.component.UiComponentProvider
@@ -71,8 +75,10 @@ fun PhotoScreen(
             }
         }
     }
+    var selectedPost = remember { mutableStateOf<String?>(null) }
     DesignPagingContent<UiPost>(
         state = derivedState,
+        placeholder = { PostPageSkeleton() },
         onRefresh = { viewModel.load(author, Pageable(0, postLimit)) },
     ) { state, lazyPagingItems ->
         LazyColumn {
@@ -85,8 +91,8 @@ fun PhotoScreen(
                         photo,
                         index,
                         currentTime,
-                        engagements = { EngagementScreen(photo, component, viewModelStoreOwner) {
-
+                        engagements = { EngagementScreen(photo.mapToEngagement(), component, viewModelStoreOwner) {
+                            selectedPost.value = photo.id
                         } }
                     ) {
                         val media = photo.media.first()
@@ -109,6 +115,7 @@ fun PhotoScreen(
             }
         }
     }
+    CommentBottomSheet(selectedPost, postLimit, component, viewModelStoreOwner)
     LaunchedEffect(Unit) {
         while (true) {
             delay(60_000L)

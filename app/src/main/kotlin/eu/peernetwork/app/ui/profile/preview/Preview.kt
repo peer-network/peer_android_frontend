@@ -11,21 +11,21 @@ import eu.peernetwork.persistence.domain.provider.PreferenceProvider
 import eu.peernetwork.user.ui.provider.UserProvider
 import eu.peernetwork.user.ui.user.User
 
-interface ProfilePreview : UserProvider, PreferenceProvider, BlogProvider {
+interface Preview : UserProvider, PreferenceProvider, BlogProvider {
     @javax.inject.Scope
     @Retention(AnnotationRetention.RUNTIME)
     annotation class Scope
 
     @Scope
     @dagger.Component(
-        dependencies = [ ProfilePreview::class ],
-        modules = [ProfilePreviewModule::class ]
+        dependencies = [ Preview::class ],
+        modules = [PreviewModule::class ]
     )
-    interface Component : ProfilePreview, UiComponentProvider, User, Photo, Video, Music
+    interface Component : Preview, UiComponentProvider, User, Photo, Video, Music
 
-    class Builder(private val dependency: ProfilePreview) : UiComponent.DefaultBuilder<ProfilePreview, Component>() {
+    class Builder(private val dependency: Preview) : UiComponent.DefaultBuilder<Preview, Component>() {
         override fun build(context: Context): Component {
-            return DaggerProfilePreview_Component.builder().profilePreview(dependency).build()
+            return DaggerPreview_Component.builder().preview(dependency).build()
         }
     }
 }
