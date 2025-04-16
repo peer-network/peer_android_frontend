@@ -3,6 +3,8 @@ package eu.peernetwork.blog.ui.usecase
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import androidx.paging.PagingSource.LoadParams
+import androidx.paging.PagingSource.LoadResult
 import eu.peernetwork.blog.domain.model.Comment
 import eu.peernetwork.blog.domain.repository.CommentRepository
 import eu.peernetwork.blog.ui.mapper.mapToComment
@@ -24,7 +26,7 @@ class CommentUsecase @Inject constructor(
                 pageSize = param.page.limit,
                 enablePlaceholders = false
             ),
-            pagingSourceFactory = { this }
+            pagingSourceFactory = { source() }
         ).flow
     }
 

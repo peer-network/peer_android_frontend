@@ -17,7 +17,14 @@ class ObserveAuthUserUsecase @Inject constructor(
     override fun invoke(): Flow<UiAccount?> {
         return interactor.observeAccount().map { account ->
             withContext(dispatcher.io) {
-                account?.let { userUsecase(it) }
+                account?.let {
+                    try {
+                        userUsecase(it)
+                    } catch (error: Throwable) {
+                        error.printStackTrace()
+                        null
+                    }
+                }
             }
         }
     }

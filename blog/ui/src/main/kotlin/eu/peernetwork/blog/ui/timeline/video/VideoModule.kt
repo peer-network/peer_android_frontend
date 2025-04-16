@@ -6,14 +6,13 @@ import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
 import eu.peernetwork.blog.ui.comment.Comment
-import eu.peernetwork.blog.ui.engagement.EngagementsViewModel
+import eu.peernetwork.blog.ui.engagement.EngagementViewModel
 import eu.peernetwork.core.ui.annotation.UiBuilder
 import eu.peernetwork.core.ui.annotation.UiViewModel
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.factory.UiBuilderFactory
 import eu.peernetwork.core.ui.factory.UiViewModelFactory
-import okhttp3.Call
 import javax.inject.Provider
 
 @Module
@@ -39,8 +38,8 @@ object VideoModule {
     @Provides
     @IntoMap
     @Video.Scope
-    @UiViewModel(EngagementsViewModel::class)
-    fun engagementsViewModel(viewModel: EngagementsViewModel): ViewModel = viewModel
+    @UiViewModel(EngagementViewModel::class)
+    fun engagementsViewModel(viewModel: EngagementViewModel): ViewModel = viewModel
 
     @Provides
     @IntoMap

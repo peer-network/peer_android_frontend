@@ -10,9 +10,9 @@ import eu.peernetwork.core.ui.factory.UiViewModelFactory
 import javax.inject.Provider
 
 @Module
-object EngagementsModule {
+object EngagementModule {
     @Provides
-    @Engagements.Scope
+    @Engagement.Scope
     fun provideViewModelFactory(
         providers: @JvmSuppressWildcards Map<Class<out ViewModel>, @JvmSuppressWildcards Provider<ViewModel>>
     ): ViewModelProvider.Factory {
@@ -21,7 +21,7 @@ object EngagementsModule {
 
     @Provides
     @IntoMap
-    @Engagements.Scope
-    @UiViewModel(EngagementsViewModel::class)
-    fun viewModel(viewModel: EngagementsViewModel): ViewModel = viewModel
+    @Engagement.Scope
+    @UiViewModel(EngagementViewModel::class)
+    fun viewModel(viewModel: EngagementViewModel): ViewModel = viewModel
 }

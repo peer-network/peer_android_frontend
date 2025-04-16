@@ -7,7 +7,7 @@ fun MediaModel.mapFromDomain(): Media {
     return Media(
         path = path,
         options = Media.Options(
-            size = options.size,
+            size = options.size ?: "",
             cover = options.cover,
             resolution = options.resolution?.mapToIntPair()
         )

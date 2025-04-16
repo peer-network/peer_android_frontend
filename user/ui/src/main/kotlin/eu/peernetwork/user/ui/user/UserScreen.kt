@@ -35,7 +35,6 @@ import eu.peernetwork.user.ui.compose.UserOverview
 
 @Composable
 fun UserScreen(
-    errorState: MutableState<Throwable?>,
     loadState: MutableState<Boolean>,
     modifier: Modifier = Modifier,
     provider: UiComponentProvider,
@@ -70,7 +69,7 @@ fun UserScreen(
     } }
     DesignStatefulContent<UiAccount>(
         state = derivedState,
-        refresh = { viewModel.initialize() },
+        onRefresh = { viewModel.initialize() },
         placeholder = { UserSkeleton(modifier = modifier.padding(end = 8.dp)) },
         errorContent = {
             UserErrorScaffold(modifier = modifier.padding(end = 8.dp)) {
@@ -92,14 +91,11 @@ fun UserScreen(
             onEvent = onEvent
         )
     }
-    LaunchedEffect(derivedState.value) {
-        loadState.value = derivedState.value is DesignStatefulContentState.Loading
-        errorState.value = (derivedState.value as? DesignStatefulContentState.Error?)?.error
-    }
     LaunchedEffect(loadState.value) {
         if ((loadState.value && derivedState.value !is DesignStatefulContentState.Loading)
             || (!loadState.value && derivedState.value is DesignStatefulContentState.Error)) {
             viewModel.refreshAccount()
+            loadState.value = false
         }
     }
 }

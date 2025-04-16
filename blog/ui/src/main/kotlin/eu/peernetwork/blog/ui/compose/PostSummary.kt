@@ -9,7 +9,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.blog.ui.mapper.annotateTag
 
@@ -24,9 +23,8 @@ fun PostSummary(
     Row(modifier = modifier) {
         Text(
             text = username,
-            style = MaterialTheme.typography.headlineSmall.copy(
+            style = MaterialTheme.typography.headlineMedium.copy(
                 color = color,
-                fontWeight = FontWeight.Bold,
                 fontStyle = FontStyle.Italic
             ),
             modifier = Modifier.padding(end = 8.dp)
@@ -34,22 +32,21 @@ fun PostSummary(
         Column {
             Text(
                 text = title,
-                style = MaterialTheme.typography.headlineSmall.copy(
-                    color = color,
-                    fontWeight = FontWeight.Bold,
-                ),
-                modifier = Modifier.padding(bottom = 2.dp)
+                style = MaterialTheme.typography.bodyMedium.copy(color = color),
             )
-            Text(
-                text = description.annotateTag(
-                    MaterialTheme.typography.bodySmall.toSpanStyle().copy(
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                ),
-                style = MaterialTheme.typography.bodySmall.copy(
-                    color = MaterialTheme.colorScheme.tertiary,
-                ),
-            )
+            if (description.isNotEmpty()) {
+                Text(
+                    text = description.annotateTag(
+                        MaterialTheme.typography.bodySmall.toSpanStyle().copy(
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    ),
+                    style = MaterialTheme.typography.bodySmall.copy(
+                        color = MaterialTheme.colorScheme.tertiary,
+                    ),
+                    modifier = Modifier.padding(top = 2.dp)
+                )
+            }
         }
     }
 }

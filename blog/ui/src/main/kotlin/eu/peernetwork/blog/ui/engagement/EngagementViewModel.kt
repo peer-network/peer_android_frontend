@@ -7,7 +7,7 @@ import eu.peernetwork.blog.domain.usecase.LikeUsecase
 import eu.peernetwork.blog.domain.usecase.ViewUsecase
 import javax.inject.Inject
 
-class EngagementsViewModel @Inject constructor(
+class EngagementViewModel @Inject constructor(
     private val likeUsecase: LikeUsecase,
     private val dislikeUsecase: DislikeUsecase,
     private val viewUsecase: ViewUsecase

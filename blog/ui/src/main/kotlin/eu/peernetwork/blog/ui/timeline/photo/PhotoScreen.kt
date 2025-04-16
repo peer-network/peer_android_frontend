@@ -1,10 +1,7 @@
 package eu.peernetwork.blog.ui.timeline.photo
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -15,29 +12,25 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import eu.peernetwork.core.ui.extension.builder
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.LoadState
-import androidx.paging.PagingData
-import androidx.paging.compose.collectAsLazyPagingItems
-import dev.materii.pullrefresh.DragRefreshLayout
-import dev.materii.pullrefresh.rememberPullRefreshState
-import eu.peernetwork.blog.ui.comment.CommentScreen
+import androidx.paging.compose.LazyPagingItems
+import eu.peernetwork.blog.ui.comment.CommentBottomSheet
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.compose.PostListItem
-import eu.peernetwork.blog.ui.engagement.EngagementsViewModel
+import eu.peernetwork.blog.ui.compose.PostPageSkeleton
+import eu.peernetwork.blog.ui.engagement.EngagementScreen
 import eu.peernetwork.core.common.model.Pageable
-import eu.peernetwork.core.ui.design.component.DesignStatefulContent
 import eu.peernetwork.core.ui.design.component.DesignStatefulContentState
-import eu.peernetwork.core.ui.design.compose.DesignBottomSheet
 import eu.peernetwork.blog.ui.mapper.mapToProperty
+import eu.peernetwork.core.ui.design.component.DesignPagingContent
+import eu.peernetwork.core.ui.design.component.DesignRefreshableContent
 import eu.peernetwork.media.core.renderer.ImageView
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -55,12 +48,6 @@ fun PhotoScreen(
         viewModelStoreOwner = viewModelStoreOwner,
         factory = component.viewModelFactory()
     )
-    val engagementsViewModel = viewModel(
-        modelClass = EngagementsViewModel::class.java,
-        viewModelStoreOwner = viewModelStoreOwner,
-        factory = component.viewModelFactory()
-    )
-    val coroutineScope = rememberCoroutineScope()
     val state by viewModel.state.collectAsStateWithLifecycle()
     val currentTime = remember { mutableLongStateOf(System.currentTimeMillis()) }
     LaunchedEffect(Unit) {
@@ -83,51 +70,27 @@ fun PhotoScreen(
             }
         }
     }
-    var isRefreshing by remember {
-        mutableStateOf(derivedState.value is DesignStatefulContentState.Loading)
-    }
-    val pullRefreshState = rememberPullRefreshState(refreshing = isRefreshing, onRefresh = {
-        viewModel.load(Pageable(0, postLimit))
-    })
-    DragRefreshLayout(
-        state = pullRefreshState
-    ) {
-        DesignStatefulContent<Flow<PagingData<UiPost>>>(
-            state = derivedState,
-            refresh = { viewModel.load(Pageable(0, postLimit)) }
-        ) { flow ->
-            val lazyPagingItems = flow.collectAsLazyPagingItems()
-            var showSheet = remember { mutableStateOf(false) }
-            var selectedPostId = remember { mutableStateOf("") }
-            DesignBottomSheet(
-                showSheet = showSheet,
-                tag = "designBottomSheet",
-                onDismissRequest = { showSheet.value = false },
-                color = Color.White.copy(alpha = 0.9f),
-                sheetPeekHeight = 600.dp,
-                content = {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(12.dp)
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .weight(1f)
-                                .fillMaxWidth()
-                        ) {
-                            CommentScreen(
-                                postId = selectedPostId,
-                                postLimit = postLimit,
-                                provider = component,
-                                viewModelStoreOwner = viewModelStoreOwner,
-                                modifier = Modifier.fillMaxSize()
-                            )
-                        }
-
-                    }
-                }
-            )
+    var selectedPostId = remember { mutableStateOf<String?>(null) }
+    DesignPagingContent<UiPost>(
+        state = derivedState,
+        onRefresh = { viewModel.load(Pageable(0, postLimit)) },
+        placeholder = { PostPageSkeleton() }
+    ) { state, lazyPagingItems ->
+        val refreshState = remember { derivedStateOf {
+            if (lazyPagingItems.loadState.refresh is LoadState.Loading) {
+                DesignStatefulContentState.Loading
+            } else if (lazyPagingItems.loadState.refresh is LoadState.Error) {
+                DesignStatefulContentState.Error(
+                    (lazyPagingItems.loadState.refresh as LoadState.Error).error
+                )
+            } else {
+                state.value
+            }
+        } }
+        DesignRefreshableContent<LazyPagingItems<UiPost>>(
+            state = refreshState,
+            onRefresh = { lazyPagingItems.refresh() }
+        ) {
             LazyColumn(modifier = Modifier.fillMaxSize()) {
                 items(
                     count = lazyPagingItems.itemCount,
@@ -138,9 +101,10 @@ fun PhotoScreen(
                             post = post,
                             position = index,
                             state = currentTime,
-                            onClick = {},
-                            provider = component,
-                            viewModelStoreOwner = viewModelStoreOwner,
+                            engagements = {
+                                EngagementScreen(post, component, viewModelStoreOwner) {
+
+                                } },
                             content = {
                                 val media = post.media.first()
                                 component.imageView()(
@@ -158,4 +122,5 @@ fun PhotoScreen(
             }
         }
     }
+    CommentBottomSheet(selectedPostId)
 }

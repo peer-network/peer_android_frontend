@@ -5,23 +5,23 @@ import androidx.lifecycle.ViewModelProvider
 import eu.peernetwork.blog.ui.provider.BlogProvider
 import eu.peernetwork.core.ui.component.UiComponent
 
-interface Engagements : BlogProvider {
+interface Engagement : BlogProvider {
     @javax.inject.Scope
     @Retention(AnnotationRetention.RUNTIME)
     annotation class Scope
 
     @Scope
     @dagger.Component(
-        dependencies = [Engagements::class],
-        modules = [EngagementsModule::class]
+        dependencies = [Engagement::class],
+        modules = [EngagementModule::class]
     )
-    interface Component : Engagements {
+    interface Component : Engagement {
         fun viewModelFactory(): ViewModelProvider.Factory
     }
 
-    class Builder(private val dependency: Engagements) : UiComponent.DefaultBuilder<Engagements, Component>() {
+    class Builder(private val dependency: Engagement) : UiComponent.DefaultBuilder<Engagement, Component>() {
         override fun build(context: Context): Component {
-            return DaggerEngagements_Component.builder().engagements(dependency).build()
+            return DaggerEngagement_Component.builder().engagement(dependency).build()
         }
     }
 }

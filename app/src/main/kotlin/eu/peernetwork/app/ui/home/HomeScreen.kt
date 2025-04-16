@@ -62,7 +62,7 @@ fun HomeScreen(provider: UiComponentProvider) {
     } }
     DesignStatefulContent<Pair<String, Int>>(
         state = derivedState,
-        refresh = { viewModel() },
+        onRefresh = { viewModel() },
         modifier = Modifier.fillMaxSize()
     ) { data ->
         val title = remember {

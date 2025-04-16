@@ -97,7 +97,7 @@ fun VideoDialog(
         DragRefreshLayout(state = pullRefreshState) {
             DesignStatefulContent<Flow<PagingData<UiVideo>>>(
                 state = derivedState,
-                refresh = { viewModel.load(author, Pageable(0, postLimit)) }
+                onRefresh = { viewModel.load(author, Pageable(0, postLimit)) }
             ) {flow ->
                 val lazyPagingItems = flow.collectAsLazyPagingItems()
                 if (lazyPagingItems.loadState.refresh is LoadState.Loading) {

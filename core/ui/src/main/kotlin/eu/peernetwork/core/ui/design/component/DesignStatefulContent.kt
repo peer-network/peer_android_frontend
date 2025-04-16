@@ -34,7 +34,8 @@ import eu.peernetwork.core.ui.theme.PeerTheme
 fun<T> DesignStatefulContent(
     state: State<DesignStatefulContentState>,
     modifier: Modifier = Modifier,
-    refresh: () -> Unit = {},
+    autoRefresh: Boolean = true,
+    onRefresh: () -> Unit = {},
     durationMillis: Int = 1000,
     easing: Easing = FastOutSlowInEasing,
     contentAlignment: Alignment = Alignment.Center,
@@ -76,13 +77,13 @@ fun<T> DesignStatefulContent(
             is DesignStatefulContentState.Error -> {
                 val error = (state.value as DesignStatefulContentState.Error)
                 errorContent?.invoke(error.error)
-                    ?: DesignErrorContent(error.error, onRetry = refresh)
+                    ?: DesignErrorContent(error.error, onRetry = onRefresh)
             }
         }
     }
     LaunchedEffect(isEmpty.value) {
-        if (isEmpty.value) {
-            refresh()
+        if (isEmpty.value && autoRefresh) {
+            onRefresh()
         }
     }
 }

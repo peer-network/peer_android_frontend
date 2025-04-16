@@ -5,7 +5,7 @@ data class MediaModel(
     val options: Options
 ) {
     data class Options(
-        val size: String,
+        val size: String?,
         val cover: String? = null,
         val resolution: String? = null,
     )

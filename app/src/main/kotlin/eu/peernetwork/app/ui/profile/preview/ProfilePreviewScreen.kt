@@ -26,7 +26,6 @@ import eu.peernetwork.blog.ui.post.music.MusicScreen
 import eu.peernetwork.blog.ui.post.photo.PhotoScreen
 import eu.peernetwork.blog.ui.post.video.VideoScreen
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.component.DesignRefreshErrorContent
 import eu.peernetwork.core.ui.design.component.DesignRefreshableContent
 import eu.peernetwork.core.ui.design.component.DesignStatefulContentState
 import eu.peernetwork.core.ui.extension.builder
@@ -47,7 +46,6 @@ fun ProfilePreviewScreen(
         provider.builder(ProfilePreview.Builder::class.java).build(context)
     }
     val pageState = rememberSaveable { mutableIntStateOf(0) }
-    var errorState = remember { mutableStateOf<Throwable?>(null) }
     var isProfileRefreshing = remember { mutableStateOf(false) }
     var isImageRefreshing = remember { mutableStateOf(false) }
     var isVideoRefreshing = remember { mutableStateOf(false) }
@@ -70,10 +68,8 @@ fun ProfilePreviewScreen(
     ) {
         ProfilePreviewContent(
             state = pageState,
-            errorState = errorState,
             header = {
                 UserScreen(
-                    errorState = errorState,
                     loadState = isProfileRefreshing,
                     onEvent = {
                         if (it is UserEvent.Settings) {
@@ -111,7 +107,6 @@ fun ProfilePreviewScreen(
 @Composable
 fun ProfilePreviewContent(
     state: MutableIntState,
-    errorState: State<Throwable?>,
     modifier: Modifier = Modifier,
     onNavigate: (Int) -> Unit = {},
     header: @Composable (State<Float>) -> Unit,
@@ -126,18 +121,10 @@ fun ProfilePreviewContent(
         modifier = modifier,
         pagerState = pageState
     ) {
-        if (errorState.value == null) {
-            HorizontalPager(
-                state = pageState,
-                verticalAlignment = Alignment.Top,
-            ) { page -> content(page) }
-        } else {
-            DesignRefreshErrorContent(
-                errorState.value!!,
-                modifier = Modifier.fillMaxSize()
-                    .padding(bottom = 72.dp)
-            )
-        }
+        HorizontalPager(
+            state = pageState,
+            verticalAlignment = Alignment.Top,
+        ) { page -> content(page) }
         LaunchedEffect(pageState.currentPage) { onNavigate(pageState.currentPage) }
     }
 }

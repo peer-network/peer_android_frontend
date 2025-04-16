@@ -3,6 +3,8 @@ package eu.peernetwork.blog.ui.usecase
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import androidx.paging.PagingSource.LoadParams
+import androidx.paging.PagingSource.LoadResult
 import eu.peernetwork.blog.domain.model.Content
 import eu.peernetwork.blog.domain.model.Filter
 import eu.peernetwork.blog.domain.repository.ContentRepository
@@ -25,7 +27,7 @@ class PostUsecase @Inject constructor(
                 pageSize = param.page.limit,
                 enablePlaceholders = false
             ),
-            pagingSourceFactory = { this }
+            pagingSourceFactory = { source() }
         ).flow
     }
 
@@ -47,11 +49,13 @@ class PostUsecase @Inject constructor(
         return LoadResult.Page(
             data = response.items.map { it.mapToPhoto() },
             prevKey = if (currentOffset <= 0) null else currentOffset - 1,
-            nextKey = if (response.items.isEmpty()) null else currentOffset + response.items.size
+            nextKey = if (response.items.isNotEmpty()) {
+                currentOffset + response.items.size
+            } else {
+                null
+            }
         )
     }
 
-    data class Parameter(
-        val page: Pageable
-    )
+    data class Parameter(val page: Pageable)
 }

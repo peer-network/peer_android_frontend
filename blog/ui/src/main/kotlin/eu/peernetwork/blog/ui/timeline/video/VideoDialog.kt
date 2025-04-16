@@ -39,7 +39,7 @@ import eu.peernetwork.blog.ui.comment.CommentScreen
 import eu.peernetwork.blog.ui.compose.DialogPostCard
 import eu.peernetwork.blog.ui.compose.PostIcon
 import eu.peernetwork.blog.ui.compose.PostSummary
-import eu.peernetwork.blog.ui.engagement.EngagementsViewModel
+import eu.peernetwork.blog.ui.engagement.EngagementViewModel
 import eu.peernetwork.blog.ui.model.UiAction
 import eu.peernetwork.blog.ui.model.UiVideo
 import eu.peernetwork.blog.ui.post.photo.formatTimeAgo
@@ -72,8 +72,8 @@ fun VideoDialog(
         viewModelStoreOwner = viewModelStoreOwner,
         factory = component.viewModelFactory()
     )
-    val engagementsViewModel = viewModel(
-        modelClass = EngagementsViewModel::class.java,
+    val engagementViewModel = viewModel(
+        modelClass = EngagementViewModel::class.java,
         viewModelStoreOwner = viewModelStoreOwner,
         factory = component.viewModelFactory()
     )
@@ -109,7 +109,7 @@ fun VideoDialog(
     })
     DesignDialogSheet(tag = "VideoDialog", visible = isVisible.value) {
         DragRefreshLayout(state = pullRefreshState) {
-            DesignStatefulContent<Flow<PagingData<UiVideo>>>(state = derivedState, refresh = {
+            DesignStatefulContent<Flow<PagingData<UiVideo>>>(state = derivedState, onRefresh = {
                 viewModel.load(Pageable(0, postLimit))
             }) { flow ->
                 val lazyPagingItems = flow.collectAsLazyPagingItems()
@@ -182,12 +182,12 @@ fun VideoDialog(
                                     Column(horizontalAlignment = Alignment.End, modifier = Modifier.padding(bottom = 36.dp, end = 16.dp)) {
                                         PostIcon(UiAction.Like, post.likes.toString(), position = false, onClick = {
                                             coroutineScope.launch {
-                                                engagementsViewModel.create(post.id, Engagement.Content.Like)
+                                                engagementViewModel.create(post.id, Engagement.Content.Like)
                                             }
                                         }, color = MaterialTheme.colorScheme.onSecondary)
                                         PostIcon(UiAction.Dislike, post.dislikes.toString(), position = false, onClick = {
                                             coroutineScope.launch {
-                                                engagementsViewModel.create(post.id, Engagement.Content.Dislike)
+                                                engagementViewModel.create(post.id, Engagement.Content.Dislike)
                                             }
                                         }, color = MaterialTheme.colorScheme.onSecondary)
                                         PostIcon(UiAction.Comment, post.comment.toString(), position = false, onClick = {

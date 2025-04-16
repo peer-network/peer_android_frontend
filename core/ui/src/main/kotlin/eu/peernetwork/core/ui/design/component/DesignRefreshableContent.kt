@@ -14,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -39,7 +40,9 @@ fun<T> DesignRefreshableContent(
     content: @Composable (T) -> Unit,
 ) {
     val contentState = remember { mutableStateOf<T?>(null) }
-    val errorState = remember { mutableStateOf<Throwable?>(null) }
+    val errorState = remember { derivedStateOf {
+        (state.value as? DesignStatefulContentState.Error?)?.error
+    } }
     val refreshState = rememberPullRefreshState(
         refreshing = state.value is DesignStatefulContentState.Loading,
         onRefresh = onRefresh
@@ -63,15 +66,8 @@ fun<T> DesignRefreshableContent(
         }
     }
     LaunchedEffect(state.value) {
-        when (state.value) {
-            DesignStatefulContentState.Empty -> {}
-            DesignStatefulContentState.Loading -> {}
-            is DesignStatefulContentState.Success<*> -> {
-                contentState.value = (state.value as DesignStatefulContentState.Success<*>).result as T
-            }
-            is DesignStatefulContentState.Error -> {
-                errorState.value = (state.value as DesignStatefulContentState.Error).error
-            }
+        if (state.value is DesignStatefulContentState.Success<*>) {
+            contentState.value = (state.value as DesignStatefulContentState.Success<*>).result as T
         }
     }
 }
