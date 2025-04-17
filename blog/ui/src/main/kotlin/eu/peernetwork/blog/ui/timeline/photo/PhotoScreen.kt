@@ -19,7 +19,7 @@ import eu.peernetwork.core.ui.extension.builder
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
-import eu.peernetwork.blog.ui.comment.CommentBottomSheet
+import eu.peernetwork.blog.ui.comment.CommentSheet
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.compose.PostListItem
 import eu.peernetwork.blog.ui.compose.PostPageSkeleton
@@ -123,5 +123,5 @@ fun PhotoScreen(
             }
         }
     }
-    CommentBottomSheet(selectedPost, postLimit, component, viewModelStoreOwner)
+    CommentSheet(selectedPost, postLimit, component, viewModelStoreOwner)
 }

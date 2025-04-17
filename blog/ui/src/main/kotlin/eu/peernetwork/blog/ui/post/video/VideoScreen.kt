@@ -24,7 +24,7 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.LoadState
-import eu.peernetwork.blog.ui.comment.CommentBottomSheet
+import eu.peernetwork.blog.ui.comment.CommentSheet
 import eu.peernetwork.blog.ui.model.UiVideo
 import eu.peernetwork.blog.ui.compose.MediaPostCard
 import eu.peernetwork.blog.ui.compose.PostSummary
@@ -123,7 +123,7 @@ fun VideoScreen(
             }
         }
         VideoDialog(author, postLimit, selectedClip, provider, viewModelStoreOwner)
-        CommentBottomSheet(selectedPost, postLimit, component, viewModelStoreOwner)
+        CommentSheet(selectedPost, postLimit, component, viewModelStoreOwner)
     }
     LaunchedEffect(Unit) {
         while (true) {

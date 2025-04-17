@@ -21,7 +21,7 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.LoadState
-import eu.peernetwork.blog.ui.comment.CommentBottomSheet
+import eu.peernetwork.blog.ui.comment.CommentSheet
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.compose.PostListItem
 import eu.peernetwork.blog.ui.compose.PostPageSkeleton
@@ -115,7 +115,7 @@ fun PhotoScreen(
             }
         }
     }
-    CommentBottomSheet(selectedPost, postLimit, component, viewModelStoreOwner)
+    CommentSheet(selectedPost, postLimit, component, viewModelStoreOwner)
     LaunchedEffect(Unit) {
         while (true) {
             delay(60_000L)

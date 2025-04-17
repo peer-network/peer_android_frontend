@@ -41,7 +41,7 @@ import kotlinx.coroutines.flow.Flow
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CommentBottomSheet(
+fun CommentSheet(
     state: MutableState<String?>,
     postLimit: Int,
     provider: UiComponentProvider,

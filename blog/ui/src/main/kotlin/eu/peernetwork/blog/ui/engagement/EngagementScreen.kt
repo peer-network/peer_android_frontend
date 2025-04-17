@@ -8,7 +8,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModelStoreOwner
@@ -64,7 +63,7 @@ fun EngagementScreen(
             } else {
                 MaterialTheme.colorScheme.tertiary
             },
-        ) { viewModel.like(post.value) }
+        ) { viewModel.like(engagement) }
         PostIcon(
             action = UiAction.Dislike,
             value = post.value.dislikes.toString(),

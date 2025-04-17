@@ -22,6 +22,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -47,8 +48,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun DesignBottomSheet(
     showSheet: MutableState<Boolean>,
-    onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
+    onDismissRequest: () -> Unit = {},
     tag: String,
     handleBackPress: Boolean = true,
     initialValue: SheetValue = SheetValue.Hidden,
@@ -68,9 +69,8 @@ fun DesignBottomSheet(
         initialValue = initialValue,
         skipHiddenState = false
     )
-    val initialized = remember { mutableStateOf(false) }
     val scaffoldState = rememberBottomSheetScaffoldState(bottomSheetState = sheetState)
-    DesignOverlayHost(tag, visible = true) {
+    DesignOverlayHost(tag, visible = showSheet.value) { overlayState ->
         overlay {
             background()
             BottomSheetScaffold(
@@ -88,7 +88,14 @@ fun DesignBottomSheet(
                                     height = coordinates.size.height
                                 }
                             }
-                    ) { content() }
+                    ) {
+                        content()
+                        LaunchedEffect(overlayState.value) {
+                            if (overlayState.value) {
+                                focus.requestFocus()
+                            }
+                        }
+                    }
                 },
                 sheetSwipeEnabled = true,
                 sheetDragHandle = {
@@ -109,22 +116,34 @@ fun DesignBottomSheet(
                         )
                     }
                 },
-            ) { }
-        }
-    }
-    LaunchedEffect(showSheet.value) {
-        if (showSheet.value) {
-            focus.requestFocus()
-            sheetState.partialExpand()
-        } else {
-            sheetState.hide()
+            ) {
+                LaunchedEffect(overlayState.value) {
+                    if (overlayState.value) {
+                        sheetState.partialExpand()
+                    } else {
+                        sheetState.hide()
+                    }
+                }
+                DisposableEffect(overlayState.value) {
+                    onDispose {
+                        coroutineScope.launch {
+                            sheetState.hide()
+                        }
+                    }
+                }
+            }
         }
     }
     LaunchedEffect(scaffoldState.bottomSheetState.currentValue) {
-        if (scaffoldState.bottomSheetState.currentValue == SheetValue.Hidden && initialized.value) {
+        if (scaffoldState.bottomSheetState.currentValue == SheetValue.Hidden) {
+            showSheet.value = false
             onDismissRequest()
         }
-        initialized.value = true
+    }
+    LaunchedEffect(showSheet.value) {
+        if (!showSheet.value) {
+            onDismissRequest()
+        }
     }
     BackHandler(enabled = showSheet.value && handleBackPress) {
         coroutineScope.launch {

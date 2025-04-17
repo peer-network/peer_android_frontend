@@ -1,5 +1,6 @@
 package eu.peernetwork.blog.ui.timeline.video
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -118,7 +119,6 @@ fun VideoDialog(
                             DesignBottomSheet(
                                 showSheet = showSheet,
                                 tag = "designBottomSheet",
-                                onDismissRequest = { showSheet.value = false },
                                 color = Color.White.copy(alpha = 0.9f),
                                 sheetPeekHeight = 600.dp,
                                 content = {
@@ -191,5 +191,8 @@ fun VideoDialog(
                 }
             }
         }
+    }
+    BackHandler(enabled = isVisible.value) {
+        initialPage.value = null
     }
 }

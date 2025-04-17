@@ -18,7 +18,7 @@ import kotlinx.coroutines.delay
 import androidx.compose.ui.semantics.Role
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
-import eu.peernetwork.blog.ui.comment.CommentBottomSheet
+import eu.peernetwork.blog.ui.comment.CommentSheet
 import eu.peernetwork.blog.ui.model.UiVideo
 import eu.peernetwork.blog.ui.compose.MediaPostCard
 import eu.peernetwork.blog.ui.compose.PostSummary
@@ -130,6 +130,6 @@ fun VideoScreen(
             }
         }
         VideoDialog(postLimit, selectedClip, provider, viewModelStoreOwner)
-        CommentBottomSheet(selectedPostId, postLimit, component, viewModelStoreOwner)
+        CommentSheet(selectedPostId, postLimit, component, viewModelStoreOwner)
     }
 }

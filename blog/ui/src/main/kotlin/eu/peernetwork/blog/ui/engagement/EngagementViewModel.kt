@@ -11,50 +11,58 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
+import kotlin.collections.set
 
 class EngagementViewModel @Inject constructor(
     private val likeUsecase: LikeUsecase,
     private val dislikeUsecase: DislikeUsecase,
     private val contentUsecase: ContentUsecase
 ) : ViewModel() {
-    val engagements = mutableMapOf<String, UiEngagement>()
+    private val mutexes = ConcurrentHashMap.newKeySet<String>()
 
-    val mutableState = MutableStateFlow<State>(State.Empty(engagements))
+    private val engagements = mutableMapOf<String, UiEngagement>()
+
+    private val mutableState = MutableStateFlow<State>(State.Empty(engagements))
 
     val state: StateFlow<State> = mutableState.asStateFlow()
 
     fun like(engagement: UiEngagement) {
-        update(engagement.copy(
-            likes = engagement.likes + 1,
-            isLiked = true,
-        ))
-        mutableState.tryEmit(State.Success(engagements))
-        handleEngagement(engagement) { likeUsecase(engagement.id) }
+        handleEngagement(engagement) {
+            update(engagement.copy(
+                likes = engagement.likes + 1,
+                isLiked = true,
+            ))
+            likeUsecase(engagement.id)
+        }
     }
 
     fun dislike(engagement: UiEngagement) {
-        update(engagement.copy(
-            dislikes = engagement.dislikes + 1,
-            isDisliked = true,
-        ))
-        mutableState.tryEmit(State.Success(engagements))
-        handleEngagement(engagement) { dislikeUsecase(engagement.id) }
+        handleEngagement(engagement) {
+            update(engagement.copy(
+                dislikes = engagement.dislikes + 1,
+                isDisliked = true,
+            ))
+            dislikeUsecase(engagement.id)
+        }
     }
 
     private fun handleEngagement(engagement: UiEngagement, block: suspend () -> Unit) {
         viewModelScope.launch {
+            if (mutexes.contains(engagement.id)) {
+                return@launch
+            }
+            mutexes.add(engagement.id)
             try {
                 block()
-                try {
-                    engagements[engagement.id] = contentUsecase(engagement.id).mapToEngagement()
-                } catch (error: Throwable) {
-                    error.printStackTrace()
-                }
+                engagements[engagement.id] = contentUsecase(engagement.id).mapToEngagement()
                 mutableState.tryEmit(State.Success(engagements))
             } catch (error: Throwable) {
                 engagements[engagement.id] = engagement
                 mutableState.tryEmit(State.Error(engagement.id, engagements, error))
+            } finally {
+                mutexes.remove(engagement.id)
             }
         }
     }
@@ -65,7 +73,9 @@ class EngagementViewModel @Inject constructor(
     }
 
     fun reset() {
-        mutableState.tryEmit(State.Empty(engagements))
+        viewModelScope.launch {
+            mutableState.tryEmit(State.Empty(engagements))
+        }
     }
 
     sealed class State(val engagements: Map<String, UiEngagement>) {
