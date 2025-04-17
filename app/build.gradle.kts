@@ -1,4 +1,7 @@
-plugins { id(libs.plugins.ksp.get().pluginId) }
+plugins {
+    id(libs.plugins.ksp.get().pluginId)
+    id(libs.plugins.gms.get().pluginId)
+}
 
 android {
     defaultConfig {
@@ -17,6 +20,7 @@ android {
             versionNameSuffix = "-DEBUG"
             buildConfigField("String", "BASE_URL", "\"https://getpeer.eu\"")
             buildConfigField("String", "MEDIA_URL", "\"https://media.getpeer.eu\"")
+            buildConfigField("boolean", "USE_SYSTEM_THEME", "true")
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
         release {
@@ -24,6 +28,7 @@ android {
             isShrinkResources = true
             buildConfigField("String", "BASE_URL", "\"https://peernetwork.eu\"")
             buildConfigField("String", "MEDIA_URL", "\"https://media.peernetwork.eu\"")
+            buildConfigField("boolean", "USE_SYSTEM_THEME", "false")
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
             signingConfig = signingConfigs.getByName("debug")
         }
@@ -63,6 +68,10 @@ dependencies {
     implementation(project(":social:data"))
     implementation(project(":social:remote"))
     implementation(project(":social:ui"))
+
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.config)
 
     implementation(libs.dagger)
     ksp(libs.dagger.compiler)

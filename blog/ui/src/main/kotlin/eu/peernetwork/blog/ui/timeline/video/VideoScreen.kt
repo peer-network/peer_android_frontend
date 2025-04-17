@@ -24,7 +24,9 @@ import eu.peernetwork.blog.ui.compose.MediaPostCard
 import eu.peernetwork.blog.ui.compose.PostSummary
 import eu.peernetwork.blog.ui.compose.PostPageSkeleton
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
+import eu.peernetwork.blog.ui.mapper.mapToContent
 import eu.peernetwork.blog.ui.mapper.mapToEngagement
+import eu.peernetwork.blog.ui.model.UiContent
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.post.photo.formatTimeAgo
 import eu.peernetwork.core.ui.design.component.DesignPagingContent
@@ -71,7 +73,7 @@ fun VideoScreen(
         }
     }
     var selectedClip = remember { mutableStateOf<Int?>(null) }
-    var selectedPostId = remember { mutableStateOf<String?>(null) }
+    var selectedPost = remember { mutableStateOf<UiContent?>(null) }
     DesignPagingContent<UiVideo>(
         state = derivedState,
         onRefresh = { viewModel.load(Pageable(0, postLimit)) },
@@ -106,7 +108,7 @@ fun VideoScreen(
                             },
                             engagements = {
                                 EngagementScreen(post.mapToEngagement(), component, viewModelStoreOwner) {
-                                    selectedPostId.value = post.id
+                                    selectedPost.value = post.mapToContent()
                                 }
                             },
                             modifier = Modifier.padding(bottom = 16.dp)
@@ -130,6 +132,6 @@ fun VideoScreen(
             }
         }
         VideoDialog(postLimit, selectedClip, provider, viewModelStoreOwner)
-        CommentSheet(selectedPostId, postLimit, component, viewModelStoreOwner)
+        CommentSheet(selectedPost, postLimit, component, viewModelStoreOwner)
     }
 }

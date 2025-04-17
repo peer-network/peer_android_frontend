@@ -78,7 +78,7 @@ fun EngagementScreen(
     LaunchedEffect(error.value) {
         if (error.value != null && error.value?.selected == engagement.id) {
             Toast.makeText(context, error.value?.error?.message ?: errorMessage, Toast.LENGTH_SHORT).show()
-            viewModel.reset()
+            viewModel.clean()
         }
     }
 }

@@ -169,13 +169,13 @@ fun VideoDialog(
                                         .align(Alignment.BottomEnd)
                                 ) {
                                     Column(horizontalAlignment = Alignment.End, modifier = Modifier.padding(bottom = 36.dp, end = 16.dp)) {
-                                        PostIcon(UiAction.Like, post.likes.toString(), position = false, onClick = {
+                                        PostIcon(UiAction.Like, post.likes.toString(), isHorizontal = false, onClick = {
 
                                         }, color = MaterialTheme.colorScheme.onSecondary)
-                                        PostIcon(UiAction.Dislike, post.dislikes.toString(), position = false, onClick = {
+                                        PostIcon(UiAction.Dislike, post.dislikes.toString(), isHorizontal = false, onClick = {
 
                                         }, color = MaterialTheme.colorScheme.onSecondary)
-                                        PostIcon(UiAction.Comment, post.comment.toString(), position = false, onClick = {
+                                        PostIcon(UiAction.Comment, post.comment.toString(), isHorizontal = false, onClick = {
                                             selectedPostId.value = post.id
                                             showSheet.value = true
                                         }, color = MaterialTheme.colorScheme.onSecondary)

@@ -30,7 +30,9 @@ import eu.peernetwork.blog.ui.compose.MediaPostCard
 import eu.peernetwork.blog.ui.compose.PostSummary
 import eu.peernetwork.blog.ui.compose.PostPageSkeleton
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
+import eu.peernetwork.blog.ui.mapper.mapToContent
 import eu.peernetwork.blog.ui.mapper.mapToEngagement
+import eu.peernetwork.blog.ui.model.UiContent
 import eu.peernetwork.blog.ui.post.photo.formatTimeAgo
 import eu.peernetwork.core.common.model.Pageable
 import eu.peernetwork.core.ui.component.UiComponentProvider
@@ -74,7 +76,7 @@ fun VideoScreen(
         }
     } }
     var selectedClip = remember { mutableStateOf<Int?>(null) }
-    var selectedPost = remember { mutableStateOf<String?>(null) }
+    var selectedPost = remember { mutableStateOf<UiContent?>(null) }
     DesignPagingContent<UiVideo>(
         state = derivedState,
         placeholder = { PostPageSkeleton() },
@@ -95,7 +97,7 @@ fun VideoScreen(
                         },
                         engagements = {
                             EngagementScreen(post.mapToEngagement(), component, viewModelStoreOwner) {
-                                selectedPost.value = post.id
+                                selectedPost.value = post.mapToContent()
                             }
                         }
                     ) {

@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.graphql).apply(false)
     alias(libs.plugins.kover).apply(true)
     alias(libs.plugins.ksp).apply(false)
+    alias(libs.plugins.gms).apply(false)
 }
 
 subprojects {

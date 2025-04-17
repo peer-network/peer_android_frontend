@@ -25,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -55,8 +56,9 @@ fun DesignBottomSheet(
     initialValue: SheetValue = SheetValue.Hidden,
     sheetPeekHeight: Dp = 400.dp,
     color: Color = MaterialTheme.colorScheme.tertiaryContainer,
-    background: @Composable () -> Unit = {},
-    content: @Composable () -> Unit,
+    indicatorColor: Color = MaterialTheme.colorScheme.surfaceDim,
+    background: @Composable (State<Boolean>) -> Unit = {},
+    content: @Composable (State<Boolean>) -> Unit,
 ) {
     val density = LocalDensity.current
     val focus = remember { FocusRequester() }
@@ -72,7 +74,7 @@ fun DesignBottomSheet(
     val scaffoldState = rememberBottomSheetScaffoldState(bottomSheetState = sheetState)
     DesignOverlayHost(tag, visible = showSheet.value) { overlayState ->
         overlay {
-            background()
+            background(overlayState)
             BottomSheetScaffold(
                 scaffoldState = scaffoldState,
                 sheetPeekHeight = with(density) { height.toDp() },
@@ -89,7 +91,7 @@ fun DesignBottomSheet(
                                 }
                             }
                     ) {
-                        content()
+                        content(overlayState)
                         LaunchedEffect(overlayState.value) {
                             if (overlayState.value) {
                                 focus.requestFocus()
@@ -109,10 +111,7 @@ fun DesignBottomSheet(
                             modifier = Modifier
                                 .width(40.dp)
                                 .height(4.dp)
-                                .background(
-                                    color = MaterialTheme.colorScheme.tertiaryContainer,
-                                    shape = RoundedCornerShape(2.dp)
-                                )
+                                .background(color = indicatorColor, shape = RoundedCornerShape(2.dp))
                         )
                     }
                 },

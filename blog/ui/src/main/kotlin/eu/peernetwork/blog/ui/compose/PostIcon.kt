@@ -21,18 +21,16 @@ import eu.peernetwork.core.ui.design.compose.DesignTextButton
 fun PostIcon(
     action: UiAction,
     value: String,
-    position: Boolean = true,
+    isHorizontal: Boolean = true,
     color: Color = MaterialTheme.colorScheme.tertiary,
     onClick: (UiAction) -> Unit,
 ) {
     DesignTextButton(
         onClick = { onClick(action) },
-        contentPadding = PaddingValues(2.dp)
+        contentPadding = PaddingValues(4.dp)
     ) {
-        if (position) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
+        if (isHorizontal) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
                     painter = painterResource(id = action.id),
                     contentDescription = action.label?.let { stringResource(it) },
@@ -44,9 +42,7 @@ fun PostIcon(
                 ))
             }
         } else {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Icon(
                     painter = painterResource(id = action.id),
                     contentDescription = action.label?.let { stringResource(it) },

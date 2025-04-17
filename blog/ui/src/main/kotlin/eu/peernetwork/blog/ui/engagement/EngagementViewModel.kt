@@ -7,6 +7,7 @@ import eu.peernetwork.blog.domain.usecase.DislikeUsecase
 import eu.peernetwork.blog.domain.usecase.LikeUsecase
 import eu.peernetwork.blog.ui.mapper.mapToEngagement
 import eu.peernetwork.blog.ui.model.UiEngagement
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -24,62 +25,54 @@ class EngagementViewModel @Inject constructor(
 
     private val engagements = mutableMapOf<String, UiEngagement>()
 
-    private val mutableState = MutableStateFlow<State>(State.Empty(engagements))
+    private val mutableState = MutableStateFlow<State>(State.Idle(engagements))
 
     val state: StateFlow<State> = mutableState.asStateFlow()
 
     fun like(engagement: UiEngagement) {
-        handleEngagement(engagement) {
-            update(engagement.copy(
-                likes = engagement.likes + 1,
-                isLiked = true,
-            ))
-            likeUsecase(engagement.id)
-        }
+        handleEngagement(engagement, engagement.copy(
+            likes = engagement.likes + 1,
+            isLiked = true,
+        )) { likeUsecase(engagement.id) }
     }
 
     fun dislike(engagement: UiEngagement) {
-        handleEngagement(engagement) {
-            update(engagement.copy(
-                dislikes = engagement.dislikes + 1,
-                isDisliked = true,
-            ))
-            dislikeUsecase(engagement.id)
-        }
+        handleEngagement(engagement, engagement.copy(
+            dislikes = engagement.dislikes + 1,
+            isDisliked = true,
+        )) { dislikeUsecase(engagement.id) }
     }
 
-    private fun handleEngagement(engagement: UiEngagement, block: suspend () -> Unit) {
+    private fun handleEngagement(
+        previous: UiEngagement,
+        next: UiEngagement,
+        block: suspend () -> Unit
+    ) {
+        if (mutexes.contains(previous.id)) { return }
+        mutexes.add(previous.id)
+        engagements[previous.id] = next
         viewModelScope.launch {
-            if (mutexes.contains(engagement.id)) {
-                return@launch
-            }
-            mutexes.add(engagement.id)
             try {
+                mutableState.tryEmit(State.Loading(engagements))
+                delay(50)
                 block()
-                engagements[engagement.id] = contentUsecase(engagement.id).mapToEngagement()
+                engagements[previous.id] = contentUsecase(previous.id).mapToEngagement()
                 mutableState.tryEmit(State.Success(engagements))
             } catch (error: Throwable) {
-                engagements[engagement.id] = engagement
-                mutableState.tryEmit(State.Error(engagement.id, engagements, error))
+                engagements[previous.id] = previous
+                mutableState.tryEmit(State.Error(previous.id, engagements, error))
             } finally {
-                mutexes.remove(engagement.id)
+                mutexes.remove(previous.id)
             }
         }
     }
 
-    private fun update(engagement: UiEngagement) {
-        engagements[engagement.id] = engagement
-        mutableState.tryEmit(State.Success(engagements))
-    }
-
-    fun reset() {
-        viewModelScope.launch {
-            mutableState.tryEmit(State.Empty(engagements))
-        }
+    fun clean() {
+        viewModelScope.launch { mutableState.tryEmit(State.Idle(engagements)) }
     }
 
     sealed class State(val engagements: Map<String, UiEngagement>) {
-        data class Empty(val model: Map<String, UiEngagement>): State(model)
+        data class Idle(val model: Map<String, UiEngagement>): State(model)
         data class Loading(val model: Map<String, UiEngagement>): State(model)
         data class Success(val model: Map<String, UiEngagement>): State(model)
         data class Error(

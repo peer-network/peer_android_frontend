@@ -17,7 +17,8 @@ fun GetCommentsQuery.AffectedRow.mapToDomain(): List<Comment> {
                 imageUrl = it.user.img!!,
                 ),
             createdAt = 0L,
-            likes = it.amountlikes
+            likes = it.amountlikes,
+            isLiked = it.isliked
         )
     }
 }
@@ -33,6 +34,7 @@ fun CreateCommentMutation.AffectedRow.mapToDomain(): Comment {
             imageUrl = user.img!!
         ),
         createdAt = createdat as Long,
-        likes = amountlikes
+        likes = amountlikes,
+        isLiked = isliked
     )
 }
