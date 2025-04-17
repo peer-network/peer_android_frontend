@@ -100,7 +100,7 @@ fun CreatorContent(
     attachments: MutableState<List<Uri>>,
     onSubmit: (UiDraft) -> Unit = {},
     header: @Composable () -> Unit = {},
-    footer: @Composable (MimeType) -> Unit = {}
+    footer: @Composable (MimeType?) -> Unit = {}
 ) {
     val title = remember { TextFieldState() }
     val description = remember { TextFieldState() }
@@ -110,7 +110,7 @@ fun CreatorContent(
         isLoading = isLoading,
         type = selected,
         modifier = modifier.fillMaxSize(),
-        footer = { footer(state.value ?: MimeType.Photo) },
+        footer = { footer(state.value) },
     ) {
         DesignLabel(
             label = { error.value?.message?.let {
