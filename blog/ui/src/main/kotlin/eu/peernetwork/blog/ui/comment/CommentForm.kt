@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -20,11 +21,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import eu.peernetwork.blog.ui.R
 import eu.peernetwork.blog.ui.compose.ContentBadge
 import eu.peernetwork.blog.ui.model.UiAuthor
 import eu.peernetwork.blog.ui.model.UiContent
@@ -60,6 +63,9 @@ fun CommentForm(
                     keyboardType = KeyboardType.Text,
                     imeAction = ImeAction.Send
                 ),
+                onKeyboardAction = KeyboardActions {
+                    if (comment.isValidInput())
+                    onSubmit(model.id, comment.text.toString()) },
                 maxLines = 3,
                 colors = TextFieldDefaults.colors(
                     unfocusedContainerColor = Color.Transparent,
@@ -72,12 +78,16 @@ fun CommentForm(
                 trailing = {
                     DesignTextButton(
                         onClick = { onSubmit(model.id, comment.text.toString()) },
-                        enabled = comment.isValidInput()
+                        enabled = comment.isValidInput(),
+                        isLoading = isLoading.value
                     ) {
-                        Text("Send")
+                        Text(
+                            stringResource(R.string.send_label),
+                            style = MaterialTheme.typography.bodyMedium
+                        )
                     }
                 }
-            ) { Text("Reply...") }
+            ) { Text(stringResource(R.string.post_reply)) }
             Spacer(modifier = Modifier.height(24.dp))
         }
     }

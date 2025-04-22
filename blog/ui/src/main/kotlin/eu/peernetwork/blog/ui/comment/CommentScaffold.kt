@@ -22,6 +22,7 @@ import eu.peernetwork.core.ui.design.compose.DesignOverlayBackground
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CommentScaffold(
+    tag: String,
     state: MutableState<UiContent?>,
     modifier: Modifier = Modifier,
     sheet: @Composable (State<Boolean>) -> Unit,
@@ -30,7 +31,7 @@ fun CommentScaffold(
     val showSheet = remember(state.value) { mutableStateOf(state.value != null) }
     DesignBottomSheet(
         showSheet = showSheet,
-        tag = "commentBottomSheet",
+        tag = "commentBottomSheet#${tag}",
         modifier = modifier,
         onDismissRequest = { state.value = null },
         color = MaterialTheme.colorScheme.tertiaryContainer,
@@ -44,7 +45,7 @@ fun CommentScaffold(
         content = { content(it) }
     )
     DesignDialogSheet(
-        "commentDesignBottomSheet",
+        "commentDesignBottomSheet#${tag}",
         background = {},
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.BottomCenter,

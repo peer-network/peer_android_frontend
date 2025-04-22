@@ -19,17 +19,14 @@ import eu.peernetwork.core.ui.extension.builder
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
-import eu.peernetwork.blog.ui.comment.CommentScreen
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.compose.PostListItem
 import eu.peernetwork.blog.ui.compose.PostPageSkeleton
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
 import eu.peernetwork.blog.ui.mapper.mapToContent
-import eu.peernetwork.blog.ui.mapper.mapToEngagement
 import eu.peernetwork.core.common.model.Pageable
 import eu.peernetwork.core.ui.design.component.DesignStatefulContentState
 import eu.peernetwork.blog.ui.mapper.mapToProperty
-import eu.peernetwork.blog.ui.model.UiContent
 import eu.peernetwork.core.ui.design.component.DesignPagingContent
 import eu.peernetwork.core.ui.design.component.DesignRefreshableContent
 import eu.peernetwork.media.core.renderer.ImageView
@@ -73,7 +70,6 @@ fun PhotoScreen(
             }
         }
     }
-    var selectedPost = remember { mutableStateOf<UiContent?>(null) }
     val refreshEngagement = remember { mutableStateOf(false) }
     DesignPagingContent<UiPost>(
         state = derivedState,
@@ -109,13 +105,12 @@ fun PhotoScreen(
                             state = currentTime,
                             engagements = {
                                 EngagementScreen(
-                                    post.mapToEngagement(),
+                                    post.mapToContent(),
+                                    postLimit,
                                     refreshEngagement,
                                     component,
                                     viewModelStoreOwner
-                                ) {
-                                    selectedPost.value = post.mapToContent()
-                                } },
+                                ) },
                             content = {
                                 val media = post.media.first()
                                 component.imageView()(
@@ -133,5 +128,4 @@ fun PhotoScreen(
             }
         }
     }
-    CommentScreen(selectedPost, postLimit, component, viewModelStoreOwner)
 }

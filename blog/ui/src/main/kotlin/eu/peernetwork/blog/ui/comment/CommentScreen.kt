@@ -1,10 +1,10 @@
 package eu.peernetwork.blog.ui.comment
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.clearText
@@ -37,11 +37,13 @@ import kotlinx.coroutines.delay
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
 @Composable
 fun CommentScreen(
+    id: String,
     state: MutableState<UiContent?>,
     postLimit: Int,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onUpdate: () -> Unit,
 ) {
     val context = LocalContext.current
     val component = remember { provider.builder(Comment.Builder::class.java).build(context) }
@@ -56,11 +58,6 @@ fun CommentScreen(
             when (sheetState.value) {
                 CommentViewModel.State.Idle -> DesignStatefulContentState.Empty
                 CommentViewModel.State.Loading -> DesignStatefulContentState.Loading
-                is CommentViewModel.State.Update -> {
-                    DesignStatefulContentState.Success(
-                        (sheetState.value as CommentViewModel.State.Content).content
-                    )
-                }
                 is CommentViewModel.State.Content -> {
                     DesignStatefulContentState.Success(
                         (sheetState.value as CommentViewModel.State.Content).content
@@ -75,34 +72,40 @@ fun CommentScreen(
     val isLoading = remember { derivedStateOf {
         (sheetState.value as? CommentViewModel.State.Content?)?.isLoading == true
     } }
-    val lastComment = remember { derivedStateOf {
-        (sheetState.value as? CommentViewModel.State.Content?)?.lastComment
-    } }
     CommentScreen(
+        id = id,
         state = derivedState,
         contentState = state,
         isLoading = isLoading,
-        lastComment = lastComment,
-        modifier = modifier.statusBarsPadding()
-            .padding(horizontal = 24.dp)
+        modifier = modifier.padding(horizontal = 24.dp)
             .fillMaxSize(),
-        onRefresh = { state.value?.let { viewModel.load(it.id, Pageable(0, postLimit)) } }
+        onRefresh = { state.value?.let { viewModel.load(it.id, Pageable(0, postLimit)) } },
+        onUpdate = onUpdate
     ) { id, comment -> viewModel.comment(id, comment) }
+    LaunchedEffect(sheetState.value) {
+        val content = (sheetState.value as? CommentViewModel.State.Content?)
+        if (content?.error != null && id == state.value?.id) {
+            Toast.makeText(context, content.error.message, Toast.LENGTH_SHORT).show()
+            viewModel.reset()
+        }
+    }
 }
 
 @Composable
 fun CommentScreen(
+    id: String,
     state: State<DesignStatefulContentState>,
     contentState: MutableState<UiContent?>,
     isLoading: State<Boolean>,
-    lastComment: State<UiComment?>,
     onRefresh: () -> Unit,
+    onUpdate: () -> Unit,
     modifier: Modifier = Modifier,
     onSubmit: (String, String) -> Unit,
 ) {
     val comment = remember { TextFieldState() }
     val sheet = remember { mutableStateOf<UiContent?>(null) }
     CommentScaffold(
+        tag = id,
         state = contentState,
         modifier = modifier,
         sheet = { sheet.value?.let {
@@ -118,7 +121,6 @@ fun CommentScreen(
             DesignPagingContent<UiComment>(
                 state = state,
                 onRefresh = onRefresh,
-                modifier = modifier,
                 placeholder = { ContentSkeleton() }
             ) { pageState, items ->
                 LazyColumn(modifier = Modifier.fillMaxSize()) {
@@ -130,7 +132,15 @@ fun CommentScreen(
                             ) {}
                         }
                     }
-                    item { Box(modifier = Modifier.height(64.dp)) }
+                    item { Box(modifier = Modifier.navigationBarsPadding()
+                        .padding(bottom = 200.dp)) }
+                }
+                LaunchedEffect(isLoading.value) {
+                    if (!isLoading.value && comment.text.isNotEmpty()) {
+                        comment.clearText()
+                        items.refresh()
+                        onUpdate()
+                    }
                 }
             }
             LaunchedEffect(uiState.value) {
@@ -144,9 +154,4 @@ fun CommentScreen(
             }
         }
     )
-    LaunchedEffect(lastComment.value) {
-        if (lastComment.value != null) {
-            comment.clearText()
-        }
-    }
 }

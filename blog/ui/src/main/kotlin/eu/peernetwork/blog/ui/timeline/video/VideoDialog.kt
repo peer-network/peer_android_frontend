@@ -33,7 +33,6 @@ import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
 import dev.materii.pullrefresh.DragRefreshLayout
 import dev.materii.pullrefresh.rememberPullRefreshState
-import eu.peernetwork.blog.ui.comment.CommentScreen
 import eu.peernetwork.blog.ui.compose.DialogPostCard
 import eu.peernetwork.blog.ui.compose.PostIcon
 import eu.peernetwork.blog.ui.compose.PostSummary
@@ -134,13 +133,7 @@ fun VideoDialog(
                                                 .weight(1f)
                                                 .fillMaxWidth()
                                         ) {
-                                            CommentScreen(
-                                                state = selectedPostId,
-                                                postLimit = postLimit,
-                                                provider = component,
-                                                viewModelStoreOwner = viewModelStoreOwner,
-                                                modifier = Modifier.fillMaxSize()
-                                            )
+                                            
                                         }
 
                                     }

@@ -24,15 +24,12 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.LoadState
-import eu.peernetwork.blog.ui.comment.CommentScreen
 import eu.peernetwork.blog.ui.model.UiVideo
 import eu.peernetwork.blog.ui.compose.MediaPostCard
 import eu.peernetwork.blog.ui.compose.PostSummary
 import eu.peernetwork.blog.ui.compose.PostPageSkeleton
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
 import eu.peernetwork.blog.ui.mapper.mapToContent
-import eu.peernetwork.blog.ui.mapper.mapToEngagement
-import eu.peernetwork.blog.ui.model.UiContent
 import eu.peernetwork.blog.ui.post.photo.formatTimeAgo
 import eu.peernetwork.core.common.model.Pageable
 import eu.peernetwork.core.ui.component.UiComponentProvider
@@ -76,7 +73,6 @@ fun VideoScreen(
         }
     } }
     var selectedClip = remember { mutableStateOf<Int?>(null) }
-    var selectedPost = remember { mutableStateOf<UiContent?>(null) }
     val refreshEngagement = remember { mutableStateOf(false) }
     DesignPagingContent<UiVideo>(
         state = derivedState,
@@ -97,9 +93,13 @@ fun VideoScreen(
                             PostSummary(post.author.username, post.title, post.description)
                         },
                         engagements = {
-                            EngagementScreen(post.mapToEngagement(), refreshEngagement, component, viewModelStoreOwner) {
-                                selectedPost.value = post.mapToContent()
-                            }
+                            EngagementScreen(
+                                post.mapToContent(),
+                                postLimit,
+                                refreshEngagement,
+                                component,
+                                viewModelStoreOwner
+                            )
                         }
                     ) {
                         Box(modifier = Modifier.clickable(
@@ -127,7 +127,6 @@ fun VideoScreen(
             }
         }
         VideoDialog(author, postLimit, selectedClip, provider, viewModelStoreOwner)
-        CommentScreen(selectedPost, postLimit, component, viewModelStoreOwner)
     }
     LaunchedEffect(Unit) {
         while (true) {

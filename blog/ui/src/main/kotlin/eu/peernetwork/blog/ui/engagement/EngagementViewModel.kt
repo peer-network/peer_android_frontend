@@ -33,7 +33,8 @@ class EngagementViewModel @Inject constructor(
         if (engagements[engagement.id]?.isLiked == true || engagement.isLiked) {
             return
         }
-        handleEngagement(engagement, engagement.copy(
+        val next = engagements[engagement.id] ?: engagement
+        handleEngagement(engagement, next.copy(
             likes = engagement.likes + 1,
             isLiked = true,
         )) { likeUsecase(engagement.id) }
@@ -43,10 +44,16 @@ class EngagementViewModel @Inject constructor(
         if (engagements[engagement.id]?.isDisliked == true || engagement.isDisliked) {
             return
         }
-        handleEngagement(engagement, engagement.copy(
+        val next = engagements[engagement.id] ?: engagement
+        handleEngagement(engagement, next.copy(
             dislikes = engagement.dislikes + 1,
             isDisliked = true,
         )) { dislikeUsecase(engagement.id) }
+    }
+
+    fun comment(engagement: UiEngagement) {
+        val next = engagements[engagement.id] ?: engagement
+        handleEngagement(engagement, next.copy(comment = engagement.comment + 1)) {  }
     }
 
     private fun handleEngagement(

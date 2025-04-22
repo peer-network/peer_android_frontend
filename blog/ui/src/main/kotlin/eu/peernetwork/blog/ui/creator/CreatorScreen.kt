@@ -167,7 +167,7 @@ private fun CreatorActions(
     onSubmit: (UiDraft) -> Unit = {},
 ) {
     val isFormValid = remember { derivedStateOf {
-        title.isValidInput() && description.isValidInput()
+        title.isValidInput() && (selected.value != null || description.isValidInput())
                 && (selected.value?.let { it !is MimeType.Text
                 && attachments.value.isNotEmpty() } == true || selected.value == null)
     } }

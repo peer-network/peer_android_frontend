@@ -2,7 +2,6 @@ package eu.peernetwork.blog.ui.post.photo
 
 import android.content.Context
 import androidx.lifecycle.ViewModelProvider
-import eu.peernetwork.blog.ui.comment.Comment
 import eu.peernetwork.blog.ui.engagement.Engagement
 import eu.peernetwork.blog.ui.provider.BlogProvider
 import eu.peernetwork.core.ui.component.UiComponent
@@ -18,7 +17,7 @@ interface Photo : BlogProvider {
         dependencies = [Photo::class ],
         modules = [ PhotoModule::class ]
     )
-    interface Component : Photo, UiComponentProvider, Engagement, Comment {
+    interface Component : Photo, UiComponentProvider, Engagement {
         fun viewModelFactory(): ViewModelProvider.Factory
     }
 
