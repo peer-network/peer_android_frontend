@@ -27,6 +27,7 @@ import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.app.ui.feed.FeedScreen
 import eu.peernetwork.app.ui.profile.core.ProfileScreen
+import eu.peernetwork.app.ui.wallet.WalletScreen
 import eu.peernetwork.blog.ui.point.UserPointScreen
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.annotation.UiViewModel
@@ -83,6 +84,7 @@ fun HomeScreen(provider: UiComponentProvider) {
                     owner
                 )
                 is HomeRoute.Add -> CreatorScreen(title, component, owner)
+                is HomeRoute.Wallet -> WalletScreen()
                 else -> Box(modifier = Modifier.fillMaxSize()) {
                     LaunchedEffect(Unit) {
                         title.value = DesignToolbarTitle(route.label)
