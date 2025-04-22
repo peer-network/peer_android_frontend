@@ -15,26 +15,31 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import eu.peernetwork.core.ui.design.compose.DesignBottomSheet
 import eu.peernetwork.core.ui.design.compose.DesignButton
 import eu.peernetwork.media.ui.usecase.PermissionUsecase
 
-@OptIn(ExperimentalPermissionsApi::class)
+@OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun PhotoCreate(
     attachments: MutableState<List<Uri>>,
@@ -42,6 +47,7 @@ fun PhotoCreate(
 ) {
     val context = LocalContext.current
     var imageUris by remember { mutableStateOf(emptyList<Uri>()) }
+    val showSelectedPhotosState = remember { mutableStateOf(false) }
     val usecase = remember { PermissionUsecase(context) }
     val permissions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         listOf(Manifest.permission.READ_MEDIA_IMAGES)
@@ -188,6 +194,115 @@ fun PhotoCreate(
                     )
                 }
             }
+        }
+
+        val gradient = Brush.horizontalGradient(
+            colors = listOf(
+                MaterialTheme.colorScheme.secondary,
+                MaterialTheme.colorScheme.primary,
+            )
+        )
+
+        if (attachments.value.isNotEmpty()) {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(16.dp)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .background(brush = gradient)
+                        .size(48.dp)
+                        .clickable { showSelectedPhotosState.value = true },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = attachments.value.size.toString(),
+                        color = Color.White,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+        }
+
+        if (attachments.value.isNotEmpty()) {
+            DesignBottomSheet(
+                showSheet = showSelectedPhotosState,
+                onDismissRequest = {
+                    showSelectedPhotosState.value = false
+                },
+                tag = "selected_photos_sheet",
+                content = {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(MaterialTheme.colorScheme.tertiaryContainer)
+                            .padding(16.dp)
+                    ) {
+                        Column {
+                            Text(
+                                text = "Selected Photos: ${attachments.value.size}",
+                                style = MaterialTheme.typography.titleMedium,
+                                modifier = Modifier.padding(bottom = 16.dp),
+                                color = MaterialTheme.colorScheme.onPrimary
+                            )
+
+                            LazyVerticalGrid(
+                                columns = GridCells.Fixed(4),
+                                verticalArrangement = Arrangement.spacedBy(8.dp),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                items(attachments.value.size) { index ->
+                                    val uri = attachments.value[index]
+                                    Box(
+                                        modifier = Modifier
+                                            .aspectRatio(1f)
+                                            .clickable {
+                                                attachments.value = attachments.value - uri
+                                                onPhotosSelected(attachments.value)
+                                                if (attachments.value.isEmpty()) {
+                                                    showSelectedPhotosState.value = false
+                                                }
+                                            }
+                                    ) {
+                                        Image(
+                                            painter = rememberAsyncImagePainter(uri),
+                                            contentDescription = null,
+                                            contentScale = ContentScale.Crop,
+                                            modifier = Modifier.fillMaxSize()
+                                        )
+
+                                        Box(
+                                            modifier = Modifier
+                                                .align(Alignment.BottomEnd)
+                                                .background(
+                                                    color = Color.Transparent,
+                                                    shape = CircleShape
+                                                )
+                                                .size(24.dp)
+                                                .padding(2.dp)
+                                                .border(
+                                                    width = 1.dp,
+                                                    color = Color.White,
+                                                    shape = CircleShape
+                                                ),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            Text(
+                                                text = "${attachments.value.indexOf(uri) + 1}",
+                                                color = Color.White,
+                                                fontSize = 12.sp
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            )
         }
     }
 }

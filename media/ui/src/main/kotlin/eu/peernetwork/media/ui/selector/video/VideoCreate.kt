@@ -26,10 +26,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -42,22 +44,26 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import eu.peernetwork.core.ui.design.compose.DesignBottomSheet
 import eu.peernetwork.core.ui.design.compose.DesignButton
 import eu.peernetwork.media.ui.usecase.PermissionUsecase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-@OptIn(ExperimentalPermissionsApi::class)
+@OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun VideoCreate(
     attachments: MutableState<List<Uri>>,
@@ -65,6 +71,7 @@ fun VideoCreate(
 ) {
     val context = LocalContext.current
     var videoUris by remember { mutableStateOf(listOf<Uri>()) }
+    val showSelectedVideoState = remember { mutableStateOf(false) }
     val usecase = remember { PermissionUsecase(context) }
     val permissions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         listOf(Manifest.permission.READ_MEDIA_VIDEO)
@@ -96,6 +103,7 @@ fun VideoCreate(
                         val uri = videoUris[index]
                         var thumbnailBitmap by remember { mutableStateOf<Bitmap?>(null) }
                         var duration by remember { mutableStateOf<String?>(null) }
+                        val isSelected = attachments.value.contains(uri)
 
                         LaunchedEffect(uri) {
                             thumbnailBitmap = withContext(Dispatchers.IO) {
@@ -110,10 +118,12 @@ fun VideoCreate(
                             modifier = Modifier
                                 .aspectRatio(1f)
                                 .clickable {
-                                    if (!attachments.value.contains(uri)) {
-                                        attachments.value = listOf(uri)
+                                    attachments.value = if (isSelected) {
+                                        emptyList()
+                                    } else {
+                                        listOf(uri)
                                     }
-                                    onVideoSelected(uri)
+                                    onVideoSelected(if (isSelected) null else uri)
                                 }
                         ) {
                             Box(
@@ -161,17 +171,23 @@ fun VideoCreate(
                                     }
                                 }
 
-                                if (attachments.value.contains(uri)) {
+                                if (isSelected) {
                                     Box(
                                         modifier = Modifier
                                             .align(Alignment.BottomEnd)
-                                            .padding(4.dp)
+                                            .background(
+                                                color = Color.Transparent,
+                                                shape = CircleShape
+                                            )
+                                            .size(24.dp)
+                                            .padding(2.dp),
+                                        contentAlignment = Alignment.Center
                                     ) {
                                         Icon(
                                             Icons.Default.CheckCircle,
                                             contentDescription = "Selected",
-                                            tint = Color.Gray,
-                                            modifier = Modifier.size(16.dp)
+                                            tint = Color.White,
+                                            modifier = Modifier.fillMaxSize()
                                         )
                                     }
                                 }
@@ -244,6 +260,133 @@ fun VideoCreate(
                     )
                 }
             }
+        }
+        val gradient = Brush.horizontalGradient(
+            colors = listOf(
+                MaterialTheme.colorScheme.secondary,
+                MaterialTheme.colorScheme.primary,
+            )
+        )
+
+        if (attachments.value.isNotEmpty()) {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(16.dp)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .background(brush = gradient)
+                        .size(48.dp)
+                        .clickable { showSelectedVideoState.value = true },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = attachments.value.size.toString(),
+                        color = Color.White,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+        }
+
+        if (attachments.value.isNotEmpty()) {
+            DesignBottomSheet(
+                showSheet = showSelectedVideoState,
+                onDismissRequest = {
+                    showSelectedVideoState.value = false
+                },
+                sheetPeekHeight = 600.dp,
+                tag = "selected_photos_sheet",
+                content = {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(MaterialTheme.colorScheme.tertiaryContainer)
+                            .padding(16.dp)
+                    ) {
+                        Column {
+                            Text(
+                                text = "Selected Video: ",
+                                style = MaterialTheme.typography.titleMedium,
+                                modifier = Modifier.padding(bottom = 16.dp),
+                                color = MaterialTheme.colorScheme.onPrimary
+                            )
+
+                            LazyVerticalGrid(
+                                columns = GridCells.Fixed(1),
+                                verticalArrangement = Arrangement.spacedBy(8.dp),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                items(attachments.value.size) { index ->
+                                    val uri = attachments.value[index]
+                                    Box(
+                                        modifier = Modifier
+                                            .aspectRatio(1f)
+                                            .clickable {
+                                                attachments.value = emptyList()
+                                                onVideoSelected(null)
+                                                showSelectedVideoState.value = false
+                                            }
+                                    ) {
+                                        var thumbnailBitmap by remember { mutableStateOf<Bitmap?>(null) }
+
+                                        LaunchedEffect(uri) {
+                                            thumbnailBitmap = withContext(Dispatchers.IO) {
+                                                getVideoThumbnail(context, uri)
+                                            }
+                                        }
+
+                                        if (thumbnailBitmap != null) {
+                                            Image(
+                                                bitmap = thumbnailBitmap!!.asImageBitmap(),
+                                                contentDescription = "Selected video",
+                                                contentScale = ContentScale.Crop,
+                                                modifier = Modifier.fillMaxSize()
+                                            )
+                                        } else {
+                                            Box(
+                                                modifier = Modifier
+                                                    .fillMaxSize()
+                                                    .background(Color.Gray),
+                                                contentAlignment = Alignment.Center
+                                            ) {
+                                                Icon(
+                                                    Icons.Default.PlayArrow,
+                                                    contentDescription = "Video",
+                                                    tint = Color.White,
+                                                    modifier = Modifier.size(24.dp)
+                                                )
+                                            }
+                                        }
+
+                                        Box(
+                                            modifier = Modifier
+                                                .align(Alignment.BottomEnd)
+                                                .background(
+                                                    color = Color.Transparent,
+                                                    shape = CircleShape
+                                                )
+                                                .size(24.dp)
+                                                .padding(2.dp),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            Icon(
+                                                Icons.Default.CheckCircle,
+                                                contentDescription = "Selected",
+                                                tint = Color.White,
+                                                modifier = Modifier.fillMaxSize()
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            )
         }
     }
 }
