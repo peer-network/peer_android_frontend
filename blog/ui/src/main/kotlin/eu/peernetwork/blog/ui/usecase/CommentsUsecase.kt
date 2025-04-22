@@ -5,7 +5,6 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.PagingSource.LoadParams
 import androidx.paging.PagingSource.LoadResult
-import eu.peernetwork.blog.domain.model.Comment
 import eu.peernetwork.blog.domain.repository.CommentRepository
 import eu.peernetwork.blog.ui.mapper.mapToComment
 import eu.peernetwork.blog.ui.model.UiComment
@@ -14,9 +13,9 @@ import eu.peernetwork.core.ui.usecase.PagingUsecase
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class CommentUsecase @Inject constructor(
+class CommentsUsecase @Inject constructor(
     private val repository: CommentRepository
-) : PagingUsecase<CommentUsecase.Parameter, UiComment>() {
+) : PagingUsecase<CommentsUsecase.Parameter, UiComment>() {
     private lateinit var param: Parameter
 
     override fun invoke(param: Parameter): Flow<PagingData<UiComment>> {
@@ -46,10 +45,6 @@ class CommentUsecase @Inject constructor(
             prevKey = if (currentOffset <= 0) null else currentOffset - 1,
             nextKey = if (response.items.isEmpty()) null else currentOffset + response.items.size
         )
-    }
-
-    suspend fun invoke(postId: String, text: String): Comment {
-        return repository.comment(postId, text)
     }
 
     data class Parameter(

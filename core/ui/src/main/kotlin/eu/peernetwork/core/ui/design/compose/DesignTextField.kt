@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.InputTransformation
 import androidx.compose.foundation.text.input.KeyboardActionHandler
@@ -42,10 +43,12 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
@@ -75,23 +78,24 @@ fun DesignTextField(
     durationMillis: Int = 10,
     delayMillis: Int = 0,
     easing: Easing = FastOutSlowInEasing,
-    inputTransformation: InputTransformation? = null,
-    outputTransformation: OutputTransformation? = null,
     textStyle: TextStyle = MaterialTheme.typography.bodyMedium,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
-    onKeyboardAction: KeyboardActionHandler? = null,
+    onKeyboardAction: KeyboardActions = KeyboardActions.Default,
     focusRequester: FocusRequester = FocusRequester(),
-    lineLimits: TextFieldLineLimits = TextFieldLineLimits.SingleLine,
-    onTextLayout: (Density.(getResult: () -> TextLayoutResult?) -> Unit)? = null,
     horizontalArrangement: Arrangement.Horizontal = Arrangement.Start,
     verticalAlignment: Alignment.Vertical = Alignment.CenterVertically,
     interactionSource: MutableInteractionSource? = null,
-    decorator: TextFieldDecorator? = null,
     cursorBrush: Brush = SolidColor(MaterialTheme.colorScheme.primary),
     colors: TextFieldColors = DesignTextFieldColors.colors(),
     shape: Shape = RoundedCornerShape(16.dp),
     contentPadding: PaddingValues = PaddingValues(16.dp),
-    scrollState: ScrollState = rememberScrollState(),
+    singleLine: Boolean = false,
+    maxLines: Int = if (singleLine) 1 else Int.MAX_VALUE,
+    minLines: Int = 1,
+    visualTransformation: VisualTransformation = VisualTransformation.None,
+    onTextLayout: (TextLayoutResult) -> Unit = {},
+    decorationBox: @Composable (innerTextField: @Composable () -> Unit) -> Unit =
+        @Composable { innerTextField -> innerTextField() },
     leading: @Composable (() -> Unit)? = null,
     trailing: @Composable (() -> Unit)? = null,
     error: @Composable (() -> Unit)? = null,
@@ -152,22 +156,24 @@ fun DesignTextField(
             verticalAlignment = verticalAlignment
         ) {
             BasicTextField(
-                state = state,
+                value = state.text.toString(),
+                onValueChange = { input ->
+                    state.edit { replace(0, length, input) }
+                },
                 modifier = Modifier.fillMaxWidth()
                     .focusRequester(focusRequester),
                 enabled = enabled,
                 readOnly = readOnly,
-                inputTransformation = inputTransformation,
                 textStyle = textStyle.copy(color = textColor),
+                keyboardActions = onKeyboardAction,
                 keyboardOptions = keyboardOptions,
-                onKeyboardAction = onKeyboardAction,
-                lineLimits = lineLimits,
-                onTextLayout = onTextLayout,
                 interactionSource = interactionSource,
                 cursorBrush = cursorBrush,
-                outputTransformation = outputTransformation,
-                decorator = decorator,
-                scrollState = scrollState,
+                maxLines = maxLines,
+                minLines = minLines,
+                visualTransformation = visualTransformation,
+                onTextLayout = onTextLayout,
+                decorationBox = decorationBox
             )
             AnimatedVisibility(
                 visible = state.text.isEmpty(),

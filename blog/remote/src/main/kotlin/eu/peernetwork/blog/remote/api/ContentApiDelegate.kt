@@ -55,7 +55,7 @@ class ContentApiDelegate @Inject constructor(
             content.mapToDomain(url, gson.fromJson<List<MediaModel>>(
                 content.media,
                 object : TypeToken<List<MediaModel>>() {}.type
-            ).map { it.copy(options = it.options.copy(cover = content.cover))
+            ).map { it.copy(options = it.options?.copy(cover = content.cover))
                 .mapFromDomain().copy(path = "$url${it.path}")
             })
         }

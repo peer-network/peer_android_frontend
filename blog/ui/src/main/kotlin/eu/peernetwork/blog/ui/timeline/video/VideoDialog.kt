@@ -37,7 +37,9 @@ import eu.peernetwork.blog.ui.comment.CommentScreen
 import eu.peernetwork.blog.ui.compose.DialogPostCard
 import eu.peernetwork.blog.ui.compose.PostIcon
 import eu.peernetwork.blog.ui.compose.PostSummary
+import eu.peernetwork.blog.ui.mapper.mapToContent
 import eu.peernetwork.blog.ui.model.UiAction
+import eu.peernetwork.blog.ui.model.UiContent
 import eu.peernetwork.blog.ui.model.UiVideo
 import eu.peernetwork.blog.ui.post.photo.formatTimeAgo
 import eu.peernetwork.core.common.model.Pageable
@@ -115,7 +117,7 @@ fun VideoDialog(
                         val post = lazyPagingItems[page]
                         if (post != null) {
                             var showSheet = remember { mutableStateOf(false) }
-                            var selectedPostId = remember { mutableStateOf("") }
+                            var selectedPostId = remember { mutableStateOf<UiContent?>(null) }
                             DesignBottomSheet(
                                 showSheet = showSheet,
                                 tag = "designBottomSheet",
@@ -133,7 +135,7 @@ fun VideoDialog(
                                                 .fillMaxWidth()
                                         ) {
                                             CommentScreen(
-                                                postId = selectedPostId,
+                                                state = selectedPostId,
                                                 postLimit = postLimit,
                                                 provider = component,
                                                 viewModelStoreOwner = viewModelStoreOwner,
@@ -176,7 +178,7 @@ fun VideoDialog(
 
                                         }, color = MaterialTheme.colorScheme.onSecondary)
                                         PostIcon(UiAction.Comment, post.comment.toString(), isHorizontal = false, onClick = {
-                                            selectedPostId.value = post.id
+                                            selectedPostId.value = post.mapToContent()
                                             showSheet.value = true
                                         }, color = MaterialTheme.colorScheme.onSecondary)
                                     }

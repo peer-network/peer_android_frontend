@@ -18,7 +18,7 @@ import kotlinx.coroutines.delay
 import androidx.compose.ui.semantics.Role
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
-import eu.peernetwork.blog.ui.comment.CommentSheet
+import eu.peernetwork.blog.ui.comment.CommentScreen
 import eu.peernetwork.blog.ui.model.UiVideo
 import eu.peernetwork.blog.ui.compose.MediaPostCard
 import eu.peernetwork.blog.ui.compose.PostSummary
@@ -74,6 +74,7 @@ fun VideoScreen(
     }
     var selectedClip = remember { mutableStateOf<Int?>(null) }
     var selectedPost = remember { mutableStateOf<UiContent?>(null) }
+    val refreshEngagement = remember { mutableStateOf(false) }
     DesignPagingContent<UiVideo>(
         state = derivedState,
         onRefresh = { viewModel.load(Pageable(0, postLimit)) },
@@ -92,7 +93,9 @@ fun VideoScreen(
         } }
         DesignRefreshableContent<LazyPagingItems<UiPost>>(
             state = refreshState,
-            onRefresh = { lazyPagingItems.refresh() }
+            onRefresh = {
+                refreshEngagement.value = true
+                lazyPagingItems.refresh() }
         ) {
             LazyColumn(modifier = Modifier.fillMaxSize()) {
                 items(
@@ -107,9 +110,12 @@ fun VideoScreen(
                                 PostSummary(post.author.username, post.title, post.description)
                             },
                             engagements = {
-                                EngagementScreen(post.mapToEngagement(), component, viewModelStoreOwner) {
-                                    selectedPost.value = post.mapToContent()
-                                }
+                                EngagementScreen(
+                                    post.mapToEngagement(),
+                                    refreshEngagement,
+                                    component,
+                                    viewModelStoreOwner
+                                ) { selectedPost.value = post.mapToContent() }
                             },
                             modifier = Modifier.padding(bottom = 16.dp)
                         ) {
@@ -132,6 +138,6 @@ fun VideoScreen(
             }
         }
         VideoDialog(postLimit, selectedClip, provider, viewModelStoreOwner)
-        CommentSheet(selectedPost, postLimit, component, viewModelStoreOwner)
+        CommentScreen(selectedPost, postLimit, component, viewModelStoreOwner)
     }
 }

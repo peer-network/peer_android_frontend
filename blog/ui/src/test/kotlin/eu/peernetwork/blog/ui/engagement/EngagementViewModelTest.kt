@@ -9,6 +9,7 @@ import eu.peernetwork.blog.domain.usecase.LikeUsecase
 import eu.peernetwork.blog.ui.mapper.mapToEngagement
 import eu.peernetwork.blog.ui.model.UiEngagement
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
@@ -70,6 +71,34 @@ internal class EngagementViewModelTest {
     }
 
     @Test
+    fun `test like liked content`() = runTest {
+        val model = UiEngagement(
+            id = "<test-id>",
+            likes = 0,
+            dislikes = 0,
+            isDisliked = false,
+            isLiked = false,
+            comment = 0
+        )
+        val mockData = mockk<Content>(relaxed = true)
+        every { mockData.id } returns model.id
+        every { mockData.likes } returns model.likes + 1
+        every { mockData.isLiked } returns true
+        coEvery { likeUsecase(any()) } returns Unit
+        coEvery { contentUsecase(any()) } coAnswers {
+            delay(100)
+            mockData
+        }
+        viewModel.like(model)
+        viewModel.state.test {
+            awaitItem()
+            assertEquals(EngagementViewModel.State.Success(mapOf(model.id to mockData.mapToEngagement())), awaitItem())
+        }
+        coVerify(exactly = 1) { likeUsecase(any()) }
+        coVerify(exactly = 1) { contentUsecase(any()) }
+    }
+
+    @Test
     fun `test like content failure`() = runTest {
         val model = UiEngagement(
             id = "<test-id>",
@@ -112,6 +141,35 @@ internal class EngagementViewModelTest {
             assertEquals(EngagementViewModel.State.Loading(mapOf(model.id to mockData.mapToEngagement())), awaitItem())
             assertEquals(EngagementViewModel.State.Success(mapOf(model.id to mockData.mapToEngagement())), awaitItem())
         }
+    }
+
+    @Test
+    fun `test dislike disliked content`() = runTest {
+        val model = UiEngagement(
+            id = "<test-id>",
+            likes = 0,
+            dislikes = 0,
+            isDisliked = false,
+            isLiked = false,
+            comment = 0
+        )
+        val mockData = mockk<Content>(relaxed = true)
+        every { mockData.id } returns model.id
+        every { mockData.dislikes } returns model.likes + 1
+        every { mockData.isDisliked } returns true
+        coEvery { dislikeUsecase(any()) } returns Unit
+        coEvery { contentUsecase(any()) } coAnswers {
+            delay(100)
+            mockData
+        }
+        viewModel.dislike(model)
+        viewModel.dislike(model)
+        viewModel.state.test {
+            awaitItem()
+            assertEquals(EngagementViewModel.State.Success(mapOf(model.id to mockData.mapToEngagement())), awaitItem())
+        }
+        coVerify(exactly = 1) { dislikeUsecase(any()) }
+        coVerify(exactly = 1) { contentUsecase(any()) }
     }
 
     @Test

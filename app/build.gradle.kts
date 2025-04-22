@@ -20,7 +20,7 @@ android {
             versionNameSuffix = "-DEBUG"
             buildConfigField("String", "BASE_URL", "\"https://getpeer.eu\"")
             buildConfigField("String", "MEDIA_URL", "\"https://media.getpeer.eu\"")
-            buildConfigField("boolean", "USE_SYSTEM_THEME", "true")
+            buildConfigField("boolean", "USE_SYSTEM_THEME", "false")
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
         release {

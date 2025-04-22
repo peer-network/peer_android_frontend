@@ -19,7 +19,7 @@ import eu.peernetwork.core.ui.extension.builder
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
-import eu.peernetwork.blog.ui.comment.CommentSheet
+import eu.peernetwork.blog.ui.comment.CommentScreen
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.compose.PostListItem
 import eu.peernetwork.blog.ui.compose.PostPageSkeleton
@@ -74,6 +74,7 @@ fun PhotoScreen(
         }
     }
     var selectedPost = remember { mutableStateOf<UiContent?>(null) }
+    val refreshEngagement = remember { mutableStateOf(false) }
     DesignPagingContent<UiPost>(
         state = derivedState,
         onRefresh = { viewModel.load(Pageable(0, postLimit)) },
@@ -92,7 +93,9 @@ fun PhotoScreen(
         } }
         DesignRefreshableContent<LazyPagingItems<UiPost>>(
             state = refreshState,
-            onRefresh = { lazyPagingItems.refresh() }
+            onRefresh = {
+                refreshEngagement.value = true
+                lazyPagingItems.refresh() }
         ) {
             LazyColumn(modifier = Modifier.fillMaxSize()) {
                 items(
@@ -105,7 +108,12 @@ fun PhotoScreen(
                             position = index,
                             state = currentTime,
                             engagements = {
-                                EngagementScreen(post.mapToEngagement(), component, viewModelStoreOwner) {
+                                EngagementScreen(
+                                    post.mapToEngagement(),
+                                    refreshEngagement,
+                                    component,
+                                    viewModelStoreOwner
+                                ) {
                                     selectedPost.value = post.mapToContent()
                                 } },
                             content = {
@@ -125,5 +133,5 @@ fun PhotoScreen(
             }
         }
     }
-    CommentSheet(selectedPost, postLimit, component, viewModelStoreOwner)
+    CommentScreen(selectedPost, postLimit, component, viewModelStoreOwner)
 }

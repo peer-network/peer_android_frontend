@@ -109,7 +109,7 @@ fun DesignOverlay(modifier: Modifier = Modifier, content: @Composable () -> Unit
             content()
             routes.filterNotNull().forEach { tag ->
                 key(tag) {
-                    Box(Modifier.zIndex(registry[tag]?.first ?: 1f)) {
+                    Box(Modifier.zIndex(registry[tag]?.first ?: registry.size.toFloat())) {
                         registry[tag]?.second?.invoke()
                     }
                 }

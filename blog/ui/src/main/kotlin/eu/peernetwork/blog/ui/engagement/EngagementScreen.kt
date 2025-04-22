@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -25,6 +26,7 @@ import eu.peernetwork.core.ui.theme.PeerAppRed
 @Composable
 fun EngagementScreen(
     engagement: UiEngagement,
+    refresh: MutableState<Boolean>,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
     onComment: () -> Unit,
@@ -74,6 +76,12 @@ fun EngagementScreen(
             },
         ) { viewModel.dislike(post.value) }
         PostIcon(UiAction.Comment, post.value.comment.toString()) { onComment() }
+    }
+    LaunchedEffect(refresh.value) {
+        if (refresh.value) {
+            viewModel.reset()
+            refresh.value = false
+        }
     }
     LaunchedEffect(error.value) {
         if (error.value != null && error.value?.selected == engagement.id) {

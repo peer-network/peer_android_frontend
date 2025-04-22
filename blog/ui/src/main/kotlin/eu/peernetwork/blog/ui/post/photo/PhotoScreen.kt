@@ -21,7 +21,7 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.LoadState
-import eu.peernetwork.blog.ui.comment.CommentSheet
+import eu.peernetwork.blog.ui.comment.CommentScreen
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.compose.PostListItem
 import eu.peernetwork.blog.ui.compose.PostPageSkeleton
@@ -78,6 +78,7 @@ fun PhotoScreen(
         }
     }
     var selectedPost = remember { mutableStateOf<UiContent?>(null) }
+    val refreshEngagement = remember { mutableStateOf(false) }
     DesignPagingContent<UiPost>(
         state = derivedState,
         placeholder = { PostPageSkeleton() },
@@ -93,7 +94,12 @@ fun PhotoScreen(
                         photo,
                         index,
                         currentTime,
-                        engagements = { EngagementScreen(photo.mapToEngagement(), component, viewModelStoreOwner) {
+                        engagements = { EngagementScreen(
+                            photo.mapToEngagement(),
+                            refreshEngagement,
+                            component,
+                            viewModelStoreOwner
+                        ) {
                             selectedPost.value = photo.mapToContent()
                         } }
                     ) {
@@ -113,11 +119,12 @@ fun PhotoScreen(
         LaunchedEffect(loadState.value) {
             if (loadState.value) {
                 lazyPagingItems.refresh()
+                refreshEngagement.value = true
                 loadState.value = false
             }
         }
     }
-    CommentSheet(selectedPost, postLimit, component, viewModelStoreOwner)
+    CommentScreen(selectedPost, postLimit, component, viewModelStoreOwner)
     LaunchedEffect(Unit) {
         while (true) {
             delay(60_000L)

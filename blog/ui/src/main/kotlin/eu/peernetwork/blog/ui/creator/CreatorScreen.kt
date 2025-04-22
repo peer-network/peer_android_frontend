@@ -75,7 +75,7 @@ fun CreatorScreen(
         state is CreatorViewModel.State.Success
     } }
     val attachments = remember { mutableStateOf<List<Uri>>(emptyList()) }
-    CreatorContent(
+    CreatorScreen(
         attachments = attachments,
         onSubmit = { viewModel.create(it) },
         header = { AuthorScreen(component, viewModelStoreOwner) },
@@ -92,7 +92,7 @@ fun CreatorScreen(
 }
 
 @Composable
-fun CreatorContent(
+fun CreatorScreen(
     isLoading: State<Boolean>,
     shouldReset: State<Boolean>,
     error: State<Throwable?>,
@@ -228,7 +228,7 @@ private fun CreatorActions(
 @Composable
 fun PreviewCreatorScreen() {
     PeerTheme {
-        CreatorContent(
+        CreatorScreen(
             isLoading = remember { mutableStateOf(false) },
             shouldReset = remember { mutableStateOf(false) },
             error = remember { mutableStateOf(null) },

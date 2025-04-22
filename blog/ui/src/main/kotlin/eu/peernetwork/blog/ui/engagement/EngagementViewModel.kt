@@ -30,6 +30,9 @@ class EngagementViewModel @Inject constructor(
     val state: StateFlow<State> = mutableState.asStateFlow()
 
     fun like(engagement: UiEngagement) {
+        if (engagements[engagement.id]?.isLiked == true || engagement.isLiked) {
+            return
+        }
         handleEngagement(engagement, engagement.copy(
             likes = engagement.likes + 1,
             isLiked = true,
@@ -37,6 +40,9 @@ class EngagementViewModel @Inject constructor(
     }
 
     fun dislike(engagement: UiEngagement) {
+        if (engagements[engagement.id]?.isDisliked == true || engagement.isDisliked) {
+            return
+        }
         handleEngagement(engagement, engagement.copy(
             dislikes = engagement.dislikes + 1,
             isDisliked = true,
@@ -68,7 +74,16 @@ class EngagementViewModel @Inject constructor(
     }
 
     fun clean() {
-        viewModelScope.launch { mutableState.tryEmit(State.Idle(engagements)) }
+        viewModelScope.launch {
+            mutableState.tryEmit(State.Idle(engagements))
+        }
+    }
+
+    fun reset() {
+        engagements.clear()
+        viewModelScope.launch {
+            mutableState.tryEmit(State.Idle(engagements))
+        }
     }
 
     sealed class State(val engagements: Map<String, UiEngagement>) {

@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
@@ -43,19 +42,17 @@ fun ContentBadge(
                 )
             }
         },
-        modifier = modifier,
-        verticalAlignment = Alignment.CenterVertically
+        modifier = modifier
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(start = 16.dp)
-        ) {
+        Row(modifier = Modifier.padding(start = 16.dp)) {
             DesignTitle(
                 title = model.title,
                 caption = "",
                 description = model.description,
                 verticalArrangement = Arrangement.Center,
                 spacer = {},
+                maxLines = 1,
+                maxContentLines = 3,
                 modifier = Modifier.weight(1f),
                 style = DesignTitleTextStyle(
                     span = SpanStyle(
@@ -64,10 +61,8 @@ fun ContentBadge(
                         fontSize = MaterialTheme.typography.labelSmall.fontSize,
                         color = descriptionColor
                     ),
-                    style = MaterialTheme.typography.headlineMedium.copy(
-                        color = color
-                    ),
-                    descriptionStyle = MaterialTheme.typography.bodyMedium.copy(
+                    style = MaterialTheme.typography.headlineMedium.copy(color = color),
+                    descriptionStyle = MaterialTheme.typography.bodySmall.copy(
                         color = descriptionColor
                     )
                 ),
@@ -99,8 +94,6 @@ fun PreviewPostBadge() {
                 dislikes = 3,
                 comment = 5
             ),
-        ) {
-            Text("Hello, world!")
-        }
+        ) { Text("Hello, world!") }
     }
 }

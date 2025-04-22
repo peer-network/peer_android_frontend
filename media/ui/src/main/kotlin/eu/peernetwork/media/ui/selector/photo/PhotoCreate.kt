@@ -15,11 +15,6 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Warning
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -128,7 +123,7 @@ fun PhotoCreate(
                         }
                     }
                 }
-            } else {
+            } else if (!permissionsState.allPermissionsGranted) {
                 Spacer(modifier = Modifier.weight(.1f))
                 Column(
                     modifier = Modifier
@@ -137,11 +132,11 @@ fun PhotoCreate(
                         .padding(horizontal = 32.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Image(
+                    Icon(
                         painter = painterResource(id = eu.peernetwork.core.ui.R.drawable.ic_error),
                         contentDescription = "Permission required",
                         modifier = Modifier.size(64.dp),
-                        alpha = 0.7f
+                        tint = MaterialTheme.colorScheme.onPrimary
                     )
 
                     Spacer(modifier = Modifier.height(16.dp))

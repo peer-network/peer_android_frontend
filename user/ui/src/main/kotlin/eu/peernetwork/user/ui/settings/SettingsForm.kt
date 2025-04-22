@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -51,7 +50,7 @@ fun ColumnScope.SettingsForm(
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
             enabled = !isLoading.value,
             verticalAlignment = Alignment.Top,
-            lineLimits = TextFieldLineLimits.MultiLine(),
+            maxLines = 3,
             modifier = Modifier.fillMaxWidth()
                 .padding(top = 16.dp),
             leading = {
