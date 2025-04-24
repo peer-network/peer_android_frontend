@@ -41,9 +41,7 @@ fun MainScreen(
     }
     NavHost(navController = controller, startDestination = "splash") {
         composable("splash") {
-            SplashScreen(component) {
-                splashDone = true
-            }
+            SplashScreen { splashDone = true }
         }
         composable("startup") {
             SetupScreen(

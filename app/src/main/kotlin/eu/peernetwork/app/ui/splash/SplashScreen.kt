@@ -19,13 +19,9 @@ import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.rememberLottieComposition
 import eu.peernetwork.app.R
-import eu.peernetwork.core.ui.component.UiComponentProvider
 
 @Composable
-fun SplashScreen(
-    provider: UiComponentProvider,
-    onAnimationFinished: () -> Unit
-) {
+fun SplashScreen(onAnimationFinished: () -> Unit) {
     SplashScaffold(onFinished = onAnimationFinished)
 }
 
@@ -34,13 +30,10 @@ private fun SplashScaffold(onFinished: () -> Unit) {
     val composition by rememberLottieComposition(
         LottieCompositionSpec.RawRes(R.raw.lottie_animation)
     )
-
     var playForward by remember { mutableStateOf(true) }
     val progressAnim = remember { Animatable(0f) }
-
     LaunchedEffect(composition, playForward) {
         if (composition == null) return@LaunchedEffect
-
         progressAnim.animateTo(
             targetValue = if (playForward) 1f else 0f,
             animationSpec = tween(
@@ -55,7 +48,6 @@ private fun SplashScaffold(onFinished: () -> Unit) {
             onFinished()
         }
     }
-
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center,

@@ -12,12 +12,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.clearText
 import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
@@ -115,6 +117,13 @@ fun CommentForm(
                     comment.setTextAndPlaceCursorAtEnd("@${replyTo.value} ")
                     focus.requestFocus()
                     replyTo.value = null
+                }
+            }
+            DisposableEffect(Unit) {
+                onDispose {
+                    if (replyTo.value == null) {
+                        comment.clearText()
+                    }
                 }
             }
         }

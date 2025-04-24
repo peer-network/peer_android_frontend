@@ -89,7 +89,7 @@ fun CommentScreen(
         DesignPagingScaffold<UiComment>(
             state = derivedState,
             onRefresh = { state.value?.let { viewModel.load(it.id, Pageable(0, postLimit)) } },
-            placeholder = { ContentSkeleton() }
+            placeholder = { ContentSkeleton(modifier = Modifier.padding(horizontal = 24.dp)) }
         ) { pageState, items ->
             LazyColumn(modifier = Modifier.fillMaxSize()) {
                 items(items.itemCount) { index ->
