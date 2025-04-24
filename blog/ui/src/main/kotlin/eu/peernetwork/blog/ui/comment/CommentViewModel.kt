@@ -93,11 +93,11 @@ class CommentViewModel @Inject constructor(
     }
 
     fun like(comment: UiComment) {
-        if (likes.contains(comment)) {
-            likesState.tryEmit(likes)
-            return
-        }
         viewModelScope.launch {
+            if (likes.contains(comment)) {
+                likesState.tryEmit(likes)
+                return@launch
+            }
             try {
                 likes.add(comment)
                 likesState.tryEmit(likes)
