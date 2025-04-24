@@ -120,8 +120,8 @@ fun CommentScreen(
             LaunchedEffect(isLoading.value) {
                 if (!isLoading.value && isSelected.value) {
                     it.clearText()
+                    viewModel.reset()
                     items.refresh()
-                    viewModel.deselect()
                     onUpdate()
                 }
             }

@@ -31,7 +31,7 @@ class CommentViewModel @Inject constructor(
 
     private val likes = mutableSetOf<UiComment>()
 
-    private val selected = MutableStateFlow<String?>(null)
+    private val lastComment = MutableStateFlow<String?>(null)
 
     private val likesState = MutableStateFlow<Set<UiComment>>(emptySet())
 
@@ -41,7 +41,7 @@ class CommentViewModel @Inject constructor(
         content,
         mutableState,
         likesState,
-        selected
+        lastComment
     ) { content, state, likes, selected ->
         if (content != null) {
             State.Content(
@@ -83,7 +83,7 @@ class CommentViewModel @Inject constructor(
         viewModelScope.launch {
             mutableState.tryEmit(State.Loading)
             try {
-                selected.tryEmit(postId)
+                lastComment.tryEmit(postId)
                 usecase(CommentUsecase.Parameter(postId, comment)).mapToComment()
                 mutableState.tryEmit(State.Idle)
             } catch (error: Throwable) {
@@ -110,15 +110,9 @@ class CommentViewModel @Inject constructor(
         }
     }
 
-    fun deselect() {
-        viewModelScope.launch {
-            selected.tryEmit(null)
-        }
-    }
-
     fun reset() {
         viewModelScope.launch {
-            selected.tryEmit(null)
+            lastComment.tryEmit(null)
             mutableState.tryEmit(State.Idle)
         }
     }

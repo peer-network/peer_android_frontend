@@ -28,6 +28,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.input.ImeAction
@@ -60,6 +61,7 @@ fun CommentForm(
 ) {
     val color = MaterialTheme.colorScheme.primary
     val focus = remember { FocusRequester() }
+    val keyboardController = LocalSoftwareKeyboardController.current
     Column {
         Box(modifier = Modifier.height(1.dp)
             .fillMaxWidth()
@@ -116,6 +118,7 @@ fun CommentForm(
                 if (replyTo.value != null) {
                     comment.setTextAndPlaceCursorAtEnd("@${replyTo.value} ")
                     focus.requestFocus()
+                    keyboardController?.show()
                     replyTo.value = null
                 }
             }
