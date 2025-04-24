@@ -5,8 +5,8 @@ plugins {
 
 android {
     defaultConfig {
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 2
+        versionName = "1.0.1"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
@@ -68,6 +68,11 @@ dependencies {
     implementation(project(":social:data"))
     implementation(project(":social:remote"))
     implementation(project(":social:ui"))
+
+    implementation(project(":wallet:domain"))
+    implementation(project(":wallet:data"))
+    implementation(project(":wallet:remote"))
+    implementation(project(":wallet:ui"))
 
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)

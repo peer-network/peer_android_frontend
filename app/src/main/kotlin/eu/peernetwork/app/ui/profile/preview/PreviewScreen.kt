@@ -26,8 +26,8 @@ import eu.peernetwork.blog.ui.post.music.MusicScreen
 import eu.peernetwork.blog.ui.post.photo.PhotoScreen
 import eu.peernetwork.blog.ui.post.video.VideoScreen
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.component.DesignRefreshableContent
-import eu.peernetwork.core.ui.design.component.DesignStatefulContentState
+import eu.peernetwork.core.ui.design.component.DesignRefreshableScaffold
+import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.media.core.model.MimeType
@@ -51,8 +51,8 @@ fun ProfilePreviewScreen(
     var isProfileRefreshing = remember { mutableStateOf(false) }
     var isImageRefreshing = remember { mutableStateOf(false) }
     var isVideoRefreshing = remember { mutableStateOf(false) }
-    val derivedState = remember { derivedStateOf { DesignStatefulContentState.Success(Unit) } }
-    DesignRefreshableContent<Unit>(
+    val derivedState = remember { derivedStateOf { DesignStatefulScaffoldState.Success(Unit) } }
+    DesignRefreshableScaffold<Unit>(
         state = derivedState,
         modifier = Modifier.fillMaxSize(),
         onRefresh = {

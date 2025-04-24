@@ -1,27 +1,45 @@
 package eu.peernetwork.app.module.user
 
-import dagger.Binds
+import com.apollographql.apollo3.ApolloClient
 import dagger.Module
+import dagger.Provides
+import eu.peernetwork.app.interceptor.LoggingInterceptor
 import eu.peernetwork.user.data.api.AccountApi
 import eu.peernetwork.user.data.api.AuthenticationApi
 import eu.peernetwork.user.data.api.ResourceApi
 import eu.peernetwork.user.data.api.SearchApi
+import eu.peernetwork.user.data.api.TokenApi
 import eu.peernetwork.user.remote.api.AccountApiDelegate
 import eu.peernetwork.user.remote.api.AuthenticationApiDelegate
 import eu.peernetwork.user.remote.api.ResourceApiDelegate
 import eu.peernetwork.user.remote.api.SearchApiDelegate
+import eu.peernetwork.user.remote.api.TokenApiDelegate
+import eu.peernetwork.user.remote.usecase.JwtLifecycleUsecase
+import javax.inject.Named
 
 @Module
-internal interface ApiModule {
-    @Binds
-    fun bindAccountApi(delegate: AccountApiDelegate): AccountApi
+internal object ApiModule {
+    @Provides
+    fun providesAccountApi(delegate: AccountApiDelegate): AccountApi = delegate
 
-    @Binds
-    fun bindAuthenticationApi(delegate: AuthenticationApiDelegate): AuthenticationApi
+    @Provides
+    fun providesAuthenticationApi(delegate: AuthenticationApiDelegate): AuthenticationApi = delegate
 
-    @Binds
-    fun bindResourceApi(delegate: ResourceApiDelegate): ResourceApi
+    @Provides
+    fun providesResourceApi(delegate: ResourceApiDelegate): ResourceApi = delegate
 
-    @Binds
-    fun bindSearchApi(delegate: SearchApiDelegate): SearchApi
+    @Provides
+    fun providesSearchApi(delegate: SearchApiDelegate): SearchApi = delegate
+
+    @Provides
+    fun providesTokenApi(
+        @Named("baseUrl") baseUrl: String,
+        logger: LoggingInterceptor,
+        usecase: JwtLifecycleUsecase
+    ): TokenApi = TokenApiDelegate(
+        ApolloClient.Builder()
+            .serverUrl("$baseUrl/graphql")
+            .addInterceptor(logger).build(),
+        usecase
+    )
 }

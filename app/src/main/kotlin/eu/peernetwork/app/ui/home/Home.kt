@@ -8,11 +8,13 @@ import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.persistence.domain.provider.PreferenceProvider
 import eu.peernetwork.app.ui.feed.Feed
 import eu.peernetwork.blog.ui.creator.Creator
-import eu.peernetwork.blog.ui.point.BlogPoint
+import eu.peernetwork.blog.ui.point.Point
 import eu.peernetwork.blog.ui.provider.BlogProvider
 import eu.peernetwork.user.ui.provider.UserProvider
+import eu.peernetwork.wallet.ui.overview.Overview
+import eu.peernetwork.wallet.ui.provider.WalletProvider
 
-interface Home : UserProvider, PreferenceProvider, BlogProvider {
+interface Home : UserProvider, PreferenceProvider, BlogProvider, WalletProvider {
     @javax.inject.Scope
     @Retention(AnnotationRetention.RUNTIME)
     annotation class Scope
@@ -22,7 +24,7 @@ interface Home : UserProvider, PreferenceProvider, BlogProvider {
         dependencies = [ Home::class ],
         modules = [ HomeModule::class ]
     )
-    interface Component : Home, Feed, Profile, UiComponentProvider, BlogPoint, Creator {
+    interface Component : Home, Feed, Profile, UiComponentProvider, Point, Creator, Overview {
         fun viewModelFactory(): ViewModelProvider.Factory
     }
 

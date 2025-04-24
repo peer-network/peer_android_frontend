@@ -29,8 +29,8 @@ import eu.peernetwork.user.ui.model.UiAccount
 import eu.peernetwork.user.ui.model.UiOverview
 import eu.peernetwork.core.ui.design.compose.DesignAsyncImage
 import eu.peernetwork.core.ui.design.compose.DesignTitle
-import eu.peernetwork.core.ui.design.component.DesignStatefulContent
-import eu.peernetwork.core.ui.design.component.DesignStatefulContentState
+import eu.peernetwork.core.ui.design.component.DesignStatefulScaffold
+import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
 import eu.peernetwork.user.ui.compose.UserOverview
 
 @Composable
@@ -53,21 +53,21 @@ fun UserScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
     val derivedState = remember { derivedStateOf {
         when(state) {
-            UserViewModel.State.Empty -> DesignStatefulContentState.Empty
-            UserViewModel.State.Loading -> DesignStatefulContentState.Loading
+            UserViewModel.State.Empty -> DesignStatefulScaffoldState.Empty
+            UserViewModel.State.Loading -> DesignStatefulScaffoldState.Loading
             is UserViewModel.State.Success -> {
-                DesignStatefulContentState.Success(
+                DesignStatefulScaffoldState.Success(
                     (state as UserViewModel.State.Success).account
                 )
             }
             is UserViewModel.State.Error -> {
-                DesignStatefulContentState.Error(
+                DesignStatefulScaffoldState.Error(
                     (state as UserViewModel.State.Error).error
                 )
             }
         }
     } }
-    DesignStatefulContent<UiAccount>(
+    DesignStatefulScaffold<UiAccount>(
         state = derivedState,
         onRefresh = { viewModel.initialize() },
         placeholder = { UserSkeleton(modifier = modifier.padding(end = 8.dp)) },
@@ -85,15 +85,15 @@ fun UserScreen(
             }
         }
     ) {
-        UserContent(
+        UserScreen(
             modifier = modifier,
             account = it,
             onEvent = onEvent
         )
     }
     LaunchedEffect(loadState.value) {
-        if ((loadState.value && derivedState.value !is DesignStatefulContentState.Loading)
-            || (!loadState.value && derivedState.value is DesignStatefulContentState.Error)) {
+        if ((loadState.value && derivedState.value !is DesignStatefulScaffoldState.Loading)
+            || (!loadState.value && derivedState.value is DesignStatefulScaffoldState.Error)) {
             viewModel.refreshAccount()
             loadState.value = false
         }
@@ -101,7 +101,7 @@ fun UserScreen(
 }
 
 @Composable
-fun UserContent(
+fun UserScreen(
     account: UiAccount,
     onEvent: (UserEvent) -> Unit,
     modifier: Modifier = Modifier
@@ -151,6 +151,6 @@ fun PreviewAccountScreen() {
                 followed = 0
             )
         )
-        UserContent(onEvent = { }, account = model)
+        UserScreen(onEvent = { }, account = model)
     }
 }

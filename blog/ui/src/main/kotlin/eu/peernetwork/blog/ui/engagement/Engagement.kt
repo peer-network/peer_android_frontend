@@ -2,8 +2,10 @@ package eu.peernetwork.blog.ui.engagement
 
 import android.content.Context
 import androidx.lifecycle.ViewModelProvider
+import eu.peernetwork.blog.ui.comment.Comment
 import eu.peernetwork.blog.ui.provider.BlogProvider
 import eu.peernetwork.core.ui.component.UiComponent
+import eu.peernetwork.core.ui.component.UiComponentProvider
 
 interface Engagement : BlogProvider {
     @javax.inject.Scope
@@ -15,7 +17,7 @@ interface Engagement : BlogProvider {
         dependencies = [Engagement::class],
         modules = [EngagementModule::class]
     )
-    interface Component : Engagement {
+    interface Component : Engagement, UiComponentProvider, Comment {
         fun viewModelFactory(): ViewModelProvider.Factory
     }
 

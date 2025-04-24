@@ -3,24 +3,19 @@ package eu.peernetwork.user.remote.api
 import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.ApolloResponse
 import com.apollographql.apollo3.api.Operation
-import eu.peernetwork.core.common.exception.BusinessException
 import eu.peernetwork.core.remote.model.Status
 import eu.peernetwork.user.data.api.AuthenticationApi
-import eu.peernetwork.user.domain.model.Token
 import eu.peernetwork.user.remote.mock.AuthenticationMock
-import eu.peernetwork.user.remote.mock.TokenMock
-import io.mockk.CapturingSlot
+import eu.peernetwork.user.remote.usecase.JwtLifecycleUsecase
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.slot
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
 import public.eu.peernetwork.user.remote.HelloQuery
 import public.eu.peernetwork.user.remote.LoginMutation
-import public.eu.peernetwork.user.remote.RefreshTokenMutation
 import java.util.UUID
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -28,13 +23,16 @@ import kotlin.test.assertNull
 internal class AuthenticationApiDelegateTest {
     private val client = mockk<ApolloClient>()
 
+    private val usecase = mockk<JwtLifecycleUsecase>()
+
     private val listener = mockk<AuthenticationApi.Listener>(relaxed = true)
 
     private lateinit var api: AuthenticationApi
 
     @Before
     fun setup() {
-        api = AuthenticationApiDelegate(client, listener)
+        every { usecase(any()) } returns 1L
+        api = AuthenticationApiDelegate(client, usecase, listener)
     }
 
     @Test
@@ -96,50 +94,6 @@ internal class AuthenticationApiDelegateTest {
             null
         }
         assertNull(result)
-    }
-
-    @Test
-    fun `test refresh token success`(): Unit = runBlocking {
-        val mockModel = TokenMock.refresh()
-        val mockData = mockk<RefreshTokenMutation.Data>()
-        val slot: CapturingSlot<Token> = slot()
-        val operation = mockk<Operation<RefreshTokenMutation.Data>>(relaxed = true)
-        val mockResponse = ApolloResponse.Builder(
-            operation,
-            UUID.randomUUID(),
-            mockData
-        ).build()
-
-        every { mockData.refreshToken } returns mockModel
-        coEvery { listener.onAuthenticationChanged(capture(slot)) } returns Unit
-        coEvery { client.mutation(any<RefreshTokenMutation>()).execute() } returns mockResponse
-
-        api.refresh("<test-token>")
-
-        assertEquals(slot.captured.access, mockModel.accessToken)
-        coVerify { listener.onAuthenticationChanged(slot.captured) }
-    }
-
-    @Test
-    fun `test refresh token error`(): Unit = runBlocking {
-        val mockModel = TokenMock.refresh().copy(status = Status.ERROR.value)
-        val mockData = mockk<RefreshTokenMutation.Data>()
-        val operation = mockk<Operation<RefreshTokenMutation.Data>>(relaxed = true)
-        val mockResponse = ApolloResponse.Builder(
-            operation,
-            UUID.randomUUID(),
-            mockData
-        ).build()
-
-        every { mockData.refreshToken } returns mockModel
-        coEvery { client.mutation(any<RefreshTokenMutation>()).execute() } returns mockResponse
-
-        try {
-            api.refresh("<test-token>")
-        } catch (error: Throwable) {
-            assert(error is BusinessException)
-        }
-        coVerify(exactly = 0) { listener.onAuthenticationChanged(any()) }
     }
 
     @Test

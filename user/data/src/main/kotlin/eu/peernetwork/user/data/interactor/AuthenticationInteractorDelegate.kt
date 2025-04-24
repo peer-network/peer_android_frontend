@@ -19,7 +19,7 @@ class AuthenticationInteractorDelegate @Inject constructor(
     private val observable: ObservableString,
     private val retrievable: RetrievableString,
     private val repository: AccountRepository,
-    private val authenticationRepository: AuthenticationRepository,
+    private val authenticationRepository: AuthenticationRepository
 ) : AuthenticationInteractor {
     override suspend fun get(): String {
         val currentUser = retrievable(USER_KEY)

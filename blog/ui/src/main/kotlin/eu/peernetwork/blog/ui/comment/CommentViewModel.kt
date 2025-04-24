@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import androidx.paging.insertFooterItem
 import eu.peernetwork.blog.domain.usecase.CommentLikeUsecase
 import eu.peernetwork.blog.domain.usecase.CommentUsecase
 import eu.peernetwork.blog.ui.mapper.mapToComment
@@ -18,7 +17,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -27,10 +25,8 @@ import javax.inject.Inject
 class CommentViewModel @Inject constructor(
     private val usecase: CommentUsecase,
     private val commentsUsecase: CommentsUsecase,
-    private val commentLikeUsecase: CommentLikeUsecase
+    private val likeUsecase: CommentLikeUsecase
 ) : ViewModel() {
-    private val updates = MutableStateFlow<List<UiComment>>(emptyList())
-
     private val content = MutableStateFlow<Flow<PagingData<UiComment>>?>(null)
 
     private val mutableState = MutableStateFlow<State>(State.Idle)
@@ -39,7 +35,6 @@ class CommentViewModel @Inject constructor(
         if (content != null) {
             State.Content(
                 isLoading = state is State.Loading,
-                lastComment = (state as? State.Update?)?.content,
                 content = content,
                 error = (state as? State.Error?)?.error
             )
@@ -54,7 +49,6 @@ class CommentViewModel @Inject constructor(
 
     fun load(postId: String, page: Pageable) {
         viewModelScope.launch {
-            updates.tryEmit(emptyList())
             commentsUsecase(
                 CommentsUsecase.Parameter(
                     id = postId,
@@ -63,35 +57,36 @@ class CommentViewModel @Inject constructor(
             ).catch { mutableState.tryEmit(State.Error(it)) }
                 .onStart { mutableState.tryEmit(State.Loading) }
                 .cachedIn(viewModelScope)
-                .apply { combine(this, updates) { items, comments ->
-                    comments.fold(items) { acc, item -> acc.insertFooterItem(item = item) }
-                }.collectLatest {
-                    content.tryEmit(flowOf(it))
+                .apply { collectLatest {
+                    content.tryEmit(this)
                     mutableState.tryEmit(State.Idle)
                 } }
         }
     }
 
-    fun comment(postId: String, comment: String){
+    fun comment(postId: String, comment: String) {
         viewModelScope.launch {
             mutableState.tryEmit(State.Loading)
             try {
-                val result = usecase(CommentUsecase.Parameter(postId, comment)).mapToComment()
-                updates.tryEmit(updates.value + listOf(result))
-                mutableState.tryEmit(State.Update(result))
+                usecase(CommentUsecase.Parameter(postId, comment)).mapToComment()
+                mutableState.tryEmit(State.Idle)
             } catch (error: Throwable) {
                 mutableState.tryEmit(State.Error(error))
             }
         }
     }
 
+    fun reset() {
+        viewModelScope.launch {
+            mutableState.tryEmit(State.Idle)
+        }
+    }
+
     sealed interface State {
         data object Idle : State
         data object Loading : State
-        data class Update(val content: UiComment) : State
         data class Content(
             val isLoading: Boolean,
-            val lastComment: UiComment?,
             val content: Flow<PagingData<UiComment>>,
             val error: Throwable?,
         ) : State
