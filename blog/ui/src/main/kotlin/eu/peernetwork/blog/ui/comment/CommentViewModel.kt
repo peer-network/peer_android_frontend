@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import eu.peernetwork.blog.domain.usecase.CommentLikeUsecase
 import eu.peernetwork.blog.domain.usecase.CommentUsecase
 import eu.peernetwork.blog.ui.mapper.mapToComment
 import eu.peernetwork.blog.ui.model.UiComment
@@ -23,7 +24,8 @@ import javax.inject.Inject
 
 class CommentViewModel @Inject constructor(
     private val usecase: CommentUsecase,
-    private val commentsUsecase: CommentsUsecase
+    private val commentsUsecase: CommentsUsecase,
+    private val likeUsecase: CommentLikeUsecase
 ) : ViewModel() {
     private val content = MutableStateFlow<Flow<PagingData<UiComment>>?>(null)
 

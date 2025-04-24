@@ -7,13 +7,14 @@ import eu.peernetwork.core.remote.extension.getOrThrow
 import eu.peernetwork.user.data.api.AuthenticationApi
 import eu.peernetwork.user.domain.exception.AccountNotFoundException
 import eu.peernetwork.user.remote.mapper.mapToDomain
+import eu.peernetwork.user.remote.usecase.JwtLifecycleUsecase
 import public.eu.peernetwork.user.remote.HelloQuery
 import public.eu.peernetwork.user.remote.LoginMutation
-import public.eu.peernetwork.user.remote.RefreshTokenMutation
 import javax.inject.Inject
 
 class AuthenticationApiDelegate @Inject constructor(
     private val client: ApolloClient,
+    private val usecase: JwtLifecycleUsecase,
     private val listener: AuthenticationApi.Listener
 ) : AuthenticationApi {
     override suspend fun authenticated(): String {
@@ -32,16 +33,10 @@ class AuthenticationApiDelegate @Inject constructor(
         val data = response.getOrThrow().login
         response.assertOrThrow(data.status, data.ResponseCode)
         val token = data.mapToDomain()
-        listener.onAuthenticationChanged(token)
+        listener.onAuthenticationChanged(token.copy(
+            expiresIn = usecase(token.access)
+        ))
         return token.access
-    }
-
-    override suspend fun refresh(token: String) {
-        val mutation = RefreshTokenMutation(token)
-        val response = client.mutation(mutation).executeOrThrow()
-        val data = response.getOrThrow().refreshToken
-        response.assertOrThrow(data.status, data.ResponseCode)
-        listener.onAuthenticationChanged(data.mapToDomain())
     }
 
     override suspend fun logout() {

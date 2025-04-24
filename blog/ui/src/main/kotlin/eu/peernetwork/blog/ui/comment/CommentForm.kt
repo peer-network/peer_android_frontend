@@ -4,6 +4,7 @@ import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -22,13 +23,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.OffsetMapping
+import androidx.compose.ui.text.input.TransformedText
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.blog.ui.R
 import eu.peernetwork.blog.ui.compose.ContentBadge
+import eu.peernetwork.blog.ui.mapper.annotateTag
 import eu.peernetwork.blog.ui.model.UiAuthor
 import eu.peernetwork.blog.ui.model.UiContent
 import eu.peernetwork.core.ui.design.compose.DesignTextButton
@@ -45,6 +51,7 @@ fun CommentForm(
     modifier: Modifier = Modifier,
     onSubmit: (String, String) -> Unit = { id, comment -> }
 ) {
+    val color = MaterialTheme.colorScheme.primary
     Column {
         Box(modifier = Modifier.height(1.dp)
             .fillMaxWidth()
@@ -52,7 +59,7 @@ fun CommentForm(
         Column(modifier = modifier) {
             ContentBadge(
                 model = model,
-                modifier = Modifier.padding(top = 16.dp)
+                modifier = Modifier.padding(top = 16.dp, end = 16.dp)
             ) {}
             DesignTextField(
                 state = comment,
@@ -79,13 +86,20 @@ fun CommentForm(
                     DesignTextButton(
                         onClick = { onSubmit(model.id, comment.text.toString()) },
                         enabled = comment.isValidInput(),
-                        isLoading = isLoading.value
+                        isLoading = isLoading.value,
+                        contentPadding = PaddingValues(vertical = 8.dp, horizontal = 16.dp)
                     ) {
                         Text(
                             stringResource(R.string.send_label),
                             style = MaterialTheme.typography.bodyMedium
                         )
                     }
+                },
+                visualTransformation = VisualTransformation {
+                    TransformedText(
+                        it.annotateTag(SpanStyle(color = color)),
+                        OffsetMapping.Identity
+                    )
                 }
             ) { Text(stringResource(R.string.post_reply)) }
             Spacer(modifier = Modifier.height(24.dp))

@@ -48,17 +48,15 @@ fun LoginScreen(
         factory = component.viewModelFactory()
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
-    LoginContent(
+    LoginScreen(
         loading = state is LoginViewModel.State.Loading,
         error = (state as? LoginViewModel.State.Error?)?.error?.message,
         onReset = { viewModel.reset() }
-    ) { email, password ->
-        viewModel.login(email, password)
-    }
+    ) { email, password -> viewModel.login(email, password) }
 }
 
 @Composable
-fun LoginContent(
+fun LoginScreen(
     loading: Boolean = false,
     error: String? = null,
     onReset: (() -> Unit)? = null,
@@ -104,9 +102,9 @@ fun LoginContent(
 
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
-fun PreviewLoginContent() {
+fun PreviewLoginScreen() {
     PeerTheme {
-        LoginContent(
+        LoginScreen(
             onReset = {}
         ) { email, password -> }
     }

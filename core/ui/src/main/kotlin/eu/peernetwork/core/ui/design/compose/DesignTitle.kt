@@ -78,7 +78,7 @@ fun DesignTitle(
                 maxLines = maxContentLines,
                 overflow = TextOverflow.Ellipsis,
                 style = textStyle.descriptionStyle,
-                modifier = Modifier.padding(top = 6.dp)
+                modifier = Modifier.padding(top = 2.dp)
             )
         }
     }

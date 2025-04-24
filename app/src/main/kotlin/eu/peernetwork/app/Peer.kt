@@ -6,6 +6,7 @@ import eu.peernetwork.app.module.blog.BlogModule
 import eu.peernetwork.app.module.core.CoreModule
 import eu.peernetwork.app.module.core.UiModule
 import eu.peernetwork.app.module.user.UserModule
+import eu.peernetwork.app.module.wallet.WalletModule
 import eu.peernetwork.app.ui.main.Main
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import javax.inject.Singleton
@@ -20,6 +21,7 @@ interface Peer {
             CoreModule::class,
             UiModule::class,
             UserModule::class,
+            WalletModule::class,
             BlogModule::class
         ]
     )

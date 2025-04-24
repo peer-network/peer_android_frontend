@@ -3,6 +3,8 @@ package eu.peernetwork.app.ui.home
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -27,13 +29,13 @@ import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.app.ui.feed.FeedScreen
 import eu.peernetwork.app.ui.profile.core.ProfileScreen
-import eu.peernetwork.app.ui.wallet.WalletScreen
-import eu.peernetwork.blog.ui.point.UserPointScreen
+import eu.peernetwork.blog.ui.point.PointScreen
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.annotation.UiViewModel
 import eu.peernetwork.core.ui.design.compose.DesignToolbarTitle
-import eu.peernetwork.core.ui.design.component.DesignStatefulContent
-import eu.peernetwork.core.ui.design.component.DesignStatefulContentState
+import eu.peernetwork.core.ui.design.component.DesignStatefulScaffold
+import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
+import eu.peernetwork.wallet.ui.overview.OverviewScreen
 
 @Composable
 fun HomeScreen(provider: UiComponentProvider) {
@@ -50,18 +52,18 @@ fun HomeScreen(provider: UiComponentProvider) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val derivedState = remember { derivedStateOf {
         when(state) {
-            HomeViewModel.State.Empty -> DesignStatefulContentState.Empty
-            HomeViewModel.State.Loading -> DesignStatefulContentState.Loading
+            HomeViewModel.State.Empty -> DesignStatefulScaffoldState.Empty
+            HomeViewModel.State.Loading -> DesignStatefulScaffoldState.Loading
             is HomeViewModel.State.Success -> {
                 val data = (state as HomeViewModel.State.Success)
-                DesignStatefulContentState.Success(Pair(data.userId, data.lastVisitedPage))
+                DesignStatefulScaffoldState.Success(Pair(data.userId, data.lastVisitedPage))
             }
             is HomeViewModel.State.Error -> {
-                DesignStatefulContentState.Error((state as HomeViewModel.State.Error).error)
+                DesignStatefulScaffoldState.Error((state as HomeViewModel.State.Error).error)
             }
         }
     } }
-    DesignStatefulContent<Pair<String, Int>>(
+    DesignStatefulScaffold<Pair<String, Int>>(
         state = derivedState,
         onRefresh = { viewModel() },
         modifier = Modifier.fillMaxSize()
@@ -69,11 +71,11 @@ fun HomeScreen(provider: UiComponentProvider) {
         val title = remember {
             mutableStateOf(DesignToolbarTitle(HomeRoute.get(data.second).label))
         }
-        HomeContainer(
+        HomeScreen(
             title = title,
             index = data.second,
             onNavigate = { viewModel.lastVisited(it) },
-            options = { UserPointScreen(component, owner) }
+            options = { PointScreen(component, owner) }
         ) { state, route ->
             when(route) {
                 is HomeRoute.Home -> FeedScreen(title, component, owner)
@@ -84,8 +86,9 @@ fun HomeScreen(provider: UiComponentProvider) {
                     owner
                 )
                 is HomeRoute.Add -> CreatorScreen(title, component, owner)
-                is HomeRoute.Wallet -> WalletScreen()
-                else -> Box(modifier = Modifier.fillMaxSize()) {
+                is HomeRoute.Wallet -> OverviewScreen(title, component, owner)
+                else -> Box(modifier = Modifier.fillMaxSize()
+                    .verticalScroll(rememberScrollState())) {
                     LaunchedEffect(Unit) {
                         title.value = DesignToolbarTitle(route.label)
                     }
@@ -96,7 +99,7 @@ fun HomeScreen(provider: UiComponentProvider) {
 }
 
 @Composable
-fun HomeContainer(
+fun HomeScreen(
     title: MutableState<DesignToolbarTitle>,
     index: Int,
     onNavigate: (Int) -> Unit,
@@ -122,7 +125,7 @@ fun HomeContainer(
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun PreviewHomeScreen() {
     PeerTheme {
-        HomeContainer(
+        HomeScreen(
             title = remember { mutableStateOf(DesignToolbarTitle(R.string.home_label) {}) },
             index = 0,
             onNavigate = {},

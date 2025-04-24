@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
@@ -26,11 +27,19 @@ import eu.peernetwork.core.ui.theme.PeerTheme
 fun ContentBadge(
     model: UiContent,
     modifier: Modifier = Modifier,
+    verticalArrangement: Arrangement.Vertical = Arrangement.Top,
+    horizontalAlignment: Alignment.Horizontal = Alignment.Start,
+    horizontalArrangement: Arrangement.Horizontal = Arrangement.Start,
+    verticalAlignment: Alignment.Vertical = Alignment.Top,
     color: Color = MaterialTheme.colorScheme.onBackground,
     descriptionColor: Color = MaterialTheme.colorScheme.tertiary,
     content: @Composable () -> Unit
 ) {
     DesignDetailLayout(
+        horizontalAlignment = horizontalAlignment,
+        verticalArrangement = verticalArrangement,
+        horizontalArrangement = horizontalArrangement,
+        verticalAlignment = verticalAlignment,
         lead = {
             DesignAvatar {
                 DesignAsyncImage(

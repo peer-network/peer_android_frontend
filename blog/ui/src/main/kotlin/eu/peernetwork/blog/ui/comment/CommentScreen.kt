@@ -29,8 +29,8 @@ import eu.peernetwork.blog.ui.model.UiComment
 import eu.peernetwork.blog.ui.model.UiContent
 import eu.peernetwork.core.common.model.Pageable
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.component.DesignPagingContent
-import eu.peernetwork.core.ui.design.component.DesignStatefulContentState
+import eu.peernetwork.core.ui.design.component.DesignPagingScaffold
+import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
 import eu.peernetwork.core.ui.extension.builder
 import kotlinx.coroutines.delay
 
@@ -56,14 +56,14 @@ fun CommentScreen(
     val derivedState = remember {
         derivedStateOf {
             when (sheetState.value) {
-                CommentViewModel.State.Idle -> DesignStatefulContentState.Empty
-                CommentViewModel.State.Loading -> DesignStatefulContentState.Loading
+                CommentViewModel.State.Idle -> DesignStatefulScaffoldState.Empty
+                CommentViewModel.State.Loading -> DesignStatefulScaffoldState.Loading
                 is CommentViewModel.State.Content -> {
-                    DesignStatefulContentState.Success(
+                    DesignStatefulScaffoldState.Success(
                         (sheetState.value as CommentViewModel.State.Content).content
                     )
                 }
-                is CommentViewModel.State.Error -> DesignStatefulContentState.Error(
+                is CommentViewModel.State.Error -> DesignStatefulScaffoldState.Error(
                     (sheetState.value as CommentViewModel.State.Error).error
                 )
             }
@@ -94,7 +94,7 @@ fun CommentScreen(
 @Composable
 fun CommentScreen(
     id: String,
-    state: State<DesignStatefulContentState>,
+    state: State<DesignStatefulScaffoldState>,
     contentState: MutableState<UiContent?>,
     isLoading: State<Boolean>,
     onRefresh: () -> Unit,
@@ -118,7 +118,7 @@ fun CommentScreen(
             )
         } },
         content = { uiState ->
-            DesignPagingContent<UiComment>(
+            DesignPagingScaffold<UiComment>(
                 state = state,
                 onRefresh = onRefresh,
                 placeholder = { ContentSkeleton() }

@@ -15,7 +15,7 @@ import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.compose.DesignToolbarTitle
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
-import eu.peernetwork.user.ui.settings.UserSettingsScreen
+import eu.peernetwork.user.ui.settings.SettingsScreen
 
 @Composable
 fun ProfileScreen(
@@ -42,7 +42,7 @@ fun ProfileScreen(
             }
         }
         composable("settings") {
-            UserSettingsScreen(component, viewModelStoreOwner)
+            SettingsScreen(component, viewModelStoreOwner)
             LaunchedEffect(Unit) {
                 title.value = DesignToolbarTitle(R.string.settings_label)
             }

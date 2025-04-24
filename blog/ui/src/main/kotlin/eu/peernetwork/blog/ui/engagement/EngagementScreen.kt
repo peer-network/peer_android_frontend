@@ -51,7 +51,7 @@ fun EngagementScreen(
     }
     var selectedPost = remember { mutableStateOf<UiContent?>(null) }
     val errorMessage = stringResource(R.string.unknown_error_message)
-    val post = remember(state) {
+    val post = remember(content) {
         derivedStateOf {
             if (state.engagements[content.id] != null) {
                 state.engagements[content.id]!!

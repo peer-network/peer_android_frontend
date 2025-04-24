@@ -15,9 +15,11 @@ import eu.peernetwork.core.remote.extension.executeOrThrow
 import eu.peernetwork.core.remote.extension.getOrThrow
 import type.CommentsType
 import javax.inject.Inject
+import javax.inject.Named
 
 class CommentApiDelegate @Inject constructor(
-    private val client: ApolloClient
+    private val client: ApolloClient,
+    @Named("mediaUrl") private val url: String,
 ) : CommentApi {
     override suspend fun getAll(id: String, page: Pageable): Page<Comment> {
         val query = GetCommentsQuery(
@@ -27,7 +29,11 @@ class CommentApiDelegate @Inject constructor(
         )
         val response = client.query(query).executeOrThrow()
         val data = response.getOrThrow().getallposts
-        val contents = data.affectedRows?.map { it.mapToDomain() }
+        val contents = data.affectedRows?.map {
+            it.mapToDomain().map {
+                it.copy(author = it.author.copy(imageUrl = "$url${it.author.imageUrl}"))
+            }
+        }
         response.assertOrThrow(data.status, data.ResponseCode)
         return Page(
             count = data.counter,

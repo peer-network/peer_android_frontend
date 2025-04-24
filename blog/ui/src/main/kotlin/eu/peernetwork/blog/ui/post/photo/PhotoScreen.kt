@@ -29,8 +29,8 @@ import eu.peernetwork.blog.ui.mapper.mapToContent
 import eu.peernetwork.blog.ui.mapper.mapToProperty
 import eu.peernetwork.core.common.model.Pageable
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.component.DesignPagingContent
-import eu.peernetwork.core.ui.design.component.DesignStatefulContentState
+import eu.peernetwork.core.ui.design.component.DesignPagingScaffold
+import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.media.core.renderer.ImageView
 import kotlinx.coroutines.delay
@@ -61,21 +61,21 @@ fun PhotoScreen(
     val derivedState = remember {
         derivedStateOf {
             when (state) {
-                PhotoViewModel.State.Empty -> DesignStatefulContentState.Empty
-                PhotoViewModel.State.Loading -> DesignStatefulContentState.Loading
+                PhotoViewModel.State.Empty -> DesignStatefulScaffoldState.Empty
+                PhotoViewModel.State.Loading -> DesignStatefulScaffoldState.Loading
                 is PhotoViewModel.State.Success -> {
-                    DesignStatefulContentState.Success(
+                    DesignStatefulScaffoldState.Success(
                         (state as PhotoViewModel.State.Success).content
                     )
                 }
-                is PhotoViewModel.State.Error -> DesignStatefulContentState.Error(
+                is PhotoViewModel.State.Error -> DesignStatefulScaffoldState.Error(
                     (state as PhotoViewModel.State.Error).error
                 )
             }
         }
     }
     val refreshEngagement = remember { mutableStateOf(false) }
-    DesignPagingContent<UiPost>(
+    DesignPagingScaffold<UiPost>(
         state = derivedState,
         placeholder = { PostPageSkeleton() },
         onRefresh = { viewModel.load(author, Pageable(0, postLimit)) },

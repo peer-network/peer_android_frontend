@@ -33,8 +33,8 @@ import eu.peernetwork.blog.ui.mapper.mapToContent
 import eu.peernetwork.blog.ui.post.photo.formatTimeAgo
 import eu.peernetwork.core.common.model.Pageable
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.component.DesignPagingContent
-import eu.peernetwork.core.ui.design.component.DesignStatefulContentState
+import eu.peernetwork.core.ui.design.component.DesignPagingScaffold
+import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.media.core.renderer.VideoThumbnail
 import kotlinx.coroutines.delay
@@ -60,21 +60,21 @@ fun VideoScreen(
     val currentTime = remember { mutableLongStateOf(System.currentTimeMillis()) }
     val derivedState = remember { derivedStateOf {
         when(state) {
-            VideoViewModel.State.Empty -> DesignStatefulContentState.Empty
-            VideoViewModel.State.Loading -> DesignStatefulContentState.Loading
+            VideoViewModel.State.Empty -> DesignStatefulScaffoldState.Empty
+            VideoViewModel.State.Loading -> DesignStatefulScaffoldState.Loading
             is VideoViewModel.State.Success -> {
-                DesignStatefulContentState.Success(
+                DesignStatefulScaffoldState.Success(
                     (state as VideoViewModel.State.Success).content
                 )
             }
             is VideoViewModel.State.Error -> {
-                DesignStatefulContentState.Error((state as VideoViewModel.State.Error).error)
+                DesignStatefulScaffoldState.Error((state as VideoViewModel.State.Error).error)
             }
         }
     } }
     var selectedClip = remember { mutableStateOf<Int?>(null) }
     val refreshEngagement = remember { mutableStateOf(false) }
-    DesignPagingContent<UiVideo>(
+    DesignPagingScaffold<UiVideo>(
         state = derivedState,
         placeholder = { PostPageSkeleton() },
         onRefresh = { viewModel.load(author, Pageable(0, postLimit)) }

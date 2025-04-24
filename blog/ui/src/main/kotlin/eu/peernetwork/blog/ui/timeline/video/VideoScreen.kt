@@ -26,9 +26,9 @@ import eu.peernetwork.blog.ui.engagement.EngagementScreen
 import eu.peernetwork.blog.ui.mapper.mapToContent
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.post.photo.formatTimeAgo
-import eu.peernetwork.core.ui.design.component.DesignPagingContent
-import eu.peernetwork.core.ui.design.component.DesignRefreshableContent
-import eu.peernetwork.core.ui.design.component.DesignStatefulContentState
+import eu.peernetwork.core.ui.design.component.DesignPagingScaffold
+import eu.peernetwork.core.ui.design.component.DesignRefreshableScaffold
+import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
 import eu.peernetwork.media.core.renderer.VideoThumbnail
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -51,12 +51,12 @@ fun VideoScreen(
     val derivedState = remember {
         derivedStateOf {
             when (state) {
-                VideoViewModel.State.Empty -> DesignStatefulContentState.Empty
-                VideoViewModel.State.Loading -> DesignStatefulContentState.Loading
-                is VideoViewModel.State.Success -> DesignStatefulContentState.Success(
+                VideoViewModel.State.Empty -> DesignStatefulScaffoldState.Empty
+                VideoViewModel.State.Loading -> DesignStatefulScaffoldState.Loading
+                is VideoViewModel.State.Success -> DesignStatefulScaffoldState.Success(
                     (state as VideoViewModel.State.Success).data
                 )
-                is VideoViewModel.State.Error -> DesignStatefulContentState.Error(
+                is VideoViewModel.State.Error -> DesignStatefulScaffoldState.Error(
                     (state as VideoViewModel.State.Error).error
                 )
             }
@@ -71,23 +71,23 @@ fun VideoScreen(
     }
     var selectedClip = remember { mutableStateOf<Int?>(null) }
     val refreshEngagement = remember { mutableStateOf(false) }
-    DesignPagingContent<UiVideo>(
+    DesignPagingScaffold<UiVideo>(
         state = derivedState,
         onRefresh = { viewModel.load(Pageable(0, postLimit)) },
         placeholder = { PostPageSkeleton() }
     ) { state, lazyPagingItems ->
         val refreshState = remember { derivedStateOf {
             if (lazyPagingItems.loadState.refresh is LoadState.Loading) {
-                DesignStatefulContentState.Loading
+                DesignStatefulScaffoldState.Loading
             } else if (lazyPagingItems.loadState.refresh is LoadState.Error) {
-                DesignStatefulContentState.Error(
+                DesignStatefulScaffoldState.Error(
                     (lazyPagingItems.loadState.refresh as LoadState.Error).error
                 )
             } else {
                 state.value
             }
         } }
-        DesignRefreshableContent<LazyPagingItems<UiPost>>(
+        DesignRefreshableScaffold<LazyPagingItems<UiPost>>(
             state = refreshState,
             onRefresh = {
                 refreshEngagement.value = true

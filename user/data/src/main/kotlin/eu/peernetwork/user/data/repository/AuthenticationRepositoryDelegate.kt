@@ -15,10 +15,6 @@ class AuthenticationRepositoryDelegate @Inject constructor(
         return api.login(email, password)
     }
 
-    override suspend fun refresh(token: String) {
-        return api.refresh(token)
-    }
-
     override suspend fun logout() {
         return api.logout()
     }

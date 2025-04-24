@@ -52,7 +52,7 @@ fun DesignTextButton(
         containerColor = MaterialTheme.colorScheme.onBackground,
         disabledContainerColor = Color.Transparent,
         contentColor = MaterialTheme.colorScheme.tertiary,
-        disabledContentColor = MaterialTheme.colorScheme.surfaceTint
+        disabledContentColor = MaterialTheme.colorScheme.surfaceDim
     ),
     elevation: Dp = 0.dp,
     border: BorderStroke? = null,

@@ -37,8 +37,8 @@ import eu.peernetwork.blog.ui.model.UiVideo
 import eu.peernetwork.blog.ui.post.photo.formatTimeAgo
 import eu.peernetwork.core.common.model.Pageable
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.component.DesignStatefulContent
-import eu.peernetwork.core.ui.design.component.DesignStatefulContentState
+import eu.peernetwork.core.ui.design.component.DesignStatefulScaffold
+import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
 import eu.peernetwork.core.ui.design.compose.DesignDialogSheet
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.media.core.renderer.VideoPlayer
@@ -69,12 +69,12 @@ fun VideoDialog(
     val derivedState = remember {
         derivedStateOf {
             when (state) {
-                VideoViewModel.State.Empty -> DesignStatefulContentState.Empty
-                VideoViewModel.State.Loading -> DesignStatefulContentState.Loading
-                is VideoViewModel.State.Success -> DesignStatefulContentState.Success(
+                VideoViewModel.State.Empty -> DesignStatefulScaffoldState.Empty
+                VideoViewModel.State.Loading -> DesignStatefulScaffoldState.Loading
+                is VideoViewModel.State.Success -> DesignStatefulScaffoldState.Success(
                     (state as VideoViewModel.State.Success).content
                 )
-                is VideoViewModel.State.Error -> DesignStatefulContentState.Error(
+                is VideoViewModel.State.Error -> DesignStatefulScaffoldState.Error(
                     (state as VideoViewModel.State.Error).error
                 )
             }
@@ -88,14 +88,14 @@ fun VideoDialog(
         }
     }
     var isRefreshing by remember {
-        mutableStateOf(derivedState.value is DesignStatefulContentState.Loading)
+        mutableStateOf(derivedState.value is DesignStatefulScaffoldState.Loading)
     }
     val pullRefreshState = rememberPullRefreshState(refreshing = isRefreshing, onRefresh = {
         viewModel.load(author, Pageable(0, postLimit))
     })
     DesignDialogSheet(tag = "VideoDialog", visible = isVisible.value) {
         DragRefreshLayout(state = pullRefreshState) {
-            DesignStatefulContent<Flow<PagingData<UiVideo>>>(
+            DesignStatefulScaffold<Flow<PagingData<UiVideo>>>(
                 state = derivedState,
                 onRefresh = { viewModel.load(author, Pageable(0, postLimit)) }
             ) {flow ->
