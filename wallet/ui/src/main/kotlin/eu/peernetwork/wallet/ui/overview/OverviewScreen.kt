@@ -130,14 +130,28 @@ fun OverviewScreen(wallet: UiWallet) {
                     modifier = Modifier.align(Alignment.CenterVertically)
                 )
             }
+            Row(
+                modifier = Modifier.padding(bottom = 8.dp).fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = "Each token is ${wallet.rate}${wallet.currency}",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    textAlign = TextAlign.Center
+                )
+            }
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = "Now you own ${wallet.converted}${wallet.currency}",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    textAlign = TextAlign.Center
+                )
+            }
         }
-    }
-}
-
-@Preview
-@Composable
-fun PreviewWalletScreen() {
-    PeerTheme {
-        OverviewScreen(UiWallet(BigDecimal(100)))
     }
 }

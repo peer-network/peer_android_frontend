@@ -18,7 +18,11 @@ class WalletApiDelegate @Inject constructor(
         val response = client.query(query).executeOrThrow()
         val data = response.getOrThrow().currentliquidity
         return data.currentliquidity?.let {
-            it.toBigDecimalOrNull()?.let { Wallet(it) }
+            it.toBigDecimalOrNull()?.let { Wallet(
+                it,
+                rate = .10f,
+                currency = "€"
+            ) }
         } ?: throw WalletException()
     }
 }
