@@ -73,6 +73,8 @@ dependencies {
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.config)
 
+    implementation(libs.lottie)
+
     implementation(libs.dagger)
     ksp(libs.dagger.compiler)
 

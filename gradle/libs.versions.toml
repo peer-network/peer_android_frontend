@@ -31,6 +31,7 @@ material = "1.12.0"
 ucrop = "2.2.9"
 permissions = "0.28.0"
 media3 = "1.6.1"
+lottie = "6.0.0"
 
 [libraries]
 androidx-splash = { module = "androidx.core:core-splashscreen", version.ref = "androidx-splash" }
@@ -73,6 +74,7 @@ turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 mockk = { module = "io.mockk:mockk-common", version.ref = "mockk" }
 mockk-jvm = { module = "io.mockk:mockk-jvm", version.ref = "mockk-jvm" }
 permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "permissions" }
+lottie = { module = "com.airbnb.android:lottie-compose", version.ref = "lottie" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
