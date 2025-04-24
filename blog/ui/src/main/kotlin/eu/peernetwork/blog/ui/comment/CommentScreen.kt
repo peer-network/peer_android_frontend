@@ -1,6 +1,7 @@
 package eu.peernetwork.blog.ui.comment
 
 import android.widget.Toast
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -18,11 +19,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import eu.peernetwork.blog.ui.compose.ContentBadge
+import eu.peernetwork.blog.ui.compose.ContentBar
 import eu.peernetwork.blog.ui.compose.ContentSkeleton
 import eu.peernetwork.blog.ui.mapper.mapToContent
 import eu.peernetwork.blog.ui.model.UiComment
@@ -69,19 +71,62 @@ fun CommentScreen(
             }
         }
     }
-    val isLoading = remember { derivedStateOf {
-        (sheetState.value as? CommentViewModel.State.Content?)?.isLoading == true
+    val contents = remember { derivedStateOf {
+        sheetState.value as? CommentViewModel.State.Content?
     } }
+    val replyTo = remember { mutableStateOf<String?>(null) }
+    val isLoading = remember { derivedStateOf { contents.value?.isLoading == true } }
+    val isSelected = remember { derivedStateOf { contents.value?.selected != null } }
     CommentScreen(
         id = id,
-        state = derivedState,
-        contentState = state,
+        state = state,
+        replyTo = replyTo,
         isLoading = isLoading,
-        modifier = modifier.padding(horizontal = 24.dp)
-            .fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         onRefresh = { state.value?.let { viewModel.load(it.id, Pageable(0, postLimit)) } },
-        onUpdate = onUpdate
-    ) { id, comment -> viewModel.comment(id, comment) }
+        onSubmit = { id, comment -> viewModel.comment(id, comment) }
+    ) {
+        DesignPagingScaffold<UiComment>(
+            state = derivedState,
+            onRefresh = { state.value?.let { viewModel.load(it.id, Pageable(0, postLimit)) } },
+            placeholder = { ContentSkeleton() }
+        ) { pageState, items ->
+            LazyColumn(modifier = Modifier.fillMaxSize()) {
+                items(items.itemCount) { index ->
+                    items[index]?.let { comment ->
+                        ContentBar(
+                            model = comment.mapToContent(),
+                            modifier = Modifier.clickable(role = Role.Button) {
+                                    replyTo.value = comment.author.username
+                                }.padding(horizontal = 24.dp)
+                                .padding(top = 12.dp)
+                        ) {
+                            val liked = remember { derivedStateOf {
+                                contents.value?.likes?.contains(comment) == true
+                            } }
+                            CommentOptions(
+                                likes = comment.likes + if (liked.value) 1 else 0,
+                                isLiked = comment.isLiked || liked.value
+                            ) {
+                                viewModel.like(comment)
+                                items.refresh()
+                            }
+                        }
+                    }
+                }
+                item { Box(modifier = Modifier.navigationBarsPadding()
+                    .padding(bottom = 200.dp)) }
+            }
+            LaunchedEffect(isLoading.value) {
+                if (!isLoading.value && isSelected.value) {
+                    it.clearText()
+                    items.refresh()
+                    viewModel.deselect()
+                    onUpdate()
+                }
+            }
+        }
+    }
     LaunchedEffect(sheetState.value) {
         val content = (sheetState.value as? CommentViewModel.State.Content?)
         if (content?.error != null && id == state.value?.id) {
@@ -94,59 +139,36 @@ fun CommentScreen(
 @Composable
 fun CommentScreen(
     id: String,
-    state: State<DesignStatefulScaffoldState>,
-    contentState: MutableState<UiContent?>,
+    state: MutableState<UiContent?>,
+    replyTo: MutableState<String?>,
     isLoading: State<Boolean>,
-    onRefresh: () -> Unit,
-    onUpdate: () -> Unit,
     modifier: Modifier = Modifier,
-    onSubmit: (String, String) -> Unit,
+    onRefresh: () -> Unit = {},
+    onSubmit: (String, String) -> Unit = { id, comment -> },
+    content: @Composable (TextFieldState) -> Unit = {}
 ) {
     val comment = remember { TextFieldState() }
     val sheet = remember { mutableStateOf<UiContent?>(null) }
     CommentScaffold(
         tag = id,
-        state = contentState,
+        state = state,
         modifier = modifier,
         sheet = { sheet.value?.let {
             CommentForm(
                 model = it,
                 comment = comment,
+                replyTo = replyTo,
                 isLoading = isLoading,
                 modifier = Modifier.padding(horizontal = 24.dp),
                 onSubmit = onSubmit
             )
         } },
         content = { uiState ->
-            DesignPagingScaffold<UiComment>(
-                state = state,
-                onRefresh = onRefresh,
-                placeholder = { ContentSkeleton() }
-            ) { pageState, items ->
-                LazyColumn(modifier = Modifier.fillMaxSize()) {
-                    items(items.itemCount) { index ->
-                        items[index]?.let { comment ->
-                            ContentBadge(
-                                model = comment.mapToContent(),
-                                modifier = Modifier.padding(top = 16.dp)
-                            ) {}
-                        }
-                    }
-                    item { Box(modifier = Modifier.navigationBarsPadding()
-                        .padding(bottom = 200.dp)) }
-                }
-                LaunchedEffect(isLoading.value) {
-                    if (!isLoading.value && comment.text.isNotEmpty()) {
-                        comment.clearText()
-                        items.refresh()
-                        onUpdate()
-                    }
-                }
-            }
+            content(comment)
             LaunchedEffect(uiState.value) {
-                contentState.value?.let {
+                state.value?.let {
                     if (uiState.value) {
-                        sheet.value = contentState.value
+                        sheet.value = state.value
                         delay(50)
                         onRefresh()
                     }

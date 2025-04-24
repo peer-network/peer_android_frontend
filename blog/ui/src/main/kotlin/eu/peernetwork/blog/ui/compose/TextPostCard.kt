@@ -47,7 +47,7 @@ fun TextPostCard(
         modifier = modifier,
         header = {
             Row {
-                AuthorBadge(
+                AuthorBar(
                     author,
                     description,
                     modifier = Modifier.weight(1f)

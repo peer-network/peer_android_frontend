@@ -29,13 +29,26 @@ class CommentViewModel @Inject constructor(
 ) : ViewModel() {
     private val content = MutableStateFlow<Flow<PagingData<UiComment>>?>(null)
 
+    private val likes = mutableSetOf<UiComment>()
+
+    private val selected = MutableStateFlow<String?>(null)
+
+    private val likesState = MutableStateFlow<Set<UiComment>>(emptySet())
+
     private val mutableState = MutableStateFlow<State>(State.Idle)
 
-    val state: StateFlow<State> = combine(content, mutableState) { content, state ->
+    val state: StateFlow<State> = combine(
+        content,
+        mutableState,
+        likesState,
+        selected
+    ) { content, state, likes, selected ->
         if (content != null) {
             State.Content(
                 isLoading = state is State.Loading,
+                likes = likes,
                 content = content,
+                selected = selected,
                 error = (state as? State.Error?)?.error
             )
         } else {
@@ -49,6 +62,8 @@ class CommentViewModel @Inject constructor(
 
     fun load(postId: String, page: Pageable) {
         viewModelScope.launch {
+            likes.clear()
+            likesState.tryEmit(likes)
             commentsUsecase(
                 CommentsUsecase.Parameter(
                     id = postId,
@@ -68,6 +83,7 @@ class CommentViewModel @Inject constructor(
         viewModelScope.launch {
             mutableState.tryEmit(State.Loading)
             try {
+                selected.tryEmit(postId)
                 usecase(CommentUsecase.Parameter(postId, comment)).mapToComment()
                 mutableState.tryEmit(State.Idle)
             } catch (error: Throwable) {
@@ -76,8 +92,33 @@ class CommentViewModel @Inject constructor(
         }
     }
 
+    fun like(comment: UiComment) {
+        if (likes.contains(comment)) {
+            likesState.tryEmit(likes)
+            return
+        }
+        viewModelScope.launch {
+            try {
+                likes.add(comment)
+                likesState.tryEmit(likes)
+                likeUsecase(comment.id)
+            } catch (error: Throwable) {
+                likes.remove(comment)
+                likesState.tryEmit(likes)
+                mutableState.tryEmit(State.Error(error))
+            }
+        }
+    }
+
+    fun deselect() {
+        viewModelScope.launch {
+            selected.tryEmit(null)
+        }
+    }
+
     fun reset() {
         viewModelScope.launch {
+            selected.tryEmit(null)
             mutableState.tryEmit(State.Idle)
         }
     }
@@ -87,6 +128,8 @@ class CommentViewModel @Inject constructor(
         data object Loading : State
         data class Content(
             val isLoading: Boolean,
+            val selected: String?,
+            val likes: Set<UiComment>,
             val content: Flow<PagingData<UiComment>>,
             val error: Throwable?,
         ) : State

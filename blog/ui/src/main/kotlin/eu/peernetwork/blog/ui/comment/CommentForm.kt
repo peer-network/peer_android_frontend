@@ -12,15 +12,19 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -33,7 +37,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.blog.ui.R
-import eu.peernetwork.blog.ui.compose.ContentBadge
+import eu.peernetwork.blog.ui.compose.ContentBar
 import eu.peernetwork.blog.ui.mapper.annotateTag
 import eu.peernetwork.blog.ui.model.UiAuthor
 import eu.peernetwork.blog.ui.model.UiContent
@@ -48,16 +52,18 @@ fun CommentForm(
     model: UiContent,
     comment: TextFieldState,
     isLoading: State<Boolean>,
+    replyTo: MutableState<String?>,
     modifier: Modifier = Modifier,
     onSubmit: (String, String) -> Unit = { id, comment -> }
 ) {
     val color = MaterialTheme.colorScheme.primary
+    val focus = remember { FocusRequester() }
     Column {
         Box(modifier = Modifier.height(1.dp)
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.surfaceDim.copy(alpha = .1f)))
         Column(modifier = modifier) {
-            ContentBadge(
+            ContentBar(
                 model = model,
                 modifier = Modifier.padding(top = 16.dp, end = 16.dp)
             ) {}
@@ -65,6 +71,7 @@ fun CommentForm(
                 state = comment,
                 enabled = !isLoading.value,
                 modifier = Modifier.padding(start = 36.dp),
+                focusRequester = focus,
                 keyboardOptions = KeyboardOptions(
                     capitalization = KeyboardCapitalization.Sentences,
                     keyboardType = KeyboardType.Text,
@@ -103,6 +110,13 @@ fun CommentForm(
                 }
             ) { Text(stringResource(R.string.post_reply)) }
             Spacer(modifier = Modifier.height(24.dp))
+            LaunchedEffect(replyTo.value) {
+                if (replyTo.value != null) {
+                    comment.setTextAndPlaceCursorAtEnd("@${replyTo.value} ")
+                    focus.requestFocus()
+                    replyTo.value = null
+                }
+            }
         }
     }
 }
@@ -117,6 +131,7 @@ fun PreviewCommentForm() {
             comment = comment,
             modifier = Modifier.padding(horizontal = 24.dp),
             isLoading = isLoading,
+            replyTo = remember { mutableStateOf(null) },
             model = UiContent(
                 id = "abc123",
                 title = "John Doe",

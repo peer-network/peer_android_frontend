@@ -21,7 +21,7 @@ import eu.peernetwork.core.ui.design.compose.DesignTitleTextStyle
 import eu.peernetwork.core.ui.theme.PeerTheme
 
 @Composable
-fun AuthorBadge(
+fun AuthorBar(
     author: UiAuthor,
     description: String,
     modifier: Modifier = Modifier,
@@ -74,7 +74,7 @@ fun AuthorBadge(
 @Composable
 fun PreviewAuthorBadge() {
     PeerTheme {
-        AuthorBadge(
+        AuthorBar(
             author = UiAuthor(
                 id = "",
                 slug = 12034,

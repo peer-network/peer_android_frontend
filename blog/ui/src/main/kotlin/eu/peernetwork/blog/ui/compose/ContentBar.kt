@@ -24,7 +24,7 @@ import eu.peernetwork.core.ui.design.compose.DesignTitleTextStyle
 import eu.peernetwork.core.ui.theme.PeerTheme
 
 @Composable
-fun ContentBadge(
+fun ContentBar(
     model: UiContent,
     modifier: Modifier = Modifier,
     verticalArrangement: Arrangement.Vertical = Arrangement.Top,
@@ -83,9 +83,9 @@ fun ContentBadge(
 
 @Preview
 @Composable
-fun PreviewPostBadge() {
+fun PreviewContentBar() {
     PeerTheme {
-        ContentBadge(
+        ContentBar(
             model = UiContent(
                 id = "abc123",
                 title = "John Doe",
