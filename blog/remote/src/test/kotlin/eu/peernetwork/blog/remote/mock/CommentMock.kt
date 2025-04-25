@@ -16,7 +16,7 @@ object CommentMock {
                     postid = "<test-postid>",
                     parentid = "<test-parentid>",
                     content = "<test-content>",
-                    createdat = System.currentTimeMillis(),
+                    createdat = "2025-03-24 00:05:09.334000",
                     amountlikes = 42,
                     isliked = true,
                     user = CreateCommentMutation.User(

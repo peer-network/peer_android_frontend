@@ -26,11 +26,13 @@ import kotlin.test.assertNull
 internal class CommentApiDelegateTest {
     private val client = mockk<ApolloClient>()
 
+    private val url = "http://locahost"
+
     private lateinit var api: CommentApi
 
     @Before
     fun setup() {
-        api = CommentApiDelegate(client)
+        api = CommentApiDelegate(client, url)
     }
 
     @Test

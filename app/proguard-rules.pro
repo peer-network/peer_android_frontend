@@ -19,3 +19,15 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+-keep class com.peernetwork.user.remote.** { *; }
+-keep class com.peernetwork.blog.remote.** { *; }
+-keep class com.peernetwork.social.remote.** { *; }
+
+-keep class com.apollographql.** { *; }
+-keep class * implements com.apollographql.apollo3.api.Operation { *; }
+
+-keepclassmembers class ** {
+    <init>(...);
+    <fields>;
+}

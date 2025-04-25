@@ -6,7 +6,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.blog.ui.mapper.annotateTag
 
@@ -20,10 +19,8 @@ fun PostText(
         Text(
             text = title,
             style = MaterialTheme.typography.headlineMedium.copy(
-                color = MaterialTheme.colorScheme.onBackground,
-                fontWeight = FontWeight.Bold,
-            ),
-            modifier = Modifier.padding(bottom = 4.dp)
+                color = MaterialTheme.colorScheme.onBackground
+            )
         )
         Text(
             text = description.annotateTag(
@@ -34,6 +31,7 @@ fun PostText(
             style = MaterialTheme.typography.bodyMedium.copy(
                 color = MaterialTheme.colorScheme.tertiary,
             ),
+            modifier = Modifier.padding(top = 4.dp)
         )
     }
 }

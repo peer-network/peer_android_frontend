@@ -9,13 +9,13 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import eu.peernetwork.app.ui.profile.preview.ProfilePreviewScreen
+import eu.peernetwork.app.ui.profile.preview.PreviewScreen
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.compose.DesignToolbarTitle
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
-import eu.peernetwork.user.ui.settings.UserSettingsScreen
+import eu.peernetwork.user.ui.settings.SettingsScreen
 
 @Composable
 fun ProfileScreen(
@@ -31,7 +31,7 @@ fun ProfileScreen(
     }
     NavHost(navController = controller, startDestination = "profile") {
         composable("profile") {
-            ProfilePreviewScreen(
+            PreviewScreen(
                 userId = userId,
                 onSettings = { controller.navigateIfNecessary("settings") },
                 provider = component,
@@ -42,7 +42,7 @@ fun ProfileScreen(
             }
         }
         composable("settings") {
-            UserSettingsScreen(component, viewModelStoreOwner)
+            SettingsScreen(component, viewModelStoreOwner)
             LaunchedEffect(Unit) {
                 title.value = DesignToolbarTitle(R.string.settings_label)
             }

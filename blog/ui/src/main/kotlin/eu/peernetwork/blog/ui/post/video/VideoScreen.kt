@@ -3,6 +3,7 @@ package eu.peernetwork.blog.ui.post.video
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -23,22 +24,20 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.LoadState
-import androidx.paging.PagingData
-import androidx.paging.compose.collectAsLazyPagingItems
 import eu.peernetwork.blog.ui.model.UiVideo
 import eu.peernetwork.blog.ui.compose.MediaPostCard
 import eu.peernetwork.blog.ui.compose.PostSummary
-import eu.peernetwork.blog.ui.compose.PostIcon
-import eu.peernetwork.blog.ui.model.UiAction
+import eu.peernetwork.blog.ui.compose.PostPageSkeleton
+import eu.peernetwork.blog.ui.engagement.EngagementScreen
+import eu.peernetwork.blog.ui.mapper.mapToContent
 import eu.peernetwork.blog.ui.post.photo.formatTimeAgo
 import eu.peernetwork.core.common.model.Pageable
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.component.DesignStatefulContent
-import eu.peernetwork.core.ui.design.component.DesignStatefulContentState
+import eu.peernetwork.core.ui.design.component.DesignPagingScaffold
+import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.media.core.renderer.VideoThumbnail
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
 
 @Composable
 fun VideoScreen(
@@ -61,25 +60,26 @@ fun VideoScreen(
     val currentTime = remember { mutableLongStateOf(System.currentTimeMillis()) }
     val derivedState = remember { derivedStateOf {
         when(state) {
-            VideoViewModel.State.Empty -> DesignStatefulContentState.Empty
-            VideoViewModel.State.Loading -> DesignStatefulContentState.Loading
+            VideoViewModel.State.Empty -> DesignStatefulScaffoldState.Empty
+            VideoViewModel.State.Loading -> DesignStatefulScaffoldState.Loading
             is VideoViewModel.State.Success -> {
-                DesignStatefulContentState.Success(
+                DesignStatefulScaffoldState.Success(
                     (state as VideoViewModel.State.Success).content
                 )
             }
             is VideoViewModel.State.Error -> {
-                DesignStatefulContentState.Error((state as VideoViewModel.State.Error).error)
+                DesignStatefulScaffoldState.Error((state as VideoViewModel.State.Error).error)
             }
         }
     } }
-    var position = remember { mutableStateOf<Int?>(null) }
-    DesignStatefulContent<Flow<PagingData<UiVideo>>>(
+    var selectedClip = remember { mutableStateOf<Int?>(null) }
+    val refreshEngagement = remember { mutableStateOf(false) }
+    DesignPagingScaffold<UiVideo>(
         state = derivedState,
-        refresh = { viewModel.load(author, Pageable(0, postLimit)) }
-    ) { flow ->
-        val lazyPagingItems = flow.collectAsLazyPagingItems()
-        LazyColumn {
+        placeholder = { PostPageSkeleton() },
+        onRefresh = { viewModel.load(author, Pageable(0, postLimit)) }
+    ) { contentState, lazyPagingItems ->
+        LazyColumn(modifier = Modifier.fillMaxSize()) {
             items(
                 count = lazyPagingItems.itemCount,
                 key = { index -> index }
@@ -93,14 +93,18 @@ fun VideoScreen(
                             PostSummary(post.author.username, post.title, post.description)
                         },
                         engagements = {
-                            PostIcon(UiAction.Like, post.likes.toString(), onClick = {})
-                            PostIcon(UiAction.Dislike, post.dislikes.toString(), onClick = {})
-                            PostIcon(UiAction.Comment, post.dislikes.toString(), onClick = {})
+                            EngagementScreen(
+                                post.mapToContent(),
+                                postLimit,
+                                refreshEngagement,
+                                component,
+                                viewModelStoreOwner
+                            )
                         }
                     ) {
                         Box(modifier = Modifier.clickable(
                             role = Role.Button,
-                            onClick = { position.value = index }
+                            onClick = { selectedClip.value = index }
                         )) {
                             component.videoThumbnail()(
                                 Modifier,
@@ -115,15 +119,14 @@ fun VideoScreen(
             }
             item { Spacer(modifier = Modifier.height(56.dp)) }
         }
-        VideoDialog(author, postLimit, position, provider, viewModelStoreOwner)
-    }
-    LaunchedEffect(derivedState.value) {
-        loadState.value = derivedState.value is DesignStatefulContentState.Loading
-    }
-    LaunchedEffect(loadState.value) {
-        if (loadState.value) {
-            viewModel.load(author, Pageable(0, postLimit))
+        LaunchedEffect(loadState.value) {
+            if (loadState.value) {
+                lazyPagingItems.refresh()
+                refreshEngagement.value = true
+                loadState.value = false
+            }
         }
+        VideoDialog(author, postLimit, selectedClip, provider, viewModelStoreOwner)
     }
     LaunchedEffect(Unit) {
         while (true) {

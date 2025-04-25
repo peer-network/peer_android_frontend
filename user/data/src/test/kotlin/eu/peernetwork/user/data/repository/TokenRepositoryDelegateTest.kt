@@ -5,7 +5,9 @@ import eu.peernetwork.persistence.domain.observable.ObservableString
 import eu.peernetwork.persistence.domain.publishable.PublishableString
 import eu.peernetwork.persistence.domain.retrievable.RetrievableString
 import eu.peernetwork.user.data.api.AuthenticationApi
+import eu.peernetwork.user.data.api.TokenApi
 import eu.peernetwork.user.data.mock.TokenMock
+import eu.peernetwork.user.data.repository.TokenRepositoryDelegate.Companion.TAG
 import eu.peernetwork.user.domain.repository.TokenRepository
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -23,6 +25,8 @@ internal class TokenRepositoryDelegateTest {
 
     private val publisher = mockk<PublishableString>()
 
+    private val api = mockk<TokenApi>()
+
     private val observer = mockk<ObservableString>()
 
     private val retrievable = mockk<RetrievableString>()
@@ -33,7 +37,7 @@ internal class TokenRepositoryDelegateTest {
 
     @Before
     fun setup() {
-        TokenRepositoryDelegate(gson, publisher, observer, retrievable).also {
+        TokenRepositoryDelegate(gson, api, publisher, observer, retrievable).also {
             repository = it
             listener = it
         }
@@ -57,6 +61,18 @@ internal class TokenRepositoryDelegateTest {
         listener.onAuthenticationChanged(token)
 
         coVerify { publisher(any(), gson.toJson(token)) }
+    }
+
+    @Test
+    fun `test refresh token`() = runBlocking {
+        val token = TokenMock.token()
+        coEvery { api.refresh(any()) } returns token
+        coEvery { publisher(any(), any()) } returns Unit
+
+        repository.refresh("old_token")
+
+        coVerify { api.refresh("old_token") }
+        coVerify { publisher(TAG, gson.toJson(token)) }
     }
 
     @Test

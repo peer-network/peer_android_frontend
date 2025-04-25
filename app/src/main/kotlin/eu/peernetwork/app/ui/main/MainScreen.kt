@@ -3,6 +3,9 @@ package eu.peernetwork.app.ui.main
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -26,15 +29,20 @@ fun MainScreen(
         factory = component.viewModelFactory()
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
-    LaunchedEffect(state) {
+    var splashDone by remember { mutableStateOf(false) }
+
+    LaunchedEffect(state, splashDone) {
+        if (!splashDone) return@LaunchedEffect
         when(state) {
-            is MainViewModel.State.Splash -> controller.attachIfNecessary("splash")
+            is MainViewModel.State.Splash -> Unit
             is MainViewModel.State.Startup -> controller.attachIfNecessary("startup")
             is MainViewModel.State.Home -> controller.attachIfNecessary("home")
         }
     }
     NavHost(navController = controller, startDestination = "splash") {
-        composable("splash") { SplashScreen(component) }
+        composable("splash") {
+            SplashScreen { splashDone = true }
+        }
         composable("startup") {
             SetupScreen(
                 provider = component,

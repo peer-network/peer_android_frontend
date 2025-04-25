@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -21,7 +20,6 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -32,11 +30,15 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.OffsetMapping
+import androidx.compose.ui.text.input.TransformedText
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.blog.ui.R
 import eu.peernetwork.blog.ui.mapper.annotateTag
 import eu.peernetwork.core.ui.design.compose.DesignAvatar
+import eu.peernetwork.core.ui.design.compose.DesignRichTextField
 import eu.peernetwork.core.ui.design.compose.DesignTextField
 import eu.peernetwork.core.ui.theme.PeerTheme
 import kotlinx.coroutines.delay
@@ -49,13 +51,7 @@ fun CreatorForm(
     isLoading: State<Boolean>,
     avatar: @Composable () -> Unit = {}
 ) {
-    val color = MaterialTheme.colorScheme.primary
     val focus = remember { FocusRequester() }
-    val annotatedText = remember {
-        derivedStateOf {
-            description.text.toString().annotateTag(SpanStyle(color = color))
-        }
-    }
     Column(modifier = Modifier.fillMaxSize()) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -82,7 +78,7 @@ fun CreatorForm(
                 ),
             ) { Text(stringResource(R.string.post_title)) }
         }
-        DesignTextField(
+        DesignRichTextField(
             description,
             contentPadding = PaddingValues(
                 top = 16.dp,
@@ -97,7 +93,7 @@ fun CreatorForm(
                 imeAction = ImeAction.Next
             ),
             verticalAlignment = Alignment.Top,
-            lineLimits = TextFieldLineLimits.MultiLine(),
+            maxLines = 3,
             modifier = Modifier.fillMaxWidth()
                 .padding(vertical = 12.dp),
             leading = { },
@@ -109,15 +105,6 @@ fun CreatorForm(
                 focusedPlaceholderColor = MaterialTheme.colorScheme.surfaceDim,
                 unfocusedPlaceholderColor = MaterialTheme.colorScheme.surfaceTint,
             ),
-            decorator = { innerTextField ->
-                innerTextField()
-                Text(
-                    text = annotatedText.value,
-                    style = MaterialTheme.typography.bodyMedium.copy(
-                        color = MaterialTheme.colorScheme.onBackground
-                    )
-                )
-            }
         ) { Text(text = stringResource(R.string.post_description)) }
         Spacer(modifier = Modifier.height(4.dp))
     }

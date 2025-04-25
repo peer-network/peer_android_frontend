@@ -1,7 +1,7 @@
 package eu.peernetwork.app.ui.profile.core
 
 import android.content.Context
-import eu.peernetwork.app.ui.profile.preview.ProfilePreview
+import eu.peernetwork.app.ui.profile.preview.Preview
 import eu.peernetwork.blog.ui.provider.BlogProvider
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
@@ -19,7 +19,7 @@ interface Profile : UserProvider, PreferenceProvider, BlogProvider {
         dependencies = [ Profile::class ],
         modules = [ ProfileModule::class ]
     )
-    interface Component : Profile, UiComponentProvider, ProfilePreview, Settings
+    interface Component : Profile, UiComponentProvider, Preview, Settings
 
     class Builder(private val dependency: Profile) : UiComponent.DefaultBuilder<Profile, Component>() {
         override fun build(context: Context): Component {

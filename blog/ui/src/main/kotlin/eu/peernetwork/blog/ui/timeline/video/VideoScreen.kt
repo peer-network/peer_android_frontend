@@ -11,31 +11,25 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.paging.compose.collectAsLazyPagingItems
 import eu.peernetwork.core.common.model.Pageable
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.extension.builder
 import kotlinx.coroutines.delay
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.paging.LoadState
-import androidx.paging.PagingData
-import dev.materii.pullrefresh.DragRefreshLayout
-import dev.materii.pullrefresh.rememberPullRefreshState
-import eu.peernetwork.blog.ui.comment.CommentScreen
+import androidx.paging.compose.LazyPagingItems
 import eu.peernetwork.blog.ui.model.UiVideo
 import eu.peernetwork.blog.ui.compose.MediaPostCard
 import eu.peernetwork.blog.ui.compose.PostSummary
-import eu.peernetwork.blog.ui.compose.PostIcon
-import eu.peernetwork.blog.ui.engagement.EngagementsViewModel
-import eu.peernetwork.blog.ui.model.UiAction
+import eu.peernetwork.blog.ui.compose.PostPageSkeleton
+import eu.peernetwork.blog.ui.engagement.EngagementScreen
+import eu.peernetwork.blog.ui.mapper.mapToContent
+import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.post.photo.formatTimeAgo
-import eu.peernetwork.core.ui.design.component.DesignStatefulContent
-import eu.peernetwork.core.ui.design.component.DesignStatefulContentState
-import eu.peernetwork.core.ui.design.compose.DesignBottomSheet
+import eu.peernetwork.core.ui.design.component.DesignPagingScaffold
+import eu.peernetwork.core.ui.design.component.DesignRefreshableScaffold
+import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
 import eu.peernetwork.media.core.renderer.VideoThumbnail
-import kotlinx.coroutines.flow.Flow
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -53,22 +47,16 @@ fun VideoScreen(
         viewModelStoreOwner = viewModelStoreOwner,
         factory = component.viewModelFactory()
     )
-    val engagementsViewModel = viewModel(
-        modelClass = EngagementsViewModel::class.java,
-        viewModelStoreOwner = viewModelStoreOwner,
-        factory = component.viewModelFactory()
-    )
-    val coroutineScope = rememberCoroutineScope()
     val state by viewModel.state.collectAsStateWithLifecycle()
     val derivedState = remember {
         derivedStateOf {
             when (state) {
-                VideoViewModel.State.Empty -> DesignStatefulContentState.Empty
-                VideoViewModel.State.Loading -> DesignStatefulContentState.Loading
-                is VideoViewModel.State.Success -> DesignStatefulContentState.Success(
+                VideoViewModel.State.Empty -> DesignStatefulScaffoldState.Empty
+                VideoViewModel.State.Loading -> DesignStatefulScaffoldState.Loading
+                is VideoViewModel.State.Success -> DesignStatefulScaffoldState.Success(
                     (state as VideoViewModel.State.Success).data
                 )
-                is VideoViewModel.State.Error -> DesignStatefulContentState.Error(
+                is VideoViewModel.State.Error -> DesignStatefulScaffoldState.Error(
                     (state as VideoViewModel.State.Error).error
                 )
             }
@@ -81,50 +69,30 @@ fun VideoScreen(
             currentTime.longValue = System.currentTimeMillis()
         }
     }
-    var isRefreshing by remember {
-        mutableStateOf(derivedState.value is DesignStatefulContentState.Loading)
-    }
-    var position = remember { mutableStateOf<Int?>(null) }
-    val pullRefreshState = rememberPullRefreshState(refreshing = isRefreshing, onRefresh = {
-        viewModel.load(Pageable(0, postLimit))
-    })
-    DragRefreshLayout(state = pullRefreshState) {
-        DesignStatefulContent<Flow<PagingData<UiVideo>>>(
-            state = derivedState,
-            refresh = { viewModel.load(Pageable(0, postLimit)) }
-        ) { flow ->
-            val lazyPagingItems = flow.collectAsLazyPagingItems()
-            var showSheet = remember { mutableStateOf(false) }
-            var selectedPostId = remember { mutableStateOf("") }
-            DesignBottomSheet(
-                showSheet = showSheet,
-                tag = "designBottomSheet",
-                onDismissRequest = { showSheet.value = false },
-                color = Color.White.copy(alpha = 0.9f),
-                sheetPeekHeight = 600.dp,
-                content = {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(12.dp)
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .weight(1f)
-                                .fillMaxWidth()
-                        ) {
-                            CommentScreen(
-                                postId = selectedPostId,
-                                postLimit = postLimit,
-                                provider = component,
-                                viewModelStoreOwner = viewModelStoreOwner,
-                                modifier = Modifier.fillMaxSize()
-                            )
-                        }
-
-                    }
-                }
-            )
+    var selectedClip = remember { mutableStateOf<Int?>(null) }
+    val refreshEngagement = remember { mutableStateOf(false) }
+    DesignPagingScaffold<UiVideo>(
+        state = derivedState,
+        onRefresh = { viewModel.load(Pageable(0, postLimit)) },
+        placeholder = { PostPageSkeleton() }
+    ) { state, lazyPagingItems ->
+        val refreshState = remember { derivedStateOf {
+            if (lazyPagingItems.loadState.refresh is LoadState.Loading) {
+                DesignStatefulScaffoldState.Loading
+            } else if (lazyPagingItems.loadState.refresh is LoadState.Error) {
+                DesignStatefulScaffoldState.Error(
+                    (lazyPagingItems.loadState.refresh as LoadState.Error).error
+                )
+            } else {
+                state.value
+            }
+        } }
+        DesignRefreshableScaffold<LazyPagingItems<UiPost>>(
+            state = refreshState,
+            onRefresh = {
+                refreshEngagement.value = true
+                lazyPagingItems.refresh() }
+        ) {
             LazyColumn(modifier = Modifier.fillMaxSize()) {
                 items(
                     count = lazyPagingItems.itemCount,
@@ -134,19 +102,23 @@ fun VideoScreen(
                         MediaPostCard(
                             author = post.author,
                             description = post.createdAt.formatTimeAgo(currentTime.longValue),
-                            modifier = Modifier.padding(bottom = 4.dp),
                             caption = {
                                 PostSummary(post.author.username, post.title, post.description)
                             },
                             engagements = {
-                                PostIcon(UiAction.Like, post.likes.toString(), onClick = { })
-                                PostIcon(UiAction.Dislike, post.dislikes.toString(), onClick = { })
-                                PostIcon(UiAction.Comment, post.comment.toString(), onClick = { })
-                            }
+                                EngagementScreen(
+                                    post.mapToContent(),
+                                    postLimit,
+                                    refreshEngagement,
+                                    component,
+                                    viewModelStoreOwner
+                                )
+                            },
+                            modifier = Modifier.padding(bottom = 16.dp)
                         ) {
                             Box(modifier = Modifier.clickable(
                                 role = Role.Button,
-                                onClick = { position.value = index }
+                                onClick = { selectedClip.value = index }
                             )) {
                                 component.videoThumbnail()(
                                     Modifier,
@@ -161,7 +133,7 @@ fun VideoScreen(
                 }
                 item { Spacer(modifier = Modifier.height(56.dp)) }
             }
-            VideoDialog(postLimit, position, provider, viewModelStoreOwner)
         }
+        VideoDialog(postLimit, selectedClip, provider, viewModelStoreOwner)
     }
 }

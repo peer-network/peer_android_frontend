@@ -33,9 +33,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import eu.peernetwork.core.ui.annotation.UiViewModel
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.component.DesignRefreshableContent
+import eu.peernetwork.core.ui.design.component.DesignRefreshableScaffold
 import eu.peernetwork.core.ui.design.compose.DesignOutlinedButton
-import eu.peernetwork.core.ui.design.component.DesignStatefulContentState
+import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.user.ui.R
@@ -48,7 +48,7 @@ import eu.peernetwork.user.ui.compose.LogoutSheet
 import eu.peernetwork.user.ui.compose.PasswordSheet
 
 @Composable
-fun UserSettingsScreen(
+fun SettingsScreen(
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner = UiViewModel.Owner(),
 ) {
@@ -64,24 +64,24 @@ fun UserSettingsScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
     val derivedState = remember { derivedStateOf {
         when(state) {
-            SettingsViewModel.State.Empty -> DesignStatefulContentState.Empty
-            SettingsViewModel.State.Loading -> DesignStatefulContentState.Loading
+            SettingsViewModel.State.Empty -> DesignStatefulScaffoldState.Empty
+            SettingsViewModel.State.Loading -> DesignStatefulScaffoldState.Loading
             is SettingsViewModel.State.Content -> {
-                DesignStatefulContentState.Success((state as SettingsViewModel.State.Content).account)
+                DesignStatefulScaffoldState.Success((state as SettingsViewModel.State.Content).account)
             }
             is SettingsViewModel.State.Failure -> {
-                DesignStatefulContentState.Error((state as SettingsViewModel.State.Failure).error)
+                DesignStatefulScaffoldState.Error((state as SettingsViewModel.State.Failure).error)
             }
         }
     } }
     val content = remember { derivedStateOf { state as? SettingsViewModel.State.Content? } }
     val error = remember { derivedStateOf { content.value?.error } }
     val isLoading = remember { derivedStateOf { content.value?.processing == true } }
-    DesignRefreshableContent<UiAccount>(
+    DesignRefreshableScaffold<UiAccount>(
         state = derivedState,
         onRefresh = { viewModel.getAccount() }
     ) {
-        UserSettingsContent(
+        SettingsScreen(
             account = it,
             isLoading = isLoading,
             error = error,
@@ -101,7 +101,7 @@ fun UserSettingsScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UserSettingsContent(
+fun SettingsScreen(
     account: UiAccount,
     isLoading: State<Boolean>,
     modifier: Modifier = Modifier,
@@ -127,6 +127,7 @@ fun UserSettingsContent(
     Column(modifier = modifier) {
         SettingsHeader(
             account = account,
+            modifier = Modifier.padding(top = 8.dp),
             isLoading = isLoading.value,
             enabled = !isLoading.value && fields.value != account.mapToModels(),
             onChange = { image.value = it },
@@ -179,7 +180,7 @@ fun UserSettingsContent(
 
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
-fun PreviewUserSettingsContent() {
+fun PreviewSettingsScreen() {
     PeerTheme {
         val model = UiAccount(
             id = System.currentTimeMillis().toString(),
@@ -194,7 +195,7 @@ fun PreviewUserSettingsContent() {
                 followed = 0
             )
         )
-        UserSettingsContent(
+        SettingsScreen(
             account = model,
             isLoading = remember { mutableStateOf(false) },
             modifier = Modifier

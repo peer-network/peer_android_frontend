@@ -4,12 +4,14 @@ import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,6 +27,7 @@ import eu.peernetwork.core.ui.theme.PeerTheme
 fun UserScaffold(
     modifier: Modifier = Modifier,
     textStyle: TextStyle = MaterialTheme.typography.bodyMedium,
+    contentPadding: PaddingValues = PaddingValues(top = 8.dp),
     avatar: @Composable (() -> Unit)? = null,
     indicator: @Composable (() -> Unit)? = null,
     actions: @Composable (() -> Unit)? = null,
@@ -32,7 +35,7 @@ fun UserScaffold(
     content: @Composable () -> Unit,
 ) {
     DesignDetail(
-        modifier = modifier,
+        modifier = modifier.padding(contentPadding),
         textStyle = textStyle,
         lead = { avatar?.run {
                 DesignAvatar(
@@ -53,7 +56,7 @@ fun UserScaffold(
 }
 
 @Composable
-fun UserSkeleton(modifier: Modifier = Modifier) {
+fun UserScaffold(modifier: Modifier = Modifier) {
     UserScaffold(
         modifier = modifier,
         avatar = {
@@ -63,12 +66,13 @@ fun UserSkeleton(modifier: Modifier = Modifier) {
     ) {
         Column {
             Box(modifier = Modifier.width(100.dp)
-                .height(8.dp)
-                .background(MaterialTheme.colorScheme.tertiaryContainer))
-            Box(modifier = Modifier.fillMaxWidth()
-                .height(48.dp)
                 .padding(top = 8.dp)
-                .background(MaterialTheme.colorScheme.tertiaryContainer))
+                .height(16.dp)
+                .background(MaterialTheme.colorScheme.tertiaryContainer, RoundedCornerShape(4.dp)))
+            Box(modifier = Modifier.fillMaxWidth()
+                .padding(top = 8.dp)
+                .height(48.dp)
+                .background(MaterialTheme.colorScheme.tertiaryContainer, RoundedCornerShape(4.dp)))
         }
     }
 }
@@ -88,12 +92,13 @@ fun UserErrorScaffold(
     ) {
         Column {
             Box(modifier = Modifier.width(100.dp)
-                .height(8.dp)
-                .background(MaterialTheme.colorScheme.tertiaryContainer))
+                .padding(top = 8.dp)
+                .height(16.dp)
+                .background(MaterialTheme.colorScheme.tertiaryContainer, RoundedCornerShape(4.dp)))
             Box(modifier = Modifier.fillMaxWidth()
-                .height(48.dp)
                 .padding(top = 8.dp, end = 8.dp)
-                .background(MaterialTheme.colorScheme.tertiaryContainer))
+                .height(48.dp)
+                .background(MaterialTheme.colorScheme.tertiaryContainer, RoundedCornerShape(4.dp)))
         }
     }
 }
@@ -103,7 +108,7 @@ fun UserErrorScaffold(
 fun PreviewUserScaffold() {
     PeerTheme {
         Column {
-            UserSkeleton(modifier = Modifier.padding(16.dp))
+            UserScaffold(modifier = Modifier.padding(16.dp))
             UserErrorScaffold(modifier = Modifier.padding(16.dp)) {
                 Text(text = "icon")
             }

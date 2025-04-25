@@ -8,5 +8,7 @@ interface TokenRepository {
 
     fun observe(): Flow<Token?>
 
+    suspend fun refresh(token: String): Token
+
     suspend fun clear()
 }

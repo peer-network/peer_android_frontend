@@ -57,7 +57,7 @@ fun RegistrationScreen(
             state is RegistrationViewModel.State.Success
         }
     }
-    RegistrationContent(
+    RegistrationScreen(
         loading = state is RegistrationViewModel.State.Loading,
         error = (state as? RegistrationViewModel.State.Error?)?.error?.message,
         onReset = { viewModel.reset() }
@@ -72,7 +72,7 @@ fun RegistrationScreen(
 }
 
 @Composable
-fun RegistrationContent(
+fun RegistrationScreen(
     loading: Boolean = false,
     error: String? = null,
     onReset: (() -> Unit)? = null,
@@ -124,8 +124,8 @@ fun RegistrationContent(
 
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
-fun PreviewRegistrationContent() {
+fun PreviewRegistrationScreen() {
     PeerTheme {
-        RegistrationContent { email, username, password -> }
+        RegistrationScreen { email, username, password -> }
     }
 }

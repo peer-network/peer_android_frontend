@@ -4,6 +4,9 @@ import eu.peernetwork.blog.domain.model.Author
 import eu.peernetwork.blog.domain.model.Comment
 import eu.peernetwork.blog.remote.comment.CreateCommentMutation
 import eu.peernetwork.blog.remote.comment.GetCommentsQuery
+import java.text.SimpleDateFormat
+import java.util.Locale
+import java.util.TimeZone
 
 fun GetCommentsQuery.AffectedRow.mapToDomain(): List<Comment> {
     return comments.map {
@@ -17,7 +20,8 @@ fun GetCommentsQuery.AffectedRow.mapToDomain(): List<Comment> {
                 imageUrl = it.user.img!!,
                 ),
             createdAt = 0L,
-            likes = it.amountlikes
+            likes = it.amountlikes,
+            isLiked = it.isliked
         )
     }
 }
@@ -32,7 +36,15 @@ fun CreateCommentMutation.AffectedRow.mapToDomain(): Comment {
             username = user.username!!,
             imageUrl = user.img!!
         ),
-        createdAt = createdat as Long,
-        likes = amountlikes
+        createdAt = (createdat.toString()).mapToTimestamp(),
+        likes = amountlikes,
+        isLiked = isliked
     )
+}
+
+fun String.mapToTimestamp(): Long {
+    val trimmedDate = substring(0, 23)
+    val format = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.US)
+    format.timeZone = TimeZone.getTimeZone("UTC")
+    return format.parse(trimmedDate)?.time ?: 0L
 }

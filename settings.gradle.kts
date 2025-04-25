@@ -37,6 +37,11 @@ include(":blog:data")
 include(":blog:remote")
 include(":blog:ui")
 
+include(":wallet:domain")
+include(":wallet:data")
+include(":wallet:remote")
+include(":wallet:ui")
+
 include(":social:domain")
 include(":social:data")
 include(":social:remote")

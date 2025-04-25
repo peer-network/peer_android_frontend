@@ -7,8 +7,6 @@ interface AuthenticationApi {
 
     suspend fun login(email: String, password: String): String
 
-    suspend fun refresh(token: String)
-
     suspend fun logout()
 
     interface Listener {

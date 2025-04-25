@@ -1,83 +1,51 @@
 package eu.peernetwork.blog.ui.comment
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
+import android.widget.Toast
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.TextFieldState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material3.Divider
+import androidx.compose.foundation.text.input.clearText
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardCapitalization
-import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.paging.PagingData
-import androidx.paging.compose.collectAsLazyPagingItems
-import coil.compose.AsyncImage
-import eu.peernetwork.blog.ui.model.UiAuthor
+import eu.peernetwork.blog.ui.compose.ContentBar
+import eu.peernetwork.blog.ui.compose.ContentSkeleton
+import eu.peernetwork.blog.ui.mapper.mapToContent
 import eu.peernetwork.blog.ui.model.UiComment
+import eu.peernetwork.blog.ui.model.UiContent
 import eu.peernetwork.core.common.model.Pageable
-import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.component.DesignStatefulContent
-import eu.peernetwork.core.ui.design.component.DesignStatefulContentState
-import eu.peernetwork.core.ui.design.compose.DesignOption
-import eu.peernetwork.core.ui.design.compose.DesignTextField
+import eu.peernetwork.core.ui.design.component.DesignPagingScaffold
+import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
 import eu.peernetwork.core.ui.extension.builder
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
 @Composable
 fun CommentScreen(
-    postId: State<String>,
+    id: String,
+    state: MutableState<UiContent?>,
     postLimit: Int,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
-    modifier: Modifier
+    modifier: Modifier = Modifier,
+    onUpdate: () -> Unit,
 ) {
     val context = LocalContext.current
     val component = remember { provider.builder(Comment.Builder::class.java).build(context) }
@@ -86,140 +54,127 @@ fun CommentScreen(
         viewModelStoreOwner = viewModelStoreOwner,
         factory = component.viewModelFactory()
     )
-    val state = viewModel.state.collectAsStateWithLifecycle()
-    val currentTime = remember { mutableLongStateOf(System.currentTimeMillis()) }
-
-    LaunchedEffect(Unit) {
-        while (true) {
-            delay(60_000L)
-            currentTime.longValue = System.currentTimeMillis()
-        }
-    }
-
-    LaunchedEffect(postId.value) {
-        viewModel.load(postId.value, Pageable(0, postLimit))
-    }
-
-    DesignStatefulContent<Flow<PagingData<UiComment>>>(
-        state = remember {
-            derivedStateOf {
-                when (state.value) {
-                    CommentViewModel.State.Empty -> DesignStatefulContentState.Empty
-                    CommentViewModel.State.Loading -> DesignStatefulContentState.Loading
-                    is CommentViewModel.State.Success -> {
-                        DesignStatefulContentState.Success(
-                            (state.value as CommentViewModel.State.Success).content
-                        )
-                    }
-                    is CommentViewModel.State.Error -> DesignStatefulContentState.Error(
-                        (state.value as CommentViewModel.State.Error).error
+    val sheetState = viewModel.state.collectAsStateWithLifecycle()
+    val derivedState = remember {
+        derivedStateOf {
+            when (sheetState.value) {
+                CommentViewModel.State.Loading -> DesignStatefulScaffoldState.Loading
+                is CommentViewModel.State.Content -> {
+                    DesignStatefulScaffoldState.Success(
+                        (sheetState.value as CommentViewModel.State.Content).content
                     )
                 }
+                is CommentViewModel.State.Error -> DesignStatefulScaffoldState.Error(
+                    (sheetState.value as CommentViewModel.State.Error).error
+                )
+                else -> DesignStatefulScaffoldState.Empty
             }
-        },
-        refresh = { viewModel.load(postId.value, Pageable(0, postLimit)) }
-    ) { flow ->
-        val items = flow.collectAsLazyPagingItems()
-        val commentState = remember { TextFieldState() }
-        val focusRequester = remember { FocusRequester() }
-
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp)
-        ) {
-            items(items.itemCount) { index ->
-                items[index]?.let { comment ->
-                    Row(
-                        modifier = modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 8.dp),
-                        verticalAlignment = Alignment.Top,
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Row {
-                            Text(
-                                text = comment.author.username,
-                                style = MaterialTheme.typography.titleSmall,
-                                fontWeight = FontWeight.Bold
-                            )
-
-                            Spacer(modifier = Modifier.width(12.dp))
-
-                            Text(
-                                text = comment.content,
-                                style = MaterialTheme.typography.bodySmall
-                            )
+        }
+    }
+    val contents = remember { derivedStateOf {
+        sheetState.value as? CommentViewModel.State.Content?
+    } }
+    val replyTo = remember { mutableStateOf<String?>(null) }
+    val isLoading = remember { derivedStateOf { contents.value?.isLoading == true } }
+    val isSelected = remember { derivedStateOf { contents.value?.selected != null } }
+    CommentScreen(
+        id = id,
+        state = state,
+        replyTo = replyTo,
+        isLoading = isLoading,
+        modifier = modifier.fillMaxSize(),
+        onRefresh = { state.value?.let { viewModel.load(it.id, Pageable(0, postLimit)) } },
+        onSubmit = { id, comment -> viewModel.comment(id, comment) }
+    ) {
+        DesignPagingScaffold<UiComment>(
+            state = derivedState,
+            onRefresh = { state.value?.let { viewModel.load(it.id, Pageable(0, postLimit)) } },
+            placeholder = { ContentSkeleton(modifier = Modifier.padding(horizontal = 24.dp)) }
+        ) { pageState, items ->
+            LazyColumn(modifier = Modifier.fillMaxSize()) {
+                items(items.itemCount) { index ->
+                    items[index]?.let { comment ->
+                        ContentBar(
+                            model = comment.mapToContent(),
+                            modifier = Modifier
+                                .padding(horizontal = 24.dp)
+                                .padding(top = 12.dp),
+                            titleOnClick = {
+                                replyTo.value = comment.author.username
+                            },
+                        ) {
+                            val liked = remember { derivedStateOf {
+                                contents.value?.likes?.firstOrNull { it.id == comment.id }
+                            } }
+                            CommentOptions(
+                                likes = liked.value?.likes ?: comment.likes,
+                                isLiked = liked.value?.isLiked ?: comment.isLiked
+                            ) {
+                                viewModel.like(comment)
+                                items.refresh()
+                            }
                         }
-                        DesignOption(
-                            text = comment.likes.toString(),
-                            painter = painterResource(id = R.drawable.ic_like),
-                            contentDescription = "Action Icon",
-                            tint = Color.Black,
-                            onClick = {}
-                        )
+                    }
+                }
+                item { Box(modifier = Modifier.navigationBarsPadding()
+                    .padding(bottom = 200.dp)) }
+            }
+            LaunchedEffect(isLoading.value) {
+                if (!isLoading.value && isSelected.value) {
+                    it.clearText()
+                    items.refresh()
+                    onUpdate()
+                }
+            }
+        }
+    }
+    LaunchedEffect(sheetState.value) {
+        val content = (sheetState.value as? CommentViewModel.State.Content?)
+        if (content?.error != null && id == state.value?.id) {
+            Toast.makeText(context, content.error.message, Toast.LENGTH_SHORT).show()
+            viewModel.reset()
+        }
+    }
+}
+
+@Composable
+fun CommentScreen(
+    id: String,
+    state: MutableState<UiContent?>,
+    replyTo: MutableState<String?>,
+    isLoading: State<Boolean>,
+    modifier: Modifier = Modifier,
+    onRefresh: () -> Unit = {},
+    onSubmit: (String, String) -> Unit = { id, comment -> },
+    content: @Composable (TextFieldState) -> Unit = {}
+) {
+    val comment = remember { TextFieldState() }
+    val sheet = remember { mutableStateOf<UiContent?>(null) }
+    CommentScaffold(
+        tag = id,
+        state = state,
+        modifier = modifier,
+        sheet = { sheet.value?.let {
+            CommentForm(
+                model = it,
+                comment = comment,
+                replyTo = replyTo,
+                isLoading = isLoading,
+                modifier = Modifier.padding(horizontal = 24.dp),
+                onSubmit = onSubmit
+            )
+        } },
+        content = { uiState ->
+            content(comment)
+            LaunchedEffect(uiState.value) {
+                state.value?.let {
+                    if (uiState.value) {
+                        sheet.value = state.value
+                        delay(50)
+                        onRefresh()
                     }
                 }
             }
         }
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(
-                    color = MaterialTheme.colorScheme.surface,
-                    shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
-                )
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            DesignTextField(
-                state = commentState,
-                modifier = Modifier.weight(1f),
-                focusRequester = focusRequester,
-                keyboardOptions = KeyboardOptions(
-                    capitalization = KeyboardCapitalization.Sentences,
-                    keyboardType = KeyboardType.Text,
-                    imeAction = ImeAction.Send
-                ),
-                onKeyboardAction = {
-                    if (commentState.text.isNotBlank()) {
-                        viewModel.comment(
-                            postId.value,
-                            commentState.text.toString()
-                        )
-                    }
-                },
-                colors = TextFieldDefaults.colors(
-                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
-                    focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
-                    focusedTextColor = MaterialTheme.colorScheme.onBackground,
-                    unfocusedTextColor = MaterialTheme.colorScheme.tertiary,
-                    focusedPlaceholderColor = MaterialTheme.colorScheme.surfaceDim,
-                    unfocusedPlaceholderColor = MaterialTheme.colorScheme.surfaceTint,
-                ),
-                lineLimits = TextFieldLineLimits.MultiLine(1, 3),
-                placeholder = { Text("Write a comment...") }
-            )
-
-            IconButton(
-                onClick = {
-                    if (commentState.text.isNotBlank()) {
-                        viewModel.comment(postId.value, commentState.text.toString())
-                    }
-                },
-                enabled = commentState.text.isNotBlank()
-                ) {
-                Icon(
-                    imageVector = Icons.Default.Edit,
-                    contentDescription = "Send comment",
-                    tint = if (commentState.text.isNotBlank()) {
-                        MaterialTheme.colorScheme.primary
-                    } else {
-                        MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
-                    }
-                )
-            }
-        }
-    }
+    )
 }

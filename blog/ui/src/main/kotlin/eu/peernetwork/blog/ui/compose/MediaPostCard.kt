@@ -83,7 +83,7 @@ fun MediaPostCard(
                 vertical = 16.dp,
                 horizontal = 24.dp
             )) {
-                AuthorBadge(
+                AuthorBar(
                     author,
                     description,
                     modifier = Modifier.weight(1f),

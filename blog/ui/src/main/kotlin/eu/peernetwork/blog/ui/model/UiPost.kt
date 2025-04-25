@@ -12,6 +12,8 @@ data class UiPost(
     val createdAt: Long,
     val description: String,
     val likes: Int,
+    val isLiked: Boolean,
+    val isDisliked: Boolean,
     val dislikes: Int,
     val comment: Int
 ) {

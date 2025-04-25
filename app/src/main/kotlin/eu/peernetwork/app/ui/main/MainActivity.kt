@@ -3,10 +3,12 @@ package eu.peernetwork.app.ui.main
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.DisposableEffect
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModelProvider
+import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.design.compose.DesignOverlay
 import eu.peernetwork.core.ui.extension.findBuilder
@@ -23,6 +25,7 @@ class MainActivity : ComponentActivity(), UiComponent.Provider<Main.Component> {
         findBuilder(Main.Builder::class).build(this)
     }
 
+    @Suppress("KotlinConstantConditions")
     override fun onCreate(savedInstanceState: Bundle?) {
         injector.inject(this)
         super.onCreate(savedInstanceState)
@@ -30,7 +33,13 @@ class MainActivity : ComponentActivity(), UiComponent.Provider<Main.Component> {
         installSplashScreen()
         WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
-            PeerTheme {
+            PeerTheme(
+                isDarkMode = if (BuildConfig.USE_SYSTEM_THEME) {
+                    isSystemInDarkTheme()
+                } else {
+                    true
+                }
+            ) {
                 DesignOverlay {
                     MainScreen(
                         component = injector,

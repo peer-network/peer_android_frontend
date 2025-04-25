@@ -3,7 +3,7 @@ package eu.peernetwork.app.ui.profile.core
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
-import eu.peernetwork.app.ui.profile.preview.ProfilePreview
+import eu.peernetwork.app.ui.profile.preview.Preview
 import eu.peernetwork.core.ui.annotation.UiBuilder
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
@@ -19,9 +19,9 @@ object ProfileModule {
     @Profile.Scope
     @Provides
     @IntoMap
-    @UiBuilder(ProfilePreview.Builder::class)
+    @UiBuilder(Preview.Builder::class)
     fun provideProfileDetailBuilder(component: Profile.Component): UiComponent.Builder {
-        return ProfilePreview.Builder(component)
+        return Preview.Builder(component)
     }
 
     @Profile.Scope

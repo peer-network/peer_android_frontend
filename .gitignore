@@ -1,5 +1,6 @@
 *.iml
 build/
+release/
 .idea/
 .gradle/
 *.log
@@ -7,3 +8,4 @@ build/
 *.keystore
 .DS_Store
 local.properties
+google-services.json

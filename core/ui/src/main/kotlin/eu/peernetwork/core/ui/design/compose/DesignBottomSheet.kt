@@ -22,8 +22,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -47,15 +49,16 @@ import kotlinx.coroutines.launch
 @Composable
 fun DesignBottomSheet(
     showSheet: MutableState<Boolean>,
-    onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
+    onDismissRequest: () -> Unit = {},
     tag: String,
     handleBackPress: Boolean = true,
     initialValue: SheetValue = SheetValue.Hidden,
     sheetPeekHeight: Dp = 400.dp,
     color: Color = MaterialTheme.colorScheme.tertiaryContainer,
-    background: @Composable () -> Unit = {},
-    content: @Composable () -> Unit,
+    indicatorColor: Color = MaterialTheme.colorScheme.surfaceDim,
+    background: @Composable (State<Boolean>) -> Unit = {},
+    content: @Composable (State<Boolean>) -> Unit,
 ) {
     val density = LocalDensity.current
     val focus = remember { FocusRequester() }
@@ -68,11 +71,10 @@ fun DesignBottomSheet(
         initialValue = initialValue,
         skipHiddenState = false
     )
-    val initialized = remember { mutableStateOf(false) }
     val scaffoldState = rememberBottomSheetScaffoldState(bottomSheetState = sheetState)
-    DesignOverlayHost(tag, visible = true) {
+    DesignOverlayHost(tag, visible = showSheet.value) { overlayState ->
         overlay {
-            background()
+            background(overlayState)
             BottomSheetScaffold(
                 scaffoldState = scaffoldState,
                 sheetPeekHeight = with(density) { height.toDp() },
@@ -88,7 +90,14 @@ fun DesignBottomSheet(
                                     height = coordinates.size.height
                                 }
                             }
-                    ) { content() }
+                    ) {
+                        content(overlayState)
+                        LaunchedEffect(overlayState.value) {
+                            if (overlayState.value) {
+                                focus.requestFocus()
+                            }
+                        }
+                    }
                 },
                 sheetSwipeEnabled = true,
                 sheetDragHandle = {
@@ -102,29 +111,38 @@ fun DesignBottomSheet(
                             modifier = Modifier
                                 .width(40.dp)
                                 .height(4.dp)
-                                .background(
-                                    color = MaterialTheme.colorScheme.tertiaryContainer,
-                                    shape = RoundedCornerShape(2.dp)
-                                )
+                                .background(color = indicatorColor, shape = RoundedCornerShape(2.dp))
                         )
                     }
                 },
-            ) { }
-        }
-    }
-    LaunchedEffect(showSheet.value) {
-        if (showSheet.value) {
-            focus.requestFocus()
-            sheetState.partialExpand()
-        } else {
-            sheetState.hide()
+            ) {
+                LaunchedEffect(overlayState.value) {
+                    if (overlayState.value) {
+                        sheetState.partialExpand()
+                    } else {
+                        sheetState.hide()
+                    }
+                }
+                DisposableEffect(overlayState.value) {
+                    onDispose {
+                        coroutineScope.launch {
+                            sheetState.hide()
+                        }
+                    }
+                }
+            }
         }
     }
     LaunchedEffect(scaffoldState.bottomSheetState.currentValue) {
-        if (scaffoldState.bottomSheetState.currentValue == SheetValue.Hidden && initialized.value) {
+        if (scaffoldState.bottomSheetState.currentValue == SheetValue.Hidden) {
+            showSheet.value = false
             onDismissRequest()
         }
-        initialized.value = true
+    }
+    LaunchedEffect(showSheet.value) {
+        if (!showSheet.value) {
+            onDismissRequest()
+        }
     }
     BackHandler(enabled = showSheet.value && handleBackPress) {
         coroutineScope.launch {

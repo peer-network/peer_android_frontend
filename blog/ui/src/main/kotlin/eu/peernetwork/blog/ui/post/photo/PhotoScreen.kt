@@ -12,6 +12,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -20,19 +21,19 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.LoadState
-import androidx.paging.PagingData
-import androidx.paging.compose.collectAsLazyPagingItems
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.compose.PostListItem
+import eu.peernetwork.blog.ui.compose.PostPageSkeleton
+import eu.peernetwork.blog.ui.engagement.EngagementScreen
+import eu.peernetwork.blog.ui.mapper.mapToContent
 import eu.peernetwork.blog.ui.mapper.mapToProperty
 import eu.peernetwork.core.common.model.Pageable
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.component.DesignStatefulContent
-import eu.peernetwork.core.ui.design.component.DesignStatefulContentState
+import eu.peernetwork.core.ui.design.component.DesignPagingScaffold
+import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.media.core.renderer.ImageView
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
 import java.util.Calendar
 import java.util.Locale
 import java.util.concurrent.TimeUnit
@@ -60,24 +61,25 @@ fun PhotoScreen(
     val derivedState = remember {
         derivedStateOf {
             when (state) {
-                PhotoViewModel.State.Empty -> DesignStatefulContentState.Empty
-                PhotoViewModel.State.Loading -> DesignStatefulContentState.Loading
+                PhotoViewModel.State.Empty -> DesignStatefulScaffoldState.Empty
+                PhotoViewModel.State.Loading -> DesignStatefulScaffoldState.Loading
                 is PhotoViewModel.State.Success -> {
-                    DesignStatefulContentState.Success(
+                    DesignStatefulScaffoldState.Success(
                         (state as PhotoViewModel.State.Success).content
                     )
                 }
-                is PhotoViewModel.State.Error -> DesignStatefulContentState.Error(
+                is PhotoViewModel.State.Error -> DesignStatefulScaffoldState.Error(
                     (state as PhotoViewModel.State.Error).error
                 )
             }
         }
     }
-    DesignStatefulContent<Flow<PagingData<UiPost>>>(
+    val refreshEngagement = remember { mutableStateOf(false) }
+    DesignPagingScaffold<UiPost>(
         state = derivedState,
-        refresh = { viewModel.load(author, Pageable(0, postLimit)) }
-    ) { flow ->
-        val lazyPagingItems = flow.collectAsLazyPagingItems()
+        placeholder = { PostPageSkeleton() },
+        onRefresh = { viewModel.load(author, Pageable(0, postLimit)) },
+    ) { state, lazyPagingItems ->
         LazyColumn {
             items(
                 count = lazyPagingItems.itemCount,
@@ -85,9 +87,16 @@ fun PhotoScreen(
             ) { index ->
                 lazyPagingItems[index]?.let { photo ->
                     PostListItem(
-                        photo, index, currentTime, onClick = {},
-                        provider = provider,
-                        viewModelStoreOwner = viewModelStoreOwner
+                        photo,
+                        index,
+                        currentTime,
+                        engagements = { EngagementScreen(
+                            photo.mapToContent(),
+                            postLimit,
+                            refreshEngagement,
+                            component,
+                            viewModelStoreOwner
+                        ) }
                     ) {
                         val media = photo.media.first()
                         component.imageView()(
@@ -102,13 +111,12 @@ fun PhotoScreen(
             }
             item { Spacer(modifier = Modifier.height(56.dp)) }
         }
-    }
-    LaunchedEffect(derivedState.value) {
-        loadState.value = derivedState.value is DesignStatefulContentState.Loading
-    }
-    LaunchedEffect(loadState.value) {
-        if (loadState.value) {
-            viewModel.load(author, Pageable(0, postLimit))
+        LaunchedEffect(loadState.value) {
+            if (loadState.value) {
+                lazyPagingItems.refresh()
+                refreshEngagement.value = true
+                loadState.value = false
+            }
         }
     }
     LaunchedEffect(Unit) {

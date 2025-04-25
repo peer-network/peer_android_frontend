@@ -6,7 +6,7 @@ import eu.peernetwork.media.core.model.MimeType
 
 interface MediaSelector : Renderer.Stateful<MediaSelector.Spec> {
     data class Spec(
-        val type: MimeType,
+        val type: MimeType?,
         val attachments: MutableState<List<Uri>>
     )
 }

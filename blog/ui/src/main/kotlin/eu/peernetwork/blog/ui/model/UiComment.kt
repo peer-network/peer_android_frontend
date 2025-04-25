@@ -8,5 +8,6 @@ data class UiComment (
     val author: UiAuthor,
     val content: String,
     val createdAt: Long,
-    val likes: Int
+    val likes: Int,
+    val isLiked: Boolean
 )

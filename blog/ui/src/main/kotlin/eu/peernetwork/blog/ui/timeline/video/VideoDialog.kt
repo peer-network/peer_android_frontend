@@ -19,7 +19,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,26 +33,24 @@ import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
 import dev.materii.pullrefresh.DragRefreshLayout
 import dev.materii.pullrefresh.rememberPullRefreshState
-import eu.peernetwork.blog.domain.model.Engagement
-import eu.peernetwork.blog.ui.comment.CommentScreen
 import eu.peernetwork.blog.ui.compose.DialogPostCard
 import eu.peernetwork.blog.ui.compose.PostIcon
 import eu.peernetwork.blog.ui.compose.PostSummary
-import eu.peernetwork.blog.ui.engagement.EngagementsViewModel
+import eu.peernetwork.blog.ui.mapper.mapToContent
 import eu.peernetwork.blog.ui.model.UiAction
+import eu.peernetwork.blog.ui.model.UiContent
 import eu.peernetwork.blog.ui.model.UiVideo
 import eu.peernetwork.blog.ui.post.photo.formatTimeAgo
 import eu.peernetwork.core.common.model.Pageable
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.component.DesignStatefulContent
-import eu.peernetwork.core.ui.design.component.DesignStatefulContentState
+import eu.peernetwork.core.ui.design.component.DesignStatefulScaffold
+import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
 import eu.peernetwork.core.ui.design.compose.DesignBottomSheet
 import eu.peernetwork.core.ui.design.compose.DesignDialogSheet
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.media.core.renderer.VideoPlayer
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -72,23 +69,17 @@ fun VideoDialog(
         viewModelStoreOwner = viewModelStoreOwner,
         factory = component.viewModelFactory()
     )
-    val engagementsViewModel = viewModel(
-        modelClass = EngagementsViewModel::class.java,
-        viewModelStoreOwner = viewModelStoreOwner,
-        factory = component.viewModelFactory()
-    )
     val state by viewModel.state.collectAsStateWithLifecycle()
     val isVisible = remember { derivedStateOf { initialPage.value != null } }
-    val coroutineScope = rememberCoroutineScope()
     val derivedState = remember {
         derivedStateOf {
             when (state) {
-                VideoViewModel.State.Empty -> DesignStatefulContentState.Empty
-                VideoViewModel.State.Loading -> DesignStatefulContentState.Loading
-                is VideoViewModel.State.Success -> DesignStatefulContentState.Success(
+                VideoViewModel.State.Empty -> DesignStatefulScaffoldState.Empty
+                VideoViewModel.State.Loading -> DesignStatefulScaffoldState.Loading
+                is VideoViewModel.State.Success -> DesignStatefulScaffoldState.Success(
                     (state as VideoViewModel.State.Success).data
                 )
-                is VideoViewModel.State.Error -> DesignStatefulContentState.Error(
+                is VideoViewModel.State.Error -> DesignStatefulScaffoldState.Error(
                     (state as VideoViewModel.State.Error).error
                 )
             }
@@ -102,14 +93,14 @@ fun VideoDialog(
         }
     }
     var isRefreshing by remember {
-        mutableStateOf(derivedState.value is DesignStatefulContentState.Loading)
+        mutableStateOf(derivedState.value is DesignStatefulScaffoldState.Loading)
     }
     val pullRefreshState = rememberPullRefreshState(refreshing = isRefreshing, onRefresh = {
         viewModel.load(Pageable(0, postLimit))
     })
     DesignDialogSheet(tag = "VideoDialog", visible = isVisible.value) {
         DragRefreshLayout(state = pullRefreshState) {
-            DesignStatefulContent<Flow<PagingData<UiVideo>>>(state = derivedState, refresh = {
+            DesignStatefulScaffold<Flow<PagingData<UiVideo>>>(state = derivedState, onRefresh = {
                 viewModel.load(Pageable(0, postLimit))
             }) { flow ->
                 val lazyPagingItems = flow.collectAsLazyPagingItems()
@@ -125,11 +116,10 @@ fun VideoDialog(
                         val post = lazyPagingItems[page]
                         if (post != null) {
                             var showSheet = remember { mutableStateOf(false) }
-                            var selectedPostId = remember { mutableStateOf("") }
+                            var selectedPostId = remember { mutableStateOf<UiContent?>(null) }
                             DesignBottomSheet(
                                 showSheet = showSheet,
                                 tag = "designBottomSheet",
-                                onDismissRequest = { showSheet.value = false },
                                 color = Color.White.copy(alpha = 0.9f),
                                 sheetPeekHeight = 600.dp,
                                 content = {
@@ -143,13 +133,7 @@ fun VideoDialog(
                                                 .weight(1f)
                                                 .fillMaxWidth()
                                         ) {
-                                            CommentScreen(
-                                                postId = selectedPostId,
-                                                postLimit = postLimit,
-                                                provider = component,
-                                                viewModelStoreOwner = viewModelStoreOwner,
-                                                modifier = Modifier.fillMaxSize()
-                                            )
+                                            
                                         }
 
                                     }
@@ -180,18 +164,14 @@ fun VideoDialog(
                                         .align(Alignment.BottomEnd)
                                 ) {
                                     Column(horizontalAlignment = Alignment.End, modifier = Modifier.padding(bottom = 36.dp, end = 16.dp)) {
-                                        PostIcon(UiAction.Like, post.likes.toString(), position = false, onClick = {
-                                            coroutineScope.launch {
-                                                engagementsViewModel.create(post.id, Engagement.Content.Like)
-                                            }
+                                        PostIcon(UiAction.Like, post.likes.toString(), isHorizontal = false, onClick = {
+
                                         }, color = MaterialTheme.colorScheme.onSecondary)
-                                        PostIcon(UiAction.Dislike, post.dislikes.toString(), position = false, onClick = {
-                                            coroutineScope.launch {
-                                                engagementsViewModel.create(post.id, Engagement.Content.Dislike)
-                                            }
+                                        PostIcon(UiAction.Dislike, post.dislikes.toString(), isHorizontal = false, onClick = {
+
                                         }, color = MaterialTheme.colorScheme.onSecondary)
-                                        PostIcon(UiAction.Comment, post.comment.toString(), position = false, onClick = {
-                                            selectedPostId.value = post.id
+                                        PostIcon(UiAction.Comment, post.comment.toString(), isHorizontal = false, onClick = {
+                                            selectedPostId.value = post.mapToContent()
                                             showSheet.value = true
                                         }, color = MaterialTheme.colorScheme.onSecondary)
                                     }
@@ -208,8 +188,6 @@ fun VideoDialog(
         }
     }
     BackHandler(enabled = isVisible.value) {
-        coroutineScope.launch {
-            initialPage.value = null
-        }
+        initialPage.value = null
     }
 }

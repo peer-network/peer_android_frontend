@@ -44,15 +44,6 @@ internal class AuthenticationRepositoryDelegateTest {
     }
 
     @Test
-    fun `test refresh token`() = runBlocking {
-        coEvery { api.refresh(any()) } returns Unit
-
-        repository.refresh("old_token")
-
-        coVerify { api.refresh("old_token") }
-    }
-
-    @Test
     fun `test user logout`(): Unit = runBlocking {
         coEvery { api.logout() } returns Unit
 

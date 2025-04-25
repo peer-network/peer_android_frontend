@@ -75,7 +75,7 @@ fun CreatorScreen(
         state is CreatorViewModel.State.Success
     } }
     val attachments = remember { mutableStateOf<List<Uri>>(emptyList()) }
-    CreatorContent(
+    CreatorScreen(
         attachments = attachments,
         onSubmit = { viewModel.create(it) },
         header = { AuthorScreen(component, viewModelStoreOwner) },
@@ -92,7 +92,7 @@ fun CreatorScreen(
 }
 
 @Composable
-fun CreatorContent(
+fun CreatorScreen(
     isLoading: State<Boolean>,
     shouldReset: State<Boolean>,
     error: State<Throwable?>,
@@ -100,7 +100,7 @@ fun CreatorContent(
     attachments: MutableState<List<Uri>>,
     onSubmit: (UiDraft) -> Unit = {},
     header: @Composable () -> Unit = {},
-    footer: @Composable (MimeType) -> Unit = {}
+    footer: @Composable (MimeType?) -> Unit = {}
 ) {
     val title = remember { TextFieldState() }
     val description = remember { TextFieldState() }
@@ -110,7 +110,7 @@ fun CreatorContent(
         isLoading = isLoading,
         type = selected,
         modifier = modifier.fillMaxSize(),
-        footer = { footer(state.value ?: MimeType.Photo) },
+        footer = { footer(state.value) },
     ) {
         DesignLabel(
             label = { error.value?.message?.let {
@@ -167,7 +167,7 @@ private fun CreatorActions(
     onSubmit: (UiDraft) -> Unit = {},
 ) {
     val isFormValid = remember { derivedStateOf {
-        title.isValidInput() && description.isValidInput()
+        title.isValidInput() && (selected.value != null || description.isValidInput())
                 && (selected.value?.let { it !is MimeType.Text
                 && attachments.value.isNotEmpty() } == true || selected.value == null)
     } }
@@ -228,7 +228,7 @@ private fun CreatorActions(
 @Composable
 fun PreviewCreatorScreen() {
     PeerTheme {
-        CreatorContent(
+        CreatorScreen(
             isLoading = remember { mutableStateOf(false) },
             shouldReset = remember { mutableStateOf(false) },
             error = remember { mutableStateOf(null) },

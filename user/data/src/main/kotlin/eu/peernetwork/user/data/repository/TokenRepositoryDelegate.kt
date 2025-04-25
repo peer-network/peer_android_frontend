@@ -5,6 +5,7 @@ import eu.peernetwork.persistence.domain.observable.ObservableString
 import eu.peernetwork.persistence.domain.publishable.PublishableString
 import eu.peernetwork.persistence.domain.retrievable.RetrievableString
 import eu.peernetwork.user.data.api.AuthenticationApi
+import eu.peernetwork.user.data.api.TokenApi
 import eu.peernetwork.user.domain.model.Token
 import eu.peernetwork.user.domain.repository.TokenRepository
 import kotlinx.coroutines.flow.Flow
@@ -13,6 +14,7 @@ import javax.inject.Inject
 
 class TokenRepositoryDelegate @Inject constructor(
     private val gson: Gson,
+    private val api: TokenApi,
     private val publisher: PublishableString,
     private val observable: ObservableString,
     private val retrievableString: RetrievableString,
@@ -32,11 +34,17 @@ class TokenRepositoryDelegate @Inject constructor(
         publisher(TAG, token?.let { gson.toJson(it) })
     }
 
+    override suspend fun refresh(token: String): Token {
+        val token = api.refresh(token)
+        onAuthenticationChanged(token)
+        return token
+    }
+
     override suspend fun clear() {
         publisher(TAG, null)
     }
 
-    private companion object {
+    internal companion object {
         val TAG: String = TokenRepositoryDelegate::class.java.name
     }
 }

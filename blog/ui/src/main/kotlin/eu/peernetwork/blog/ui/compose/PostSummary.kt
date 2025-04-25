@@ -8,10 +8,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.blog.ui.mapper.annotateTag
+import eu.peernetwork.core.ui.design.compose.DesignRichTitle
+import eu.peernetwork.core.ui.design.compose.DesignTitleTextStyle
 
 @Composable
 fun PostSummary(
@@ -24,32 +27,27 @@ fun PostSummary(
     Row(modifier = modifier) {
         Text(
             text = username,
-            style = MaterialTheme.typography.headlineSmall.copy(
+            style = MaterialTheme.typography.headlineMedium.copy(
                 color = color,
-                fontWeight = FontWeight.Bold,
                 fontStyle = FontStyle.Italic
             ),
             modifier = Modifier.padding(end = 8.dp)
         )
-        Column {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.headlineSmall.copy(
-                    color = color,
-                    fontWeight = FontWeight.Bold,
+        DesignRichTitle(
+            title = title,
+            description = description,
+            style = DesignTitleTextStyle(
+                style = MaterialTheme.typography.bodyMedium.copy(color = color),
+                descriptionStyle = MaterialTheme.typography.bodySmall.copy(
+                    color = MaterialTheme.colorScheme.tertiary
                 ),
-                modifier = Modifier.padding(bottom = 2.dp)
-            )
-            Text(
-                text = description.annotateTag(
-                    MaterialTheme.typography.bodySmall.toSpanStyle().copy(
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                ),
-                style = MaterialTheme.typography.bodySmall.copy(
-                    color = MaterialTheme.colorScheme.tertiary,
+                span = SpanStyle(
+                    fontStyle = FontStyle.Italic,
+                    fontWeight = FontWeight.Normal,
+                    fontSize = MaterialTheme.typography.bodySmall.fontSize,
+                    color = MaterialTheme.colorScheme.tertiary
                 ),
             )
-        }
+        )
     }
 }

@@ -4,60 +4,122 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import eu.peernetwork.blog.domain.model.Engagement
 import eu.peernetwork.blog.domain.usecase.CommentLikeUsecase
+import eu.peernetwork.blog.domain.usecase.CommentUsecase
+import eu.peernetwork.blog.ui.mapper.mapToComment
 import eu.peernetwork.blog.ui.model.UiComment
-import eu.peernetwork.blog.ui.timeline.photo.PhotoViewModel
-import eu.peernetwork.blog.ui.usecase.CommentUsecase
+import eu.peernetwork.blog.ui.usecase.CommentsUsecase
 import eu.peernetwork.core.common.model.Pageable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class CommentViewModel @Inject constructor(
     private val usecase: CommentUsecase,
-    private val commentLikeUsecase: CommentLikeUsecase
+    private val commentsUsecase: CommentsUsecase,
+    private val likeUsecase: CommentLikeUsecase
 ) : ViewModel() {
-    private val mutableState = MutableStateFlow<State>(State.Empty)
+    private val content = MutableStateFlow<Flow<PagingData<UiComment>>?>(null)
 
-    val state: StateFlow<State> = mutableState.asStateFlow()
+    private val likes = mutableSetOf<UiComment>()
+
+    private val mutableState = MutableStateFlow<State>(State.Default)
+
+    val state: StateFlow<State> = combine(
+        content,
+        mutableState
+    ) { content, state ->
+        if (content != null) {
+            State.Content(
+                isLoading = state is State.Loading,
+                likes = likes,
+                content = content,
+                selected = (state as? State.Comment?)?.id,
+                error = (state as? State.Error?)?.error
+            )
+        } else {
+            state
+        }
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = State.Default
+    )
 
     fun load(postId: String, page: Pageable) {
         viewModelScope.launch {
-            usecase(
-                CommentUsecase.Parameter(
+            likes.clear()
+            commentsUsecase(
+                CommentsUsecase.Parameter(
                     id = postId,
                     page = page
                 )
             ).catch { mutableState.tryEmit(State.Error(it)) }
                 .onStart { mutableState.tryEmit(State.Loading) }
                 .cachedIn(viewModelScope)
-                .apply {
-                    collectLatest { mutableState.tryEmit(State.Success(this)) }
-                }
+                .apply { collectLatest {
+                    content.tryEmit(this)
+                    mutableState.tryEmit(State.Default)
+                } }
         }
     }
 
-    fun comment(postId: String, comment: String){
+    fun comment(postId: String, comment: String) {
         viewModelScope.launch {
+            mutableState.tryEmit(State.Loading)
             try {
-                usecase.invoke(postId, comment)
+                mutableState.tryEmit(State.Comment(
+                    usecase(CommentUsecase.Parameter(postId, comment))
+                        .mapToComment().id
+                ))
             } catch (error: Throwable) {
                 mutableState.tryEmit(State.Error(error))
             }
         }
     }
 
+    fun like(comment: UiComment) {
+        viewModelScope.launch {
+            if (likes.contains(comment)) {
+                return@launch
+            }
+            val update = comment.copy(likes = comment.likes + 1, isLiked = true)
+            try {
+                likes.add(update)
+                mutableState.tryEmit(State.Comment(comment.id))
+                likeUsecase(comment.id)
+            } catch (error: Throwable) {
+                likes.remove(update)
+                mutableState.tryEmit(State.Error(error))
+            }
+        }
+    }
+
+    fun reset() {
+        viewModelScope.launch {
+            mutableState.tryEmit(State.Default)
+        }
+    }
+
     sealed interface State {
-        data object Empty : State
-        data object Loading : State
-        data class Success(val content: Flow<PagingData<UiComment>>) : State
-        data class Error(val error: Throwable) : State
+        data object Default: State
+        data object Loading: State
+        data class Comment(val id: String): State
+        data class Content(
+            val isLoading: Boolean,
+            val selected: String?,
+            val likes: Set<UiComment>,
+            val content: Flow<PagingData<UiComment>>,
+            val error: Throwable?,
+        ): State
+        data class Error(val error: Throwable): State
     }
 }

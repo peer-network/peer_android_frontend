@@ -354,7 +354,6 @@ fun VideoContent(
         DesignBottomSheet(
             tag = "videoBottomSheet",
             showSheet = showDescriptionSheet,
-            onDismissRequest = { showDescriptionSheet.value = false },
             sheetPeekHeight = 300.dp,
             content = {
                 Column(

@@ -5,7 +5,6 @@ import dagger.Module
 import dagger.Provides
 import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.app.interceptor.LoggingInterceptor
-import eu.peernetwork.user.remote.interceptor.AuthInterceptor
 import eu.peernetwork.user.remote.interceptor.JwtInterceptor
 import okhttp3.OkHttpClient
 import javax.inject.Named
@@ -28,13 +27,11 @@ internal object NetworkModule {
         @Named("baseUrl") baseUrl: String,
         logger: LoggingInterceptor,
         jwtInterceptor: JwtInterceptor,
-        authInterceptor: AuthInterceptor,
     ): ApolloClient {
         return ApolloClient.Builder()
             .serverUrl("$baseUrl/graphql")
             .addInterceptor(logger)
             .addInterceptor(jwtInterceptor)
-            .addInterceptor(authInterceptor)
             .build()
     }
 }
