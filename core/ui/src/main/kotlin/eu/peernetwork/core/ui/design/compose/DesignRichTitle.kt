@@ -78,12 +78,7 @@ fun DesignRichTitle(
                     }
 
                     pushStringAnnotation(tag = annotationTag, annotation = value)
-                    withStyle(
-                        style = SpanStyle(
-                            color = styleColor,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                    ) {
+                    withStyle(style = SpanStyle(color = styleColor)) {
                         append(value)
                     }
                     pop()
@@ -95,7 +90,6 @@ fun DesignRichTitle(
             }
         }
     }
-
     Column(
         modifier = modifier,
         verticalArrangement = verticalArrangement,
@@ -110,9 +104,7 @@ fun DesignRichTitle(
                 if (titleOnClick != null) Modifier.clickable { titleOnClick() } else Modifier
             )
         )
-
         spacer()
-
         if (description.isNotEmpty()) {
             ClickableText(
                 text = annotatedDescription,

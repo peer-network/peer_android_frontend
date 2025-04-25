@@ -84,7 +84,6 @@ fun DesignRichTextField(
 ) {
     var isFocused by remember { mutableStateOf(false) }
     val pattern = remember { Regex("""(@\w+)|(#\w+)|(https?://[^\s]+)|(ftp://[^\s]+)""") }
-
     val backgroundColor by animateColorAsState(
         targetValue = if (isFocused) {
             colors.focusedContainerColor
@@ -97,7 +96,6 @@ fun DesignRichTextField(
             easing = easing
         )
     )
-
     val defaultTextColor by animateColorAsState(
         targetValue = if (isFocused) {
             colors.focusedTextColor
@@ -110,7 +108,6 @@ fun DesignRichTextField(
             easing = easing
         )
     )
-
     val placeholderTextColor by animateColorAsState(
         targetValue = if (isFocused) {
             colors.focusedPlaceholderColor
@@ -123,7 +120,6 @@ fun DesignRichTextField(
             easing = easing
         )
     )
-
     val annotatedString by derivedStateOf {
         buildAnnotatedString {
             val matches = pattern.findAll(state.text)
@@ -139,8 +135,7 @@ fun DesignRichTextField(
                             match.value.startsWith("http") -> linkColor
                             match.value.startsWith("ftp") -> linkColor
                             else -> defaultTextColor
-                        },
-                        fontWeight = FontWeight.SemiBold
+                        }
                     )
                 ) {
                     append(match.value)
@@ -152,7 +147,6 @@ fun DesignRichTextField(
             }
         }
     }
-
     DesignLabel(
         label = error,
         visible = hasError,
@@ -209,7 +203,6 @@ fun DesignRichTextField(
                     }
                 )
             }
-
             AnimatedVisibility(
                 visible = state.text.isEmpty(),
                 enter = fadeIn(),
