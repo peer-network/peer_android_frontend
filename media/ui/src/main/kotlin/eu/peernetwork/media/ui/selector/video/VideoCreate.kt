@@ -434,20 +434,43 @@ fun loadGalleryVideos(context: Context): List<Uri> {
     } else {
         MediaStore.Video.Media.EXTERNAL_CONTENT_URI
     }
-    val projection = arrayOf(MediaStore.Video.Media._ID)
+    val supportedMimeTypes = arrayOf(
+        "video/mp4",
+        "video/quicktime",
+        "video/x-matroska",
+        "video/webm"
+    )
+    val projection = arrayOf(
+        MediaStore.Video.Media._ID,
+        MediaStore.Video.Media.DISPLAY_NAME,
+        MediaStore.Video.Media.MIME_TYPE
+    )
+    val selection = "${MediaStore.Video.Media.MIME_TYPE} IN (${supportedMimeTypes.joinToString(",") { "?" }})"
+    val selectionArgs = supportedMimeTypes
 
     context.contentResolver.query(
         collection,
         projection,
-        null,
-        null,
+        selection,
+        selectionArgs,
         "${MediaStore.Video.Media.DATE_ADDED} DESC"
     )?.use { cursor ->
         val idColumn = cursor.getColumnIndexOrThrow(MediaStore.Video.Media._ID)
+        val nameColumn = cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DISPLAY_NAME)
+
         while (cursor.moveToNext()) {
             val id = cursor.getLong(idColumn)
-            val contentUri = ContentUris.withAppendedId(collection, id)
-            videos.add(contentUri)
+            val fileName = cursor.getString(nameColumn)
+
+            if (fileName?.let { name ->
+                    name.endsWith(".mp4", ignoreCase = true) ||
+                            name.endsWith(".mov", ignoreCase = true) ||
+                            name.endsWith(".mkv", ignoreCase = true) ||
+                            name.endsWith(".webm", ignoreCase = true)
+                } == true) {
+                val contentUri = ContentUris.withAppendedId(collection, id)
+                videos.add(contentUri)
+            }
         }
     }
     return videos

@@ -309,15 +309,37 @@ fun PhotoCreate(
 
 fun loadGalleryImages(context: Context): List<Uri> {
     val images = mutableListOf<Uri>()
-    val projection = arrayOf(MediaStore.Images.Media._ID)
+    val projection = arrayOf(
+        MediaStore.Images.Media._ID,
+        MediaStore.Images.Media.DISPLAY_NAME,
+        MediaStore.Images.Media.MIME_TYPE
+    )
     val uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-    val cursor = context.contentResolver.query(uri, projection, null, null, MediaStore.Images.Media.DATE_ADDED + " DESC")
+    val selection = "${MediaStore.Images.Media.MIME_TYPE} IN (?, ?, ?)"
+    val selectionArgs = arrayOf("image/png", "image/jpeg", "image/jpg")
+    val cursor = context.contentResolver.query(
+        uri,
+        projection,
+        selection,
+        selectionArgs,
+        "${MediaStore.Images.Media.DATE_ADDED} DESC"
+    )
 
     cursor?.use {
-        val columnIndex = it.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
+        val idColumn = it.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
+        val nameColumn = it.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME)
+
         while (it.moveToNext()) {
-            val imageUri = Uri.withAppendedPath(uri, it.getLong(columnIndex).toString())
-            images.add(imageUri)
+            val imageUri = Uri.withAppendedPath(uri, it.getLong(idColumn).toString())
+            val fileName = it.getString(nameColumn)
+
+            if (fileName?.let { name ->
+                    name.endsWith(".png", ignoreCase = true) ||
+                            name.endsWith(".jpg", ignoreCase = true) ||
+                            name.endsWith(".jpeg", ignoreCase = true)
+                } == true) {
+                images.add(imageUri)
+            }
         }
     }
     return images
