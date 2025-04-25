@@ -46,18 +46,15 @@ fun EngagementScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
     val error = remember(state) {
         derivedStateOf {
-            (state as? EngagementViewModel.State.Error?)
+            (state as? EngagementViewModel.State.Content?)?.error
         }
     }
     var selectedPost = remember { mutableStateOf<UiContent?>(null) }
     val errorMessage = stringResource(R.string.unknown_error_message)
     val post = remember(content) {
         derivedStateOf {
-            if (state.engagements[content.id] != null) {
-                state.engagements[content.id]!!
-            } else {
-                content.mapToEngagement()
-            }
+            (state as? EngagementViewModel.State.Content?)
+                ?.engagements?.get(content.id) ?: content.mapToEngagement()
         }
     }
     Row {
@@ -90,9 +87,9 @@ fun EngagementScreen(
         }
     }
     LaunchedEffect(error.value) {
-        if (error.value != null && error.value?.selected == content.id) {
-            Toast.makeText(context, error.value?.error?.message ?: errorMessage, Toast.LENGTH_SHORT).show()
-            viewModel.clean()
+        if (error.value != null && post.value.id == content.id) {
+            Toast.makeText(context, error.value?.message ?: errorMessage, Toast.LENGTH_SHORT).show()
+            viewModel.clear()
         }
     }
     CommentScreen(content.id, selectedPost, postLimit, component, viewModelStoreOwner) {

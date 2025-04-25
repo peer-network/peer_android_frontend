@@ -31,24 +31,18 @@ class CommentViewModel @Inject constructor(
 
     private val likes = mutableSetOf<UiComment>()
 
-    private val lastComment = MutableStateFlow<String?>(null)
-
-    private val likesState = MutableStateFlow<Set<UiComment>>(emptySet())
-
-    private val mutableState = MutableStateFlow<State>(State.Idle)
+    private val mutableState = MutableStateFlow<State>(State.Default)
 
     val state: StateFlow<State> = combine(
         content,
-        mutableState,
-        likesState,
-        lastComment
-    ) { content, state, likes, selected ->
+        mutableState
+    ) { content, state ->
         if (content != null) {
             State.Content(
                 isLoading = state is State.Loading,
                 likes = likes,
                 content = content,
-                selected = selected,
+                selected = (state as? State.Comment?)?.id,
                 error = (state as? State.Error?)?.error
             )
         } else {
@@ -57,13 +51,12 @@ class CommentViewModel @Inject constructor(
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = State.Idle
+        initialValue = State.Default
     )
 
     fun load(postId: String, page: Pageable) {
         viewModelScope.launch {
             likes.clear()
-            likesState.tryEmit(likes)
             commentsUsecase(
                 CommentsUsecase.Parameter(
                     id = postId,
@@ -74,7 +67,7 @@ class CommentViewModel @Inject constructor(
                 .cachedIn(viewModelScope)
                 .apply { collectLatest {
                     content.tryEmit(this)
-                    mutableState.tryEmit(State.Idle)
+                    mutableState.tryEmit(State.Default)
                 } }
         }
     }
@@ -83,9 +76,10 @@ class CommentViewModel @Inject constructor(
         viewModelScope.launch {
             mutableState.tryEmit(State.Loading)
             try {
-                lastComment.tryEmit(postId)
-                usecase(CommentUsecase.Parameter(postId, comment)).mapToComment()
-                mutableState.tryEmit(State.Idle)
+                mutableState.tryEmit(State.Comment(
+                    usecase(CommentUsecase.Parameter(postId, comment))
+                        .mapToComment().id
+                ))
             } catch (error: Throwable) {
                 mutableState.tryEmit(State.Error(error))
             }
@@ -95,16 +89,14 @@ class CommentViewModel @Inject constructor(
     fun like(comment: UiComment) {
         viewModelScope.launch {
             if (likes.contains(comment)) {
-                likesState.tryEmit(likes)
                 return@launch
             }
             try {
-                likes.add(comment)
-                likesState.tryEmit(likes)
+                likes.add(comment.copy(likes = comment.likes + 1, isLiked = true))
+                mutableState.tryEmit(State.Comment(comment.id))
                 likeUsecase(comment.id)
             } catch (error: Throwable) {
                 likes.remove(comment)
-                likesState.tryEmit(likes)
                 mutableState.tryEmit(State.Error(error))
             }
         }
@@ -112,21 +104,21 @@ class CommentViewModel @Inject constructor(
 
     fun reset() {
         viewModelScope.launch {
-            lastComment.tryEmit(null)
-            mutableState.tryEmit(State.Idle)
+            mutableState.tryEmit(State.Default)
         }
     }
 
     sealed interface State {
-        data object Idle : State
-        data object Loading : State
+        data object Default: State
+        data object Loading: State
+        data class Comment(val id: String): State
         data class Content(
             val isLoading: Boolean,
             val selected: String?,
             val likes: Set<UiComment>,
             val content: Flow<PagingData<UiComment>>,
             val error: Throwable?,
-        ) : State
-        data class Error(val error: Throwable) : State
+        ): State
+        data class Error(val error: Throwable): State
     }
 }

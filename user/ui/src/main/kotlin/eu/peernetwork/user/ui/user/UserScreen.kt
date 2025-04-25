@@ -70,7 +70,7 @@ fun UserScreen(
     DesignStatefulScaffold<UiAccount>(
         state = derivedState,
         onRefresh = { viewModel.initialize() },
-        placeholder = { UserSkeleton(modifier = modifier.padding(end = 8.dp)) },
+        placeholder = { UserScaffold(modifier = modifier.padding(end = 8.dp)) },
         errorContent = {
             UserErrorScaffold(modifier = modifier.padding(end = 8.dp)) {
                 IconButton(onClick = {

@@ -16,7 +16,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -57,7 +56,7 @@ fun UserScaffold(
 }
 
 @Composable
-fun UserSkeleton(modifier: Modifier = Modifier) {
+fun UserScaffold(modifier: Modifier = Modifier) {
     UserScaffold(
         modifier = modifier,
         avatar = {
@@ -109,7 +108,7 @@ fun UserErrorScaffold(
 fun PreviewUserScaffold() {
     PeerTheme {
         Column {
-            UserSkeleton(modifier = Modifier.padding(16.dp))
+            UserScaffold(modifier = Modifier.padding(16.dp))
             UserErrorScaffold(modifier = Modifier.padding(16.dp)) {
                 Text(text = "icon")
             }

@@ -58,7 +58,6 @@ fun CommentScreen(
     val derivedState = remember {
         derivedStateOf {
             when (sheetState.value) {
-                CommentViewModel.State.Idle -> DesignStatefulScaffoldState.Empty
                 CommentViewModel.State.Loading -> DesignStatefulScaffoldState.Loading
                 is CommentViewModel.State.Content -> {
                     DesignStatefulScaffoldState.Success(
@@ -68,6 +67,7 @@ fun CommentScreen(
                 is CommentViewModel.State.Error -> DesignStatefulScaffoldState.Error(
                     (sheetState.value as CommentViewModel.State.Error).error
                 )
+                else -> DesignStatefulScaffoldState.Empty
             }
         }
     }
@@ -104,11 +104,11 @@ fun CommentScreen(
                             },
                         ) {
                             val liked = remember { derivedStateOf {
-                                contents.value?.likes?.contains(comment) == true
+                                contents.value?.likes?.firstOrNull { it.id == comment.id }
                             } }
                             CommentOptions(
-                                likes = comment.likes + if (liked.value) 1 else 0,
-                                isLiked = comment.isLiked || liked.value
+                                likes = liked.value?.likes ?: comment.likes,
+                                isLiked = liked.value?.isLiked ?: comment.isLiked
                             ) {
                                 viewModel.like(comment)
                                 items.refresh()
@@ -122,7 +122,6 @@ fun CommentScreen(
             LaunchedEffect(isLoading.value) {
                 if (!isLoading.value && isSelected.value) {
                     it.clearText()
-                    viewModel.reset()
                     items.refresh()
                     onUpdate()
                 }
