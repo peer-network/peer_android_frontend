@@ -35,7 +35,7 @@ import eu.peernetwork.user.ui.user.UserEvent
 import eu.peernetwork.user.ui.user.UserScreen
 
 @Composable
-fun ProfilePreviewScreen(
+fun PreviewScreen(
     userId: String,
     onSettings: () -> Unit,
     provider: UiComponentProvider,
@@ -61,7 +61,7 @@ fun ProfilePreviewScreen(
             isProfileRefreshing.value = true
         }
     ) {
-        ProfilePreviewContent(
+        PreviewScreen(
             state = pageState,
             header = {
                 UserScreen(
@@ -100,7 +100,7 @@ fun ProfilePreviewScreen(
 }
 
 @Composable
-fun ProfilePreviewContent(
+fun PreviewScreen(
     state: MutableIntState,
     modifier: Modifier = Modifier,
     onNavigate: (Int) -> Unit = {},
@@ -126,7 +126,7 @@ fun ProfilePreviewContent(
 
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
-fun PreviewProfilePreview() {
+fun PreviewPreviewScreen() {
     PeerTheme {
         PreviewScaffold(
             modifier = Modifier.fillMaxSize(),

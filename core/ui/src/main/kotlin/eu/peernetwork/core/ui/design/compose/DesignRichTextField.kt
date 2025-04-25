@@ -21,7 +21,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -43,7 +42,9 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.OffsetMapping
+import androidx.compose.ui.text.input.TransformedText
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -165,14 +166,6 @@ fun DesignRichTextField(
             verticalAlignment = verticalAlignment
         ) {
             Box {
-                if (readOnly || !enabled) {
-                    Text(
-                        text = annotatedString,
-                        style = textStyle,
-                        maxLines = maxLines,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                }
                 BasicTextField(
                     value = state.text.toString(),
                     onValueChange = { input ->
@@ -182,7 +175,7 @@ fun DesignRichTextField(
                         .focusRequester(focusRequester),
                     enabled = enabled,
                     readOnly = readOnly,
-                    textStyle = textStyle.copy(color = Color.Transparent),
+                    textStyle = textStyle.copy(color = defaultTextColor),
                     keyboardActions = onKeyboardAction,
                     keyboardOptions = keyboardOptions,
                     interactionSource = interactionSource,
@@ -190,16 +183,8 @@ fun DesignRichTextField(
                     maxLines = maxLines,
                     minLines = minLines,
                     onTextLayout = onTextLayout,
-                    decorationBox = { innerTextField ->
-                        Box {
-                            Text(
-                                text = annotatedString,
-                                style = textStyle,
-                                maxLines = maxLines,
-                                modifier = Modifier.fillMaxWidth()
-                            )
-                            innerTextField()
-                        }
+                    visualTransformation = VisualTransformation {
+                        TransformedText(annotatedString, OffsetMapping.Identity)
                     }
                 )
             }

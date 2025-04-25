@@ -9,7 +9,7 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import eu.peernetwork.app.ui.profile.preview.ProfilePreviewScreen
+import eu.peernetwork.app.ui.profile.preview.PreviewScreen
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.compose.DesignToolbarTitle
@@ -31,7 +31,7 @@ fun ProfileScreen(
     }
     NavHost(navController = controller, startDestination = "profile") {
         composable("profile") {
-            ProfilePreviewScreen(
+            PreviewScreen(
                 userId = userId,
                 onSettings = { controller.navigateIfNecessary("settings") },
                 provider = component,
