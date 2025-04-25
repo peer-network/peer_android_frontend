@@ -96,10 +96,12 @@ fun CommentScreen(
                     items[index]?.let { comment ->
                         ContentBar(
                             model = comment.mapToContent(),
-                            modifier = Modifier.clickable(role = Role.Button) {
-                                    replyTo.value = comment.author.username
-                                }.padding(horizontal = 24.dp)
-                                .padding(top = 12.dp)
+                            modifier = Modifier
+                                .padding(horizontal = 24.dp)
+                                .padding(top = 12.dp),
+                            titleOnClick = {
+                                replyTo.value = comment.author.username
+                            },
                         ) {
                             val liked = remember { derivedStateOf {
                                 contents.value?.likes?.contains(comment) == true

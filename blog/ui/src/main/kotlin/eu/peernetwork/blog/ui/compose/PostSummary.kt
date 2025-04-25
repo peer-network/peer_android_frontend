@@ -8,9 +8,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.blog.ui.mapper.annotateTag
+import eu.peernetwork.core.ui.design.compose.DesignRichTitle
+import eu.peernetwork.core.ui.design.compose.DesignTitleTextStyle
 
 @Composable
 fun PostSummary(
@@ -29,24 +33,21 @@ fun PostSummary(
             ),
             modifier = Modifier.padding(end = 8.dp)
         )
-        Column {
-            Text(
-                text = title,
+        DesignRichTitle(
+            title = title,
+            description = description,
+            style = DesignTitleTextStyle(
                 style = MaterialTheme.typography.bodyMedium.copy(color = color),
+                descriptionStyle = MaterialTheme.typography.bodySmall.copy(
+                    color = MaterialTheme.colorScheme.tertiary
+                ),
+                span = SpanStyle(
+                    fontStyle = FontStyle.Italic,
+                    fontWeight = FontWeight.Normal,
+                    fontSize = MaterialTheme.typography.bodySmall.fontSize,
+                    color = MaterialTheme.colorScheme.tertiary
+                ),
             )
-            if (description.isNotEmpty()) {
-                Text(
-                    text = description.annotateTag(
-                        MaterialTheme.typography.bodySmall.toSpanStyle().copy(
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                    ),
-                    style = MaterialTheme.typography.bodySmall.copy(
-                        color = MaterialTheme.colorScheme.tertiary,
-                    ),
-                    modifier = Modifier.padding(top = 2.dp)
-                )
-            }
-        }
+        )
     }
 }

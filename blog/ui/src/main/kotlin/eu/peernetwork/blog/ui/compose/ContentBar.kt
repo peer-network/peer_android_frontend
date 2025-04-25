@@ -19,7 +19,7 @@ import eu.peernetwork.blog.ui.model.UiContent
 import eu.peernetwork.core.ui.design.compose.DesignAsyncImage
 import eu.peernetwork.core.ui.design.compose.DesignAvatar
 import eu.peernetwork.core.ui.design.compose.DesignDetailLayout
-import eu.peernetwork.core.ui.design.compose.DesignTitle
+import eu.peernetwork.core.ui.design.compose.DesignRichTitle
 import eu.peernetwork.core.ui.design.compose.DesignTitleTextStyle
 import eu.peernetwork.core.ui.theme.PeerTheme
 
@@ -33,6 +33,7 @@ fun ContentBar(
     verticalAlignment: Alignment.Vertical = Alignment.Top,
     color: Color = MaterialTheme.colorScheme.onBackground,
     descriptionColor: Color = MaterialTheme.colorScheme.tertiary,
+    titleOnClick: (() -> Unit)? = null,
     content: @Composable () -> Unit
 ) {
     DesignDetailLayout(
@@ -54,15 +55,15 @@ fun ContentBar(
         modifier = modifier
     ) {
         Row(modifier = Modifier.padding(start = 16.dp)) {
-            DesignTitle(
+            DesignRichTitle(
                 title = model.title,
-                caption = "",
                 description = model.description,
                 verticalArrangement = Arrangement.Center,
                 spacer = {},
                 maxLines = 1,
                 maxContentLines = 3,
                 modifier = Modifier.weight(1f),
+                titleOnClick = titleOnClick,
                 style = DesignTitleTextStyle(
                     span = SpanStyle(
                         fontStyle = FontStyle.Italic,

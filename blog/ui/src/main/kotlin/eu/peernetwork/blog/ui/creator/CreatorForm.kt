@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import eu.peernetwork.blog.ui.R
 import eu.peernetwork.blog.ui.mapper.annotateTag
 import eu.peernetwork.core.ui.design.compose.DesignAvatar
+import eu.peernetwork.core.ui.design.compose.DesignRichTextField
 import eu.peernetwork.core.ui.design.compose.DesignTextField
 import eu.peernetwork.core.ui.theme.PeerTheme
 import kotlinx.coroutines.delay
@@ -50,7 +51,6 @@ fun CreatorForm(
     isLoading: State<Boolean>,
     avatar: @Composable () -> Unit = {}
 ) {
-    val color = MaterialTheme.colorScheme.primary
     val focus = remember { FocusRequester() }
     Column(modifier = Modifier.fillMaxSize()) {
         Row(
@@ -78,7 +78,7 @@ fun CreatorForm(
                 ),
             ) { Text(stringResource(R.string.post_title)) }
         }
-        DesignTextField(
+        DesignRichTextField(
             description,
             contentPadding = PaddingValues(
                 top = 16.dp,
@@ -105,12 +105,6 @@ fun CreatorForm(
                 focusedPlaceholderColor = MaterialTheme.colorScheme.surfaceDim,
                 unfocusedPlaceholderColor = MaterialTheme.colorScheme.surfaceTint,
             ),
-            visualTransformation = VisualTransformation {
-                TransformedText(
-                    it.annotateTag(SpanStyle(color = color)),
-                    OffsetMapping.Identity
-                )
-            }
         ) { Text(text = stringResource(R.string.post_description)) }
         Spacer(modifier = Modifier.height(4.dp))
     }

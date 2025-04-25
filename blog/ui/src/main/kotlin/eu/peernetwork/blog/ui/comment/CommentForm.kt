@@ -30,22 +30,17 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.OffsetMapping
-import androidx.compose.ui.text.input.TransformedText
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.blog.ui.R
 import eu.peernetwork.blog.ui.compose.ContentBar
-import eu.peernetwork.blog.ui.mapper.annotateTag
 import eu.peernetwork.blog.ui.model.UiAuthor
 import eu.peernetwork.blog.ui.model.UiContent
+import eu.peernetwork.core.ui.design.compose.DesignRichTextField
 import eu.peernetwork.core.ui.design.compose.DesignTextButton
-import eu.peernetwork.core.ui.design.compose.DesignTextField
 import eu.peernetwork.core.ui.extension.isValidInput
 import eu.peernetwork.core.ui.theme.PeerTheme
 
@@ -59,7 +54,6 @@ fun CommentForm(
     modifier: Modifier = Modifier,
     onSubmit: (String, String) -> Unit = { id, comment -> }
 ) {
-    val color = MaterialTheme.colorScheme.primary
     val focus = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
     Column {
@@ -71,7 +65,7 @@ fun CommentForm(
                 model = model,
                 modifier = Modifier.padding(top = 16.dp, end = 16.dp)
             ) {}
-            DesignTextField(
+            DesignRichTextField(
                 state = comment,
                 enabled = !isLoading.value,
                 modifier = Modifier.padding(start = 36.dp),
@@ -106,12 +100,6 @@ fun CommentForm(
                         )
                     }
                 },
-                visualTransformation = VisualTransformation {
-                    TransformedText(
-                        it.annotateTag(SpanStyle(color = color)),
-                        OffsetMapping.Identity
-                    )
-                }
             ) { Text(stringResource(R.string.post_reply)) }
             Spacer(modifier = Modifier.height(24.dp))
             LaunchedEffect(replyTo.value) {
