@@ -91,12 +91,13 @@ class CommentViewModel @Inject constructor(
             if (likes.contains(comment)) {
                 return@launch
             }
+            val update = comment.copy(likes = comment.likes + 1, isLiked = true)
             try {
-                likes.add(comment.copy(likes = comment.likes + 1, isLiked = true))
+                likes.add(update)
                 mutableState.tryEmit(State.Comment(comment.id))
                 likeUsecase(comment.id)
             } catch (error: Throwable) {
-                likes.remove(comment)
+                likes.remove(update)
                 mutableState.tryEmit(State.Error(error))
             }
         }
