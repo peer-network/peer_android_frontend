@@ -89,8 +89,8 @@ fun VideoScreen(
                 state.value
             }
         } }
-        val isLoading = remember { derivedStateOf {
-            lazyPagingItems.loadState.refresh is LoadState.Loading
+        val refreshed = remember { derivedStateOf {
+            lazyPagingItems.loadState.refresh is LoadState.NotLoading
         } }
         DesignRefreshableScaffold<LazyPagingItems<UiPost>>(
             state = refreshState,
@@ -99,7 +99,7 @@ fun VideoScreen(
             EngagementScreen(
                 tag,
                 postLimit,
-                isLoading,
+                refreshed,
                 component,
                 viewModelStoreOwner
             ) { engagement ->

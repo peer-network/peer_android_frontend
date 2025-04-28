@@ -79,13 +79,13 @@ fun PhotoScreen(
         placeholder = { PostPageSkeleton() },
         onRefresh = { viewModel.load(author, Pageable(0, postLimit)) },
     ) { state, lazyPagingItems ->
-        val isLoading = remember { derivedStateOf {
-            lazyPagingItems.loadState.refresh is LoadState.Loading
+        val refreshed = remember { derivedStateOf {
+            lazyPagingItems.loadState.refresh is LoadState.NotLoading
         } }
         EngagementScreen(
             author,
             postLimit,
-            isLoading,
+            refreshed,
             component,
             viewModelStoreOwner
         ) { engagement ->
