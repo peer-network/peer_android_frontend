@@ -5,6 +5,8 @@ sealed interface Engagement {
         data object Like : Content
         data object Dislike : Content
         data object View : Content
+        data object Report : Content
+        data object Save : Content
     }
     sealed interface Comment : Engagement {
         data object Like : Comment

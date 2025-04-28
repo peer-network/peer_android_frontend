@@ -18,6 +18,7 @@ fun LazyItemScope.PostListItem(
     position: Int,
     state: State<Long>,
     engagements: @Composable RowScope.() -> Unit,
+    moderation: @Composable RowScope.() -> Unit,
     content: @Composable (UiPost) -> Unit
 ) {
     Spacer(modifier = Modifier.height(
@@ -35,7 +36,8 @@ fun LazyItemScope.PostListItem(
             caption = {
                 PostSummary(post.author.username, post.title, post.description)
             },
-            engagements = engagements
+            engagements = engagements,
+            moderation = moderation
         ) { content(post) }
     } else {
         TextPostCard(
@@ -43,7 +45,8 @@ fun LazyItemScope.PostListItem(
             description = post.createdAt.formatTimeAgo(state.value),
             modifier = Modifier.padding(bottom = 12.dp)
                 .padding(horizontal = 8.dp),
-            engagements = engagements
+            engagements = engagements,
+            moderation = moderation
         ) {
             PostText(
                 post.title,

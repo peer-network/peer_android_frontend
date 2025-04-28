@@ -8,5 +8,7 @@ fun Engagement.Content.mapToAction(): ActionType {
         Engagement.Content.Like -> ActionType.LIKE
         Engagement.Content.Dislike -> ActionType.DISLIKE
         Engagement.Content.View -> ActionType.VIEW
+        Engagement.Content.Report -> ActionType.REPORT
+        Engagement.Content.Save -> ActionType.SAVE
     }
 }

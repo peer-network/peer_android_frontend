@@ -27,6 +27,7 @@ import eu.peernetwork.blog.ui.compose.PostPageSkeleton
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
 import eu.peernetwork.blog.ui.mapper.mapToContent
 import eu.peernetwork.blog.ui.mapper.mapToProperty
+import eu.peernetwork.blog.ui.moderation.ModerationActions
 import eu.peernetwork.core.common.model.Pageable
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.component.DesignPagingScaffold
@@ -96,7 +97,14 @@ fun PhotoScreen(
                             refreshEngagement,
                             component,
                             viewModelStoreOwner
-                        ) }
+                        ) },
+                        moderation = {
+                            ModerationActions(
+                                photo.mapToContent(),
+                                component,
+                                viewModelStoreOwner
+                            )
+                        },
                     ) {
                         val media = photo.media.first()
                         component.imageView()(

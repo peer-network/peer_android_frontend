@@ -25,6 +25,7 @@ import eu.peernetwork.blog.ui.compose.PostPageSkeleton
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
 import eu.peernetwork.blog.ui.mapper.mapToContent
 import eu.peernetwork.blog.ui.model.UiPost
+import eu.peernetwork.blog.ui.moderation.ModerationActions
 import eu.peernetwork.blog.ui.post.photo.formatTimeAgo
 import eu.peernetwork.core.ui.design.component.DesignPagingScaffold
 import eu.peernetwork.core.ui.design.component.DesignRefreshableScaffold
@@ -110,6 +111,13 @@ fun VideoScreen(
                                     post.mapToContent(),
                                     postLimit,
                                     refreshEngagement,
+                                    component,
+                                    viewModelStoreOwner
+                                )
+                            },
+                            moderation = {
+                                ModerationActions(
+                                    post.mapToContent(),
                                     component,
                                     viewModelStoreOwner
                                 )

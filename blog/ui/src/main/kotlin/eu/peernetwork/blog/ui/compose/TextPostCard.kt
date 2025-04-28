@@ -41,6 +41,7 @@ fun TextPostCard(
     ),
     actions: @Composable RowScope.() -> Unit = {},
     engagements: @Composable RowScope.() -> Unit = {},
+    moderation: @Composable RowScope.() -> Unit = {},
     content: @Composable () -> Unit,
 ) {
     PostCard(
@@ -72,17 +73,7 @@ fun TextPostCard(
             ) {
                 engagements()
                 Spacer(modifier = Modifier.weight(1f))
-                DesignTextButton(
-                    onClick = {},
-                    contentPadding = PaddingValues(0.dp)
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_menu),
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.tertiary,
-                        modifier = Modifier.size(28.dp)
-                    )
-                }
+                moderation()
             }
         }
     ) { content() }

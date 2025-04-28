@@ -37,6 +37,7 @@ fun MediaPostCard(
     contentPadding: PaddingValues = PaddingValues(0.dp),
     actions: @Composable RowScope.() -> Unit = {},
     engagements: @Composable RowScope.() -> Unit = {},
+    moderation: @Composable RowScope.() -> Unit = {},
     caption: @Composable () -> Unit = {},
     content: @Composable () -> Unit,
 ) {
@@ -51,17 +52,7 @@ fun MediaPostCard(
             ) {
                 engagements()
                 Spacer(modifier = Modifier.weight(1f))
-                DesignTextButton(
-                    onClick = {},
-                    contentPadding = PaddingValues(0.dp)
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_menu),
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.tertiary,
-                        modifier = Modifier.size(28.dp)
-                    )
-                }
+                moderation()
             }
             Box(modifier = Modifier.padding(horizontal = 24.dp)) { caption() }
         },

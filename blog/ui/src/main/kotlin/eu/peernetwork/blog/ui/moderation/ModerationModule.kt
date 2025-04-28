@@ -1,12 +1,10 @@
-package eu.peernetwork.blog.ui.timeline.video
+package eu.peernetwork.blog.ui.moderation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
-import eu.peernetwork.blog.ui.engagement.Engagement
-import eu.peernetwork.blog.ui.moderation.Moderation
 import eu.peernetwork.core.ui.annotation.UiBuilder
 import eu.peernetwork.core.ui.annotation.UiViewModel
 import eu.peernetwork.core.ui.component.UiComponent
@@ -16,38 +14,30 @@ import eu.peernetwork.core.ui.factory.UiViewModelFactory
 import javax.inject.Provider
 
 @Module
-object VideoModule {
+object ModerationModule {
     @Provides
+    @Moderation.Scope
     fun provideBuilderFactory(factory: UiBuilderFactory): UiComponentProvider.Factory = factory
 
     @Provides
-    @Video.Scope
+    @Moderation.Scope
     fun provideViewModelFactory(
-        classToViewModel:
-        @JvmSuppressWildcards Map<Class<out ViewModel>, Provider<ViewModel>>
+        providers: @JvmSuppressWildcards Map<Class<out ViewModel>, @JvmSuppressWildcards Provider<ViewModel>>
     ): ViewModelProvider.Factory {
-        return UiViewModelFactory(classToViewModel)
+        return UiViewModelFactory(providers)
     }
 
     @Provides
     @IntoMap
-    @Video.Scope
-    @UiViewModel(VideoViewModel::class)
-    fun viewModel(viewModel: VideoViewModel): ViewModel = viewModel
+    @Moderation.Scope
+    @UiViewModel(ModerationViewModel::class)
+    fun viewModel(viewModel: ModerationViewModel): ViewModel = viewModel
 
     @Provides
     @IntoMap
-    @Video.Scope
-    @UiBuilder(Engagement.Builder::class)
-    fun provideEngagementBuilder(component: Video.Component): UiComponent.Builder {
-        return Engagement.Builder(component)
-    }
-
-    @Provides
-    @IntoMap
-    @Video.Scope
+    @Moderation.Scope
     @UiBuilder(Moderation.Builder::class)
-    fun provideModerationBuilder(component: Video.Component): UiComponent.Builder {
+    fun provideModerationBuilder(component: Moderation.Component): UiComponent.Builder {
         return Moderation.Builder(component)
     }
 }
