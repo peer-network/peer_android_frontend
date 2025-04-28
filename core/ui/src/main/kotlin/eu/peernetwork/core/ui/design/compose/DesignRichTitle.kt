@@ -57,7 +57,7 @@ fun DesignRichTitle(
     val uriHandler = LocalUriHandler.current
     val annotatedDescription by remember(description) {
         derivedStateOf {
-            val pattern = Regex("""(@\w+)|(#\w+)|((https?|ftp)://[^\s]+)""")
+            val pattern = Regex("""(@\w+)|(#\w+)|((https?|ftp)://[^\s]+)""", RegexOption.IGNORE_CASE)
             buildAnnotatedString {
                 val matches = pattern.findAll(description)
                 var lastIndex = 0
@@ -65,7 +65,7 @@ fun DesignRichTitle(
                     val value = match.value
                     append(description.substring(lastIndex, match.range.first))
                     val annotationTag = when {
-                        value.startsWith("http") || value.startsWith("ftp") -> "URL"
+                        value.startsWith("http", true) || value.startsWith("ftp", true) -> "URL"
                         value.startsWith("@") -> "MENTION"
                         value.startsWith("#") -> "HASHTAG"
                         else -> "PLAIN"
@@ -115,7 +115,7 @@ fun DesignRichTitle(
                 onClick = { offset ->
                     annotatedDescription.getStringAnnotations(tag = "URL", start = offset, end = offset)
                         .firstOrNull()?.let { annotation ->
-                            uriHandler.openUri(annotation.item)
+                            uriHandler.openUri(annotation.item.lowercase())
                         }
                 }
             )

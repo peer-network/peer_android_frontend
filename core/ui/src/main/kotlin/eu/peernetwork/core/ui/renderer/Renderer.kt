@@ -1,4 +1,4 @@
-package eu.peernetwork.media.core.renderer
+package eu.peernetwork.core.ui.renderer
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier

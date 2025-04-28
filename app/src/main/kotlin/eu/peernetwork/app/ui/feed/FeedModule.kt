@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
+import eu.peernetwork.app.ui.profile.Profile
 import eu.peernetwork.blog.ui.timeline.music.Music
 import eu.peernetwork.blog.ui.timeline.photo.Photo
 import eu.peernetwork.blog.ui.timeline.video.Video
@@ -36,6 +37,14 @@ object FeedModule {
     @Feed.Scope
     @UiViewModel(FeedViewModel::class)
     fun viewModel(viewModel: FeedViewModel): ViewModel = viewModel
+
+    @Feed.Scope
+    @Provides
+    @IntoMap
+    @UiBuilder(Profile.Builder::class)
+    fun provideProfileBuilder(component: Feed.Component): UiComponent.Builder {
+        return Profile.Builder(component)
+    }
 
     @Feed.Scope
     @Provides

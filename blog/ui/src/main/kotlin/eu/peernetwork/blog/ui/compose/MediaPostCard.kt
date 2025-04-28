@@ -35,8 +35,10 @@ fun MediaPostCard(
     description: String,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp),
+    onClick: () -> Unit = {},
     actions: @Composable RowScope.() -> Unit = {},
     engagements: @Composable RowScope.() -> Unit = {},
+    moderation: @Composable RowScope.() -> Unit = {},
     caption: @Composable () -> Unit = {},
     content: @Composable () -> Unit,
 ) {
@@ -51,17 +53,7 @@ fun MediaPostCard(
             ) {
                 engagements()
                 Spacer(modifier = Modifier.weight(1f))
-                DesignTextButton(
-                    onClick = {},
-                    contentPadding = PaddingValues(0.dp)
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_menu),
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.tertiary,
-                        modifier = Modifier.size(28.dp)
-                    )
-                }
+                moderation()
             }
             Box(modifier = Modifier.padding(horizontal = 24.dp)) { caption() }
         },
@@ -86,6 +78,7 @@ fun MediaPostCard(
                 AuthorBar(
                     author,
                     description,
+                    onClick = onClick,
                     modifier = Modifier.weight(1f),
                     descriptionColor = MaterialTheme.colorScheme.onBackground
                 )

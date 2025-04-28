@@ -12,6 +12,7 @@
     <string name="confirmation_label">Confirm</string>
 
     <string name="post_label">Posts</string>
+    <string name="follow_label">Follow</string>
     <string name="follower_label">Followers</string>
     <string name="following_label">Following</string>
     <string name="peers_label">Peers</string>

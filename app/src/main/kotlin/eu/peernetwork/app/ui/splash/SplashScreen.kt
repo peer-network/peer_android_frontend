@@ -22,11 +22,6 @@ import eu.peernetwork.app.R
 
 @Composable
 fun SplashScreen(onAnimationFinished: () -> Unit) {
-    SplashScaffold(onFinished = onAnimationFinished)
-}
-
-@Composable
-private fun SplashScaffold(onFinished: () -> Unit) {
     val composition by rememberLottieComposition(
         LottieCompositionSpec.RawRes(R.raw.lottie_animation)
     )
@@ -45,7 +40,7 @@ private fun SplashScaffold(onFinished: () -> Unit) {
         if (playForward) {
             playForward = false
         } else {
-            onFinished()
+            onAnimationFinished()
         }
     }
     Box(

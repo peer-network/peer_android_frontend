@@ -1,4 +1,4 @@
-package eu.peernetwork.user.ui.user
+package eu.peernetwork.user.ui.compose
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background
@@ -24,7 +24,7 @@ import eu.peernetwork.core.ui.design.compose.DesignDetail
 import eu.peernetwork.core.ui.theme.PeerTheme
 
 @Composable
-fun UserScaffold(
+fun ProfileScaffold(
     modifier: Modifier = Modifier,
     textStyle: TextStyle = MaterialTheme.typography.bodyMedium,
     contentPadding: PaddingValues = PaddingValues(top = 8.dp),
@@ -56,8 +56,8 @@ fun UserScaffold(
 }
 
 @Composable
-fun UserScaffold(modifier: Modifier = Modifier) {
-    UserScaffold(
+fun ProfileScaffold(modifier: Modifier = Modifier) {
+    ProfileScaffold(
         modifier = modifier,
         avatar = {
             Box(modifier = Modifier.size(64.dp)
@@ -78,11 +78,11 @@ fun UserScaffold(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun UserErrorScaffold(
+fun ProfileScaffold(
     modifier: Modifier = Modifier,
     actions: @Composable () -> Unit,
 ) {
-    UserScaffold(
+    ProfileScaffold(
         modifier = modifier,
         avatar = {
             Box(modifier = Modifier.size(64.dp)
@@ -105,14 +105,14 @@ fun UserErrorScaffold(
 
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
-fun PreviewUserScaffold() {
+fun PreviewProfileScaffold() {
     PeerTheme {
         Column {
-            UserScaffold(modifier = Modifier.padding(16.dp))
-            UserErrorScaffold(modifier = Modifier.padding(16.dp)) {
+            ProfileScaffold(modifier = Modifier.padding(16.dp))
+            ProfileScaffold(modifier = Modifier.padding(16.dp)) {
                 Text(text = "icon")
             }
-            UserScaffold(
+            ProfileScaffold(
                 modifier = Modifier.padding(16.dp),
                 avatar = {
                     Box(modifier = Modifier

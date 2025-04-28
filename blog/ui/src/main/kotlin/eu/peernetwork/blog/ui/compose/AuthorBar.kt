@@ -1,5 +1,6 @@
 package eu.peernetwork.blog.ui.compose
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -7,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -26,7 +28,8 @@ fun AuthorBar(
     description: String,
     modifier: Modifier = Modifier,
     color: Color = MaterialTheme.colorScheme.onBackground,
-    descriptionColor: Color = MaterialTheme.colorScheme.tertiary
+    descriptionColor: Color = MaterialTheme.colorScheme.tertiary,
+    onClick: () -> Unit = {}
 ) {
     DesignDetailLayout(
         lead = {
@@ -37,7 +40,8 @@ fun AuthorBar(
                     size = 36.dp,
                     style = MaterialTheme.typography.bodyMedium.copy(
                         color = color,
-                    )
+                    ),
+                    modifier = Modifier.clickable(role = Role.Button, onClick = onClick)
                 )
             }
         },

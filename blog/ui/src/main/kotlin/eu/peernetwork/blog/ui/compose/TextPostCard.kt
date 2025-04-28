@@ -33,6 +33,7 @@ fun TextPostCard(
     author: UiAuthor,
     description: String,
     modifier: Modifier = Modifier,
+    onClick: () -> Unit = {},
     contentPadding: PaddingValues = PaddingValues(
         top = 16.dp,
         start = 16.dp,
@@ -41,6 +42,7 @@ fun TextPostCard(
     ),
     actions: @Composable RowScope.() -> Unit = {},
     engagements: @Composable RowScope.() -> Unit = {},
+    moderation: @Composable RowScope.() -> Unit = {},
     content: @Composable () -> Unit,
 ) {
     PostCard(
@@ -50,7 +52,8 @@ fun TextPostCard(
                 AuthorBar(
                     author,
                     description,
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
+                    onClick = onClick
                 )
                 actions()
             }
@@ -72,17 +75,7 @@ fun TextPostCard(
             ) {
                 engagements()
                 Spacer(modifier = Modifier.weight(1f))
-                DesignTextButton(
-                    onClick = {},
-                    contentPadding = PaddingValues(0.dp)
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_menu),
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.tertiary,
-                        modifier = Modifier.size(28.dp)
-                    )
-                }
+                moderation()
             }
         }
     ) { content() }

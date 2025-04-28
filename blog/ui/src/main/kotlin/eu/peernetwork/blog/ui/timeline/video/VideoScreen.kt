@@ -25,6 +25,7 @@ import eu.peernetwork.blog.ui.compose.PostPageSkeleton
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
 import eu.peernetwork.blog.ui.mapper.mapToContent
 import eu.peernetwork.blog.ui.model.UiPost
+import eu.peernetwork.blog.ui.moderation.ModerationScreen
 import eu.peernetwork.blog.ui.post.photo.formatTimeAgo
 import eu.peernetwork.core.ui.design.component.DesignPagingScaffold
 import eu.peernetwork.core.ui.design.component.DesignRefreshableScaffold
@@ -34,9 +35,11 @@ import eu.peernetwork.media.core.renderer.VideoThumbnail
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VideoScreen(
+    tag: String,
     postLimit: Int,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
+    onClick: (String) -> Unit = {},
 ) {
     val context = LocalContext.current
     val component = remember {
@@ -70,7 +73,6 @@ fun VideoScreen(
         }
     }
     var selectedClip = remember { mutableStateOf<Int?>(null) }
-    val refreshEngagement = remember { mutableStateOf(false) }
     DesignPagingScaffold<UiVideo>(
         state = derivedState,
         onRefresh = { viewModel.load(Pageable(0, postLimit)) },
@@ -87,51 +89,69 @@ fun VideoScreen(
                 state.value
             }
         } }
+        val isLoading = remember { derivedStateOf {
+            lazyPagingItems.loadState.refresh is LoadState.Loading
+        } }
         DesignRefreshableScaffold<LazyPagingItems<UiPost>>(
             state = refreshState,
-            onRefresh = {
-                refreshEngagement.value = true
-                lazyPagingItems.refresh() }
+            onRefresh = { lazyPagingItems.refresh() }
         ) {
-            LazyColumn(modifier = Modifier.fillMaxSize()) {
-                items(
-                    count = lazyPagingItems.itemCount,
-                    key = { index -> index }
-                ) { index ->
-                    lazyPagingItems[index]?.let { post ->
-                        MediaPostCard(
-                            author = post.author,
-                            description = post.createdAt.formatTimeAgo(currentTime.longValue),
-                            caption = {
-                                PostSummary(post.author.username, post.title, post.description)
-                            },
-                            engagements = {
-                                EngagementScreen(
-                                    post.mapToContent(),
-                                    postLimit,
-                                    refreshEngagement,
-                                    component,
-                                    viewModelStoreOwner
-                                )
-                            },
-                            modifier = Modifier.padding(bottom = 16.dp)
-                        ) {
-                            Box(modifier = Modifier.clickable(
-                                role = Role.Button,
-                                onClick = { selectedClip.value = index }
-                            )) {
-                                component.videoThumbnail()(
-                                    Modifier,
-                                    VideoThumbnail.Spec(post.media, post.resolution)
-                                )
+            EngagementScreen(
+                tag,
+                postLimit,
+                isLoading,
+                component,
+                viewModelStoreOwner
+            ) { engagement ->
+                ModerationScreen(
+                    component,
+                    viewModelStoreOwner
+                ) { spec ->
+                    LazyColumn(modifier = Modifier.fillMaxSize()) {
+                        items(
+                            count = lazyPagingItems.itemCount,
+                            key = { index -> index }
+                        ) { index ->
+                            lazyPagingItems[index]?.let { post ->
+                                MediaPostCard(
+                                    author = post.author,
+                                    onClick = { onClick(post.author.id) },
+                                    description = post.createdAt.formatTimeAgo(currentTime.longValue),
+                                    caption = {
+                                        PostSummary(post.author.username, post.title, post.description)
+                                    },
+                                    engagements = {
+                                        EngagementScreen(
+                                            spec = engagement,
+                                            model = post.mapToContent(),
+                                        )
+                                    },
+                                    moderation = {
+                                        ModerationScreen(
+                                            post.mapToContent(),
+                                            spec
+                                        )
+                                    },
+                                    modifier = Modifier.padding(bottom = 16.dp)
+                                ) {
+                                    Box(modifier = Modifier.clickable(
+                                        role = Role.Button,
+                                        onClick = { selectedClip.value = index }
+                                    )) {
+                                        component.videoThumbnail()(
+                                            Modifier,
+                                            VideoThumbnail.Spec(post.media, post.resolution)
+                                        )
+                                    }
+                                }
                             }
                         }
+                        if (lazyPagingItems.loadState.append is LoadState.Loading) {
+                            item { CircularProgressIndicator(modifier = Modifier.padding(16.dp)) }
+                        }
+                        item { Spacer(modifier = Modifier.height(56.dp)) }
                     }
                 }
-                if (lazyPagingItems.loadState.append is LoadState.Loading) {
-                    item { CircularProgressIndicator(modifier = Modifier.padding(16.dp)) }
-                }
-                item { Spacer(modifier = Modifier.height(56.dp)) }
             }
         }
         VideoDialog(postLimit, selectedClip, provider, viewModelStoreOwner)

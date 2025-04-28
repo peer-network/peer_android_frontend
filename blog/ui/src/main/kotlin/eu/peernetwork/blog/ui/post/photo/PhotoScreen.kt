@@ -12,7 +12,6 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -27,6 +26,7 @@ import eu.peernetwork.blog.ui.compose.PostPageSkeleton
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
 import eu.peernetwork.blog.ui.mapper.mapToContent
 import eu.peernetwork.blog.ui.mapper.mapToProperty
+import eu.peernetwork.blog.ui.moderation.ModerationScreen
 import eu.peernetwork.core.common.model.Pageable
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.component.DesignPagingScaffold
@@ -74,47 +74,65 @@ fun PhotoScreen(
             }
         }
     }
-    val refreshEngagement = remember { mutableStateOf(false) }
     DesignPagingScaffold<UiPost>(
         state = derivedState,
         placeholder = { PostPageSkeleton() },
         onRefresh = { viewModel.load(author, Pageable(0, postLimit)) },
     ) { state, lazyPagingItems ->
-        LazyColumn {
-            items(
-                count = lazyPagingItems.itemCount,
-                key = { index -> index }
-            ) { index ->
-                lazyPagingItems[index]?.let { photo ->
-                    PostListItem(
-                        photo,
-                        index,
-                        currentTime,
-                        engagements = { EngagementScreen(
-                            photo.mapToContent(),
-                            postLimit,
-                            refreshEngagement,
-                            component,
-                            viewModelStoreOwner
-                        ) }
-                    ) {
-                        val media = photo.media.first()
-                        component.imageView()(
-                            Modifier,
-                            ImageView.Spec(media.path, media.mapToProperty())
-                        )
+        val isLoading = remember { derivedStateOf {
+            lazyPagingItems.loadState.refresh is LoadState.Loading
+        } }
+        EngagementScreen(
+            author,
+            postLimit,
+            isLoading,
+            component,
+            viewModelStoreOwner
+        ) { engagement ->
+            ModerationScreen(
+                component,
+                viewModelStoreOwner
+            ) { spec ->
+                LazyColumn {
+                    items(
+                        count = lazyPagingItems.itemCount,
+                        key = { index -> index }
+                    ) { index ->
+                        lazyPagingItems[index]?.let { photo ->
+                            val content = photo.mapToContent()
+                            PostListItem(
+                                photo,
+                                index,
+                                currentTime,
+                                engagements = { EngagementScreen(
+                                    content,
+                                    engagement
+                                ) },
+                                moderation = {
+                                    ModerationScreen(
+                                        model = content,
+                                        spec = spec
+                                    )
+                                },
+                            ) {
+                                val media = photo.media.first()
+                                component.imageView()(
+                                    Modifier,
+                                    ImageView.Spec(media.path, media.mapToProperty())
+                                )
+                            }
+                        }
                     }
+                    if (lazyPagingItems.loadState.append is LoadState.Loading) {
+                        item { CircularProgressIndicator(modifier = Modifier.padding(16.dp)) }
+                    }
+                    item { Spacer(modifier = Modifier.height(56.dp)) }
                 }
             }
-            if (lazyPagingItems.loadState.append is LoadState.Loading) {
-                item { CircularProgressIndicator(modifier = Modifier.padding(16.dp)) }
-            }
-            item { Spacer(modifier = Modifier.height(56.dp)) }
         }
         LaunchedEffect(loadState.value) {
             if (loadState.value) {
                 lazyPagingItems.refresh()
-                refreshEngagement.value = true
                 loadState.value = false
             }
         }

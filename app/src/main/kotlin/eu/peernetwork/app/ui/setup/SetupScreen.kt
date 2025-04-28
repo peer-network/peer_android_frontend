@@ -13,7 +13,6 @@ import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -44,13 +43,13 @@ fun SetupScreen(
         factory = component.viewModelFactory()
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val contentState = rememberSaveable { mutableIntStateOf(state.page) }
+    val contentState = remember { mutableIntStateOf(state.page) }
     DesignContainer {
         SetupScaffold(
             header = { SetupHeader(state = contentState) },
             footer = { SetupFooter(onPrivacy = {}) }
         ) {
-            SetupContent(
+            SetupScreen(
                 state = contentState,
                 register = { RegistrationScreen(
                     component,
@@ -65,7 +64,7 @@ fun SetupScreen(
 }
 
 @Composable
-fun SetupContent(
+fun SetupScreen(
     state: MutableIntState,
     register: @Composable () -> Unit,
     login: @Composable () -> Unit,
@@ -95,13 +94,13 @@ fun SetupContent(
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun PreviewSetupScreen() {
-    val state = rememberSaveable { mutableIntStateOf(1) }
+    val state = remember { mutableIntStateOf(1) }
     PeerTheme {
         SetupScaffold(
             header = { SetupHeader(state = state) },
             footer = { SetupFooter(onPrivacy = {}) },
         ) {
-            SetupContent(
+            SetupScreen(
                 state = state,
                 register = {
                     Text(

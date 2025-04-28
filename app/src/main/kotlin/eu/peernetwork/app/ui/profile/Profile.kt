@@ -1,15 +1,21 @@
-package eu.peernetwork.app.ui.profile.core
+package eu.peernetwork.app.ui.profile
 
 import android.content.Context
-import eu.peernetwork.app.ui.profile.preview.Preview
+import eu.peernetwork.blog.ui.post.music.Music
+import eu.peernetwork.blog.ui.post.photo.Photo
+import eu.peernetwork.blog.ui.post.video.Video
 import eu.peernetwork.blog.ui.provider.BlogProvider
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.persistence.domain.provider.PreferenceProvider
+import eu.peernetwork.social.ui.member.Member
+import eu.peernetwork.social.ui.provider.SocialProvider
+import eu.peernetwork.user.ui.account.Account
 import eu.peernetwork.user.ui.provider.UserProvider
 import eu.peernetwork.user.ui.settings.Settings
+import eu.peernetwork.user.ui.user.User
 
-interface Profile : UserProvider, PreferenceProvider, BlogProvider {
+interface Profile : UserProvider, PreferenceProvider, BlogProvider, SocialProvider {
     @javax.inject.Scope
     @Retention(AnnotationRetention.RUNTIME)
     annotation class Scope
@@ -19,7 +25,7 @@ interface Profile : UserProvider, PreferenceProvider, BlogProvider {
         dependencies = [ Profile::class ],
         modules = [ ProfileModule::class ]
     )
-    interface Component : Profile, UiComponentProvider, Preview, Settings
+    interface Component : Profile, UiComponentProvider, Settings, Member, User, Photo, Video, Music, Account
 
     class Builder(private val dependency: Profile) : UiComponent.DefaultBuilder<Profile, Component>() {
         override fun build(context: Context): Component {

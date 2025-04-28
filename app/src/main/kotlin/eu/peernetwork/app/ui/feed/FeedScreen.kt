@@ -28,20 +28,30 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavType
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import eu.peernetwork.app.BuildConfig
+import eu.peernetwork.app.ui.profile.ProfileScreen
 import eu.peernetwork.media.core.model.MimeType
 import eu.peernetwork.blog.ui.timeline.music.MusicScreen
 import eu.peernetwork.blog.ui.timeline.photo.PhotoScreen
 import eu.peernetwork.blog.ui.timeline.video.VideoScreen
 import eu.peernetwork.core.ui.R
+import eu.peernetwork.core.ui.annotation.UiViewModel
 import eu.peernetwork.core.ui.component.UiComponentProvider
+import eu.peernetwork.core.ui.design.compose.DesignRouter
 import eu.peernetwork.core.ui.design.compose.DesignTab
 import eu.peernetwork.core.ui.design.compose.DesignToolbarTitle
 import eu.peernetwork.core.ui.extension.builder
+import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.core.ui.theme.PeerTheme
+import eu.peernetwork.social.ui.renderder.UserRenderer
 
 @Composable
 fun FeedScreen(
+    id: String,
     title: MutableState<DesignToolbarTitle>,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
@@ -57,21 +67,54 @@ fun FeedScreen(
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
     val pageState = remember { mutableIntStateOf(state.page) }
-    FeedContent(
-        state = pageState,
-        modifier = Modifier.fillMaxSize(),
-        onNavigate = { viewModel.lastVisited(it) },
-        photo = { PhotoScreen(BuildConfig.PAGING_LIMIT, component, viewModelStoreOwner) },
-        video = { VideoScreen(BuildConfig.PAGING_LIMIT, component, viewModelStoreOwner) },
-        music = { MusicScreen(component, viewModelStoreOwner) }
-    )
-    LaunchedEffect(Unit) {
-        title.value = DesignToolbarTitle(R.string.home_label) {}
+    val controller = rememberNavController()
+    DesignRouter(
+        navController = controller,
+        startDestination = "feed",
+    ) {
+        composable("feed") {
+            FeedScreen(
+                state = pageState,
+                modifier = Modifier.fillMaxSize(),
+                onNavigate = { viewModel.lastVisited(it) },
+                photo = { PhotoScreen(id, BuildConfig.PAGING_LIMIT, component, viewModelStoreOwner) {
+                    controller.navigateIfNecessary("profile/$it")
+                } },
+                video = { VideoScreen(id, BuildConfig.PAGING_LIMIT, component, viewModelStoreOwner) {
+                    controller.navigateIfNecessary("profile/$it")
+                } },
+                music = { MusicScreen(component, viewModelStoreOwner) }
+            )
+            LaunchedEffect(Unit) {
+                title.value = DesignToolbarTitle(R.string.home_label) {}
+            }
+        }
+        composable(
+            "profile/{id}",
+            arguments = listOf(navArgument("id") {
+                type = NavType.StringType
+            })
+        ) { backStackEntry ->
+            val userId = backStackEntry.arguments?.getString("id")
+            ProfileScreen(
+                userId = userId ?: id,
+                title = title,
+                type = if (userId == id) {
+                    UserRenderer.Type.ACCOUNT
+                } else {
+                    userId?.let {
+                        UserRenderer.Type.USER
+                    } ?: UserRenderer.Type.ACCOUNT
+                },
+                provider = component,
+                viewModelStoreOwner = UiViewModel.Owner()
+            )
+        }
     }
 }
 
 @Composable
-fun FeedContent(
+fun FeedScreen(
     state: MutableIntState,
     modifier: Modifier = Modifier,
     onNavigate: (Int) -> Unit = {},
@@ -114,7 +157,7 @@ fun FeedContent(
 fun PreviewFeedScreen() {
     val state = rememberSaveable { mutableIntStateOf(0) }
     PeerTheme {
-        FeedContent(
+        FeedScreen(
             state = state,
             modifier = Modifier.fillMaxSize(),
             photo = { Text("Photo") },

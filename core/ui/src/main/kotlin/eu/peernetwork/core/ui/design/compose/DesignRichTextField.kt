@@ -84,7 +84,7 @@ fun DesignRichTextField(
     placeholder: @Composable (() -> Unit)? = null
 ) {
     var isFocused by remember { mutableStateOf(false) }
-    val pattern = remember { Regex("""(@\w+)|(#\w+)|(https?://[^\s]+)|(ftp://[^\s]+)""") }
+    val pattern = remember { Regex("""(@\w+)|(#\w+)|(https?://[^\s]+)|(ftp://[^\s]+)""", RegexOption.IGNORE_CASE) }
     val backgroundColor by animateColorAsState(
         targetValue = if (isFocused) {
             colors.focusedContainerColor
@@ -131,10 +131,10 @@ fun DesignRichTextField(
                 withStyle(
                     SpanStyle(
                         color = when {
-                            match.value.startsWith("@") -> mentionColor
-                            match.value.startsWith("#") -> hashtagColor
-                            match.value.startsWith("http") -> linkColor
-                            match.value.startsWith("ftp") -> linkColor
+                            match.value.startsWith("@", true) -> mentionColor
+                            match.value.startsWith("#", true) -> hashtagColor
+                            match.value.startsWith("http", true) -> linkColor
+                            match.value.startsWith("ftp", true) -> linkColor
                             else -> defaultTextColor
                         }
                     )

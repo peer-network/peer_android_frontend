@@ -28,7 +28,7 @@ import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.app.ui.feed.FeedScreen
-import eu.peernetwork.app.ui.profile.core.ProfileScreen
+import eu.peernetwork.app.ui.profile.ProfileScreen
 import eu.peernetwork.blog.ui.point.PointScreen
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.annotation.UiViewModel
@@ -78,7 +78,7 @@ fun HomeScreen(provider: UiComponentProvider) {
             options = { PointScreen(component, owner) }
         ) { state, route ->
             when(route) {
-                is HomeRoute.Home -> FeedScreen(title, component, owner)
+                is HomeRoute.Home -> FeedScreen(data.first, title, component, owner)
                 is HomeRoute.Profile -> ProfileScreen(
                     data.first,
                     title,

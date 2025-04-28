@@ -11,7 +11,7 @@ import eu.peernetwork.user.domain.interactor.AuthenticationInteractor
     includes = [
         ApiModule::class,
         SettingsModule::class,
-        RepositoryModule::class,
+        RepositoryModule::class
     ]
 )
 interface UserModule {
