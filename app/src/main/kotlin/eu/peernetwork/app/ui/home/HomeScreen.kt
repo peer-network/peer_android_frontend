@@ -35,6 +35,7 @@ import eu.peernetwork.core.ui.annotation.UiViewModel
 import eu.peernetwork.core.ui.design.compose.DesignToolbarTitle
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffold
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
+import eu.peernetwork.social.ui.search.SearchScreen
 import eu.peernetwork.wallet.ui.overview.OverviewScreen
 
 @Composable
@@ -87,6 +88,7 @@ fun HomeScreen(provider: UiComponentProvider) {
                 )
                 is HomeRoute.Add -> CreatorScreen(title, component, owner)
                 is HomeRoute.Wallet -> OverviewScreen(title, component, owner)
+                is HomeRoute.Search -> SearchScreen(title, component, owner)
                 else -> Box(modifier = Modifier.fillMaxSize()
                     .verticalScroll(rememberScrollState())) {
                     LaunchedEffect(Unit) {
