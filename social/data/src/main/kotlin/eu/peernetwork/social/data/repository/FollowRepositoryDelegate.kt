@@ -1,17 +1,17 @@
 package eu.peernetwork.social.data.repository
 
 import eu.peernetwork.core.common.model.Pageable
+import eu.peernetwork.social.data.api.FollowApi
 import eu.peernetwork.social.domain.model.User
 import eu.peernetwork.social.domain.repository.FollowRepository
 import kotlinx.coroutines.flow.SharedFlow
+import javax.inject.Inject
 
-class FollowRepositoryDelegate : FollowRepository {
-    override suspend fun follow(id: String) {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun unfollow(id: String) {
-        TODO("Not yet implemented")
+class FollowRepositoryDelegate @Inject constructor(
+    private val api: FollowApi
+) : FollowRepository {
+    override suspend fun follow(id: String): Boolean {
+        return api.follow(id)
     }
 
     override fun followers(id: String, pageable: Pageable): SharedFlow<List<User>> {

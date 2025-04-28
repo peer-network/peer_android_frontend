@@ -48,7 +48,7 @@ class SettingsViewModel @Inject constructor(
 
     fun initialize() {
         viewModelScope.launch {
-            if (observerUsecase().firstOrNull { it == null } == null) {
+            if (observerUsecase().firstOrNull() == null) {
                 getAccount()
             }
         }

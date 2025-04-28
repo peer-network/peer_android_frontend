@@ -5,9 +5,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.PagingSource.LoadParams
 import androidx.paging.PagingSource.LoadResult
-import eu.peernetwork.blog.domain.model.Content
-import eu.peernetwork.blog.domain.model.Filter
-import eu.peernetwork.blog.domain.repository.ContentRepository
+import eu.peernetwork.blog.domain.usecase.PhotosUsecase
 import eu.peernetwork.blog.ui.mapper.mapToPhoto
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.core.common.model.Pageable
@@ -15,9 +13,9 @@ import eu.peernetwork.core.ui.usecase.PagingUsecase
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class PostUsecase @Inject constructor(
-    private val repository: ContentRepository
-) : PagingUsecase<PostUsecase.Parameter, UiPost>() {
+class UserPostsUsecase @Inject constructor(
+    private val usecase: PhotosUsecase
+) : PagingUsecase<UserPostsUsecase.Parameter, UiPost>() {
     private lateinit var param: Parameter
 
     override fun invoke(param: Parameter): Flow<PagingData<UiPost>> {
@@ -37,15 +35,7 @@ class PostUsecase @Inject constructor(
             offset = currentOffset,
             limit = params.loadSize
         )
-        val response = repository.getAll(
-            filter = Filter(
-                type = setOf(
-                    Content.Type.TEXT,
-                    Content.Type.IMAGE
-                )
-            ),
-            currentPage
-        )
+        val response = usecase(PhotosUsecase.Parameter(page = currentPage))
         return LoadResult.Page(
             data = response.items.map { it.mapToPhoto() },
             prevKey = if (currentOffset <= 0) null else currentOffset - 1,

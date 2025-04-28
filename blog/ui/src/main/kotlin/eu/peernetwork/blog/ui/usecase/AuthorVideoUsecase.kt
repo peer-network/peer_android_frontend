@@ -5,9 +5,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.PagingSource.LoadParams
 import androidx.paging.PagingSource.LoadResult
-import eu.peernetwork.blog.domain.model.Content
-import eu.peernetwork.blog.domain.model.Filter
-import eu.peernetwork.blog.domain.repository.ContentRepository
+import eu.peernetwork.blog.domain.usecase.VideosUsecase
 import eu.peernetwork.blog.ui.mapper.mapToVideo
 import eu.peernetwork.blog.ui.model.UiVideo
 import eu.peernetwork.core.common.model.Pageable
@@ -16,7 +14,7 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class AuthorVideoUsecase @Inject constructor(
-    private val repository: ContentRepository
+    private val usecase: VideosUsecase
 ) : PagingUsecase<AuthorVideoUsecase.Parameter, UiVideo>() {
     private lateinit var param: Parameter
 
@@ -37,14 +35,11 @@ class AuthorVideoUsecase @Inject constructor(
             offset = currentOffset,
             limit = params.loadSize
         )
-        val response = repository.getAll(
-            filter = Filter(
+        val response = usecase(
+            VideosUsecase.Parameter(
                 author = param.author,
-                type = setOf(
-                    Content.Type.VIDEO
-                )
-            ),
-            currentPage
+                page = currentPage
+            )
         )
         return LoadResult.Page(
             data = response.items.map { it.mapToVideo() },
