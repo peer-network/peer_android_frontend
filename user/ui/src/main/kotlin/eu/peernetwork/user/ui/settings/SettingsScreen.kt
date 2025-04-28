@@ -47,6 +47,7 @@ import eu.peernetwork.user.ui.model.UiOverview
 import eu.peernetwork.user.ui.model.UiSettings
 import eu.peernetwork.user.ui.compose.LogoutSheet
 import eu.peernetwork.user.ui.compose.PasswordSheet
+import eu.peernetwork.user.ui.compose.ProfileScaffold
 
 @Composable
 fun SettingsScreen(
@@ -80,7 +81,10 @@ fun SettingsScreen(
     val isLoading = remember { derivedStateOf { content.value?.processing == true } }
     DesignRefreshableScaffold<UiAccount>(
         state = derivedState,
-        onRefresh = { viewModel.getAccount() }
+        onRefresh = { viewModel.getAccount() },
+        placeholder = { ProfileScaffold(modifier = Modifier.fillMaxSize()
+            .padding(vertical = 16.dp, horizontal = 24.dp)
+            .verticalScroll(rememberScrollState())) }
     ) {
         SettingsScreen(
             account = it,
@@ -99,6 +103,11 @@ fun SettingsScreen(
         }
     }
     LaunchedEffect(Unit) { viewModel.reset() }
+    LaunchedEffect(content.value) {
+        if (content.value == null) {
+            viewModel.initialize()
+        }
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

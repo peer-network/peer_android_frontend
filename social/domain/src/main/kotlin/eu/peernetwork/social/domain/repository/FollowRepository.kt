@@ -5,9 +5,7 @@ import eu.peernetwork.social.domain.model.User
 import kotlinx.coroutines.flow.SharedFlow
 
 interface FollowRepository {
-    suspend fun follow(id: String)
-
-    suspend fun unfollow(id: String)
+    suspend fun follow(id: String): Boolean
 
     fun followers(id: String, pageable: Pageable): SharedFlow<List<User>>
 

@@ -107,7 +107,11 @@ fun FeedScreen(
                     } ?: UserRenderer.Type.ACCOUNT
                 },
                 provider = component,
-                viewModelStoreOwner = UiViewModel.Owner()
+                viewModelStoreOwner = if (userId == id) {
+                    viewModelStoreOwner
+                } else {
+                    UiViewModel.Owner()
+                }
             )
         }
     }

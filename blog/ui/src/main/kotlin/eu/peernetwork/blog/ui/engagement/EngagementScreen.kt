@@ -60,15 +60,7 @@ fun EngagementScreen(
     }
     var post = remember { mutableStateOf<UiContent?>(null) }
     val errorMessage = stringResource(R.string.unknown_error_message)
-    val hasError = remember {
-        derivedStateOf { error.value != null }
-    }
-    val isRefreshed = remember {
-        derivedStateOf {
-            (state as? EngagementViewModel.State.Content?)
-                ?.engagements?.isEmpty() == false && refresh.value
-        }
-    }
+    val hasError = remember { derivedStateOf { error.value != null } }
     content(EngagementSpec(
         onInit = {
             (state as? EngagementViewModel.State.Content?)
@@ -78,8 +70,8 @@ fun EngagementScreen(
         onDisLike = { viewModel.dislike(it) },
         onComment = { post.value = it }
     ))
-    LaunchedEffect(isRefreshed.value) {
-        if (isRefreshed.value) {
+    LaunchedEffect(refresh.value) {
+        if (refresh.value) {
             viewModel.reset()
         }
     }

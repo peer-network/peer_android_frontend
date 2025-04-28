@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import eu.peernetwork.blog.ui.model.UiVideo
-import eu.peernetwork.blog.ui.usecase.VideoUsecase
+import eu.peernetwork.blog.ui.usecase.UserVideosUsecase
 import eu.peernetwork.core.common.model.Pageable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,7 +18,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class VideoViewModel @Inject constructor(
-    private val usecase: VideoUsecase
+    private val usecase: UserVideosUsecase
 ) : ViewModel() {
     private val mutableState = MutableStateFlow<State>(State.Empty)
 
@@ -27,7 +27,7 @@ class VideoViewModel @Inject constructor(
     fun load(page: Pageable) {
         viewModelScope.launch {
             usecase(
-                VideoUsecase.Parameter(
+                UserVideosUsecase.Parameter(
                     page = page
                 )
             ).catch { mutableState.tryEmit(State.Error(it)) }
