@@ -28,7 +28,7 @@ import eu.peernetwork.core.ui.theme.LightAccentColor
 import eu.peernetwork.core.ui.theme.PeerAppRed
 
 data class EngagementSpec(
-    val onInit: (UiContent) -> UiEngagement,
+    val onLoad: (UiContent) -> UiEngagement,
     val onLike: (UiEngagement) -> Unit,
     val onDisLike: (UiEngagement) -> Unit,
     val onComment: (UiContent) -> Unit,
@@ -62,7 +62,7 @@ fun EngagementScreen(
     val errorMessage = stringResource(R.string.unknown_error_message)
     val hasError = remember { derivedStateOf { error.value != null } }
     content(EngagementSpec(
-        onInit = {
+        onLoad = {
             (state as? EngagementViewModel.State.Content?)
                 ?.engagements?.get(it.id) ?: it.mapToEngagement()
         },
@@ -95,7 +95,7 @@ fun EngagementScreen(
     model: UiContent,
     spec: EngagementSpec,
 ) {
-    val engagement by remember(model) { derivedStateOf { spec.onInit(model) } }
+    val engagement by remember(model) { derivedStateOf { spec.onLoad(model) } }
     Row {
         PostIcon(
             action = UiAction.Like,
