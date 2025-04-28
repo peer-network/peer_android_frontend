@@ -9,6 +9,6 @@ class UserSearchUsecase @Inject constructor(
     private val repository: SearchRepository
 ) : ParameterizedSuspendableUseCase<String, Unit> {
     override suspend fun invoke(param: String) {
-        repository.filterByUsername(param, Pageable(0, 20))
+        repository.friends(param, Pageable(0, 20))
     }
 }
