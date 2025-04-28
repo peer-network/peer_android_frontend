@@ -1,11 +1,14 @@
 package eu.peernetwork.user.ui.user
 
 import android.content.res.Configuration
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -14,14 +17,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.theme.PeerTheme
@@ -31,14 +32,19 @@ import eu.peernetwork.core.ui.design.compose.DesignAsyncImage
 import eu.peernetwork.core.ui.design.compose.DesignTitle
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffold
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
-import eu.peernetwork.user.ui.compose.UserOverview
+import eu.peernetwork.core.ui.design.compose.DesignOutlinedButton
+import eu.peernetwork.user.ui.R
+import eu.peernetwork.user.ui.compose.Overview
+import eu.peernetwork.user.ui.compose.ProfileScaffold
 
 @Composable
 fun UserScreen(
+    id: String,
     loadState: MutableState<Boolean>,
     modifier: Modifier = Modifier,
     provider: UiComponentProvider,
-    onEvent: (UserEvent) -> Unit,
+    onFollow: () -> Unit,
+    onClick: (Int) -> Unit,
     viewModelStoreOwner: ViewModelStoreOwner,
 ) {
     val context = LocalContext.current
@@ -69,32 +75,20 @@ fun UserScreen(
     } }
     DesignStatefulScaffold<UiAccount>(
         state = derivedState,
-        onRefresh = { viewModel.initialize() },
-        placeholder = { UserScaffold(modifier = modifier.padding(end = 8.dp)) },
-        errorContent = {
-            UserErrorScaffold(modifier = modifier.padding(end = 8.dp)) {
-                IconButton(onClick = {
-                    onEvent(UserEvent.Settings)
-                }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_settings),
-                        contentDescription = stringResource(R.string.settings_label),
-                        modifier = Modifier.size(18.dp)
-                    )
-                }
-            }
-        }
+        onRefresh = { viewModel.getAccount(id) },
+        placeholder = { ProfileScaffold(modifier = modifier.padding(end = 8.dp)) },
+        errorContent = { ProfileScaffold(modifier = modifier.padding(end = 8.dp)) }
     ) {
         UserScreen(
             modifier = modifier,
             account = it,
-            onEvent = onEvent
+            onFollow = onFollow,
+            onClick = onClick
         )
     }
     LaunchedEffect(loadState.value) {
-        if ((loadState.value && derivedState.value !is DesignStatefulScaffoldState.Loading)
-            || (!loadState.value && derivedState.value is DesignStatefulScaffoldState.Error)) {
-            viewModel.refreshAccount()
+        if (loadState.value) {
+            viewModel.getAccount(id)
             loadState.value = false
         }
     }
@@ -103,40 +97,57 @@ fun UserScreen(
 @Composable
 fun UserScreen(
     account: UiAccount,
-    onEvent: (UserEvent) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onFollow: () -> Unit,
+    onClick: (Int) -> Unit,
 ) {
-    val emptyDescription = stringResource(eu.peernetwork.user.ui.R.string.empty_description_message)
-    UserScaffold(
+    val emptyDescription = stringResource(R.string.empty_description_message)
+    ProfileScaffold(
         modifier = modifier,
         avatar = { DesignAsyncImage(account.username, account.imageUrl) },
         actions = {
-            IconButton(onClick = {
-                onEvent(UserEvent.Settings)
-            }) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_settings),
-                    contentDescription = stringResource(R.string.settings_label),
-                    modifier = Modifier.size(18.dp)
+            Box(
+                modifier = Modifier.padding(vertical = 8.dp)
+                    .padding(bottom = 4.dp)
+            ) {
+                DesignOutlinedButton(
+                    onClick = onFollow,
+                    isLoading = false,
+                    shape = RoundedCornerShape(8.dp),
+                    textStyle = MaterialTheme.typography.bodySmall,
+                    enabled = false,
+                    contentPadding = PaddingValues(vertical = 4.dp, horizontal = 32.dp),
+                    modifier = Modifier
+                        .padding(start = 4.dp)
+                        .height(28.dp),
+                    content = {
+                        Text(
+                            text = stringResource(R.string.follow_label),
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
                 )
             }
         },
         options = {
-            UserOverview(
+            Overview(
                 overview = account.overview,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                onClick = onClick
             )
         }
-    ) { DesignTitle(
-        account.username,
-        account.slug.toString(),
-        account.bio ?: emptyDescription
-    ) }
+    ) {
+        DesignTitle(
+            account.username,
+            account.slug.toString(),
+            account.bio ?: emptyDescription
+        )
+    }
 }
 
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
-fun PreviewAccountScreen() {
+fun PreviewUserScreen() {
     PeerTheme {
         val model = UiAccount(
             id = System.currentTimeMillis().toString(),
@@ -151,6 +162,6 @@ fun PreviewAccountScreen() {
                 followed = 0
             )
         )
-        UserScreen(onEvent = { }, account = model)
+        UserScreen(onFollow = { }, account = model) {}
     }
 }

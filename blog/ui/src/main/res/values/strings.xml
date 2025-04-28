@@ -4,4 +4,6 @@
     <string name="post_description">Write a post…</string>
     <string name="post_reply">Write a comment…</string>
     <string name="send_label">Send</string>
+
+    <string name="action_message">Action successfully completed</string>
 </resources>

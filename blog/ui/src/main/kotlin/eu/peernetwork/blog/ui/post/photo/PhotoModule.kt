@@ -6,6 +6,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
 import eu.peernetwork.blog.ui.engagement.Engagement
+import eu.peernetwork.blog.ui.moderation.Moderation
 import eu.peernetwork.core.ui.annotation.UiBuilder
 import eu.peernetwork.core.ui.annotation.UiViewModel
 import eu.peernetwork.core.ui.component.UiComponent
@@ -41,5 +42,13 @@ object PhotoModule {
     @UiBuilder(Engagement.Builder::class)
     fun provideEngagementBuilder(photo: Photo.Component): UiComponent.Builder {
         return Engagement.Builder(photo)
+    }
+
+    @Provides
+    @IntoMap
+    @Photo.Scope
+    @UiBuilder(Moderation.Builder::class)
+    fun provideModerationBuilder(photo: Photo.Component): UiComponent.Builder {
+        return Moderation.Builder(photo)
     }
 }

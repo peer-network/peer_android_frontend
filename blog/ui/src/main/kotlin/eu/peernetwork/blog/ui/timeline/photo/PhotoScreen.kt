@@ -27,6 +27,7 @@ import eu.peernetwork.blog.ui.mapper.mapToContent
 import eu.peernetwork.core.common.model.Pageable
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
 import eu.peernetwork.blog.ui.mapper.mapToProperty
+import eu.peernetwork.blog.ui.moderation.ModerationScreen
 import eu.peernetwork.core.ui.design.component.DesignPagingScaffold
 import eu.peernetwork.core.ui.design.component.DesignRefreshableScaffold
 import eu.peernetwork.media.core.renderer.ImageView
@@ -35,9 +36,11 @@ import kotlinx.coroutines.delay
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
 @Composable
 fun PhotoScreen(
+    tag: String,
     postLimit: Int,
     provider: UiComponentProvider,
-    viewModelStoreOwner: ViewModelStoreOwner
+    viewModelStoreOwner: ViewModelStoreOwner,
+    onClick: (String) -> Unit = {}
 ) {
     val context = LocalContext.current
     val component = remember {
@@ -70,7 +73,6 @@ fun PhotoScreen(
             }
         }
     }
-    val refreshEngagement = remember { mutableStateOf(false) }
     DesignPagingScaffold<UiPost>(
         state = derivedState,
         onRefresh = { viewModel.load(Pageable(0, postLimit)) },
@@ -87,44 +89,62 @@ fun PhotoScreen(
                 state.value
             }
         } }
+        val isLoading = remember { derivedStateOf {
+            lazyPagingItems.loadState.refresh is LoadState.Loading
+        } }
         DesignRefreshableScaffold<LazyPagingItems<UiPost>>(
             state = refreshState,
-            onRefresh = {
-                refreshEngagement.value = true
-                lazyPagingItems.refresh() }
+            onRefresh = { lazyPagingItems.refresh() }
         ) {
-            LazyColumn(modifier = Modifier.fillMaxSize()) {
-                items(
-                    count = lazyPagingItems.itemCount,
-                    key = { index -> lazyPagingItems[index]?.id ?: index }
-                ) { index ->
-                    lazyPagingItems[index]?.let { post ->
-                        PostListItem(
-                            post = post,
-                            position = index,
-                            state = currentTime,
-                            engagements = {
-                                EngagementScreen(
-                                    post.mapToContent(),
-                                    postLimit,
-                                    refreshEngagement,
-                                    component,
-                                    viewModelStoreOwner
-                                ) },
-                            content = {
-                                val media = post.media.first()
-                                component.imageView()(
-                                    Modifier,
-                                    ImageView.Spec(media.path, media.mapToProperty())
+            EngagementScreen(
+                tag,
+                postLimit,
+                isLoading,
+                component,
+                viewModelStoreOwner
+            ) { engagement ->
+                ModerationScreen(
+                    component,
+                    viewModelStoreOwner
+                ) { spec ->
+                    LazyColumn(modifier = Modifier.fillMaxSize()) {
+                        items(
+                            count = lazyPagingItems.itemCount,
+                            key = { index -> lazyPagingItems[index]?.id ?: index }
+                        ) { index ->
+                            lazyPagingItems[index]?.let { post ->
+                                PostListItem(
+                                    post = post,
+                                    position = index,
+                                    state = currentTime,
+                                    onClick = { onClick(post.author.id) },
+                                    engagements = {
+                                        EngagementScreen(
+                                            post.mapToContent(),
+                                            engagement,
+                                        ) },
+                                    moderation = {
+                                        ModerationScreen(
+                                            post.mapToContent(),
+                                            spec
+                                        )
+                                    },
+                                    content = {
+                                        val media = post.media.first()
+                                        component.imageView()(
+                                            Modifier,
+                                            ImageView.Spec(media.path, media.mapToProperty())
+                                        )
+                                    }
                                 )
                             }
-                        )
+                        }
+                        if (lazyPagingItems.loadState.append is LoadState.Loading) {
+                            item { CircularProgressIndicator(modifier = Modifier.padding(16.dp)) }
+                        }
+                        item { Spacer(modifier = Modifier.height(56.dp)) }
                     }
                 }
-                if (lazyPagingItems.loadState.append is LoadState.Loading) {
-                    item { CircularProgressIndicator(modifier = Modifier.padding(16.dp)) }
-                }
-                item { Spacer(modifier = Modifier.height(56.dp)) }
             }
         }
     }

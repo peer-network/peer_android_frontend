@@ -2,7 +2,7 @@ package eu.peernetwork.app.ui.home
 
 import android.content.Context
 import androidx.lifecycle.ViewModelProvider
-import eu.peernetwork.app.ui.profile.core.Profile
+import eu.peernetwork.app.ui.profile.Profile
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.persistence.domain.provider.PreferenceProvider

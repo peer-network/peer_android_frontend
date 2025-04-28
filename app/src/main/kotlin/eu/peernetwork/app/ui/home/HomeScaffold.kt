@@ -1,6 +1,7 @@
 package eu.peernetwork.app.ui.home
 
 import android.content.res.Configuration
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.Text
@@ -29,7 +30,7 @@ fun HomeScaffold(
         footer = footer,
         modifier = Modifier.statusBarsPadding()
             .navigationBarsPadding()
-    ) { content(it) }
+    ) { state -> content(state) }
 }
 
 @Composable
@@ -39,7 +40,7 @@ fun PreviewHomeScaffold() {
         HomeScaffold(
             header = { HomeHeader(remember { mutableStateOf(DesignToolbarTitle(R.string.home_label)) }) { } },
             footer = { HomeFooter(remember { mutableIntStateOf(0) }) }
-        ) {
+        ) { state ->
             Text(
                 text = "",
                 textAlign = TextAlign.Center

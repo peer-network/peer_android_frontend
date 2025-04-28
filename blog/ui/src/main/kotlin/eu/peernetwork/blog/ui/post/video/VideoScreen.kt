@@ -30,6 +30,7 @@ import eu.peernetwork.blog.ui.compose.PostSummary
 import eu.peernetwork.blog.ui.compose.PostPageSkeleton
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
 import eu.peernetwork.blog.ui.mapper.mapToContent
+import eu.peernetwork.blog.ui.moderation.ModerationScreen
 import eu.peernetwork.blog.ui.post.photo.formatTimeAgo
 import eu.peernetwork.core.common.model.Pageable
 import eu.peernetwork.core.ui.component.UiComponentProvider
@@ -73,56 +74,73 @@ fun VideoScreen(
         }
     } }
     var selectedClip = remember { mutableStateOf<Int?>(null) }
-    val refreshEngagement = remember { mutableStateOf(false) }
     DesignPagingScaffold<UiVideo>(
         state = derivedState,
         placeholder = { PostPageSkeleton() },
         onRefresh = { viewModel.load(author, Pageable(0, postLimit)) }
     ) { contentState, lazyPagingItems ->
-        LazyColumn(modifier = Modifier.fillMaxSize()) {
-            items(
-                count = lazyPagingItems.itemCount,
-                key = { index -> index }
-            ) { index ->
-                lazyPagingItems[index]?.let { post ->
-                    MediaPostCard(
-                        author = post.author,
-                        description = post.createdAt.formatTimeAgo(currentTime.longValue),
-                        modifier = Modifier.padding(bottom = 4.dp),
-                        caption = {
-                            PostSummary(post.author.username, post.title, post.description)
-                        },
-                        engagements = {
-                            EngagementScreen(
-                                post.mapToContent(),
-                                postLimit,
-                                refreshEngagement,
-                                component,
-                                viewModelStoreOwner
-                            )
-                        }
-                    ) {
-                        Box(modifier = Modifier.clickable(
-                            role = Role.Button,
-                            onClick = { selectedClip.value = index }
-                        )) {
-                            component.videoThumbnail()(
-                                Modifier,
-                                VideoThumbnail.Spec(post.media, post.resolution)
-                            )
+        val isLoading = remember { derivedStateOf {
+            lazyPagingItems.loadState.refresh is LoadState.Loading
+        } }
+        EngagementScreen(
+            author,
+            postLimit,
+            isLoading,
+            component,
+            viewModelStoreOwner
+        ) { engagement ->
+            ModerationScreen(
+                component,
+                viewModelStoreOwner
+            ) { spec ->
+                LazyColumn(modifier = Modifier.fillMaxSize()) {
+                    items(
+                        count = lazyPagingItems.itemCount,
+                        key = { index -> index }
+                    ) { index ->
+                        lazyPagingItems[index]?.let { post ->
+                            MediaPostCard(
+                                author = post.author,
+                                description = post.createdAt.formatTimeAgo(currentTime.longValue),
+                                modifier = Modifier.padding(bottom = 16.dp),
+                                caption = {
+                                    PostSummary(post.author.username, post.title, post.description)
+                                },
+                                engagements = {
+                                    EngagementScreen(
+                                        post.mapToContent(),
+                                        engagement
+                                    )
+                                },
+                                moderation = {
+                                    ModerationScreen(
+                                        post.mapToContent(),
+                                        spec
+                                    )
+                                },
+                            ) {
+                                Box(modifier = Modifier.clickable(
+                                    role = Role.Button,
+                                    onClick = { selectedClip.value = index }
+                                )) {
+                                    component.videoThumbnail()(
+                                        Modifier,
+                                        VideoThumbnail.Spec(post.media, post.resolution)
+                                    )
+                                }
+                            }
                         }
                     }
+                    if (lazyPagingItems.loadState.append is LoadState.Loading) {
+                        item { CircularProgressIndicator(modifier = Modifier.padding(16.dp)) }
+                    }
+                    item { Spacer(modifier = Modifier.height(56.dp)) }
                 }
             }
-            if (lazyPagingItems.loadState.append is LoadState.Loading) {
-                item { CircularProgressIndicator(modifier = Modifier.padding(16.dp)) }
-            }
-            item { Spacer(modifier = Modifier.height(56.dp)) }
         }
         LaunchedEffect(loadState.value) {
             if (loadState.value) {
                 lazyPagingItems.refresh()
-                refreshEngagement.value = true
                 loadState.value = false
             }
         }

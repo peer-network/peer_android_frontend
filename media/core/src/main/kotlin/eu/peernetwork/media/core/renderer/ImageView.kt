@@ -1,5 +1,6 @@
 package eu.peernetwork.media.core.renderer
 
+import eu.peernetwork.core.ui.renderer.Renderer
 import eu.peernetwork.media.core.model.Property
 
 interface ImageView : Renderer.Stateful<ImageView.Spec> {

@@ -30,7 +30,7 @@ fun CreatorScaffold(
         alwaysReturn = true,
         header = { content() },
         overlay = {}
-    ) {
+    ) { state ->
         Box {
             footer()
             DesignOverlayBackground(

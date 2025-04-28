@@ -5,9 +5,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import eu.peernetwork.core.ui.R
+import eu.peernetwork.core.ui.design.compose.DesignNavigation
 import eu.peernetwork.core.ui.extension.attachIfNecessary
 
 @Composable
@@ -18,7 +18,7 @@ fun HomeNavigation(
     content: @Composable (HomeRoute) -> Unit
 ) {
     val startDestination = remember { HomeRoute.get(state.value).path }
-    NavHost(
+    DesignNavigation(
         navController = navController,
         startDestination = startDestination
     ) {

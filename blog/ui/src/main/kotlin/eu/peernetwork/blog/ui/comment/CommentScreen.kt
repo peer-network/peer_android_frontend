@@ -1,7 +1,6 @@
 package eu.peernetwork.blog.ui.comment
 
 import android.widget.Toast
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -19,7 +18,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -39,7 +37,7 @@ import kotlinx.coroutines.delay
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
 @Composable
 fun CommentScreen(
-    id: String,
+    tag: String,
     state: MutableState<UiContent?>,
     postLimit: Int,
     provider: UiComponentProvider,
@@ -78,7 +76,7 @@ fun CommentScreen(
     val isLoading = remember { derivedStateOf { contents.value?.isLoading == true } }
     val isSelected = remember { derivedStateOf { contents.value?.selected != null } }
     CommentScreen(
-        id = id,
+        tag = tag,
         state = state,
         replyTo = replyTo,
         isLoading = isLoading,
@@ -130,7 +128,7 @@ fun CommentScreen(
     }
     LaunchedEffect(sheetState.value) {
         val content = (sheetState.value as? CommentViewModel.State.Content?)
-        if (content?.error != null && id == state.value?.id) {
+        if (content?.error != null) {
             Toast.makeText(context, content.error.message, Toast.LENGTH_SHORT).show()
             viewModel.reset()
         }
@@ -139,7 +137,7 @@ fun CommentScreen(
 
 @Composable
 fun CommentScreen(
-    id: String,
+    tag: String,
     state: MutableState<UiContent?>,
     replyTo: MutableState<String?>,
     isLoading: State<Boolean>,
@@ -151,7 +149,7 @@ fun CommentScreen(
     val comment = remember { TextFieldState() }
     val sheet = remember { mutableStateOf<UiContent?>(null) }
     CommentScaffold(
-        tag = id,
+        tag = tag,
         state = state,
         modifier = modifier,
         sheet = { sheet.value?.let {

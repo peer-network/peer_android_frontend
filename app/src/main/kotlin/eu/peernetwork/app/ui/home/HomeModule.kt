@@ -12,7 +12,7 @@ import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.factory.UiBuilderFactory
 import eu.peernetwork.core.ui.factory.UiViewModelFactory
 import eu.peernetwork.app.ui.feed.Feed
-import eu.peernetwork.app.ui.profile.core.Profile
+import eu.peernetwork.app.ui.profile.Profile
 import eu.peernetwork.blog.ui.creator.Creator
 import eu.peernetwork.blog.ui.point.Point
 import eu.peernetwork.wallet.ui.overview.Overview

@@ -23,33 +23,34 @@ import eu.peernetwork.user.ui.R
 import eu.peernetwork.user.ui.model.UiOverview
 
 @Composable
-fun UserOverview(
-    modifier: Modifier = Modifier,
+fun Overview(
     overview: UiOverview,
+    modifier: Modifier = Modifier,
+    onClick: (Int) -> Unit
 ) {
     Row(
         modifier = modifier,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        UserOverviewItem(
+        Overview(
             title = { Text("${overview.followers}") },
             subTitle = { Text(stringResource(R.string.follower_label)) },
             modifier = Modifier.padding(horizontal = 8.dp),
             horizontalAlignment = Alignment.Start
         )
-        UserOverviewItem(
+        Overview(
             title = { Text("${overview.followed}") },
             subTitle = { Text(stringResource(R.string.following_label)) },
             modifier = Modifier.padding(horizontal = 8.dp),
             horizontalAlignment = Alignment.Start
         )
-        UserOverviewItem(
+        Overview(
             title = { Text("${overview.peers}") },
             subTitle = { Text(stringResource(R.string.peers_label)) },
             modifier = Modifier.padding(horizontal = 8.dp),
             horizontalAlignment = Alignment.Start
         )
-        UserOverviewItem(
+        Overview(
             title = { Text("${overview.posts}") },
             subTitle = { Text(stringResource(R.string.post_label)) },
             modifier = Modifier.padding(horizontal = 8.dp),
@@ -59,7 +60,7 @@ fun UserOverview(
 }
 
 @Composable
-fun UserOverviewItem(
+fun Overview(
     title: @Composable () -> Unit,
     subTitle: @Composable () -> Unit,
     modifier: Modifier = Modifier,
@@ -87,7 +88,7 @@ fun UserOverviewItem(
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun PreviewUserOverview() {
     PeerTheme {
-        UserOverview(
+        Overview(
             modifier = Modifier.fillMaxWidth(),
             overview = UiOverview(
                 posts = 0,
@@ -95,6 +96,6 @@ fun PreviewUserOverview() {
                 followed = 0,
                 followers = 0
             )
-        )
+        ) {}
     }
 }
