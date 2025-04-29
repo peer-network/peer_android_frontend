@@ -10,11 +10,12 @@ import eu.peernetwork.app.ui.feed.Feed
 import eu.peernetwork.blog.ui.creator.Creator
 import eu.peernetwork.blog.ui.point.Point
 import eu.peernetwork.blog.ui.provider.BlogProvider
+import eu.peernetwork.social.ui.provider.SocialProvider
 import eu.peernetwork.user.ui.provider.UserProvider
 import eu.peernetwork.wallet.ui.overview.Overview
 import eu.peernetwork.wallet.ui.provider.WalletProvider
 
-interface Home : UserProvider, PreferenceProvider, BlogProvider, WalletProvider {
+interface Home : UserProvider, PreferenceProvider, BlogProvider, WalletProvider, SocialProvider {
     @javax.inject.Scope
     @Retention(AnnotationRetention.RUNTIME)
     annotation class Scope

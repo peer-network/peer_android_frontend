@@ -8,6 +8,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModelStoreOwner
+import androidx.lifecycle.viewmodel.compose.viewModel
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.component.DesignRefreshableScaffold
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
@@ -29,8 +30,13 @@ fun MemberScreen(
     val component = remember {
         provider.builder(Member.Builder::class.java).build(context)
     }
+    val viewModel: MemberViewModel = viewModel(
+        viewModelStoreOwner = viewModelStoreOwner,
+        factory = component.viewModelFactory()
+    )
     var userState = remember { mutableStateOf(false) }
     var refreshing = remember { mutableStateOf(false) }
+
     MemberScreen(
         onRefresh = {
             refreshing.value = true
@@ -44,7 +50,12 @@ fun MemberScreen(
                     viewModelStoreOwner,
                     type,
                     onSettings,
-                    {},
+                    {FollowButton(
+                        userId = id,
+                        viewModel = viewModel,
+                        modifier = Modifier,
+                        isInitiallyFollowing = it
+                    )},
                     {}
                 )
             )

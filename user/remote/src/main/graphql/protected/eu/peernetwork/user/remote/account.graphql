@@ -11,7 +11,9 @@ query Profile($userid: ID) {
             amountfollowed
             amountfollower
             amountposts
-            amountfriends
+            amountfriends,
+            isfollowed,
+            isfollowing
         }
     }
 }

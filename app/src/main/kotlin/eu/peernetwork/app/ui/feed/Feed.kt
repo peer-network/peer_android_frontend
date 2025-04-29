@@ -10,9 +10,10 @@ import eu.peernetwork.blog.ui.timeline.video.Video
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.persistence.domain.provider.PreferenceProvider
+import eu.peernetwork.social.ui.provider.SocialProvider
 import eu.peernetwork.user.ui.provider.UserProvider
 
-interface Feed : PreferenceProvider, UserProvider, BlogProvider {
+interface Feed : PreferenceProvider, UserProvider, BlogProvider, SocialProvider {
     @javax.inject.Scope
     @Retention(AnnotationRetention.RUNTIME)
     annotation class Scope

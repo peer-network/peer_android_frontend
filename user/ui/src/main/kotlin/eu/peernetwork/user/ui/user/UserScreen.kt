@@ -2,13 +2,9 @@ package eu.peernetwork.user.ui.user
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -32,7 +28,6 @@ import eu.peernetwork.core.ui.design.compose.DesignAsyncImage
 import eu.peernetwork.core.ui.design.compose.DesignTitle
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffold
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
-import eu.peernetwork.core.ui.design.compose.DesignOutlinedButton
 import eu.peernetwork.user.ui.R
 import eu.peernetwork.user.ui.compose.Overview
 import eu.peernetwork.user.ui.compose.ProfileScaffold
@@ -43,7 +38,7 @@ fun UserScreen(
     loadState: MutableState<Boolean>,
     modifier: Modifier = Modifier,
     provider: UiComponentProvider,
-    onFollow: () -> Unit,
+    onFollow: @Composable (Boolean) -> Unit,
     onClick: (Int) -> Unit,
     viewModelStoreOwner: ViewModelStoreOwner,
 ) {
@@ -98,7 +93,7 @@ fun UserScreen(
 fun UserScreen(
     account: UiAccount,
     modifier: Modifier = Modifier,
-    onFollow: () -> Unit,
+    onFollow: @Composable (Boolean) -> Unit,
     onClick: (Int) -> Unit,
 ) {
     val emptyDescription = stringResource(R.string.empty_description_message)
@@ -110,23 +105,13 @@ fun UserScreen(
                 modifier = Modifier.padding(vertical = 8.dp)
                     .padding(bottom = 4.dp)
             ) {
-                DesignOutlinedButton(
-                    onClick = onFollow,
-                    isLoading = false,
-                    shape = RoundedCornerShape(8.dp),
-                    textStyle = MaterialTheme.typography.bodySmall,
-                    enabled = false,
-                    contentPadding = PaddingValues(vertical = 4.dp, horizontal = 32.dp),
+                Box(
                     modifier = Modifier
                         .padding(start = 4.dp)
-                        .height(28.dp),
-                    content = {
-                        Text(
-                            text = stringResource(R.string.follow_label),
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                    }
-                )
+                        .height(28.dp)
+                ){
+                    onFollow(account.isfollowing)
+                }
             }
         },
         options = {
@@ -160,7 +145,9 @@ fun PreviewUserScreen() {
                 peers = 0,
                 followers = 0,
                 followed = 0
-            )
+            ),
+            isfollowing = false,
+            isfollowed = false
         )
         UserScreen(onFollow = { }, account = model) {}
     }

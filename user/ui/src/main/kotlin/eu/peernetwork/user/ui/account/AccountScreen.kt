@@ -151,7 +151,9 @@ fun PreviewAccountScreen() {
                 peers = 0,
                 followers = 0,
                 followed = 0
-            )
+            ),
+            isfollowing = false,
+            isfollowed = false
         )
         AccountScreen(onSettings = { }, account = model) {}
     }
