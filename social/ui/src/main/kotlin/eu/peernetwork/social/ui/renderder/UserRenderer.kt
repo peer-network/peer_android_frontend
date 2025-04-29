@@ -16,7 +16,7 @@ interface UserRenderer : Renderer.Stateful<UserRenderer.Spec> {
         val viewModelStoreOwner: ViewModelStoreOwner,
         val type: Type,
         val onSettings: () -> Unit,
-        val onFollow: @Composable (Boolean) -> Unit,
+        val onFollow: @Composable (Pair<Boolean, Boolean>) -> Unit,
         val onClick: (Int) -> Unit,
     )
 }

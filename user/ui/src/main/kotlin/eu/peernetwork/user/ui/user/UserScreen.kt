@@ -38,7 +38,7 @@ fun UserScreen(
     loadState: MutableState<Boolean>,
     modifier: Modifier = Modifier,
     provider: UiComponentProvider,
-    onFollow: @Composable (Boolean) -> Unit,
+    onFollow: @Composable (Pair<Boolean, Boolean>) -> Unit,
     onClick: (Int) -> Unit,
     viewModelStoreOwner: ViewModelStoreOwner,
 ) {
@@ -93,7 +93,7 @@ fun UserScreen(
 fun UserScreen(
     account: UiAccount,
     modifier: Modifier = Modifier,
-    onFollow: @Composable (Boolean) -> Unit,
+    onFollow: @Composable (Pair<Boolean, Boolean>) -> Unit,
     onClick: (Int) -> Unit,
 ) {
     val emptyDescription = stringResource(R.string.empty_description_message)
@@ -110,7 +110,7 @@ fun UserScreen(
                         .padding(start = 4.dp)
                         .height(28.dp)
                 ){
-                    onFollow(account.isfollowing)
+                    onFollow(account.isfollowing to account.isfollowed)
                 }
             }
         },
