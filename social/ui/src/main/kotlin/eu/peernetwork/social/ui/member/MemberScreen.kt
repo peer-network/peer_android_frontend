@@ -50,12 +50,15 @@ fun MemberScreen(
                     viewModelStoreOwner,
                     type,
                     onSettings,
-                    {FollowButton(
-                        userId = id,
-                        viewModel = viewModel,
-                        modifier = Modifier,
-                        isInitiallyFollowing = it
-                    )},
+                    onFollow = { (isFollowing, isFollowedBy) ->
+                        FollowButton(
+                            userId = id,
+                            viewModel = viewModel,
+                            modifier = Modifier,
+                            isInitiallyFollowing = isFollowing,
+                            initiallyFollowedBy = isFollowedBy
+                        )
+                    },
                     {}
                 )
             )
