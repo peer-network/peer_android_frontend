@@ -6,7 +6,7 @@ import eu.peernetwork.core.remote.extension.assertOrThrow
 import eu.peernetwork.core.remote.extension.executeOrThrow
 import eu.peernetwork.core.remote.extension.getOrThrow
 import eu.peernetwork.social.data.api.FollowApi
-import eu.peernetwork.social.domain.model.User
+import eu.peernetwork.social.domain.model.Member
 import kotlinx.coroutines.flow.SharedFlow
 import social.social.eu.peernetwork.social.remote.UserFollowMutation
 import javax.inject.Inject
@@ -20,11 +20,11 @@ class FollowApiDelegate @Inject constructor(private val client: ApolloClient) : 
         return data.isfollowing == true
     }
 
-    override fun followers(id: String, pageable: Pageable): SharedFlow<List<User>> {
+    override fun followers(id: String, pageable: Pageable): SharedFlow<List<Member>> {
         TODO("Not yet implemented")
     }
 
-    override fun following(id: String, pageable: Pageable): SharedFlow<List<User>> {
+    override fun following(id: String, pageable: Pageable): SharedFlow<List<Member>> {
         TODO("Not yet implemented")
     }
 }

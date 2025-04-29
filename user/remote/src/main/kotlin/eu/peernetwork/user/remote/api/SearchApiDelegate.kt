@@ -1,6 +1,7 @@
 package eu.peernetwork.user.remote.api
 
 import com.apollographql.apollo3.ApolloClient
+import eu.peernetwork.core.common.model.Page
 import eu.peernetwork.core.common.model.Pageable
 import eu.peernetwork.core.remote.extension.assertOrThrow
 import eu.peernetwork.core.remote.extension.executeOrThrow
@@ -14,11 +15,16 @@ import javax.inject.Inject
 class SearchApiDelegate @Inject constructor(
     private val client: ApolloClient
 ) : SearchApi {
-    override suspend fun findByUsername(username: String, pageable: Pageable): List<User> {
+    override suspend fun findByUsername(username: String, pageable: Pageable): Page<User> {
         val query = SearchuserQuery(username, pageable.offset, pageable.limit)
         val response = client.query(query).executeOrThrow()
         val data = response.getOrThrow().searchuser
         response.assertOrThrow(data.status, data.ResponseCode)
-        return data.affectedRows?.mapNotNull { it?.mapToDomain() } ?: emptyList()
+        val content = data.affectedRows?.mapNotNull { it?.mapToDomain() } ?: emptyList()
+        return Page(
+            count = data.counter,
+            offset = pageable.offset,
+            items = content
+        )
     }
 }

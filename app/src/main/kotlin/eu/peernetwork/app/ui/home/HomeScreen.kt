@@ -35,7 +35,7 @@ import eu.peernetwork.core.ui.annotation.UiViewModel
 import eu.peernetwork.core.ui.design.compose.DesignToolbarTitle
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffold
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
-import eu.peernetwork.social.ui.search.SearchScreen
+import eu.peernetwork.social.ui.search.core.SearchScreen
 import eu.peernetwork.wallet.ui.overview.OverviewScreen
 
 @Composable
