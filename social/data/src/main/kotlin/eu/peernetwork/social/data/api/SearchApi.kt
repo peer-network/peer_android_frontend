@@ -1,9 +1,9 @@
-package eu.peernetwork.social.domain.repository
+package eu.peernetwork.social.data.api
 
 import eu.peernetwork.core.common.model.Page
 import eu.peernetwork.core.common.model.Pageable
 import eu.peernetwork.social.domain.model.Member
 
-interface PeerRepository {
+interface SearchApi {
     suspend fun friends(id: String, pageable: Pageable): Page<Member>
 }

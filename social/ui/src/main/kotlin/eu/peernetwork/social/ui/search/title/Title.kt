@@ -2,8 +2,9 @@ package eu.peernetwork.social.ui.search.title
 
 import android.content.Context
 import eu.peernetwork.core.ui.component.UiComponent
+import eu.peernetwork.social.ui.provider.SocialProvider
 
-interface Title {
+interface Title : SocialProvider {
     @javax.inject.Scope
     @Retention(AnnotationRetention.RUNTIME)
     annotation class Scope

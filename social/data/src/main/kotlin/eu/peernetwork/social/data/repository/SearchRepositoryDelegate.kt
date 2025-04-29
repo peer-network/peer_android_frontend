@@ -2,14 +2,18 @@ package eu.peernetwork.social.data.repository
 
 import eu.peernetwork.core.common.model.Page
 import eu.peernetwork.core.common.model.Pageable
+import eu.peernetwork.social.data.api.SearchApi
 import eu.peernetwork.social.domain.model.Member
-import eu.peernetwork.social.domain.repository.PeerRepository
+import eu.peernetwork.social.domain.repository.SearchRepository
+import javax.inject.Inject
 
-class PeerRepositoryDelegate : PeerRepository {
+class SearchRepositoryDelegate @Inject constructor(
+    private val api: SearchApi
+) : SearchRepository {
     override suspend fun friends(
         id: String,
         pageable: Pageable
     ): Page<Member> {
-        TODO("Not yet implemented")
+        return api.friends(id, pageable)
     }
 }
