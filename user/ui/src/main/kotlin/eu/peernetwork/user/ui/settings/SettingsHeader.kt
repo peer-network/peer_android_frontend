@@ -161,7 +161,9 @@ fun PreviewSettingsAvatar() {
                 peers = 0,
                 followers = 0,
                 followed = 0
-            )
+            ),
+            isfollowing = false,
+            isfollowed = false
         )
         SettingsHeader(
             account = model,

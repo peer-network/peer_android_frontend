@@ -209,7 +209,9 @@ fun PreviewSettingsScreen() {
                 peers = 0,
                 followers = 0,
                 followed = 0
-            )
+            ),
+            isfollowing = false,
+            isfollowed = false
         )
         SettingsScreen(
             account = model,

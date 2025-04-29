@@ -1,3 +1,7 @@
 package eu.peernetwork.social.ui.provider
 
-interface SocialProvider
+import eu.peernetwork.social.domain.repository.FollowRepository
+
+interface SocialProvider {
+    fun followRepository(): FollowRepository
+}

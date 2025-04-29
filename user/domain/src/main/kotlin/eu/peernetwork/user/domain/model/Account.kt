@@ -6,5 +6,7 @@ data class Account(
     val username: String,
     val bio: String,
     val imageUrl: String,
-    val overview: Overview
+    val overview: Overview,
+    val isfollowing: Boolean,
+    val isfollowed: Boolean
 )
