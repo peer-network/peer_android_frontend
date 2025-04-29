@@ -44,8 +44,8 @@ internal class SearchApiDelegateTest {
 
         val result = api.findByUsername("<test-username>", Pageable(0, 1))
 
-        assertEquals(result.first().id, mockModel.affectedRows?.first()?.id)
-        assertEquals(result.first().slug, mockModel.affectedRows?.first()?.slug)
+        assertEquals(result.items.first().id, mockModel.affectedRows?.first()?.id)
+        assertEquals(result.items.first().slug, mockModel.affectedRows?.first()?.slug)
     }
 
     @Test
