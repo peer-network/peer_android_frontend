@@ -2,9 +2,10 @@ package eu.peernetwork.social.ui.search.tag
 
 import android.content.Context
 import eu.peernetwork.core.ui.component.UiComponent
+import eu.peernetwork.social.ui.provider.SocialProvider
 import eu.peernetwork.social.ui.search.title.TitleModule
 
-interface Tag {
+interface Tag : SocialProvider {
     @javax.inject.Scope
     @Retention(AnnotationRetention.RUNTIME)
     annotation class Scope

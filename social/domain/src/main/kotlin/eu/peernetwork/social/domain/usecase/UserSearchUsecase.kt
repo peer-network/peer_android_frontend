@@ -1,14 +1,21 @@
 package eu.peernetwork.social.domain.usecase
 
+import eu.peernetwork.core.common.model.Page
 import eu.peernetwork.core.common.model.Pageable
 import eu.peernetwork.core.common.usecase.ParameterizedSuspendableUseCase
 import eu.peernetwork.social.domain.interactor.SearchInteractor
+import eu.peernetwork.social.domain.model.Member
 import javax.inject.Inject
 
 class UserSearchUsecase @Inject constructor(
     private val repository: SearchInteractor
-) : ParameterizedSuspendableUseCase<String, Unit> {
-    override suspend fun invoke(param: String) {
-        repository.user(param, Pageable(0, 20))
+) : ParameterizedSuspendableUseCase<UserSearchUsecase.Parameter, Page<Member>> {
+    override suspend fun invoke(param: Parameter): Page<Member> {
+        return repository.user(param.username, param.page)
     }
+
+    data class Parameter(
+        val username: String,
+        val page: Pageable
+    )
 }

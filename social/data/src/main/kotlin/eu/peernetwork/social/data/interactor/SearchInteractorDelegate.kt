@@ -37,7 +37,6 @@ class SearchInteractorDelegate @Inject constructor(
                 Member(
                     id = it.id,
                     username = it.username,
-                    bio = it.bio,
                     imageUrl = it.imageUrl
                 )
             }
