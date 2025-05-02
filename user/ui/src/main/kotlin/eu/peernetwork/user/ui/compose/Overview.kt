@@ -1,6 +1,7 @@
 package eu.peernetwork.user.ui.compose
 
 import android.content.res.Configuration
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -35,25 +36,25 @@ fun Overview(
         Overview(
             title = { Text("${overview.followers}") },
             subTitle = { Text(stringResource(R.string.follower_label)) },
-            modifier = Modifier.padding(horizontal = 8.dp),
+            modifier = Modifier.padding(horizontal = 8.dp).clickable { onClick(0) },
             horizontalAlignment = Alignment.Start
         )
         Overview(
             title = { Text("${overview.followed}") },
             subTitle = { Text(stringResource(R.string.following_label)) },
-            modifier = Modifier.padding(horizontal = 8.dp),
+            modifier = Modifier.padding(horizontal = 8.dp).clickable { onClick(1) },
             horizontalAlignment = Alignment.Start
         )
         Overview(
             title = { Text("${overview.peers}") },
             subTitle = { Text(stringResource(R.string.peers_label)) },
-            modifier = Modifier.padding(horizontal = 8.dp),
+            modifier = Modifier.padding(horizontal = 8.dp).clickable { onClick(2) },
             horizontalAlignment = Alignment.Start
         )
         Overview(
             title = { Text("${overview.posts}") },
             subTitle = { Text(stringResource(R.string.post_label)) },
-            modifier = Modifier.padding(horizontal = 8.dp),
+            modifier = Modifier.padding(horizontal = 8.dp).clickable { onClick(3) },
             horizontalAlignment = Alignment.Start
         )
     }
