@@ -46,6 +46,7 @@ import eu.peernetwork.user.ui.R
 import eu.peernetwork.user.ui.model.UiAccount
 import eu.peernetwork.user.ui.model.UiOverview
 import eu.peernetwork.core.ui.design.compose.DesignAsyncImage
+import eu.peernetwork.user.ui.activity.CropActivity
 import java.io.File
 
 @Composable
@@ -101,7 +102,8 @@ fun UserSettingsAvatar(
     val imageCropLauncher = rememberLauncherForActivityResult(
         contract = object : ActivityResultContract<Pair<Uri, Uri>, Uri?>() {
             override fun createIntent(context: Context, input: Pair<Uri, Uri>): Intent {
-                return UCrop.of(input.first, input.second).withAspectRatio(1f, 1f).getIntent(context)
+                return UCrop.of(input.first, input.second).withAspectRatio(1f, 1f)
+                    .getIntent(context).setClass(context, CropActivity::class.java)
             }
 
             override fun parseResult(resultCode: Int, intent: Intent?): Uri? {

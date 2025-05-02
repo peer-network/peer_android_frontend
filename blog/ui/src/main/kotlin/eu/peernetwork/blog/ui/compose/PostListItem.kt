@@ -20,6 +20,7 @@ fun LazyItemScope.PostListItem(
     onClick: () -> Unit = {},
     engagements: @Composable RowScope.() -> Unit,
     moderation: @Composable RowScope.() -> Unit,
+    actions: @Composable RowScope.() -> Unit = {},
     content: @Composable (UiPost) -> Unit
 ) {
     Spacer(modifier = Modifier.height(
@@ -39,7 +40,8 @@ fun LazyItemScope.PostListItem(
             },
             engagements = engagements,
             moderation = moderation,
-            onClick = onClick
+            onClick = onClick,
+            actions = actions
         ) { content(post) }
     } else {
         TextPostCard(
@@ -49,7 +51,8 @@ fun LazyItemScope.PostListItem(
                 .padding(horizontal = 8.dp),
             engagements = engagements,
             moderation = moderation,
-            onClick = onClick
+            onClick = onClick,
+            actions = actions
         ) {
             PostText(
                 post.title,

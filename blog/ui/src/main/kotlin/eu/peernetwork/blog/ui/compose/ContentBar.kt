@@ -94,7 +94,9 @@ fun PreviewContentBar() {
                     id = "",
                     slug = 12034,
                     username = "JohnDoe",
-                    imageUrl = "http://localhost"
+                    imageUrl = "http://localhost",
+                    isfollowing = false,
+                    isfollowed = false
                 ),
                 createdAt = System.currentTimeMillis(),
                 description = "This is a mock description for a content post. It's purely for testing.",

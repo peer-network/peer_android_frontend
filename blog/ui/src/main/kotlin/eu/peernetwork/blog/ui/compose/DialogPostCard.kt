@@ -112,7 +112,9 @@ fun PreviewDialogPostCard() {
                 id = "",
                 slug = 12034,
                 username = "JohnDoe",
-                imageUrl = "http://localhost"
+                imageUrl = "http://localhost",
+                isfollowing = false,
+                isfollowed = false
             ),
             description = "Description...",
             engagements = {

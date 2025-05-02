@@ -40,6 +40,7 @@ fun VideoScreen(
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
     onClick: (String) -> Unit = {},
+    onFollow: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit = {}
 ) {
     val context = LocalContext.current
     val component = remember {
@@ -132,7 +133,8 @@ fun VideoScreen(
                                             spec
                                         )
                                     },
-                                    modifier = Modifier.padding(bottom = 16.dp)
+                                    modifier = Modifier.padding(bottom = 16.dp),
+                                    actions = { onFollow(Triple(post.author.id, post.author.isfollowing, post.author.isfollowed)) }
                                 ) {
                                     Box(modifier = Modifier.clickable(
                                         role = Role.Button,

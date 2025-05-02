@@ -6,6 +6,8 @@ import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
 import eu.peernetwork.app.ui.profile.Profile
+import eu.peernetwork.app.ui.renderer.BlogRendererDelegate
+import eu.peernetwork.app.ui.renderer.UserRendererDelegate
 import eu.peernetwork.blog.ui.timeline.music.Music
 import eu.peernetwork.blog.ui.timeline.photo.Photo
 import eu.peernetwork.blog.ui.timeline.video.Video
@@ -15,6 +17,9 @@ import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.factory.UiBuilderFactory
 import eu.peernetwork.core.ui.factory.UiViewModelFactory
+import eu.peernetwork.social.ui.member.Member
+import eu.peernetwork.social.ui.renderder.BlogRenderer
+import eu.peernetwork.social.ui.renderder.UserRenderer
 import javax.inject.Provider
 
 @Module
@@ -68,5 +73,25 @@ object FeedModule {
     @UiBuilder(Video.Builder::class)
     fun provideVideoBuilder(component: Feed.Component): UiComponent.Builder {
         return Video.Builder(component)
+    }
+
+    @Feed.Scope
+    @Provides
+    @IntoMap
+    @UiBuilder(Member.Builder::class)
+    fun provideMemberBuilder(component: Feed.Component): UiComponent.Builder {
+        return Member.Builder(component)
+    }
+
+    @Feed.Scope
+    @Provides
+    fun provideBlogRenderer(component: Feed.Component): BlogRenderer {
+        return BlogRendererDelegate(component)
+    }
+
+    @Feed.Scope
+    @Provides
+    fun provideProfileDetail(component: Feed.Component): UserRenderer {
+        return UserRendererDelegate(component)
     }
 }

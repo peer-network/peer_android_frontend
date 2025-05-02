@@ -18,6 +18,8 @@ fun GetCommentsQuery.AffectedRow.mapToDomain(): List<Comment> {
                 slug = it.user.slug!!,
                 username = it.user.username!!,
                 imageUrl = it.user.img!!,
+                isfollowing = it.user.isfollowing!!,
+                isfollowed = it.user.isfollowed!!
                 ),
             createdAt = 0L,
             likes = it.amountlikes,
@@ -34,7 +36,9 @@ fun CreateCommentMutation.AffectedRow.mapToDomain(): Comment {
             id = user.id,
             slug = user.slug!!,
             username = user.username!!,
-            imageUrl = user.img!!
+            imageUrl = user.img!!,
+            isfollowing = user.isfollowing!!,
+            isfollowed = user.isfollowed!!
         ),
         createdAt = (createdat.toString()).mapToTimestamp(),
         likes = amountlikes,

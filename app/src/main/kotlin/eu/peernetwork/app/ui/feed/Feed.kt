@@ -9,6 +9,8 @@ import eu.peernetwork.blog.ui.timeline.photo.Photo
 import eu.peernetwork.blog.ui.timeline.video.Video
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
+import eu.peernetwork.social.ui.member.Member
+
 interface Feed : ApplicationProvider {
     @javax.inject.Scope
     @Retention(AnnotationRetention.RUNTIME)
@@ -24,6 +26,7 @@ interface Feed : ApplicationProvider {
         Music,
         Video,
         Photo,
+        Member,
         Profile {
         fun viewModelFactory(): ViewModelProvider.Factory
     }

@@ -17,6 +17,8 @@ class AuthorInteractorDelegate @Inject constructor(
             slug = account.slug,
             username = account.username,
             imageUrl = account.imageUrl,
+            isfollowing = account.isfollowing,
+            isfollowed = account.isfollowed
         )
     }
 
@@ -27,6 +29,8 @@ class AuthorInteractorDelegate @Inject constructor(
             slug = account.slug,
             username = account.username,
             imageUrl = account.imageUrl,
+            isfollowing = account.isfollowing,
+            isfollowed = account.isfollowed
         )
     }
 }

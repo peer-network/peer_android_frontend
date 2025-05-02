@@ -11,6 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -20,34 +21,56 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModelStoreOwner
+import androidx.lifecycle.viewmodel.compose.viewModel
+import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.compose.DesignOutlinedButton
+import eu.peernetwork.core.ui.extension.builder
+
+data class Quintuple<T1, T2, T3, T4, T5>(
+    val first: T1,
+    val second: T2,
+    val third: T3,
+    val fourth: T4,
+    val fifth: T5
+)
 
 @Composable
 fun FollowButton(
-    userId: String,
-    isInitiallyFollowing: Boolean,
-    initiallyFollowedBy: Boolean,
-    viewModel: MemberViewModel,
-    modifier: Modifier = Modifier,
+    viewModelStoreOwner: ViewModelStoreOwner,
+    provider: UiComponentProvider,
+    content: @Composable ((String) -> Unit, Throwable?, MemberViewModel.State.Content?) -> Unit
 ) {
+    val context = LocalContext.current
+    val component = remember {
+        provider.builder(Member.Builder::class.java).build(context)
+    }
+    val viewModel: MemberViewModel = viewModel(
+        viewModelStoreOwner = viewModelStoreOwner,
+        factory = component.viewModelFactory()
+    )
     val state = viewModel.state.collectAsState().value
+
+    content(
+        { viewModel.follow(it) },
+        (state as? MemberViewModel.State.Error)?.error,
+        state as? MemberViewModel.State.Content
+    )
+}
+
+@Composable
+fun FollowButtonStateless(
+    isFollowing: Boolean,
+    error: Throwable?,
+    initiallyFollowedBy: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     val context = LocalContext.current
 
-    var isFollowing by remember(isInitiallyFollowing) { mutableStateOf(isInitiallyFollowing) }
-    val isLoading = state is MemberViewModel.State.Loading
-
-    LaunchedEffect(state) {
-        when (state) {
-            is MemberViewModel.State.Success -> {
-                if (state.userId == userId) {
-                    isFollowing = state.isFollowing
-                }
-            }
-            is MemberViewModel.State.Error -> {
-                isFollowing = !isFollowing
-                Toast.makeText(context, "Error: ${state.error.message}", Toast.LENGTH_SHORT).show()
-            }
-            else -> Unit
+    LaunchedEffect(error) {
+        error?.let {
+            Toast.makeText(context, "Error: ${it.message}", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -83,18 +106,13 @@ fun FollowButton(
     }
 
     DesignOutlinedButton(
-        onClick = {
-            isFollowing = !isFollowing
-            viewModel.follow(userId)
-                  },
-        modifier = modifier
-            .background(
-                brush = if (useGradient) gradient else Brush.linearGradient(
-                    listOf(Color.Transparent, Color.Transparent)
-                ),
-                shape = RoundedCornerShape(50),
+        onClick = onClick,
+        modifier = modifier.background(
+            brush = if (useGradient) gradient else Brush.linearGradient(
+                listOf(Color.Transparent, Color.Transparent)
             ),
-        enabled = !isLoading,
+            shape = RoundedCornerShape(50),
+        ),
         shape = RoundedCornerShape(50),
         colors = ButtonDefaults.outlinedButtonColors(
             containerColor = backgroundColor,
@@ -110,5 +128,3 @@ fun FollowButton(
         )
     }
 }
-
-data class Quintuple<T1, T2, T3, T4, T5>(val first: T1, val second: T2, val third: T3, val fourth: T4, val fifth: T5)

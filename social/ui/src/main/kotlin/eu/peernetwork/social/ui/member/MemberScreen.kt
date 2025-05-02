@@ -40,28 +40,33 @@ fun MemberScreen(
     MemberScreen(
         onRefresh = {
             refreshing.value = true
-            userState.value = true },
-        header = {
-            component.userRenderer()(
-                modifier = Modifier,
-                UserRenderer.Spec(
-                    id,
-                    userState,
-                    viewModelStoreOwner,
-                    type,
-                    onSettings,
-                    onFollow = { (isFollowing, isFollowedBy) ->
-                        FollowButton(
-                            userId = id,
-                            viewModel = viewModel,
-                            modifier = Modifier,
-                            isInitiallyFollowing = isFollowing,
-                            initiallyFollowedBy = isFollowedBy
-                        )
-                    },
-                    {}
+            userState.value = true
+        },
+        header = { scrollState ->
+            FollowButton(
+                viewModelStoreOwner = viewModelStoreOwner,
+                provider = provider
+            ) { onFollow, error, success ->
+                component.userRenderer()(
+                    modifier = Modifier,
+                    UserRenderer.Spec(
+                        id,
+                        userState,
+                        viewModelStoreOwner,
+                        type,
+                        onSettings,
+                        {
+                            FollowButtonStateless(
+                                isFollowing = success?.followings?.get(id) ?: it.first,
+                                error = error,
+                                initiallyFollowedBy = it.second,
+                                onClick = { onFollow(id) }
+                            )
+                        },
+                        {}
+                    )
                 )
-            )
+            }
         },
     ) {
         component.blogRenderer()(

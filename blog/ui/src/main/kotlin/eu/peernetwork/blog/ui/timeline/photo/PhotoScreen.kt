@@ -1,5 +1,6 @@
 package eu.peernetwork.blog.ui.timeline.photo
 
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -40,7 +41,8 @@ fun PhotoScreen(
     postLimit: Int,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
-    onClick: (String) -> Unit = {}
+    onClick: (String) -> Unit = {},
+    onFollow: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit = {}
 ) {
     val context = LocalContext.current
     val component = remember {
@@ -135,7 +137,8 @@ fun PhotoScreen(
                                             Modifier,
                                             ImageView.Spec(media.path, media.mapToProperty())
                                         )
-                                    }
+                                    },
+                                    actions = { onFollow(Triple(post.author.id, post.author.isfollowing, post.author.isfollowed)) }
                                 )
                             }
                         }

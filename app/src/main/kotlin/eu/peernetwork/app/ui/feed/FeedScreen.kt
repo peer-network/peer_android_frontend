@@ -1,6 +1,5 @@
 package eu.peernetwork.app.ui.feed
 
-import android.content.res.Configuration
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -103,7 +102,9 @@ fun FeedScreen(
                     painter = painterResource(id = it.id),
                     contentDescription = it.label?.let { stringResource(it) },
                     tint = MaterialTheme.colorScheme.tertiary,
-                    modifier = Modifier.padding(vertical = 8.dp).size(28.dp)
+                    modifier = Modifier
+                        .padding(vertical = 8.dp)
+                        .size(28.dp)
                 )
             }
         }
@@ -123,7 +124,7 @@ fun FeedScreen(
 }
 
 @Composable
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview
 fun PreviewFeedScreen() {
     val state = rememberSaveable { mutableIntStateOf(0) }
     PeerTheme {
