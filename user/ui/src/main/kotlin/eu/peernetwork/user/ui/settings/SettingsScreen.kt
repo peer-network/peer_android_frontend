@@ -2,6 +2,7 @@ package eu.peernetwork.user.ui.settings
 
 import android.content.res.Configuration
 import android.net.Uri
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -94,6 +95,7 @@ fun SettingsScreen(
             onDeactivate = { viewModel.deactivate(it) }
         ) { model, password ->
             viewModel.update(it, model, password ?: "")
+            Toast.makeText(context, "Profile updated", Toast.LENGTH_SHORT).show()
         }
     }
     LaunchedEffect(Unit) { viewModel.reset() }
@@ -111,6 +113,7 @@ fun SettingsScreen(
     onDeactivate: (String) -> Unit = {},
     onSubmit: (List<UiSettings>, String?) -> Unit,
 ) {
+    val context = LocalContext.current
     val image = remember { mutableStateOf<Uri?>(null) }
     val username = remember { TextFieldState(account.username) }
     val bio = remember { TextFieldState(account.bio ?: "") }
@@ -124,6 +127,7 @@ fun SettingsScreen(
             UiSettings.Description(bio.text.trim().toString()),
         )
     } }
+
     Column(modifier = modifier) {
         SettingsHeader(
             account = account,
@@ -137,7 +141,8 @@ fun SettingsScreen(
                 } else {
                     showPassword.value = true
                 }
-                image.value = null },
+                image.value = null
+            }
         )
         SettingsForm(username, bio, isLoading, error)
         Row(modifier = Modifier.padding(top = 16.dp)) {
@@ -166,10 +171,12 @@ fun SettingsScreen(
         PasswordSheet(showDeactivation, label = stringResource(R.string.deactivate_text)) {
             showDeactivation.value = false
             onDeactivate(it)
+            Toast.makeText(context, "Account deactivated", Toast.LENGTH_SHORT).show()
         }
         LogoutSheet(showLogout) {
             showLogout.value = false
             onLogout()
+            Toast.makeText(context, "Logged out successfully", Toast.LENGTH_SHORT).show()
         }
         PasswordSheet(showPassword, label = stringResource(R.string.confirmation_label)) {
             showPassword.value = false

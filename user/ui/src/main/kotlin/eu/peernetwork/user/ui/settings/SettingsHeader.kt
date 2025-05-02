@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.net.Uri
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
@@ -56,6 +57,8 @@ fun SettingsHeader(
     onChange: (Uri?) -> Unit,
     onSubmit: () -> Unit,
 ) {
+    val context = LocalContext.current
+
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
@@ -67,7 +70,9 @@ fun SettingsHeader(
         )
         Spacer(modifier = Modifier.weight(1f))
         DesignOutlinedButton(
-            onClick = onSubmit,
+            onClick = {
+                onSubmit()  // Just trigger save, no Toast here
+            },
             isLoading = isLoading,
             shape = RoundedCornerShape(8.dp),
             textStyle = MaterialTheme.typography.bodySmall,
@@ -85,7 +90,6 @@ fun SettingsHeader(
         )
     }
 }
-
 @Composable
 fun UserSettingsAvatar(
     name: String,

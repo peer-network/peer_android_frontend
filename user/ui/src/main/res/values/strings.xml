@@ -16,7 +16,7 @@
     <string name="follower_label">Followers</string>
     <string name="following_label">Following</string>
     <string name="peers_label">Peers</string>
-
+    <string name="successful_message"> Registration Successful! </string>
     <string name="description_placeholder">Write a description to your profile…</string>
 
     <string name="logout_message">Do you really want to log out?</string>
