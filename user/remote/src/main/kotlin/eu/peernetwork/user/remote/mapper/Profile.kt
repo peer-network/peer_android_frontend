@@ -13,8 +13,8 @@ fun ProfileQuery.AffectedRows.mapToDomain(): AccountModel {
         followed = amountfollowed!!,
         follower = amountfollower!!,
         posts = amountposts!!,
-        peers = amountfriends,
-        isfollowing = isfollowing ?: false,
-        isfollowed = isfollowed ?: false,
+        peers = amountfriends!!,
+        isfollowing = isfollowing == true,
+        isfollowed = isfollowed == true,
     )
 }

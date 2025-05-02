@@ -40,6 +40,8 @@ internal class AccountRepositoryDelegateTest {
             followed = 0,
             posts = 0,
             follower = 0,
+            isfollowed = false,
+            isfollowing = false,
             peers = 0
         )
         coEvery { api.get(any()) } returns mockResponse

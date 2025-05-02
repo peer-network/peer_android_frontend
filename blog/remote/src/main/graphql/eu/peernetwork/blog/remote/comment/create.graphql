@@ -1,4 +1,4 @@
-mutation CreateComment($action: CommentsType!, $postId: ID!, $content: String!) {
+mutation CreateComment($action: CommentType!, $postId: ID!, $content: String!) {
     createComment(action: $action, postid: $postId, content: $content) {
         status
         counter

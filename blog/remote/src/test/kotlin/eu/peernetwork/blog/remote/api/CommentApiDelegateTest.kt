@@ -17,7 +17,7 @@ import io.mockk.verify
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
-import type.CommentsType
+import type.CommentType
 import java.util.UUID
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -48,7 +48,7 @@ internal class CommentApiDelegateTest {
             mockData
         ).build()
 
-        every { mockData.getallposts } returns content
+        every { mockData.listPosts } returns content
         coEvery { client.query(any<GetCommentsQuery>()).execute() } returns mockResponse
 
         val result = api.getAll(id, page)
@@ -76,7 +76,7 @@ internal class CommentApiDelegateTest {
             mockData
         ).build()
 
-        every { mockData.getallposts } returns content
+        every { mockData.listPosts } returns content
         coEvery { client.query(any<GetCommentsQuery>()).execute() } returns mockResponse
 
         val result = try {
@@ -113,7 +113,7 @@ internal class CommentApiDelegateTest {
         assertEquals(result.id, content.affectedRows?.first()?.commentid)
 
         verify { client.mutation(CreateCommentMutation(
-            action = CommentsType.COMMENT,
+            action = CommentType.COMMENT,
             postId = id,
             content = comment
         )) }
@@ -142,7 +142,7 @@ internal class CommentApiDelegateTest {
         }
         assertNull(result)
         verify { client.mutation(CreateCommentMutation(
-            action = CommentsType.COMMENT,
+            action = CommentType.COMMENT,
             postId = id,
             content = comment
         )) }

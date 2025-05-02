@@ -41,6 +41,12 @@ class MemberViewModel @Inject constructor(
         }
     }
 
+    fun reset() {
+        viewModelScope.launch {
+            mutableState.tryEmit(State.Empty)
+        }
+    }
+
     sealed interface State {
         data object Empty : State
         data object Loading : State

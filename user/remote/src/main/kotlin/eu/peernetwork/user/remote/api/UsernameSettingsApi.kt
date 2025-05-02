@@ -14,7 +14,7 @@ class UsernameSettingsApi @Inject constructor(
     override suspend fun invoke(value: String, password: String) {
         val mutation = UpdateNameMutation(value, password)
         val response = client.mutation(mutation).executeOrThrow()
-        val data = response.getOrThrow().updateName
+        val data = response.getOrThrow().updateUsername
         response.assertOrThrow(data.status, data.ResponseCode)
     }
 }

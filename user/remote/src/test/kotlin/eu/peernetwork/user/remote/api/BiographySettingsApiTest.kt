@@ -39,7 +39,7 @@ internal class BiographySettingsApiTest {
             mockData
         ).build()
 
-        every { mockData.updateBiography } returns mockModel
+        every { mockData.updateBio } returns mockModel
         coEvery { client.mutation(any<UpdateBiographyMutation>()).execute() } returns mockResponse
 
         api(bio)
@@ -59,7 +59,7 @@ internal class BiographySettingsApiTest {
             mockData
         ).build()
 
-        every { mockData.updateBiography } returns mockModel
+        every { mockData.updateBio } returns mockModel
         coEvery { client.mutation(any<UpdateBiographyMutation>()).execute() } returns mockResponse
 
         val result = try {

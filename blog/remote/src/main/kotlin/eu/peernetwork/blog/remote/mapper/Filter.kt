@@ -3,9 +3,9 @@ package eu.peernetwork.blog.remote.mapper
 import eu.peernetwork.blog.domain.model.Sort
 import eu.peernetwork.blog.domain.model.Engagement
 import eu.peernetwork.blog.domain.model.Filter
-import type.SortType
+import type.PostSortType
 
-fun Filter.mapToSortType(): SortType? {
+fun Filter.mapToSortType(): PostSortType? {
     return when (criteria) {
         is Filter.Criteria.Content -> (criteria as Filter.Criteria.Content).sort.mapFromDomain()
         is Filter.Criteria.Reaction -> (criteria as Filter.Criteria.Reaction).engagement.mapFromDomain()
@@ -13,18 +13,18 @@ fun Filter.mapToSortType(): SortType? {
     }
 }
 
-fun Sort.mapFromDomain(): SortType {
+fun Sort.mapFromDomain(): PostSortType {
     return when (this) {
-        Sort.NEW -> SortType.NEWEST
-        Sort.TREND -> SortType.TRENDING
+        Sort.NEW -> PostSortType.NEWEST
+        Sort.TREND -> PostSortType.TRENDING
     }
 }
 
-fun Engagement.mapFromDomain(): SortType {
+fun Engagement.mapFromDomain(): PostSortType {
     return when (this) {
-        Engagement.Content.Like -> SortType.LIKES
-        Engagement.Content.Dislike -> SortType.DISLIKES
-        Engagement.Content.View -> SortType.VIEWS
-        else -> SortType.UNKNOWN__
+        Engagement.Content.Like -> PostSortType.LIKES
+        Engagement.Content.Dislike -> PostSortType.DISLIKES
+        Engagement.Content.View -> PostSortType.VIEWS
+        else -> PostSortType.UNKNOWN__
     }
 }

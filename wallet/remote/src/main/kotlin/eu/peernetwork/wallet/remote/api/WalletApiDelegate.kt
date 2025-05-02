@@ -16,7 +16,7 @@ class WalletApiDelegate @Inject constructor(
     override suspend fun get(): Wallet {
         val query = CurrentliquidityQuery()
         val response = client.query(query).executeOrThrow()
-        val data = response.getOrThrow().currentliquidity
+        val data = response.getOrThrow().balance
         return data.currentliquidity?.let {
             it.toBigDecimalOrNull()?.let { Wallet(
                 it,

@@ -11,24 +11,28 @@ When expected as an input type, any string (such as `"4"`) or integer
 """
 scalar ID
 
-type Mutation {
-  register(input: RegisterInput!): RegisterResponse!
-
-  verifiedAccount(userid: ID!): verifiedAccount!
-
-  login(email: String!, password: String!): AuthPayload!
-
-  refreshToken(refreshToken: String!): AuthPayload!
-
-  contactus(name: String!, email: String!, message: String!): StandardResponse!
-}
-
 """
 The `String` scalar type represents textual data, represented as UTF-8
 character sequences. The String type is most often used by GraphQL to
 represent free-form human-readable text.
 """
 scalar String
+
+type Mutation {
+  register(input: RegistrationInput!): RegisterResponse!
+
+  verifyAccount(userid: ID!): verifyAccount!
+
+  login(email: String!, password: String!): AuthPayload!
+
+  requestPasswordReset(email: String!): StandardResponse
+
+  resetPassword(token: String!, password: String!): StandardResponse
+
+  refreshToken(refreshToken: String!): AuthPayload!
+
+  contactus(name: String!, email: String!, message: String!): StandardResponse!
+}
 
 type StandardResponse {
   status: String!
@@ -42,17 +46,21 @@ scalar JSON
 
 type HelloResponse {
   currentuserid: ID
+
+  currentVersion: String
+
+  wikiLink: String
 }
 
 type RegisterResponse {
-  status: String!
+  status: String
 
   ResponseCode: String
 
   userid: ID
 }
 
-type verifiedAccount {
+type verifyAccount {
   status: String!
 
   ResponseCode: String
@@ -68,12 +76,14 @@ type AuthPayload {
   refreshToken: String
 }
 
-input RegisterInput {
+input RegistrationInput {
   email: String!
 
   password: String!
 
   username: String!
+
+  pkey: String
 }
 
 """

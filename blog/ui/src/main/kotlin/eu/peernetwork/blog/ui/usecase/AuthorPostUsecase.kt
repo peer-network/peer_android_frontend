@@ -33,7 +33,7 @@ class AuthorPostUsecase @Inject constructor(
         val currentOffset = params.key ?: param.page.offset
         val currentPage = Pageable(
             offset = currentOffset,
-            limit = params.loadSize
+            limit = param.page.limit
         )
         val response = usecase(
             PhotosUsecase.Parameter(

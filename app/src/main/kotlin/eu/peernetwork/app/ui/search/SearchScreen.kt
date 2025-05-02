@@ -1,11 +1,11 @@
 package eu.peernetwork.app.ui.search
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -19,10 +19,7 @@ import eu.peernetwork.app.ui.profile.ProfileScreen
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.annotation.UiViewModel
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.component.DesignRefreshableScaffold
-import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
 import eu.peernetwork.core.ui.design.compose.DesignRouter
-import eu.peernetwork.core.ui.design.compose.DesignScaffold
 import eu.peernetwork.core.ui.design.compose.DesignToolbarTitle
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
@@ -55,11 +52,9 @@ fun SearchScreen(
             SearchScreen(
                 onRefresh = {}
             ) { mode, query ->
-                if (query.text.length >= 3) {
-                    MemberScreen(query, postLimit, {
-                        controller.navigateIfNecessary("profile/$it")
-                    }, component, viewModelStoreOwner)
-                }
+                MemberScreen(query, postLimit, {
+                    controller.navigateIfNecessary("profile/$it")
+                }, component, viewModelStoreOwner)
             }
         }
         composable(
@@ -99,19 +94,10 @@ fun SearchScreen(
     modifier: Modifier = Modifier,
     content: @Composable (SearchMode, TextFieldState) -> Unit
 ) {
-    val state = remember { mutableStateOf(DesignStatefulScaffoldState.Success(Unit)) }
     val query = remember { TextFieldState() }
-    DesignScaffold(
-        modifier = modifier.fillMaxSize(),
-        alwaysReturn = true,
-        header = { SearchHeader(query) },
-    ) { contentState ->
-        DesignRefreshableScaffold<Unit>(
-            state = state,
-            onRefresh = onRefresh
-        ) {
-            content(SearchMode.USERNAME, query)
-        }
+    Column(modifier = modifier.fillMaxSize()) {
+        SearchHeader(query)
+        content(SearchMode.USERNAME, query)
     }
 }
 

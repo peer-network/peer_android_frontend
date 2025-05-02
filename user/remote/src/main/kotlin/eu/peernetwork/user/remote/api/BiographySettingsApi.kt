@@ -14,7 +14,7 @@ class BiographySettingsApi @Inject constructor(
     override suspend fun invoke(value: String) {
         val mutation = UpdateBiographyMutation(value)
         val response = client.mutation(mutation).executeOrThrow()
-        val data = response.getOrThrow().updateBiography
+        val data = response.getOrThrow().updateBio
         response.assertOrThrow(data.status, data.ResponseCode)
     }
 }

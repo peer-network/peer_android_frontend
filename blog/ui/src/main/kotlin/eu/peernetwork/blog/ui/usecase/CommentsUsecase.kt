@@ -33,7 +33,7 @@ class CommentsUsecase @Inject constructor(
         val currentOffset = params.key ?: param.page.offset
         val currentPage = Pageable(
             offset = currentOffset,
-            limit = params.loadSize
+            limit = param.page.limit
         )
         val response = repository.getAll(
             id = param.id,
