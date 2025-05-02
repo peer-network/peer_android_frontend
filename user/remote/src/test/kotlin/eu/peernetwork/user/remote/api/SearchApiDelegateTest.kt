@@ -39,7 +39,7 @@ internal class SearchApiDelegateTest {
             mockData
         ).build()
 
-        every { mockData.searchuser } returns mockModel
+        every { mockData.searchUser } returns mockModel
         coEvery { client.query(any<SearchuserQuery>()).execute() } returns mockResponse
 
         val result = api.findByUsername("<test-username>", Pageable(0, 1))
@@ -59,7 +59,7 @@ internal class SearchApiDelegateTest {
             mockData
         ).build()
 
-        every { mockData.searchuser } returns mockModel
+        every { mockData.searchUser } returns mockModel
         coEvery { client.query(any<SearchuserQuery>()).execute() } returns mockResponse
 
         val result = try {

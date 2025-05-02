@@ -1,5 +1,5 @@
 mutation UpdateMail($email: String!, $password: String!) {
-    updateMail(email: $email, password: $password) {
+    updateEmail(email: $email, password: $password) {
         status
         ResponseCode
     }

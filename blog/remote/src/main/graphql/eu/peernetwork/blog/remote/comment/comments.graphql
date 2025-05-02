@@ -3,7 +3,7 @@ query GetComments(
     $offset: Int
     $limit: Int
 ) {
-    getallposts(
+    listPosts(
         postid: $postId,
         commentLimit: $limit,
         commentOffset: $offset

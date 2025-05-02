@@ -40,7 +40,7 @@ internal class UsernameSettingsApiTest {
             mockData
         ).build()
 
-        every { mockData.updateName } returns mockModel
+        every { mockData.updateUsername } returns mockModel
         coEvery { client.mutation(any<UpdateNameMutation>()).execute() } returns mockResponse
 
         api(username, password)
@@ -61,7 +61,7 @@ internal class UsernameSettingsApiTest {
             mockData
         ).build()
 
-        every { mockData.updateName } returns mockModel
+        every { mockData.updateUsername } returns mockModel
         coEvery { client.mutation(any<UpdateNameMutation>()).execute() } returns mockResponse
 
         val result = try {

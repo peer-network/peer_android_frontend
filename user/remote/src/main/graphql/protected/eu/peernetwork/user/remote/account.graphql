@@ -1,5 +1,5 @@
 query Profile($userid: ID) {
-    profile(userid: $userid) {
+    getProfile(userid: $userid) {
         status
         ResponseCode
         affectedRows {

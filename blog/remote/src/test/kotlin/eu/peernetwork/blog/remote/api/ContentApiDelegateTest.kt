@@ -21,10 +21,10 @@ import io.mockk.verify
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
-import type.ContenType
-import type.FilterType
-import type.PostenType
-import type.SortType
+import type.ContentType
+import type.PostFilterType
+import type.PostSortType
+import type.PostType
 import java.util.UUID
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -58,7 +58,7 @@ internal class ContentApiDelegateTest {
             mockData
         ).build()
 
-        every { mockData.getallposts } returns content
+        every { mockData.listPosts } returns content
         coEvery { client.query(any<GetallpostsQuery>()).execute() } returns mockResponse
 
         val result = api.get(filter, page)
@@ -86,7 +86,7 @@ internal class ContentApiDelegateTest {
             mockData
         ).build()
 
-        every { mockData.getallposts } returns content
+        every { mockData.listPosts } returns content
         coEvery { client.query(any<GetallpostsQuery>()).execute() } returns mockResponse
 
         val result = api.get(filter, page)
@@ -95,7 +95,7 @@ internal class ContentApiDelegateTest {
         assertEquals(result.items.first().id, content.affectedRows?.first()?.id)
 
         verify { client.query(GetallpostsQuery(
-            filter = Optional.present(listOf(FilterType.IMAGE)),
+            filter = Optional.present(listOf(PostFilterType.IMAGE)),
             limit = Optional.present(page.limit),
             offset = Optional.present(page.offset)
         )) }
@@ -114,7 +114,7 @@ internal class ContentApiDelegateTest {
             mockData
         ).build()
 
-        every { mockData.getallposts } returns content
+        every { mockData.listPosts } returns content
         coEvery { client.query(any<GetallpostsQuery>()).execute() } returns mockResponse
 
         val result = api.get(filter, page)
@@ -123,7 +123,7 @@ internal class ContentApiDelegateTest {
         assertEquals(result.items.first().id, content.affectedRows?.first()?.id)
 
         verify { client.query(GetallpostsQuery(
-            sort = Optional.present(SortType.NEWEST),
+            sort = Optional.present(PostSortType.NEWEST),
             limit = Optional.present(page.limit),
             offset = Optional.present(page.offset)
         )) }
@@ -142,7 +142,7 @@ internal class ContentApiDelegateTest {
             mockData
         ).build()
 
-        every { mockData.getallposts } returns content
+        every { mockData.listPosts } returns content
         coEvery { client.query(any<GetallpostsQuery>()).execute() } returns mockResponse
 
         val result = try {
@@ -179,10 +179,10 @@ internal class ContentApiDelegateTest {
         assertEquals(result.id, content.affectedRows?.id)
 
         verify { client.mutation(CreatePostMutation(
-            action = PostenType.POST,
+            action = PostType.POST,
             title = draft.title,
             description = Optional.presentIfNotNull(draft.description),
-            contentType = ContenType.text,
+            contentType = ContentType.text,
             media = Optional.present(type.files),
             tags = Optional.present(draft.tags)
         )) }
@@ -243,10 +243,10 @@ internal class ContentApiDelegateTest {
         assertEquals(result.id, content.affectedRows?.id)
 
         verify { client.mutation(CreatePostMutation(
-            action = PostenType.POST,
+            action = PostType.POST,
             title = draft.title,
             description = Optional.presentIfNotNull(draft.description),
-            contentType = ContenType.audio,
+            contentType = ContentType.audio,
             media = Optional.present(listOf(media)),
             cover = Optional.present(listOf(cover)),
             tags = Optional.present(draft.tags)

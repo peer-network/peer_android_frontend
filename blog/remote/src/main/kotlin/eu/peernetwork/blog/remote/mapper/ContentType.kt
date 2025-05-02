@@ -2,24 +2,24 @@ package eu.peernetwork.blog.remote.mapper
 
 import eu.peernetwork.blog.domain.model.Content.Type
 import eu.peernetwork.blog.domain.model.Draft
-import type.ContenType
-import type.FilterType
+import type.ContentType
+import type.PostFilterType
 
-fun Type.mapToFilter(): FilterType {
+fun Type.mapToFilter(): PostFilterType {
     return when(this) {
-        Type.TEXT -> FilterType.TEXT
-        Type.AUDIO -> FilterType.AUDIO
-        Type.IMAGE -> FilterType.IMAGE
-        Type.VIDEO -> FilterType.VIDEO
+        Type.TEXT -> PostFilterType.TEXT
+        Type.AUDIO -> PostFilterType.AUDIO
+        Type.IMAGE -> PostFilterType.IMAGE
+        Type.VIDEO -> PostFilterType.VIDEO
     }
 }
 
-fun Draft.Type.mapFromDomain(): ContenType {
+fun Draft.Type.mapFromDomain(): ContentType {
     return when(this) {
-        is Draft.Type.Video -> ContenType.video
-        is Draft.Type.Audio -> ContenType.audio
-        is Draft.Type.Image -> ContenType.image
-        is Draft.Type.Text -> ContenType.text
+        is Draft.Type.Video -> ContentType.video
+        is Draft.Type.Audio -> ContentType.audio
+        is Draft.Type.Image -> ContentType.image
+        is Draft.Type.Text -> ContentType.text
     }
 }
 

@@ -1,5 +1,5 @@
 mutation UserFollow($userid: ID!) {
-    userFollow(userid: $userid) {
+    toggleUserFollowStatus(userid: $userid) {
         status
         ResponseCode
         isfollowing

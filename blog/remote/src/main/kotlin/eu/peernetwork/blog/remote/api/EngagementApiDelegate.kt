@@ -19,7 +19,7 @@ class EngagementApiDelegate @Inject constructor(
 ) : EngagementApi {
     override suspend fun points(): List<Point> {
         val response = client.query(DailyfreestatusQuery()).executeOrThrow()
-        val data = response.getOrThrow().dailyfreestatus
+        val data = response.getOrThrow().getDailyFreeStatus
         response.assertOrThrow(data.status, data.ResponseCode)
         return data.affectedRows?.mapNotNull {
             Point(
@@ -33,7 +33,7 @@ class EngagementApiDelegate @Inject constructor(
     override suspend fun post(id: String, engagement: Engagement.Content) {
         val mutation = ResolveActionPostMutation(engagement.mapToAction(), id)
         val response = client.mutation(mutation).executeOrThrow()
-        val data = response.getOrThrow().resolveActionPost
+        val data = response.getOrThrow().resolvePostAction
         response.assertOrThrow(data.status, data.ResponseCode)
     }
 

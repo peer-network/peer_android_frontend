@@ -4,8 +4,8 @@ import eu.peernetwork.core.remote.model.Status
 import protected.eu.peernetwork.user.remote.SearchuserQuery
 
 object SearchMock {
-    fun users(): SearchuserQuery.Searchuser {
-        return SearchuserQuery.Searchuser(
+    fun users(): SearchuserQuery.SearchUser {
+        return SearchuserQuery.SearchUser(
             status = Status.SUCCESS.value,
             ResponseCode = null,
             counter = 1,

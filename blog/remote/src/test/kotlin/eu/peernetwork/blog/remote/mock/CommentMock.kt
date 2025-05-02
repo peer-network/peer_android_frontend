@@ -32,8 +32,8 @@ object CommentMock {
         )
     }
 
-    fun comments(): GetCommentsQuery.Getallposts {
-        return GetCommentsQuery.Getallposts(
+    fun comments(): GetCommentsQuery.ListPosts {
+        return GetCommentsQuery.ListPosts(
             status = Status.SUCCESS.value,
             ResponseCode = null,
             counter = 1,

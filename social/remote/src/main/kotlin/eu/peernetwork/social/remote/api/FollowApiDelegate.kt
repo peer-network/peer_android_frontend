@@ -15,7 +15,7 @@ class FollowApiDelegate @Inject constructor(private val client: ApolloClient) : 
     override suspend fun follow(id: String): Boolean {
         val mutation = UserFollowMutation(id)
         val response = client.mutation(mutation).executeOrThrow()
-        val data = response.getOrThrow().userFollow
+        val data = response.getOrThrow().toggleUserFollowStatus
         response.assertOrThrow(data.status, data.ResponseCode)
         return data.isfollowing == true
     }

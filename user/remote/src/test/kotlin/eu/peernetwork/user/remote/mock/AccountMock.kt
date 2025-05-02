@@ -17,8 +17,8 @@ object AccountMock {
         )
     }
 
-    fun profile(): ProfileQuery.Profile {
-        return ProfileQuery.Profile(
+    fun profile(): ProfileQuery.GetProfile {
+        return ProfileQuery.GetProfile(
             status = Status.SUCCESS.value,
             ResponseCode = null,
             affectedRows = ProfileQuery.AffectedRows(
@@ -30,7 +30,9 @@ object AccountMock {
                 amountfollowed = 0,
                 amountposts = 0,
                 amountfollower = 0,
-                amountfriends = 0
+                amountfriends = 0,
+                isfollowing = false,
+                isfollowed = false
             )
         )
     }
@@ -50,8 +52,8 @@ object AccountMock {
         )
     }
 
-    fun verification(): VerifiedAccountMutation.VerifiedAccount {
-        return VerifiedAccountMutation.VerifiedAccount(
+    fun verification(): VerifiedAccountMutation.VerifyAccount {
+        return VerifiedAccountMutation.VerifyAccount(
             status = Status.SUCCESS.value,
             ResponseCode = null,
         )

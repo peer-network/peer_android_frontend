@@ -18,7 +18,7 @@ class SearchApiDelegate @Inject constructor(
     override suspend fun findByUsername(username: String, pageable: Pageable): Page<User> {
         val query = SearchuserQuery(username, pageable.offset, pageable.limit)
         val response = client.query(query).executeOrThrow()
-        val data = response.getOrThrow().searchuser
+        val data = response.getOrThrow().searchUser
         response.assertOrThrow(data.status, data.ResponseCode)
         val content = data.affectedRows?.mapNotNull { it?.mapToDomain() } ?: emptyList()
         return Page(

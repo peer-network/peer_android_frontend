@@ -1,5 +1,5 @@
 query Currentliquidity {
-    currentliquidity {
+    balance {
         currentliquidity
     }
 }

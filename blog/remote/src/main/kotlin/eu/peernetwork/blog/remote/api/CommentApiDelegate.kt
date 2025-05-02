@@ -13,7 +13,7 @@ import eu.peernetwork.core.common.model.Pageable
 import eu.peernetwork.core.remote.extension.assertOrThrow
 import eu.peernetwork.core.remote.extension.executeOrThrow
 import eu.peernetwork.core.remote.extension.getOrThrow
-import type.CommentsType
+import type.CommentType
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -28,7 +28,7 @@ class CommentApiDelegate @Inject constructor(
             limit = Optional.present(page.limit)
         )
         val response = client.query(query).executeOrThrow()
-        val data = response.getOrThrow().getallposts
+        val data = response.getOrThrow().listPosts
         val contents = data.affectedRows?.map {
             it.mapToDomain().map {
                 it.copy(author = it.author.copy(imageUrl = "$url${it.author.imageUrl}"))
@@ -44,7 +44,7 @@ class CommentApiDelegate @Inject constructor(
 
     override suspend fun comment(postId: String, text: String): Comment {
         val mutation = CreateCommentMutation(
-            action = CommentsType.COMMENT,
+            action = CommentType.COMMENT,
             postId = postId,
             content = text
         )

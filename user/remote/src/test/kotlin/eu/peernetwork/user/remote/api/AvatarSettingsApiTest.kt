@@ -39,7 +39,7 @@ internal class AvatarSettingsApiTest {
             mockData
         ).build()
 
-        every { mockData.updateProfilePicture } returns mockModel
+        every { mockData.updateProfileImage } returns mockModel
         coEvery { client.mutation(any<UpdateProfilePictureMutation>()).execute() } returns mockResponse
 
         api(avatar)
@@ -59,7 +59,7 @@ internal class AvatarSettingsApiTest {
             mockData
         ).build()
 
-        every { mockData.updateProfilePicture } returns mockModel
+        every { mockData.updateProfileImage } returns mockModel
         coEvery { client.mutation(any<UpdateProfilePictureMutation>()).execute() } returns mockResponse
 
         val result = try {

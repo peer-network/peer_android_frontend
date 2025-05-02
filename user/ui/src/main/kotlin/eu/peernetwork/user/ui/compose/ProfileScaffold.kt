@@ -27,7 +27,7 @@ import eu.peernetwork.core.ui.theme.PeerTheme
 fun ProfileScaffold(
     modifier: Modifier = Modifier,
     textStyle: TextStyle = MaterialTheme.typography.bodyMedium,
-    contentPadding: PaddingValues = PaddingValues(top = 8.dp),
+    contentPadding: PaddingValues = PaddingValues(top = 12.dp),
     avatar: @Composable (() -> Unit)? = null,
     indicator: @Composable (() -> Unit)? = null,
     actions: @Composable (() -> Unit)? = null,
