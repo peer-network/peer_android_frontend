@@ -82,7 +82,7 @@ fun Blog(
                 painter = painterResource(id = it.id),
                 contentDescription = it.label?.let { stringResource(it) },
                 tint = MaterialTheme.colorScheme.tertiary,
-                modifier = Modifier.padding(vertical = 4.dp).size(28.dp)
+                modifier = Modifier.padding(vertical = 8.dp).size(28.dp)
             )
         }
     }

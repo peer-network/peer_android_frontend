@@ -1,7 +1,8 @@
 package eu.peernetwork.social.domain.model
 
-data class Content(
+data class Post(
     val id: String,
-    val text: String,
-    val imageUrl: String
+    val title: String,
+    val description: String,
+    val author: Member
 )

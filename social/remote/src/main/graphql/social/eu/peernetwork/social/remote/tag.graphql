@@ -1,0 +1,14 @@
+query SearchTags(
+    $tagName: String!,
+    $offset: Int!,
+    $limit: Int!,
+) {
+    searchTags(tagName: $tagName, offset: $offset, limit: $limit) {
+        status
+        counter
+        ResponseCode
+        affectedRows {
+            name
+        }
+    }
+}
