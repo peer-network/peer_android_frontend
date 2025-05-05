@@ -48,6 +48,8 @@ import eu.peernetwork.user.ui.model.UiSettings
 import eu.peernetwork.user.ui.compose.LogoutSheet
 import eu.peernetwork.user.ui.compose.PasswordSheet
 import eu.peernetwork.user.ui.compose.ProfileScaffold
+import androidx.compose.runtime.setValue
+
 
 @Composable
 fun SettingsScreen(
@@ -79,6 +81,7 @@ fun SettingsScreen(
     val content = remember { derivedStateOf { state as? SettingsViewModel.State.Content? } }
     val error = remember { derivedStateOf { content.value?.error } }
     val isLoading = remember { derivedStateOf { content.value?.processing == true } }
+    var status by remember { mutableStateOf(false) }
     DesignRefreshableScaffold<UiAccount>(
         state = derivedState,
         onRefresh = { viewModel.getAccount() },
@@ -98,14 +101,19 @@ fun SettingsScreen(
             onLogout = { viewModel.logout() },
             onDeactivate = { viewModel.deactivate(it) }
         ) { model, password ->
+            status = true
             viewModel.update(it, model, password ?: "")
-            Toast.makeText(context, "Profile updated", Toast.LENGTH_SHORT).show()
+
         }
     }
     LaunchedEffect(Unit) { viewModel.reset() }
     LaunchedEffect(content.value) {
         if (content.value == null) {
             viewModel.initialize()
+        }
+        if (isLoading.value == false && status) {
+            status = false
+            Toast.makeText(context, "Profile updated", Toast.LENGTH_SHORT).show()
         }
     }
 }

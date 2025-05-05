@@ -36,7 +36,6 @@ import eu.peernetwork.core.ui.extension.isValidInput
 import eu.peernetwork.core.ui.extension.passwordStrength
 import eu.peernetwork.core.ui.theme.PeerTheme
 import android.widget.Toast
-//import androidx.compose.ui.res.stringResource
 
 @Composable
 fun RegistrationScreen(
