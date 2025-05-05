@@ -12,6 +12,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -84,7 +85,6 @@ fun MemberScreen(
                 .verticalScroll(rememberScrollState())
         ) }
     ) { state, lazyPagingItems ->
-
         LazyColumn(modifier = Modifier.fillMaxSize()) {
             items(
                 count = lazyPagingItems.itemCount,
@@ -116,5 +116,10 @@ fun MemberScreen(
                     viewModel.reset()
                 }
             }
+    }
+    DisposableEffect(Unit) {
+        onDispose {
+            viewModel.reset()
+        }
     }
 }

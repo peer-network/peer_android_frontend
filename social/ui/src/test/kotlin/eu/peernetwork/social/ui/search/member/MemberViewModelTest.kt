@@ -1,4 +1,5 @@
-import org.junit.jupiter.api.Assertions.*
-class MemberViewModelTest {
-  
+package eu.peernetwork.social.ui.search.member
+
+internal class MemberViewModelTest {
+
 }

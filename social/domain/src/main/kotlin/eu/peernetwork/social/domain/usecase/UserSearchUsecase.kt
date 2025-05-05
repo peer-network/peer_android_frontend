@@ -11,7 +11,7 @@ class UserSearchUsecase @Inject constructor(
     private val repository: SearchInteractor
 ) : ParameterizedSuspendableUseCase<UserSearchUsecase.Parameter, Page<Member>> {
     override suspend fun invoke(param: Parameter): Page<Member> {
-        return repository.user(param.username, param.page)
+        return repository.findMember(param.username, param.page)
     }
 
     data class Parameter(

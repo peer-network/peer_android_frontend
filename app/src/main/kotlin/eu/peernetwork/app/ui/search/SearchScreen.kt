@@ -1,15 +1,21 @@
 package eu.peernetwork.app.ui.search
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
@@ -26,10 +32,6 @@ import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.social.ui.renderder.UserRenderer
 import eu.peernetwork.social.ui.search.member.MemberScreen
-
-enum class SearchMode {
-    USERNAME, TAG, TITLE
-}
 
 @Composable
 fun SearchScreen(
@@ -52,9 +54,14 @@ fun SearchScreen(
             SearchScreen(
                 onRefresh = {}
             ) { mode, query ->
-                MemberScreen(query, postLimit, {
-                    controller.navigateIfNecessary("profile/$it")
-                }, component, viewModelStoreOwner)
+                if (mode == SearchMode.USERNAME) {
+                    MemberScreen(query, postLimit, {
+                        controller.navigateIfNecessary("profile/$it")
+                    }, component, viewModelStoreOwner)
+                } else {
+                    Box(modifier = Modifier.fillMaxSize()
+                        .verticalScroll(rememberScrollState()))
+                }
             }
         }
         composable(
@@ -92,12 +99,18 @@ fun SearchScreen(
 fun SearchScreen(
     onRefresh: () -> Unit,
     modifier: Modifier = Modifier,
-    content: @Composable (SearchMode, TextFieldState) -> Unit
+    content: @Composable (SearchMode?, TextFieldState) -> Unit
 ) {
     val query = remember { TextFieldState() }
+    val mode = remember { mutableStateOf<SearchMode?>(null) }
     Column(modifier = modifier.fillMaxSize()) {
-        SearchHeader(query)
-        content(SearchMode.USERNAME, query)
+        SearchHeader(
+            query,
+            mode,
+            modifier = Modifier.padding(horizontal = 24.dp)
+                .padding(top = 16.dp)
+        )
+        content(mode.value, query)
     }
 }
 
