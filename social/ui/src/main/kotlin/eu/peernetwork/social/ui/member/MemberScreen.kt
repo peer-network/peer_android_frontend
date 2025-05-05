@@ -2,7 +2,9 @@ package eu.peernetwork.social.ui.member
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -150,16 +152,25 @@ fun MemberScreen(
 
 @Composable
 fun FollowersBottomSheet(userId: String, onDismiss: () -> Unit) {
-    Column(modifier = Modifier.padding(16.dp)) {
+    Column(
+        modifier = Modifier
+            .padding(16.dp)
+            .defaultMinSize(minHeight = 500.dp)
+            .fillMaxWidth()
+    ) {
         Text("Followers", style = MaterialTheme.typography.bodyMedium)
-        // Add your followers list here
 
     }
 }
 
 @Composable
 fun FollowingBottomSheet(userId: String, onDismiss: () -> Unit) {
-    Column(modifier = Modifier.padding(16.dp)) {
+    Column(
+        modifier = Modifier
+            .padding(16.dp)
+            .defaultMinSize(minHeight = 500.dp)
+            .fillMaxWidth()
+    ) {
         Text("Following", style = MaterialTheme.typography.bodyMedium)
         // Add your following list here
 
@@ -168,7 +179,12 @@ fun FollowingBottomSheet(userId: String, onDismiss: () -> Unit) {
 
 @Composable
 fun PeersBottomSheet(userId: String, onDismiss: () -> Unit) {
-    Column(modifier = Modifier.padding(16.dp)) {
+    Column(
+        modifier = Modifier
+            .padding(16.dp)
+            .defaultMinSize(minHeight = 500.dp)
+            .fillMaxWidth()
+    ) {
         Text("Peers", style = MaterialTheme.typography.bodyMedium)
         // Add your peers list here
 
