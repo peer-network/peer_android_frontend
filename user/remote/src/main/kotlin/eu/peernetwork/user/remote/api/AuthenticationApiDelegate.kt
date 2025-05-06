@@ -7,14 +7,14 @@ import eu.peernetwork.core.remote.extension.getOrThrow
 import eu.peernetwork.user.data.api.AuthenticationApi
 import eu.peernetwork.user.domain.exception.AccountNotFoundException
 import eu.peernetwork.user.remote.mapper.mapToDomain
-import eu.peernetwork.user.remote.usecase.JwtLifecycleUsecase
+import eu.peernetwork.user.remote.usecase.JwtExpiryUsecase
 import public.eu.peernetwork.user.remote.HelloQuery
 import public.eu.peernetwork.user.remote.LoginMutation
 import javax.inject.Inject
 
 class AuthenticationApiDelegate @Inject constructor(
     private val client: ApolloClient,
-    private val usecase: JwtLifecycleUsecase,
+    private val usecase: JwtExpiryUsecase,
     private val listener: AuthenticationApi.Listener
 ) : AuthenticationApi {
     override suspend fun authenticated(): String {

@@ -50,7 +50,9 @@ fun LoginScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
     LoginScreen(
         loading = state is LoginViewModel.State.Loading,
-        error = (state as? LoginViewModel.State.Error?)?.error?.message,
+        error = (state as? LoginViewModel.State.Error?)?.error?.message?.let {
+            component.resource().string(it)
+        },
         onReset = { viewModel.reset() }
     ) { email, password -> viewModel.login(email, password) }
 }

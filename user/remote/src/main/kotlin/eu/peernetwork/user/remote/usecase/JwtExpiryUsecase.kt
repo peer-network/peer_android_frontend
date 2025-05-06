@@ -6,7 +6,7 @@ import eu.peernetwork.core.common.usecase.ParameterizedImmediateUseCase
 import org.json.JSONObject
 import javax.inject.Inject
 
-class JwtLifecycleUsecase @Inject constructor() : ParameterizedImmediateUseCase<String, Long> {
+class JwtExpiryUsecase @Inject constructor() : ParameterizedImmediateUseCase<String, Long> {
     override fun invoke(param: String): Long {
         val parts = param.split(".")
         if (parts.size != 3) {
