@@ -96,7 +96,6 @@ class FollowApiDelegate @Inject constructor(
                 imageUrl = "$url/${it?.img!!}".removeSuffix("/")
             )
         }
-
         return Page(
             count = data.counter,
             items = friends ?: emptyList(),

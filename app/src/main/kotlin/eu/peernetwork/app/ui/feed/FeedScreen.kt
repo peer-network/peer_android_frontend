@@ -68,12 +68,12 @@ fun FeedScreen(
             state = pageState,
             modifier = Modifier.fillMaxSize(),
             onNavigate = { viewModel.lastVisited(it) },
-            photo = { PhotoScreen(id, BuildConfig.PAGING_LIMIT, component, viewModelStoreOwner) {
+            photo = { PhotoScreen(id, BuildConfig.PAGING_LIMIT, component, viewModelStoreOwner, {
                 controller.navigateIfNecessary("profile/$it")
-            } },
-            video = { VideoScreen(id, BuildConfig.PAGING_LIMIT, component, viewModelStoreOwner) {
+            }) {}  },
+            video = { VideoScreen(id, BuildConfig.PAGING_LIMIT, component, viewModelStoreOwner, {
                 controller.navigateIfNecessary("profile/$it")
-            } },
+            }) {} },
             music = { MusicScreen(component, viewModelStoreOwner) }
         )
         LaunchedEffect(Unit) {
