@@ -17,21 +17,15 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
-import androidx.navigation.NavType
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
-import eu.peernetwork.app.ui.profile.ProfileScreen
 import eu.peernetwork.core.ui.R
-import eu.peernetwork.core.ui.annotation.UiViewModel
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.compose.DesignRouter
 import eu.peernetwork.core.ui.design.compose.DesignToolbarTitle
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.core.ui.theme.PeerTheme
-import eu.peernetwork.social.ui.renderder.UserRenderer
 import eu.peernetwork.social.ui.search.member.MemberScreen
+import eu.peernetwork.social.ui.search.tag.TagScreen
+import eu.peernetwork.social.ui.search.title.TitleScreen
 
 @Composable
 fun SearchScreen(
@@ -45,49 +39,29 @@ fun SearchScreen(
     val component = remember {
         provider.builder(Search.Builder::class.java).build(context)
     }
-    val controller = rememberNavController()
-    DesignRouter(
-        navController = controller,
-        startDestination = "search",
-    ) {
-        composable("search") {
-            SearchScreen(
-                onRefresh = {}
-            ) { mode, query ->
-                if (mode == SearchMode.USERNAME) {
-                    MemberScreen(query, postLimit, {
-                        controller.navigateIfNecessary("profile/$it")
-                    }, component, viewModelStoreOwner)
-                } else {
-                    Box(modifier = Modifier.fillMaxSize()
-                        .verticalScroll(rememberScrollState()))
-                }
+    SearchNavigation(
+        id,
+        title,
+        component,
+        viewModelStoreOwner
+    ) { controller ->
+        SearchScreen { mode, query ->
+            if (mode == SearchMode.USERNAME) {
+                MemberScreen(query, postLimit, {
+                    controller.navigateIfNecessary("profile/$it")
+                }, component, viewModelStoreOwner)
+            } else if (mode == SearchMode.TAG) {
+                TagScreen(query, postLimit, {
+                    TODO("navigate to feed screen with tag filter")
+                }, component, viewModelStoreOwner)
+            } else if (mode == SearchMode.TITLE) {
+                TitleScreen(query, postLimit, {
+                    TODO("navigate to overlay of post")
+                }, component, viewModelStoreOwner)
+            } else {
+                Box(modifier = Modifier.fillMaxSize()
+                    .verticalScroll(rememberScrollState()))
             }
-        }
-        composable(
-            "profile/{id}",
-            arguments = listOf(navArgument("id") {
-                type = NavType.StringType
-            })
-        ) { backStackEntry ->
-            val userId = backStackEntry.arguments?.getString("id")
-            ProfileScreen(
-                userId = userId ?: id,
-                title = title,
-                type = if (userId == id) {
-                    UserRenderer.Type.ACCOUNT
-                } else {
-                    userId?.let {
-                        UserRenderer.Type.USER
-                    } ?: UserRenderer.Type.ACCOUNT
-                },
-                provider = component,
-                viewModelStoreOwner = if (userId == id) {
-                    viewModelStoreOwner
-                } else {
-                    UiViewModel.Owner()
-                }
-            )
         }
     }
     LaunchedEffect(Unit) {
@@ -97,7 +71,6 @@ fun SearchScreen(
 
 @Composable
 fun SearchScreen(
-    onRefresh: () -> Unit,
     modifier: Modifier = Modifier,
     content: @Composable (SearchMode?, TextFieldState) -> Unit
 ) {
@@ -118,8 +91,6 @@ fun SearchScreen(
 @Composable
 fun PreviewSearchScreen() {
     PeerTheme {
-        SearchScreen(
-            onRefresh = {}
-        ) { mode, query -> }
+        SearchScreen { mode, query -> }
     }
 }

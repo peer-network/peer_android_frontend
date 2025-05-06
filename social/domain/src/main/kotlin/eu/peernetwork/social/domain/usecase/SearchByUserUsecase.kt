@@ -7,11 +7,11 @@ import eu.peernetwork.social.domain.interactor.SearchInteractor
 import eu.peernetwork.social.domain.model.Member
 import javax.inject.Inject
 
-class UserSearchUsecase @Inject constructor(
-    private val repository: SearchInteractor
-) : ParameterizedSuspendableUseCase<UserSearchUsecase.Parameter, Page<Member>> {
+class SearchByUserUsecase @Inject constructor(
+    private val interactor: SearchInteractor
+) : ParameterizedSuspendableUseCase<SearchByUserUsecase.Parameter, Page<Member>> {
     override suspend fun invoke(param: Parameter): Page<Member> {
-        return repository.findMember(param.username, param.page)
+        return interactor.findMember(param.username, param.page)
     }
 
     data class Parameter(

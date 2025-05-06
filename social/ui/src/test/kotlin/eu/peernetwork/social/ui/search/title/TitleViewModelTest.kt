@@ -1,11 +1,11 @@
-package eu.peernetwork.social.ui.search.member
+package eu.peernetwork.social.ui.search.title
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.paging.PagingData
 import app.cash.turbine.test
 import eu.peernetwork.core.common.model.Pageable
-import eu.peernetwork.social.ui.mock.MemberMock
-import eu.peernetwork.social.ui.usecase.MemberUsecase
+import eu.peernetwork.social.ui.mock.PostMock
+import eu.peernetwork.social.ui.usecase.TitleUsecase
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
@@ -24,20 +24,20 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 @OptIn(ExperimentalCoroutinesApi::class)
-internal class MemberViewModelTest {
+internal class TitleViewModelTest {
     @get:Rule
     val instantExecutorRule = InstantTaskExecutorRule()
 
     private val dispatcher = UnconfinedTestDispatcher()
 
-    private val usecase = mockk<MemberUsecase>()
+    private val usecase = mockk<TitleUsecase>()
 
-    private lateinit var viewModel: MemberViewModel
+    private lateinit var viewModel: TitleViewModel
 
     @Before
     fun setup() {
         Dispatchers.setMain(dispatcher)
-        viewModel = MemberViewModel(usecase)
+        viewModel = TitleViewModel(usecase)
     }
 
     @After
@@ -46,9 +46,9 @@ internal class MemberViewModelTest {
     }
 
     @Test
-    fun `test search member success`() = runTest {
-        val username = "<test-username>"
-        val mockData = MemberMock.model()
+    fun `test search title success`() = runTest {
+        val title = "<test-title>"
+        val mockData = PostMock.model()
         val mockPagingData = PagingData.from(listOf(mockData))
 
         coEvery { usecase(any()) } returns flow {
@@ -56,23 +56,23 @@ internal class MemberViewModelTest {
             emit(mockPagingData)
         }
 
-        viewModel.search(username, Pageable(0, 1))
+        viewModel.search(title, Pageable(0, 1))
         viewModel.state.test {
-            assertTrue(awaitItem() is MemberViewModel.State.Loading)
-            assertTrue(awaitItem() is MemberViewModel.State.Success)
+            assertTrue(awaitItem() is TitleViewModel.State.Loading)
+            assertTrue(awaitItem() is TitleViewModel.State.Success)
         }
     }
 
     @Test
-    fun `test search member error`() = runTest {
-        val username = "<test-username>"
+    fun `test search title error`() = runTest {
+        val title = "<test-title>"
         val error = RuntimeException("<test-exception>")
         coEvery { usecase(any()) } returns flow {
             throw error
         }
-        viewModel.search(username, Pageable(0, 1))
+        viewModel.search(title, Pageable(0, 1))
         viewModel.state.test {
-            assertEquals(MemberViewModel.State.Error(error), awaitItem())
+            assertEquals(TitleViewModel.State.Error(error), awaitItem())
         }
     }
 }

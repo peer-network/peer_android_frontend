@@ -1,11 +1,11 @@
-package eu.peernetwork.social.ui.search.member
+package eu.peernetwork.social.ui.search.tag
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.paging.PagingData
 import app.cash.turbine.test
 import eu.peernetwork.core.common.model.Pageable
-import eu.peernetwork.social.ui.mock.MemberMock
-import eu.peernetwork.social.ui.usecase.MemberUsecase
+import eu.peernetwork.social.ui.mock.TagMock
+import eu.peernetwork.social.ui.usecase.TagUsecase
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
@@ -24,20 +24,20 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 @OptIn(ExperimentalCoroutinesApi::class)
-internal class MemberViewModelTest {
+internal class TagViewModelTest {
     @get:Rule
     val instantExecutorRule = InstantTaskExecutorRule()
 
     private val dispatcher = UnconfinedTestDispatcher()
 
-    private val usecase = mockk<MemberUsecase>()
+    private val usecase = mockk<TagUsecase>()
 
-    private lateinit var viewModel: MemberViewModel
+    private lateinit var viewModel: TagViewModel
 
     @Before
     fun setup() {
         Dispatchers.setMain(dispatcher)
-        viewModel = MemberViewModel(usecase)
+        viewModel = TagViewModel(usecase)
     }
 
     @After
@@ -46,9 +46,9 @@ internal class MemberViewModelTest {
     }
 
     @Test
-    fun `test search member success`() = runTest {
-        val username = "<test-username>"
-        val mockData = MemberMock.model()
+    fun `test search tag success`() = runTest {
+        val tag = "<test-tag>"
+        val mockData = TagMock.model()
         val mockPagingData = PagingData.from(listOf(mockData))
 
         coEvery { usecase(any()) } returns flow {
@@ -56,23 +56,23 @@ internal class MemberViewModelTest {
             emit(mockPagingData)
         }
 
-        viewModel.search(username, Pageable(0, 1))
+        viewModel.search(tag, Pageable(0, 1))
         viewModel.state.test {
-            assertTrue(awaitItem() is MemberViewModel.State.Loading)
-            assertTrue(awaitItem() is MemberViewModel.State.Success)
+            assertTrue(awaitItem() is TagViewModel.State.Loading)
+            assertTrue(awaitItem() is TagViewModel.State.Success)
         }
     }
 
     @Test
-    fun `test search member error`() = runTest {
-        val username = "<test-username>"
+    fun `test search tag error`() = runTest {
+        val tag = "<test-tag>"
         val error = RuntimeException("<test-exception>")
         coEvery { usecase(any()) } returns flow {
             throw error
         }
-        viewModel.search(username, Pageable(0, 1))
+        viewModel.search(tag, Pageable(0, 1))
         viewModel.state.test {
-            assertEquals(MemberViewModel.State.Error(error), awaitItem())
+            assertEquals(TagViewModel.State.Error(error), awaitItem())
         }
     }
 }
