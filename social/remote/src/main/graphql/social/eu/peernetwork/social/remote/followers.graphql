@@ -1,0 +1,17 @@
+query ListFollowRelations($userid: ID!, $offset: Int!, $limit: Int!) {
+    listFollowRelations(userid: $userid, offset: $offset, limit: $limit) {
+        status
+        counter
+        ResponseCode
+        affectedRows {
+            followers {
+                id
+                username
+                slug
+                img
+                isfollowed
+                isfollowing
+            }
+        }
+    }
+}

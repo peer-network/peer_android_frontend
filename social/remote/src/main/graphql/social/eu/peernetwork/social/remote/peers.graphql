@@ -1,0 +1,15 @@
+query ListPeers($offset: Int!, $limit: Int!) {
+    listFriends(offset: $offset, limit: $limit) {
+        status
+        counter
+        ResponseCode
+        affectedRows {
+            userid
+            img
+            username
+            slug
+            biography
+            updatedat
+        }
+    }
+}

@@ -29,9 +29,8 @@ class FollowRepositoryDelegate @Inject constructor(
     }
 
     override suspend fun friends(
-        id: String,
         pageable: Pageable
     ): Page<Member> {
-        return api.friends(id, pageable)
+        return api.friends(pageable)
     }
 }

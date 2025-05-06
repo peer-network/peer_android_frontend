@@ -26,6 +26,9 @@ import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
 import eu.peernetwork.core.ui.design.compose.DesignBottomSheet
 import eu.peernetwork.core.ui.design.compose.DesignScaffold
 import eu.peernetwork.core.ui.extension.builder
+import eu.peernetwork.social.ui.followers.FollowersScreen
+import eu.peernetwork.social.ui.followings.FollowingsScreen
+import eu.peernetwork.social.ui.peers.PeersScreen
 import eu.peernetwork.social.ui.renderder.BlogRenderer
 import eu.peernetwork.social.ui.renderder.UserRenderer
 
@@ -49,10 +52,6 @@ fun MemberScreen(
     val component = remember {
         provider.builder(Member.Builder::class.java).build(context)
     }
-    val viewModel: MemberViewModel = viewModel(
-        viewModelStoreOwner = viewModelStoreOwner,
-        factory = component.viewModelFactory()
-    )
     val userState = remember { mutableStateOf(false) }
     val refreshing = remember { mutableStateOf(false) }
     val showSheet = remember { mutableStateOf(false) }
@@ -60,9 +59,27 @@ fun MemberScreen(
 
     val bottomSheetContent: @Composable (State<Boolean>) -> Unit = {
         when (bottomSheetType) {
-            BottomSheetType.FOLLOWERS -> FollowersBottomSheet(id) { showSheet.value = false }
-            BottomSheetType.FOLLOWING -> FollowingBottomSheet(id) { showSheet.value = false }
-            BottomSheetType.PEERS -> PeersBottomSheet(id) { showSheet.value = false }
+            BottomSheetType.FOLLOWERS -> FollowersScreen(
+                userId = id,
+                onDismiss = { showSheet.value = false },
+                provider = component,
+                viewModelStoreOwner = viewModelStoreOwner,
+                postLimit = limit,
+            )
+            BottomSheetType.FOLLOWING -> FollowingsScreen(
+                userId = id,
+                onDismiss = { showSheet.value = false },
+                provider = component,
+                viewModelStoreOwner = viewModelStoreOwner,
+                postLimit = limit,
+            )
+            BottomSheetType.PEERS -> PeersScreen(
+                userId = id,
+                onDismiss = { showSheet.value = false },
+                provider = component,
+                viewModelStoreOwner = viewModelStoreOwner,
+                postLimit = limit,
+            )
             null -> {}
         }
     }
@@ -125,6 +142,9 @@ fun MemberScreen(
             },
             tag = "traki",
             showSheet = showSheet,
+            sheetPeekHeight = 500.dp,
+            modifier = Modifier
+                .defaultMinSize(minHeight = 500.dp),
             content = bottomSheetContent
         )
     }
@@ -147,46 +167,5 @@ fun MemberScreen(
             modifier = modifier.fillMaxSize(),
             header = header,
         ) { state -> content() }
-    }
-}
-
-@Composable
-fun FollowersBottomSheet(userId: String, onDismiss: () -> Unit) {
-    Column(
-        modifier = Modifier
-            .padding(16.dp)
-            .defaultMinSize(minHeight = 500.dp)
-            .fillMaxWidth()
-    ) {
-        Text("Followers", style = MaterialTheme.typography.bodyMedium)
-
-    }
-}
-
-@Composable
-fun FollowingBottomSheet(userId: String, onDismiss: () -> Unit) {
-    Column(
-        modifier = Modifier
-            .padding(16.dp)
-            .defaultMinSize(minHeight = 500.dp)
-            .fillMaxWidth()
-    ) {
-        Text("Following", style = MaterialTheme.typography.bodyMedium)
-        // Add your following list here
-
-    }
-}
-
-@Composable
-fun PeersBottomSheet(userId: String, onDismiss: () -> Unit) {
-    Column(
-        modifier = Modifier
-            .padding(16.dp)
-            .defaultMinSize(minHeight = 500.dp)
-            .fillMaxWidth()
-    ) {
-        Text("Peers", style = MaterialTheme.typography.bodyMedium)
-        // Add your peers list here
-
     }
 }
