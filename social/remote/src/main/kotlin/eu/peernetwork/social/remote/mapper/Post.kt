@@ -8,6 +8,7 @@ fun GetallpostsQuery.AffectedRow.mapToDomain(url: String): Post {
     return Post(
         id = id,
         title = title,
+        type = contenttype,
         description = mediadescription,
         author = Member(
             id = user.id,

@@ -6,6 +6,7 @@ object PostMock {
     fun model(): UiPost {
         return UiPost(
             id = "<test-id>",
+            type = "<test-type>",
             title = "<test-title>",
             description = "<test-description>",
             author = MemberMock.model()

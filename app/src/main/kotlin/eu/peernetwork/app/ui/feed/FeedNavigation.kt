@@ -1,4 +1,4 @@
-package eu.peernetwork.app.ui.search
+package eu.peernetwork.app.ui.feed
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -9,27 +9,25 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import eu.peernetwork.app.ui.profile.ProfileScreen
-import eu.peernetwork.blog.ui.preview.photo.PhotoScreen
-import eu.peernetwork.blog.ui.preview.video.VideoScreen
 import eu.peernetwork.core.ui.annotation.UiViewModel
 import eu.peernetwork.core.ui.design.compose.DesignRouter
 import eu.peernetwork.core.ui.design.compose.DesignToolbarTitle
 import eu.peernetwork.social.ui.renderder.UserRenderer
 
 @Composable
-fun SearchNavigation(
+fun FeedNavigation(
     id: String,
     title: MutableState<DesignToolbarTitle>,
-    component: Search.Component,
+    component: Feed.Component,
     viewModelStoreOwner: ViewModelStoreOwner,
-    search: @Composable (NavHostController) -> Unit
+    feed: @Composable (NavHostController) -> Unit
 ) {
     val controller = rememberNavController()
     DesignRouter(
         navController = controller,
-        startDestination = "search",
+        startDestination = "feed",
     ) {
-        composable("search") { search(controller) }
+        composable("feed") { feed(controller) }
         composable(
             "profile/{id}",
             arguments = listOf(navArgument("id") {
@@ -53,32 +51,6 @@ fun SearchNavigation(
                 } else {
                     UiViewModel.Owner()
                 }
-            )
-        }
-        composable(
-            "photo/{id}",
-            arguments = listOf(navArgument("id") {
-                type = NavType.StringType
-            })
-        ) { backStackEntry ->
-            val id = backStackEntry.arguments?.getString("id")
-            PhotoScreen(
-                id = id ?: "",
-                provider = component,
-                viewModelStoreOwner = UiViewModel.Owner()
-            )
-        }
-        composable(
-            "video/{id}",
-            arguments = listOf(navArgument("id") {
-                type = NavType.StringType
-            })
-        ) { backStackEntry ->
-            val id = backStackEntry.arguments?.getString("id")
-            VideoScreen(
-                id = id ?: "",
-                provider = component,
-                viewModelStoreOwner = UiViewModel.Owner()
             )
         }
     }

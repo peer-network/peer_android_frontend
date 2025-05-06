@@ -7,6 +7,7 @@ import eu.peernetwork.social.ui.model.UiPost
 fun Post.mapFromDomain(): UiPost {
     return UiPost(
         id = id,
+        type = type,
         title = title,
         description = description,
         author = UiMember(

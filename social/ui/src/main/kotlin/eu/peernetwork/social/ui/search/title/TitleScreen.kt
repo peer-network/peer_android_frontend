@@ -41,7 +41,7 @@ import kotlinx.coroutines.flow.debounce
 fun TitleScreen(
     query: TextFieldState,
     postLimit: Int,
-    onClick: (String) -> Unit,
+    onClick: (String, String) -> Unit,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
 ) {
@@ -94,7 +94,7 @@ fun TitleScreen(
                     Box(modifier = Modifier.fillMaxWidth()
                         .padding(vertical = 16.dp)
                         .clickable(role = Role.Button) {
-                            onClick(post.id)
+                            onClick(post.id, post.type)
                         }) {
                         Text(
                             text = post.title,

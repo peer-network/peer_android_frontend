@@ -55,8 +55,8 @@ fun SearchScreen(
                     TODO("navigate to feed screen with tag filter")
                 }, component, viewModelStoreOwner)
             } else if (mode == SearchMode.TITLE) {
-                TitleScreen(query, postLimit, {
-                    TODO("navigate to overlay of post")
+                TitleScreen(query, postLimit, { id, type ->
+                    controller.navigateIfNecessary("photo/$id")
                 }, component, viewModelStoreOwner)
             } else {
                 Box(modifier = Modifier.fillMaxSize()
