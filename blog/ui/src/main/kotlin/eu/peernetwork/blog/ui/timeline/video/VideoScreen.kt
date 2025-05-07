@@ -119,7 +119,7 @@ fun VideoScreen(
                                     onClick = { onClick(post.author.id) },
                                     description = post.createdAt.formatTimeAgo(currentTime.longValue),
                                     caption = {
-                                        PostSummary(post.author.username, post.title, post.description)
+                                        PostSummary(post.author.username, post.title, post.description, userOnClick = { onClick(post.author.id) })
                                     },
                                     engagements = {
                                         EngagementScreen(

@@ -90,19 +90,59 @@ fun DesignRichTitle(
             }
         }
     }
+    val annotatedTitle by remember(title) {
+        derivedStateOf {
+            val pattern = Regex("""(@\w+)|((https?|ftp)://[^\s]+)""", RegexOption.IGNORE_CASE)
+            buildAnnotatedString {
+                val matches = pattern.findAll(title)
+                var lastIndex = 0
+                matches.forEach { match ->
+                    val value = match.value
+                    append(title.substring(lastIndex, match.range.first))
+                    val annotationTag = when {
+                        value.startsWith("http", true) || value.startsWith("ftp", true) -> "URL"
+                        value.startsWith("@") -> "MENTION"
+                        else -> "PLAIN"
+                    }
+                    val styleColor = when (annotationTag) {
+                        "URL" -> linkColor
+                        "MENTION" -> mentionColor
+                        else -> textStyle.style.color
+                    }
+
+                    pushStringAnnotation(tag = annotationTag, annotation = value)
+                    withStyle(style = SpanStyle(color = styleColor)) {
+                        append(value)
+                    }
+                    pop()
+                    lastIndex = match.range.last + 1
+                }
+                if (lastIndex < title.length) {
+                    append(description.substring(lastIndex))
+                }
+            }
+        }
+    }
+
     Column(
         modifier = modifier,
         verticalArrangement = verticalArrangement,
         horizontalAlignment = horizontalAlignment
     ) {
-        Text(
-            text = title,
+        ClickableText(
+            text = annotatedTitle,
             style = textStyle.style,
             overflow = TextOverflow.Ellipsis,
             maxLines = maxLines,
             modifier = Modifier.then(
                 if (titleOnClick != null) Modifier.clickable { titleOnClick() } else Modifier
-            )
+            ),
+            onClick = { offset ->
+                annotatedTitle.getStringAnnotations(tag = "URL", start = offset, end = offset)
+                    .firstOrNull()?.let { annotation ->
+                        uriHandler.openUri(annotation.item.lowercase())
+                    }
+            }
         )
         spacer()
         if (description.isNotEmpty()) {

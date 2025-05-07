@@ -120,6 +120,7 @@ fun PhotoScreen(
                                     position = index,
                                     state = currentTime,
                                     onClick = { onClick(post.author.id) },
+                                    userOnClick = { onClick(post.author.id) },
                                     engagements = {
                                         EngagementScreen(
                                             post.mapToContent(),

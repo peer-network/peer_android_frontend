@@ -1,6 +1,6 @@
 package eu.peernetwork.blog.ui.compose
 
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -12,7 +12,6 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import eu.peernetwork.blog.ui.mapper.annotateTag
 import eu.peernetwork.core.ui.design.compose.DesignRichTitle
 import eu.peernetwork.core.ui.design.compose.DesignTitleTextStyle
 
@@ -21,6 +20,7 @@ fun PostSummary(
     username: String,
     title: String,
     description: String,
+    userOnClick: () -> Unit = {},
     color: Color = MaterialTheme.colorScheme.onBackground,
     modifier: Modifier = Modifier
 ) {
@@ -31,7 +31,9 @@ fun PostSummary(
                 color = color,
                 fontStyle = FontStyle.Italic
             ),
-            modifier = Modifier.padding(end = 8.dp)
+            modifier = Modifier
+                .padding(end = 8.dp)
+                .clickable { userOnClick() }
         )
         DesignRichTitle(
             title = title,

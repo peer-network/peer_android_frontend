@@ -18,6 +18,7 @@ fun LazyItemScope.PostListItem(
     position: Int,
     state: State<Long>,
     onClick: () -> Unit = {},
+    userOnClick: () -> Unit = {},
     engagements: @Composable RowScope.() -> Unit,
     moderation: @Composable RowScope.() -> Unit,
     actions: @Composable RowScope.() -> Unit = {},
@@ -36,7 +37,7 @@ fun LazyItemScope.PostListItem(
             description = post.createdAt.formatTimeAgo(state.value),
             modifier = Modifier.padding(bottom = 16.dp),
             caption = {
-                PostSummary(post.author.username, post.title, post.description)
+                PostSummary(post.author.username, post.title, post.description, userOnClick = userOnClick)
             },
             engagements = engagements,
             moderation = moderation,
