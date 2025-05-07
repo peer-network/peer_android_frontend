@@ -6,7 +6,7 @@ import com.apollographql.apollo3.api.Operation
 import eu.peernetwork.core.remote.model.Status
 import eu.peernetwork.user.data.api.AuthenticationApi
 import eu.peernetwork.user.remote.mock.AuthenticationMock
-import eu.peernetwork.user.remote.usecase.JwtLifecycleUsecase
+import eu.peernetwork.user.remote.usecase.JwtExpiryUsecase
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -23,7 +23,7 @@ import kotlin.test.assertNull
 internal class AuthenticationApiDelegateTest {
     private val client = mockk<ApolloClient>()
 
-    private val usecase = mockk<JwtLifecycleUsecase>()
+    private val usecase = mockk<JwtExpiryUsecase>()
 
     private val listener = mockk<AuthenticationApi.Listener>(relaxed = true)
 

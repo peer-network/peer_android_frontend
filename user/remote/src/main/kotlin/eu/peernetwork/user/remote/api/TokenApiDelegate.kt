@@ -7,13 +7,13 @@ import eu.peernetwork.core.remote.extension.getOrThrow
 import eu.peernetwork.user.data.api.TokenApi
 import eu.peernetwork.user.domain.model.Token
 import eu.peernetwork.user.remote.mapper.mapToDomain
-import eu.peernetwork.user.remote.usecase.JwtLifecycleUsecase
+import eu.peernetwork.user.remote.usecase.JwtExpiryUsecase
 import public.eu.peernetwork.user.remote.RefreshTokenMutation
 import javax.inject.Inject
 
 class TokenApiDelegate @Inject constructor(
     private val client: ApolloClient,
-    private val usecase: JwtLifecycleUsecase
+    private val usecase: JwtExpiryUsecase
 ) : TokenApi {
     override suspend fun refresh(token: String): Token {
         val mutation = RefreshTokenMutation(token)

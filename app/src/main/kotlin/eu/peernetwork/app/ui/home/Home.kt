@@ -2,21 +2,17 @@ package eu.peernetwork.app.ui.home
 
 import android.content.Context
 import androidx.lifecycle.ViewModelProvider
+import eu.peernetwork.app.provider.ApplicationProvider
 import eu.peernetwork.app.ui.profile.Profile
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.persistence.domain.provider.PreferenceProvider
 import eu.peernetwork.app.ui.feed.Feed
 import eu.peernetwork.blog.ui.creator.Creator
 import eu.peernetwork.blog.ui.point.Point
-import eu.peernetwork.blog.ui.provider.BlogProvider
-import eu.peernetwork.social.ui.provider.SocialProvider
 import eu.peernetwork.app.ui.search.Search
-import eu.peernetwork.user.ui.provider.UserProvider
 import eu.peernetwork.wallet.ui.overview.Overview
-import eu.peernetwork.wallet.ui.provider.WalletProvider
 
-interface Home : UserProvider, PreferenceProvider, BlogProvider, WalletProvider, SocialProvider {
+interface Home : ApplicationProvider {
     @javax.inject.Scope
     @Retention(AnnotationRetention.RUNTIME)
     annotation class Scope

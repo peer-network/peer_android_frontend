@@ -2,14 +2,13 @@ package eu.peernetwork.app.ui.setup
 
 import android.content.Context
 import androidx.lifecycle.ViewModelProvider
+import eu.peernetwork.app.provider.ApplicationProvider
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.persistence.domain.provider.PreferenceProvider
 import eu.peernetwork.user.ui.login.Login
-import eu.peernetwork.user.ui.provider.UserProvider
 import eu.peernetwork.user.ui.registeration.Registration
 
-interface Setup : UserProvider, PreferenceProvider {
+interface Setup : ApplicationProvider {
     @javax.inject.Scope
     @Retention(AnnotationRetention.RUNTIME)
     annotation class Scope

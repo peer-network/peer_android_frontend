@@ -8,7 +8,7 @@ import androidx.paging.PagingSource.LoadResult
 import eu.peernetwork.core.common.model.Pageable
 import eu.peernetwork.core.common.provider.Dispatcher
 import eu.peernetwork.core.ui.usecase.PagingUsecase
-import eu.peernetwork.social.domain.usecase.UserSearchUsecase
+import eu.peernetwork.social.domain.usecase.SearchByUserUsecase
 import eu.peernetwork.social.ui.mapper.mapFromDomain
 import eu.peernetwork.social.ui.model.UiMember
 import kotlinx.coroutines.flow.Flow
@@ -17,7 +17,7 @@ import javax.inject.Inject
 
 class MemberUsecase @Inject constructor(
     private val dispatcher: Dispatcher,
-    private val usecase: UserSearchUsecase
+    private val usecase: SearchByUserUsecase
 ) : PagingUsecase<MemberUsecase.Parameter, UiMember>() {
     private lateinit var param: Parameter
 
@@ -38,7 +38,7 @@ class MemberUsecase @Inject constructor(
             offset = currentOffset,
             limit = param.page.limit
         )
-        val response = usecase(UserSearchUsecase.Parameter(param.username, page = currentPage))
+        val response = usecase(SearchByUserUsecase.Parameter(param.username, page = currentPage))
         LoadResult.Page(
             data = response.items.map { it.mapFromDomain() },
             prevKey = if (currentOffset <= 0) null else currentOffset - 1,

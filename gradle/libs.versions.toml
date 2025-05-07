@@ -50,6 +50,7 @@ compose-navigation = { group = "androidx.navigation", name = "navigation-compose
 compose-coil = { module = "io.coil-kt:coil-compose", version.ref = "coil-compose" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
 firebase-config = { module = "com.google.firebase:firebase-config" }
+firebase-messaging = { module = "com.google.firebase:firebase-messaging" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase-bom" }
 pullrefresh = { module = "dev.materii.pullrefresh:pullrefresh", version.ref = "pullrefresh" }
 viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "androidx-lifecyle" }

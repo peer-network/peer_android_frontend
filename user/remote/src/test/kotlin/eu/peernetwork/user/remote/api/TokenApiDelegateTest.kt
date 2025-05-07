@@ -7,7 +7,7 @@ import eu.peernetwork.core.common.exception.BusinessException
 import eu.peernetwork.core.remote.model.Status
 import eu.peernetwork.user.data.api.TokenApi
 import eu.peernetwork.user.remote.mock.TokenMock
-import eu.peernetwork.user.remote.usecase.JwtLifecycleUsecase
+import eu.peernetwork.user.remote.usecase.JwtExpiryUsecase
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -21,7 +21,7 @@ import kotlin.test.assertEquals
 class TokenApiDelegateTest {
     private val client = mockk<ApolloClient>()
 
-    private val usecase = mockk<JwtLifecycleUsecase>()
+    private val usecase = mockk<JwtExpiryUsecase>()
 
     private lateinit var api: TokenApi
 

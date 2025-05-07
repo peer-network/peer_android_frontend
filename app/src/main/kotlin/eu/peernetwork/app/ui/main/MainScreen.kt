@@ -30,7 +30,6 @@ fun MainScreen(
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
     var splashDone by remember { mutableStateOf(false) }
-
     LaunchedEffect(state, splashDone) {
         if (!splashDone) return@LaunchedEffect
         when(state) {
@@ -41,7 +40,7 @@ fun MainScreen(
     }
     NavHost(navController = controller, startDestination = "splash") {
         composable("splash") {
-            SplashScreen { splashDone = true }
+            SplashScreen(component, viewModelStoreOwner) { splashDone = true }
         }
         composable("startup") {
             SetupScreen(

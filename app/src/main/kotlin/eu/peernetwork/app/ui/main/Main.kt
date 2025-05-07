@@ -3,18 +3,14 @@ package eu.peernetwork.app.ui.main
 import android.content.Context
 import androidx.lifecycle.ViewModelProvider
 import dagger.android.AndroidInjector
+import eu.peernetwork.app.provider.ApplicationProvider
 import eu.peernetwork.app.ui.home.Home
 import eu.peernetwork.app.ui.setup.Setup
 import eu.peernetwork.app.ui.splash.Splash
-import eu.peernetwork.blog.ui.provider.BlogProvider
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.persistence.domain.provider.PreferenceProvider
-import eu.peernetwork.social.ui.provider.SocialProvider
-import eu.peernetwork.user.ui.provider.UserProvider
-import eu.peernetwork.wallet.ui.provider.WalletProvider
 
-interface Main : UserProvider, PreferenceProvider, BlogProvider, WalletProvider, SocialProvider {
+interface Main : ApplicationProvider {
     @javax.inject.Scope
     @Retention(AnnotationRetention.RUNTIME)
     annotation class Scope

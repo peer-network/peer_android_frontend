@@ -117,7 +117,7 @@ fun MemberScreen(
                 }
             }
     }
-    DisposableEffect(Unit) {
+    DisposableEffect(query.text) {
         onDispose {
             viewModel.reset()
         }

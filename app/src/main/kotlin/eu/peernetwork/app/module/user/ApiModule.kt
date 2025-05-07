@@ -14,7 +14,7 @@ import eu.peernetwork.user.remote.api.AuthenticationApiDelegate
 import eu.peernetwork.user.remote.api.ResourceApiDelegate
 import eu.peernetwork.user.remote.api.SearchApiDelegate
 import eu.peernetwork.user.remote.api.TokenApiDelegate
-import eu.peernetwork.user.remote.usecase.JwtLifecycleUsecase
+import eu.peernetwork.user.remote.usecase.JwtExpiryUsecase
 import javax.inject.Named
 
 @Module
@@ -35,7 +35,7 @@ internal object ApiModule {
     fun providesTokenApi(
         @Named("baseUrl") baseUrl: String,
         logger: LoggingInterceptor,
-        usecase: JwtLifecycleUsecase
+        usecase: JwtExpiryUsecase
     ): TokenApi = TokenApiDelegate(
         ApolloClient.Builder()
             .serverUrl("$baseUrl/graphql")

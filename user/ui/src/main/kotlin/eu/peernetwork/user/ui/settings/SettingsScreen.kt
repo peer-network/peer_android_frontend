@@ -50,7 +50,6 @@ import eu.peernetwork.user.ui.compose.PasswordSheet
 import eu.peernetwork.user.ui.compose.ProfileScaffold
 import androidx.compose.runtime.setValue
 
-
 @Composable
 fun SettingsScreen(
     provider: UiComponentProvider,
