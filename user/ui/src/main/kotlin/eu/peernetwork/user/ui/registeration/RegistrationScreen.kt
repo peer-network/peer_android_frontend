@@ -35,6 +35,7 @@ import eu.peernetwork.core.ui.extension.isValidEmail
 import eu.peernetwork.core.ui.extension.isValidInput
 import eu.peernetwork.core.ui.extension.passwordStrength
 import eu.peernetwork.core.ui.theme.PeerTheme
+import android.widget.Toast
 
 @Composable
 fun RegistrationScreen(
@@ -43,6 +44,7 @@ fun RegistrationScreen(
     onRegistrationSuccess: () -> Unit
 ) {
     val context = LocalContext.current
+    val successMessage = stringResource(R.string.successful_message)
     val component = remember {
         provider.builder(Registration.Builder::class.java).build(context)
     }
@@ -57,6 +59,8 @@ fun RegistrationScreen(
             state is RegistrationViewModel.State.Success
         }
     }
+
+    // Call UI
     RegistrationScreen(
         loading = state is RegistrationViewModel.State.Loading,
         error = (state as? RegistrationViewModel.State.Error?)?.error?.message,
@@ -64,12 +68,16 @@ fun RegistrationScreen(
     ) { email, username, password ->
         viewModel.register(username, email, password)
     }
+
+    // LaunchedEffect block
     LaunchedEffect(registrationState) {
         if (registrationState) {
+            Toast.makeText(context, successMessage, Toast.LENGTH_SHORT).show()
             onRegistrationSuccess()
         }
     }
 }
+
 
 @Composable
 fun RegistrationScreen(

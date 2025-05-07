@@ -2,6 +2,7 @@ package eu.peernetwork.user.ui.settings
 
 import android.content.res.Configuration
 import android.net.Uri
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -47,6 +48,7 @@ import eu.peernetwork.user.ui.model.UiSettings
 import eu.peernetwork.user.ui.compose.LogoutSheet
 import eu.peernetwork.user.ui.compose.PasswordSheet
 import eu.peernetwork.user.ui.compose.ProfileScaffold
+import androidx.compose.runtime.setValue
 
 @Composable
 fun SettingsScreen(
@@ -78,6 +80,7 @@ fun SettingsScreen(
     val content = remember { derivedStateOf { state as? SettingsViewModel.State.Content? } }
     val error = remember { derivedStateOf { content.value?.error } }
     val isLoading = remember { derivedStateOf { content.value?.processing == true } }
+    var status by remember { mutableStateOf(false) }
     DesignRefreshableScaffold<UiAccount>(
         state = derivedState,
         onRefresh = { viewModel.getAccount() },
@@ -97,13 +100,19 @@ fun SettingsScreen(
             onLogout = { viewModel.logout() },
             onDeactivate = { viewModel.deactivate(it) }
         ) { model, password ->
+            status = true
             viewModel.update(it, model, password ?: "")
+
         }
     }
     LaunchedEffect(Unit) { viewModel.reset() }
     LaunchedEffect(content.value) {
         if (content.value == null) {
             viewModel.initialize()
+        }
+        if (isLoading.value == false && status) {
+            status = false
+            Toast.makeText(context, "Profile updated", Toast.LENGTH_SHORT).show()
         }
     }
 }
@@ -120,6 +129,7 @@ fun SettingsScreen(
     onDeactivate: (String) -> Unit = {},
     onSubmit: (List<UiSettings>, String?) -> Unit,
 ) {
+    val context = LocalContext.current
     val image = remember { mutableStateOf<Uri?>(null) }
     val username = remember { TextFieldState(account.username) }
     val bio = remember { TextFieldState(account.bio ?: "") }
@@ -133,6 +143,7 @@ fun SettingsScreen(
             UiSettings.Description(bio.text.trim().toString()),
         )
     } }
+
     Column(modifier = modifier) {
         SettingsHeader(
             account = account,
@@ -146,7 +157,8 @@ fun SettingsScreen(
                 } else {
                     showPassword.value = true
                 }
-                image.value = null },
+                image.value = null
+            }
         )
         SettingsForm(username, bio, isLoading, error)
         Row(modifier = Modifier.padding(top = 16.dp)) {
@@ -175,10 +187,12 @@ fun SettingsScreen(
         PasswordSheet(showDeactivation, label = stringResource(R.string.deactivate_text)) {
             showDeactivation.value = false
             onDeactivate(it)
+            Toast.makeText(context, "Account deactivated", Toast.LENGTH_SHORT).show()
         }
         LogoutSheet(showLogout) {
             showLogout.value = false
             onLogout()
+            Toast.makeText(context, "Logged out successfully", Toast.LENGTH_SHORT).show()
         }
         PasswordSheet(showPassword, label = stringResource(R.string.confirmation_label)) {
             showPassword.value = false

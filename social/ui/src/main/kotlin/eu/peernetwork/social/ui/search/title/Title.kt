@@ -1,6 +1,5 @@
 package eu.peernetwork.social.ui.search.title
 
-import android.content.Context
 import androidx.lifecycle.ViewModelProvider
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.social.ui.provider.SocialProvider
