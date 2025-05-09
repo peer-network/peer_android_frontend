@@ -149,17 +149,14 @@ fun ConnectionScreen(
             shape = RoundedCornerShape(16),
         ),
         shape = RoundedCornerShape(16),
+        textStyle = MaterialTheme.typography.bodySmall,
         colors = ButtonDefaults.outlinedButtonColors(
             containerColor = status.color,
             contentColor = status.textColor,
             disabledContainerColor = Color.Transparent
         ),
+        minHeight = 32.dp,
         border = BorderStroke(1.dp, status.borderColor),
-        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 2.dp)
-    ) {
-        Text(
-            stringResource(status.res),
-            style = MaterialTheme.typography.bodySmall
-        )
-    }
+        contentPadding = PaddingValues(horizontal = 24.dp, vertical = 2.dp)
+    ) { Text(stringResource(status.res)) }
 }

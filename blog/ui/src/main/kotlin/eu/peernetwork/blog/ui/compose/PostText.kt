@@ -70,7 +70,6 @@ fun PostText(
                         "HASHTAG" -> hashtagColor
                         else -> textStyle.descriptionStyle.color
                     }
-
                     pushStringAnnotation(tag = annotationTag, annotation = value)
                     withStyle(style = SpanStyle(color = styleColor)) {
                         append(value)
@@ -103,7 +102,6 @@ fun PostText(
                         "MENTION" -> mentionColor
                         else -> textStyle.style.color
                     }
-
                     pushStringAnnotation(tag = annotationTag, annotation = value)
                     withStyle(style = SpanStyle(color = styleColor)) {
                         append(value)
@@ -112,7 +110,7 @@ fun PostText(
                     lastIndex = match.range.last + 1
                 }
                 if (lastIndex < title.length) {
-                    append(description.substring(lastIndex))
+                    append(title.substring(lastIndex))
                 }
             }
         }

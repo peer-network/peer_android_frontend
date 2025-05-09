@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.tooling.preview.Preview
@@ -31,14 +33,19 @@ fun PostCard(
     ),
     content: @Composable () -> Unit,
 ) {
+    val updatedHeader by rememberUpdatedState(header)
+    val updatedToolbar by rememberUpdatedState(toolbar)
+    val updatedContent by rememberUpdatedState(content)
+    val updatedFooter by rememberUpdatedState(footer)
+    val updatedBackground by rememberUpdatedState(background)
     Column(modifier = modifier) {
         Layout(
             content = {
-                Box { background() }
+                Box { updatedBackground() }
                 Column(modifier = Modifier.padding(contentPadding)) {
-                    header()
-                    content()
-                    footer()
+                    updatedHeader()
+                    updatedContent()
+                    updatedFooter()
                 }
             }
         ) { measurables, constraints ->
@@ -55,7 +62,7 @@ fun PostCard(
                 columnPlaceable.place(0, 0)
             }
         }
-        toolbar()
+        updatedToolbar()
     }
 }
 

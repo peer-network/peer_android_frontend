@@ -86,7 +86,7 @@ fun FeedScreen(
                         ConnectionScreen(
                             isFollowing = connection.getOrDefault(it.first, it.third),
                             isFollowed = it.second,
-                            onClick = { connection.invoke(it.first) }
+                            onClick = { connection.invoke(it.first) },
                         )
                     }
                 },

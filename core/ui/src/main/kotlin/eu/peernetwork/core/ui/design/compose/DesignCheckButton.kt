@@ -25,6 +25,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -71,6 +72,8 @@ fun DesignCheckButton(
         targetValue = if (check.value) 1f else .6f,
         animationSpec = tween(durationMillis = durationMillis, easing = easing)
     )
+    val checkHandler by rememberUpdatedState(onCheck)
+    val updatedContent by rememberUpdatedState(content)
     Box(
         modifier = modifier.clip(shape)
             .then(if (border != null) {
@@ -85,7 +88,7 @@ fun DesignCheckButton(
                 onClick = {
                     if (enabled) {
                         check.value = !check.value
-                        onCheck(check.value)
+                        checkHandler(check.value)
                     }
                 }
             )
@@ -99,7 +102,7 @@ fun DesignCheckButton(
         ) {
             CompositionLocalProvider(
                 LocalContentColor provides contentColor
-            ) { content() }
+            ) { updatedContent() }
         }
     }
 }

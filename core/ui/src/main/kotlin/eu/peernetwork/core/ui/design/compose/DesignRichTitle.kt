@@ -118,7 +118,7 @@ fun DesignRichTitle(
                     lastIndex = match.range.last + 1
                 }
                 if (lastIndex < title.length) {
-                    append(description.substring(lastIndex))
+                    append(title.substring(lastIndex))
                 }
             }
         }

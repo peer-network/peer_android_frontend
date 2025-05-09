@@ -28,6 +28,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -58,8 +59,6 @@ fun SettingsHeader(
     onChange: (Uri?) -> Unit,
     onSubmit: () -> Unit,
 ) {
-    val context = LocalContext.current
-
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
@@ -71,9 +70,7 @@ fun SettingsHeader(
         )
         Spacer(modifier = Modifier.weight(1f))
         DesignOutlinedButton(
-            onClick = {
-                onSubmit()  // Just trigger save, no Toast here
-            },
+            onClick = onSubmit,
             isLoading = isLoading,
             shape = RoundedCornerShape(8.dp),
             textStyle = MaterialTheme.typography.bodySmall,
@@ -99,6 +96,7 @@ fun UserSettingsAvatar(
 ) {
     val context = LocalContext.current
     var imageUri by remember { mutableStateOf<Uri?>(null) }
+    val avatarHandler by rememberUpdatedState(onChange)
     val imageCropLauncher = rememberLauncherForActivityResult(
         contract = object : ActivityResultContract<Pair<Uri, Uri>, Uri?>() {
             override fun createIntent(context: Context, input: Pair<Uri, Uri>): Intent {
@@ -114,7 +112,7 @@ fun UserSettingsAvatar(
         }
     ) { it?.let {
         imageUri = it
-        onChange(it)
+        avatarHandler(it)
     } }
     val imagePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()

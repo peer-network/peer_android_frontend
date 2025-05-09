@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -26,10 +28,12 @@ fun DesignAvatar(
     icon: @Composable (() -> Unit)? = null,
     content: @Composable () -> Unit,
 ) {
+    val updatedIcon by rememberUpdatedState(icon)
+    val updatedContent by rememberUpdatedState(content)
     Layout(
         content = {
-            Box(modifier = Modifier.clip(CircleShape)) { content() }
-            Box { icon?.invoke() }
+            Box(modifier = Modifier.clip(CircleShape)) { updatedContent() }
+            Box { updatedIcon?.invoke() }
         },
         modifier = modifier
     ) { measurables, constraints ->

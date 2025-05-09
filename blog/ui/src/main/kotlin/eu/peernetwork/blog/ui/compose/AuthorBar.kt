@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -31,6 +33,7 @@ fun AuthorBar(
     descriptionColor: Color = MaterialTheme.colorScheme.tertiary,
     onClick: () -> Unit = {}
 ) {
+    val handleClick by rememberUpdatedState(onClick)
     DesignDetailLayout(
         lead = {
             DesignAvatar {
@@ -41,7 +44,7 @@ fun AuthorBar(
                     style = MaterialTheme.typography.bodyMedium.copy(
                         color = color,
                     ),
-                    modifier = Modifier.clickable(role = Role.Button, onClick = onClick)
+                    modifier = Modifier.clickable(role = Role.Button, onClick = handleClick)
                 )
             }
         },

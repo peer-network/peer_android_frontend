@@ -23,6 +23,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -143,7 +144,10 @@ fun SettingsScreen(
             UiSettings.Description(bio.text.trim().toString()),
         )
     } }
-
+    val logoutHandler by rememberUpdatedState(onLogout)
+    val submitHandler by rememberUpdatedState(onSubmit)
+    val deactivateHandler by rememberUpdatedState(onDeactivate)
+    val passwordValidatorHandler by rememberUpdatedState(requiresPassword)
     Column(modifier = modifier) {
         SettingsHeader(
             account = account,
@@ -152,8 +156,8 @@ fun SettingsScreen(
             enabled = !isLoading.value && fields.value != account.mapToModels(),
             onChange = { image.value = it },
             onSubmit = {
-                if (!requiresPassword(fields.value)) {
-                    onSubmit(fields.value, null)
+                if (!passwordValidatorHandler(fields.value)) {
+                    submitHandler(fields.value, null)
                 } else {
                     showPassword.value = true
                 }
@@ -186,17 +190,17 @@ fun SettingsScreen(
         }
         PasswordSheet(showDeactivation, label = stringResource(R.string.deactivate_text)) {
             showDeactivation.value = false
-            onDeactivate(it)
+            deactivateHandler(it)
             Toast.makeText(context, "Account deactivated", Toast.LENGTH_SHORT).show()
         }
         LogoutSheet(showLogout) {
             showLogout.value = false
-            onLogout()
+            logoutHandler()
             Toast.makeText(context, "Logged out successfully", Toast.LENGTH_SHORT).show()
         }
         PasswordSheet(showPassword, label = stringResource(R.string.confirmation_label)) {
             showPassword.value = false
-            onSubmit(fields.value, it)
+            submitHandler(fields.value, it)
         }
     }
 }
