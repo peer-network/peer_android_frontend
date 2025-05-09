@@ -10,6 +10,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModelStoreOwner
@@ -63,7 +64,8 @@ fun EngagementScreen(
     var post = remember { mutableStateOf<UiContent?>(null) }
     val errorMessage = stringResource(R.string.unknown_error_message)
     val hasError = remember { derivedStateOf { error.value != null } }
-    content(EngagementSpec(
+    val updatedContent by rememberUpdatedState(content)
+    updatedContent(EngagementSpec(
         onLoad = {
             (state as? EngagementViewModel.State.Content?)
                 ?.engagements?.get(it.id) ?: it.mapToEngagement()

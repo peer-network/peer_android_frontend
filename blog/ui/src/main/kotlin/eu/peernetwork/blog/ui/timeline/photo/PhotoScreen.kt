@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.lifecycle.ViewModelStoreOwner
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.*
@@ -24,11 +25,13 @@ import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.compose.PostListItem
 import eu.peernetwork.blog.ui.compose.PostPageSkeleton
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
+import eu.peernetwork.blog.ui.engagement.EngagementSpec
 import eu.peernetwork.blog.ui.mapper.mapToContent
+import eu.peernetwork.blog.ui.mapper.mapToProperty
 import eu.peernetwork.core.common.model.Pageable
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
-import eu.peernetwork.blog.ui.mapper.mapToProperty
 import eu.peernetwork.blog.ui.moderation.ModerationScreen
+import eu.peernetwork.blog.ui.moderation.ModerationSpec
 import eu.peernetwork.core.ui.design.component.DesignPagingScaffold
 import eu.peernetwork.core.ui.design.component.DesignRefreshableScaffold
 import eu.peernetwork.media.core.renderer.ImageView
@@ -56,9 +59,7 @@ fun PhotoScreen(
         factory = component.viewModelFactory()
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val clickHandler by rememberUpdatedState(onClick)
     val currentTime = remember { mutableLongStateOf(System.currentTimeMillis()) }
-    val updatedConnection by rememberUpdatedState(connection)
     LaunchedEffect(Unit) {
         while (true) {
             delay(60_000L)
@@ -121,42 +122,23 @@ fun PhotoScreen(
                             key = { index -> lazyPagingItems[index]?.id ?: index }
                         ) { index ->
                             lazyPagingItems[index]?.let { post ->
-                                PostListItem(
+                                PhotoScreen(
+                                    id = id,
                                     post = post,
-                                    position = index,
-                                    state = currentTime,
-                                    onClick = { clickHandler(post.author.id) },
-                                    userOnClick = { clickHandler(post.author.id) },
-                                    onMentionClick = onMentionClick,
+                                    index = index,
+                                    currentTime = currentTime,
+                                    engagementSpec = engagement,
+                                    moderationSpec = spec,
+                                    onClick = onClick,
                                     onHashtagClick = onHashtagClick,
-                                    engagements = {
-                                        EngagementScreen(
-                                            post.mapToContent(),
-                                            engagement,
-                                        ) },
-                                    moderation = {
-                                        ModerationScreen(
-                                            post.mapToContent(),
-                                            spec
-                                        )
-                                    },
+                                    onMentionClick = onMentionClick,
+                                    connection = connection,
                                     content = {
                                         val media = post.media.first()
                                         component.imageView()(
                                             Modifier,
                                             ImageView.Spec(media.path, media.mapToProperty())
                                         )
-                                    },
-                                    actions = {
-                                        if (id != post.author.id) {
-                                            updatedConnection(
-                                                Triple(
-                                                    post.author.id,
-                                                    post.author.isfollowing,
-                                                    post.author.isfollowed
-                                                )
-                                            )
-                                        }
                                     }
                                 )
                             }
@@ -170,4 +152,55 @@ fun PhotoScreen(
             }
         }
     }
+}
+
+@Composable
+fun LazyItemScope.PhotoScreen(
+    id: String,
+    post: UiPost,
+    index: Int,
+    currentTime: State<Long>,
+    engagementSpec: EngagementSpec,
+    moderationSpec: ModerationSpec,
+    onClick: (String) -> Unit = {},
+    onMentionClick: (String) -> Unit = {},
+    onHashtagClick: (String) -> Unit = {},
+    connection: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit = {},
+    content: @Composable (UiPost) -> Unit = {}
+) {
+    val engagement = remember { post.mapToContent() }
+    val clickHandler by rememberUpdatedState(onClick)
+    val updatedConnection by rememberUpdatedState(connection)
+    PostListItem(
+        post = post,
+        position = index,
+        state = currentTime,
+        onClick = { clickHandler(post.author.id) },
+        userOnClick = { clickHandler(post.author.id) },
+        onMentionClick = onMentionClick,
+        onHashtagClick = onHashtagClick,
+        engagements = {
+            EngagementScreen(
+                engagement,
+                engagementSpec,
+            ) },
+        moderation = {
+            ModerationScreen(
+                post.mapToContent(),
+                moderationSpec
+            )
+        },
+        content = content,
+        actions = {
+            if (id != post.author.id) {
+                updatedConnection(
+                    Triple(
+                        post.author.id,
+                        post.author.isfollowing,
+                        post.author.isfollowed
+                    )
+                )
+            }
+        }
+    )
 }

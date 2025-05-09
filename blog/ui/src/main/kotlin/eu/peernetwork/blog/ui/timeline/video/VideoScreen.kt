@@ -23,9 +23,11 @@ import eu.peernetwork.blog.ui.compose.MediaPostCard
 import eu.peernetwork.blog.ui.compose.PostSummary
 import eu.peernetwork.blog.ui.compose.PostPageSkeleton
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
+import eu.peernetwork.blog.ui.engagement.EngagementSpec
 import eu.peernetwork.blog.ui.mapper.mapToContent
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.moderation.ModerationScreen
+import eu.peernetwork.blog.ui.moderation.ModerationSpec
 import eu.peernetwork.blog.ui.post.photo.formatTimeAgo
 import eu.peernetwork.core.ui.design.component.DesignPagingScaffold
 import eu.peernetwork.core.ui.design.component.DesignRefreshableScaffold
@@ -68,8 +70,6 @@ fun VideoScreen(
             }
         }
     }
-    val clickHandler by rememberUpdatedState(onClick)
-    val updatedConnection by rememberUpdatedState(connection)
     val currentTime = remember { mutableLongStateOf(System.currentTimeMillis()) }
     LaunchedEffect(Unit) {
         while (true) {
@@ -120,47 +120,22 @@ fun VideoScreen(
                             key = { index -> index }
                         ) { index ->
                             lazyPagingItems[index]?.let { post ->
-                                MediaPostCard(
-                                    author = post.author,
-                                    onClick = { clickHandler(post.author.id) },
-                                    description = post.createdAt.formatTimeAgo(currentTime.longValue),
-                                    caption = {
-                                        PostSummary(post.author.username, post.title, post.description, userOnClick = { onClick(post.author.id) }, onMentionClick = onMentionClick, onHashtagClick = onHashtagClick)
-                                    },
-                                    engagements = {
-                                        EngagementScreen(
-                                            spec = engagement,
-                                            model = post.mapToContent(),
-                                        )
-                                    },
-                                    moderation = {
-                                        ModerationScreen(
-                                            post.mapToContent(),
-                                            spec
-                                        )
-                                    },
-                                    modifier = Modifier.padding(bottom = 16.dp),
-                                    actions = {
-                                        if (id != post.author.id) {
-                                            updatedConnection(
-                                                Triple(
-                                                    post.author.id,
-                                                    post.author.isfollowing,
-                                                    post.author.isfollowed
-                                                )
-                                            )
-                                        }
-                                    }
+                                VideoScreen(
+                                    id = id,
+                                    post = post,
+                                    index = index,
+                                    currentTime = currentTime,
+                                    engagementSpec = engagement,
+                                    moderationSpec = spec,
+                                    onClick = onClick,
+                                    onSelect = { selectedClip.value = it },
+                                    onMentionClick = onMentionClick, onHashtagClick = onHashtagClick,
+                                    connection = connection
                                 ) {
-                                    Box(modifier = Modifier.clickable(
-                                        role = Role.Button,
-                                        onClick = { selectedClip.value = index }
-                                    )) {
-                                        component.videoThumbnail()(
-                                            Modifier,
-                                            VideoThumbnail.Spec(post.media, post.resolution)
-                                        )
-                                    }
+                                    component.videoThumbnail()(
+                                        Modifier,
+                                        VideoThumbnail.Spec(post.media, post.resolution)
+                                    )
                                 }
                             }
                         }
@@ -173,5 +148,69 @@ fun VideoScreen(
             }
         }
         VideoDialog(postLimit, selectedClip, provider, viewModelStoreOwner)
+    }
+}
+
+@Composable
+fun VideoScreen(
+    id: String,
+    post: UiVideo,
+    index: Int,
+    currentTime: State<Long>,
+    engagementSpec: EngagementSpec,
+    moderationSpec: ModerationSpec,
+    onClick: (String) -> Unit = {},
+    onSelect: (Int) -> Unit = {},
+    onMentionClick: (String) -> Unit = {},
+    onHashtagClick: (String) -> Unit = {},
+    connection: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit = {},
+    content: @Composable (UiVideo) -> Unit = {}
+) {
+    val clickHandler by rememberUpdatedState(onClick)
+    val selectHandler by rememberUpdatedState(onSelect)
+    val updatedContent by rememberUpdatedState(content)
+    val updatedConnection by rememberUpdatedState(connection)
+    MediaPostCard(
+        author = post.author,
+        onClick = { clickHandler(post.author.id) },
+        description = post.createdAt.formatTimeAgo(currentTime.value),
+        caption = {
+            PostSummary(
+                post.author.username,
+                post.title,
+                post.description,
+                userOnClick = { onClick(post.author.id) },
+                onMentionClick = onMentionClick, onHashtagClick = onHashtagClick
+            )
+        },
+        engagements = {
+            EngagementScreen(
+                spec = engagementSpec,
+                model = post.mapToContent(),
+            )
+        },
+        moderation = {
+            ModerationScreen(
+                post.mapToContent(),
+                moderationSpec
+            )
+        },
+        modifier = Modifier.padding(bottom = 16.dp),
+        actions = {
+            if (id != post.author.id) {
+                updatedConnection(
+                    Triple(
+                        post.author.id,
+                        post.author.isfollowing,
+                        post.author.isfollowed
+                    )
+                )
+            }
+        }
+    ) {
+        Box(modifier = Modifier.clickable(
+            role = Role.Button,
+            onClick = { selectHandler(index) }
+        )) { updatedContent(post) }
     }
 }

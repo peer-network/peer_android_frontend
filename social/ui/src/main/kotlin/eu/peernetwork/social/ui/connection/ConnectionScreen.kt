@@ -39,7 +39,6 @@ interface ConnectionController {
 
 data class ConnectionState(
     val res: Int,
-    val color: Color,
     val textColor: Color,
     val borderColor: Color,
     val useGradient: Boolean
@@ -101,7 +100,6 @@ fun ConnectionScreen(
     val primary = MaterialTheme.colorScheme.primary
     val onPrimary = MaterialTheme.colorScheme.onPrimary
     val secondary = MaterialTheme.colorScheme.secondary
-    val tertiary = MaterialTheme.colorScheme.tertiary
     val gradient = Brush.horizontalGradient(colors = listOf(secondary, primary))
     var following by remember(isFollowing) { mutableStateOf(isFollowing) }
     val state by remember(following, isFollowed) { derivedStateOf {
@@ -115,23 +113,20 @@ fun ConnectionScreen(
         when(state) {
             ConnectionStatus.PEER -> ConnectionState(
                 R.string.peer_label,
-                Color.Transparent,
-                secondary,
                 onPrimary,
+                secondary,
                 true
             )
             ConnectionStatus.FOLLOWING -> ConnectionState(
                 R.string.following_label,
-                Color.Transparent,
-                primary,
+                secondary,
                 primary,
                 false
             )
             ConnectionStatus.FOLLOW -> ConnectionState(
                 R.string.follow_label,
-                Color.Transparent,
-                tertiary,
-                tertiary,
+                onPrimary,
+                onPrimary,
                 false
             )
         }
@@ -146,17 +141,19 @@ fun ConnectionScreen(
                     listOf(Color.Transparent, Color.Transparent)
                 )
             },
-            shape = RoundedCornerShape(16),
+            shape = RoundedCornerShape(28),
         ),
-        shape = RoundedCornerShape(16),
-        textStyle = MaterialTheme.typography.bodySmall,
+        shape = RoundedCornerShape(28),
+        textStyle = MaterialTheme.typography.bodySmall.copy(
+            color = status.textColor
+        ),
         colors = ButtonDefaults.outlinedButtonColors(
-            containerColor = status.color,
+            containerColor = Color.Transparent,
             contentColor = status.textColor,
             disabledContainerColor = Color.Transparent
         ),
         minHeight = 32.dp,
         border = BorderStroke(1.dp, status.borderColor),
-        contentPadding = PaddingValues(horizontal = 24.dp, vertical = 2.dp)
+        contentPadding = PaddingValues(horizontal = 24.dp, vertical = 4.dp)
     ) { Text(stringResource(status.res)) }
 }

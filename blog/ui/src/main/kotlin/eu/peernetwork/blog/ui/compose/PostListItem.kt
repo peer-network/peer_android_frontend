@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.blog.ui.model.UiPost
@@ -26,6 +28,7 @@ fun LazyItemScope.PostListItem(
     actions: @Composable RowScope.() -> Unit = {},
     content: @Composable (UiPost) -> Unit
 ) {
+    val updatedContent by rememberUpdatedState(content)
     Spacer(modifier = Modifier.height(
         if (position == 0 && post.type == UiPost.Type.TEXT) {
             12.dp
@@ -45,7 +48,7 @@ fun LazyItemScope.PostListItem(
             moderation = moderation,
             onClick = onClick,
             actions = actions
-        ) { content(post) }
+        ) { updatedContent(post) }
     } else {
         TextPostCard(
             author = post.author,

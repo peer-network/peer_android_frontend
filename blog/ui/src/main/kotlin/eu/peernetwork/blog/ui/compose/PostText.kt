@@ -4,11 +4,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalUriHandler
@@ -18,7 +18,6 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import eu.peernetwork.blog.ui.mapper.annotateTag
 import eu.peernetwork.core.ui.design.compose.DesignTitleTextStyle
 
 @Composable
@@ -33,6 +32,8 @@ fun PostText(
     onMentionClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {}
 ) {
+    val handleMention by rememberUpdatedState(onMentionClick)
+    val handleHashTag by rememberUpdatedState(onHashtagClick)
     val textStyle = style ?: DesignTitleTextStyle(
         span = SpanStyle(
             fontStyle = FontStyle.Italic,
@@ -126,7 +127,7 @@ fun PostText(
                 annotations.firstOrNull()?.let { annotation ->
                     when (annotation.tag) {
                         "URL" -> uriHandler.openUri(annotation.item.lowercase())
-                        "MENTION" -> onMentionClick(annotation.item)
+                        "MENTION" -> handleMention(annotation.item)
                     }
                 }
             }
@@ -142,8 +143,8 @@ fun PostText(
                 annotations.firstOrNull()?.let { annotation ->
                     when (annotation.tag) {
                         "URL" -> uriHandler.openUri(annotation.item.lowercase())
-                        "MENTION" -> onMentionClick(annotation.item)
-                        "HASHTAG" -> onHashtagClick(annotation.item)
+                        "MENTION" -> handleMention(annotation.item)
+                        "HASHTAG" -> handleHashTag(annotation.item)
                     }
                 }
             }
