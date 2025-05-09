@@ -23,6 +23,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -48,7 +49,6 @@ import eu.peernetwork.user.ui.model.UiSettings
 import eu.peernetwork.user.ui.compose.LogoutSheet
 import eu.peernetwork.user.ui.compose.PasswordSheet
 import eu.peernetwork.user.ui.compose.ProfileScaffold
-import androidx.compose.runtime.setValue
 
 @Composable
 fun SettingsScreen(
@@ -56,38 +56,64 @@ fun SettingsScreen(
     viewModelStoreOwner: ViewModelStoreOwner = UiViewModel.Owner(),
 ) {
     val context = LocalContext.current
+
+    // Build the settings component from the provider?
     val component = remember {
         provider.builder(Settings.Builder::class.java).build(context)
     }
+
+    // So this Initializes the ViewModel
     val viewModel = viewModel(
         modelClass = SettingsViewModel::class.java,
         viewModelStoreOwner = viewModelStoreOwner,
         factory = component.viewModelFactory()
     )
+
+    // Observe current state from ViewModel
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val derivedState = remember { derivedStateOf {
-        when(state) {
-            SettingsViewModel.State.Empty -> DesignStatefulScaffoldState.Empty
-            SettingsViewModel.State.Loading -> DesignStatefulScaffoldState.Loading
-            is SettingsViewModel.State.Content -> {
-                DesignStatefulScaffoldState.Success((state as SettingsViewModel.State.Content).account)
-            }
-            is SettingsViewModel.State.Failure -> {
-                DesignStatefulScaffoldState.Error((state as SettingsViewModel.State.Failure).error)
+
+    // This Converts raw state -> scaffold-ready format
+    val derivedState = remember {
+        derivedStateOf {
+            when (state) {
+                SettingsViewModel.State.Empty -> DesignStatefulScaffoldState.Empty
+                SettingsViewModel.State.Loading -> DesignStatefulScaffoldState.Loading
+                is SettingsViewModel.State.Content -> {
+                    DesignStatefulScaffoldState.Success((state as SettingsViewModel.State.Content).account)
+                }
+                is SettingsViewModel.State.Failure -> {
+                    DesignStatefulScaffoldState.Error((state as SettingsViewModel.State.Failure).error)
+                }
             }
         }
-    } }
+    }
+
+    // Extracts content?  And It is only valid when -> successs
     val content = remember { derivedStateOf { state as? SettingsViewModel.State.Content? } }
+
+    // This Checks for errors
     val error = remember { derivedStateOf { content.value?.error } }
+
+    // Ok here this Loading state based on ViewModel content
     val isLoading = remember { derivedStateOf { content.value?.processing == true } }
+
+    // Internal flag to track if update has occurred
     var status by remember { mutableStateOf(false) }
+
+    // Main scaffold for displaying settings screen or error or the loading states
     DesignRefreshableScaffold<UiAccount>(
         state = derivedState,
         onRefresh = { viewModel.getAccount() },
-        placeholder = { ProfileScaffold(modifier = Modifier.fillMaxSize()
-            .padding(vertical = 16.dp, horizontal = 24.dp)
-            .verticalScroll(rememberScrollState())) }
+        placeholder = {
+            ProfileScaffold(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(vertical = 16.dp, horizontal = 24.dp)
+                    .verticalScroll(rememberScrollState())
+            )
+        }
     ) {
+        // Main screen with user profile settings
         SettingsScreen(
             account = it,
             isLoading = isLoading,
@@ -102,15 +128,19 @@ fun SettingsScreen(
         ) { model, password ->
             status = true
             viewModel.update(it, model, password ?: "")
-
         }
     }
+
+    // Reset ViewModel state on first launch
     LaunchedEffect(Unit) { viewModel.reset() }
+
+    // Initialize data + show success toast only when appropriate
     LaunchedEffect(content.value) {
         if (content.value == null) {
             viewModel.initialize()
         }
-        if (isLoading.value == false && status) {
+        // Show toast only if update completed successfully and no error brought
+        if (isLoading.value == false && status && error.value == null) {
             status = false
             Toast.makeText(context, "Profile updated", Toast.LENGTH_SHORT).show()
         }
@@ -130,21 +160,30 @@ fun SettingsScreen(
     onSubmit: (List<UiSettings>, String?) -> Unit,
 ) {
     val context = LocalContext.current
+
+    // Input field states
     val image = remember { mutableStateOf<Uri?>(null) }
     val username = remember { TextFieldState(account.username) }
     val bio = remember { TextFieldState(account.bio ?: "") }
+
+    // Visibility toggles for bottom sheets
     var showPassword = remember { mutableStateOf(false) }
     var showLogout = remember { mutableStateOf(false) }
     var showDeactivation = remember { mutableStateOf(false) }
-    val fields = remember { derivedStateOf {
-        listOf(
-            UiSettings.Avatar(image.value),
-            UiSettings.Username(username.text.trim().toString()),
-            UiSettings.Description(bio.text.trim().toString()),
-        )
-    } }
+
+    // Compose a list of fields that can be edited
+    val fields = remember {
+        derivedStateOf {
+            listOf(
+                UiSettings.Avatar(image.value),
+                UiSettings.Username(username.text.trim().toString()),
+                UiSettings.Description(bio.text.trim().toString()),
+            )
+        }
+    }
 
     Column(modifier = modifier) {
+        // Header section: avatar, username, update button
         SettingsHeader(
             account = account,
             modifier = Modifier.padding(top = 8.dp),
@@ -160,7 +199,11 @@ fun SettingsScreen(
                 image.value = null
             }
         )
+
+        // Input fields: username, bio, validation
         SettingsForm(username, bio, isLoading, error)
+
+        // Logout / Deactivate buttons
         Row(modifier = Modifier.padding(top = 16.dp)) {
             DesignOutlinedButton(
                 onClick = { showLogout.value = true },
@@ -184,16 +227,22 @@ fun SettingsScreen(
                 )
             )
         }
+
+        // Sheet for confirming deactivation
         PasswordSheet(showDeactivation, label = stringResource(R.string.deactivate_text)) {
             showDeactivation.value = false
             onDeactivate(it)
             Toast.makeText(context, "Account deactivated", Toast.LENGTH_SHORT).show()
         }
+
+        // Sheet for confirming logout
         LogoutSheet(showLogout) {
             showLogout.value = false
             onLogout()
             Toast.makeText(context, "Logged out successfully", Toast.LENGTH_SHORT).show()
         }
+
+        // Sheet for entering password when required
         PasswordSheet(showPassword, label = stringResource(R.string.confirmation_label)) {
             showPassword.value = false
             onSubmit(fields.value, it)
