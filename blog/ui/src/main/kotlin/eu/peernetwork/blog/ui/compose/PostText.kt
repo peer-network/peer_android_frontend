@@ -127,7 +127,6 @@ fun PostText(
                     when (annotation.tag) {
                         "URL" -> uriHandler.openUri(annotation.item.lowercase())
                         "MENTION" -> onMentionClick(annotation.item)
-                        "HASHTAG" -> onHashtagClick(annotation.item)
                     }
                 }
             }

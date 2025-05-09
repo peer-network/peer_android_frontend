@@ -32,6 +32,8 @@ fun MemberScreen(
     limit: Int,
     type: UserRenderer.Type,
     onSettings: () -> Unit = {},
+    onMentionClick: (String) -> Unit = {},
+    onHashtagClick: (String) -> Unit = {},
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
 ) {
@@ -88,7 +90,9 @@ fun MemberScreen(
                     refreshing,
                     limit,
                     BlogRenderer.Type.UNSPECIFIED,
-                    viewModelStoreOwner
+                    viewModelStoreOwner,
+                    onMentionClick,
+                    onHashtagClick
                 )
             )
         }

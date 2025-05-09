@@ -44,7 +44,6 @@ import kotlinx.coroutines.delay
 fun VideoScreen(
     author: String,
     postLimit: Int,
-
     loadState: MutableState<Boolean>,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,

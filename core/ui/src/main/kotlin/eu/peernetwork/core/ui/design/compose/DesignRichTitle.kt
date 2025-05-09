@@ -136,18 +136,14 @@ fun DesignRichTitle(
             style = textStyle.style,
             overflow = TextOverflow.Ellipsis,
             maxLines = maxLines,
-            modifier = Modifier.then(
-                if (titleOnClick != null) Modifier.clickable { titleOnClick() } else Modifier
-            ),
             onClick = { offset ->
                 val annotations = annotatedTitle.getStringAnnotations(start = offset, end = offset)
                 annotations.firstOrNull()?.let { annotation ->
                     when (annotation.tag) {
                         "URL" -> uriHandler.openUri(annotation.item.lowercase())
                         "MENTION" -> onMentionClick(annotation.item)
-                        "HASHTAG" -> onHashtagClick(annotation.item)
                     }
-                }
+                } ?: titleOnClick?.invoke()
             }
         )
         spacer()

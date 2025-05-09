@@ -5,6 +5,7 @@ import dagger.Provides
 import dagger.multibindings.IntoMap
 import eu.peernetwork.app.ui.renderer.BlogRendererDelegate
 import eu.peernetwork.app.ui.renderer.UserRendererDelegate
+import eu.peernetwork.app.ui.search.Search
 import eu.peernetwork.blog.ui.post.music.Music
 import eu.peernetwork.blog.ui.post.photo.Photo
 import eu.peernetwork.blog.ui.post.video.Video
@@ -79,6 +80,14 @@ object ProfileModule {
     @UiBuilder(Music.Builder::class)
     fun provideMusicBuilder(component: Profile.Component): UiComponent.Builder {
         return Music.Builder(component)
+    }
+
+    @Profile.Scope
+    @Provides
+    @IntoMap
+    @UiBuilder(Search.Builder::class)
+    fun provideSearchBuilder(component: Profile.Component): UiComponent.Builder {
+        return Search.Builder(component)
     }
 
     @Profile.Scope
