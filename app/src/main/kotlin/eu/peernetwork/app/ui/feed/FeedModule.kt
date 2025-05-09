@@ -8,6 +8,7 @@ import dagger.multibindings.IntoMap
 import eu.peernetwork.app.ui.profile.Profile
 import eu.peernetwork.app.ui.renderer.BlogRendererDelegate
 import eu.peernetwork.app.ui.renderer.UserRendererDelegate
+import eu.peernetwork.app.ui.search.Search
 import eu.peernetwork.blog.ui.timeline.music.Music
 import eu.peernetwork.blog.ui.timeline.photo.Photo
 import eu.peernetwork.blog.ui.timeline.video.Video
@@ -81,6 +82,14 @@ object FeedModule {
     @UiBuilder(Member.Builder::class)
     fun provideMemberBuilder(component: Feed.Component): UiComponent.Builder {
         return Member.Builder(component)
+    }
+
+    @Feed.Scope
+    @Provides
+    @IntoMap
+    @UiBuilder(Search.Builder::class)
+    fun provideSearchBuilder(component: Feed.Component): UiComponent.Builder {
+        return Search.Builder(component)
     }
 
     @Feed.Scope

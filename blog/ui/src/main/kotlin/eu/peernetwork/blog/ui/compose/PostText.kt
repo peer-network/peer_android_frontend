@@ -30,6 +30,8 @@ fun PostText(
     mentionColor: Color = MaterialTheme.colorScheme.primary,
     hashtagColor: Color = MaterialTheme.colorScheme.primary,
     linkColor: Color = MaterialTheme.colorScheme.primary,
+    onMentionClick: (String) -> Unit = {},
+    onHashtagClick: (String) -> Unit = {}
 ) {
     val textStyle = style ?: DesignTitleTextStyle(
         span = SpanStyle(
@@ -122,10 +124,14 @@ fun PostText(
                 color = MaterialTheme.colorScheme.onBackground
             ),
             onClick = { offset ->
-                annotatedTitle.getStringAnnotations(tag = "URL", start = offset, end = offset)
-                    .firstOrNull()?.let { annotation ->
-                        uriHandler.openUri(annotation.item.lowercase())
+                val annotations = annotatedTitle.getStringAnnotations(start = offset, end = offset)
+                annotations.firstOrNull()?.let { annotation ->
+                    when (annotation.tag) {
+                        "URL" -> uriHandler.openUri(annotation.item.lowercase())
+                        "MENTION" -> onMentionClick(annotation.item)
+                        "HASHTAG" -> onHashtagClick(annotation.item)
                     }
+                }
             }
         )
         ClickableText(
@@ -135,10 +141,14 @@ fun PostText(
             ),
             modifier = Modifier.padding(top = 4.dp),
             onClick = { offset ->
-                annotatedDescription.getStringAnnotations(tag = "URL", start = offset, end = offset)
-                    .firstOrNull()?.let { annotation ->
-                        uriHandler.openUri(annotation.item.lowercase())
+                val annotations = annotatedDescription.getStringAnnotations(start = offset, end = offset)
+                annotations.firstOrNull()?.let { annotation ->
+                    when (annotation.tag) {
+                        "URL" -> uriHandler.openUri(annotation.item.lowercase())
+                        "MENTION" -> onMentionClick(annotation.item)
+                        "HASHTAG" -> onHashtagClick(annotation.item)
                     }
+                }
             }
         )
     }

@@ -19,6 +19,8 @@ fun LazyItemScope.PostListItem(
     state: State<Long>,
     onClick: () -> Unit = {},
     userOnClick: () -> Unit = {},
+    onMentionClick: (String) -> Unit = {},
+    onHashtagClick: (String) -> Unit = {},
     engagements: @Composable RowScope.() -> Unit,
     moderation: @Composable RowScope.() -> Unit,
     actions: @Composable RowScope.() -> Unit = {},
@@ -58,7 +60,9 @@ fun LazyItemScope.PostListItem(
             PostText(
                 post.title,
                 post.description,
-                Modifier.padding(top = 12.dp, bottom = 4.dp)
+                Modifier.padding(top = 12.dp, bottom = 4.dp),
+                onMentionClick = onMentionClick,
+                onHashtagClick = onHashtagClick
             )
         }
     }

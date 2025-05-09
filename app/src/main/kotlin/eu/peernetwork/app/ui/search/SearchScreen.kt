@@ -27,6 +27,12 @@ import eu.peernetwork.social.ui.search.member.MemberScreen
 import eu.peernetwork.social.ui.search.tag.TagScreen
 import eu.peernetwork.social.ui.search.title.TitleScreen
 
+sealed interface SearchState {
+    data object Default : SearchState
+    data class Username(val value: String) : SearchState
+    data class Tag(val value: String): SearchState
+}
+
 @Composable
 fun SearchScreen(
     id: String,
@@ -34,6 +40,7 @@ fun SearchScreen(
     postLimit: Int,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
+    searchState: SearchState = SearchState.Default,
 ) {
     val context = LocalContext.current
     val component = remember {

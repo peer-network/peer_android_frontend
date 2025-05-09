@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.lifecycle.ViewModelProvider
 import eu.peernetwork.app.provider.ApplicationProvider
 import eu.peernetwork.app.ui.profile.Profile
+import eu.peernetwork.app.ui.search.Search
 import eu.peernetwork.blog.ui.timeline.music.Music
 import eu.peernetwork.blog.ui.timeline.photo.Photo
 import eu.peernetwork.blog.ui.timeline.video.Video
@@ -27,6 +28,7 @@ interface Feed : ApplicationProvider {
         Video,
         Photo,
         Member,
+        Search,
         Profile {
         fun viewModelFactory(): ViewModelProvider.Factory
     }

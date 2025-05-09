@@ -39,6 +39,8 @@ import kotlinx.coroutines.delay
 fun PhotoScreen(
     tag: String,
     postLimit: Int,
+    onMentionClick: (String) -> Unit = {},
+    onHashtagClick: (String) -> Unit = {},
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
     onClick: (String) -> Unit = {},
@@ -121,6 +123,8 @@ fun PhotoScreen(
                                     state = currentTime,
                                     onClick = { onClick(post.author.id) },
                                     userOnClick = { onClick(post.author.id) },
+                                    onMentionClick = onMentionClick,
+                                    onHashtagClick = onHashtagClick,
                                     engagements = {
                                         EngagementScreen(
                                             post.mapToContent(),
