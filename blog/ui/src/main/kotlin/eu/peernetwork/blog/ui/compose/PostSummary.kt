@@ -21,6 +21,8 @@ fun PostSummary(
     title: String,
     description: String,
     userOnClick: () -> Unit = {},
+    onMentionClick: (String) -> Unit = {},
+    onHashtagClick: (String) -> Unit = {},
     color: Color = MaterialTheme.colorScheme.onBackground,
     modifier: Modifier = Modifier
 ) {
@@ -49,7 +51,9 @@ fun PostSummary(
                     fontSize = MaterialTheme.typography.bodySmall.fontSize,
                     color = MaterialTheme.colorScheme.tertiary
                 ),
-            )
+            ),
+            onMentionClick = onMentionClick,
+            onHashtagClick = onHashtagClick
         )
     }
 }

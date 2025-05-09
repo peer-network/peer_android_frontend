@@ -43,6 +43,8 @@ fun CommentScreen(
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
     modifier: Modifier = Modifier,
+    onMentionClick: (String) -> Unit = {},
+    onHashtagClick: (String) -> Unit = {},
     onUpdate: () -> Unit,
 ) {
     val context = LocalContext.current
@@ -100,6 +102,8 @@ fun CommentScreen(
                             titleOnClick = {
                                 replyTo.value = comment.author.username
                             },
+                            onMentionClick = onMentionClick,
+                            onHashtagClick = onHashtagClick
                         ) {
                             val liked = remember { derivedStateOf {
                                 contents.value?.likes?.firstOrNull { it.id == comment.id }

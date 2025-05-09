@@ -23,6 +23,7 @@ import java.net.URLEncoder
 fun FeedNavigation(
     id: String,
     title: MutableState<DesignToolbarTitle>,
+    postLimit: Int,
     component: Feed.Component,
     viewModelStoreOwner: ViewModelStoreOwner,
     feed: @Composable (NavHostController) -> Unit
@@ -68,14 +69,14 @@ fun FeedNavigation(
             val type = backStackEntry.arguments?.getString("type") ?: ""
             val query = backStackEntry.arguments?.getString("query") ?: ""
             val searchState = when (type) {
-                "username" -> SearchState.Username(query)
-                "tag" -> SearchState.Tag(query)
+                "username" -> SearchState.Active.Username(query)
+                "tag" -> SearchState.Active.Tag(query)
                 else -> SearchState.Default
             }
             SearchScreen(
                 id = id,
                 title = title,
-                postLimit = 20,
+                postLimit = postLimit,
                 provider = component,
                 viewModelStoreOwner = viewModelStoreOwner,
                 searchState = searchState

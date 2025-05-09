@@ -29,8 +29,11 @@ import eu.peernetwork.social.ui.search.title.TitleScreen
 
 sealed interface SearchState {
     data object Default : SearchState
-    data class Username(val value: String) : SearchState
-    data class Tag(val value: String): SearchState
+    sealed class Active(val value: String) : SearchState {
+        data class Username(private val query: String) : Active(query)
+        data class Tag(private val query: String): Active(query)
+    }
+
 }
 
 @Composable
@@ -52,7 +55,7 @@ fun SearchScreen(
         component,
         viewModelStoreOwner
     ) { controller ->
-        SearchScreen { mode, query ->
+        SearchScreen(state = searchState) { mode, query ->
             if (mode == SearchMode.USERNAME) {
                 MemberScreen(query, postLimit, {
                     controller.navigateIfNecessary("profile/$it")
@@ -79,10 +82,20 @@ fun SearchScreen(
 @Composable
 fun SearchScreen(
     modifier: Modifier = Modifier,
+    state: SearchState? = null,
     content: @Composable (SearchMode?, TextFieldState) -> Unit
 ) {
-    val query = remember { TextFieldState() }
-    val mode = remember { mutableStateOf<SearchMode?>(null) }
+    val query = remember(state) { TextFieldState((state as? SearchState.Active)?.value ?: "") }
+    val mode = remember(state) {
+        mutableStateOf(
+            when (state) {
+                is SearchState.Active.Username -> SearchMode.USERNAME
+                is SearchState.Active.Tag -> SearchMode.TAG
+                else -> null
+            }
+        )
+    }
+
     Column(modifier = modifier.fillMaxSize()) {
         SearchHeader(
             query,

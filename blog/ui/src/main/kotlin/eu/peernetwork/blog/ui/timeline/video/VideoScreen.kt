@@ -37,6 +37,8 @@ import eu.peernetwork.media.core.renderer.VideoThumbnail
 fun VideoScreen(
     id: String,
     postLimit: Int,
+    onMentionClick: (String) -> Unit = {},
+    onHashtagClick: (String) -> Unit = {},
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
     onClick: (String) -> Unit = {},
@@ -103,6 +105,8 @@ fun VideoScreen(
                 id,
                 postLimit,
                 refreshed,
+                onMentionClick,
+                onHashtagClick,
                 component,
                 viewModelStoreOwner
             ) { engagement ->
@@ -121,7 +125,7 @@ fun VideoScreen(
                                     onClick = { clickHandler(post.author.id) },
                                     description = post.createdAt.formatTimeAgo(currentTime.longValue),
                                     caption = {
-                                        PostSummary(post.author.username, post.title, post.description, userOnClick = { onClick(post.author.id) })
+                                        PostSummary(post.author.username, post.title, post.description, userOnClick = { onClick(post.author.id) }, onMentionClick = onMentionClick, onHashtagClick = onHashtagClick)
                                     },
                                     engagements = {
                                         EngagementScreen(

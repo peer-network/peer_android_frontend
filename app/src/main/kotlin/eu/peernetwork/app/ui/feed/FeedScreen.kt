@@ -45,6 +45,7 @@ import eu.peernetwork.social.ui.connection.ConnectionScreen
 fun FeedScreen(
     id: String,
     title: MutableState<DesignToolbarTitle>,
+    postLimit: Int,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
 ) {
@@ -62,6 +63,7 @@ fun FeedScreen(
     FeedNavigation(
         id = id,
         title = title,
+        postLimit = postLimit,
         component = component,
         viewModelStoreOwner = viewModelStoreOwner
     ) { controller ->
@@ -91,9 +93,15 @@ fun FeedScreen(
                     }
                 },
                 video = {
-                    VideoScreen(id, BuildConfig.PAGING_LIMIT, component, viewModelStoreOwner, {
-                        controller.navigateIfNecessary("profile/$it")
-                    }) {
+                    VideoScreen(
+                        id,
+                        BuildConfig.PAGING_LIMIT,
+                        { controller.navigateToUsernameSearch(it) },
+                        { controller.navigateToTagSearch(it) },
+                        component,
+                        viewModelStoreOwner,
+                        { controller.navigateIfNecessary("profile/$it") }
+                    ) {
                         ConnectionScreen(
                             isFollowing = connection.getOrDefault(it.first, it.third),
                             isFollowed = it.second,

@@ -82,7 +82,7 @@ fun HomeScreen(provider: UiComponentProvider) {
             options = { PointScreen(component, owner) }
         ) { state, route ->
             when(route) {
-                is HomeRoute.Home -> FeedScreen(data.first, title, component, owner)
+                is HomeRoute.Home -> FeedScreen(data.first, title, BuildConfig.PAGING_LIMIT, component, owner)
                 is HomeRoute.Profile -> ProfileScreen(
                     data.first,
                     title,

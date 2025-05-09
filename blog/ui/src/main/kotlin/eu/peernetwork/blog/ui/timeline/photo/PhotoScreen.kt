@@ -106,6 +106,8 @@ fun PhotoScreen(
                 id,
                 postLimit,
                 refreshed,
+                onMentionClick,
+                onHashtagClick,
                 component,
                 viewModelStoreOwner
             ) { engagement ->

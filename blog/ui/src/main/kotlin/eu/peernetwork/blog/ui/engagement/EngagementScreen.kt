@@ -39,6 +39,8 @@ fun EngagementScreen(
     tag: String,
     postLimit: Int,
     refresh: State<Boolean>,
+    onMentionClick: (String) -> Unit = {},
+    onHashtagClick: (String) -> Unit = {},
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
     content: @Composable (EngagementSpec) -> Unit
@@ -81,7 +83,15 @@ fun EngagementScreen(
             viewModel.clear()
         }
     }
-    CommentScreen(tag, post, postLimit, component, viewModelStoreOwner) {
+    CommentScreen(
+        tag,
+        post,
+        postLimit,
+        component,
+        viewModelStoreOwner,
+        onMentionClick = onMentionClick,
+        onHashtagClick = onHashtagClick
+    ) {
         post.value?.mapToEngagement()?.let {
             val engagement = (state as? EngagementViewModel.State.Content?)
                 ?.engagements?.get(it.id) ?: it

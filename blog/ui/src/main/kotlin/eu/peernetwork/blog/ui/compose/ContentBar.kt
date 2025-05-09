@@ -34,6 +34,8 @@ fun ContentBar(
     color: Color = MaterialTheme.colorScheme.onBackground,
     descriptionColor: Color = MaterialTheme.colorScheme.tertiary,
     titleOnClick: (() -> Unit)? = null,
+    onMentionClick: (String) -> Unit = {},
+    onHashtagClick: (String) -> Unit = {},
     content: @Composable () -> Unit
 ) {
     DesignDetailLayout(
@@ -76,6 +78,8 @@ fun ContentBar(
                         color = descriptionColor
                     )
                 ),
+                onMentionClick = onMentionClick,
+                onHashtagClick = onHashtagClick
             )
             content()
         }
