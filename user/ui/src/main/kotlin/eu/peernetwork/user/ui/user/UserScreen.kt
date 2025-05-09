@@ -3,7 +3,6 @@ package eu.peernetwork.user.ui.user
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -11,6 +10,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -77,7 +77,7 @@ fun UserScreen(
         UserScreen(
             modifier = modifier,
             account = it,
-            onFollow = onFollow,
+            connection = onFollow,
             onClick = onClick
         )
     }
@@ -93,9 +93,11 @@ fun UserScreen(
 fun UserScreen(
     account: UiAccount,
     modifier: Modifier = Modifier,
-    onFollow: @Composable (Pair<Boolean, Boolean>) -> Unit,
+    connection: @Composable (Pair<Boolean, Boolean>) -> Unit,
     onClick: (Int) -> Unit,
 ) {
+    val clickHandler by rememberUpdatedState(onClick)
+    val updatedConnection by rememberUpdatedState(connection)
     val emptyDescription = stringResource(R.string.empty_description_message)
     ProfileScaffold(
         modifier = modifier,
@@ -104,21 +106,13 @@ fun UserScreen(
             Box(
                 modifier = Modifier.padding(vertical = 8.dp)
                     .padding(bottom = 4.dp)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .padding(start = 4.dp)
-                        .height(28.dp)
-                ){
-                    onFollow(account.isfollowing to account.isfollowed)
-                }
-            }
+            ) { updatedConnection(account.isfollowing to account.isfollowed) }
         },
         options = {
             Overview(
                 overview = account.overview,
                 modifier = Modifier.fillMaxWidth(),
-                onClick = onClick
+                onClick = clickHandler
             )
         }
     ) {
@@ -149,6 +143,6 @@ fun PreviewUserScreen() {
             isfollowing = false,
             isfollowed = false
         )
-        UserScreen(onFollow = { }, account = model) {}
+        UserScreen(connection = { }, account = model) {}
     }
 }

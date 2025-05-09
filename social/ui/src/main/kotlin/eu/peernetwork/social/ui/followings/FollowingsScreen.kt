@@ -1,11 +1,9 @@
 package eu.peernetwork.social.ui.followings
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -22,13 +20,10 @@ import eu.peernetwork.core.common.model.Pageable
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.social.ui.compose.FollowerItem
-import eu.peernetwork.social.ui.followers.Followers
-import eu.peernetwork.social.ui.followers.FollowersViewModel
 
 @Composable
 fun FollowingsScreen(
     userId: String,
-    onDismiss: () -> Unit = {},
     postLimit: Int,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner

@@ -26,7 +26,6 @@ import eu.peernetwork.social.ui.compose.FollowerItem
 @Composable
 fun FollowersScreen(
     userId: String,
-    onDismiss: () -> Unit = {},
     postLimit: Int,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner

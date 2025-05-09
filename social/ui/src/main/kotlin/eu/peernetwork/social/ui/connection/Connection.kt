@@ -3,8 +3,9 @@ package eu.peernetwork.social.ui.connection
 import android.content.Context
 import androidx.lifecycle.ViewModelProvider
 import eu.peernetwork.core.ui.component.UiComponent
+import eu.peernetwork.social.ui.provider.SocialProvider
 
-interface Connection {
+interface Connection : SocialProvider {
     @javax.inject.Scope
     @Retention(AnnotationRetention.RUNTIME)
     annotation class Scope

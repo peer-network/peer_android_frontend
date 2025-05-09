@@ -18,6 +18,7 @@ import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.factory.UiBuilderFactory
 import eu.peernetwork.core.ui.factory.UiViewModelFactory
+import eu.peernetwork.social.ui.connection.Connection
 import eu.peernetwork.social.ui.member.Member
 import eu.peernetwork.social.ui.renderder.BlogRenderer
 import eu.peernetwork.social.ui.renderder.UserRenderer
@@ -90,6 +91,14 @@ object FeedModule {
     @UiBuilder(Search.Builder::class)
     fun provideSearchBuilder(component: Feed.Component): UiComponent.Builder {
         return Search.Builder(component)
+    }
+
+    @Feed.Scope
+    @Provides
+    @IntoMap
+    @UiBuilder(Connection.Builder::class)
+    fun provideConnectionBuilder(component: Feed.Component): UiComponent.Builder {
+        return Connection.Builder(component)
     }
 
     @Feed.Scope

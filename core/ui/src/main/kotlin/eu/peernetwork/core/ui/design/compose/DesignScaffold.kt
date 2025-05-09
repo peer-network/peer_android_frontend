@@ -19,6 +19,7 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,6 +51,10 @@ fun DesignScaffold(
     val animatedOffset by animateIntAsState(
         targetValue = (normalizedOffset.floatValue * footerHeightPx).toInt()
     )
+    val updatedHeader by rememberUpdatedState(header)
+    val updatedOverlay by rememberUpdatedState(overlay)
+    val updatedFooter by rememberUpdatedState(footer)
+    val updatedContent by rememberUpdatedState(content)
     val nestedScrollConnection = remember {
         object : NestedScrollConnection {
             override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
@@ -77,13 +82,13 @@ fun DesignScaffold(
             modifier = Modifier.fillMaxSize()
                 .verticalScroll(scroll)
         ) {
-            header(normalizedOffset)
+            updatedHeader(normalizedOffset)
             Column(modifier = Modifier.fillMaxWidth()
                 .height(height)) {
-                content(normalizedOffset)
+                updatedContent(normalizedOffset)
             }
         }
-        Box { overlay(normalizedOffset) }
+        Box { updatedOverlay(normalizedOffset) }
         Box(
             contentAlignment = Alignment.BottomCenter,
             modifier = Modifier.align(Alignment.BottomCenter)
@@ -92,7 +97,7 @@ fun DesignScaffold(
             Box(modifier = Modifier.onGloballyPositioned { coordinates ->
                 footerHeightPx = coordinates.size.height
             }.offset { IntOffset(0, animatedOffset) }) {
-                footer(normalizedOffset)
+                updatedFooter(normalizedOffset)
             }
         }
     }

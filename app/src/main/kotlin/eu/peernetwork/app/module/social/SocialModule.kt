@@ -2,7 +2,9 @@ package eu.peernetwork.app.module.social
 
 import dagger.Binds
 import dagger.Module
+import eu.peernetwork.social.data.interactor.ConnectionInteractorDelegate
 import eu.peernetwork.social.data.interactor.SearchInteractorDelegate
+import eu.peernetwork.social.domain.interactor.ConnectionInteractor
 import eu.peernetwork.social.domain.interactor.SearchInteractor
 
 @Module(includes = [
@@ -12,4 +14,7 @@ import eu.peernetwork.social.domain.interactor.SearchInteractor
 interface SocialModule {
     @Binds
     fun bindSearchInteractor(delegate: SearchInteractorDelegate): SearchInteractor
+
+    @Binds
+    fun bindConnectionInteractor(delegate: ConnectionInteractorDelegate): ConnectionInteractor
 }

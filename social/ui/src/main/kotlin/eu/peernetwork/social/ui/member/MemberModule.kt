@@ -12,6 +12,7 @@ import javax.inject.Provider
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.factory.UiBuilderFactory
 import eu.peernetwork.core.ui.factory.UiViewModelFactory
+import eu.peernetwork.social.ui.connection.Connection
 import eu.peernetwork.social.ui.followers.Followers
 import eu.peernetwork.social.ui.followings.Followings
 import eu.peernetwork.social.ui.peers.Peers
@@ -38,6 +39,14 @@ object MemberModule {
     @Member.Scope
     @UiViewModel(MemberViewModel::class)
     fun viewModel(viewModel: MemberViewModel): ViewModel = viewModel
+
+    @Provides
+    @IntoMap
+    @Member.Scope
+    @UiBuilder(Connection.Builder::class)
+    fun provideConnectionBuilder(member: Member.Component): UiComponent.Builder {
+        return Connection.Builder(member)
+    }
 
     @Provides
     @IntoMap

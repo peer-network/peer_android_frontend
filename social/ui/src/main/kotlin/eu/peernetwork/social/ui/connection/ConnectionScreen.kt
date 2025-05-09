@@ -1,21 +1,54 @@
 package eu.peernetwork.social.ui.connection
 
 import android.widget.Toast
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import eu.peernetwork.core.ui.component.UiComponentProvider
+import eu.peernetwork.core.ui.design.compose.DesignOutlinedButton
 import eu.peernetwork.core.ui.extension.builder
+import eu.peernetwork.social.ui.R
+import eu.peernetwork.social.ui.member.status
 
 interface ConnectionController {
-    operator fun invoke()
+    operator fun invoke(id: String)
 
     fun getOrDefault(id: String, default: Boolean): Boolean
+}
+
+data class ConnectionState(
+    val res: Int,
+    val color: Color,
+    val textColor: Color,
+    val borderColor: Color,
+    val useGradient: Boolean
+)
+
+enum class ConnectionStatus {
+    PEER,
+    FOLLOWING,
+    FOLLOW
 }
 
 @Composable
@@ -33,21 +66,100 @@ fun ConnectionScreen(
         factory = component.viewModelFactory()
     )
     val state = viewModel.state.collectAsState().value
+    val updatedContent by rememberUpdatedState(content)
     val error = remember { derivedStateOf { (state as? ConnectionViewModel.State.Error)?.error } }
-     val controller = remember { derivedStateOf {
+     val controller by remember { derivedStateOf {
         object : ConnectionController {
-            override fun invoke() {
-                TODO("Not yet implemented")
+            override fun invoke(id: String) {
+                viewModel.connect(id)
             }
 
             override fun getOrDefault(id: String, default: Boolean): Boolean {
-                TODO("Not yet implemented")
+                return viewModel.getOrDefault(id, default)
             }
         }
     } }
+    updatedContent(controller)
+    LaunchedEffect(Unit) {
+        viewModel.initialize()
+    }
     LaunchedEffect(error.value) {
-        error.value?.let {
-            Toast.makeText(context, "Error: ${it.message}", Toast.LENGTH_SHORT).show()
+        error.value?.message?.let {
+            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+            viewModel.reset()
         }
+    }
+}
+
+@Composable
+fun ConnectionScreen(
+    isFollowing: Boolean,
+    isFollowed: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val primary = MaterialTheme.colorScheme.primary
+    val onPrimary = MaterialTheme.colorScheme.onPrimary
+    val secondary = MaterialTheme.colorScheme.secondary
+    val tertiary = MaterialTheme.colorScheme.tertiary
+    val gradient = Brush.horizontalGradient(colors = listOf(secondary, primary))
+    var following by remember(isFollowing) { mutableStateOf(isFollowing) }
+    val state by remember(following, isFollowed) { derivedStateOf {
+        Pair(following, isFollowed).status()
+    } }
+    val clickHandler by rememberUpdatedState {
+        following = !following
+        onClick()
+    }
+    val status by remember { derivedStateOf {
+        when(state) {
+            ConnectionStatus.PEER -> ConnectionState(
+                R.string.peer_label,
+                Color.Transparent,
+                secondary,
+                onPrimary,
+                true
+            )
+            ConnectionStatus.FOLLOWING -> ConnectionState(
+                R.string.following_label,
+                Color.Transparent,
+                primary,
+                primary,
+                false
+            )
+            ConnectionStatus.FOLLOW -> ConnectionState(
+                R.string.follow_label,
+                Color.Transparent,
+                tertiary,
+                tertiary,
+                false
+            )
+        }
+    } }
+    DesignOutlinedButton(
+        onClick = clickHandler,
+        modifier = modifier.background(
+            brush = if (status.useGradient) {
+                gradient
+            } else {
+                Brush.linearGradient(
+                    listOf(Color.Transparent, Color.Transparent)
+                )
+            },
+            shape = RoundedCornerShape(16),
+        ),
+        shape = RoundedCornerShape(16),
+        colors = ButtonDefaults.outlinedButtonColors(
+            containerColor = status.color,
+            contentColor = status.textColor,
+            disabledContainerColor = Color.Transparent
+        ),
+        border = BorderStroke(1.dp, status.borderColor),
+        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 2.dp)
+    ) {
+        Text(
+            stringResource(status.res),
+            style = MaterialTheme.typography.bodySmall
+        )
     }
 }

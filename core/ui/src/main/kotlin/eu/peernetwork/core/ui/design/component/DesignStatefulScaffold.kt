@@ -54,13 +54,13 @@ fun<T> DesignStatefulScaffold(
         )
     )
     Box(
-        modifier = modifier.then(
+        modifier = modifier.graphicsLayer {
             if (state.value is DesignStatefulScaffoldState.Loading) {
-                Modifier.graphicsLayer { this.alpha = alpha }
+                this.alpha = alpha
             } else {
-                Modifier
+                1
             }
-        ),
+        },
         contentAlignment = contentAlignment
     ) {
         when (state.value) {

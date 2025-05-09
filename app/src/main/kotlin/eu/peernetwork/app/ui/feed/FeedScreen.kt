@@ -39,6 +39,7 @@ import eu.peernetwork.core.ui.design.compose.DesignToolbarTitle
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.core.ui.theme.PeerTheme
+import eu.peernetwork.social.ui.connection.ConnectionScreen
 
 @Composable
 fun FeedScreen(
@@ -64,30 +65,45 @@ fun FeedScreen(
         component = component,
         viewModelStoreOwner = viewModelStoreOwner
     ) { controller ->
-        FeedScreen(
-            state = pageState,
-            modifier = Modifier.fillMaxSize(),
-            onNavigate = { viewModel.lastVisited(it) },
-            photo = {
-                PhotoScreen(
-                    id,
-                    BuildConfig.PAGING_LIMIT,
-                    { controller.navigateToUsernameSearch(it) },
-                    { controller.navigateToTagSearch(it) },
-                    component,
-                    viewModelStoreOwner,
-                    { controller.navigateIfNecessary("profile/$it") }
-                ) {
-
-                }
-            },
-            video = {
-                VideoScreen(id, BuildConfig.PAGING_LIMIT, component, viewModelStoreOwner, {
-                    controller.navigateIfNecessary("profile/$it")
-                }) {}
-            },
-            music = { MusicScreen(component, viewModelStoreOwner) }
-        )
+        ConnectionScreen(
+            provider = component,
+            viewModelStoreOwner = viewModelStoreOwner
+        ) { connection ->
+            FeedScreen(
+                state = pageState,
+                modifier = Modifier.fillMaxSize(),
+                onNavigate = { viewModel.lastVisited(it) },
+                photo = {
+                    PhotoScreen(
+                        id,
+                        BuildConfig.PAGING_LIMIT,
+                        { controller.navigateToUsernameSearch(it) },
+                        { controller.navigateToTagSearch(it) },
+                        component,
+                        viewModelStoreOwner,
+                        { controller.navigateIfNecessary("profile/$it") }
+                    ) {
+                        ConnectionScreen(
+                            isFollowing = connection.getOrDefault(it.first, it.third),
+                            isFollowed = it.second,
+                            onClick = { connection.invoke(it.first) }
+                        )
+                    }
+                },
+                video = {
+                    VideoScreen(id, BuildConfig.PAGING_LIMIT, component, viewModelStoreOwner, {
+                        controller.navigateIfNecessary("profile/$it")
+                    }) {
+                        ConnectionScreen(
+                            isFollowing = connection.getOrDefault(it.first, it.third),
+                            isFollowed = it.second,
+                            onClick = { connection.invoke(it.first) }
+                        )
+                    }
+                },
+                music = { MusicScreen(component, viewModelStoreOwner) }
+            )
+        }
         LaunchedEffect(Unit) {
             title.value = DesignToolbarTitle(R.string.home_label) {}
         }

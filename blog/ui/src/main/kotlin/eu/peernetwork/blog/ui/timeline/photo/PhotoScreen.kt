@@ -37,14 +37,14 @@ import kotlinx.coroutines.delay
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
 @Composable
 fun PhotoScreen(
-    tag: String,
+    id: String,
     postLimit: Int,
     onMentionClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
     onClick: (String) -> Unit = {},
-    onFollow: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit = {}
+    connection: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit = {}
 ) {
     val context = LocalContext.current
     val component = remember {
@@ -56,7 +56,9 @@ fun PhotoScreen(
         factory = component.viewModelFactory()
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val clickHandler by rememberUpdatedState(onClick)
     val currentTime = remember { mutableLongStateOf(System.currentTimeMillis()) }
+    val updatedConnection by rememberUpdatedState(connection)
     LaunchedEffect(Unit) {
         while (true) {
             delay(60_000L)
@@ -101,7 +103,7 @@ fun PhotoScreen(
             onRefresh = { lazyPagingItems.refresh() }
         ) {
             EngagementScreen(
-                tag,
+                id,
                 postLimit,
                 refreshed,
                 component,
@@ -121,8 +123,8 @@ fun PhotoScreen(
                                     post = post,
                                     position = index,
                                     state = currentTime,
-                                    onClick = { onClick(post.author.id) },
-                                    userOnClick = { onClick(post.author.id) },
+                                    onClick = { clickHandler(post.author.id) },
+                                    userOnClick = { clickHandler(post.author.id) },
                                     onMentionClick = onMentionClick,
                                     onHashtagClick = onHashtagClick,
                                     engagements = {
@@ -143,7 +145,17 @@ fun PhotoScreen(
                                             ImageView.Spec(media.path, media.mapToProperty())
                                         )
                                     },
-                                    actions = { onFollow(Triple(post.author.id, post.author.isfollowing, post.author.isfollowed)) }
+                                    actions = {
+                                        if (id != post.author.id) {
+                                            updatedConnection(
+                                                Triple(
+                                                    post.author.id,
+                                                    post.author.isfollowing,
+                                                    post.author.isfollowed
+                                                )
+                                            )
+                                        }
+                                    }
                                 )
                             }
                         }

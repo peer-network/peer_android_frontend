@@ -10,6 +10,7 @@ import eu.peernetwork.blog.ui.timeline.photo.Photo
 import eu.peernetwork.blog.ui.timeline.video.Video
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
+import eu.peernetwork.social.ui.connection.Connection
 import eu.peernetwork.social.ui.member.Member
 
 interface Feed : ApplicationProvider {
@@ -29,7 +30,8 @@ interface Feed : ApplicationProvider {
         Photo,
         Member,
         Search,
-        Profile {
+        Profile,
+        Connection {
         fun viewModelFactory(): ViewModelProvider.Factory
     }
 

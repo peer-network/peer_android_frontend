@@ -35,12 +35,12 @@ import eu.peernetwork.media.core.renderer.VideoThumbnail
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VideoScreen(
-    tag: String,
+    id: String,
     postLimit: Int,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
     onClick: (String) -> Unit = {},
-    onFollow: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit = {}
+    connection: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit = {}
 ) {
     val context = LocalContext.current
     val component = remember {
@@ -66,6 +66,8 @@ fun VideoScreen(
             }
         }
     }
+    val clickHandler by rememberUpdatedState(onClick)
+    val updatedConnection by rememberUpdatedState(connection)
     val currentTime = remember { mutableLongStateOf(System.currentTimeMillis()) }
     LaunchedEffect(Unit) {
         while (true) {
@@ -98,7 +100,7 @@ fun VideoScreen(
             onRefresh = { lazyPagingItems.refresh() }
         ) {
             EngagementScreen(
-                tag,
+                id,
                 postLimit,
                 refreshed,
                 component,
@@ -116,7 +118,7 @@ fun VideoScreen(
                             lazyPagingItems[index]?.let { post ->
                                 MediaPostCard(
                                     author = post.author,
-                                    onClick = { onClick(post.author.id) },
+                                    onClick = { clickHandler(post.author.id) },
                                     description = post.createdAt.formatTimeAgo(currentTime.longValue),
                                     caption = {
                                         PostSummary(post.author.username, post.title, post.description, userOnClick = { onClick(post.author.id) })
@@ -134,7 +136,17 @@ fun VideoScreen(
                                         )
                                     },
                                     modifier = Modifier.padding(bottom = 16.dp),
-                                    actions = { onFollow(Triple(post.author.id, post.author.isfollowing, post.author.isfollowed)) }
+                                    actions = {
+                                        if (id != post.author.id) {
+                                            updatedConnection(
+                                                Triple(
+                                                    post.author.id,
+                                                    post.author.isfollowing,
+                                                    post.author.isfollowed
+                                                )
+                                            )
+                                        }
+                                    }
                                 ) {
                                     Box(modifier = Modifier.clickable(
                                         role = Role.Button,
