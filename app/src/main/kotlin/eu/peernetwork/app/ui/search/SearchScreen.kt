@@ -33,7 +33,6 @@ sealed interface SearchState {
         data class Username(private val query: String) : Active(query)
         data class Tag(private val query: String): Active(query)
     }
-
 }
 
 @Composable
@@ -62,11 +61,9 @@ fun SearchScreen(
                 }, component, viewModelStoreOwner)
             } else if (mode == SearchMode.TAG) {
                 TagScreen(query, postLimit, {
-                    TODO("navigate to feed screen with tag filter")
                 }, component, viewModelStoreOwner)
             } else if (mode == SearchMode.TITLE) {
                 TitleScreen(query, postLimit, { id, type ->
-                    controller.navigateIfNecessary("photo/$id")
                 }, component, viewModelStoreOwner)
             } else {
                 Box(modifier = Modifier.fillMaxSize()

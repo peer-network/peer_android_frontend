@@ -9,12 +9,14 @@ import eu.peernetwork.blog.domain.usecase.VideosUsecase
 import eu.peernetwork.blog.ui.mapper.mapToVideo
 import eu.peernetwork.blog.ui.model.UiVideo
 import eu.peernetwork.core.common.model.Pageable
+import eu.peernetwork.core.ui.usecase.AnnotationUsecase
 import eu.peernetwork.core.ui.usecase.PagingUsecase
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class AuthorVideoUsecase @Inject constructor(
-    private val usecase: VideosUsecase
+    private val usecase: VideosUsecase,
+    private val annotationUsecase: AnnotationUsecase
 ) : PagingUsecase<AuthorVideoUsecase.Parameter, UiVideo>() {
     private lateinit var param: Parameter
 
@@ -42,7 +44,7 @@ class AuthorVideoUsecase @Inject constructor(
             )
         )
         return LoadResult.Page(
-            data = response.items.map { it.mapToVideo() },
+            data = response.items.map { it.mapToVideo { annotationUsecase(it) } },
             prevKey = if (currentOffset <= 0) null else currentOffset - 1,
             nextKey = if (response.items.isEmpty()) null else currentOffset + response.items.size
         )

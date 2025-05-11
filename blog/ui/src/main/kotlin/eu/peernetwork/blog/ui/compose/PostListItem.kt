@@ -42,7 +42,14 @@ fun LazyItemScope.PostListItem(
             description = post.createdAt.formatTimeAgo(state.value),
             modifier = Modifier.padding(bottom = 16.dp),
             caption = {
-                PostSummary(post.author.username, post.title, post.description, userOnClick = userOnClick, onMentionClick = onMentionClick, onHashtagClick = onHashtagClick)
+                PostSummary(
+                    post.author.username,
+                    post.title,
+                    post.description,
+                    userOnClick = userOnClick,
+                    onMentionClick = onMentionClick,
+                    onHashtagClick = onHashtagClick
+                )
             },
             engagements = engagements,
             moderation = moderation,

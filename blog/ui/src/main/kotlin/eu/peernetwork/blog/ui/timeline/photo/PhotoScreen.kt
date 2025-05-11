@@ -169,14 +169,14 @@ fun LazyItemScope.PhotoScreen(
     content: @Composable (UiPost) -> Unit = {}
 ) {
     val engagement = remember { post.mapToContent() }
-    val clickHandler by rememberUpdatedState(onClick)
+    val clickHandler by rememberUpdatedState { onClick(post.author.id) }
     val updatedConnection by rememberUpdatedState(connection)
     PostListItem(
         post = post,
         position = index,
         state = currentTime,
-        onClick = { clickHandler(post.author.id) },
-        userOnClick = { clickHandler(post.author.id) },
+        onClick = clickHandler,
+        userOnClick = clickHandler,
         onMentionClick = onMentionClick,
         onHashtagClick = onHashtagClick,
         engagements = {

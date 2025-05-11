@@ -30,6 +30,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
@@ -134,7 +135,7 @@ fun PreviewCommentForm() {
             replyTo = remember { mutableStateOf(null) },
             model = UiContent(
                 id = "abc123",
-                title = "John Doe",
+                title = buildAnnotatedString { append("John Doe") },
                 author = UiAuthor(
                     id = "",
                     slug = 12034,
@@ -144,7 +145,9 @@ fun PreviewCommentForm() {
                     isfollowed = false
                 ),
                 createdAt = System.currentTimeMillis(),
-                description = "This is a mock description for a content post. It's purely for testing.",
+                description = buildAnnotatedString {
+                    append("This is a mock description for a content post. It's purely for testing.")
+                },
                 likes = 25,
                 isLiked = true,
                 isDisliked = false,

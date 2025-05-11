@@ -23,7 +23,6 @@ import eu.peernetwork.social.ui.compose.FollowerItem
 
 @Composable
 fun PeersScreen(
-    userId: String,
     postLimit: Int,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner
@@ -37,11 +36,6 @@ fun PeersScreen(
         factory = component.viewModelFactory()
     )
     val state by viewModel.state.collectAsState()
-
-    LaunchedEffect(userId) {
-        viewModel.peers(pageable = Pageable(offset = 0, limit = postLimit))
-    }
-
     when (val currentState = state) {
         is PeersViewModel.State.Empty -> {
             Box(
@@ -53,7 +47,6 @@ fun PeersScreen(
                 Text("No peers found.")
             }
         }
-
         is PeersViewModel.State.Error -> {
             Box(
                 modifier = Modifier
@@ -64,7 +57,6 @@ fun PeersScreen(
                 Text("No peers found.")
             }
         }
-
         is PeersViewModel.State.Success -> {
             val members = currentState.page.items
             LazyColumn(
@@ -84,5 +76,8 @@ fun PeersScreen(
                 }
             }
         }
+    }
+    LaunchedEffect(Unit) {
+        viewModel.peers(pageable = Pageable(offset = 0, limit = postLimit))
     }
 }

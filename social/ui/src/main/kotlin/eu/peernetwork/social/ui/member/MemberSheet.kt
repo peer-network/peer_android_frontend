@@ -30,7 +30,6 @@ fun MemberSheet(
             postLimit = limit,
         )
         ConnectionStatus.PEER -> PeersScreen(
-            userId = id,
             provider = provider,
             viewModelStoreOwner = viewModelStoreOwner,
             postLimit = limit,

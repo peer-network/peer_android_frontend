@@ -10,6 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -93,7 +94,7 @@ fun PreviewContentBar() {
         ContentBar(
             model = UiContent(
                 id = "abc123",
-                title = "John Doe",
+                title = buildAnnotatedString { append("John Doe") },
                 author = UiAuthor(
                     id = "",
                     slug = 12034,
@@ -103,7 +104,8 @@ fun PreviewContentBar() {
                     isfollowed = false
                 ),
                 createdAt = System.currentTimeMillis(),
-                description = "This is a mock description for a content post. It's purely for testing.",
+                description = buildAnnotatedString {
+                    append("This is a mock description for a content post. It's purely for testing.") },
                 likes = 25,
                 isLiked = true,
                 isDisliked = false,

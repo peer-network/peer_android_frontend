@@ -1,15 +1,15 @@
 package eu.peernetwork.blog.ui.mapper
 
+import androidx.compose.ui.text.AnnotatedString
 import eu.peernetwork.blog.domain.model.Content
 import eu.peernetwork.blog.ui.model.UiContent
-import eu.peernetwork.blog.ui.model.UiEngagement
 import eu.peernetwork.blog.ui.model.UiPost
 
-fun Content.mapToPhoto(): UiPost {
+fun Content.mapToPhoto(annotate: (String) -> AnnotatedString): UiPost {
     return UiPost(
         id = id,
-        title = title,
-        description = description,
+        title = annotate(title),
+        description = annotate(description),
         media = media.map { it.mapFromDomain() },
         author = author.mapFromDomain(),
         type = type.mapFromDomain(),
@@ -41,17 +41,6 @@ fun UiPost.mapToContent(): UiContent {
         isLiked = isLiked,
         isDisliked = isDisliked,
         dislikes = dislikes,
-        comment = comment
-    )
-}
-
-fun UiPost.mapToEngagement(): UiEngagement {
-    return UiEngagement(
-        id = id,
-        likes = likes,
-        dislikes = dislikes,
-        isLiked = isLiked,
-        isDisliked = isDisliked,
         comment = comment
     )
 }

@@ -65,7 +65,7 @@ fun EngagementScreen(
     val errorMessage = stringResource(R.string.unknown_error_message)
     val hasError = remember { derivedStateOf { error.value != null } }
     val updatedContent by rememberUpdatedState(content)
-    updatedContent(EngagementSpec(
+    val spec = remember(state) { EngagementSpec(
         onLoad = {
             (state as? EngagementViewModel.State.Content?)
                 ?.engagements?.get(it.id) ?: it.mapToEngagement()
@@ -73,7 +73,8 @@ fun EngagementScreen(
         onLike = { viewModel.like(it) },
         onDisLike = { viewModel.dislike(it) },
         onComment = { post.value = it }
-    ))
+    ) }
+    updatedContent(spec)
     LaunchedEffect(refresh.value) {
         if (refresh.value) {
             viewModel.reset()

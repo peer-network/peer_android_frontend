@@ -62,8 +62,8 @@ fun DesignOutlinedButton(
     shape: Shape = RoundedCornerShape(16.dp),
     elevation: Dp = 0.dp,
     durationMillis: Int = 1000,
-    minWidth: Dp = 64.dp,
-    minHeight: Dp = 48.dp,
+    minWidth: Dp = ButtonDefaults.MinWidth,
+    minHeight: Dp = ButtonDefaults.MinHeight,
     colors: ButtonColors = ButtonDefaults.buttonColors(
         containerColor = Color.Transparent,
         disabledContainerColor = Color.Transparent,
@@ -78,8 +78,8 @@ fun DesignOutlinedButton(
 ) {
     val onClickState by rememberUpdatedState(onClick)
     val updateContent by rememberUpdatedState(content)
-    val clickHandler = remember { { if (!isLoading && enabled) onClickState() } }
-    val backgroundColor by remember { derivedStateOf {
+    val clickHandler = remember(isLoading, enabled) { { if (!isLoading && enabled) onClickState() } }
+    val backgroundColor by remember(enabled) { derivedStateOf {
         if (enabled) {
             colors.containerColor
         } else {

@@ -167,7 +167,7 @@ fun VideoScreen(
     content: @Composable (UiVideo) -> Unit = {}
 ) {
     val clickHandler by rememberUpdatedState(onClick)
-    val selectHandler by rememberUpdatedState(onSelect)
+    val selectHandler by rememberUpdatedState { onSelect(index) }
     val updatedContent by rememberUpdatedState(content)
     val updatedConnection by rememberUpdatedState(connection)
     MediaPostCard(
@@ -210,7 +210,7 @@ fun VideoScreen(
     ) {
         Box(modifier = Modifier.clickable(
             role = Role.Button,
-            onClick = { selectHandler(index) }
+            onClick = selectHandler
         )) { updatedContent(post) }
     }
 }

@@ -1,15 +1,15 @@
 package eu.peernetwork.blog.data.interactor
 
-import eu.peernetwork.blog.domain.interactor.EngagementInteractor
+import eu.peernetwork.blog.domain.interactor.PointInteractor
 import eu.peernetwork.blog.domain.model.Point
 import eu.peernetwork.blog.domain.repository.EngagementRepository
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import javax.inject.Inject
 
-class EngagementInteractorDelegate @Inject constructor(
+class PointInteractorDelegate @Inject constructor(
     private val repository: EngagementRepository
-) : EngagementInteractor {
+) : PointInteractor {
     private val mutableState = MutableSharedFlow<List<Point>>(replay = 1)
 
     init { mutableState.tryEmit(emptyList()) }

@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
@@ -168,6 +169,7 @@ fun SettingsScreen(
         Row(modifier = Modifier.padding(top = 16.dp)) {
             DesignOutlinedButton(
                 onClick = { showLogout.value = true },
+                shape = RoundedCornerShape(12.dp),
                 modifier = Modifier
                     .weight(1f)
                     .padding(end = 6.dp),
@@ -175,6 +177,7 @@ fun SettingsScreen(
             )
             DesignOutlinedButton(
                 onClick = { showDeactivation.value = true },
+                shape = RoundedCornerShape(12.dp),
                 modifier = Modifier
                     .weight(1f)
                     .padding(start = 6.dp),

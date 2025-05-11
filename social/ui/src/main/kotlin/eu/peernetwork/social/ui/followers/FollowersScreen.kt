@@ -1,11 +1,9 @@
 package eu.peernetwork.social.ui.followers
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -39,11 +37,6 @@ fun FollowersScreen(
         factory = component.viewModelFactory()
     )
     val state by viewModel.state.collectAsState()
-
-    LaunchedEffect(userId) {
-        viewModel.followers(userId, pageable = Pageable(offset = 0, limit = postLimit))
-    }
-
     when (val currentState = state) {
         is FollowersViewModel.State.Empty -> {
             Box(
@@ -75,5 +68,8 @@ fun FollowersScreen(
                 }
             }
         }
+    }
+    LaunchedEffect(userId) {
+        viewModel.followers(userId, pageable = Pageable(offset = 0, limit = postLimit))
     }
 }

@@ -65,16 +65,17 @@ fun ConnectionScreen(
         factory = component.viewModelFactory()
     )
     val state = viewModel.state.collectAsState().value
+    val connectionState = viewModel.connections.collectAsState().value
     val updatedContent by rememberUpdatedState(content)
     val error = remember { derivedStateOf { (state as? ConnectionViewModel.State.Error)?.error } }
-     val controller by remember { derivedStateOf {
+    val controller by remember { derivedStateOf {
         object : ConnectionController {
             override fun invoke(id: String) {
                 viewModel.connect(id)
             }
 
             override fun getOrDefault(id: String, default: Boolean): Boolean {
-                return viewModel.getOrDefault(id, default)
+                return connectionState.getOrDefault(id, default)
             }
         }
     } }

@@ -1,7 +1,6 @@
 package eu.peernetwork.social.ui.member
 
 import android.content.Context
-import androidx.lifecycle.ViewModelProvider
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.social.ui.connection.Connection
@@ -21,9 +20,7 @@ interface Member : SocialProvider, RendererProvider {
         dependencies = [ Member::class ],
         modules = [MemberModule::class]
     )
-    interface Component : Member, Followers, UiComponentProvider, Followings, Peers, Connection {
-        fun viewModelFactory(): ViewModelProvider.Factory
-    }
+    interface Component : Member, Followers, UiComponentProvider, Followings, Peers, Connection
 
     class Builder(private val dependency: Member) : UiComponent.DefaultBuilder<Member, Component>() {
         override fun build(context: Context): Component {

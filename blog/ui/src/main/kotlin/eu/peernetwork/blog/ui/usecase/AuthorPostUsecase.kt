@@ -9,12 +9,14 @@ import eu.peernetwork.blog.domain.usecase.PhotosUsecase
 import eu.peernetwork.blog.ui.mapper.mapToPhoto
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.core.common.model.Pageable
+import eu.peernetwork.core.ui.usecase.AnnotationUsecase
 import eu.peernetwork.core.ui.usecase.PagingUsecase
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class AuthorPostUsecase @Inject constructor(
-    private val usecase: PhotosUsecase
+    private val usecase: PhotosUsecase,
+    private val annotationUsecase: AnnotationUsecase
 ) : PagingUsecase<AuthorPostUsecase.Parameter, UiPost>() {
     private lateinit var param: Parameter
 
@@ -42,7 +44,7 @@ class AuthorPostUsecase @Inject constructor(
             )
         )
         return LoadResult.Page(
-            data = response.items.map { it.mapToPhoto() },
+            data = response.items.map { it.mapToPhoto { annotationUsecase(it) } },
             prevKey = if (currentOffset <= 0) null else currentOffset - 1,
             nextKey = if (response.items.isEmpty()) null else currentOffset + response.items.size
         )

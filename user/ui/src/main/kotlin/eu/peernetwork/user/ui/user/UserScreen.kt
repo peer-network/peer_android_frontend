@@ -112,7 +112,7 @@ fun UserScreen(
             Overview(
                 overview = account.overview,
                 modifier = Modifier.fillMaxWidth(),
-                onClick = clickHandler
+                onClick = { if (it < 2) clickHandler(it) }
             )
         }
     ) {

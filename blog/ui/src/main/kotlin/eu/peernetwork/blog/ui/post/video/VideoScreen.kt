@@ -11,11 +11,13 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.Role
@@ -29,8 +31,10 @@ import eu.peernetwork.blog.ui.compose.MediaPostCard
 import eu.peernetwork.blog.ui.compose.PostSummary
 import eu.peernetwork.blog.ui.compose.PostPageSkeleton
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
+import eu.peernetwork.blog.ui.engagement.EngagementSpec
 import eu.peernetwork.blog.ui.mapper.mapToContent
 import eu.peernetwork.blog.ui.moderation.ModerationScreen
+import eu.peernetwork.blog.ui.moderation.ModerationSpec
 import eu.peernetwork.blog.ui.post.photo.formatTimeAgo
 import eu.peernetwork.core.common.model.Pageable
 import eu.peernetwork.core.ui.component.UiComponentProvider
@@ -103,35 +107,18 @@ fun VideoScreen(
                         key = { index -> index }
                     ) { index ->
                         lazyPagingItems[index]?.let { post ->
-                            MediaPostCard(
-                                author = post.author,
-                                description = post.createdAt.formatTimeAgo(currentTime.longValue),
-                                modifier = Modifier.padding(bottom = 16.dp),
-                                caption = {
-                                    PostSummary(post.author.username, post.title, post.description)
-                                },
-                                engagements = {
-                                    EngagementScreen(
-                                        post.mapToContent(),
-                                        engagement
-                                    )
-                                },
-                                moderation = {
-                                    ModerationScreen(
-                                        post.mapToContent(),
-                                        spec
-                                    )
-                                },
+                            VideoScreen(
+                                post = post,
+                                index = index,
+                                currentTime = currentTime,
+                                engagementSpec = engagement,
+                                moderationSpec = spec,
+                                onSelect = { selectedClip.value = it },
                             ) {
-                                Box(modifier = Modifier.clickable(
-                                    role = Role.Button,
-                                    onClick = { selectedClip.value = index }
-                                )) {
-                                    component.videoThumbnail()(
-                                        Modifier,
-                                        VideoThumbnail.Spec(post.media, post.resolution)
-                                    )
-                                }
+                                component.videoThumbnail()(
+                                    Modifier,
+                                    VideoThumbnail.Spec(post.media, post.resolution)
+                                )
                             }
                         }
                     }
@@ -155,5 +142,44 @@ fun VideoScreen(
             delay(60_000L)
             currentTime.longValue = System.currentTimeMillis()
         }
+    }
+}
+
+@Composable
+fun VideoScreen(
+    post: UiVideo,
+    index: Int,
+    currentTime: State<Long>,
+    engagementSpec: EngagementSpec,
+    moderationSpec: ModerationSpec,
+    onSelect: (Int) -> Unit,
+    content: @Composable (UiVideo) -> Unit = {}
+) {
+    val updatedContent by rememberUpdatedState(content)
+    val selectionHandler by rememberUpdatedState { onSelect(index) }
+    MediaPostCard(
+        author = post.author,
+        description = post.createdAt.formatTimeAgo(currentTime.value),
+        modifier = Modifier.padding(bottom = 16.dp),
+        caption = {
+            PostSummary(post.author.username, post.title, post.description)
+        },
+        engagements = {
+            EngagementScreen(
+                post.mapToContent(),
+                engagementSpec
+            )
+        },
+        moderation = {
+            ModerationScreen(
+                post.mapToContent(),
+                moderationSpec
+            )
+        },
+    ) {
+        Box(modifier = Modifier.clickable(
+            role = Role.Button,
+            onClick = selectionHandler
+        )) { updatedContent(post) }
     }
 }

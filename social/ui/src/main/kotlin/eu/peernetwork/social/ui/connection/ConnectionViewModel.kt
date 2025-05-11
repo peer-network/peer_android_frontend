@@ -17,29 +17,30 @@ class ConnectionViewModel @Inject constructor(
 ) : ViewModel() {
     private val mutableState = MutableStateFlow<State>(State.Empty)
 
-    private val connections = MutableStateFlow<Map<String, Boolean>>(emptyMap())
+    private val mutableConnections = MutableStateFlow<Map<String, Boolean>>(emptyMap())
 
     val state: StateFlow<State> = mutableState.asStateFlow()
+
+    val connections: StateFlow<Map<String, Boolean>> = mutableConnections.asStateFlow()
 
     fun initialize() {
         viewModelScope.launch {
             observeConnectionsUsecase().collectLatest {
-                connections.emit(it)
+                mutableConnections.emit(it)
             }
         }
     }
 
     fun connect(id: String) {
         viewModelScope.launch {
-            runCatching { connectionsUsecase(id) }
-                .onFailure {
+            mutableState.emit(State.Loading)
+            runCatching {
+                connectionsUsecase(id)
+                mutableState.emit(State.Success)
+            }.onFailure {
                     mutableState.emit(State.Error(it))
                 }
         }
-    }
-
-    fun getOrDefault(id: String, default: Boolean): Boolean {
-        return connections.value[id] ?: default
     }
 
     fun reset() {

@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.blog.ui.model.UiAuthor
@@ -134,8 +135,8 @@ fun PreviewImagePostCard() {
             caption = {
                 PostSummary(
                     "JohnDoe",
-                    "JohnDoe",
-                    "Description..."
+                    buildAnnotatedString { append("John Doe") },
+                    buildAnnotatedString { append("Description...") }
                 )
             }
         ) {

@@ -8,6 +8,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -18,8 +19,8 @@ import eu.peernetwork.core.ui.design.compose.DesignTitleTextStyle
 @Composable
 fun PostSummary(
     username: String,
-    title: String,
-    description: String,
+    title: AnnotatedString,
+    description: AnnotatedString,
     userOnClick: () -> Unit = {},
     onMentionClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
