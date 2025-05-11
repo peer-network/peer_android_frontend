@@ -31,11 +31,11 @@ class ConnectionViewModel @Inject constructor(
         }
     }
 
-    fun connect(id: String) {
+    fun connect(id: String, value: Boolean) {
         viewModelScope.launch {
             mutableState.emit(State.Loading)
             runCatching {
-                connectionsUsecase(id)
+                connectionsUsecase(ConnectionsUsecase.Parameter(id, value))
                 mutableState.emit(State.Success)
             }.onFailure {
                     mutableState.emit(State.Error(it))

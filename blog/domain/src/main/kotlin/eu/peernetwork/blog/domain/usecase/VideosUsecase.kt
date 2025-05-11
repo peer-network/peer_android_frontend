@@ -3,6 +3,7 @@ package eu.peernetwork.blog.domain.usecase
 import eu.peernetwork.blog.domain.interactor.PointInteractor
 import eu.peernetwork.blog.domain.model.Content
 import eu.peernetwork.blog.domain.model.Filter
+import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.blog.domain.repository.ContentRepository
 import eu.peernetwork.core.common.model.Page
 import eu.peernetwork.core.common.model.Pageable
@@ -18,7 +19,8 @@ class VideosUsecase @Inject constructor(
             repository.getAll(
                 filter = Filter(
                     author = param.author,
-                    type = setOf(Content.Type.VIDEO)
+                    type = setOf(Content.Type.VIDEO),
+                    criteria = param.criteria
                 ),
                 param.page
             )
@@ -33,6 +35,7 @@ class VideosUsecase @Inject constructor(
 
     data class Parameter(
         val author: String? = null,
+        val criteria: Criteria? = null,
         val page: Pageable
     )
 }

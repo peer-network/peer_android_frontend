@@ -61,9 +61,11 @@ fun SearchScreen(
                 }, component, viewModelStoreOwner)
             } else if (mode == SearchMode.TAG) {
                 TagScreen(query, postLimit, {
+                    controller.navigateIfNecessary("feed/$it")
                 }, component, viewModelStoreOwner)
             } else if (mode == SearchMode.TITLE) {
-                TitleScreen(query, postLimit, { id, type ->
+                TitleScreen(query, postLimit, {
+                    controller.navigateIfNecessary("search/${it.title}")
                 }, component, viewModelStoreOwner)
             } else {
                 Box(modifier = Modifier.fillMaxSize()

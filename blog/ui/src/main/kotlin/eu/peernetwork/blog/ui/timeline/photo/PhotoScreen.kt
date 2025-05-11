@@ -21,6 +21,7 @@ import eu.peernetwork.core.ui.extension.builder
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
+import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.compose.PostListItem
 import eu.peernetwork.blog.ui.compose.PostPageSkeleton
@@ -42,6 +43,7 @@ import kotlinx.coroutines.delay
 fun PhotoScreen(
     id: String,
     postLimit: Int,
+    criteria: Criteria? = null,
     onMentionClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
     provider: UiComponentProvider,
@@ -82,7 +84,7 @@ fun PhotoScreen(
     }
     DesignPagingScaffold<UiPost>(
         state = derivedState,
-        onRefresh = { viewModel.load(Pageable(0, postLimit)) },
+        onRefresh = { viewModel.load(Pageable(0, postLimit), criteria) },
         placeholder = { PostPageSkeleton() }
     ) { state, lazyPagingItems ->
         val refreshState = remember { derivedStateOf {
@@ -168,7 +170,7 @@ fun LazyItemScope.PhotoScreen(
     connection: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit = {},
     content: @Composable (UiPost) -> Unit = {}
 ) {
-    val engagement = remember { post.mapToContent() }
+    val engagement = remember(post) { post.mapToContent() }
     val clickHandler by rememberUpdatedState { onClick(post.author.id) }
     val updatedConnection by rememberUpdatedState(connection)
     PostListItem(
@@ -186,7 +188,7 @@ fun LazyItemScope.PhotoScreen(
             ) },
         moderation = {
             ModerationScreen(
-                post.mapToContent(),
+                engagement,
                 moderationSpec
             )
         },

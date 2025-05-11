@@ -7,10 +7,15 @@ interface EngagementInteractor {
 
     suspend fun dislike(id: String)
 
+    suspend fun comment(id: String)
+
     fun observe(): SharedFlow<Map<String, Reaction>>
 
+    suspend fun clear()
+
     data class Reaction(
-        val like: Boolean,
-        val dislike: Boolean
+        val like: Boolean?,
+        val dislike: Boolean?,
+        val commented: Int?
     )
 }

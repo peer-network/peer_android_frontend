@@ -18,6 +18,7 @@ import kotlinx.coroutines.delay
 import androidx.compose.ui.semantics.Role
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
+import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.blog.ui.model.UiVideo
 import eu.peernetwork.blog.ui.compose.MediaPostCard
 import eu.peernetwork.blog.ui.compose.PostSummary
@@ -39,6 +40,7 @@ import eu.peernetwork.media.core.renderer.VideoThumbnail
 fun VideoScreen(
     id: String,
     postLimit: Int,
+    criteria: Criteria? = null,
     onMentionClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
     provider: UiComponentProvider,
@@ -80,7 +82,7 @@ fun VideoScreen(
     var selectedClip = remember { mutableStateOf<Int?>(null) }
     DesignPagingScaffold<UiVideo>(
         state = derivedState,
-        onRefresh = { viewModel.load(Pageable(0, postLimit)) },
+        onRefresh = { viewModel.load(Pageable(0, postLimit), criteria) },
         placeholder = { PostPageSkeleton() }
     ) { state, lazyPagingItems ->
         val refreshState = remember { derivedStateOf {
@@ -170,15 +172,16 @@ fun VideoScreen(
     val selectHandler by rememberUpdatedState { onSelect(index) }
     val updatedContent by rememberUpdatedState(content)
     val updatedConnection by rememberUpdatedState(connection)
+    val engagement = remember(post) { post.mapToContent() }
     MediaPostCard(
         author = post.author,
         onClick = { clickHandler(post.author.id) },
         description = post.createdAt.formatTimeAgo(currentTime.value),
         caption = {
             PostSummary(
-                post.author.username,
-                post.title,
-                post.description,
+                engagement.author.username,
+                engagement.title,
+                engagement.description,
                 userOnClick = { onClick(post.author.id) },
                 onMentionClick = onMentionClick, onHashtagClick = onHashtagClick
             )
@@ -186,12 +189,12 @@ fun VideoScreen(
         engagements = {
             EngagementScreen(
                 spec = engagementSpec,
-                model = post.mapToContent(),
+                model = engagement,
             )
         },
         moderation = {
             ModerationScreen(
-                post.mapToContent(),
+                engagement,
                 moderationSpec
             )
         },

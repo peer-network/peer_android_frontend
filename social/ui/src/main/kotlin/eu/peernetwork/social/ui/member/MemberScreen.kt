@@ -69,7 +69,7 @@ fun MemberScreen(
                             ConnectionScreen(
                                 isFollowing = connectionState.getOrDefault(id, it.first),
                                 isFollowed = it.second,
-                                onClick = { controller.invoke(id) }
+                                onClick = { follow -> controller.invoke(id, !follow) }
                             )
                         },
                         { sheetType ->

@@ -1,8 +1,9 @@
 package eu.peernetwork.blog.data.interactor
 
 import eu.peernetwork.blog.domain.interactor.EngagementInteractor
-import eu.peernetwork.blog.domain.usecase.DislikeUsecase
-import eu.peernetwork.blog.domain.usecase.LikeUsecase
+import eu.peernetwork.blog.domain.interactor.PointInteractor
+import eu.peernetwork.blog.domain.model.Engagement
+import eu.peernetwork.blog.domain.repository.EngagementRepository
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.onSubscription
@@ -11,62 +12,90 @@ import javax.inject.Inject
 import kotlin.collections.set
 
 class EngagementInteractorDelegate @Inject constructor(
-    private val likeUsecase: LikeUsecase,
-    private val dislikeUsecase: DislikeUsecase,
+    private val repository: EngagementRepository,
+    private val interactor: PointInteractor
 ) : EngagementInteractor {
     private val mutexes = ConcurrentHashMap.newKeySet<String>()
 
-    private val reactions = ConcurrentHashMap<String, EngagementInteractor.Reaction>()
+    private val likes = ConcurrentHashMap<String, Boolean>()
+
+    private val dislikes = ConcurrentHashMap<String, Boolean>()
+
+    private val comments = ConcurrentHashMap<String, Int>()
 
     private val state = MutableSharedFlow<Map<String, EngagementInteractor.Reaction>>(replay = 1)
 
     override suspend fun like(id: String) {
         if (!mutexes.add(id)) return
-        val previous = reactions[id]
+        val previous = likes[id]
         try {
-            reactions[id] = previous?.copy(like = true)
-                ?: EngagementInteractor.Reaction(
-                    like = true,
-                    dislike = false
-                )
-            likeUsecase(id)
-            state.tryEmit(reactions)
+            likes[id] = true
+            invalidate()
+            repository.post(id, Engagement.Content.Like)
         } catch (error: Throwable) {
             if (previous == null) {
-                reactions.remove(id)
+                likes.remove(id)
             } else {
-                reactions[id] = previous
+                likes[id] = previous
             }
             throw error
         } finally {
             mutexes.remove(id)
+            invalidate()
+            refresh()
         }
     }
 
     override suspend fun dislike(id: String) {
         if (!mutexes.add(id)) return
-        val previous = reactions[id]
+        val previous = dislikes[id]
         try {
-            reactions[id] = previous?.copy(like = true)
-                ?: EngagementInteractor.Reaction(
-                    like = false,
-                    dislike = true
-                )
-            dislikeUsecase(id)
-            state.tryEmit(reactions)
+            dislikes[id] = true
+            invalidate()
+            repository.post(id, Engagement.Content.Dislike)
         } catch (error: Throwable) {
             if (previous == null) {
-                reactions.remove(id)
+                dislikes.remove(id)
             } else {
-                reactions[id] = previous
+                dislikes[id] = previous
             }
             throw error
         } finally {
             mutexes.remove(id)
+            invalidate()
+            refresh()
+        }
+    }
+
+    override suspend fun comment(id: String) {
+        comments[id] = comments.getOrDefault(id, 0) + 1
+        invalidate()
+    }
+
+    private fun invalidate() {
+        state.tryEmit(
+            (likes.keys + dislikes.keys + comments.keys).associateWith { key ->
+                EngagementInteractor.Reaction(likes[key], dislikes[key], comments[key])
+            }
+        )
+    }
+
+    private suspend fun refresh() {
+        try {
+            interactor.refresh()
+        } catch (error: Throwable) {
+            error.printStackTrace()
         }
     }
 
     override fun observe(): SharedFlow<Map<String, EngagementInteractor.Reaction>> {
-        return state.onSubscription { emit(reactions) }
+        return state.onSubscription { invalidate() }
+    }
+
+    override suspend fun clear() {
+        likes.clear()
+        dislikes.clear()
+        comments.clear()
+        invalidate()
     }
 }

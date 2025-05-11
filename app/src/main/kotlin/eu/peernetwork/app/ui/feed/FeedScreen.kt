@@ -28,6 +28,7 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import eu.peernetwork.app.BuildConfig
+import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.media.core.model.MimeType
 import eu.peernetwork.blog.ui.timeline.music.MusicScreen
 import eu.peernetwork.blog.ui.timeline.photo.PhotoScreen
@@ -48,6 +49,7 @@ fun FeedScreen(
     postLimit: Int,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
+    criteria: Criteria? = null,
 ) {
     val context = LocalContext.current
     val component = remember {
@@ -80,6 +82,7 @@ fun FeedScreen(
                     PhotoScreen(
                         id,
                         BuildConfig.PAGING_LIMIT,
+                        criteria,
                         { controller.navigateToUsernameSearch(it) },
                         { controller.navigateToTagSearch(it) },
                         component,
@@ -89,7 +92,7 @@ fun FeedScreen(
                         ConnectionScreen(
                             isFollowing = connection.getOrDefault(it.first, it.third),
                             isFollowed = it.second,
-                            onClick = { connectionController.invoke(it.first) },
+                            onClick = { follow -> connectionController.invoke(it.first, !follow) },
                         )
                     }
                 },
@@ -97,6 +100,7 @@ fun FeedScreen(
                     VideoScreen(
                         id,
                         BuildConfig.PAGING_LIMIT,
+                        criteria,
                         { controller.navigateToUsernameSearch(it) },
                         { controller.navigateToTagSearch(it) },
                         component,
@@ -106,7 +110,7 @@ fun FeedScreen(
                         ConnectionScreen(
                             isFollowing = connection.getOrDefault(it.first, it.third),
                             isFollowed = it.second,
-                            onClick = { connectionController.invoke(it.first) }
+                            onClick = { follow -> connectionController.invoke(it.first, !follow) }
                         )
                     }
                 },
@@ -114,7 +118,11 @@ fun FeedScreen(
             )
         }
         LaunchedEffect(Unit) {
-            title.value = DesignToolbarTitle(R.string.home_label) {}
+            title.value = if (criteria is Criteria.Content) {
+                DesignToolbarTitle(R.string.search_label)
+            } else {
+                DesignToolbarTitle(R.string.home_label) {}
+            }
         }
     }
 }

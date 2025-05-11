@@ -25,6 +25,7 @@ import eu.peernetwork.blog.ui.model.UiEngagement
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.extension.builder
+import eu.peernetwork.core.ui.extension.toInt
 import eu.peernetwork.core.ui.theme.LightAccentColor
 import eu.peernetwork.core.ui.theme.PeerAppRed
 
@@ -56,25 +57,37 @@ fun EngagementScreen(
         factory = component.viewModelFactory()
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val reactionState by viewModel.reactions.collectAsStateWithLifecycle()
     val error = remember(state) {
         derivedStateOf {
-            (state as? EngagementViewModel.State.Content?)?.error
+            (state as? EngagementViewModel.State.Error?)?.error
         }
     }
     var post = remember { mutableStateOf<UiContent?>(null) }
     val errorMessage = stringResource(R.string.unknown_error_message)
     val hasError = remember { derivedStateOf { error.value != null } }
     val updatedContent by rememberUpdatedState(content)
-    val spec = remember(state) { EngagementSpec(
+    val spec = remember(state, reactionState.values) { EngagementSpec(
         onLoad = {
-            (state as? EngagementViewModel.State.Content?)
-                ?.engagements?.get(it.id) ?: it.mapToEngagement()
+            val isLiked = reactionState[it.id]?.isLiked
+            val isDisliked = reactionState[it.id]?.isDisliked
+            val commented = reactionState[it.id]?.commented ?: 0
+            it.mapToEngagement().copy(
+                likes = it.likes + (isLiked == true && !it.isLiked).toInt(),
+                isLiked = isLiked ?: it.isLiked,
+                dislikes = it.dislikes + (isDisliked == true && !it.isDisliked).toInt(),
+                isDisliked = isDisliked ?: it.isDisliked,
+                comment = it.comment + commented
+            )
         },
-        onLike = { viewModel.like(it) },
-        onDisLike = { viewModel.dislike(it) },
+        onLike = { viewModel.like(it.id) },
+        onDisLike = { viewModel.dislike(it.id) },
         onComment = { post.value = it }
     ) }
     updatedContent(spec)
+    LaunchedEffect(Unit) {
+        viewModel.initialize()
+    }
     LaunchedEffect(refresh.value) {
         if (refresh.value) {
             viewModel.reset()
@@ -94,13 +107,7 @@ fun EngagementScreen(
         viewModelStoreOwner,
         onMentionClick = onMentionClick,
         onHashtagClick = onHashtagClick
-    ) {
-        post.value?.mapToEngagement()?.let {
-            val engagement = (state as? EngagementViewModel.State.Content?)
-                ?.engagements?.get(it.id) ?: it
-            viewModel.comment(engagement)
-        }
-    }
+    )
 }
 
 @Composable

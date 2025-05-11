@@ -44,8 +44,7 @@ fun CommentScreen(
     viewModelStoreOwner: ViewModelStoreOwner,
     modifier: Modifier = Modifier,
     onMentionClick: (String) -> Unit = {},
-    onHashtagClick: (String) -> Unit = {},
-    onUpdate: () -> Unit,
+    onHashtagClick: (String) -> Unit = {}
 ) {
     val context = LocalContext.current
     val component = remember { provider.builder(Comment.Builder::class.java).build(context) }
@@ -125,7 +124,6 @@ fun CommentScreen(
                 if (!isLoading.value && isSelected.value) {
                     it.clearText()
                     items.refresh()
-                    onUpdate()
                 }
             }
         }

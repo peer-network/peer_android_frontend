@@ -6,8 +6,13 @@ import javax.inject.Inject
 
 class ConnectionsUsecase @Inject constructor(
     private val interactor: ConnectionInteractor
-) : ParameterizedSuspendableUseCase<String, Unit> {
-    override suspend fun invoke(param: String) {
-        return interactor.connect(param)
+) : ParameterizedSuspendableUseCase<ConnectionsUsecase.Parameter, Unit> {
+    override suspend fun invoke(param: Parameter) {
+        return interactor.connect(param.id, param.value)
     }
+
+    data class Parameter(
+        val id: String,
+        val value: Boolean = true
+    )
 }

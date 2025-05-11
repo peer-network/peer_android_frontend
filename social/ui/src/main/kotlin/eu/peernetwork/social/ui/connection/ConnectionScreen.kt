@@ -13,10 +13,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -33,7 +31,7 @@ import eu.peernetwork.social.ui.member.status
 import kotlinx.coroutines.flow.StateFlow
 
 interface ConnectionController {
-    operator fun invoke(id: String)
+    operator fun invoke(id: String, value: Boolean)
 
     fun observe(): StateFlow<Map<String, Boolean>>
 }
@@ -70,8 +68,8 @@ fun ConnectionScreen(
     val error = remember { derivedStateOf { (state as? ConnectionViewModel.State.Error)?.error } }
     val controller by remember { derivedStateOf {
         object : ConnectionController {
-            override fun invoke(id: String) {
-                viewModel.connect(id)
+            override fun invoke(id: String, value: Boolean) {
+                viewModel.connect(id, value)
             }
 
             override fun observe(): StateFlow<Map<String, Boolean>> {
@@ -95,20 +93,18 @@ fun ConnectionScreen(
 fun ConnectionScreen(
     isFollowing: Boolean,
     isFollowed: Boolean,
-    onClick: () -> Unit,
+    onClick: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val primary = MaterialTheme.colorScheme.primary
     val onPrimary = MaterialTheme.colorScheme.onPrimary
     val secondary = MaterialTheme.colorScheme.secondary
     val gradient = Brush.horizontalGradient(colors = listOf(secondary, primary))
-    var followingState by remember(isFollowing) { mutableStateOf(isFollowing) }
     val clickHandler by rememberUpdatedState {
-        followingState = !followingState
-        onClick()
+        onClick(isFollowing)
     }
     val state by remember(isFollowing, isFollowed) { derivedStateOf {
-        when(Pair(followingState, isFollowed).status()) {
+        when(Pair(isFollowing, isFollowed).status()) {
             ConnectionStatus.PEER -> ConnectionState(
                 R.string.peer_label,
                 onPrimary,

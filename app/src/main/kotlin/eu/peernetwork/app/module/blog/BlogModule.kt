@@ -3,8 +3,10 @@ package eu.peernetwork.app.module.blog
 import dagger.Binds
 import dagger.Module
 import eu.peernetwork.blog.data.interactor.AuthorInteractorDelegate
+import eu.peernetwork.blog.data.interactor.EngagementInteractorDelegate
 import eu.peernetwork.blog.data.interactor.PointInteractorDelegate
 import eu.peernetwork.blog.domain.interactor.AuthorInteractor
+import eu.peernetwork.blog.domain.interactor.EngagementInteractor
 import eu.peernetwork.blog.domain.interactor.PointInteractor
 import javax.inject.Singleton
 
@@ -20,5 +22,9 @@ interface BlogModule {
 
     @Binds
     @Singleton
-    fun bindEngagementInteractor(delegate: PointInteractorDelegate): PointInteractor
+    fun bindPointInteractor(delegate: PointInteractorDelegate): PointInteractor
+
+    @Binds
+    @Singleton
+    fun bindEngagementInteractor(delegate: EngagementInteractorDelegate): EngagementInteractor
 }
