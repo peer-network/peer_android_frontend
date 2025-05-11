@@ -30,11 +30,12 @@ import eu.peernetwork.core.ui.design.compose.DesignOutlinedButton
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.social.ui.R
 import eu.peernetwork.social.ui.member.status
+import kotlinx.coroutines.flow.StateFlow
 
 interface ConnectionController {
     operator fun invoke(id: String)
 
-    fun getOrDefault(id: String, default: Boolean): Boolean
+    fun observe(): StateFlow<Map<String, Boolean>>
 }
 
 data class ConnectionState(
@@ -65,7 +66,6 @@ fun ConnectionScreen(
         factory = component.viewModelFactory()
     )
     val state = viewModel.state.collectAsState().value
-    val connectionState = viewModel.connections.collectAsState().value
     val updatedContent by rememberUpdatedState(content)
     val error = remember { derivedStateOf { (state as? ConnectionViewModel.State.Error)?.error } }
     val controller by remember { derivedStateOf {
@@ -74,8 +74,8 @@ fun ConnectionScreen(
                 viewModel.connect(id)
             }
 
-            override fun getOrDefault(id: String, default: Boolean): Boolean {
-                return connectionState.getOrDefault(id, default)
+            override fun observe(): StateFlow<Map<String, Boolean>> {
+                return viewModel.connections
             }
         }
     } }
@@ -102,16 +102,13 @@ fun ConnectionScreen(
     val onPrimary = MaterialTheme.colorScheme.onPrimary
     val secondary = MaterialTheme.colorScheme.secondary
     val gradient = Brush.horizontalGradient(colors = listOf(secondary, primary))
-    var following by remember(isFollowing) { mutableStateOf(isFollowing) }
-    val state by remember(following, isFollowed) { derivedStateOf {
-        Pair(following, isFollowed).status()
-    } }
+    var followingState by remember(isFollowing) { mutableStateOf(isFollowing) }
     val clickHandler by rememberUpdatedState {
-        following = !following
+        followingState = !followingState
         onClick()
     }
-    val status by remember { derivedStateOf {
-        when(state) {
+    val state by remember(isFollowing, isFollowed) { derivedStateOf {
+        when(Pair(followingState, isFollowed).status()) {
             ConnectionStatus.PEER -> ConnectionState(
                 R.string.peer_label,
                 onPrimary,
@@ -135,7 +132,7 @@ fun ConnectionScreen(
     DesignOutlinedButton(
         onClick = clickHandler,
         modifier = modifier.background(
-            brush = if (status.useGradient) {
+            brush = if (state.useGradient) {
                 gradient
             } else {
                 Brush.linearGradient(
@@ -146,15 +143,15 @@ fun ConnectionScreen(
         ),
         shape = RoundedCornerShape(28),
         textStyle = MaterialTheme.typography.bodySmall.copy(
-            color = status.textColor
+            color = state.textColor
         ),
         colors = ButtonDefaults.outlinedButtonColors(
             containerColor = Color.Transparent,
-            contentColor = status.textColor,
+            contentColor = state.textColor,
             disabledContainerColor = Color.Transparent
         ),
         minHeight = 32.dp,
-        border = BorderStroke(1.dp, status.borderColor),
+        border = BorderStroke(1.dp, state.borderColor),
         contentPadding = PaddingValues(horizontal = 24.dp, vertical = 4.dp)
-    ) { Text(stringResource(status.res)) }
+    ) { Text(stringResource(state.res)) }
 }

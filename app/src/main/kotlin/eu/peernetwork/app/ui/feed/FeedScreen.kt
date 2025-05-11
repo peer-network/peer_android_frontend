@@ -70,7 +70,8 @@ fun FeedScreen(
         ConnectionScreen(
             provider = component,
             viewModelStoreOwner = viewModelStoreOwner
-        ) { connection ->
+        ) { connectionController ->
+            val connection by connectionController.observe().collectAsStateWithLifecycle()
             FeedScreen(
                 state = pageState,
                 modifier = Modifier.fillMaxSize(),
@@ -88,7 +89,7 @@ fun FeedScreen(
                         ConnectionScreen(
                             isFollowing = connection.getOrDefault(it.first, it.third),
                             isFollowed = it.second,
-                            onClick = { connection.invoke(it.first) },
+                            onClick = { connectionController.invoke(it.first) },
                         )
                     }
                 },
@@ -105,7 +106,7 @@ fun FeedScreen(
                         ConnectionScreen(
                             isFollowing = connection.getOrDefault(it.first, it.third),
                             isFollowed = it.second,
-                            onClick = { connection.invoke(it.first) }
+                            onClick = { connectionController.invoke(it.first) }
                         )
                     }
                 },

@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.component.DesignRefreshableScaffold
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
@@ -48,6 +49,7 @@ fun MemberScreen(
         provider = component,
         viewModelStoreOwner = viewModelStoreOwner
     ) { controller ->
+        val connectionState by controller.observe().collectAsStateWithLifecycle()
         MemberScreen(
             onRefresh = {
                 refreshing.value = true
@@ -65,7 +67,7 @@ fun MemberScreen(
                         onSettings,
                         {
                             ConnectionScreen(
-                                isFollowing = controller.getOrDefault(id, it.first),
+                                isFollowing = connectionState.getOrDefault(id, it.first),
                                 isFollowed = it.second,
                                 onClick = { controller.invoke(id) }
                             )
