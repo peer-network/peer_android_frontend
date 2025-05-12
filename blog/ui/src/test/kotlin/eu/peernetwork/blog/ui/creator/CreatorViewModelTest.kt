@@ -7,6 +7,7 @@ import eu.peernetwork.blog.domain.usecase.ContentCreationUsecase
 import eu.peernetwork.blog.ui.mapper.mapToPhoto
 import eu.peernetwork.blog.ui.model.UiDraft
 import eu.peernetwork.core.common.usecase.TextEncoderUsecase
+import eu.peernetwork.core.ui.usecase.AnnotationUsecase
 import eu.peernetwork.media.core.model.MimeType
 import eu.peernetwork.media.core.usecase.MediaEncoderUsecase
 import io.mockk.coEvery
@@ -36,12 +37,19 @@ internal class CreatorViewModelTest {
 
     private val textEncoderUsecase = mockk<TextEncoderUsecase>(relaxed = true)
 
+    private val annotationUsecase = mockk<AnnotationUsecase>(relaxed = true)
+
     private lateinit var viewModel: CreatorViewModel
 
     @Before
     fun setup() {
         Dispatchers.setMain(dispatcher)
-        viewModel = CreatorViewModel(contentCreationUsecase, mediaEncoderUsecase, textEncoderUsecase)
+        viewModel = CreatorViewModel(
+            contentCreationUsecase,
+            mediaEncoderUsecase,
+            textEncoderUsecase,
+            annotationUsecase
+        )
     }
 
     @Test
@@ -63,7 +71,7 @@ internal class CreatorViewModelTest {
         viewModel.create(draft)
         viewModel.state.test {
             assertEquals(CreatorViewModel.State.Loading, awaitItem())
-            assertEquals(CreatorViewModel.State.Success(mockData.mapToPhoto()), awaitItem())
+            assertEquals(CreatorViewModel.State.Success(mockData.mapToPhoto { annotationUsecase(it) }), awaitItem())
         }
     }
 
