@@ -81,6 +81,8 @@ fun CommentScreen(
         state = state,
         replyTo = replyTo,
         isLoading = isLoading,
+        onMentionClick = onMentionClick,
+        onHashtagClick = onHashtagClick,
         modifier = modifier.fillMaxSize(),
         onRefresh = { state.value?.let { viewModel.load(it.id, Pageable(0, postLimit)) } },
         onSubmit = { id, comment -> viewModel.comment(id, comment) }
@@ -143,6 +145,8 @@ fun CommentScreen(
     state: MutableState<UiContent?>,
     replyTo: MutableState<String?>,
     isLoading: State<Boolean>,
+    onMentionClick: (String) -> Unit = {},
+    onHashtagClick: (String) -> Unit = {},
     modifier: Modifier = Modifier,
     onRefresh: () -> Unit = {},
     onSubmit: (String, String) -> Unit = { id, comment -> },
@@ -161,7 +165,9 @@ fun CommentScreen(
                 replyTo = replyTo,
                 isLoading = isLoading,
                 modifier = Modifier.padding(horizontal = 24.dp),
-                onSubmit = onSubmit
+                onSubmit = onSubmit,
+                onMentionClick = onMentionClick,
+                onHashtagClick = onHashtagClick
             )
         } },
         content = { uiState ->

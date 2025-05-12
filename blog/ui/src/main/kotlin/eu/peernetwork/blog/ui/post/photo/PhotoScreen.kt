@@ -111,6 +111,8 @@ fun PhotoScreen(
                                 post = photo,
                                 index = index,
                                 currentTime = currentTime,
+                                onMentionClick = onMentionClick,
+                                onHashtagClick = onHashtagClick,
                                 engagementSpec = engagement,
                                 moderationSpec = spec
                             ) {
@@ -168,6 +170,8 @@ fun LazyItemScope.PhotoScreen(
     post: UiPost,
     index: Int,
     currentTime: State<Long>,
+    onMentionClick: (String) -> Unit = {},
+    onHashtagClick: (String) -> Unit = {},
     engagementSpec: EngagementSpec,
     moderationSpec: ModerationSpec,
     content: @Composable (UiPost) -> Unit = {}
@@ -177,6 +181,8 @@ fun LazyItemScope.PhotoScreen(
         post,
         index,
         currentTime,
+        onMentionClick = onMentionClick,
+        onHashtagClick = onHashtagClick,
         engagements = { EngagementScreen(
             model,
             engagementSpec

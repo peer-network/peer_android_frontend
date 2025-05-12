@@ -53,7 +53,9 @@ fun CommentForm(
     isLoading: State<Boolean>,
     replyTo: MutableState<String?>,
     modifier: Modifier = Modifier,
-    onSubmit: (String, String) -> Unit = { id, comment -> }
+    onSubmit: (String, String) -> Unit = { id, comment -> },
+    onMentionClick: (String) -> Unit = {},
+    onHashtagClick: (String) -> Unit = {},
 ) {
     val focus = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -64,7 +66,9 @@ fun CommentForm(
         Column(modifier = modifier) {
             ContentBar(
                 model = model,
-                modifier = Modifier.padding(top = 16.dp, end = 16.dp)
+                modifier = Modifier.padding(top = 16.dp, end = 16.dp),
+                onMentionClick = onMentionClick,
+                onHashtagClick = onHashtagClick
             ) {}
             DesignRichTextField(
                 state = comment,

@@ -111,6 +111,8 @@ fun VideoScreen(
                                 post = post,
                                 index = index,
                                 currentTime = currentTime,
+                                onMentionClick = onMentionClick,
+                                onHashtagClick = onHashtagClick,
                                 engagementSpec = engagement,
                                 moderationSpec = spec,
                                 onSelect = { selectedClip.value = it },
@@ -150,6 +152,8 @@ fun VideoScreen(
     post: UiVideo,
     index: Int,
     currentTime: State<Long>,
+    onMentionClick: (String) -> Unit = {},
+    onHashtagClick: (String) -> Unit = {},
     engagementSpec: EngagementSpec,
     moderationSpec: ModerationSpec,
     onSelect: (Int) -> Unit,
@@ -162,7 +166,7 @@ fun VideoScreen(
         description = post.createdAt.formatTimeAgo(currentTime.value),
         modifier = Modifier.padding(bottom = 16.dp),
         caption = {
-            PostSummary(post.author.username, post.title, post.description)
+            PostSummary(post.author.username, post.title, post.description,onMentionClick = onMentionClick, onHashtagClick = onHashtagClick)
         },
         engagements = {
             EngagementScreen(
