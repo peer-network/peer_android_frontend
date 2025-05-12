@@ -9,7 +9,9 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -31,6 +33,8 @@ fun<T : Any> DesignPagingScaffold(
     errorContent: (@Composable (Throwable) -> Unit)? = null,
     content: @Composable (State<DesignStatefulScaffoldState>, LazyPagingItems<T>) -> Unit,
 ) {
+    val updatedContent by rememberUpdatedState(content)
+    val updatedErrorContent by rememberUpdatedState(errorContent)
     DesignStatefulScaffold<Flow<PagingData<T>>>(
         state = state,
         modifier = modifier,
@@ -40,7 +44,7 @@ fun<T : Any> DesignPagingScaffold(
         contentAlignment = contentAlignment,
         placeholder = placeholder,
         errorContent = {
-            errorContent?.invoke(it)
+            updatedErrorContent?.invoke(it)
                 ?: DesignErrorContent(
                     it, onRetry = onRefresh,
                     modifier = Modifier.fillMaxSize()
@@ -70,14 +74,14 @@ fun<T : Any> DesignPagingScaffold(
             contentAlignment = contentAlignment,
             placeholder = placeholder,
             errorContent = {
-                errorContent?.invoke(it)
+                updatedErrorContent?.invoke(it)
                     ?: DesignErrorContent(
                         it, onRetry = onRefresh,
                         modifier = Modifier.fillMaxSize()
                             .padding(bottom = 64.dp)
                             .verticalScroll(rememberScrollState())
                     ) },
-            content = { content(contentState, it) }
+            content = { updatedContent(contentState, it) }
         )
     }
 }

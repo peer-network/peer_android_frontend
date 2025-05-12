@@ -30,6 +30,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
@@ -52,7 +53,9 @@ fun CommentForm(
     isLoading: State<Boolean>,
     replyTo: MutableState<String?>,
     modifier: Modifier = Modifier,
-    onSubmit: (String, String) -> Unit = { id, comment -> }
+    onSubmit: (String, String) -> Unit = { id, comment -> },
+    onMentionClick: (String) -> Unit = {},
+    onHashtagClick: (String) -> Unit = {},
 ) {
     val focus = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -63,7 +66,9 @@ fun CommentForm(
         Column(modifier = modifier) {
             ContentBar(
                 model = model,
-                modifier = Modifier.padding(top = 16.dp, end = 16.dp)
+                modifier = Modifier.padding(top = 16.dp, end = 16.dp),
+                onMentionClick = onMentionClick,
+                onHashtagClick = onHashtagClick
             ) {}
             DesignRichTextField(
                 state = comment,
@@ -134,15 +139,19 @@ fun PreviewCommentForm() {
             replyTo = remember { mutableStateOf(null) },
             model = UiContent(
                 id = "abc123",
-                title = "John Doe",
+                title = buildAnnotatedString { append("John Doe") },
                 author = UiAuthor(
                     id = "",
                     slug = 12034,
                     username = "JohnDoe",
-                    imageUrl = "http://localhost"
+                    imageUrl = "http://localhost",
+                    isfollowing = false,
+                    isfollowed = false
                 ),
                 createdAt = System.currentTimeMillis(),
-                description = "This is a mock description for a content post. It's purely for testing.",
+                description = buildAnnotatedString {
+                    append("This is a mock description for a content post. It's purely for testing.")
+                },
                 likes = 25,
                 isLiked = true,
                 isDisliked = false,

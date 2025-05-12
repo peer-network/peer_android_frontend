@@ -8,9 +8,10 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import eu.peernetwork.app.BuildConfig
+import eu.peernetwork.app.ui.feed.FeedScreen
 import eu.peernetwork.app.ui.profile.ProfileScreen
-import eu.peernetwork.blog.ui.preview.photo.PhotoScreen
-import eu.peernetwork.blog.ui.preview.video.VideoScreen
+import eu.peernetwork.blog.domain.model.Filter
 import eu.peernetwork.core.ui.annotation.UiViewModel
 import eu.peernetwork.core.ui.design.compose.DesignRouter
 import eu.peernetwork.core.ui.design.compose.DesignToolbarTitle
@@ -56,29 +57,35 @@ fun SearchNavigation(
             )
         }
         composable(
-            "photo/{id}",
-            arguments = listOf(navArgument("id") {
+            "feed/{tag}",
+            arguments = listOf(navArgument("tag") {
                 type = NavType.StringType
             })
         ) { backStackEntry ->
-            val id = backStackEntry.arguments?.getString("id")
-            PhotoScreen(
-                id = id ?: "",
-                provider = component,
-                viewModelStoreOwner = UiViewModel.Owner()
+            val tag = backStackEntry.arguments?.getString("tag")
+            FeedScreen(
+                id,
+                title,
+                BuildConfig.PAGING_LIMIT,
+                component,
+                viewModelStoreOwner = UiViewModel.Owner(),
+                criteria = tag?.let { Filter.Criteria.Content(tag = it) }
             )
         }
         composable(
-            "video/{id}",
-            arguments = listOf(navArgument("id") {
+            "search/{title}",
+            arguments = listOf(navArgument("title") {
                 type = NavType.StringType
             })
         ) { backStackEntry ->
-            val id = backStackEntry.arguments?.getString("id")
-            VideoScreen(
-                id = id ?: "",
-                provider = component,
-                viewModelStoreOwner = UiViewModel.Owner()
+            val query = backStackEntry.arguments?.getString("title")
+            FeedScreen(
+                id,
+                title,
+                BuildConfig.PAGING_LIMIT,
+                component,
+                viewModelStoreOwner = UiViewModel.Owner(),
+                criteria = query?.let { Filter.Criteria.Content(title = it) }
             )
         }
     }

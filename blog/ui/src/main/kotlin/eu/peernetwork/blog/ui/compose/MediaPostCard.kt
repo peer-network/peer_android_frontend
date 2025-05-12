@@ -16,11 +16,14 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.blog.ui.model.UiAuthor
@@ -42,6 +45,11 @@ fun MediaPostCard(
     caption: @Composable () -> Unit = {},
     content: @Composable () -> Unit,
 ) {
+    val updatedAction by rememberUpdatedState(actions)
+    val updatedContent by rememberUpdatedState(content)
+    val updatedCaption by rememberUpdatedState(caption)
+    val updatedEngagements by rememberUpdatedState(engagements)
+    val updatedModeration by rememberUpdatedState(moderation)
     PostCard(
         modifier = modifier,
         header = {},
@@ -51,18 +59,18 @@ fun MediaPostCard(
                 modifier = Modifier.padding(top = 4.dp)
                     .padding(horizontal = 24.dp)
             ) {
-                engagements()
+                updatedEngagements()
                 Spacer(modifier = Modifier.weight(1f))
-                moderation()
+                updatedModeration()
             }
-            Box(modifier = Modifier.padding(horizontal = 24.dp)) { caption() }
+            Box(modifier = Modifier.padding(horizontal = 24.dp)) { updatedCaption() }
         },
         background = {},
         contentPadding = contentPadding,
         footer = { }
     ) {
         Box {
-            content()
+            updatedContent()
             Image(
                 painter = painterResource(eu.peernetwork.blog.ui.R.drawable.overlay_gradient),
                 contentDescription = null,
@@ -82,7 +90,7 @@ fun MediaPostCard(
                     modifier = Modifier.weight(1f),
                     descriptionColor = MaterialTheme.colorScheme.onBackground
                 )
-                actions()
+                updatedAction()
             }
         }
     }
@@ -99,7 +107,9 @@ fun PreviewImagePostCard() {
                 id = "",
                 slug = 12034,
                 username = "JohnDoe",
-                imageUrl = "http://localhost"
+                imageUrl = "http://localhost",
+                isfollowing = false,
+                isfollowed = false
             ),
             description = "Description...",
             engagements = {
@@ -125,8 +135,8 @@ fun PreviewImagePostCard() {
             caption = {
                 PostSummary(
                     "JohnDoe",
-                    "JohnDoe",
-                    "Description..."
+                    buildAnnotatedString { append("John Doe") },
+                    buildAnnotatedString { append("Description...") }
                 )
             }
         ) {

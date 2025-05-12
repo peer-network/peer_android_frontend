@@ -8,6 +8,8 @@ fun Author.mapFromDomain(): UiAuthor {
         id = id,
         username = username,
         slug = slug,
-        imageUrl = imageUrl
+        imageUrl = imageUrl,
+        isfollowing = isfollowing,
+        isfollowed = isfollowed
     )
 }

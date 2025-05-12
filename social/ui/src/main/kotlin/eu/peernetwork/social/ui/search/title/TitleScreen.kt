@@ -17,6 +17,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -41,7 +42,7 @@ import kotlinx.coroutines.flow.debounce
 fun TitleScreen(
     query: TextFieldState,
     postLimit: Int,
-    onClick: (String, String) -> Unit,
+    onClick: (UiPost) -> Unit,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
 ) {
@@ -71,6 +72,7 @@ fun TitleScreen(
             }
         }
     }
+    val clickHandler by rememberUpdatedState(onClick)
     DesignPagingScaffold<UiPost>(
         state = derivedState,
         onRefresh = {
@@ -94,7 +96,7 @@ fun TitleScreen(
                     Box(modifier = Modifier.fillMaxWidth()
                         .padding(vertical = 16.dp)
                         .clickable(role = Role.Button) {
-                            onClick(post.id, post.type)
+                            clickHandler(post)
                         }) {
                         Text(
                             text = post.title,

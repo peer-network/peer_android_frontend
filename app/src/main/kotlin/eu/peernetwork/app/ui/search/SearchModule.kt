@@ -3,9 +3,8 @@ package eu.peernetwork.app.ui.search
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
+import eu.peernetwork.app.ui.feed.Feed
 import eu.peernetwork.app.ui.profile.Profile
-import eu.peernetwork.blog.ui.preview.photo.Photo
-import eu.peernetwork.blog.ui.preview.video.Video
 import eu.peernetwork.core.ui.annotation.UiBuilder
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
@@ -55,16 +54,8 @@ object SearchModule {
     @Search.Scope
     @Provides
     @IntoMap
-    @UiBuilder(Photo.Builder::class)
-    fun providePhotoBuilder(component: Search.Component): UiComponent.Builder {
-        return Photo.Builder(component)
-    }
-
-    @Search.Scope
-    @Provides
-    @IntoMap
-    @UiBuilder(Video.Builder::class)
-    fun provideVideoBuilder(component: Search.Component): UiComponent.Builder {
-        return Video.Builder(component)
+    @UiBuilder(Feed.Builder::class)
+    fun provideFeedBuilder(component: Search.Component): UiComponent.Builder {
+        return Feed.Builder(component)
     }
 }

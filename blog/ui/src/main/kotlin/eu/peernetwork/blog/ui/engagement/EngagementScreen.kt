@@ -10,6 +10,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModelStoreOwner
@@ -24,6 +25,7 @@ import eu.peernetwork.blog.ui.model.UiEngagement
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.extension.builder
+import eu.peernetwork.core.ui.extension.toInt
 import eu.peernetwork.core.ui.theme.LightAccentColor
 import eu.peernetwork.core.ui.theme.PeerAppRed
 
@@ -39,6 +41,8 @@ fun EngagementScreen(
     tag: String,
     postLimit: Int,
     refresh: State<Boolean>,
+    onMentionClick: (String) -> Unit = {},
+    onHashtagClick: (String) -> Unit = {},
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
     content: @Composable (EngagementSpec) -> Unit
@@ -53,23 +57,37 @@ fun EngagementScreen(
         factory = component.viewModelFactory()
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val reactionState by viewModel.reactions.collectAsStateWithLifecycle()
     val error = remember(state) {
         derivedStateOf {
-            (state as? EngagementViewModel.State.Content?)?.error
+            (state as? EngagementViewModel.State.Error?)?.error
         }
     }
     var post = remember { mutableStateOf<UiContent?>(null) }
     val errorMessage = stringResource(R.string.unknown_error_message)
     val hasError = remember { derivedStateOf { error.value != null } }
-    content(EngagementSpec(
+    val updatedContent by rememberUpdatedState(content)
+    val spec = remember(state, reactionState.values) { EngagementSpec(
         onLoad = {
-            (state as? EngagementViewModel.State.Content?)
-                ?.engagements?.get(it.id) ?: it.mapToEngagement()
+            val isLiked = reactionState[it.id]?.isLiked
+            val isDisliked = reactionState[it.id]?.isDisliked
+            val commented = reactionState[it.id]?.commented ?: 0
+            it.mapToEngagement().copy(
+                likes = it.likes + (isLiked == true && !it.isLiked).toInt(),
+                isLiked = isLiked ?: it.isLiked,
+                dislikes = it.dislikes + (isDisliked == true && !it.isDisliked).toInt(),
+                isDisliked = isDisliked ?: it.isDisliked,
+                comment = it.comment + commented
+            )
         },
-        onLike = { viewModel.like(it) },
-        onDisLike = { viewModel.dislike(it) },
+        onLike = { viewModel.like(it.id) },
+        onDisLike = { viewModel.dislike(it.id) },
         onComment = { post.value = it }
-    ))
+    ) }
+    updatedContent(spec)
+    LaunchedEffect(Unit) {
+        viewModel.initialize()
+    }
     LaunchedEffect(refresh.value) {
         if (refresh.value) {
             viewModel.reset()
@@ -81,13 +99,15 @@ fun EngagementScreen(
             viewModel.clear()
         }
     }
-    CommentScreen(tag, post, postLimit, component, viewModelStoreOwner) {
-        post.value?.mapToEngagement()?.let {
-            val engagement = (state as? EngagementViewModel.State.Content?)
-                ?.engagements?.get(it.id) ?: it
-            viewModel.comment(engagement)
-        }
-    }
+    CommentScreen(
+        tag,
+        post,
+        postLimit,
+        component,
+        viewModelStoreOwner,
+        onMentionClick = onMentionClick,
+        onHashtagClick = onHashtagClick
+    )
 }
 
 @Composable

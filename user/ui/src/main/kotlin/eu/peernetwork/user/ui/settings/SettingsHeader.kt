@@ -28,6 +28,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -46,6 +47,7 @@ import eu.peernetwork.user.ui.R
 import eu.peernetwork.user.ui.model.UiAccount
 import eu.peernetwork.user.ui.model.UiOverview
 import eu.peernetwork.core.ui.design.compose.DesignAsyncImage
+import eu.peernetwork.user.ui.activity.CropActivity
 import java.io.File
 
 @Composable
@@ -57,8 +59,6 @@ fun SettingsHeader(
     onChange: (Uri?) -> Unit,
     onSubmit: () -> Unit,
 ) {
-    val context = LocalContext.current
-
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
@@ -70,9 +70,7 @@ fun SettingsHeader(
         )
         Spacer(modifier = Modifier.weight(1f))
         DesignOutlinedButton(
-            onClick = {
-                onSubmit()  // Just trigger save, no Toast here
-            },
+            onClick = onSubmit,
             isLoading = isLoading,
             shape = RoundedCornerShape(8.dp),
             textStyle = MaterialTheme.typography.bodySmall,
@@ -98,10 +96,12 @@ fun UserSettingsAvatar(
 ) {
     val context = LocalContext.current
     var imageUri by remember { mutableStateOf<Uri?>(null) }
+    val avatarHandler by rememberUpdatedState(onChange)
     val imageCropLauncher = rememberLauncherForActivityResult(
         contract = object : ActivityResultContract<Pair<Uri, Uri>, Uri?>() {
             override fun createIntent(context: Context, input: Pair<Uri, Uri>): Intent {
-                return UCrop.of(input.first, input.second).withAspectRatio(1f, 1f).getIntent(context)
+                return UCrop.of(input.first, input.second).withAspectRatio(1f, 1f)
+                    .getIntent(context).setClass(context, CropActivity::class.java)
             }
 
             override fun parseResult(resultCode: Int, intent: Intent?): Uri? {
@@ -112,7 +112,7 @@ fun UserSettingsAvatar(
         }
     ) { it?.let {
         imageUri = it
-        onChange(it)
+        avatarHandler(it)
     } }
     val imagePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()

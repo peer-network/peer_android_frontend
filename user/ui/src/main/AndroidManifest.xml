@@ -3,8 +3,8 @@
 
     <application>
         <activity
-            android:name="com.yalantis.ucrop.UCropActivity"
+            android:name=".activity.CropActivity"
             android:exported="true"
-            android:theme="@style/Theme.Peer" />
+            android:theme="@style/Theme.Peer.Dialog" />
     </application>
 </manifest>

@@ -34,14 +34,18 @@ class BlogRendererDelegate(val provider: UiComponentProvider) : BlogRenderer {
                 BuildConfig.PAGING_LIMIT,
                 spec.state,
                 provider,
-                spec.viewModelStoreOwner
+                spec.viewModelStoreOwner,
+                spec.onMentionClick,
+                spec.onHashtagClick,
             )
             BlogRenderer.Type.VIDEO -> VideoScreen(
                 spec.id,
                 BuildConfig.PAGING_LIMIT,
                 spec.state,
                 provider,
-                spec.viewModelStoreOwner
+                spec.viewModelStoreOwner,
+                spec.onMentionClick,
+                spec.onHashtagClick,
             )
             BlogRenderer.Type.AUDIO -> MusicScreen(provider, spec.viewModelStoreOwner)
             BlogRenderer.Type.UNSPECIFIED -> Blog { offset ->
@@ -51,14 +55,18 @@ class BlogRendererDelegate(val provider: UiComponentProvider) : BlogRenderer {
                         BuildConfig.PAGING_LIMIT,
                         spec.state,
                         provider,
-                        spec.viewModelStoreOwner
+                        spec.viewModelStoreOwner,
+                        spec.onMentionClick,
+                        spec.onHashtagClick,
                     )
                     1 -> VideoScreen(
                         spec.id,
                         BuildConfig.PAGING_LIMIT,
                         spec.state,
                         provider,
-                        spec.viewModelStoreOwner
+                        spec.viewModelStoreOwner,
+                        spec.onMentionClick,
+                        spec.onHashtagClick,
                     )
                     2 -> MusicScreen(provider, spec.viewModelStoreOwner)
                 }

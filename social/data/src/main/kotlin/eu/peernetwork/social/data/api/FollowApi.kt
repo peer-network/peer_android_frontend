@@ -11,5 +11,5 @@ interface FollowApi {
 
     suspend fun following(id: String, pageable: Pageable): Page<Member>
 
-    suspend fun friends(id: String, pageable: Pageable): Page<Member>
+    suspend fun friends(pageable: Pageable): Page<Member>
 }

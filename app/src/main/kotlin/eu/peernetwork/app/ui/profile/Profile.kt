@@ -2,6 +2,7 @@ package eu.peernetwork.app.ui.profile
 
 import android.content.Context
 import eu.peernetwork.app.provider.ApplicationProvider
+import eu.peernetwork.app.ui.search.Search
 import eu.peernetwork.blog.ui.post.music.Music
 import eu.peernetwork.blog.ui.post.photo.Photo
 import eu.peernetwork.blog.ui.post.video.Video
@@ -22,7 +23,7 @@ interface Profile : ApplicationProvider {
         dependencies = [ Profile::class ],
         modules = [ ProfileModule::class ]
     )
-    interface Component : Profile, UiComponentProvider, Settings, Member, User, Photo, Video, Music, Account
+    interface Component : Profile, UiComponentProvider, Settings, Member, User, Photo, Video, Music, Account, Search
 
     class Builder(private val dependency: Profile) : UiComponent.DefaultBuilder<Profile, Component>() {
         override fun build(context: Context): Component {

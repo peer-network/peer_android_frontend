@@ -1,6 +1,7 @@
 package eu.peernetwork.blog.ui.post.photo
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.paging.PagingData
 import app.cash.turbine.test
 import eu.peernetwork.blog.ui.model.UiAuthor
@@ -36,7 +37,6 @@ internal class PhotoViewModelTest {
     @Before
     fun setup() {
         Dispatchers.setMain(dispatcher)
-
         viewModel = PhotoViewModel(usecase)
     }
 
@@ -45,17 +45,19 @@ internal class PhotoViewModelTest {
         val author = "<test-author>"
         val mockData = UiPost(
             id = "<test-id>",
-            title = "<test-title>",
+            title = buildAnnotatedString { append("<test-title>") },
             media = mockk(),
             author = UiAuthor(
                 id = "<test-id>",
                 username = "<test-username>",
                 slug = 0,
-                imageUrl = "http://localhost"
+                imageUrl = "http://localhost",
+                isfollowed = false,
+                isfollowing = false
             ),
             type = UiPost.Type.IMAGE,
             createdAt = System.currentTimeMillis(),
-            description = "<test-description>",
+            description = buildAnnotatedString { append("<test-description>") },
             likes = 0,
             dislikes = 0,
             isLiked = false,
@@ -63,12 +65,10 @@ internal class PhotoViewModelTest {
             comment = 0
         )
         val mockPagingData = PagingData.from(listOf(mockData))
-
         coEvery { usecase(any()) } returns flow {
             delay(100)
             emit(mockPagingData)
         }
-
         viewModel.load(author, Pageable(0, 1))
         viewModel.state.test {
             assertTrue(awaitItem() is PhotoViewModel.State.Loading)

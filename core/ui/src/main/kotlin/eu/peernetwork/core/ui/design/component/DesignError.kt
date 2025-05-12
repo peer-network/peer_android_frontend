@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -39,17 +41,19 @@ fun DesignErrorContent(
     label: (@Composable () -> Unit)? = null,
     content: (@Composable (Throwable) -> Unit)? = null,
 ) {
+    val updatedLabel by rememberUpdatedState(label)
+    val updatedContent by rememberUpdatedState(content)
     Column(
         modifier = modifier.padding(contentPaddingValues),
         verticalArrangement = verticalArrangement,
         horizontalAlignment = horizontalAlignment
     ) {
-        content?.invoke(error) ?: DesignError(error)
+        updatedContent?.invoke(error) ?: DesignError(error)
         DesignOutlinedButton(
             onClick = onRetry,
             modifier = Modifier.padding(top = 16.dp),
             content = {
-                label?.invoke() ?: Text(
+                updatedLabel?.invoke() ?: Text(
                     stringResource(R.string.retry_label),
                     modifier = Modifier.padding(horizontal = 18.dp)
                 )
