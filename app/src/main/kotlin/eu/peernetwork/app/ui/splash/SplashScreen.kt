@@ -13,6 +13,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -49,7 +50,8 @@ fun SplashScreen(
     val derivedState = remember {
         mutableStateOf<DesignStatefulScaffoldState>(DesignStatefulScaffoldState.Empty)
     }
-    var play = remember { mutableStateOf(false) }
+    var play = remember { mutableStateOf(true) }
+    val onFinish by rememberUpdatedState(onAnimationFinished)
     DesignStatefulScaffold<Unit>(
         state = derivedState,
         onRefresh = {
@@ -68,7 +70,7 @@ fun SplashScreen(
     ) { SplashScreen(play) {
         if (it == AnimationEndReason.Finished && state is SplashViewModel.State.Ready) {
             if (!play.value) {
-                onAnimationFinished()
+                onFinish()
             }
             play.value = false
         } else if (it == AnimationEndReason.Finished && state is SplashViewModel.State.Error) {
@@ -84,11 +86,12 @@ fun SplashScreen(
 }
 
 @Composable
-fun SplashScreen(play: State<Boolean>, onAnimationFinished: (AnimationEndReason) -> Unit,) {
+fun SplashScreen(play: State<Boolean>, onAnimationFinished: (AnimationEndReason) -> Unit) {
     val composition by rememberLottieComposition(
         LottieCompositionSpec.RawRes(R.raw.lottie_animation)
     )
     val progressAnim = remember { Animatable(0f) }
+    val onFinish by rememberUpdatedState(onAnimationFinished)
     LaunchedEffect(composition, play.value) {
         if (composition == null) return@LaunchedEffect
         val progress = progressAnim.animateTo(
@@ -98,7 +101,7 @@ fun SplashScreen(play: State<Boolean>, onAnimationFinished: (AnimationEndReason)
                 easing = LinearEasing
             )
         )
-        onAnimationFinished(progress.endReason)
+        onFinish(progress.endReason)
     }
     Box(
         modifier = Modifier.fillMaxSize(),

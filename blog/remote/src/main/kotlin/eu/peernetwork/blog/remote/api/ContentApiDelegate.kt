@@ -41,9 +41,25 @@ class ContentApiDelegate @Inject constructor(
         } else {
             Optional.present(filter.type.map { it.mapToFilter() })
         }
+        val tag = if (filter.criteria is Filter.Criteria.Content) {
+            (filter.criteria as? Filter.Criteria.Content?)?.tag?.let {
+                Optional.present(it)
+            } ?: Optional.absent()
+        } else {
+            Optional.absent()
+        }
+        val title = if (filter.criteria is Filter.Criteria.Content) {
+            (filter.criteria as? Filter.Criteria.Content?)?.title?.let {
+                Optional.present(it)
+            } ?: Optional.absent()
+        } else {
+            Optional.absent()
+        }
         val query = GetallpostsQuery(
             filter = filterBy,
             sort = sortBy,
+            tag = tag,
+            title = title,
             postId = post,
             userId = author,
             offset = Optional.present(page.offset),

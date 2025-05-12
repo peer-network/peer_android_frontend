@@ -56,7 +56,7 @@ fun SearchHeader(
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val focus = remember { FocusRequester() }
-    var lastMode by remember { mutableStateOf<SearchMode>(SearchMode.USERNAME) }
+    var lastMode by remember { mutableStateOf<SearchMode>(mode.value ?: SearchMode.USERNAME) }
     DesignCard(
         color = MaterialTheme.colorScheme.surfaceContainerLow,
         contentPadding = PaddingValues(vertical = 0.dp),

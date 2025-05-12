@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.usecase.UserPostsUsecase
 import eu.peernetwork.core.common.model.Pageable
@@ -24,10 +25,11 @@ class PhotoViewModel @Inject constructor(
 
     val state: StateFlow<State> = mutableState.asStateFlow()
 
-    fun load(page: Pageable) {
+    fun load(page: Pageable, criteria: Criteria? = null) {
         viewModelScope.launch {
             usecase(
                 UserPostsUsecase.Parameter(
+                    criteria = criteria,
                     page = page
                 )
             )

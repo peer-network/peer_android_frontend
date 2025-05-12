@@ -1,6 +1,5 @@
 package eu.peernetwork.app.ui.feed
 
-import android.content.res.Configuration
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -29,6 +28,7 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import eu.peernetwork.app.BuildConfig
+import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.media.core.model.MimeType
 import eu.peernetwork.blog.ui.timeline.music.MusicScreen
 import eu.peernetwork.blog.ui.timeline.photo.PhotoScreen
@@ -40,13 +40,16 @@ import eu.peernetwork.core.ui.design.compose.DesignToolbarTitle
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.core.ui.theme.PeerTheme
+import eu.peernetwork.social.ui.connection.ConnectionScreen
 
 @Composable
 fun FeedScreen(
     id: String,
     title: MutableState<DesignToolbarTitle>,
+    postLimit: Int,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
+    criteria: Criteria? = null,
 ) {
     val context = LocalContext.current
     val component = remember {
@@ -62,23 +65,64 @@ fun FeedScreen(
     FeedNavigation(
         id = id,
         title = title,
+        postLimit = postLimit,
         component = component,
         viewModelStoreOwner = viewModelStoreOwner
     ) { controller ->
-        FeedScreen(
-            state = pageState,
-            modifier = Modifier.fillMaxSize(),
-            onNavigate = { viewModel.lastVisited(it) },
-            photo = { PhotoScreen(id, BuildConfig.PAGING_LIMIT, component, viewModelStoreOwner) {
-                controller.navigateIfNecessary("profile/$it")
-            } },
-            video = { VideoScreen(id, BuildConfig.PAGING_LIMIT, component, viewModelStoreOwner) {
-                controller.navigateIfNecessary("profile/$it")
-            } },
-            music = { MusicScreen(component, viewModelStoreOwner) }
-        )
+        ConnectionScreen(
+            provider = component,
+            viewModelStoreOwner = viewModelStoreOwner
+        ) { connectionController ->
+            val connection by connectionController.observe().collectAsStateWithLifecycle()
+            FeedScreen(
+                state = pageState,
+                modifier = Modifier.fillMaxSize(),
+                onNavigate = { viewModel.lastVisited(it) },
+                photo = {
+                    PhotoScreen(
+                        id,
+                        BuildConfig.PAGING_LIMIT,
+                        criteria,
+                        { controller.navigateToUsernameSearch(it) },
+                        { controller.navigateToTagSearch(it) },
+                        component,
+                        viewModelStoreOwner,
+                        { controller.navigateIfNecessary("profile/$it") }
+                    ) {
+                        ConnectionScreen(
+                            isFollowing = connection.getOrDefault(it.first, it.third),
+                            isFollowed = it.second,
+                            onClick = { follow -> connectionController.invoke(it.first, !follow) },
+                        )
+                    }
+                },
+                video = {
+                    VideoScreen(
+                        id,
+                        BuildConfig.PAGING_LIMIT,
+                        criteria,
+                        { controller.navigateToUsernameSearch(it) },
+                        { controller.navigateToTagSearch(it) },
+                        component,
+                        viewModelStoreOwner,
+                        { controller.navigateIfNecessary("profile/$it") }
+                    ) {
+                        ConnectionScreen(
+                            isFollowing = connection.getOrDefault(it.first, it.third),
+                            isFollowed = it.second,
+                            onClick = { follow -> connectionController.invoke(it.first, !follow) }
+                        )
+                    }
+                },
+                music = { MusicScreen(component, viewModelStoreOwner) }
+            )
+        }
         LaunchedEffect(Unit) {
-            title.value = DesignToolbarTitle(R.string.home_label) {}
+            title.value = if (criteria is Criteria.Content) {
+                DesignToolbarTitle(R.string.search_label)
+            } else {
+                DesignToolbarTitle(R.string.home_label) {}
+            }
         }
     }
 }
@@ -103,7 +147,9 @@ fun FeedScreen(
                     painter = painterResource(id = it.id),
                     contentDescription = it.label?.let { stringResource(it) },
                     tint = MaterialTheme.colorScheme.tertiary,
-                    modifier = Modifier.padding(vertical = 8.dp).size(28.dp)
+                    modifier = Modifier
+                        .padding(vertical = 8.dp)
+                        .size(28.dp)
                 )
             }
         }
@@ -123,7 +169,7 @@ fun FeedScreen(
 }
 
 @Composable
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview
 fun PreviewFeedScreen() {
     val state = rememberSaveable { mutableIntStateOf(0) }
     PeerTheme {

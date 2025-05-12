@@ -1,6 +1,6 @@
 package eu.peernetwork.blog.data.interactor
 
-import eu.peernetwork.blog.domain.interactor.EngagementInteractor
+import eu.peernetwork.blog.domain.interactor.PointInteractor
 import eu.peernetwork.blog.domain.model.Point
 import eu.peernetwork.blog.domain.repository.EngagementRepository
 import io.mockk.coEvery
@@ -24,12 +24,12 @@ internal class EngagementInteractorDelegateTest {
 
     private val repository = mockk<EngagementRepository>()
 
-    private lateinit var interactor: EngagementInteractor
+    private lateinit var interactor: PointInteractor
 
     @Before
     fun setup() {
         Dispatchers.setMain(testDispatcher)
-        interactor = EngagementInteractorDelegate(repository)
+        interactor = PointInteractorDelegate(repository)
     }
 
     @After

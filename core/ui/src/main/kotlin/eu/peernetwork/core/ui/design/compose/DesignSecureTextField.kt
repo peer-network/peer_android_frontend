@@ -31,6 +31,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -111,6 +112,7 @@ fun DesignSecureTextField(
             easing = easing
         )
     )
+    val updatedPlaceholder by rememberUpdatedState(placeholder)
     DesignLabel(
         label = label,
         visible = showLabel,
@@ -150,7 +152,7 @@ fun DesignSecureTextField(
                 enter = fadeIn(),
                 exit = fadeOut(),
             ) {
-                placeholder?.run {
+                updatedPlaceholder?.run {
                     CompositionLocalProvider(
                         LocalTextStyle provides textStyle.copy(
                             color = placeholderTextColor

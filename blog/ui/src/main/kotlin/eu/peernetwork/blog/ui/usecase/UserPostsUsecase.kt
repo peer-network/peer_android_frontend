@@ -5,16 +5,21 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.PagingSource.LoadParams
 import androidx.paging.PagingSource.LoadResult
+import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.blog.domain.usecase.PhotosUsecase
+import eu.peernetwork.blog.domain.usecase.EngagementRefreshUsecase
 import eu.peernetwork.blog.ui.mapper.mapToPhoto
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.core.common.model.Pageable
+import eu.peernetwork.core.ui.usecase.AnnotationUsecase
 import eu.peernetwork.core.ui.usecase.PagingUsecase
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class UserPostsUsecase @Inject constructor(
-    private val usecase: PhotosUsecase
+    private val usecase: PhotosUsecase,
+    private val engagementRefreshUsecase: EngagementRefreshUsecase,
+    private val annotationUsecase: AnnotationUsecase
 ) : PagingUsecase<UserPostsUsecase.Parameter, UiPost>() {
     private lateinit var param: Parameter
 
@@ -35,9 +40,17 @@ class UserPostsUsecase @Inject constructor(
             offset = currentOffset,
             limit = param.page.limit
         )
-        val response = usecase(PhotosUsecase.Parameter(page = currentPage))
+        val response = usecase(
+            PhotosUsecase.Parameter(
+                criteria = param.criteria,
+                page = currentPage
+            )
+        )
+        if (currentOffset <= 0) {
+            engagementRefreshUsecase()
+        }
         return LoadResult.Page(
-            data = response.items.map { it.mapToPhoto() },
+            data = response.items.map { it.mapToPhoto { annotationUsecase(it) } },
             prevKey = if (currentOffset <= 0) null else currentOffset - 1,
             nextKey = if (response.items.isNotEmpty()) {
                 currentOffset + response.items.size
@@ -47,5 +60,8 @@ class UserPostsUsecase @Inject constructor(
         )
     }
 
-    data class Parameter(val page: Pageable)
+    data class Parameter(
+        val criteria: Criteria? = null,
+        val page: Pageable
+    )
 }

@@ -43,7 +43,8 @@ fun CommentScreen(
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
     modifier: Modifier = Modifier,
-    onUpdate: () -> Unit,
+    onMentionClick: (String) -> Unit = {},
+    onHashtagClick: (String) -> Unit = {}
 ) {
     val context = LocalContext.current
     val component = remember { provider.builder(Comment.Builder::class.java).build(context) }
@@ -80,6 +81,8 @@ fun CommentScreen(
         state = state,
         replyTo = replyTo,
         isLoading = isLoading,
+        onMentionClick = onMentionClick,
+        onHashtagClick = onHashtagClick,
         modifier = modifier.fillMaxSize(),
         onRefresh = { state.value?.let { viewModel.load(it.id, Pageable(0, postLimit)) } },
         onSubmit = { id, comment -> viewModel.comment(id, comment) }
@@ -100,6 +103,8 @@ fun CommentScreen(
                             titleOnClick = {
                                 replyTo.value = comment.author.username
                             },
+                            onMentionClick = onMentionClick,
+                            onHashtagClick = onHashtagClick
                         ) {
                             val liked = remember { derivedStateOf {
                                 contents.value?.likes?.firstOrNull { it.id == comment.id }
@@ -121,7 +126,6 @@ fun CommentScreen(
                 if (!isLoading.value && isSelected.value) {
                     it.clearText()
                     items.refresh()
-                    onUpdate()
                 }
             }
         }
@@ -141,6 +145,8 @@ fun CommentScreen(
     state: MutableState<UiContent?>,
     replyTo: MutableState<String?>,
     isLoading: State<Boolean>,
+    onMentionClick: (String) -> Unit = {},
+    onHashtagClick: (String) -> Unit = {},
     modifier: Modifier = Modifier,
     onRefresh: () -> Unit = {},
     onSubmit: (String, String) -> Unit = { id, comment -> },
@@ -159,7 +165,9 @@ fun CommentScreen(
                 replyTo = replyTo,
                 isLoading = isLoading,
                 modifier = Modifier.padding(horizontal = 24.dp),
-                onSubmit = onSubmit
+                onSubmit = onSubmit,
+                onMentionClick = onMentionClick,
+                onHashtagClick = onHashtagClick
             )
         } },
         content = { uiState ->

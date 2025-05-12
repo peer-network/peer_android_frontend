@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
@@ -28,6 +30,8 @@ fun  DesignDialog(
     background: (@Composable () -> Unit)? = null,
     builder: @Composable (State<Boolean>) -> Unit,
 ) {
+    val updatedBackground by rememberUpdatedState(background)
+    val updatedBuilder by rememberUpdatedState(builder)
     DesignOverlayHost(
         tag = tag,
         visible = visible,
@@ -38,7 +42,7 @@ fun  DesignDialog(
                 modifier = modifier,
                 contentAlignment = contentAlignment
             ) {
-                background?.invoke() ?: DesignOverlayBackground(
+                updatedBackground?.invoke() ?: DesignOverlayBackground(
                     state = dialogState,
                     durationMillis = durationMillis,
                     modifier = Modifier.fillMaxSize()
@@ -48,7 +52,7 @@ fun  DesignDialog(
                     visible = dialogState.value,
                     enter = enter,
                     exit = exit
-                ) { builder(dialogState) }
+                ) { updatedBuilder(dialogState) }
             }
         }
     }

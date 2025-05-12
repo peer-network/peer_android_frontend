@@ -6,7 +6,6 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import eu.peernetwork.blog.domain.usecase.CommentLikeUsecase
 import eu.peernetwork.blog.domain.usecase.CommentUsecase
-import eu.peernetwork.blog.ui.mapper.mapToComment
 import eu.peernetwork.blog.ui.model.UiComment
 import eu.peernetwork.blog.ui.usecase.CommentsUsecase
 import eu.peernetwork.core.common.model.Pageable
@@ -77,8 +76,7 @@ class CommentViewModel @Inject constructor(
             mutableState.tryEmit(State.Loading)
             try {
                 mutableState.tryEmit(State.Comment(
-                    usecase(CommentUsecase.Parameter(postId, comment))
-                        .mapToComment().id
+                    usecase(CommentUsecase.Parameter(postId, comment)).id
                 ))
             } catch (error: Throwable) {
                 mutableState.tryEmit(State.Error(error))

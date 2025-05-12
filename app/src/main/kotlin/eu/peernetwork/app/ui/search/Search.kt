@@ -2,9 +2,8 @@ package eu.peernetwork.app.ui.search
 
 import android.content.Context
 import eu.peernetwork.app.provider.ApplicationProvider
+import eu.peernetwork.app.ui.feed.Feed
 import eu.peernetwork.app.ui.profile.Profile
-import eu.peernetwork.blog.ui.preview.photo.Photo
-import eu.peernetwork.blog.ui.preview.video.Video
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.social.ui.search.member.Member
@@ -21,7 +20,7 @@ interface Search : ApplicationProvider {
         dependencies = [ Search::class ],
         modules = [ SearchModule::class ]
     )
-    interface Component : UiComponentProvider, Search, Title, Member, Tag, Profile, Photo, Video
+    interface Component : UiComponentProvider, Search, Title, Member, Tag, Profile, Feed
 
     class Builder(private val dependency: Search) : UiComponent.DefaultBuilder<Search, Component>() {
         override fun build(context: Context): Component {

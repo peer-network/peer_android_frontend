@@ -1,12 +1,13 @@
 package eu.peernetwork.blog.ui.model
 
 import androidx.compose.runtime.Immutable
+import androidx.compose.ui.text.AnnotatedString
 
 @Immutable
 data class UiVideo(
     val id: String,
-    val title: String,
-    val description: String,
+    val title: AnnotatedString,
+    val description: AnnotatedString,
     val media: String,
     val author: UiAuthor,
     val createdAt: Long,

@@ -8,6 +8,7 @@ import eu.peernetwork.blog.ui.mapper.mapToPhoto
 import eu.peernetwork.blog.ui.model.UiDraft
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.core.common.usecase.TextEncoderUsecase
+import eu.peernetwork.core.ui.usecase.AnnotationUsecase
 import eu.peernetwork.media.core.model.MimeType
 import eu.peernetwork.media.core.usecase.MediaEncoderUsecase
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,6 +21,7 @@ class CreatorViewModel @Inject constructor(
     private val usecase: ContentCreationUsecase,
     private val mediaEncoderUsecase: MediaEncoderUsecase,
     private val textEncoderUsecase: TextEncoderUsecase,
+    private val annotationUsecase: AnnotationUsecase
 ) : ViewModel() {
     private val mutableState = MutableStateFlow<State>(State.Empty)
 
@@ -30,7 +32,7 @@ class CreatorViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val model = draft.mapToDomain()
-                val photo = usecase(model).mapToPhoto()
+                val photo = usecase(model).mapToPhoto { annotationUsecase(it) }
                 mutableState.tryEmit(State.Success(photo))
             } catch (error: Throwable) {
                 mutableState.tryEmit(State.Error(error))
