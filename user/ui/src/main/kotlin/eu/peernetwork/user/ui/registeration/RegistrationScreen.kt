@@ -1,6 +1,7 @@
 package eu.peernetwork.user.ui.registeration
-
+// Imports all necessary stuffs
 import android.content.res.Configuration
+import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -35,7 +36,6 @@ import eu.peernetwork.core.ui.extension.isValidEmail
 import eu.peernetwork.core.ui.extension.isValidInput
 import eu.peernetwork.core.ui.extension.passwordStrength
 import eu.peernetwork.core.ui.theme.PeerTheme
-import android.widget.Toast
 
 @Composable
 fun RegistrationScreen(
@@ -54,30 +54,30 @@ fun RegistrationScreen(
         factory = component.viewModelFactory()
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val registrationState by remember(state) {
-        derivedStateOf {
-            state is RegistrationViewModel.State.Success
-        }
-    }
 
-    // Call UI
+    // TASK: The goal is to apply the same logic used in LoginScreen -> RegistrationScreen.
+    // >> Errors are mapped to the UI by observing the ViewModel's state -> showing the error message.
+    // >> Registration success is handled by checking the ViewModel's success state and showing a Toast message.
+
+    // Idk this shit Call UI for registration form
     RegistrationScreen(
         loading = state is RegistrationViewModel.State.Loading,
-        error = (state as? RegistrationViewModel.State.Error?)?.error?.message,
+        error = (state as? RegistrationViewModel.State.Error?)?.error?.message?.let {
+            component.resource().string(it)
+        },
         onReset = { viewModel.reset() }
     ) { email, username, password ->
         viewModel.register(username, email, password)
     }
 
-    // LaunchedEffect block
-    LaunchedEffect(registrationState) {
-        if (registrationState) {
+    // Handle registration success and show a Toast message
+    LaunchedEffect(state) {
+        if (state is RegistrationViewModel.State.Success) {
             Toast.makeText(context, successMessage, Toast.LENGTH_SHORT).show()
-            onRegistrationSuccess()
+            onRegistrationSuccess() // Callback when registration is successful
         }
     }
 }
-
 
 @Composable
 fun RegistrationScreen(
@@ -96,6 +96,8 @@ fun RegistrationScreen(
         email.isValidEmail() && username.isValidInput() &&
                 (password.passwordStrength().value >= DesignPasswordStrength.STRONG.value)
     } }
+
+    // Registration form UI
     Column(
         modifier = Modifier.fillMaxWidth()
             .padding(bottom = imeHeight.dp)
@@ -127,6 +129,8 @@ fun RegistrationScreen(
             )
         }
     }
+
+    // Reset state when composable is disposed
     DisposableEffect(email) { onDispose { onReset?.invoke() } }
 }
 
