@@ -15,6 +15,7 @@ import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.app.ui.search.SearchScreen
 import eu.peernetwork.app.ui.search.SearchState
 import eu.peernetwork.core.ui.R
+import eu.peernetwork.core.ui.annotation.UiViewModel
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.compose.DesignRouter
 import eu.peernetwork.core.ui.design.compose.DesignToolbarTitle
@@ -49,7 +50,28 @@ fun ProfileScreen(
                 provider = component,
                 viewModelStoreOwner = viewModelStoreOwner,
                 onHashtagClick = { tag -> navController.navigateToTagSearch(tag) },
-                onMentionClick = { username -> navController.navigateToUsernameSearch(username) }
+                onMentionClick = { username -> navController.navigateToUsernameSearch(username) },
+                imageOnClick = { image -> navController.navigateIfNecessary("member/$image") }
+            )
+            LaunchedEffect(Unit) {
+                title.value = DesignToolbarTitle(R.string.profile_label)
+            }
+        }
+        composable(
+            "member/{id}",
+            arguments = listOf(navArgument("id") { this.type = NavType.StringType })
+        ) { backStackEntry ->
+            val id = backStackEntry.arguments?.getString("id") ?: ""
+            MemberScreen(
+                id = id,
+                limit = BuildConfig.PAGING_LIMIT,
+                type = if (id == userId) UserRenderer.Type.ACCOUNT else UserRenderer.Type.USER,
+                onSettings = { navController.navigateIfNecessary("settings") },
+                provider = component,
+                viewModelStoreOwner = if (id == userId) viewModelStoreOwner else UiViewModel.Owner(),
+                onHashtagClick = { tag -> navController.navigateToTagSearch(tag) },
+                onMentionClick = { username -> navController.navigateToUsernameSearch(username) },
+                imageOnClick = { image -> navController.navigateIfNecessary("member/$image") }
             )
             LaunchedEffect(Unit) {
                 title.value = DesignToolbarTitle(R.string.profile_label)
@@ -75,7 +97,6 @@ fun ProfileScreen(
                 "tag" -> SearchState.Active.Tag(query)
                 else -> SearchState.Default
             }
-
             SearchScreen(
                 id = userId,
                 title = title,

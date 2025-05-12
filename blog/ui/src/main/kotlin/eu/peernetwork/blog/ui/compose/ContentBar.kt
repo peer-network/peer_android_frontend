@@ -1,5 +1,6 @@
 package eu.peernetwork.blog.ui.compose
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
@@ -37,6 +38,7 @@ fun ContentBar(
     titleOnClick: (() -> Unit)? = null,
     onMentionClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
+    imageOnClick: (String) -> Unit = {},
     content: @Composable () -> Unit
 ) {
     DesignDetailLayout(
@@ -51,7 +53,11 @@ fun ContentBar(
                     imageUrl = model.author.imageUrl,
                     size = 36.dp,
                     color = MaterialTheme.colorScheme.surfaceDim,
-                    style = MaterialTheme.typography.bodyMedium.copy(color = color)
+                    style = MaterialTheme.typography.bodyMedium.copy(color = color),
+                    modifier = Modifier.clickable {
+                        imageOnClick(model.author.id)
+                    }
+
                 )
             }
         },

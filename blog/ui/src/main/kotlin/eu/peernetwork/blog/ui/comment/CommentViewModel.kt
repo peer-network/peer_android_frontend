@@ -101,8 +101,11 @@ class CommentViewModel @Inject constructor(
         }
     }
 
-    fun reset() {
+    fun reset(force: Boolean = false) {
         viewModelScope.launch {
+            if (force) {
+                content.tryEmit(null)
+            }
             mutableState.tryEmit(State.Default)
         }
     }

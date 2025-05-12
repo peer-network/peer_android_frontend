@@ -43,6 +43,7 @@ fun EngagementScreen(
     refresh: State<Boolean>,
     onMentionClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
+    imageOnClick: (String) -> Unit = {},
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
     content: @Composable (EngagementSpec) -> Unit
@@ -106,7 +107,8 @@ fun EngagementScreen(
         component,
         viewModelStoreOwner,
         onMentionClick = onMentionClick,
-        onHashtagClick = onHashtagClick
+        onHashtagClick = onHashtagClick,
+        imageOnClick = imageOnClick
     )
 }
 

@@ -109,6 +109,7 @@ fun VideoScreen(
                 refreshed,
                 onMentionClick,
                 onHashtagClick,
+                onClick,
                 component,
                 viewModelStoreOwner
             ) { engagement ->

@@ -52,6 +52,7 @@ fun PhotoScreen(
     viewModelStoreOwner: ViewModelStoreOwner,
     onMentionClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
+    imageOnClick: (String) -> Unit = {},
 ) {
     val context = LocalContext.current
     val component = remember {
@@ -94,6 +95,7 @@ fun PhotoScreen(
             refreshed,
             onMentionClick = onMentionClick,
             onHashtagClick = onHashtagClick,
+            imageOnClick,
             component,
             viewModelStoreOwner
         ) { engagement ->

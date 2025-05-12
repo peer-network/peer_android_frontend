@@ -21,5 +21,6 @@ interface BlogRenderer : Renderer.Stateful<BlogRenderer.Spec> {
         val viewModelStoreOwner: ViewModelStoreOwner,
         val onMentionClick: (String) -> Unit = {},
         val onHashtagClick: (String) -> Unit = {},
+        val imageOnClick: (String) -> Unit = {},
     )
 }

@@ -44,7 +44,8 @@ fun CommentScreen(
     viewModelStoreOwner: ViewModelStoreOwner,
     modifier: Modifier = Modifier,
     onMentionClick: (String) -> Unit = {},
-    onHashtagClick: (String) -> Unit = {}
+    onHashtagClick: (String) -> Unit = {},
+    imageOnClick: (String) -> Unit = {},
 ) {
     val context = LocalContext.current
     val component = remember { provider.builder(Comment.Builder::class.java).build(context) }
@@ -78,19 +79,24 @@ fun CommentScreen(
     val isSelected = remember { derivedStateOf { contents.value?.selected != null } }
     val mentionToOpen = remember { mutableStateOf<String?>(null) }
     val hashtagToOpen = remember { mutableStateOf<String?>(null) }
+    val imageToOpen = remember { mutableStateOf<String?>(null) }
+
     LaunchedEffect(state.value) {
         if (state.value == null) {
+            viewModel.reset(true)
+            delay(200)
             mentionToOpen.value?.let {
-                delay(200)
                 onMentionClick(it)
                 mentionToOpen.value = null
             }
             hashtagToOpen.value?.let {
-                delay(200)
                 onHashtagClick(it)
                 hashtagToOpen.value = null
             }
-            viewModel.reset()
+            imageToOpen.value?.let {
+                imageOnClick(it)
+                imageToOpen.value = null
+            }
         }
     }
     CommentScreen(
@@ -132,6 +138,10 @@ fun CommentScreen(
                             },
                             onHashtagClick = { hashtag ->
                                 hashtagToOpen.value = hashtag
+                                state.value = null
+                            },
+                            imageOnClick = { imageUrl ->
+                                imageToOpen.value = imageUrl
                                 state.value = null
                             }
                         ) {
