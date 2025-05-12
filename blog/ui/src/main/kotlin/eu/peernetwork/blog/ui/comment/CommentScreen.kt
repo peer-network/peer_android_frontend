@@ -76,13 +76,36 @@ fun CommentScreen(
     val replyTo = remember { mutableStateOf<String?>(null) }
     val isLoading = remember { derivedStateOf { contents.value?.isLoading == true } }
     val isSelected = remember { derivedStateOf { contents.value?.selected != null } }
+    val mentionToOpen = remember { mutableStateOf<String?>(null) }
+    val hashtagToOpen = remember { mutableStateOf<String?>(null) }
+    LaunchedEffect(state.value) {
+        if (state.value == null) {
+            mentionToOpen.value?.let {
+                delay(200)
+                onMentionClick(it)
+                mentionToOpen.value = null
+            }
+            hashtagToOpen.value?.let {
+                delay(200)
+                onHashtagClick(it)
+                hashtagToOpen.value = null
+            }
+            viewModel.reset()
+        }
+    }
     CommentScreen(
         tag = tag,
         state = state,
         replyTo = replyTo,
         isLoading = isLoading,
-        onMentionClick = onMentionClick,
-        onHashtagClick = onHashtagClick,
+        onMentionClick = { username ->
+            mentionToOpen.value = username
+            state.value = null
+        },
+        onHashtagClick = { hashtag ->
+            hashtagToOpen.value = hashtag
+            state.value = null
+        },
         modifier = modifier.fillMaxSize(),
         onRefresh = { state.value?.let { viewModel.load(it.id, Pageable(0, postLimit)) } },
         onSubmit = { id, comment -> viewModel.comment(id, comment) }
@@ -103,8 +126,14 @@ fun CommentScreen(
                             titleOnClick = {
                                 replyTo.value = comment.author.username
                             },
-                            onMentionClick = onMentionClick,
-                            onHashtagClick = onHashtagClick
+                            onMentionClick = { username ->
+                                mentionToOpen.value = username
+                                state.value = null
+                            },
+                            onHashtagClick = { hashtag ->
+                                hashtagToOpen.value = hashtag
+                                state.value = null
+                            }
                         ) {
                             val liked = remember { derivedStateOf {
                                 contents.value?.likes?.firstOrNull { it.id == comment.id }
@@ -145,9 +174,9 @@ fun CommentScreen(
     state: MutableState<UiContent?>,
     replyTo: MutableState<String?>,
     isLoading: State<Boolean>,
+    modifier: Modifier = Modifier,
     onMentionClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
-    modifier: Modifier = Modifier,
     onRefresh: () -> Unit = {},
     onSubmit: (String, String) -> Unit = { id, comment -> },
     content: @Composable (TextFieldState) -> Unit = {}
