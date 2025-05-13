@@ -4,8 +4,10 @@ import dagger.Binds
 import dagger.Module
 import eu.peernetwork.blog.data.interactor.AuthorInteractorDelegate
 import eu.peernetwork.blog.data.interactor.EngagementInteractorDelegate
+import eu.peernetwork.blog.data.interactor.PointInteractorDelegate
 import eu.peernetwork.blog.domain.interactor.AuthorInteractor
 import eu.peernetwork.blog.domain.interactor.EngagementInteractor
+import eu.peernetwork.blog.domain.interactor.PointInteractor
 import javax.inject.Singleton
 
 @Module(
@@ -17,6 +19,10 @@ import javax.inject.Singleton
 interface BlogModule {
     @Binds
     fun bindAuthorInteractor(delegate: AuthorInteractorDelegate): AuthorInteractor
+
+    @Binds
+    @Singleton
+    fun bindPointInteractor(delegate: PointInteractorDelegate): PointInteractor
 
     @Binds
     @Singleton

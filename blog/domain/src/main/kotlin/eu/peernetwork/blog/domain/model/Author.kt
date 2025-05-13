@@ -5,4 +5,6 @@ data class Author(
     val slug: Int,
     val username: String,
     val imageUrl: String,
+    val isfollowing: Boolean,
+    val isfollowed:Boolean
 )

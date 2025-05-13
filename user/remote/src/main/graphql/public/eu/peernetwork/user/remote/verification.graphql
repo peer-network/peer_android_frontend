@@ -1,5 +1,5 @@
 mutation VerifiedAccount($userid: ID!) {
-    verifiedAccount(userid: $userid) {
+    verifyAccount(userid: $userid) {
         status
         ResponseCode
     }

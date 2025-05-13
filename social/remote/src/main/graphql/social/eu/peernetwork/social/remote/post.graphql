@@ -1,0 +1,39 @@
+query Getallposts(
+    $title: String,
+    $offset: Int,
+    $limit: Int
+) {
+    listPosts(
+        title: $title,
+        limit: $limit,
+        offset: $offset
+    ) {
+        status
+        counter
+        ResponseCode
+        affectedRows {
+            id
+            title
+            mediadescription
+            isliked
+            isviewed
+            isdisliked
+            amountlikes
+            amountdislikes
+            amountviews
+            amountcomments
+            media
+            cover
+            contenttype
+            createdat
+            user {
+                id
+                username
+                slug
+                img
+                isfollowed
+                isfollowing
+            }
+        }
+    }
+}

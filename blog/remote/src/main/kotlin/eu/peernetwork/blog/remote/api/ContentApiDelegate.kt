@@ -21,7 +21,7 @@ import eu.peernetwork.core.common.model.Pageable
 import eu.peernetwork.core.remote.extension.assertOrThrow
 import eu.peernetwork.core.remote.extension.executeOrThrow
 import eu.peernetwork.core.remote.extension.getOrThrow
-import type.PostenType
+import type.PostType
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -41,16 +41,32 @@ class ContentApiDelegate @Inject constructor(
         } else {
             Optional.present(filter.type.map { it.mapToFilter() })
         }
+        val tag = if (filter.criteria is Filter.Criteria.Content) {
+            (filter.criteria as? Filter.Criteria.Content?)?.tag?.let {
+                Optional.present(it)
+            } ?: Optional.absent()
+        } else {
+            Optional.absent()
+        }
+        val title = if (filter.criteria is Filter.Criteria.Content) {
+            (filter.criteria as? Filter.Criteria.Content?)?.title?.let {
+                Optional.present(it)
+            } ?: Optional.absent()
+        } else {
+            Optional.absent()
+        }
         val query = GetallpostsQuery(
             filter = filterBy,
             sort = sortBy,
+            tag = tag,
+            title = title,
             postId = post,
             userId = author,
             offset = Optional.present(page.offset),
             limit = Optional.present(page.limit)
         )
         val response = client.query(query).executeOrThrow()
-        val data = response.getOrThrow().getallposts
+        val data = response.getOrThrow().listPosts
         val contents = data.affectedRows?.map { content ->
             content.mapToDomain(url, gson.fromJson<List<MediaModel>>(
                 content.media,
@@ -69,7 +85,7 @@ class ContentApiDelegate @Inject constructor(
 
     override suspend fun create(draft: Draft): Content {
         val mutation = CreatePostMutation(
-            action = PostenType.POST,
+            action = PostType.POST,
             title = draft.title,
             description = Optional.presentIfNotNull(draft.description),
             contentType = draft.type.mapFromDomain(),

@@ -43,7 +43,9 @@ fun CommentScreen(
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
     modifier: Modifier = Modifier,
-    onUpdate: () -> Unit,
+    onMentionClick: (String) -> Unit = {},
+    onHashtagClick: (String) -> Unit = {},
+    imageOnClick: (String) -> Unit = {},
 ) {
     val context = LocalContext.current
     val component = remember { provider.builder(Comment.Builder::class.java).build(context) }
@@ -75,11 +77,41 @@ fun CommentScreen(
     val replyTo = remember { mutableStateOf<String?>(null) }
     val isLoading = remember { derivedStateOf { contents.value?.isLoading == true } }
     val isSelected = remember { derivedStateOf { contents.value?.selected != null } }
+    val mentionToOpen = remember { mutableStateOf<String?>(null) }
+    val hashtagToOpen = remember { mutableStateOf<String?>(null) }
+    val imageToOpen = remember { mutableStateOf<String?>(null) }
+
+    LaunchedEffect(state.value) {
+        if (state.value == null) {
+            viewModel.reset(true)
+            delay(200)
+            mentionToOpen.value?.let {
+                onMentionClick(it)
+                mentionToOpen.value = null
+            }
+            hashtagToOpen.value?.let {
+                onHashtagClick(it)
+                hashtagToOpen.value = null
+            }
+            imageToOpen.value?.let {
+                imageOnClick(it)
+                imageToOpen.value = null
+            }
+        }
+    }
     CommentScreen(
         tag = tag,
         state = state,
         replyTo = replyTo,
         isLoading = isLoading,
+        onMentionClick = { username ->
+            mentionToOpen.value = username
+            state.value = null
+        },
+        onHashtagClick = { hashtag ->
+            hashtagToOpen.value = hashtag
+            state.value = null
+        },
         modifier = modifier.fillMaxSize(),
         onRefresh = { state.value?.let { viewModel.load(it.id, Pageable(0, postLimit)) } },
         onSubmit = { id, comment -> viewModel.comment(id, comment) }
@@ -100,6 +132,18 @@ fun CommentScreen(
                             titleOnClick = {
                                 replyTo.value = comment.author.username
                             },
+                            onMentionClick = { username ->
+                                mentionToOpen.value = username
+                                state.value = null
+                            },
+                            onHashtagClick = { hashtag ->
+                                hashtagToOpen.value = hashtag
+                                state.value = null
+                            },
+                            imageOnClick = { imageUrl ->
+                                imageToOpen.value = imageUrl
+                                state.value = null
+                            }
                         ) {
                             val liked = remember { derivedStateOf {
                                 contents.value?.likes?.firstOrNull { it.id == comment.id }
@@ -121,7 +165,6 @@ fun CommentScreen(
                 if (!isLoading.value && isSelected.value) {
                     it.clearText()
                     items.refresh()
-                    onUpdate()
                 }
             }
         }
@@ -142,6 +185,8 @@ fun CommentScreen(
     replyTo: MutableState<String?>,
     isLoading: State<Boolean>,
     modifier: Modifier = Modifier,
+    onMentionClick: (String) -> Unit = {},
+    onHashtagClick: (String) -> Unit = {},
     onRefresh: () -> Unit = {},
     onSubmit: (String, String) -> Unit = { id, comment -> },
     content: @Composable (TextFieldState) -> Unit = {}
@@ -159,7 +204,9 @@ fun CommentScreen(
                 replyTo = replyTo,
                 isLoading = isLoading,
                 modifier = Modifier.padding(horizontal = 24.dp),
-                onSubmit = onSubmit
+                onSubmit = onSubmit,
+                onMentionClick = onMentionClick,
+                onHashtagClick = onHashtagClick
             )
         } },
         content = { uiState ->

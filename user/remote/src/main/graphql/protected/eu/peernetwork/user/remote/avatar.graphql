@@ -1,5 +1,5 @@
 mutation UpdateProfilePicture($img: String!) {
-    updateProfilePicture(img: $img) {
+    updateProfileImage(img: $img) {
         status
         ResponseCode
     }

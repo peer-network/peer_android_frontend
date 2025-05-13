@@ -21,6 +21,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -46,6 +47,7 @@ fun DesignTab(
     content: @Composable (Int) -> Unit
 ) {
     val coroutine = rememberCoroutineScope()
+    val updatedContent by rememberUpdatedState(content)
     Column(modifier = modifier) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             repeat(state.pageCount) {
@@ -60,7 +62,7 @@ fun DesignTab(
                                 state.animateScrollToPage(it)
                             }
                         }
-                ) { content(it) }
+                ) { updatedContent(it) }
             }
         }
         Box(

@@ -1,3 +1,11 @@
 package eu.peernetwork.social.ui.provider
 
-interface SocialProvider
+import eu.peernetwork.core.common.provider.CoreProvider
+import eu.peernetwork.social.domain.interactor.ConnectionInteractor
+import eu.peernetwork.social.domain.interactor.SearchInteractor
+
+interface SocialProvider : CoreProvider, RepositoryProvider {
+    fun searchInteractor(): SearchInteractor
+
+    fun connectionInteractor(): ConnectionInteractor
+}

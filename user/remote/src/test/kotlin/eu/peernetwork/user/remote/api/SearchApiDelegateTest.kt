@@ -39,13 +39,13 @@ internal class SearchApiDelegateTest {
             mockData
         ).build()
 
-        every { mockData.searchuser } returns mockModel
+        every { mockData.searchUser } returns mockModel
         coEvery { client.query(any<SearchuserQuery>()).execute() } returns mockResponse
 
         val result = api.findByUsername("<test-username>", Pageable(0, 1))
 
-        assertEquals(result.first().id, mockModel.affectedRows?.first()?.id)
-        assertEquals(result.first().slug, mockModel.affectedRows?.first()?.slug)
+        assertEquals(result.items.first().id, mockModel.affectedRows?.first()?.id)
+        assertEquals(result.items.first().slug, mockModel.affectedRows?.first()?.slug)
     }
 
     @Test
@@ -59,7 +59,7 @@ internal class SearchApiDelegateTest {
             mockData
         ).build()
 
-        every { mockData.searchuser } returns mockModel
+        every { mockData.searchUser } returns mockModel
         coEvery { client.query(any<SearchuserQuery>()).execute() } returns mockResponse
 
         val result = try {

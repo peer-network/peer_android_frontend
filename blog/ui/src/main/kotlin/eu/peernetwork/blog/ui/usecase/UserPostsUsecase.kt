@@ -5,19 +5,22 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.PagingSource.LoadParams
 import androidx.paging.PagingSource.LoadResult
-import eu.peernetwork.blog.domain.model.Content
-import eu.peernetwork.blog.domain.model.Filter
-import eu.peernetwork.blog.domain.repository.ContentRepository
+import eu.peernetwork.blog.domain.model.Filter.Criteria
+import eu.peernetwork.blog.domain.usecase.PhotosUsecase
+import eu.peernetwork.blog.domain.usecase.EngagementRefreshUsecase
 import eu.peernetwork.blog.ui.mapper.mapToPhoto
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.core.common.model.Pageable
+import eu.peernetwork.core.ui.usecase.AnnotationUsecase
 import eu.peernetwork.core.ui.usecase.PagingUsecase
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class PostUsecase @Inject constructor(
-    private val repository: ContentRepository
-) : PagingUsecase<PostUsecase.Parameter, UiPost>() {
+class UserPostsUsecase @Inject constructor(
+    private val usecase: PhotosUsecase,
+    private val engagementRefreshUsecase: EngagementRefreshUsecase,
+    private val annotationUsecase: AnnotationUsecase
+) : PagingUsecase<UserPostsUsecase.Parameter, UiPost>() {
     private lateinit var param: Parameter
 
     override fun invoke(param: Parameter): Flow<PagingData<UiPost>> {
@@ -35,19 +38,19 @@ class PostUsecase @Inject constructor(
         val currentOffset = params.key ?: param.page.offset
         val currentPage = Pageable(
             offset = currentOffset,
-            limit = params.loadSize
+            limit = param.page.limit
         )
-        val response = repository.getAll(
-            filter = Filter(
-                type = setOf(
-                    Content.Type.TEXT,
-                    Content.Type.IMAGE
-                )
-            ),
-            currentPage
+        val response = usecase(
+            PhotosUsecase.Parameter(
+                criteria = param.criteria,
+                page = currentPage
+            )
         )
+        if (currentOffset <= 0) {
+            engagementRefreshUsecase()
+        }
         return LoadResult.Page(
-            data = response.items.map { it.mapToPhoto() },
+            data = response.items.map { it.mapToPhoto { annotationUsecase(it) } },
             prevKey = if (currentOffset <= 0) null else currentOffset - 1,
             nextKey = if (response.items.isNotEmpty()) {
                 currentOffset + response.items.size
@@ -57,5 +60,8 @@ class PostUsecase @Inject constructor(
         )
     }
 
-    data class Parameter(val page: Pageable)
+    data class Parameter(
+        val criteria: Criteria? = null,
+        val page: Pageable
+    )
 }

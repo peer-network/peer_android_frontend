@@ -8,6 +8,8 @@ data class AccountModel(
     val biography: String,
     val followed: Int,
     val follower: Int,
+    val isfollowing: Boolean,
+    val isfollowed: Boolean,
     val posts: Int,
     val peers: Int
 )

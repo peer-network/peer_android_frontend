@@ -1,14 +1,14 @@
 package eu.peernetwork.blog.remote.mapper
 
 import eu.peernetwork.blog.domain.model.Engagement
-import type.ActionType
+import type.PostActionType
 
-fun Engagement.Content.mapToAction(): ActionType {
+fun Engagement.Content.mapToAction(): PostActionType {
     return when (this) {
-        Engagement.Content.Like -> ActionType.LIKE
-        Engagement.Content.Dislike -> ActionType.DISLIKE
-        Engagement.Content.View -> ActionType.VIEW
-        Engagement.Content.Report -> ActionType.REPORT
-        Engagement.Content.Save -> ActionType.SAVE
+        Engagement.Content.Like -> PostActionType.LIKE
+        Engagement.Content.Dislike -> PostActionType.DISLIKE
+        Engagement.Content.View -> PostActionType.VIEW
+        Engagement.Content.Report -> PostActionType.REPORT
+        Engagement.Content.Save -> PostActionType.SAVE
     }
 }

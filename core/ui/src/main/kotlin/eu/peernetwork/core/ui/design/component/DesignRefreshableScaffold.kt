@@ -15,8 +15,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -43,22 +45,25 @@ fun<T> DesignRefreshableScaffold(
     val errorState = remember { derivedStateOf {
         (state.value as? DesignStatefulScaffoldState.Error?)?.error
     } }
+    val updatedContent by rememberUpdatedState(content)
+    val updatedPlaceholder by rememberUpdatedState(placeholder)
+    val updatedErrorContent by rememberUpdatedState(errorContent)
     val refreshState = rememberPullRefreshState(
         refreshing = state.value is DesignStatefulScaffoldState.Loading,
         onRefresh = onRefresh
     )
     DragRefreshLayout(state = refreshState, modifier = modifier) {
         if (errorState.value != null) {
-            errorContent?.invoke(errorState.value!!)
+            updatedErrorContent?.invoke(errorState.value!!)
                 ?: DesignRefreshErrorContent(
                     errorState.value!!,
                     modifier = Modifier.fillMaxSize()
                         .verticalScroll(rememberScrollState())
                 )
         } else if (contentState.value != null) {
-            content(contentState.value!!)
+            updatedContent(contentState.value!!)
         } else if (state.value is DesignStatefulScaffoldState.Empty) {
-            placeholder?.invoke() ?: DesignRefreshErrorContent(
+            updatedPlaceholder?.invoke() ?: DesignRefreshErrorContent(
                 RuntimeException(stringResource(R.string.empty_message)),
                 modifier = Modifier.fillMaxSize()
                     .verticalScroll(rememberScrollState())

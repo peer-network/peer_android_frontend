@@ -3,6 +3,7 @@ package eu.peernetwork.app.ui.home
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
@@ -20,9 +21,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
+import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.blog.ui.creator.CreatorScreen
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.extension.builder
@@ -35,6 +38,7 @@ import eu.peernetwork.core.ui.annotation.UiViewModel
 import eu.peernetwork.core.ui.design.compose.DesignToolbarTitle
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffold
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
+import eu.peernetwork.app.ui.search.SearchScreen
 import eu.peernetwork.wallet.ui.overview.OverviewScreen
 
 @Composable
@@ -78,7 +82,13 @@ fun HomeScreen(provider: UiComponentProvider) {
             options = { PointScreen(component, owner) }
         ) { state, route ->
             when(route) {
-                is HomeRoute.Home -> FeedScreen(data.first, title, component, owner)
+                is HomeRoute.Home -> FeedScreen(
+                    data.first,
+                    title,
+                    BuildConfig.PAGING_LIMIT,
+                    component,
+                    owner
+                )
                 is HomeRoute.Profile -> ProfileScreen(
                     data.first,
                     title,
@@ -87,6 +97,13 @@ fun HomeScreen(provider: UiComponentProvider) {
                 )
                 is HomeRoute.Add -> CreatorScreen(title, component, owner)
                 is HomeRoute.Wallet -> OverviewScreen(title, component, owner)
+                is HomeRoute.Search -> SearchScreen(
+                    id = data.first,
+                    title,
+                    BuildConfig.PAGING_LIMIT,
+                    component,
+                    owner
+                )
                 else -> Box(modifier = Modifier.fillMaxSize()
                     .verticalScroll(rememberScrollState())) {
                     LaunchedEffect(Unit) {
@@ -109,7 +126,7 @@ fun HomeScreen(
     val controller = rememberNavController()
     val navigationState = rememberSaveable { mutableIntStateOf(index) }
     HomeScaffold(
-        header = { HomeHeader(title, options = options) },
+        header = { HomeHeader(title, options = options, modifier = Modifier.padding(top = 8.dp)) },
         footer = { HomeFooter(navigationState) }
     ) { state ->
         HomeNavigation(

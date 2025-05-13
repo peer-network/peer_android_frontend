@@ -23,7 +23,9 @@ class UserUsecase @Inject constructor(
 
     private suspend fun getDescription(path: String): String? {
         return try {
-            descriptionUsecase(path)
+            descriptionUsecase(path).trim()
+                .replace(Regex("[\\s\\t]+"), " ")
+                .replace(Regex("^\\s+|\\s+$"), "")
         } catch (_: Throwable) { null }
     }
 }

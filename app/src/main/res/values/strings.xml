@@ -4,4 +4,10 @@
     <string name="logo">Peer Logo</string>
     <string name="slogan_text">Almost like with any social media you can share the content you love, but with Peer, you earn on the side – no fame needed!</string>
     <string name="privacy_text">Privacy Policy</string>
+
+    <string name="tag_label">tag</string>
+    <string name="title_label">title</string>
+    <string name="mention_label">username</string>
+  
+    <string name="notification_caption">Open Peer to keep the conversation going.</string>
 </resources>

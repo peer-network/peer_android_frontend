@@ -21,6 +21,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
@@ -53,37 +54,41 @@ fun<T> DesignStatefulScaffold(
             repeatMode = RepeatMode.Reverse
         )
     )
+    val handleRefresh by rememberUpdatedState(onRefresh)
+    val updatedContent by rememberUpdatedState(content)
+    val updatedPlaceholder by rememberUpdatedState(placeholder)
+    val updatedErrorContent by rememberUpdatedState(errorContent)
     Box(
-        modifier = modifier.then(
+        modifier = modifier.graphicsLayer {
             if (state.value is DesignStatefulScaffoldState.Loading) {
-                Modifier.graphicsLayer { this.alpha = alpha }
+                this.alpha = alpha
             } else {
-                Modifier
+                1
             }
-        ),
+        },
         contentAlignment = contentAlignment
     ) {
         when (state.value) {
             DesignStatefulScaffoldState.Empty -> {
-                placeholder?.invoke() ?: DesignStatefulContentPlaceholder()
+                updatedPlaceholder?.invoke() ?: DesignStatefulContentPlaceholder()
             }
             DesignStatefulScaffoldState.Loading -> {
-                placeholder?.invoke() ?: DesignStatefulContentPlaceholder(
+                updatedPlaceholder?.invoke() ?: DesignStatefulContentPlaceholder(
                         text = stringResource(R.string.loading_text))
             }
             is DesignStatefulScaffoldState.Success<*> -> {
-                content((state.value as DesignStatefulScaffoldState.Success<*>).result as T)
+                updatedContent((state.value as DesignStatefulScaffoldState.Success<*>).result as T)
             }
             is DesignStatefulScaffoldState.Error -> {
                 val error = (state.value as DesignStatefulScaffoldState.Error)
-                errorContent?.invoke(error.error)
+                updatedErrorContent?.invoke(error.error)
                     ?: DesignErrorContent(error.error, onRetry = onRefresh)
             }
         }
     }
     LaunchedEffect(isEmpty.value) {
         if (isEmpty.value && autoRefresh) {
-            onRefresh()
+            handleRefresh()
         }
     }
 }

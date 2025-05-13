@@ -15,6 +15,7 @@ import kotlinx.coroutines.Dispatchers
     PersistenceModule::class,
     UsecaseModule::class,
     MediaModule::class,
+    ServiceModule::class
 ])
 object CoreModule {
     @Provides

@@ -29,6 +29,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.app.R
 import eu.peernetwork.core.ui.extension.annotate
 import eu.peernetwork.core.ui.theme.PeerTheme
@@ -43,7 +44,7 @@ fun SetupHeader(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
-            painter = if (isSystemInDarkTheme()) {
+            painter = if (isSystemInDarkTheme() || !BuildConfig.USE_SYSTEM_THEME) {
                 painterResource(id = R.drawable.ic_logo)
             } else {
                 painterResource(id = R.drawable.ic_logo_dark)

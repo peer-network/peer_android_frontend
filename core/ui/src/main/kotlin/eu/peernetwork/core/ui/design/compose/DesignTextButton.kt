@@ -24,6 +24,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -34,7 +35,6 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -63,6 +63,8 @@ fun DesignTextButton(
     contentPadding: PaddingValues = PaddingValues(4.dp),
     content: @Composable () -> Unit
     ) {
+    val clickHandler by rememberUpdatedState(onClick)
+    val updatedContent by rememberUpdatedState(content)
     val contentColor = if (enabled) colors.contentColor else colors.disabledContentColor
     Box(
         modifier = modifier.clip(shape)
@@ -76,7 +78,7 @@ fun DesignTextButton(
                 enabled = enabled,
                 onClick = {
                     if (enabled) {
-                        onClick()
+                        clickHandler()
                     }
                 }
             ).defaultMinSize(minWidth = minWidth, minHeight = minHeight),
@@ -105,9 +107,7 @@ fun DesignTextButton(
                         color = contentColor,
                         style = MaterialTheme.typography.bodyMedium.copy(color = contentColor)
                     )
-                } else {
-                    content()
-                }
+                } else { updatedContent() }
             }
         }
     }

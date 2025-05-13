@@ -25,6 +25,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -70,6 +71,8 @@ fun DesignButton(
             MaterialTheme.colorScheme.primary,
         )
     )
+    val clickHandler by rememberUpdatedState(onClick)
+    val updatedContent by rememberUpdatedState(content)
     val contentColor = if (enabled) colors.contentColor else colors.disabledContentColor
     Box(
         modifier = modifier
@@ -83,7 +86,7 @@ fun DesignButton(
             .clickable(
                 role = Role.Button,
                 enabled = enabled && !isLoading,
-                onClick = { if (!isLoading && enabled) onClick() }
+                onClick = { if (!isLoading && enabled) clickHandler() }
             )
             .defaultMinSize(minWidth = minWidth, minHeight = minHeight),
         contentAlignment = Alignment.Center
@@ -114,7 +117,7 @@ fun DesignButton(
             } else {
                 CompositionLocalProvider(
                     LocalContentColor provides contentColor
-                ) { content() }
+                ) { updatedContent() }
             }
         }
     }

@@ -18,14 +18,17 @@ import kotlinx.coroutines.delay
 import androidx.compose.ui.semantics.Role
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
+import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.blog.ui.model.UiVideo
 import eu.peernetwork.blog.ui.compose.MediaPostCard
 import eu.peernetwork.blog.ui.compose.PostSummary
 import eu.peernetwork.blog.ui.compose.PostPageSkeleton
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
+import eu.peernetwork.blog.ui.engagement.EngagementSpec
 import eu.peernetwork.blog.ui.mapper.mapToContent
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.moderation.ModerationScreen
+import eu.peernetwork.blog.ui.moderation.ModerationSpec
 import eu.peernetwork.blog.ui.post.photo.formatTimeAgo
 import eu.peernetwork.core.ui.design.component.DesignPagingScaffold
 import eu.peernetwork.core.ui.design.component.DesignRefreshableScaffold
@@ -35,11 +38,15 @@ import eu.peernetwork.media.core.renderer.VideoThumbnail
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VideoScreen(
-    tag: String,
+    id: String,
     postLimit: Int,
+    criteria: Criteria? = null,
+    onMentionClick: (String) -> Unit = {},
+    onHashtagClick: (String) -> Unit = {},
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
     onClick: (String) -> Unit = {},
+    connection: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit = {}
 ) {
     val context = LocalContext.current
     val component = remember {
@@ -75,7 +82,7 @@ fun VideoScreen(
     var selectedClip = remember { mutableStateOf<Int?>(null) }
     DesignPagingScaffold<UiVideo>(
         state = derivedState,
-        onRefresh = { viewModel.load(Pageable(0, postLimit)) },
+        onRefresh = { viewModel.load(Pageable(0, postLimit), criteria) },
         placeholder = { PostPageSkeleton() }
     ) { state, lazyPagingItems ->
         val refreshState = remember { derivedStateOf {
@@ -89,17 +96,20 @@ fun VideoScreen(
                 state.value
             }
         } }
-        val isLoading = remember { derivedStateOf {
-            lazyPagingItems.loadState.refresh is LoadState.Loading
+        val refreshed = remember { derivedStateOf {
+            lazyPagingItems.loadState.refresh is LoadState.NotLoading
         } }
         DesignRefreshableScaffold<LazyPagingItems<UiPost>>(
             state = refreshState,
             onRefresh = { lazyPagingItems.refresh() }
         ) {
             EngagementScreen(
-                tag,
+                id,
                 postLimit,
-                isLoading,
+                refreshed,
+                onMentionClick,
+                onHashtagClick,
+                onClick,
                 component,
                 viewModelStoreOwner
             ) { engagement ->
@@ -113,36 +123,22 @@ fun VideoScreen(
                             key = { index -> index }
                         ) { index ->
                             lazyPagingItems[index]?.let { post ->
-                                MediaPostCard(
-                                    author = post.author,
-                                    onClick = { onClick(post.author.id) },
-                                    description = post.createdAt.formatTimeAgo(currentTime.longValue),
-                                    caption = {
-                                        PostSummary(post.author.username, post.title, post.description)
-                                    },
-                                    engagements = {
-                                        EngagementScreen(
-                                            spec = engagement,
-                                            model = post.mapToContent(),
-                                        )
-                                    },
-                                    moderation = {
-                                        ModerationScreen(
-                                            post.mapToContent(),
-                                            spec
-                                        )
-                                    },
-                                    modifier = Modifier.padding(bottom = 16.dp)
+                                VideoScreen(
+                                    id = id,
+                                    post = post,
+                                    index = index,
+                                    currentTime = currentTime,
+                                    engagementSpec = engagement,
+                                    moderationSpec = spec,
+                                    onClick = onClick,
+                                    onSelect = { selectedClip.value = it },
+                                    onMentionClick = onMentionClick, onHashtagClick = onHashtagClick,
+                                    connection = connection
                                 ) {
-                                    Box(modifier = Modifier.clickable(
-                                        role = Role.Button,
-                                        onClick = { selectedClip.value = index }
-                                    )) {
-                                        component.videoThumbnail()(
-                                            Modifier,
-                                            VideoThumbnail.Spec(post.media, post.resolution)
-                                        )
-                                    }
+                                    component.videoThumbnail()(
+                                        Modifier,
+                                        VideoThumbnail.Spec(post.media, post.resolution)
+                                    )
                                 }
                             }
                         }
@@ -155,5 +151,70 @@ fun VideoScreen(
             }
         }
         VideoDialog(postLimit, selectedClip, provider, viewModelStoreOwner)
+    }
+}
+
+@Composable
+fun VideoScreen(
+    id: String,
+    post: UiVideo,
+    index: Int,
+    currentTime: State<Long>,
+    engagementSpec: EngagementSpec,
+    moderationSpec: ModerationSpec,
+    onClick: (String) -> Unit = {},
+    onSelect: (Int) -> Unit = {},
+    onMentionClick: (String) -> Unit = {},
+    onHashtagClick: (String) -> Unit = {},
+    connection: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit = {},
+    content: @Composable (UiVideo) -> Unit = {}
+) {
+    val clickHandler by rememberUpdatedState(onClick)
+    val selectHandler by rememberUpdatedState { onSelect(index) }
+    val updatedContent by rememberUpdatedState(content)
+    val updatedConnection by rememberUpdatedState(connection)
+    val engagement = remember(post) { post.mapToContent() }
+    MediaPostCard(
+        author = post.author,
+        onClick = { clickHandler(post.author.id) },
+        description = post.createdAt.formatTimeAgo(currentTime.value),
+        caption = {
+            PostSummary(
+                engagement.author.username,
+                engagement.title,
+                engagement.description,
+                userOnClick = { onClick(post.author.id) },
+                onMentionClick = onMentionClick, onHashtagClick = onHashtagClick
+            )
+        },
+        engagements = {
+            EngagementScreen(
+                spec = engagementSpec,
+                model = engagement,
+            )
+        },
+        moderation = {
+            ModerationScreen(
+                engagement,
+                moderationSpec
+            )
+        },
+        modifier = Modifier.padding(bottom = 16.dp),
+        actions = {
+            if (id != post.author.id) {
+                updatedConnection(
+                    Triple(
+                        post.author.id,
+                        post.author.isfollowing,
+                        post.author.isfollowed
+                    )
+                )
+            }
+        }
+    ) {
+        Box(modifier = Modifier.clickable(
+            role = Role.Button,
+            onClick = selectHandler
+        )) { updatedContent(post) }
     }
 }

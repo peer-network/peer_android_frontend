@@ -1,15 +1,15 @@
 package eu.peernetwork.social.domain.repository
 
+import eu.peernetwork.core.common.model.Page
 import eu.peernetwork.core.common.model.Pageable
-import eu.peernetwork.social.domain.model.User
-import kotlinx.coroutines.flow.SharedFlow
+import eu.peernetwork.social.domain.model.Member
 
 interface FollowRepository {
-    suspend fun follow(id: String)
+    suspend fun follow(id: String): Boolean
 
-    suspend fun unfollow(id: String)
+    suspend fun followers(id: String, pageable: Pageable): Page<Member>
 
-    fun followers(id: String, pageable: Pageable): SharedFlow<List<User>>
+    suspend fun following(id: String, pageable: Pageable): Page<Member>
 
-    fun following(id: String, pageable: Pageable): SharedFlow<List<User>>
+    suspend fun friends(pageable: Pageable): Page<Member>
 }

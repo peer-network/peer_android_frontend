@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.blog.ui.model.UiPost
@@ -18,10 +20,15 @@ fun LazyItemScope.PostListItem(
     position: Int,
     state: State<Long>,
     onClick: () -> Unit = {},
+    userOnClick: () -> Unit = {},
+    onMentionClick: (String) -> Unit = {},
+    onHashtagClick: (String) -> Unit = {},
     engagements: @Composable RowScope.() -> Unit,
     moderation: @Composable RowScope.() -> Unit,
+    actions: @Composable RowScope.() -> Unit = {},
     content: @Composable (UiPost) -> Unit
 ) {
+    val updatedContent by rememberUpdatedState(content)
     Spacer(modifier = Modifier.height(
         if (position == 0 && post.type == UiPost.Type.TEXT) {
             12.dp
@@ -35,12 +42,20 @@ fun LazyItemScope.PostListItem(
             description = post.createdAt.formatTimeAgo(state.value),
             modifier = Modifier.padding(bottom = 16.dp),
             caption = {
-                PostSummary(post.author.username, post.title, post.description)
+                PostSummary(
+                    post.author.username,
+                    post.title,
+                    post.description,
+                    userOnClick = userOnClick,
+                    onMentionClick = onMentionClick,
+                    onHashtagClick = onHashtagClick
+                )
             },
             engagements = engagements,
             moderation = moderation,
-            onClick = onClick
-        ) { content(post) }
+            onClick = onClick,
+            actions = actions
+        ) { updatedContent(post) }
     } else {
         TextPostCard(
             author = post.author,
@@ -49,12 +64,15 @@ fun LazyItemScope.PostListItem(
                 .padding(horizontal = 8.dp),
             engagements = engagements,
             moderation = moderation,
-            onClick = onClick
+            onClick = onClick,
+            actions = actions
         ) {
             PostText(
                 post.title,
                 post.description,
-                Modifier.padding(top = 12.dp, bottom = 4.dp)
+                Modifier.padding(top = 12.dp, bottom = 4.dp),
+                onMentionClick = onMentionClick,
+                onHashtagClick = onHashtagClick
             )
         }
     }

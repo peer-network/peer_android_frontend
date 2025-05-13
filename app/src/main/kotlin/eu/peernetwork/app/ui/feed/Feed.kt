@@ -2,17 +2,18 @@ package eu.peernetwork.app.ui.feed
 
 import android.content.Context
 import androidx.lifecycle.ViewModelProvider
+import eu.peernetwork.app.provider.ApplicationProvider
 import eu.peernetwork.app.ui.profile.Profile
-import eu.peernetwork.blog.ui.provider.BlogProvider
+import eu.peernetwork.app.ui.search.Search
 import eu.peernetwork.blog.ui.timeline.music.Music
 import eu.peernetwork.blog.ui.timeline.photo.Photo
 import eu.peernetwork.blog.ui.timeline.video.Video
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.persistence.domain.provider.PreferenceProvider
-import eu.peernetwork.user.ui.provider.UserProvider
+import eu.peernetwork.social.ui.connection.Connection
+import eu.peernetwork.social.ui.member.Member
 
-interface Feed : PreferenceProvider, UserProvider, BlogProvider {
+interface Feed : ApplicationProvider {
     @javax.inject.Scope
     @Retention(AnnotationRetention.RUNTIME)
     annotation class Scope
@@ -27,7 +28,10 @@ interface Feed : PreferenceProvider, UserProvider, BlogProvider {
         Music,
         Video,
         Photo,
-        Profile {
+        Member,
+        Search,
+        Profile,
+        Connection {
         fun viewModelFactory(): ViewModelProvider.Factory
     }
 

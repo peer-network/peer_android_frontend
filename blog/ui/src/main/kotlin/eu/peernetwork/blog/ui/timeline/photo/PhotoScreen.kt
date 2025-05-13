@@ -1,5 +1,6 @@
 package eu.peernetwork.blog.ui.timeline.photo
 
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -8,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.lifecycle.ViewModelStoreOwner
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.*
@@ -19,15 +21,18 @@ import eu.peernetwork.core.ui.extension.builder
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
+import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.compose.PostListItem
 import eu.peernetwork.blog.ui.compose.PostPageSkeleton
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
+import eu.peernetwork.blog.ui.engagement.EngagementSpec
 import eu.peernetwork.blog.ui.mapper.mapToContent
+import eu.peernetwork.blog.ui.mapper.mapToProperty
 import eu.peernetwork.core.common.model.Pageable
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
-import eu.peernetwork.blog.ui.mapper.mapToProperty
 import eu.peernetwork.blog.ui.moderation.ModerationScreen
+import eu.peernetwork.blog.ui.moderation.ModerationSpec
 import eu.peernetwork.core.ui.design.component.DesignPagingScaffold
 import eu.peernetwork.core.ui.design.component.DesignRefreshableScaffold
 import eu.peernetwork.media.core.renderer.ImageView
@@ -36,11 +41,15 @@ import kotlinx.coroutines.delay
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
 @Composable
 fun PhotoScreen(
-    tag: String,
+    id: String,
     postLimit: Int,
+    criteria: Criteria? = null,
+    onMentionClick: (String) -> Unit = {},
+    onHashtagClick: (String) -> Unit = {},
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
-    onClick: (String) -> Unit = {}
+    onClick: (String) -> Unit = {},
+    connection: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit = {}
 ) {
     val context = LocalContext.current
     val component = remember {
@@ -75,7 +84,7 @@ fun PhotoScreen(
     }
     DesignPagingScaffold<UiPost>(
         state = derivedState,
-        onRefresh = { viewModel.load(Pageable(0, postLimit)) },
+        onRefresh = { viewModel.load(Pageable(0, postLimit), criteria) },
         placeholder = { PostPageSkeleton() }
     ) { state, lazyPagingItems ->
         val refreshState = remember { derivedStateOf {
@@ -89,17 +98,20 @@ fun PhotoScreen(
                 state.value
             }
         } }
-        val isLoading = remember { derivedStateOf {
-            lazyPagingItems.loadState.refresh is LoadState.Loading
+        val refreshed = remember { derivedStateOf {
+            lazyPagingItems.loadState.refresh is LoadState.NotLoading
         } }
         DesignRefreshableScaffold<LazyPagingItems<UiPost>>(
             state = refreshState,
             onRefresh = { lazyPagingItems.refresh() }
         ) {
             EngagementScreen(
-                tag,
+                id,
                 postLimit,
-                isLoading,
+                refreshed,
+                onMentionClick,
+                onHashtagClick,
+                onClick,
                 component,
                 viewModelStoreOwner
             ) { engagement ->
@@ -113,22 +125,17 @@ fun PhotoScreen(
                             key = { index -> lazyPagingItems[index]?.id ?: index }
                         ) { index ->
                             lazyPagingItems[index]?.let { post ->
-                                PostListItem(
+                                PhotoScreen(
+                                    id = id,
                                     post = post,
-                                    position = index,
-                                    state = currentTime,
-                                    onClick = { onClick(post.author.id) },
-                                    engagements = {
-                                        EngagementScreen(
-                                            post.mapToContent(),
-                                            engagement,
-                                        ) },
-                                    moderation = {
-                                        ModerationScreen(
-                                            post.mapToContent(),
-                                            spec
-                                        )
-                                    },
+                                    index = index,
+                                    currentTime = currentTime,
+                                    engagementSpec = engagement,
+                                    moderationSpec = spec,
+                                    onClick = onClick,
+                                    onHashtagClick = onHashtagClick,
+                                    onMentionClick = onMentionClick,
+                                    connection = connection,
                                     content = {
                                         val media = post.media.first()
                                         component.imageView()(
@@ -148,4 +155,55 @@ fun PhotoScreen(
             }
         }
     }
+}
+
+@Composable
+fun LazyItemScope.PhotoScreen(
+    id: String,
+    post: UiPost,
+    index: Int,
+    currentTime: State<Long>,
+    engagementSpec: EngagementSpec,
+    moderationSpec: ModerationSpec,
+    onClick: (String) -> Unit = {},
+    onMentionClick: (String) -> Unit = {},
+    onHashtagClick: (String) -> Unit = {},
+    connection: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit = {},
+    content: @Composable (UiPost) -> Unit = {}
+) {
+    val engagement = remember(post) { post.mapToContent() }
+    val clickHandler by rememberUpdatedState { onClick(post.author.id) }
+    val updatedConnection by rememberUpdatedState(connection)
+    PostListItem(
+        post = post,
+        position = index,
+        state = currentTime,
+        onClick = clickHandler,
+        userOnClick = clickHandler,
+        onMentionClick = onMentionClick,
+        onHashtagClick = onHashtagClick,
+        engagements = {
+            EngagementScreen(
+                engagement,
+                engagementSpec,
+            ) },
+        moderation = {
+            ModerationScreen(
+                engagement,
+                moderationSpec
+            )
+        },
+        content = content,
+        actions = {
+            if (id != post.author.id) {
+                updatedConnection(
+                    Triple(
+                        post.author.id,
+                        post.author.isfollowing,
+                        post.author.isfollowed
+                    )
+                )
+            }
+        }
+    )
 }

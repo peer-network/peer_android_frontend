@@ -14,7 +14,7 @@ class EmailSettingsApi @Inject constructor(
     override suspend fun invoke(value: String, password: String) {
         val mutation = UpdateMailMutation(value, password)
         val response = client.mutation(mutation).executeOrThrow()
-        val data = response.getOrThrow().updateMail
+        val data = response.getOrThrow().updateEmail
         response.assertOrThrow(data.status, data.ResponseCode)
     }
 }

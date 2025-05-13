@@ -3,9 +3,9 @@ package eu.peernetwork.user.ui.registeration
 import android.content.Context
 import androidx.lifecycle.ViewModelProvider
 import eu.peernetwork.core.ui.component.UiComponent
-import eu.peernetwork.user.domain.provider.AccountProvider
+import eu.peernetwork.user.ui.provider.UserProvider
 
-interface Registration : AccountProvider {
+interface Registration : UserProvider {
     @javax.inject.Scope
     @Retention(AnnotationRetention.RUNTIME)
     annotation class Scope

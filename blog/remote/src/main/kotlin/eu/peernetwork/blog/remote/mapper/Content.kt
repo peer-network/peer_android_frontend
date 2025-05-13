@@ -16,7 +16,9 @@ fun CreatePostMutation.AffectedRows.mapToDomain(url: String, media: List<Media>)
             id = user.id,
             slug = user.slug!!,
             username = user.username!!,
-            imageUrl = "$url${user.img}?${System.currentTimeMillis()}"
+            imageUrl = "$url${user.img}?${System.currentTimeMillis()}",
+            isfollowing = user.isfollowing!!,
+            isfollowed = user.isfollowed!!
         ),
         createdAt = createdat.toString().toTimestamp(),
         type = contenttype.mapToDomain(),
@@ -38,7 +40,9 @@ fun GetallpostsQuery.AffectedRow.mapToDomain(url: String, media: List<Media>): C
             id = user.id,
             slug = user.slug!!,
             username = user.username!!,
-            imageUrl = "$url${user.img}"
+            imageUrl = "$url${user.img}",
+            isfollowing = user.isfollowing!!,
+            isfollowed = user.isfollowed!!
         ),
         createdAt = createdat.toString().toTimestamp(),
         type = contenttype.mapToDomain(),

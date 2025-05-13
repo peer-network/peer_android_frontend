@@ -36,8 +36,8 @@ object ContentMock {
         )
     }
 
-    fun contents(): GetallpostsQuery.Getallposts {
-        return GetallpostsQuery.Getallposts(
+    fun contents(): GetallpostsQuery.ListPosts {
+        return GetallpostsQuery.ListPosts(
             status = Status.SUCCESS.value,
             ResponseCode = null,
             counter = 1,

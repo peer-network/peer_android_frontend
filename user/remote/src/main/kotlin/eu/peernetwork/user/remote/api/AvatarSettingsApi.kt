@@ -14,7 +14,7 @@ class AvatarSettingsApi @Inject constructor(
     override suspend fun invoke(value: String) {
         val mutation = UpdateProfilePictureMutation(value)
         val response = client.mutation(mutation).executeOrThrow()
-        val data = response.getOrThrow().updateProfilePicture
+        val data = response.getOrThrow().updateProfileImage
         response.assertOrThrow(data.status, data.ResponseCode)
     }
 }

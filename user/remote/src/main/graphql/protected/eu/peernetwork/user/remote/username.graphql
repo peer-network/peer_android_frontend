@@ -1,5 +1,5 @@
 mutation UpdateName($username: String!, $password: String!) {
-    updateName(username: $username, password: $password) {
+    updateUsername(username: $username, password: $password) {
         status
         ResponseCode
     }

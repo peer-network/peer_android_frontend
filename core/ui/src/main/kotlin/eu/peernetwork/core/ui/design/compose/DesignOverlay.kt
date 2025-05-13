@@ -23,6 +23,7 @@ import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.runtime.toMutableStateList
@@ -77,6 +78,7 @@ fun DesignOverlay(modifier: Modifier = Modifier, content: @Composable () -> Unit
             }
         }
     }
+    val updatedContent by rememberUpdatedState(content)
     val overlayRegistry = remember {
         object : DesignOverlayRegistry {
             override fun register(
@@ -106,7 +108,7 @@ fun DesignOverlay(modifier: Modifier = Modifier, content: @Composable () -> Unit
         LocalDesignOverlayController provides currentController,
     ) {
         Box(modifier) {
-            content()
+            updatedContent()
             routes.filterNotNull().forEach { tag ->
                 key(tag) {
                     Box(Modifier.zIndex(registry[tag]?.first ?: registry.size.toFloat())) {
@@ -135,7 +137,8 @@ fun DesignOverlayHost(
             }
         }
     }
-    builder(overlayBuilder, isVisible)
+    val updatedBuilder by rememberUpdatedState(builder)
+    updatedBuilder(overlayBuilder, isVisible)
     LaunchedEffect(visible) {
         snapshotFlow { visible }
             .collectLatest { value ->
@@ -151,9 +154,7 @@ fun DesignOverlayHost(
             }
     }
     DisposableEffect(Unit) {
-        onDispose {
-            overlayRegistry.clear(tag)
-        }
+        onDispose { overlayRegistry.clear(tag) }
     }
 }
 

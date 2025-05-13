@@ -31,6 +31,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -71,10 +72,13 @@ fun DesignBottomSheet(
         initialValue = initialValue,
         skipHiddenState = false
     )
+    val updatedBackground by rememberUpdatedState(background)
+    val updatedContent by rememberUpdatedState(content)
+    val dismissRequest by rememberUpdatedState(onDismissRequest)
     val scaffoldState = rememberBottomSheetScaffoldState(bottomSheetState = sheetState)
     DesignOverlayHost(tag, visible = showSheet.value) { overlayState ->
         overlay {
-            background(overlayState)
+            updatedBackground(overlayState)
             BottomSheetScaffold(
                 scaffoldState = scaffoldState,
                 sheetPeekHeight = with(density) { height.toDp() },
@@ -91,7 +95,7 @@ fun DesignBottomSheet(
                                 }
                             }
                     ) {
-                        content(overlayState)
+                        updatedContent(overlayState)
                         LaunchedEffect(overlayState.value) {
                             if (overlayState.value) {
                                 focus.requestFocus()
@@ -136,17 +140,17 @@ fun DesignBottomSheet(
     LaunchedEffect(scaffoldState.bottomSheetState.currentValue) {
         if (scaffoldState.bottomSheetState.currentValue == SheetValue.Hidden) {
             showSheet.value = false
-            onDismissRequest()
+            dismissRequest()
         }
     }
     LaunchedEffect(showSheet.value) {
         if (!showSheet.value) {
-            onDismissRequest()
+            dismissRequest()
         }
     }
     BackHandler(enabled = showSheet.value && handleBackPress) {
         coroutineScope.launch {
-            onDismissRequest()
+            dismissRequest()
             sheetState.hide()
         }
     }

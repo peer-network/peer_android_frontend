@@ -7,29 +7,29 @@ import protected.eu.peernetwork.user.remote.UpdateNameMutation
 import protected.eu.peernetwork.user.remote.UpdateProfilePictureMutation
 
 object SettingsMock {
-    fun username(): UpdateNameMutation.UpdateName {
-        return UpdateNameMutation.UpdateName(
+    fun username(): UpdateNameMutation.UpdateUsername {
+        return UpdateNameMutation.UpdateUsername(
             status = Status.SUCCESS.value,
             ResponseCode = null,
         )
     }
 
-    fun email(): UpdateMailMutation.UpdateMail {
-        return UpdateMailMutation.UpdateMail(
+    fun email(): UpdateMailMutation.UpdateEmail {
+        return UpdateMailMutation.UpdateEmail(
             status = Status.SUCCESS.value,
             ResponseCode = null,
         )
     }
 
-    fun bio(): UpdateBiographyMutation.UpdateBiography {
-        return UpdateBiographyMutation.UpdateBiography(
+    fun bio(): UpdateBiographyMutation.UpdateBio {
+        return UpdateBiographyMutation.UpdateBio(
             status = Status.SUCCESS.value,
             ResponseCode = null,
         )
     }
 
-    fun avatar(): UpdateProfilePictureMutation.UpdateProfilePicture {
-        return UpdateProfilePictureMutation.UpdateProfilePicture(
+    fun avatar(): UpdateProfilePictureMutation.UpdateProfileImage {
+        return UpdateProfilePictureMutation.UpdateProfileImage(
             status = Status.SUCCESS.value,
             ResponseCode = null,
         )

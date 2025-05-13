@@ -20,6 +20,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -39,6 +41,7 @@ fun DesignBox(
 ) {
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
+    val updatedContent by rememberUpdatedState(content)
     Box(
         contentAlignment = contentAlignment,
         propagateMinConstraints = propagateMinConstraints,
@@ -46,7 +49,7 @@ fun DesignBox(
                 minWidth = screenWidth * minWidth,
                 minHeight = screenHeight * minHeight
             )
-    ) { content() }
+    ) { updatedContent() }
 }
 
 @Composable
@@ -59,17 +62,19 @@ fun DesignDetailLayout(
     lead: @Composable () -> Unit,
     content: @Composable ColumnScope.() -> Unit,
 ) {
+    val updatedLead by rememberUpdatedState(lead)
+    val updatedContent by rememberUpdatedState(content)
     Row(
         modifier = modifier,
         horizontalArrangement = horizontalArrangement,
         verticalAlignment = verticalAlignment
     ) {
-        lead()
+        updatedLead()
         Column(
             modifier = Modifier.weight(1f),
             verticalArrangement = verticalArrangement,
             horizontalAlignment = horizontalAlignment
-        ) { content() }
+        ) { updatedContent() }
     }
 }
 
@@ -82,19 +87,23 @@ fun DesignDetail(
     options: @Composable (() -> Unit)? = null,
     content: @Composable RowScope.() -> Unit,
 ) {
+    val updatedLead by rememberUpdatedState(lead)
+    val updatedTrailing by rememberUpdatedState(trailing)
+    val updatedOptions by rememberUpdatedState(options)
+    val updatedContent by rememberUpdatedState(content)
     DesignDetailLayout(
         modifier = modifier,
-        lead = { lead?.invoke() },
+        lead = { updatedLead?.invoke() },
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             CompositionLocalProvider(LocalTextStyle provides textStyle.copy(
                 color = MaterialTheme.colorScheme.onBackground
-            )) { content() }
+            )) { updatedContent() }
             CompositionLocalProvider(
                 LocalContentColor provides MaterialTheme.colorScheme.onSurface
-            ) { trailing?.invoke() }
+            ) { updatedTrailing?.invoke() }
         }
-        options?.invoke()
+        updatedOptions?.invoke()
     }
 }
 

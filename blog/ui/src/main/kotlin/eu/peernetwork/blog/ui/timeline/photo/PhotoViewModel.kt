@@ -4,8 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.blog.ui.model.UiPost
-import eu.peernetwork.blog.ui.usecase.PostUsecase
+import eu.peernetwork.blog.ui.usecase.UserPostsUsecase
 import eu.peernetwork.core.common.model.Pageable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,16 +19,17 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class PhotoViewModel @Inject constructor(
-    private val usecase: PostUsecase
+    private val usecase: UserPostsUsecase
 ) : ViewModel() {
     private val mutableState = MutableStateFlow<State>(State.Empty)
 
     val state: StateFlow<State> = mutableState.asStateFlow()
 
-    fun load(page: Pageable) {
+    fun load(page: Pageable, criteria: Criteria? = null) {
         viewModelScope.launch {
             usecase(
-                PostUsecase.Parameter(
+                UserPostsUsecase.Parameter(
+                    criteria = criteria,
                     page = page
                 )
             )

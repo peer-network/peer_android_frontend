@@ -37,7 +37,7 @@ internal class WalletApiDelegateTest {
             mockData
         ).build()
 
-        every { mockData.currentliquidity } returns wallet
+        every { mockData.balance } returns wallet
         coEvery { client.query(any<CurrentliquidityQuery>()).execute() } returns mockResponse
 
         val result = api.get()

@@ -1,9 +1,12 @@
 package eu.peernetwork.social.domain.repository
 
+import eu.peernetwork.core.common.model.Page
 import eu.peernetwork.core.common.model.Pageable
-import eu.peernetwork.social.domain.model.User
-import kotlinx.coroutines.flow.SharedFlow
+import eu.peernetwork.social.domain.model.Post
+import eu.peernetwork.social.domain.model.Tag
 
 interface SearchRepository {
-    fun friends(id: String, pageable: Pageable): SharedFlow<List<User>>
+    suspend fun findAllTags(tag: String, pageable: Pageable): Page<Tag>
+
+    suspend fun findPostsByTitle(title: String, pageable: Pageable): Page<Post>
 }

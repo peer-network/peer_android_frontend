@@ -1,6 +1,7 @@
 package eu.peernetwork.user.ui.registeration
 
 import android.content.res.Configuration
+import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -43,30 +44,30 @@ fun RegistrationScreen(
     onRegistrationSuccess: () -> Unit
 ) {
     val context = LocalContext.current
+    val successMessage = stringResource(R.string.successful_message)
     val component = remember {
         provider.builder(Registration.Builder::class.java).build(context)
     }
+    val handleRegistrationSuccess by rememberUpdatedState(onRegistrationSuccess)
     val viewModel = viewModel(
         modelClass = RegistrationViewModel::class.java,
         viewModelStoreOwner = viewModelStoreOwner,
         factory = component.viewModelFactory()
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val registrationState by remember(state) {
-        derivedStateOf {
-            state is RegistrationViewModel.State.Success
-        }
-    }
     RegistrationScreen(
         loading = state is RegistrationViewModel.State.Loading,
-        error = (state as? RegistrationViewModel.State.Error?)?.error?.message,
+        error = (state as? RegistrationViewModel.State.Error?)?.error?.message?.let {
+            component.resource().string(it)
+        },
         onReset = { viewModel.reset() }
     ) { email, username, password ->
         viewModel.register(username, email, password)
     }
-    LaunchedEffect(registrationState) {
-        if (registrationState) {
-            onRegistrationSuccess()
+    LaunchedEffect(state) {
+        if (state is RegistrationViewModel.State.Success) {
+            Toast.makeText(context, successMessage, Toast.LENGTH_SHORT).show()
+            handleRegistrationSuccess()
         }
     }
 }
@@ -88,6 +89,8 @@ fun RegistrationScreen(
         email.isValidEmail() && username.isValidInput() &&
                 (password.passwordStrength().value >= DesignPasswordStrength.STRONG.value)
     } }
+    val handleReset by rememberUpdatedState(onReset)
+    val handleSubmit by rememberUpdatedState(onSubmit)
     Column(
         modifier = Modifier.fillMaxWidth()
             .padding(bottom = imeHeight.dp)
@@ -102,7 +105,7 @@ fun RegistrationScreen(
         DesignButton(
             enabled = !loadingState.value && validate,
             isLoading = loadingState.value,
-            onClick = { onSubmit(
+            onClick = { handleSubmit(
                 email.text.toString(),
                 username.text.toString(),
                 password.text.toString()) },
@@ -119,7 +122,7 @@ fun RegistrationScreen(
             )
         }
     }
-    DisposableEffect(email) { onDispose { onReset?.invoke() } }
+    DisposableEffect(email) { onDispose { handleReset?.invoke() } }
 }
 
 @Composable

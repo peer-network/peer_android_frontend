@@ -1,6 +1,5 @@
 package eu.peernetwork.app.ui.feed
 
-import android.content.res.Configuration
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -28,33 +27,29 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavType
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import eu.peernetwork.app.BuildConfig
-import eu.peernetwork.app.ui.profile.ProfileScreen
+import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.media.core.model.MimeType
 import eu.peernetwork.blog.ui.timeline.music.MusicScreen
 import eu.peernetwork.blog.ui.timeline.photo.PhotoScreen
 import eu.peernetwork.blog.ui.timeline.video.VideoScreen
 import eu.peernetwork.core.ui.R
-import eu.peernetwork.core.ui.annotation.UiViewModel
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.compose.DesignRouter
 import eu.peernetwork.core.ui.design.compose.DesignTab
 import eu.peernetwork.core.ui.design.compose.DesignToolbarTitle
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.core.ui.theme.PeerTheme
-import eu.peernetwork.social.ui.renderder.UserRenderer
+import eu.peernetwork.social.ui.connection.ConnectionScreen
 
 @Composable
 fun FeedScreen(
     id: String,
     title: MutableState<DesignToolbarTitle>,
+    postLimit: Int,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
+    criteria: Criteria? = null,
 ) {
     val context = LocalContext.current
     val component = remember {
@@ -67,48 +62,67 @@ fun FeedScreen(
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
     val pageState = remember { mutableIntStateOf(state.page) }
-    val controller = rememberNavController()
-    DesignRouter(
-        navController = controller,
-        startDestination = "feed",
-    ) {
-        composable("feed") {
+    FeedNavigation(
+        id = id,
+        title = title,
+        postLimit = postLimit,
+        component = component,
+        viewModelStoreOwner = viewModelStoreOwner
+    ) { controller ->
+        ConnectionScreen(
+            provider = component,
+            viewModelStoreOwner = viewModelStoreOwner
+        ) { connectionController ->
+            val connection by connectionController.observe().collectAsStateWithLifecycle()
             FeedScreen(
                 state = pageState,
                 modifier = Modifier.fillMaxSize(),
                 onNavigate = { viewModel.lastVisited(it) },
-                photo = { PhotoScreen(id, BuildConfig.PAGING_LIMIT, component, viewModelStoreOwner) {
-                    controller.navigateIfNecessary("profile/$it")
-                } },
-                video = { VideoScreen(id, BuildConfig.PAGING_LIMIT, component, viewModelStoreOwner) {
-                    controller.navigateIfNecessary("profile/$it")
-                } },
+                photo = {
+                    PhotoScreen(
+                        id,
+                        BuildConfig.PAGING_LIMIT,
+                        criteria,
+                        { controller.navigateToUsernameSearch(it) },
+                        { controller.navigateToTagSearch(it) },
+                        component,
+                        viewModelStoreOwner,
+                        { controller.navigateIfNecessary("profile/$it") }
+                    ) {
+                        ConnectionScreen(
+                            isFollowing = connection.getOrDefault(it.first, it.third),
+                            isFollowed = it.second,
+                            onClick = { follow -> connectionController.invoke(it.first, !follow) },
+                        )
+                    }
+                },
+                video = {
+                    VideoScreen(
+                        id,
+                        BuildConfig.PAGING_LIMIT,
+                        criteria,
+                        { controller.navigateToUsernameSearch(it) },
+                        { controller.navigateToTagSearch(it) },
+                        component,
+                        viewModelStoreOwner,
+                        { controller.navigateIfNecessary("profile/$it") }
+                    ) {
+                        ConnectionScreen(
+                            isFollowing = connection.getOrDefault(it.first, it.third),
+                            isFollowed = it.second,
+                            onClick = { follow -> connectionController.invoke(it.first, !follow) }
+                        )
+                    }
+                },
                 music = { MusicScreen(component, viewModelStoreOwner) }
             )
-            LaunchedEffect(Unit) {
-                title.value = DesignToolbarTitle(R.string.home_label) {}
-            }
         }
-        composable(
-            "profile/{id}",
-            arguments = listOf(navArgument("id") {
-                type = NavType.StringType
-            })
-        ) { backStackEntry ->
-            val userId = backStackEntry.arguments?.getString("id")
-            ProfileScreen(
-                userId = userId ?: id,
-                title = title,
-                type = if (userId == id) {
-                    UserRenderer.Type.ACCOUNT
-                } else {
-                    userId?.let {
-                        UserRenderer.Type.USER
-                    } ?: UserRenderer.Type.ACCOUNT
-                },
-                provider = component,
-                viewModelStoreOwner = UiViewModel.Owner()
-            )
+        LaunchedEffect(Unit) {
+            title.value = if (criteria is Criteria.Content) {
+                DesignToolbarTitle(R.string.search_label)
+            } else {
+                DesignToolbarTitle(R.string.home_label) {}
+            }
         }
     }
 }
@@ -133,7 +147,9 @@ fun FeedScreen(
                     painter = painterResource(id = it.id),
                     contentDescription = it.label?.let { stringResource(it) },
                     tint = MaterialTheme.colorScheme.tertiary,
-                    modifier = Modifier.padding(vertical = 8.dp).size(28.dp)
+                    modifier = Modifier
+                        .padding(vertical = 8.dp)
+                        .size(28.dp)
                 )
             }
         }
@@ -153,7 +169,7 @@ fun FeedScreen(
 }
 
 @Composable
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview
 fun PreviewFeedScreen() {
     val state = rememberSaveable { mutableIntStateOf(0) }
     PeerTheme {

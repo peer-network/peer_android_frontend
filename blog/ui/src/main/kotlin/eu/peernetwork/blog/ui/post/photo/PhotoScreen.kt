@@ -4,11 +4,13 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
@@ -24,9 +26,11 @@ import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.compose.PostListItem
 import eu.peernetwork.blog.ui.compose.PostPageSkeleton
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
+import eu.peernetwork.blog.ui.engagement.EngagementSpec
 import eu.peernetwork.blog.ui.mapper.mapToContent
 import eu.peernetwork.blog.ui.mapper.mapToProperty
 import eu.peernetwork.blog.ui.moderation.ModerationScreen
+import eu.peernetwork.blog.ui.moderation.ModerationSpec
 import eu.peernetwork.core.common.model.Pageable
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.component.DesignPagingScaffold
@@ -45,7 +49,10 @@ fun PhotoScreen(
     postLimit: Int,
     loadState: MutableState<Boolean>,
     provider: UiComponentProvider,
-    viewModelStoreOwner: ViewModelStoreOwner
+    viewModelStoreOwner: ViewModelStoreOwner,
+    onMentionClick: (String) -> Unit = {},
+    onHashtagClick: (String) -> Unit = {},
+    imageOnClick: (String) -> Unit = {},
 ) {
     val context = LocalContext.current
     val component = remember {
@@ -79,13 +86,16 @@ fun PhotoScreen(
         placeholder = { PostPageSkeleton() },
         onRefresh = { viewModel.load(author, Pageable(0, postLimit)) },
     ) { state, lazyPagingItems ->
-        val isLoading = remember { derivedStateOf {
-            lazyPagingItems.loadState.refresh is LoadState.Loading
+        val refreshed = remember { derivedStateOf {
+            lazyPagingItems.loadState.refresh is LoadState.NotLoading
         } }
         EngagementScreen(
             author,
             postLimit,
-            isLoading,
+            refreshed,
+            onMentionClick = onMentionClick,
+            onHashtagClick = onHashtagClick,
+            imageOnClick,
             component,
             viewModelStoreOwner
         ) { engagement ->
@@ -99,21 +109,14 @@ fun PhotoScreen(
                         key = { index -> index }
                     ) { index ->
                         lazyPagingItems[index]?.let { photo ->
-                            val content = photo.mapToContent()
-                            PostListItem(
-                                photo,
-                                index,
-                                currentTime,
-                                engagements = { EngagementScreen(
-                                    content,
-                                    engagement
-                                ) },
-                                moderation = {
-                                    ModerationScreen(
-                                        model = content,
-                                        spec = spec
-                                    )
-                                },
+                            PhotoScreen(
+                                post = photo,
+                                index = index,
+                                currentTime = currentTime,
+                                onMentionClick = onMentionClick,
+                                onHashtagClick = onHashtagClick,
+                                engagementSpec = engagement,
+                                moderationSpec = spec
                             ) {
                                 val media = photo.media.first()
                                 component.imageView()(
@@ -162,4 +165,36 @@ fun Long.formatTimeAgo(time: Long): String {
             String.format(Locale.getDefault(), "%1\$tb %1\$td, %1\$tY", calendar)
         }
     }
+}
+
+@Composable
+fun LazyItemScope.PhotoScreen(
+    post: UiPost,
+    index: Int,
+    currentTime: State<Long>,
+    onMentionClick: (String) -> Unit = {},
+    onHashtagClick: (String) -> Unit = {},
+    engagementSpec: EngagementSpec,
+    moderationSpec: ModerationSpec,
+    content: @Composable (UiPost) -> Unit = {}
+) {
+    val model = remember(post) { post.mapToContent() }
+    PostListItem(
+        post,
+        index,
+        currentTime,
+        onMentionClick = onMentionClick,
+        onHashtagClick = onHashtagClick,
+        engagements = { EngagementScreen(
+            model,
+            engagementSpec
+        ) },
+        moderation = {
+            ModerationScreen(
+                model = model,
+                spec = moderationSpec
+            )
+        },
+        content = content
+    )
 }

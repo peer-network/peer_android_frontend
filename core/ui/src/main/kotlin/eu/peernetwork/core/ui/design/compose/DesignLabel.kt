@@ -12,6 +12,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
@@ -28,6 +30,8 @@ fun DesignLabel(
     label: @Composable (() -> Unit)? = null,
     content: @Composable (BoxScope.() -> Unit),
 ) {
+    val updatedLabel by rememberUpdatedState(label)
+    val updatedContent by rememberUpdatedState(content)
     ConstraintLayout(modifier = modifier) {
         val (contentTag, labelTag) = createRefs()
         Box(modifier = Modifier.constrainAs(contentTag) {
@@ -37,7 +41,7 @@ fun DesignLabel(
             if (visible) {
                 bottom.linkTo(labelTag.top)
             }
-        }) { content() }
+        }) { updatedContent() }
         AnimatedVisibility(
             visible = visible,
             modifier = Modifier.constrainAs(labelTag) {
@@ -46,7 +50,7 @@ fun DesignLabel(
                 end.linkTo(parent.end)
                 width = Dimension.fillToConstraints
         }) {
-            label?.run {
+            updatedLabel?.run {
                 CompositionLocalProvider(LocalTextStyle provides textStyle) { this() }
             }
         }

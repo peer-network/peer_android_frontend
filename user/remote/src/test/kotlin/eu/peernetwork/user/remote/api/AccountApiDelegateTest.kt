@@ -45,7 +45,7 @@ internal class AccountApiDelegateTest {
             mockData
         ).build()
 
-        every { mockData.profile } returns profile
+        every { mockData.getProfile } returns profile
         coEvery { client.query(any<ProfileQuery>()).execute() } returns mockResponse
 
         val result = api.get("<test-id>")
@@ -65,7 +65,7 @@ internal class AccountApiDelegateTest {
             mockData
         ).build()
 
-        every { mockData.profile } returns profile
+        every { mockData.getProfile } returns profile
         coEvery { client.query(any<ProfileQuery>()).execute() } returns mockResponse
 
         val result = try {
@@ -175,7 +175,7 @@ internal class AccountApiDelegateTest {
             mockData
         ).build()
 
-        every { mockData.verifiedAccount } returns mockModel
+        every { mockData.verifyAccount } returns mockModel
         coEvery { client.mutation(any<VerifiedAccountMutation>()).execute() } returns mockResponse
 
         api.activate(code)
@@ -195,7 +195,7 @@ internal class AccountApiDelegateTest {
             mockData
         ).build()
 
-        every { mockData.verifiedAccount } returns mockModel
+        every { mockData.verifyAccount } returns mockModel
         coEvery { client.mutation(any<VerifiedAccountMutation>()).execute() } returns mockResponse
 
         val result = try {

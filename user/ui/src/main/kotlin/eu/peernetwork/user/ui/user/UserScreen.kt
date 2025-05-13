@@ -2,19 +2,15 @@ package eu.peernetwork.user.ui.user
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -32,7 +28,6 @@ import eu.peernetwork.core.ui.design.compose.DesignAsyncImage
 import eu.peernetwork.core.ui.design.compose.DesignTitle
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffold
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
-import eu.peernetwork.core.ui.design.compose.DesignOutlinedButton
 import eu.peernetwork.user.ui.R
 import eu.peernetwork.user.ui.compose.Overview
 import eu.peernetwork.user.ui.compose.ProfileScaffold
@@ -43,7 +38,7 @@ fun UserScreen(
     loadState: MutableState<Boolean>,
     modifier: Modifier = Modifier,
     provider: UiComponentProvider,
-    onFollow: () -> Unit,
+    onFollow: @Composable (Pair<Boolean, Boolean>) -> Unit,
     onClick: (Int) -> Unit,
     viewModelStoreOwner: ViewModelStoreOwner,
 ) {
@@ -82,7 +77,7 @@ fun UserScreen(
         UserScreen(
             modifier = modifier,
             account = it,
-            onFollow = onFollow,
+            connection = onFollow,
             onClick = onClick
         )
     }
@@ -98,9 +93,11 @@ fun UserScreen(
 fun UserScreen(
     account: UiAccount,
     modifier: Modifier = Modifier,
-    onFollow: () -> Unit,
+    connection: @Composable (Pair<Boolean, Boolean>) -> Unit,
     onClick: (Int) -> Unit,
 ) {
+    val clickHandler by rememberUpdatedState(onClick)
+    val updatedConnection by rememberUpdatedState(connection)
     val emptyDescription = stringResource(R.string.empty_description_message)
     ProfileScaffold(
         modifier = modifier,
@@ -109,31 +106,13 @@ fun UserScreen(
             Box(
                 modifier = Modifier.padding(vertical = 8.dp)
                     .padding(bottom = 4.dp)
-            ) {
-                DesignOutlinedButton(
-                    onClick = onFollow,
-                    isLoading = false,
-                    shape = RoundedCornerShape(8.dp),
-                    textStyle = MaterialTheme.typography.bodySmall,
-                    enabled = false,
-                    contentPadding = PaddingValues(vertical = 4.dp, horizontal = 32.dp),
-                    modifier = Modifier
-                        .padding(start = 4.dp)
-                        .height(28.dp),
-                    content = {
-                        Text(
-                            text = stringResource(R.string.follow_label),
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                    }
-                )
-            }
+            ) { updatedConnection(account.isfollowing to account.isfollowed) }
         },
         options = {
             Overview(
                 overview = account.overview,
                 modifier = Modifier.fillMaxWidth(),
-                onClick = onClick
+                onClick = { if (it < 2) clickHandler(it) }
             )
         }
     ) {
@@ -160,8 +139,10 @@ fun PreviewUserScreen() {
                 peers = 0,
                 followers = 0,
                 followed = 0
-            )
+            ),
+            isfollowing = false,
+            isfollowed = false
         )
-        UserScreen(onFollow = { }, account = model) {}
+        UserScreen(connection = { }, account = model) {}
     }
 }

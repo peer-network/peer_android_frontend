@@ -50,7 +50,9 @@ fun LoginScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
     LoginScreen(
         loading = state is LoginViewModel.State.Loading,
-        error = (state as? LoginViewModel.State.Error?)?.error?.message,
+        error = (state as? LoginViewModel.State.Error?)?.error?.message?.let {
+            component.resource().string(it)
+        },
         onReset = { viewModel.reset() }
     ) { email, password -> viewModel.login(email, password) }
 }
@@ -70,6 +72,8 @@ fun LoginScreen(
         email.isValidEmail() && password.isValidInput()
     } }
     val imeHeight = WindowInsets.ime.getBottom(LocalDensity.current) / 4
+    val handleReset by rememberUpdatedState(onReset)
+    val handleSubmit by rememberUpdatedState(onSubmit)
     Column(
         modifier = Modifier.fillMaxWidth()
             .padding(bottom = imeHeight.dp)
@@ -83,7 +87,7 @@ fun LoginScreen(
         DesignButton(
             enabled = !loadingState.value && validate,
             isLoading = loading,
-            onClick = { onSubmit(email.text.toString(), password.text.toString()) },
+            onClick = { handleSubmit(email.text.toString(), password.text.toString()) },
             modifier = Modifier.fillMaxWidth().padding(
                 top = 16.dp,
                 bottom = 24.dp
@@ -97,7 +101,7 @@ fun LoginScreen(
             )
         }
     }
-    DisposableEffect(email) { onDispose { onReset?.invoke() } }
+    DisposableEffect(email) { onDispose { handleReset?.invoke() } }
 }
 
 @Composable

@@ -17,6 +17,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -45,6 +47,10 @@ fun TextPostCard(
     moderation: @Composable RowScope.() -> Unit = {},
     content: @Composable () -> Unit,
 ) {
+    val updatedAction by rememberUpdatedState(actions)
+    val updatedContent by rememberUpdatedState(content)
+    val updatedEngagements by rememberUpdatedState(engagements)
+    val updatedModeration by rememberUpdatedState(moderation)
     PostCard(
         modifier = modifier,
         header = {
@@ -55,7 +61,7 @@ fun TextPostCard(
                     modifier = Modifier.weight(1f),
                     onClick = onClick
                 )
-                actions()
+                updatedAction()
             }
         },
         toolbar = {},
@@ -73,12 +79,12 @@ fun TextPostCard(
                 modifier = Modifier.padding(top = 4.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                engagements()
+                updatedEngagements()
                 Spacer(modifier = Modifier.weight(1f))
-                moderation()
+                updatedModeration()
             }
         }
-    ) { content() }
+    ) { updatedContent() }
 }
 
 @Composable
@@ -91,7 +97,9 @@ fun PreviewTextPostCard() {
                 id = "",
                 slug = 12034,
                 username = "JohnDoe",
-                imageUrl = "http://localhost"
+                imageUrl = "http://localhost",
+                isfollowing = false,
+                isfollowed = false
             ),
             description = "Description...",
             engagements = {

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="peer_label">Peers</string>
+    <string name="follow_label">Follow</string>
+    <string name="following_label">Following</string>
+</resources>

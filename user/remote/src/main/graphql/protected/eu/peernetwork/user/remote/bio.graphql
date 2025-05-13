@@ -1,5 +1,5 @@
 mutation UpdateBiography($biography: String!) {
-    updateBiography(biography: $biography) {
+    updateBio(biography: $biography) {
         status
         ResponseCode
     }

@@ -1,8 +1,8 @@
 mutation CreatePost(
-    $action: PostenType!,
+    $action: PostType!,
     $title: String!,
     $description: String,
-    $contentType: ContenType!,
+    $contentType: ContentType!,
     $media: [String!],
     $cover: [String!],
     $tags: [String!],
@@ -13,7 +13,7 @@ mutation CreatePost(
         contenttype: $contentType,
         media: $media,
         cover: $cover,
-        tags: $tags }
+        tags: $tags },
     ) {
         status
         ResponseCode

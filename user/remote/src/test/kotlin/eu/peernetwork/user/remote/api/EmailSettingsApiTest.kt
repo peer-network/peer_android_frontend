@@ -40,7 +40,7 @@ internal class EmailSettingsApiTest {
             mockData
         ).build()
 
-        every { mockData.updateMail } returns mockModel
+        every { mockData.updateEmail } returns mockModel
         coEvery { client.mutation(any<UpdateMailMutation>()).execute() } returns mockResponse
 
         api(email, password)
@@ -61,7 +61,7 @@ internal class EmailSettingsApiTest {
             mockData
         ).build()
 
-        every { mockData.updateMail } returns mockModel
+        every { mockData.updateEmail } returns mockModel
         coEvery { client.mutation(any<UpdateMailMutation>()).execute() } returns mockResponse
 
         val result = try {

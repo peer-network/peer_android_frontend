@@ -1,18 +1,22 @@
 query Getallposts(
-    $filter: [FilterType!],
-    $sort: SortType,
+    $filter: [PostFilterType!],
+    $sort: PostSortType,
+    $tag: String,
+    $title: String,
     $userId: ID,
     $postId: ID,
-    $offset: Int
+    $offset: Int,
     $limit: Int
 ) {
-    getallposts(
+    listPosts(
         filterBy: $filter,
         sortBy: $sort,
+        tag: $tag,
+        title: $title,
         userid: $userId,
         postid: $postId,
-        postLimit: $limit,
-        postOffset: $offset
+        limit: $limit,
+        offset: $offset
     ) {
         status
         counter

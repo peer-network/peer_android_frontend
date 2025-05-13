@@ -26,7 +26,7 @@ class AccountApiDelegate @Inject constructor(
     override suspend fun get(id: String, refresh: Boolean): AccountModel {
         val query = ProfileQuery(Optional.present(id))
         val response = client.query(query).executeOrThrow()
-        val data = response.getOrThrow().profile
+        val data = response.getOrThrow().getProfile
         response.assertOrThrow(data.status, data.ResponseCode)
         val account = data.affectedRows?.mapToDomain() ?: throw AccountNotFoundException()
         val image = if (!refresh) {
@@ -62,7 +62,7 @@ class AccountApiDelegate @Inject constructor(
     override suspend fun activate(code: String) {
         val mutation = VerifiedAccountMutation(code)
         val response = client.mutation(mutation).executeOrThrow()
-        val data = response.getOrThrow().verifiedAccount
+        val data = response.getOrThrow().verifyAccount
         response.assertOrThrow(data.status, data.ResponseCode)
     }
 

@@ -27,7 +27,7 @@ import eu.peernetwork.core.ui.theme.PeerTheme
 fun ProfileScaffold(
     modifier: Modifier = Modifier,
     textStyle: TextStyle = MaterialTheme.typography.bodyMedium,
-    contentPadding: PaddingValues = PaddingValues(top = 8.dp),
+    contentPadding: PaddingValues = PaddingValues(top = 12.dp),
     avatar: @Composable (() -> Unit)? = null,
     indicator: @Composable (() -> Unit)? = null,
     actions: @Composable (() -> Unit)? = null,
@@ -48,7 +48,7 @@ fun ProfileScaffold(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 8.dp, bottom = 4.dp)
+                    .padding(top = 6.dp, bottom = 2.dp)
             ) { options?.invoke() }
         }) { Box(modifier = Modifier
         .weight(1f)
@@ -109,9 +109,7 @@ fun PreviewProfileScaffold() {
     PeerTheme {
         Column {
             ProfileScaffold(modifier = Modifier.padding(16.dp))
-            ProfileScaffold(modifier = Modifier.padding(16.dp)) {
-                Text(text = "icon")
-            }
+            ProfileScaffold(modifier = Modifier.padding(16.dp)) { Text(text = "icon") }
             ProfileScaffold(
                 modifier = Modifier.padding(16.dp),
                 avatar = {
@@ -120,9 +118,7 @@ fun PreviewProfileScaffold() {
                         .background(MaterialTheme.colorScheme.tertiaryContainer)
                     )
                 },
-                actions = {
-                    Text(text = "icon")
-                },
+                actions = { Text(text = "icon") },
                 options = {
                     Text(text = "Overview", modifier = Modifier.padding(start = 8.dp))
                 }

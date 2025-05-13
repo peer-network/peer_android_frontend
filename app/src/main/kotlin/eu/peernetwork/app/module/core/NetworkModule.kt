@@ -7,6 +7,7 @@ import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.app.interceptor.LoggingInterceptor
 import eu.peernetwork.user.remote.interceptor.JwtInterceptor
 import okhttp3.OkHttpClient
+import java.util.concurrent.TimeUnit
 import javax.inject.Named
 
 @Module
@@ -20,7 +21,11 @@ internal object NetworkModule {
     fun provideMediaUrl(): String = BuildConfig.MEDIA_URL
 
     @Provides
-    fun provideOkHttpClient(): OkHttpClient = OkHttpClient()
+    fun provideOkHttpClient(): OkHttpClient = OkHttpClient.Builder()
+        .connectTimeout(5, TimeUnit.SECONDS)
+        .readTimeout(15, TimeUnit.SECONDS)
+        .writeTimeout(10, TimeUnit.SECONDS)
+        .build()
 
     @Provides
     fun provideApolloClient(

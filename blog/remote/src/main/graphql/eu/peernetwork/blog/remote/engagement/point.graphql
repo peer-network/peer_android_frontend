@@ -1,5 +1,5 @@
 query Dailyfreestatus {
-    dailyfreestatus {
+    getDailyFreeStatus {
         status
         ResponseCode
         affectedRows {

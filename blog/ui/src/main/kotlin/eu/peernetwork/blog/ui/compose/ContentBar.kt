@@ -1,5 +1,6 @@
 package eu.peernetwork.blog.ui.compose
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
@@ -10,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -34,6 +36,9 @@ fun ContentBar(
     color: Color = MaterialTheme.colorScheme.onBackground,
     descriptionColor: Color = MaterialTheme.colorScheme.tertiary,
     titleOnClick: (() -> Unit)? = null,
+    onMentionClick: (String) -> Unit = {},
+    onHashtagClick: (String) -> Unit = {},
+    imageOnClick: (String) -> Unit = {},
     content: @Composable () -> Unit
 ) {
     DesignDetailLayout(
@@ -48,7 +53,11 @@ fun ContentBar(
                     imageUrl = model.author.imageUrl,
                     size = 36.dp,
                     color = MaterialTheme.colorScheme.surfaceDim,
-                    style = MaterialTheme.typography.bodyMedium.copy(color = color)
+                    style = MaterialTheme.typography.bodyMedium.copy(color = color),
+                    modifier = Modifier.clickable {
+                        imageOnClick(model.author.id)
+                    }
+
                 )
             }
         },
@@ -76,6 +85,8 @@ fun ContentBar(
                         color = descriptionColor
                     )
                 ),
+                onMentionClick = onMentionClick,
+                onHashtagClick = onHashtagClick
             )
             content()
         }
@@ -89,15 +100,18 @@ fun PreviewContentBar() {
         ContentBar(
             model = UiContent(
                 id = "abc123",
-                title = "John Doe",
+                title = buildAnnotatedString { append("John Doe") },
                 author = UiAuthor(
                     id = "",
                     slug = 12034,
                     username = "JohnDoe",
-                    imageUrl = "http://localhost"
+                    imageUrl = "http://localhost",
+                    isfollowing = false,
+                    isfollowed = false
                 ),
                 createdAt = System.currentTimeMillis(),
-                description = "This is a mock description for a content post. It's purely for testing.",
+                description = buildAnnotatedString {
+                    append("This is a mock description for a content post. It's purely for testing.") },
                 likes = 25,
                 isLiked = true,
                 isDisliked = false,

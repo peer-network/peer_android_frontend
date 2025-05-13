@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
@@ -25,6 +27,9 @@ fun SetupScaffold(
     footer: @Composable () -> Unit,
     content: @Composable () -> Unit,
 ) {
+    val updatedHeader by rememberUpdatedState(header)
+    val updatedContent by rememberUpdatedState(content)
+    val updatedFooter by rememberUpdatedState(footer)
     ConstraintLayout(modifier = modifier.fillMaxSize()) {
         val (headerTag, sectionTag, footerTag) = createRefs()
         createVerticalChain(headerTag, sectionTag, chainStyle = ChainStyle.Packed)
@@ -35,7 +40,7 @@ fun SetupScaffold(
                 end.linkTo(parent.end, margin = 24.dp)
                 bottom.linkTo(sectionTag.top)
             },
-        ) { header() }
+        ) { updatedHeader() }
         DesignBox(
             minHeight = 0.45f,
             contentAlignment = Alignment.TopCenter,
@@ -45,7 +50,7 @@ fun SetupScaffold(
                 end.linkTo(parent.end, margin = 24.dp)
                 bottom.linkTo(footerTag.top)
             }
-        ) { content() }
+        ) { updatedContent() }
         Box(
             modifier = Modifier.constrainAs(footerTag) {
                 top.linkTo(sectionTag.bottom)
@@ -53,7 +58,7 @@ fun SetupScaffold(
                 end.linkTo(parent.end, margin = 24.dp)
                 bottom.linkTo(parent.bottom, margin = 36.dp)
             }
-        ) { footer() }
+        ) { updatedFooter() }
     }
 }
 

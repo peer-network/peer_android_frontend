@@ -13,6 +13,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -34,6 +36,9 @@ fun DesignCard(
     trailing: @Composable (() -> Unit)? = null,
     content: @Composable (BoxScope.() -> Unit),
 ) {
+    val updatedLeading by rememberUpdatedState(leading)
+    val updatedTrailing by rememberUpdatedState(trailing)
+    val updatedContent by rememberUpdatedState(content)
     Row(
         horizontalArrangement = horizontalArrangement,
         verticalAlignment = verticalAlignment,
@@ -42,9 +47,9 @@ fun DesignCard(
         .background(color)
         .padding(contentPadding)
     ) {
-        Box(modifier = Modifier.wrapContentWidth()) { leading?.invoke() }
-        Box(modifier = Modifier.weight(1f)) { content() }
-        Box(modifier = Modifier.wrapContentWidth()) { trailing?.invoke() }
+        Box(modifier = Modifier.wrapContentWidth()) { updatedLeading?.invoke() }
+        Box(modifier = Modifier.weight(1f)) { updatedContent() }
+        Box(modifier = Modifier.wrapContentWidth()) { updatedTrailing?.invoke() }
     }
 }
 

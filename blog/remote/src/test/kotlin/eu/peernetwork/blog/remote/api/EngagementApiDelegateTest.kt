@@ -18,7 +18,7 @@ import io.mockk.verify
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
-import type.ActionType
+import type.PostActionType
 import java.util.UUID
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -36,7 +36,7 @@ internal class EngagementApiDelegateTest {
     @Test
     fun `test user point`(): Unit = runBlocking {
         val name = "<test-name>"
-        val user = DailyfreestatusQuery.Dailyfreestatus(
+        val user = DailyfreestatusQuery.GetDailyFreeStatus(
             status = Status.SUCCESS.value,
             ResponseCode = "<test-response-code>",
             affectedRows = listOf(
@@ -55,7 +55,7 @@ internal class EngagementApiDelegateTest {
             mockData
         ).build()
 
-        every { mockData.dailyfreestatus } returns user
+        every { mockData.getDailyFreeStatus } returns user
         coEvery { client.query(any<DailyfreestatusQuery>()).execute() } returns mockResponse
 
         val result = api.points()
@@ -76,12 +76,12 @@ internal class EngagementApiDelegateTest {
             mockData
         ).build()
 
-        every { mockData.resolveActionPost } returns response
+        every { mockData.resolvePostAction } returns response
         coEvery { client.mutation(any<ResolveActionPostMutation>()).execute() } returns mockResponse
 
         api.post(id, engagement)
 
-        verify { client.mutation(ResolveActionPostMutation(ActionType.LIKE, id)) }
+        verify { client.mutation(ResolveActionPostMutation(PostActionType.LIKE, id)) }
     }
 
     @Test
@@ -97,7 +97,7 @@ internal class EngagementApiDelegateTest {
             mockData
         ).build()
 
-        every { mockData.resolveActionPost } returns response
+        every { mockData.resolvePostAction } returns response
         coEvery { client.mutation(any<ResolveActionPostMutation>()).execute() } returns mockResponse
 
         assertNull(try {
