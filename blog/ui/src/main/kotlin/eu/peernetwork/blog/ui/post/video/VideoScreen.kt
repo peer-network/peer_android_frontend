@@ -53,6 +53,7 @@ fun VideoScreen(
     viewModelStoreOwner: ViewModelStoreOwner,
     onMentionClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
+    imageOnClick: (String) -> Unit = {},
 ) {
     val context = LocalContext.current
     val component = remember {
@@ -94,6 +95,7 @@ fun VideoScreen(
             refreshed,
             onMentionClick,
             onHashtagClick,
+            imageOnClick,
             component,
             viewModelStoreOwner
         ) { engagement ->

@@ -35,6 +35,7 @@ fun MemberScreen(
     onSettings: () -> Unit = {},
     onMentionClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
+    imageOnClick: (String) -> Unit = {},
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
 ) {
@@ -94,7 +95,8 @@ fun MemberScreen(
                     BlogRenderer.Type.UNSPECIFIED,
                     viewModelStoreOwner,
                     onMentionClick,
-                    onHashtagClick
+                    onHashtagClick,
+                    imageOnClick
                 )
             )
         }

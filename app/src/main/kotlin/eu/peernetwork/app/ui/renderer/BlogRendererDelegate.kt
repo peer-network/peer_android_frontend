@@ -37,6 +37,7 @@ class BlogRendererDelegate(val provider: UiComponentProvider) : BlogRenderer {
                 spec.viewModelStoreOwner,
                 spec.onMentionClick,
                 spec.onHashtagClick,
+                spec.imageOnClick
             )
             BlogRenderer.Type.VIDEO -> VideoScreen(
                 spec.id,
@@ -46,6 +47,7 @@ class BlogRendererDelegate(val provider: UiComponentProvider) : BlogRenderer {
                 spec.viewModelStoreOwner,
                 spec.onMentionClick,
                 spec.onHashtagClick,
+                spec.imageOnClick
             )
             BlogRenderer.Type.AUDIO -> MusicScreen(provider, spec.viewModelStoreOwner)
             BlogRenderer.Type.UNSPECIFIED -> Blog { offset ->
@@ -58,6 +60,7 @@ class BlogRendererDelegate(val provider: UiComponentProvider) : BlogRenderer {
                         spec.viewModelStoreOwner,
                         spec.onMentionClick,
                         spec.onHashtagClick,
+                        spec.imageOnClick
                     )
                     1 -> VideoScreen(
                         spec.id,
@@ -67,6 +70,7 @@ class BlogRendererDelegate(val provider: UiComponentProvider) : BlogRenderer {
                         spec.viewModelStoreOwner,
                         spec.onMentionClick,
                         spec.onHashtagClick,
+                        spec.imageOnClick
                     )
                     2 -> MusicScreen(provider, spec.viewModelStoreOwner)
                 }
