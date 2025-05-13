@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.DisposableEffect
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModelProvider
 import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.core.ui.component.UiComponent
@@ -30,6 +31,7 @@ class MainActivity : ComponentActivity(), UiComponent.Provider<Main.Component> {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProvider(this, factory)[MainViewModel::class.java]
         installSplashScreen()
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
             PeerTheme(
                 isDarkMode = if (BuildConfig.USE_SYSTEM_THEME) {

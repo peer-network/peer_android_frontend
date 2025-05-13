@@ -13,6 +13,7 @@ import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -71,6 +72,9 @@ fun SetupScreen(
     onOptionChange: (Int) -> Unit,
 ) {
     val contentState = rememberPagerState(pageCount = { 2 }, initialPage = state.intValue)
+    val updatedLogin by rememberUpdatedState(login)
+    val updatedRegister by rememberUpdatedState(register)
+    val handleOptionChange by rememberUpdatedState(onOptionChange)
     HorizontalPager(
         state = contentState,
         verticalAlignment = Alignment.Top,
@@ -78,14 +82,14 @@ fun SetupScreen(
     ) { page ->
         Crossfade(targetState = page) { targetPage ->
             when (targetPage) {
-                0 -> login()
-                1 -> register()
+                0 -> updatedLogin()
+                1 -> updatedRegister()
             }
         }
     }
     LaunchedEffect(state.intValue) {
         state.intValue.run {
-            onOptionChange(this)
+            handleOptionChange(this)
             contentState.scrollToPage(this)
         }
     }

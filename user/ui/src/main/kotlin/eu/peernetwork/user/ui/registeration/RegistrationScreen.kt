@@ -1,5 +1,5 @@
 package eu.peernetwork.user.ui.registeration
-// Imports all necessary stuffs
+
 import android.content.res.Configuration
 import android.widget.Toast
 import androidx.compose.foundation.layout.Column
@@ -48,18 +48,13 @@ fun RegistrationScreen(
     val component = remember {
         provider.builder(Registration.Builder::class.java).build(context)
     }
+    val handleRegistrationSuccess by rememberUpdatedState(onRegistrationSuccess)
     val viewModel = viewModel(
         modelClass = RegistrationViewModel::class.java,
         viewModelStoreOwner = viewModelStoreOwner,
         factory = component.viewModelFactory()
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
-
-    // TASK: The goal is to apply the same logic used in LoginScreen -> RegistrationScreen.
-    // >> Errors are mapped to the UI by observing the ViewModel's state -> showing the error message.
-    // >> Registration success is handled by checking the ViewModel's success state and showing a Toast message.
-
-    // Idk this shit Call UI for registration form
     RegistrationScreen(
         loading = state is RegistrationViewModel.State.Loading,
         error = (state as? RegistrationViewModel.State.Error?)?.error?.message?.let {
@@ -69,12 +64,10 @@ fun RegistrationScreen(
     ) { email, username, password ->
         viewModel.register(username, email, password)
     }
-
-    // Handle registration success and show a Toast message
     LaunchedEffect(state) {
         if (state is RegistrationViewModel.State.Success) {
             Toast.makeText(context, successMessage, Toast.LENGTH_SHORT).show()
-            onRegistrationSuccess() // Callback when registration is successful
+            handleRegistrationSuccess()
         }
     }
 }
@@ -96,8 +89,8 @@ fun RegistrationScreen(
         email.isValidEmail() && username.isValidInput() &&
                 (password.passwordStrength().value >= DesignPasswordStrength.STRONG.value)
     } }
-
-    // Registration form UI
+    val handleReset by rememberUpdatedState(onReset)
+    val handleSubmit by rememberUpdatedState(onSubmit)
     Column(
         modifier = Modifier.fillMaxWidth()
             .padding(bottom = imeHeight.dp)
@@ -112,7 +105,7 @@ fun RegistrationScreen(
         DesignButton(
             enabled = !loadingState.value && validate,
             isLoading = loadingState.value,
-            onClick = { onSubmit(
+            onClick = { handleSubmit(
                 email.text.toString(),
                 username.text.toString(),
                 password.text.toString()) },
@@ -129,9 +122,7 @@ fun RegistrationScreen(
             )
         }
     }
-
-    // Reset state when composable is disposed
-    DisposableEffect(email) { onDispose { onReset?.invoke() } }
+    DisposableEffect(email) { onDispose { handleReset?.invoke() } }
 }
 
 @Composable

@@ -2,7 +2,6 @@ package eu.peernetwork.social.data.interactor
 
 import eu.peernetwork.social.domain.interactor.ConnectionInteractor
 import eu.peernetwork.social.domain.usecase.FollowUsecase
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.onSubscription
@@ -25,8 +24,7 @@ class ConnectionInteractorDelegate @Inject constructor(
         val previous = connections[id]
         try {
             connections[id] = value
-            state.tryEmit(connections)
-            delay(200)
+            state.tryEmit(connections.toMap())
             connections[id] = followUsecase(id)
         } catch (error: Throwable) {
             if (previous == null) {
@@ -37,16 +35,16 @@ class ConnectionInteractorDelegate @Inject constructor(
             throw error
         } finally {
             mutexes.remove(id)
-            state.tryEmit(connections)
+            state.tryEmit(connections.toMap())
         }
     }
 
     override fun observe(): SharedFlow<Map<String, Boolean>> = state.onSubscription {
-        state.tryEmit(connections)
+        state.tryEmit(connections.toMap())
     }
 
     override fun clear() {
         connections.clear()
-        state.tryEmit(connections)
+        state.tryEmit(connections.toMap())
     }
 }
