@@ -77,39 +77,17 @@ fun CommentScreen(
     val replyTo = remember { mutableStateOf<String?>(null) }
     val isLoading = remember { derivedStateOf { contents.value?.isLoading == true } }
     val isSelected = remember { derivedStateOf { contents.value?.selected != null } }
-    val mentionToOpen = remember { mutableStateOf<String?>(null) }
-    val hashtagToOpen = remember { mutableStateOf<String?>(null) }
-    val imageToOpen = remember { mutableStateOf<String?>(null) }
-
-    LaunchedEffect(state.value) {
-        if (state.value == null) {
-            viewModel.reset(true)
-            delay(200)
-            mentionToOpen.value?.let {
-                onMentionClick(it)
-                mentionToOpen.value = null
-            }
-            hashtagToOpen.value?.let {
-                onHashtagClick(it)
-                hashtagToOpen.value = null
-            }
-            imageToOpen.value?.let {
-                imageOnClick(it)
-                imageToOpen.value = null
-            }
-        }
-    }
     CommentScreen(
         tag = tag,
         state = state,
         replyTo = replyTo,
         isLoading = isLoading,
         onMentionClick = { username ->
-            mentionToOpen.value = username
+            onMentionClick(username)
             state.value = null
         },
         onHashtagClick = { hashtag ->
-            hashtagToOpen.value = hashtag
+            onHashtagClick(hashtag)
             state.value = null
         },
         modifier = modifier.fillMaxSize(),
@@ -132,18 +110,9 @@ fun CommentScreen(
                             titleOnClick = {
                                 replyTo.value = comment.author.username
                             },
-                            onMentionClick = { username ->
-                                mentionToOpen.value = username
-                                state.value = null
-                            },
-                            onHashtagClick = { hashtag ->
-                                hashtagToOpen.value = hashtag
-                                state.value = null
-                            },
-                            imageOnClick = { imageUrl ->
-                                imageToOpen.value = imageUrl
-                                state.value = null
-                            }
+                            onMentionClick = onMentionClick,
+                            onHashtagClick = onHashtagClick,
+                            imageOnClick = imageOnClick
                         ) {
                             val liked = remember { derivedStateOf {
                                 contents.value?.likes?.firstOrNull { it.id == comment.id }
@@ -167,6 +136,11 @@ fun CommentScreen(
                     items.refresh()
                 }
             }
+        }
+    }
+    LaunchedEffect(state.value) {
+        if (state.value == null) {
+            viewModel.reset(true)
         }
     }
     LaunchedEffect(sheetState.value) {

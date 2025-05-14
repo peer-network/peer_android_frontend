@@ -3,6 +3,8 @@ package eu.peernetwork.blog.ui.timeline.video
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -46,6 +48,7 @@ fun VideoScreen(
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
     onClick: (String) -> Unit = {},
+    listState: LazyListState = rememberLazyListState(),
     connection: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit = {}
 ) {
     val context = LocalContext.current
@@ -104,7 +107,6 @@ fun VideoScreen(
             onRefresh = { lazyPagingItems.refresh() }
         ) {
             EngagementScreen(
-                id,
                 postLimit,
                 refreshed,
                 onMentionClick,
@@ -117,7 +119,10 @@ fun VideoScreen(
                     component,
                     viewModelStoreOwner
                 ) { spec ->
-                    LazyColumn(modifier = Modifier.fillMaxSize()) {
+                    LazyColumn(
+                        state = listState,
+                        modifier = Modifier.fillMaxSize()
+                    ) {
                         items(
                             count = lazyPagingItems.itemCount,
                             key = { index -> index }

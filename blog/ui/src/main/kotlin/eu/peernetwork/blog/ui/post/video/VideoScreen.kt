@@ -90,7 +90,6 @@ fun VideoScreen(
             lazyPagingItems.loadState.refresh is LoadState.NotLoading
         } }
         EngagementScreen(
-            author,
             postLimit,
             refreshed,
             onMentionClick,

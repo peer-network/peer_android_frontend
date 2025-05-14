@@ -10,6 +10,8 @@ import androidx.lifecycle.ViewModelStoreOwner
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.*
@@ -49,6 +51,7 @@ fun PhotoScreen(
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
     onClick: (String) -> Unit = {},
+    listState: LazyListState = rememberLazyListState(),
     connection: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit = {}
 ) {
     val context = LocalContext.current
@@ -106,7 +109,6 @@ fun PhotoScreen(
             onRefresh = { lazyPagingItems.refresh() }
         ) {
             EngagementScreen(
-                id,
                 postLimit,
                 refreshed,
                 onMentionClick,
@@ -119,7 +121,10 @@ fun PhotoScreen(
                     component,
                     viewModelStoreOwner
                 ) { spec ->
-                    LazyColumn(modifier = Modifier.fillMaxSize()) {
+                    LazyColumn(
+                        state = listState,
+                        modifier = Modifier.fillMaxSize()
+                    ) {
                         items(
                             count = lazyPagingItems.itemCount,
                             key = { index -> lazyPagingItems[index]?.id ?: index }

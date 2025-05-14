@@ -1,8 +1,10 @@
 package eu.peernetwork.app.ui.search
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.lifecycle.ViewModelStoreOwner
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
@@ -12,20 +14,18 @@ import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.app.ui.feed.FeedScreen
 import eu.peernetwork.app.ui.profile.ProfileScreen
 import eu.peernetwork.blog.domain.model.Filter
-import eu.peernetwork.core.ui.annotation.UiViewModel
 import eu.peernetwork.core.ui.design.compose.DesignRouter
-import eu.peernetwork.core.ui.design.compose.DesignToolbarTitle
-import eu.peernetwork.social.ui.renderder.UserRenderer
+import eu.peernetwork.core.ui.model.ViewModelState
 
 @Composable
 fun SearchNavigation(
-    id: String,
-    title: MutableState<DesignToolbarTitle>,
+    userId: String,
     component: Search.Component,
-    viewModelStoreOwner: ViewModelStoreOwner,
+    viewModelStore: ViewModelState,
     search: @Composable (NavHostController) -> Unit
 ) {
     val controller = rememberNavController()
+    var id by remember { mutableStateOf<String>("") }
     DesignRouter(
         navController = controller,
         startDestination = "search",
@@ -37,23 +37,11 @@ fun SearchNavigation(
                 type = NavType.StringType
             })
         ) { backStackEntry ->
-            val userId = backStackEntry.arguments?.getString("id")
+            id = backStackEntry.arguments?.getString("id") ?: ""
             ProfileScreen(
-                userId = userId ?: id,
-                title = title,
-                type = if (userId == id) {
-                    UserRenderer.Type.ACCOUNT
-                } else {
-                    userId?.let {
-                        UserRenderer.Type.USER
-                    } ?: UserRenderer.Type.ACCOUNT
-                },
+                userId = id,
                 provider = component,
-                viewModelStoreOwner = if (userId == id) {
-                    viewModelStoreOwner
-                } else {
-                    UiViewModel.Owner()
-                }
+                viewModelStore = viewModelStore,
             )
         }
         composable(
@@ -64,11 +52,11 @@ fun SearchNavigation(
         ) { backStackEntry ->
             val tag = backStackEntry.arguments?.getString("tag")
             FeedScreen(
-                id,
-                title,
+                userId,
                 BuildConfig.PAGING_LIMIT,
                 component,
-                viewModelStoreOwner = UiViewModel.Owner(),
+                viewModelStore = viewModelStore,
+                title = tag,
                 criteria = tag?.let { Filter.Criteria.Content(tag = it) }
             )
         }
@@ -80,11 +68,11 @@ fun SearchNavigation(
         ) { backStackEntry ->
             val query = backStackEntry.arguments?.getString("title")
             FeedScreen(
-                id,
-                title,
+                userId,
                 BuildConfig.PAGING_LIMIT,
                 component,
-                viewModelStoreOwner = UiViewModel.Owner(),
+                viewModelStore = viewModelStore,
+                title = query,
                 criteria = query?.let { Filter.Criteria.Content(title = it) }
             )
         }

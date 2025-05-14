@@ -41,7 +41,7 @@ sealed class HomeRoute(
     data object Home: HomeRoute(
         R.drawable.ic_home_outline,
         R.drawable.ic_home,
-        R.string.home_label,
+        R.string.feed_label,
     )
     data object Search: HomeRoute(
         R.drawable.ic_search_outline,
