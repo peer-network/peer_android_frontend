@@ -94,12 +94,22 @@ fun EngagementScreen(
             viewModel.reset()
         }
     }
+
+    //HERE THE ERROR MAPPING HAS BEEN IMPLEMENTED
     LaunchedEffect(hasError.value) {
         if (hasError.value) {
-            Toast.makeText(context, error.value?.message ?: errorMessage, Toast.LENGTH_SHORT).show()
+            val message = component.resource().string(
+                when ((state as? EngagementViewModel.State.Error)?.error?.message) {
+                    "21601" -> "error.cannot_like_own_post"
+                    "21602" -> "error.cannot_dislike_own_post"
+                    else -> (state as? EngagementViewModel.State.Error)?.error?.message.orEmpty()
+                }
+            )
+            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
             viewModel.clear()
         }
     }
+
     CommentScreen(
         tag,
         post,

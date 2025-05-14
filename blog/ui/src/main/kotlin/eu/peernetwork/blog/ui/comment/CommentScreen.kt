@@ -172,7 +172,7 @@ fun CommentScreen(
     LaunchedEffect(sheetState.value) {
         val content = (sheetState.value as? CommentViewModel.State.Content?)
         if (content?.error != null) {
-            Toast.makeText(context, content.error.message, Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, content.error.message?.let { component.resource().string(it) }, Toast.LENGTH_SHORT).show()
             viewModel.reset()
         }
     }

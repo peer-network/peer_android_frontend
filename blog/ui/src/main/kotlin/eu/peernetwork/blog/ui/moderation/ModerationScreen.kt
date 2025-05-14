@@ -10,14 +10,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -25,12 +18,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import eu.peernetwork.blog.ui.model.UiContent
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.compose.DesignTextButton
 import eu.peernetwork.core.ui.extension.builder
-import androidx.lifecycle.viewmodel.compose.viewModel
-import eu.peernetwork.blog.ui.model.UiContent
 
 data class ModerationSpec(
     val onReport: (String) -> Unit,
@@ -57,19 +50,28 @@ fun ModerationScreen(
     val success by remember { derivedStateOf { state as? ModerationViewModel.State.Success? } }
     val message = stringResource(eu.peernetwork.blog.ui.R.string.action_message)
     val updatedContent by rememberUpdatedState(content)
+
     updatedContent(
         ModerationSpec(
             onSave = { viewModel.save(it) },
             onReport = { viewModel.report(it) }
         )
     )
+
     LaunchedEffect(error, success) {
         success?.postId?.let {
             Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
             viewModel.reset()
         }
+
         error?.error?.let {
-            Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show()
+            val resolvedMessage = component.resource().string(
+                when (it.message) {
+                    "21901" -> "error.cannot_report_own_post"
+                    else -> it.message.orEmpty()
+                }
+            )
+            Toast.makeText(context, resolvedMessage, Toast.LENGTH_SHORT).show()
             viewModel.reset()
         }
     }
@@ -81,6 +83,7 @@ fun ModerationScreen(
     spec: ModerationSpec
 ) {
     var expanded by remember { mutableStateOf(false) }
+
     Box {
         DesignTextButton(
             onClick = { expanded = true },
@@ -93,6 +96,7 @@ fun ModerationScreen(
                 modifier = Modifier.size(28.dp)
             )
         }
+
         DropdownMenu(
             modifier = Modifier.background(color = MaterialTheme.colorScheme.background),
             expanded = expanded,
@@ -105,11 +109,12 @@ fun ModerationScreen(
                     spec.onReport(model.id)
                 }
             )
+// Uncomment this if you want to allow Save option later
 //            DropdownMenuItem(
 //                text = { Text("Save") },
 //                onClick = {
 //                    expanded = false
-//                    viewModel.save(content.id)
+//                    spec.onSave(model.id)
 //                }
 //            )
         }
