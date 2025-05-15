@@ -50,28 +50,19 @@ fun ModerationScreen(
     val success by remember { derivedStateOf { state as? ModerationViewModel.State.Success? } }
     val message = stringResource(eu.peernetwork.blog.ui.R.string.action_message)
     val updatedContent by rememberUpdatedState(content)
-
     updatedContent(
         ModerationSpec(
             onSave = { viewModel.save(it) },
             onReport = { viewModel.report(it) }
         )
     )
-
     LaunchedEffect(error, success) {
         success?.postId?.let {
             Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
             viewModel.reset()
         }
-
-        error?.error?.let {
-            val resolvedMessage = component.resource().string(
-                when (it.message) {
-                    "21901" -> "error.cannot_report_own_post"
-                    else -> it.message.orEmpty()
-                }
-            )
-            Toast.makeText(context, resolvedMessage, Toast.LENGTH_SHORT).show()
+        error?.error?.message?.let {
+            Toast.makeText(context, component.resource().string(it), Toast.LENGTH_SHORT).show()
             viewModel.reset()
         }
     }
