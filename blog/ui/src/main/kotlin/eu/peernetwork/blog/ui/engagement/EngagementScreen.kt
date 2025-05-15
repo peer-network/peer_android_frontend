@@ -1,6 +1,7 @@
 package eu.peernetwork.blog.ui.engagement
 
 import android.widget.Toast
+import androidx.compose.animation.core.AnimationConstants.DefaultDurationMillis
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -10,6 +11,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -28,6 +30,8 @@ import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.extension.toInt
 import eu.peernetwork.core.ui.theme.LightAccentColor
 import eu.peernetwork.core.ui.theme.PeerAppRed
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 data class EngagementSpec(
     val onLoad: (UiContent) -> UiEngagement,
@@ -65,6 +69,7 @@ fun EngagementScreen(
     }
     val tag = remember { System.currentTimeMillis().toString() }
     var post = remember { mutableStateOf<UiContent?>(null) }
+    val scope = rememberCoroutineScope()
     val errorMessage = stringResource(R.string.unknown_error_message)
     val hasError = remember { derivedStateOf { error.value != null } }
     val updatedContent by rememberUpdatedState(content)
@@ -110,16 +115,23 @@ fun EngagementScreen(
         component,
         viewModelStoreOwner,
         onMentionClick = {
-            post.value = null
-            handleMentionClick(it) },
+            scope.launch {
+                post.value = null
+                delay(DefaultDurationMillis.toLong())
+                handleMentionClick(it)
+            } },
         onHashtagClick = {
-            post.value = null
-            handleHashtagClick(it)
-        },
+            scope.launch {
+                post.value = null
+                delay(DefaultDurationMillis.toLong())
+                handleHashtagClick(it)
+            } },
         imageOnClick = {
-            post.value = null
-            handleImageClick(it)
-        }
+            scope.launch {
+                post.value = null
+                delay(DefaultDurationMillis.toLong())
+                handleImageClick(it)
+            } }
     )
 }
 

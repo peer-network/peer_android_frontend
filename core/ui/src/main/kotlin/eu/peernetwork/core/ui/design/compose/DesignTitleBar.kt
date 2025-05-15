@@ -79,8 +79,9 @@ fun DesignTitle(
 ) {
     val updatedContent by rememberUpdatedState(content)
     Box(
-        modifier = modifier
+        modifier = Modifier
             .clip(RoundedCornerShape(4.dp))
+            .then(modifier)
             .padding(horizontal = 8.dp),
     ) { updatedContent() }
 }
