@@ -4,29 +4,29 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.component.DesignRefreshableScaffold
 import eu.peernetwork.core.ui.design.component.DesignScreenScaffold
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
-import eu.peernetwork.core.ui.design.compose.DesignToolbarTitle
+import eu.peernetwork.core.ui.design.compose.DesignTitle
+import eu.peernetwork.core.ui.design.compose.DesignTitleBarHost
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.wallet.ui.model.UiWallet
 
 @Composable
 fun OverviewScreen(
-    title: MutableState<DesignToolbarTitle>,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
 ) {
@@ -68,10 +68,12 @@ fun OverviewScreen(
             OverviewScreen(wallet)
         }
     }
-    LaunchedEffect(Unit) {
-        title.value = DesignToolbarTitle(
-            eu.peernetwork.core.ui.R.string.wallet_label
-        )
+    DesignTitleBarHost("WalletScreen") {
+        titleBar {
+            DesignTitle {
+                Text(stringResource(R.string.wallet_label))
+            }
+        }
     }
 }
 

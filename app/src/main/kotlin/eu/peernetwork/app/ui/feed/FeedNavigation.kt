@@ -1,10 +1,10 @@
 package eu.peernetwork.app.ui.feed
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.lifecycle.ViewModelStoreOwner
+import androidx.compose.runtime.setValue
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
@@ -13,22 +13,20 @@ import androidx.navigation.navArgument
 import eu.peernetwork.app.ui.profile.ProfileScreen
 import eu.peernetwork.app.ui.search.SearchScreen
 import eu.peernetwork.app.ui.search.SearchState
-import eu.peernetwork.core.ui.annotation.UiViewModel
 import eu.peernetwork.core.ui.design.compose.DesignRouter
-import eu.peernetwork.core.ui.design.compose.DesignToolbarTitle
-import eu.peernetwork.social.ui.renderder.UserRenderer
+import eu.peernetwork.core.ui.model.ViewModelState
 import java.net.URLEncoder
 
 @Composable
 fun FeedNavigation(
-    id: String,
-    title: MutableState<DesignToolbarTitle>,
+    userId: String,
     postLimit: Int,
     component: Feed.Component,
-    viewModelStoreOwner: ViewModelStoreOwner,
+    viewModelStore: ViewModelState,
     feed: @Composable (NavHostController) -> Unit
 ) {
     val controller = rememberNavController()
+    var id by remember { mutableStateOf<String>("") }
     DesignRouter(
         navController = controller,
         startDestination = "feed",
@@ -40,23 +38,11 @@ fun FeedNavigation(
                 type = NavType.StringType
             })
         ) { backStackEntry ->
-            val userId = backStackEntry.arguments?.getString("id")
+            id = backStackEntry.arguments?.getString("id") ?: ""
             ProfileScreen(
-                userId = userId ?: id,
-                title = title,
-                type = if (userId == id) {
-                    UserRenderer.Type.ACCOUNT
-                } else {
-                    userId?.let {
-                        UserRenderer.Type.USER
-                    } ?: UserRenderer.Type.ACCOUNT
-                },
+                userId = id,
                 provider = component,
-                viewModelStoreOwner = if (userId == id) {
-                    viewModelStoreOwner
-                } else {
-                    UiViewModel.Owner()
-                }
+                viewModelStore = viewModelStore,
             )
         }
         composable(
@@ -74,12 +60,11 @@ fun FeedNavigation(
                 else -> SearchState.Default
             }
             SearchScreen(
-                id = id,
-                title = title,
+                id = userId,
                 postLimit = postLimit,
                 provider = component,
-                viewModelStoreOwner = viewModelStoreOwner,
-                searchState = searchState
+                viewModelStore = viewModelStore,
+                searchState = searchState,
             )
         }
     }

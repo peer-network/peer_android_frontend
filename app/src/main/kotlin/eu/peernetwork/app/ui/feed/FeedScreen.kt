@@ -1,9 +1,11 @@
 package eu.peernetwork.app.ui.feed
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Icon
@@ -12,19 +14,19 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableIntState
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import eu.peernetwork.app.BuildConfig
@@ -36,25 +38,30 @@ import eu.peernetwork.blog.ui.timeline.video.VideoScreen
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.compose.DesignTab
-import eu.peernetwork.core.ui.design.compose.DesignToolbarTitle
+import eu.peernetwork.core.ui.design.compose.DesignTitle
+import eu.peernetwork.core.ui.design.compose.DesignTitleBarHost
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
+import eu.peernetwork.core.ui.model.ViewModelState
 import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.social.ui.connection.ConnectionScreen
+import kotlinx.coroutines.launch
 
 @Composable
 fun FeedScreen(
     id: String,
-    title: MutableState<DesignToolbarTitle>,
     postLimit: Int,
     provider: UiComponentProvider,
-    viewModelStoreOwner: ViewModelStoreOwner,
+    viewModelStore: ViewModelState,
+    title: String? = null,
     criteria: Criteria? = null,
 ) {
     val context = LocalContext.current
     val component = remember {
         provider.builder(Feed.Builder::class.java).build(context)
     }
+    val coroutine = rememberCoroutineScope()
+    val viewModelStoreOwner = viewModelStore.get(criteria?.toString() ?: id)
     val viewModel = viewModel(
         modelClass = FeedViewModel::class.java,
         viewModelStoreOwner = viewModelStoreOwner,
@@ -62,12 +69,13 @@ fun FeedScreen(
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
     val pageState = remember { mutableIntStateOf(state.page) }
+    val photoState = rememberLazyListState()
+    val videoState = rememberLazyListState()
     FeedNavigation(
-        id = id,
-        title = title,
+        userId = id,
         postLimit = postLimit,
         component = component,
-        viewModelStoreOwner = viewModelStoreOwner
+        viewModelStore = viewModelStore,
     ) { controller ->
         ConnectionScreen(
             provider = component,
@@ -87,7 +95,8 @@ fun FeedScreen(
                         { controller.navigateToTagSearch(it) },
                         component,
                         viewModelStoreOwner,
-                        { controller.navigateIfNecessary("profile/$it") }
+                        { controller.navigateIfNecessary("profile/$it") },
+                        photoState
                     ) {
                         ConnectionScreen(
                             isFollowing = connection.getOrDefault(it.first, it.third),
@@ -105,7 +114,8 @@ fun FeedScreen(
                         { controller.navigateToTagSearch(it) },
                         component,
                         viewModelStoreOwner,
-                        { controller.navigateIfNecessary("profile/$it") }
+                        { controller.navigateIfNecessary("profile/$it") },
+                        videoState,
                     ) {
                         ConnectionScreen(
                             isFollowing = connection.getOrDefault(it.first, it.third),
@@ -117,11 +127,22 @@ fun FeedScreen(
                 music = { MusicScreen(component, viewModelStoreOwner) }
             )
         }
-        LaunchedEffect(Unit) {
-            title.value = if (criteria is Criteria.Content) {
-                DesignToolbarTitle(R.string.search_label)
-            } else {
-                DesignToolbarTitle(R.string.home_label) {}
+    }
+    DesignTitleBarHost(
+        "FeedScreen$id$title",
+        {
+            coroutine.launch {
+                photoState.animateScrollToItem(0)
+                videoState.animateScrollToItem(0)
+            }
+        }
+    ) {
+        titleBar {
+            DesignTitle(modifier = Modifier
+                .clickable(
+                    role = Role.Button,
+                    onClick = {  })) {
+                Text(title ?: stringResource(R.string.feed_label))
             }
         }
     }

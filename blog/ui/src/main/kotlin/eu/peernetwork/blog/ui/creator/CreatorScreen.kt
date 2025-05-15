@@ -36,14 +36,15 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import eu.peernetwork.blog.ui.author.AuthorScreen
 import eu.peernetwork.blog.ui.model.UiDraft
-import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.core.ui.R
+import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.compose.DesignButton
 import eu.peernetwork.core.ui.design.compose.DesignCard
 import eu.peernetwork.core.ui.design.compose.DesignCheckButton
 import eu.peernetwork.core.ui.design.compose.DesignLabel
-import eu.peernetwork.core.ui.design.compose.DesignToolbarTitle
+import eu.peernetwork.core.ui.design.compose.DesignTitle
+import eu.peernetwork.core.ui.design.compose.DesignTitleBarHost
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.extension.isValidInput
 import eu.peernetwork.media.core.model.MimeType
@@ -51,7 +52,6 @@ import eu.peernetwork.media.core.renderer.MediaSelector
 
 @Composable
 fun CreatorScreen(
-    title: MutableState<DesignToolbarTitle>,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
 ) {
@@ -88,7 +88,13 @@ fun CreatorScreen(
         shouldReset = shouldReset,
         error = error
     )
-    LaunchedEffect(Unit) { title.value = DesignToolbarTitle(R.string.add_label) }
+    DesignTitleBarHost("CreatorScreen") {
+        titleBar {
+            DesignTitle {
+                Text(stringResource(R.string.add_label))
+            }
+        }
+    }
 }
 
 @Composable

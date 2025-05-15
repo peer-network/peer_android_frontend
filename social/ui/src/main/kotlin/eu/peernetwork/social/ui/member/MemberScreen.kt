@@ -31,7 +31,6 @@ import eu.peernetwork.social.ui.renderder.UserRenderer
 fun MemberScreen(
     id: String,
     limit: Int,
-    type: UserRenderer.Type,
     onSettings: () -> Unit = {},
     onMentionClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
@@ -64,7 +63,6 @@ fun MemberScreen(
                         id,
                         userState,
                         viewModelStoreOwner,
-                        type,
                         onSettings,
                         {
                             ConnectionScreen(

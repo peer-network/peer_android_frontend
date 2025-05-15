@@ -1,21 +1,17 @@
 package eu.peernetwork.app.ui.home
 
 import android.content.res.Configuration
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -33,24 +29,23 @@ import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.app.ui.feed.FeedScreen
 import eu.peernetwork.app.ui.profile.ProfileScreen
 import eu.peernetwork.blog.ui.point.PointScreen
-import eu.peernetwork.core.ui.R
-import eu.peernetwork.core.ui.annotation.UiViewModel
-import eu.peernetwork.core.ui.design.compose.DesignToolbarTitle
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffold
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
 import eu.peernetwork.app.ui.search.SearchScreen
+import eu.peernetwork.core.ui.design.compose.DesignTitleBar
+import eu.peernetwork.core.ui.model.ViewModelState
 import eu.peernetwork.wallet.ui.overview.OverviewScreen
 
 @Composable
 fun HomeScreen(provider: UiComponentProvider) {
-    val owner = remember { UiViewModel.Owner() }
+    val viewModelStore = remember { ViewModelState() }
     val context = LocalContext.current
     val component = remember {
         provider.builder(Home.Builder::class.java).build(context)
     }
     val viewModel = viewModel(
         modelClass = HomeViewModel::class.java,
-        viewModelStoreOwner = owner,
+        viewModelStoreOwner = viewModelStore.get(Home.Builder::class.java.name),
         factory = component.viewModelFactory()
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -72,52 +67,42 @@ fun HomeScreen(provider: UiComponentProvider) {
         onRefresh = { viewModel() },
         modifier = Modifier.fillMaxSize()
     ) { data ->
-        val title = remember {
-            mutableStateOf(DesignToolbarTitle(HomeRoute.get(data.second).label))
-        }
         HomeScreen(
-            title = title,
             index = data.second,
             onNavigate = { viewModel.lastVisited(it) },
-            options = { PointScreen(component, owner) }
+            options = { PointScreen(component, viewModelStore.get(data.first)) }
         ) { state, route ->
             when(route) {
                 is HomeRoute.Home -> FeedScreen(
                     data.first,
-                    title,
                     BuildConfig.PAGING_LIMIT,
                     component,
-                    owner
+                    viewModelStore,
                 )
                 is HomeRoute.Profile -> ProfileScreen(
                     data.first,
-                    title,
                     component,
-                    owner
+                    viewModelStore,
                 )
-                is HomeRoute.Add -> CreatorScreen(title, component, owner)
-                is HomeRoute.Wallet -> OverviewScreen(title, component, owner)
+                is HomeRoute.Add -> CreatorScreen(component, viewModelStore.get(data.first))
+                is HomeRoute.Wallet -> OverviewScreen(component, viewModelStore.get(data.first))
                 is HomeRoute.Search -> SearchScreen(
                     id = data.first,
-                    title,
                     BuildConfig.PAGING_LIMIT,
                     component,
-                    owner
+                    viewModelStore,
                 )
-                else -> Box(modifier = Modifier.fillMaxSize()
-                    .verticalScroll(rememberScrollState())) {
-                    LaunchedEffect(Unit) {
-                        title.value = DesignToolbarTitle(route.label)
-                    }
-                }
+                else -> {}
             }
         }
+    }
+    DisposableEffect(Unit) {
+        onDispose { viewModelStore.clear() }
     }
 }
 
 @Composable
 fun HomeScreen(
-    title: MutableState<DesignToolbarTitle>,
     index: Int,
     onNavigate: (Int) -> Unit,
     options: @Composable () -> Unit,
@@ -125,16 +110,23 @@ fun HomeScreen(
 ) {
     val controller = rememberNavController()
     val navigationState = rememberSaveable { mutableIntStateOf(index) }
-    HomeScaffold(
-        header = { HomeHeader(title, options = options, modifier = Modifier.padding(top = 8.dp)) },
-        footer = { HomeFooter(navigationState) }
-    ) { state ->
-        HomeNavigation(
-            state = navigationState,
-            onNavigate = onNavigate,
-            navController = controller,
-            content = { content(state, it) }
-        )
+    val updatedContent by rememberUpdatedState(content)
+    DesignTitleBar {
+        HomeScaffold(
+            header = { HomeHeader(options = options, modifier = Modifier.padding(top = 8.dp)) },
+            footer = {
+                HomeFooter(
+                    navigationState,
+                    onClick = { current()?.listener?.invoke() }
+                ) }
+        ) { state ->
+            HomeNavigation(
+                state = navigationState,
+                onNavigate = onNavigate,
+                navController = controller,
+                content = { updatedContent(state, it) }
+            )
+        }
     }
 }
 
@@ -143,7 +135,6 @@ fun HomeScreen(
 fun PreviewHomeScreen() {
     PeerTheme {
         HomeScreen(
-            title = remember { mutableStateOf(DesignToolbarTitle(R.string.home_label) {}) },
             index = 0,
             onNavigate = {},
             options = {}

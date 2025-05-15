@@ -12,8 +12,10 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
@@ -26,8 +28,10 @@ import eu.peernetwork.core.ui.theme.PeerTheme
 @Composable
 fun HomeFooter(
     state: MutableState<Int>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClick: (Int) -> Unit = {},
 ) {
+    val handleClick by rememberUpdatedState(onClick)
     Box(modifier = Modifier
         .fillMaxWidth()
         .background(MaterialTheme.colorScheme.background)
@@ -39,7 +43,12 @@ fun HomeFooter(
             verticalAlignment = Alignment.CenterVertically
         ) {
             HomeRoute.ROUTES.forEachIndexed { index, navigation ->
-                IconButton(onClick = { state.value = index }) {
+                IconButton(onClick = {
+                    if (state.value == index) {
+                        handleClick(index)
+                    }
+                    state.value = index
+                }) {
                     Box {
                         Icon(
                             tint = MaterialTheme.colorScheme.onSurface,

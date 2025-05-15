@@ -16,7 +16,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -40,7 +39,7 @@ data class ConnectionState(
     val res: Int,
     val textColor: Color,
     val borderColor: Color,
-    val useGradient: Boolean
+    val outline: Boolean
 )
 
 enum class ConnectionStatus {
@@ -98,8 +97,6 @@ fun ConnectionScreen(
 ) {
     val primary = MaterialTheme.colorScheme.primary
     val onPrimary = MaterialTheme.colorScheme.onPrimary
-    val secondary = MaterialTheme.colorScheme.secondary
-    val gradient = Brush.horizontalGradient(colors = listOf(secondary, primary))
     val clickHandler by rememberUpdatedState {
         onClick(isFollowing)
     }
@@ -108,34 +105,34 @@ fun ConnectionScreen(
             ConnectionStatus.PEER -> ConnectionState(
                 R.string.peer_label,
                 onPrimary,
-                secondary,
-                true
+                primary,
+                false
             )
             ConnectionStatus.FOLLOWING -> ConnectionState(
                 R.string.following_label,
-                secondary,
                 primary,
+                onPrimary,
                 false
             )
             ConnectionStatus.FOLLOW -> ConnectionState(
                 R.string.follow_label,
                 onPrimary,
                 onPrimary,
-                false
+                true
             )
         }
     } }
     DesignOutlinedButton(
         onClick = clickHandler,
-        modifier = modifier.background(
-            brush = if (state.useGradient) {
-                gradient
-            } else {
-                Brush.linearGradient(
-                    listOf(Color.Transparent, Color.Transparent)
+        modifier = modifier.then(
+            if (!state.outline) {
+                Modifier.background(
+                    color = state.borderColor,
+                    shape = RoundedCornerShape(28),
                 )
-            },
-            shape = RoundedCornerShape(28),
+            } else {
+                Modifier
+            }
         ),
         shape = RoundedCornerShape(28),
         textStyle = MaterialTheme.typography.bodySmall.copy(
@@ -148,6 +145,6 @@ fun ConnectionScreen(
         ),
         minHeight = 32.dp,
         border = BorderStroke(1.dp, state.borderColor),
-        contentPadding = PaddingValues(horizontal = 24.dp, vertical = 4.dp)
+        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp)
     ) { Text(stringResource(state.res)) }
 }

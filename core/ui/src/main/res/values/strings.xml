@@ -1,7 +1,7 @@
 <resources>
     <string name="loading_text">Loading…</string>
 
-    <string name="home_label">Friends</string>
+    <string name="feed_label">Friends</string>
     <string name="search_label">Search</string>
     <string name="add_label">New post</string>
     <string name="wallet_label">Wallet</string>

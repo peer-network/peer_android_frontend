@@ -16,7 +16,6 @@ import eu.peernetwork.core.ui.factory.UiBuilderFactory
 import eu.peernetwork.social.ui.member.Member
 import eu.peernetwork.social.ui.renderder.BlogRenderer
 import eu.peernetwork.social.ui.renderder.UserRenderer
-import eu.peernetwork.user.ui.account.Account
 import eu.peernetwork.user.ui.settings.Settings
 import eu.peernetwork.user.ui.user.User
 
@@ -32,14 +31,6 @@ object ProfileModule {
     @UiBuilder(Member.Builder::class)
     fun provideMemberBuilder(component: Profile.Component): UiComponent.Builder {
         return Member.Builder(component)
-    }
-
-    @Profile.Scope
-    @Provides
-    @IntoMap
-    @UiBuilder(Account.Builder::class)
-    fun provideAccountBuilder(component: Profile.Component): UiComponent.Builder {
-        return Account.Builder(component)
     }
 
     @Profile.Scope

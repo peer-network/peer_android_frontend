@@ -38,7 +38,6 @@ data class EngagementSpec(
 
 @Composable
 fun EngagementScreen(
-    tag: String,
     postLimit: Int,
     refresh: State<Boolean>,
     onMentionClick: (String) -> Unit = {},
@@ -64,10 +63,14 @@ fun EngagementScreen(
             (state as? EngagementViewModel.State.Error?)?.error
         }
     }
+    val tag = remember { System.currentTimeMillis().toString() }
     var post = remember { mutableStateOf<UiContent?>(null) }
     val errorMessage = stringResource(R.string.unknown_error_message)
     val hasError = remember { derivedStateOf { error.value != null } }
     val updatedContent by rememberUpdatedState(content)
+    val handleMentionClick by rememberUpdatedState(onMentionClick)
+    val handleHashtagClick by rememberUpdatedState(onHashtagClick)
+    val handleImageClick by rememberUpdatedState(imageOnClick)
     val spec = remember(state, reactionState.values) { EngagementSpec(
         onLoad = {
             val isLiked = reactionState[it.id]?.isLiked
@@ -106,9 +109,17 @@ fun EngagementScreen(
         postLimit,
         component,
         viewModelStoreOwner,
-        onMentionClick = onMentionClick,
-        onHashtagClick = onHashtagClick,
-        imageOnClick = imageOnClick
+        onMentionClick = {
+            post.value = null
+            handleMentionClick(it) },
+        onHashtagClick = {
+            post.value = null
+            handleHashtagClick(it)
+        },
+        imageOnClick = {
+            post.value = null
+            handleImageClick(it)
+        }
     )
 }
 

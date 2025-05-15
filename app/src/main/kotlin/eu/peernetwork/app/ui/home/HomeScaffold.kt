@@ -1,23 +1,17 @@
 package eu.peernetwork.app.ui.home
 
 import android.content.res.Configuration
-import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.design.compose.DesignScaffold
-import eu.peernetwork.core.ui.design.compose.DesignToolbarTitle
 import eu.peernetwork.core.ui.theme.PeerTheme
 
 @Composable
@@ -40,7 +34,7 @@ fun HomeScaffold(
 fun PreviewHomeScaffold() {
     PeerTheme {
         HomeScaffold(
-            header = { HomeHeader(remember { mutableStateOf(DesignToolbarTitle(R.string.home_label)) }) { } },
+            header = {  },
             footer = { HomeFooter(remember { mutableIntStateOf(0) }) }
         ) { state ->
             Text(

@@ -52,9 +52,9 @@ interface DesignOverlayController {
 private interface DesignOverlayRegistry {
     fun get(tag: String): @Composable (() -> Unit)?
 
-    fun register(tag: String, zIndex: Float, visible: Boolean, content: @Composable () -> Unit)
+    fun attach(tag: String, zIndex: Float, visible: Boolean, content: @Composable () -> Unit)
 
-    fun clear(tag: String)
+    fun detach(tag: String)
 }
 
 @Composable
@@ -81,7 +81,7 @@ fun DesignOverlay(modifier: Modifier = Modifier, content: @Composable () -> Unit
     val updatedContent by rememberUpdatedState(content)
     val overlayRegistry = remember {
         object : DesignOverlayRegistry {
-            override fun register(
+            override fun attach(
                 tag: String,
                 zIndex: Float,
                 visible: Boolean,
@@ -97,7 +97,7 @@ fun DesignOverlay(modifier: Modifier = Modifier, content: @Composable () -> Unit
                 return registry[tag]?.second
             }
 
-            override fun clear(tag: String) {
+            override fun detach(tag: String) {
                 routes.remove(tag)
                 registry.remove(tag)
             }
@@ -133,12 +133,14 @@ fun DesignOverlayHost(
     val overlayBuilder = remember(tag) {
         object : DesignOverlayBuilder {
             override fun overlay(zIndex: Float, content: @Composable () -> Unit) {
-                overlayRegistry.register(tag, zIndex, visible, content)
+                overlayRegistry.attach(tag, zIndex, visible, content)
             }
         }
     }
     val updatedBuilder by rememberUpdatedState(builder)
-    updatedBuilder(overlayBuilder, isVisible)
+    LaunchedEffect(Unit) {
+        updatedBuilder(overlayBuilder, isVisible)
+    }
     LaunchedEffect(visible) {
         snapshotFlow { visible }
             .collectLatest { value ->
@@ -154,7 +156,7 @@ fun DesignOverlayHost(
             }
     }
     DisposableEffect(Unit) {
-        onDispose { overlayRegistry.clear(tag) }
+        onDispose { overlayRegistry.detach(tag) }
     }
 }
 

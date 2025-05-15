@@ -4,6 +4,9 @@ import android.content.res.Configuration
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -13,6 +16,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -40,6 +44,7 @@ fun UserScreen(
     provider: UiComponentProvider,
     onFollow: @Composable (Pair<Boolean, Boolean>) -> Unit,
     onClick: (Int) -> Unit,
+    onSettings: () -> Unit,
     viewModelStoreOwner: ViewModelStoreOwner,
 ) {
     val context = LocalContext.current
@@ -52,6 +57,9 @@ fun UserScreen(
         factory = component.viewModelFactory()
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val isOwner = remember { derivedStateOf {
+        (state as? UserViewModel.State.Success?)?.isOwner == true
+    } }
     val derivedState = remember { derivedStateOf {
         when(state) {
             UserViewModel.State.Empty -> DesignStatefulScaffoldState.Empty
@@ -78,7 +86,12 @@ fun UserScreen(
             modifier = modifier,
             account = it,
             connection = onFollow,
-            onClick = onClick
+            onSettings = if (isOwner.value) {
+                onSettings
+            } else {
+                null
+            },
+            onClick = onClick,
         )
     }
     LaunchedEffect(loadState.value) {
@@ -94,19 +107,31 @@ fun UserScreen(
     account: UiAccount,
     modifier: Modifier = Modifier,
     connection: @Composable (Pair<Boolean, Boolean>) -> Unit,
+    onSettings: (() -> Unit)? = null,
     onClick: (Int) -> Unit,
 ) {
     val clickHandler by rememberUpdatedState(onClick)
+    val settingsHandler by rememberUpdatedState(onSettings)
     val updatedConnection by rememberUpdatedState(connection)
     val emptyDescription = stringResource(R.string.empty_description_message)
     ProfileScaffold(
         modifier = modifier,
         avatar = { DesignAsyncImage(account.username, account.imageUrl) },
         actions = {
-            Box(
-                modifier = Modifier.padding(vertical = 8.dp)
-                    .padding(bottom = 4.dp)
-            ) { updatedConnection(account.isfollowing to account.isfollowed) }
+            if (settingsHandler != null) {
+                IconButton(onClick = { settingsHandler?.invoke() }) {
+                    Icon(
+                        painter = painterResource(id = eu.peernetwork.core.ui.R.drawable.ic_settings),
+                        contentDescription = stringResource(eu.peernetwork.core.ui.R.string.settings_label),
+                        modifier = Modifier.size(18.dp)
+                    )
+                }
+            } else {
+                Box(
+                    modifier = Modifier.padding(vertical = 8.dp)
+                        .padding(bottom = 4.dp)
+                ) { updatedConnection(account.isfollowing to account.isfollowed) }
+            }
         },
         options = {
             Overview(

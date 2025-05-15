@@ -15,11 +15,9 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -27,14 +25,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import eu.peernetwork.core.ui.R
-import eu.peernetwork.core.ui.design.compose.DesignToolbarAction
-import eu.peernetwork.core.ui.design.compose.DesignToolbarTitle
+import eu.peernetwork.core.ui.design.compose.DesignTitleBar
+import eu.peernetwork.core.ui.design.compose.DesignTitleBarRegistry
 import eu.peernetwork.core.ui.theme.PeerTheme
 
 @Composable
-fun HomeHeader(
-    title: MutableState<DesignToolbarTitle>,
+fun DesignTitleBarRegistry.HomeHeader(
     modifier: Modifier = Modifier,
     textStyle: TextStyle = MaterialTheme.typography.bodyLarge,
     onClick: (HomeRoute) -> Unit = {},
@@ -53,7 +49,7 @@ fun HomeHeader(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Box(modifier = Modifier.padding(start = 16.dp))
-            DesignToolbarAction(title = title)
+            current()?.content?.invoke()
             Spacer(modifier = Modifier.weight(1f))
             options()
             IconButton(onClick = { onClick(HomeRoute.Comment) }) {
@@ -72,8 +68,12 @@ fun HomeHeader(
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun PreviewHomeHeader() {
     PeerTheme {
-        HomeHeader(title = remember {
-            mutableStateOf(DesignToolbarTitle(R.string.home_label))
-        }) { }
+        DesignTitleBar {
+            HomeHeader {
+                attach("tag", {}) {
+                    Text("Hello, world!")
+                }
+            }
+        }
     }
 }
