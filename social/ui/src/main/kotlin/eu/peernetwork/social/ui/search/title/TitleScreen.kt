@@ -17,7 +17,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -28,6 +27,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import eu.peernetwork.core.common.model.Pageable
 import eu.peernetwork.core.ui.component.UiComponentProvider
+import eu.peernetwork.core.ui.design.component.DesignError
 import eu.peernetwork.core.ui.design.component.DesignPagingScaffold
 import eu.peernetwork.core.ui.design.component.DesignStatefulContentPlaceholder
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
@@ -72,7 +72,7 @@ fun TitleScreen(
             }
         }
     }
-    val clickHandler by rememberUpdatedState(onClick)
+
     DesignPagingScaffold<UiPost>(
         state = derivedState,
         onRefresh = {
@@ -80,12 +80,18 @@ fun TitleScreen(
                 viewModel.search(query.text.toString(), Pageable(0, postLimit))
             }
         },
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
             .padding(horizontal = 24.dp),
-        placeholder = { DesignStatefulContentPlaceholder(
-            modifier = Modifier.fillMaxSize()
-                .verticalScroll(rememberScrollState())
-        ) }
+        placeholder = {
+            DesignStatefulContentPlaceholder(
+                modifier = Modifier.fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+            )
+        },
+        errorContent = { error, refresh ->
+            DesignError(refresh, error, component.resource())
+        }
     ) { state, lazyPagingItems ->
         LazyColumn(modifier = Modifier.fillMaxSize()) {
             items(
@@ -93,11 +99,14 @@ fun TitleScreen(
                 key = { index -> index }
             ) { index ->
                 lazyPagingItems[index]?.let { post ->
-                    Box(modifier = Modifier.fillMaxWidth()
-                        .padding(vertical = 16.dp)
-                        .clickable(role = Role.Button) {
-                            clickHandler(post)
-                        }) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 16.dp)
+                            .clickable(role = Role.Button) {
+                                onClick(post)
+                            }
+                    ) {
                         Text(
                             text = post.title,
                             style = MaterialTheme.typography.bodyMedium,

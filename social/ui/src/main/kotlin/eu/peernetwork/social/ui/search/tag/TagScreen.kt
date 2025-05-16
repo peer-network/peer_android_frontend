@@ -27,6 +27,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import eu.peernetwork.core.common.model.Pageable
 import eu.peernetwork.core.ui.component.UiComponentProvider
+import eu.peernetwork.core.ui.design.component.DesignError
 import eu.peernetwork.core.ui.design.component.DesignPagingScaffold
 import eu.peernetwork.core.ui.design.component.DesignStatefulContentPlaceholder
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
@@ -83,7 +84,10 @@ fun TagScreen(
         placeholder = { DesignStatefulContentPlaceholder(
             modifier = Modifier.fillMaxSize()
                 .verticalScroll(rememberScrollState())
-        ) }
+        ) },
+        errorContent = { error, refresh ->
+            DesignError(refresh, error, component.resource())
+        }
     ) { state, lazyPagingItems ->
         LazyColumn(modifier = Modifier.fillMaxSize()) {
             items(
