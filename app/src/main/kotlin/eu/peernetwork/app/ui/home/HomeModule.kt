@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
+import eu.peernetwork.app.ui.composer.Composer
 import eu.peernetwork.core.ui.annotation.UiBuilder
 import eu.peernetwork.core.ui.annotation.UiViewModel
 import eu.peernetwork.core.ui.component.UiComponent
@@ -13,7 +14,6 @@ import eu.peernetwork.core.ui.factory.UiBuilderFactory
 import eu.peernetwork.core.ui.factory.UiViewModelFactory
 import eu.peernetwork.app.ui.feed.Feed
 import eu.peernetwork.app.ui.profile.Profile
-import eu.peernetwork.blog.ui.creator.Creator
 import eu.peernetwork.blog.ui.point.Point
 import eu.peernetwork.app.ui.search.Search
 import eu.peernetwork.wallet.ui.overview.Overview
@@ -67,9 +67,9 @@ object HomeModule {
     @Home.Scope
     @Provides
     @IntoMap
-    @UiBuilder(Creator.Builder::class)
-    fun provideCreatorBuilder(component: Home.Component): UiComponent.Builder {
-        return Creator.Builder(component)
+    @UiBuilder(Composer.Builder::class)
+    fun provideComposerBuilder(component: Home.Component): UiComponent.Builder {
+        return Composer.Builder(component)
     }
 
     @Home.Scope

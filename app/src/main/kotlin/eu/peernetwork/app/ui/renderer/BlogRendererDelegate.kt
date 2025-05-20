@@ -14,12 +14,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.app.BuildConfig
-import eu.peernetwork.blog.ui.post.music.MusicScreen
 import eu.peernetwork.blog.ui.post.photo.PhotoScreen
 import eu.peernetwork.blog.ui.post.video.VideoScreen
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.compose.DesignTab
-import eu.peernetwork.media.core.model.MimeType
+import eu.peernetwork.media.core.model.UiMimeType
 import eu.peernetwork.social.ui.renderder.BlogRenderer
 
 class BlogRendererDelegate(val provider: UiComponentProvider) : BlogRenderer {
@@ -37,7 +36,8 @@ class BlogRendererDelegate(val provider: UiComponentProvider) : BlogRenderer {
                 spec.viewModelStoreOwner,
                 spec.onMentionClick,
                 spec.onHashtagClick,
-                spec.imageOnClick
+                spec.imageOnClick,
+                spec.photoState
             )
             BlogRenderer.Type.VIDEO -> VideoScreen(
                 spec.id,
@@ -47,10 +47,10 @@ class BlogRendererDelegate(val provider: UiComponentProvider) : BlogRenderer {
                 spec.viewModelStoreOwner,
                 spec.onMentionClick,
                 spec.onHashtagClick,
-                spec.imageOnClick
+                spec.imageOnClick,
+                spec.videoState
             )
-            BlogRenderer.Type.AUDIO -> MusicScreen(provider, spec.viewModelStoreOwner)
-            BlogRenderer.Type.UNSPECIFIED -> Blog { offset ->
+            BlogRenderer.Type.UNSPECIFIED -> BlogScreen { offset ->
                 when (offset) {
                     0 -> PhotoScreen(
                         spec.id,
@@ -60,7 +60,8 @@ class BlogRendererDelegate(val provider: UiComponentProvider) : BlogRenderer {
                         spec.viewModelStoreOwner,
                         spec.onMentionClick,
                         spec.onHashtagClick,
-                        spec.imageOnClick
+                        spec.imageOnClick,
+                        spec.photoState
                     )
                     1 -> VideoScreen(
                         spec.id,
@@ -70,9 +71,9 @@ class BlogRendererDelegate(val provider: UiComponentProvider) : BlogRenderer {
                         spec.viewModelStoreOwner,
                         spec.onMentionClick,
                         spec.onHashtagClick,
-                        spec.imageOnClick
+                        spec.imageOnClick,
+                        spec.videoState
                     )
-                    2 -> MusicScreen(provider, spec.viewModelStoreOwner)
                 }
             }
         }
@@ -80,16 +81,16 @@ class BlogRendererDelegate(val provider: UiComponentProvider) : BlogRenderer {
 }
 
 @Composable
-fun Blog(
+private fun BlogScreen(
     onNavigate: (Int) -> Unit = {},
     content: @Composable (Int) -> Unit
 ) {
     val pageState = rememberPagerState(
-        pageCount = { MimeType.TYPES.size },
+        pageCount = { UiMimeType.TYPES.size },
         initialPage = 0
     )
     DesignTab(pageState) { index ->
-        MimeType.TYPES[index].let {
+        UiMimeType.get(index)?.let {
             Icon(
                 painter = painterResource(id = it.id),
                 contentDescription = it.label?.let { stringResource(it) },

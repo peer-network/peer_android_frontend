@@ -22,7 +22,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import eu.peernetwork.app.BuildConfig
-import eu.peernetwork.blog.ui.creator.CreatorScreen
+import eu.peernetwork.app.ui.composer.ComposerScreen
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.theme.PeerTheme
@@ -84,7 +84,7 @@ fun HomeScreen(provider: UiComponentProvider) {
                     component,
                     viewModelStore,
                 )
-                is HomeRoute.Add -> CreatorScreen(component, viewModelStore.get(data.first))
+                is HomeRoute.Add -> ComposerScreen(component, viewModelStore.get(data.first))
                 is HomeRoute.Wallet -> OverviewScreen(component, viewModelStore.get(data.first))
                 is HomeRoute.Search -> SearchScreen(
                     id = data.first,
@@ -117,7 +117,7 @@ fun HomeScreen(
             footer = {
                 HomeFooter(
                     navigationState,
-                    onClick = { current()?.listener?.invoke() }
+                    onClick = { titleBar().value?.listener?.invoke() }
                 ) }
         ) { state ->
             HomeNavigation(

@@ -8,6 +8,6 @@
     <string name="tag_label">tag</string>
     <string name="title_label">title</string>
     <string name="mention_label">username</string>
-  
+
     <string name="notification_caption">Open Peer to keep the conversation going.</string>
 </resources>

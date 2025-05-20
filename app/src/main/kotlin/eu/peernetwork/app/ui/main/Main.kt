@@ -9,8 +9,9 @@ import eu.peernetwork.app.ui.setup.Setup
 import eu.peernetwork.app.ui.splash.Splash
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
+import eu.peernetwork.media.ui.selector.explorer.Explorer
 
-interface Main : ApplicationProvider {
+interface Main : ApplicationProvider, Explorer {
     @javax.inject.Scope
     @Retention(AnnotationRetention.RUNTIME)
     annotation class Scope

@@ -57,6 +57,7 @@ fun<T> DesignRefreshableScaffold(
             updatedErrorContent?.invoke(errorState.value!!)
                 ?: DesignRefreshErrorContent(
                     errorState.value!!,
+                    textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxSize()
                         .verticalScroll(rememberScrollState())
                 )
@@ -65,6 +66,7 @@ fun<T> DesignRefreshableScaffold(
         } else if (state.value is DesignStatefulScaffoldState.Empty) {
             updatedPlaceholder?.invoke() ?: DesignRefreshErrorContent(
                 RuntimeException(stringResource(R.string.empty_message)),
+                textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxSize()
                     .verticalScroll(rememberScrollState())
             )

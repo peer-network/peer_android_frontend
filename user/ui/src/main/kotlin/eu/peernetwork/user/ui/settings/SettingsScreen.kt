@@ -208,7 +208,7 @@ fun SettingsScreen(
         Row(modifier = Modifier.padding(top = 16.dp)) {
             DesignOutlinedButton(
                 onClick = { showLogout.value = true },
-                shape = RoundedCornerShape(12.dp),
+                shape = RoundedCornerShape(16.dp),
                 modifier = Modifier
                     .weight(1f)
                     .padding(end = 6.dp),
@@ -216,7 +216,7 @@ fun SettingsScreen(
             )
             DesignOutlinedButton(
                 onClick = { showDeactivation.value = true },
-                shape = RoundedCornerShape(12.dp),
+                shape = RoundedCornerShape(16.dp),
                 modifier = Modifier
                     .weight(1f)
                     .padding(start = 6.dp),

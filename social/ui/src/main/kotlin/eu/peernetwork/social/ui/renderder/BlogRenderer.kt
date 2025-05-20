@@ -1,15 +1,14 @@
 package eu.peernetwork.social.ui.renderder
 
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.MutableState
 import androidx.lifecycle.ViewModelStoreOwner
 import eu.peernetwork.core.ui.renderer.Renderer
-import eu.peernetwork.social.ui.connection.ConnectionController
 
 interface BlogRenderer : Renderer.Stateful<BlogRenderer.Spec> {
     enum class Type {
         PHOTO,
         VIDEO,
-        AUDIO,
         UNSPECIFIED,
     }
 
@@ -22,5 +21,7 @@ interface BlogRenderer : Renderer.Stateful<BlogRenderer.Spec> {
         val onMentionClick: (String) -> Unit = {},
         val onHashtagClick: (String) -> Unit = {},
         val imageOnClick: (String) -> Unit = {},
+        val photoState: LazyListState,
+        val videoState: LazyListState
     )
 }

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="recent_label">Recent</string>
+    <string name="photo_label">Photo</string>
+    <string name="video_label">Video</string>
+    <string name="file_label">Files</string>
+
+    <string name="gallery">Select media</string>
+    <string name="media_label">Upload media</string>
+</resources>
