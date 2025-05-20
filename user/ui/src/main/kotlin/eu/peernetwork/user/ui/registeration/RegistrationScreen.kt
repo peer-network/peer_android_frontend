@@ -81,38 +81,50 @@ fun RegistrationScreen(
 ) {
     val email = remember { TextFieldState() }
     val username = remember { TextFieldState() }
-    var password = remember { TextFieldState() }
+    val referralCode = remember { TextFieldState() }
+    val password = remember { TextFieldState() }
+
     val loadingState = rememberUpdatedState(loading)
     val errorState = rememberUpdatedState(error)
     val imeHeight = WindowInsets.ime.getBottom(LocalDensity.current) / 4
-    val validate by remember(email, username, password) { derivedStateOf {
-        email.isValidEmail() && username.isValidInput() &&
-                (password.passwordStrength().value >= DesignPasswordStrength.STRONG.value)
-    } }
+    val validate by remember(email, username, password) {
+        derivedStateOf {
+            email.isValidEmail() &&
+                    username.isValidInput() &&
+                    password.passwordStrength().value >= DesignPasswordStrength.STRONG.value
+        }
+    }
     val handleReset by rememberUpdatedState(onReset)
     val handleSubmit by rememberUpdatedState(onSubmit)
+
     Column(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
             .padding(bottom = imeHeight.dp)
     ) {
         RegistrationForm(
             email = email,
             username = username,
             password = password,
+            referralCode = referralCode,
             error = errorState.value,
             enabled = !loadingState.value,
         )
         DesignButton(
             enabled = !loadingState.value && validate,
             isLoading = loadingState.value,
-            onClick = { handleSubmit(
-                email.text.toString(),
-                username.text.toString(),
-                password.text.toString()) },
-            modifier = Modifier.fillMaxWidth().padding(
-                top = 16.dp,
-                bottom = 24.dp
-            ).padding(horizontal = 24.dp)
+            onClick = {
+                handleSubmit(
+                    email.text.toString(),
+                    username.text.toString(),
+                    password.text.toString()
+                    // No referralCode in submission logic yet
+                )
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp, bottom = 24.dp)
+                .padding(horizontal = 24.dp)
         ) {
             Text(
                 text = stringResource(R.string.register_text),
@@ -122,6 +134,7 @@ fun RegistrationScreen(
             )
         }
     }
+
     DisposableEffect(email) { onDispose { handleReset?.invoke() } }
 }
 

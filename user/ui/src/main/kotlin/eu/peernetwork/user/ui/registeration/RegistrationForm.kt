@@ -28,11 +28,12 @@ fun RegistrationForm(
     email: TextFieldState,
     username: TextFieldState,
     password: TextFieldState,
+    referralCode: TextFieldState,
     enabled: Boolean,
     modifier: Modifier = Modifier,
     error: String? = null,
 ) {
-    Column (modifier = modifier) {
+    Column(modifier = modifier) {
         DesignTextField(
             state = email,
             enabled = enabled,
@@ -51,7 +52,20 @@ fun RegistrationForm(
                 imeAction = ImeAction.Next
             ),
             placeholder = { Text(stringResource(id = R.string.username_label)) },
-            modifier = Modifier.padding(horizontal = 24.dp)
+            modifier = Modifier
+                .padding(horizontal = 24.dp)
+                .padding(top = 12.dp)
+        )
+        DesignTextField(
+            state = referralCode,
+            enabled = enabled,
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Text,
+                imeAction = ImeAction.Done
+            ),
+            placeholder = { Text(stringResource(id = R.string.referral_code_label)) },
+            modifier = Modifier
+                .padding(horizontal = 24.dp)
                 .padding(top = 12.dp)
         )
         DesignPassword(
@@ -60,7 +74,7 @@ fun RegistrationForm(
             showLabel = error != null,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Password,
-                imeAction = ImeAction.Done
+                imeAction = ImeAction.Next
             ),
             label = {
                 error?.run {
@@ -68,7 +82,8 @@ fun RegistrationForm(
                         text = this,
                         fontSize = MaterialTheme.typography.bodySmall.fontSize,
                         color = MaterialTheme.colorScheme.error,
-                        modifier = Modifier.padding(horizontal = 40.dp)
+                        modifier = Modifier
+                            .padding(horizontal = 40.dp)
                             .padding(top = 16.dp)
                     )
                 }
@@ -80,13 +95,16 @@ fun RegistrationForm(
                     width = 24.dp,
                     modifier = Modifier
                         .padding(horizontal = 16.dp)
-                        .padding(top = 8.dp).height(2.dp)
+                        .padding(top = 8.dp)
+                        .height(2.dp)
                 )
             },
             placeholder = { Text(stringResource(id = R.string.password_label)) },
-            modifier = Modifier.padding(horizontal = 24.dp)
+            modifier = Modifier
+                .padding(horizontal = 24.dp)
                 .padding(top = 12.dp)
         )
+
     }
 }
 
@@ -94,13 +112,16 @@ fun RegistrationForm(
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun PreviewRegistrationForm() {
     val email = remember { TextFieldState("johnDoe@domain.com") }
-    var username = remember { TextFieldState("johnDoe") }
-    var password = remember { TextFieldState("*********") }
+    val username = remember { TextFieldState("johnDoe") }
+    val password = remember { TextFieldState("*********") }
+    val referralCode = remember { TextFieldState("ABC123") }
+
     PeerTheme {
         RegistrationForm(
             email = email,
             username = username,
             password = password,
+            referralCode = referralCode,
             modifier = Modifier.fillMaxWidth(),
             enabled = true
         )
