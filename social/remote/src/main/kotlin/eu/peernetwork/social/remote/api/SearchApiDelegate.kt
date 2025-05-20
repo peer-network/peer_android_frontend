@@ -7,6 +7,7 @@ import eu.peernetwork.core.common.model.Pageable
 import eu.peernetwork.core.remote.extension.assertOrThrow
 import eu.peernetwork.core.remote.extension.executeOrThrow
 import eu.peernetwork.core.remote.extension.getOrThrow
+import eu.peernetwork.core.remote.provider.NetworkProvider
 import eu.peernetwork.social.data.api.SearchApi
 import eu.peernetwork.social.domain.model.Post
 import eu.peernetwork.social.domain.model.Tag
@@ -18,7 +19,7 @@ import javax.inject.Named
 
 class SearchApiDelegate @Inject constructor(
     @Named("mediaUrl") private val url: String,
-    private val client: ApolloClient,
+    private val provider: NetworkProvider,
 ) : SearchApi {
     override suspend fun findAllTags(tag: String, pageable: Pageable): Page<Tag> {
         val query = SearchTagsQuery(
@@ -26,7 +27,7 @@ class SearchApiDelegate @Inject constructor(
             offset = pageable.offset,
             limit = pageable.limit
         )
-        val response = client.query(query).executeOrThrow()
+        val response = provider.client().query(query).executeOrThrow()
         val data = response.getOrThrow().searchTags
         val contents = data.affectedRows?.mapNotNull {
             it?.name?.let { Tag(it) }
@@ -45,7 +46,7 @@ class SearchApiDelegate @Inject constructor(
             offset = Optional.present(pageable.offset),
             limit = Optional.present(pageable.limit)
         )
-        val response = client.query(query).executeOrThrow()
+        val response = provider.client().query(query).executeOrThrow()
         val data = response.getOrThrow().listPosts
         val contents = data.affectedRows?.map { it.mapToDomain(url) }
         response.assertOrThrow(data.status, data.ResponseCode)

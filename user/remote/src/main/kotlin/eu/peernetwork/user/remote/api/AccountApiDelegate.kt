@@ -5,6 +5,7 @@ import com.apollographql.apollo3.api.Optional
 import eu.peernetwork.core.remote.extension.assertOrThrow
 import eu.peernetwork.core.remote.extension.executeOrThrow
 import eu.peernetwork.core.remote.extension.getOrThrow
+import eu.peernetwork.core.remote.provider.NetworkProvider
 import eu.peernetwork.user.data.api.AccountApi
 import eu.peernetwork.user.data.model.AccountModel
 import eu.peernetwork.user.domain.exception.AccountNotFoundException
@@ -21,11 +22,11 @@ import javax.inject.Named
 
 class AccountApiDelegate @Inject constructor(
     @Named("mediaUrl") private val url: String,
-    private val client: ApolloClient
+    private val provider: NetworkProvider,
 ) : AccountApi {
     override suspend fun get(id: String, refresh: Boolean): AccountModel {
         val query = ProfileQuery(Optional.present(id))
-        val response = client.query(query).executeOrThrow()
+        val response = provider.client().query(query).executeOrThrow()
         val data = response.getOrThrow().getProfile
         response.assertOrThrow(data.status, data.ResponseCode)
         val account = data.affectedRows?.mapToDomain() ?: throw AccountNotFoundException()
@@ -43,7 +44,7 @@ class AccountApiDelegate @Inject constructor(
             username = detail.username,
             password = detail.password
         )
-        val response = client.mutation(mutation).executeOrThrow()
+        val response = provider.client().mutation(mutation).executeOrThrow()
         val data = response.getOrThrow().register
         response.assertOrThrow(data.status, data.ResponseCode)
         return data.userid ?: throw UserRegistrationException()
@@ -54,21 +55,21 @@ class AccountApiDelegate @Inject constructor(
             password = new,
             expassword = old
         )
-        val response = client.mutation(mutation).executeOrThrow()
+        val response = provider.client().mutation(mutation).executeOrThrow()
         val data = response.getOrThrow().updatePassword
         response.assertOrThrow(data.status, data.ResponseCode)
     }
 
     override suspend fun activate(code: String) {
         val mutation = VerifiedAccountMutation(code)
-        val response = client.mutation(mutation).executeOrThrow()
+        val response = provider.client().mutation(mutation).executeOrThrow()
         val data = response.getOrThrow().verifyAccount
         response.assertOrThrow(data.status, data.ResponseCode)
     }
 
     override suspend fun delete(password: String) {
         val mutation = DeleteAccountMutation(password)
-        val response = client.mutation(mutation).executeOrThrow()
+        val response = provider.client().mutation(mutation).executeOrThrow()
         val data = response.getOrThrow().deleteAccount
         response.assertOrThrow(data.status, data.ResponseCode)
     }

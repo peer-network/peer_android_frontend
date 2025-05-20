@@ -1,5 +1,7 @@
 package eu.peernetwork.app.ui.splash
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationEndReason
 import androidx.compose.animation.core.LinearEasing
@@ -7,6 +9,9 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
@@ -47,6 +52,16 @@ fun SplashScreen(
         factory = component.viewModelFactory()
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val showDialog = remember { mutableStateOf(false) }
+    val updateUrl = remember { mutableStateOf("") }
+
+    LaunchedEffect(state) {
+        if (state is SplashViewModel.State.Outdated) {
+            updateUrl.value = (state as SplashViewModel.State.Outdated).url
+            showDialog.value = true
+        }
+    }
+
     val derivedState = remember {
         mutableStateOf<DesignStatefulScaffoldState>(DesignStatefulScaffoldState.Empty)
     }
@@ -83,6 +98,25 @@ fun SplashScreen(
         }
     } }
 
+    if (showDialog.value) {
+        AlertDialog(
+            onDismissRequest = { showDialog.value = false },
+            title = { Text("Update Required") },
+            text = { Text("This version of the app is outdated. Please update to continue.") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(updateUrl.value))
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        context.startActivity(intent)
+                    }
+                ) {
+                    Text("Update Now")
+                }
+            },
+            dismissButton = {}
+        )
+    }
 }
 
 @Composable

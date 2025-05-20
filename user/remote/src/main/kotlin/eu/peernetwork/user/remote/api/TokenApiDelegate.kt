@@ -20,7 +20,7 @@ class TokenApiDelegate @Inject constructor(
         val response = client.mutation(mutation).executeOrThrow()
         val data = response.getOrThrow().refreshToken
         response.assertOrThrow(data.status, data.ResponseCode)
-        val token = data.mapToDomain()
-        return token.copy(expiresIn = usecase(token.access))
+        val model = data.mapToDomain()
+        return model.copy(expiresIn = usecase(model.access))
     }
 }

@@ -1,6 +1,5 @@
 package eu.peernetwork.blog.remote.api
 
-import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.Optional
 import eu.peernetwork.blog.data.api.CommentApi
 import eu.peernetwork.blog.domain.exception.CommentException
@@ -13,12 +12,13 @@ import eu.peernetwork.core.common.model.Pageable
 import eu.peernetwork.core.remote.extension.assertOrThrow
 import eu.peernetwork.core.remote.extension.executeOrThrow
 import eu.peernetwork.core.remote.extension.getOrThrow
+import eu.peernetwork.core.remote.provider.NetworkProvider
 import type.CommentType
 import javax.inject.Inject
 import javax.inject.Named
 
 class CommentApiDelegate @Inject constructor(
-    private val client: ApolloClient,
+    private val provider: NetworkProvider,
     @Named("mediaUrl") private val url: String,
 ) : CommentApi {
     override suspend fun getAll(id: String, page: Pageable): Page<Comment> {
@@ -27,7 +27,7 @@ class CommentApiDelegate @Inject constructor(
             offset = Optional.present(page.offset),
             limit = Optional.present(page.limit)
         )
-        val response = client.query(query).executeOrThrow()
+        val response = provider.client().query(query).executeOrThrow()
         val data = response.getOrThrow().listPosts
         val contents = data.affectedRows?.map {
             it.mapToDomain().map {
@@ -48,7 +48,7 @@ class CommentApiDelegate @Inject constructor(
             postId = postId,
             content = text
         )
-        val response = client.mutation(mutation).executeOrThrow()
+        val response = provider.client().mutation(mutation).executeOrThrow()
         val data = response.getOrThrow().createComment
         val content = data.affectedRows?.map { it?.mapToDomain() }
         response.assertOrThrow(data.status, data.ResponseCode)
