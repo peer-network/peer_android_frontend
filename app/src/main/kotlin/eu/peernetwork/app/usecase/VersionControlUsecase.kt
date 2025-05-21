@@ -25,17 +25,20 @@ class VersionControlUseCase @Inject constructor(
             Log.d("VersionControl", "Fetched minimum_required_version JSON: $json")
             val listType = object : TypeToken<List<MinimumRequiredVersion>>() {}.type
             val versionList: List<MinimumRequiredVersion> = Gson().fromJson(json, listType)
-            val minimumVersion = versionList.firstOrNull()
-
-            Log.d("VersionControl", "Current app version: ${BuildConfig.VERSION_NAME}")
-            Log.d("VersionControl", "Minimum required version from remote config: ${minimumVersion?.version}")
-            Log.d("VersionControl", "Base URL from remote config: ${minimumVersion?.url}")
-
+            val currentVersion = BuildConfig.VERSION_NAME
+            Log.d("VersionControl", "Current app version: $currentVersion")
+            val matchedVersion = versionList.firstOrNull { it.version == currentVersion }
+            val minimumVersion = matchedVersion ?: run {
+                val isDebug = currentVersion.contains("-DEBUG")
+                val fallbackList = versionList.filter { it.version.contains("-DEBUG") == isDebug }
+                fallbackList.maxByOrNull { it.version.split("-").first() }
+            }
+            Log.d("VersionControl", "Matched version: ${minimumVersion?.version}")
+            Log.d("VersionControl", "Matched URL: ${minimumVersion?.url}")
             minimumVersion?.url?.let {
                 Log.d("VersionControl", "Updating provider baseUrl to: $it")
                 provider.baseUrl(it)
-            } ?: Log.d("VersionControl", "No base URL found in minimum required version")
-
+            } ?: Log.d("VersionControl", "No base URL found in matched version")
             if (minimumVersion != null && isOutdated(minimumVersion.version)) {
                 Log.d("VersionControl", "App version is outdated")
                 Result.Outdated(minimumVersion.url)
