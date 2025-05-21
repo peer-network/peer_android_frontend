@@ -106,7 +106,7 @@ fun RegistrationScreen(
             email = email,
             username = username,
             password = password,
-            referralCode = referralCode,
+            referralCode = referralCode, //
             error = errorState.value,
             enabled = !loadingState.value,
         )
