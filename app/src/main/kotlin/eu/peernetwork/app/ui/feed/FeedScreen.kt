@@ -31,8 +31,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.blog.domain.model.Filter.Criteria
-import eu.peernetwork.media.core.model.MimeType
-import eu.peernetwork.blog.ui.timeline.music.MusicScreen
+import eu.peernetwork.media.core.model.UiMimeType
 import eu.peernetwork.blog.ui.timeline.photo.PhotoScreen
 import eu.peernetwork.blog.ui.timeline.video.VideoScreen
 import eu.peernetwork.core.ui.R
@@ -69,8 +68,6 @@ fun FeedScreen(
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
     val pageState = remember { mutableIntStateOf(state.page) }
-    val photoState = rememberLazyListState()
-    val videoState = rememberLazyListState()
     FeedNavigation(
         userId = id,
         postLimit = postLimit,
@@ -81,6 +78,8 @@ fun FeedScreen(
             provider = component,
             viewModelStoreOwner = viewModelStoreOwner
         ) { connectionController ->
+            val photoState = rememberLazyListState()
+            val videoState = rememberLazyListState()
             val connection by connectionController.observe().collectAsStateWithLifecycle()
             FeedScreen(
                 state = pageState,
@@ -124,25 +123,24 @@ fun FeedScreen(
                         )
                     }
                 },
-                music = { MusicScreen(component, viewModelStoreOwner) }
             )
-        }
-    }
-    DesignTitleBarHost(
-        "FeedScreen$id$title",
-        {
-            coroutine.launch {
-                photoState.animateScrollToItem(0)
-                videoState.animateScrollToItem(0)
-            }
-        }
-    ) {
-        titleBar {
-            DesignTitle(modifier = Modifier
-                .clickable(
-                    role = Role.Button,
-                    onClick = {  })) {
-                Text(title ?: stringResource(R.string.feed_label))
+            DesignTitleBarHost(
+                "FeedScreen$id$title",
+                {
+                    coroutine.launch {
+                        photoState.animateScrollToItem(0)
+                        videoState.animateScrollToItem(0)
+                    }
+                }
+            ) {
+                titleBar {
+                    DesignTitle(modifier = Modifier
+                        .clickable(
+                            role = Role.Button,
+                            onClick = {  })) {
+                        Text(title ?: stringResource(R.string.feed_label))
+                    }
+                }
             }
         }
     }
@@ -155,15 +153,14 @@ fun FeedScreen(
     onNavigate: (Int) -> Unit = {},
     photo: @Composable () -> Unit,
     video: @Composable () -> Unit,
-    music: @Composable () -> Unit,
 ) {
     val pageState = rememberPagerState(
-        pageCount = { MimeType.TYPES.size },
+        pageCount = { UiMimeType.TYPES.size },
         initialPage = state.intValue
     )
     Column {
         DesignTab(pageState) { index ->
-            MimeType.TYPES[index].let {
+            UiMimeType.get(index)?.let {
                 Icon(
                     painter = painterResource(id = it.id),
                     contentDescription = it.label?.let { stringResource(it) },
@@ -182,7 +179,6 @@ fun FeedScreen(
             when (page) {
                 0 -> photo()
                 1 -> video()
-                2 -> music()
             }
         }
     }
@@ -199,7 +195,6 @@ fun PreviewFeedScreen() {
             modifier = Modifier.fillMaxSize(),
             photo = { Text("Photo") },
             video = { Text("Video") },
-            music = { Text("Music") }
         )
     }
 }

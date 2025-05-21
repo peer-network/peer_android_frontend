@@ -10,6 +10,7 @@ import eu.peernetwork.blog.remote.comment.GetCommentsQuery
 import eu.peernetwork.blog.remote.mock.CommentMock
 import eu.peernetwork.core.common.model.Pageable
 import eu.peernetwork.core.remote.model.Status
+import eu.peernetwork.core.remote.api.RequestClient
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -32,7 +33,9 @@ internal class CommentApiDelegateTest {
 
     @Before
     fun setup() {
-        api = CommentApiDelegate(client, url)
+        api = CommentApiDelegate(object : RequestClient {
+            override fun invoke(): ApolloClient = client
+        }, url)
     }
 
     @Test

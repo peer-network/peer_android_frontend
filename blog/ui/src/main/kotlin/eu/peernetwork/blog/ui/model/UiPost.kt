@@ -1,9 +1,9 @@
 package eu.peernetwork.blog.ui.model
 
-import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.Stable
 import androidx.compose.ui.text.AnnotatedString
 
-@Immutable
+@Stable
 data class UiPost(
     val id: String,
     val title: AnnotatedString,

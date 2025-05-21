@@ -9,12 +9,12 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import eu.peernetwork.app.ui.home.HomeScreen
 import eu.peernetwork.app.ui.setup.SetupScreen
 import eu.peernetwork.app.ui.splash.SplashScreen
+import eu.peernetwork.core.ui.design.compose.DesignNavigation
 import eu.peernetwork.core.ui.extension.attachIfNecessary
 
 @Composable
@@ -38,7 +38,7 @@ fun MainScreen(
             is MainViewModel.State.Home -> controller.attachIfNecessary("home")
         }
     }
-    NavHost(navController = controller, startDestination = "splash") {
+    DesignNavigation(navController = controller, startDestination = "splash") {
         composable("splash") {
             SplashScreen(component, viewModelStoreOwner) { splashDone = true }
         }

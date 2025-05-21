@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModelProvider
 import eu.peernetwork.app.provider.ApplicationProvider
 import eu.peernetwork.app.ui.profile.Profile
 import eu.peernetwork.app.ui.search.Search
-import eu.peernetwork.blog.ui.timeline.music.Music
 import eu.peernetwork.blog.ui.timeline.photo.Photo
 import eu.peernetwork.blog.ui.timeline.video.Video
 import eu.peernetwork.core.ui.component.UiComponent
@@ -25,7 +24,6 @@ interface Feed : ApplicationProvider {
     )
     interface Component : Feed,
         UiComponentProvider,
-        Music,
         Video,
         Photo,
         Member,

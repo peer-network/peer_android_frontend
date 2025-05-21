@@ -6,6 +6,7 @@ import com.apollographql.apollo3.api.Operation
 import com.apollographql.apollo3.api.Optional
 import eu.peernetwork.core.common.model.Pageable
 import eu.peernetwork.core.remote.model.Status
+import eu.peernetwork.core.remote.api.RequestClient
 import eu.peernetwork.social.data.api.SearchApi
 import eu.peernetwork.social.remote.mock.PostMock
 import eu.peernetwork.social.remote.mock.TagMock
@@ -32,7 +33,9 @@ internal class SearchApiDelegateTest {
 
     @Before
     fun setup() {
-        api = SearchApiDelegate(url, client)
+        api = SearchApiDelegate(url, object : RequestClient {
+            override fun invoke(): ApolloClient = client
+        })
     }
 
     @Test

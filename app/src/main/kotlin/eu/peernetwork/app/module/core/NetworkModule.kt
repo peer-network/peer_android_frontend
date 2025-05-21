@@ -1,14 +1,14 @@
 package eu.peernetwork.app.module.core
 
-import com.apollographql.apollo3.ApolloClient
 import dagger.Module
 import dagger.Provides
 import eu.peernetwork.app.BuildConfig
-import eu.peernetwork.app.interceptor.LoggingInterceptor
-import eu.peernetwork.user.remote.interceptor.JwtInterceptor
+import eu.peernetwork.app.service.NetworkService
+import eu.peernetwork.core.remote.api.RequestClient
 import okhttp3.OkHttpClient
 import java.util.concurrent.TimeUnit
 import javax.inject.Named
+import javax.inject.Singleton
 
 @Module
 internal object NetworkModule {
@@ -28,15 +28,10 @@ internal object NetworkModule {
         .build()
 
     @Provides
-    fun provideApolloClient(
-        @Named("baseUrl") baseUrl: String,
-        logger: LoggingInterceptor,
-        jwtInterceptor: JwtInterceptor,
-    ): ApolloClient {
-        return ApolloClient.Builder()
-            .serverUrl("$baseUrl/graphql")
-            .addInterceptor(logger)
-            .addInterceptor(jwtInterceptor)
-            .build()
-    }
+    @Singleton
+    fun providesNetworkResource(delegate: NetworkService.Delegate): NetworkService = delegate
+
+    @Provides
+    @Singleton
+    fun providesNetworkProvider(delegate: NetworkService): RequestClient = delegate
 }

@@ -4,6 +4,7 @@ import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.ApolloResponse
 import com.apollographql.apollo3.api.Operation
 import eu.peernetwork.core.remote.model.Status
+import eu.peernetwork.core.remote.api.RequestClient
 import eu.peernetwork.user.data.api.AccountApi
 import eu.peernetwork.user.remote.mock.AccountMock
 import io.mockk.coEvery
@@ -31,7 +32,9 @@ internal class AccountApiDelegateTest {
 
     @Before
     fun setup() {
-        api = AccountApiDelegate(url, client)
+        api = AccountApiDelegate(url, object : RequestClient {
+            override fun invoke(): ApolloClient = client
+        })
     }
 
     @Test

@@ -78,7 +78,7 @@ fun DialogPostCard(
                 Box(modifier = Modifier.padding(horizontal = 24.dp)) { caption() }
             }
             Image(
-                painter = painterResource(eu.peernetwork.blog.ui.R.drawable.overlay_gradient),
+                painter = painterResource(R.drawable.overlay_gradient),
                 contentDescription = null,
                 modifier = Modifier.fillMaxWidth()
                     .height(136.dp)

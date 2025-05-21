@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -54,6 +56,7 @@ fun VideoScreen(
     onMentionClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
     imageOnClick: (String) -> Unit = {},
+    listState: LazyListState = rememberLazyListState(),
 ) {
     val context = LocalContext.current
     val component = remember {
@@ -102,7 +105,7 @@ fun VideoScreen(
                 component,
                 viewModelStoreOwner
             ) { spec ->
-                LazyColumn(modifier = Modifier.fillMaxSize()) {
+                LazyColumn(state = listState) {
                     items(
                         count = lazyPagingItems.itemCount,
                         key = { index -> index }

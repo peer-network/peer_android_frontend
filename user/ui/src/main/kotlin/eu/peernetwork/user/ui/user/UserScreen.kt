@@ -57,9 +57,7 @@ fun UserScreen(
         factory = component.viewModelFactory()
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val isOwner = remember { derivedStateOf {
-        (state as? UserViewModel.State.Success?)?.isOwner == true
-    } }
+    val account by viewModel.account.collectAsStateWithLifecycle()
     val derivedState = remember { derivedStateOf {
         when(state) {
             UserViewModel.State.Empty -> DesignStatefulScaffoldState.Empty
@@ -78,7 +76,9 @@ fun UserScreen(
     } }
     DesignStatefulScaffold<UiAccount>(
         state = derivedState,
-        onRefresh = { viewModel.getAccount(id) },
+        onRefresh = {
+            viewModel.initialize()
+            viewModel.getAccount(id) },
         placeholder = { ProfileScaffold(modifier = modifier.padding(end = 8.dp)) },
         errorContent = { ProfileScaffold(modifier = modifier.padding(end = 8.dp)) }
     ) {
@@ -86,7 +86,7 @@ fun UserScreen(
             modifier = modifier,
             account = it,
             connection = onFollow,
-            onSettings = if (isOwner.value) {
+            onSettings = if (it.slug == account?.slug) {
                 onSettings
             } else {
                 null
@@ -96,6 +96,7 @@ fun UserScreen(
     }
     LaunchedEffect(loadState.value) {
         if (loadState.value) {
+            viewModel.initialize()
             viewModel.getAccount(id)
             loadState.value = false
         }

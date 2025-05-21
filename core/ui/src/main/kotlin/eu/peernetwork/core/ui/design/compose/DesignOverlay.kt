@@ -33,6 +33,9 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import eu.peernetwork.core.ui.theme.PeerTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
@@ -127,6 +130,7 @@ fun DesignOverlayHost(
     durationMillis: Int = DefaultDurationMillis,
     builder: DesignOverlayBuilder.(State<Boolean>) -> Unit,
 ) {
+    val lifecycleOwner = LocalLifecycleOwner.current
     val controller = rememberDesignOverlayController()
     val isVisible = remember { mutableStateOf(visible) }
     val overlayRegistry = LocalDesignOverlayRegistry.current
@@ -138,8 +142,22 @@ fun DesignOverlayHost(
         }
     }
     val updatedBuilder by rememberUpdatedState(builder)
+    val observer = remember {
+        LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_START) {
+                updatedBuilder(overlayBuilder, isVisible)
+            } else if (event == Lifecycle.Event.ON_STOP) {
+                overlayRegistry.detach(tag)
+            }
+        }
+    }
     LaunchedEffect(Unit) {
-        updatedBuilder(overlayBuilder, isVisible)
+        lifecycleOwner.lifecycle.addObserver(observer)
+    }
+    DisposableEffect(Unit) {
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
     }
     LaunchedEffect(visible) {
         snapshotFlow { visible }
@@ -154,9 +172,6 @@ fun DesignOverlayHost(
                     controller.dismiss(tag)
                 }
             }
-    }
-    DisposableEffect(Unit) {
-        onDispose { overlayRegistry.detach(tag) }
     }
 }
 

@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
@@ -53,6 +55,7 @@ fun PhotoScreen(
     onMentionClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
     imageOnClick: (String) -> Unit = {},
+    listState: LazyListState = rememberLazyListState(),
 ) {
     val context = LocalContext.current
     val component = remember {
@@ -102,7 +105,7 @@ fun PhotoScreen(
                 component,
                 viewModelStoreOwner
             ) { spec ->
-                LazyColumn {
+                LazyColumn(state = listState) {
                     items(
                         count = lazyPagingItems.itemCount,
                         key = { index -> index }

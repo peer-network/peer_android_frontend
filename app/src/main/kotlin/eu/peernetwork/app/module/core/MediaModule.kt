@@ -1,49 +1,43 @@
 package eu.peernetwork.app.module.core
 
-import dagger.Binds
 import dagger.Module
+import dagger.Provides
 import eu.peernetwork.media.core.provider.VideoProvider
 import eu.peernetwork.media.core.usecase.MetaDataUsecase
 import eu.peernetwork.media.core.renderer.ImageView
-import eu.peernetwork.media.core.renderer.MediaSelector
 import eu.peernetwork.media.core.renderer.VideoPlayer
 import eu.peernetwork.media.core.renderer.VideoThumbnail
 import eu.peernetwork.media.core.usecase.MediaEncoderUsecase
 import eu.peernetwork.media.ui.provider.VideoProviderDelegate
 import eu.peernetwork.media.ui.usecase.MetaDataUsecaseDelegate
 import eu.peernetwork.media.ui.renderer.ImageViewDelegate
-import eu.peernetwork.media.ui.renderer.MediaSelectorDelegate
 import eu.peernetwork.media.ui.renderer.VideoPlayerDelegate
 import eu.peernetwork.media.ui.renderer.VideoThumbnailDelegate
 import eu.peernetwork.media.ui.usecase.MediaEncoderUsecaseDelegate
 import javax.inject.Singleton
 
 @Module
-interface MediaModule {
-    @Binds
+object MediaModule {
+    @Provides
     @Singleton
-    fun bindMediaSelector(delegate: MediaSelectorDelegate): MediaSelector
+    fun bindImageView(delegate: ImageViewDelegate): ImageView = delegate
 
-    @Binds
+    @Provides
     @Singleton
-    fun bindImageView(delegate: ImageViewDelegate): ImageView
+    fun bindVideoThumbnail(delegate: VideoThumbnailDelegate): VideoThumbnail = delegate
 
-    @Binds
+    @Provides
     @Singleton
-    fun bindVideoThumbnail(delegate: VideoThumbnailDelegate): VideoThumbnail
+    fun bindVideoPlayer(delegate: VideoPlayerDelegate): VideoPlayer = delegate
 
-    @Binds
+    @Provides
     @Singleton
-    fun bindVideoPlayer(delegate: VideoPlayerDelegate): VideoPlayer
+    fun bindVideoProvider(delegate: VideoProviderDelegate): VideoProvider = delegate
 
-    @Binds
+    @Provides
+    fun bindMediaEncoderUsecase(delegate: MediaEncoderUsecaseDelegate): MediaEncoderUsecase = delegate
+
+    @Provides
     @Singleton
-    fun bindVideoProvider(delegate: VideoProviderDelegate): VideoProvider
-
-    @Binds
-    fun bindMediaEncoderUsecase(delegate: MediaEncoderUsecaseDelegate): MediaEncoderUsecase
-
-    @Binds
-    @Singleton
-    fun bindMetaDataUsecase(delegate: MetaDataUsecaseDelegate): MetaDataUsecase
+    fun bindMetaDataUsecase(delegate: MetaDataUsecaseDelegate): MetaDataUsecase = delegate
 }

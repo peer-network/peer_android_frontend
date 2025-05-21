@@ -70,11 +70,11 @@ fun SearchScreen(
                     .verticalScroll(rememberScrollState()))
             }
         }
-    }
-    DesignTitleBarHost("SearchScreen") {
-        titleBar {
-            DesignTitle {
-                Text(title ?: stringResource(R.string.search_label))
+        DesignTitleBarHost("SearchScreen") {
+            titleBar {
+                DesignTitle {
+                    Text(title ?: stringResource(R.string.search_label))
+                }
             }
         }
     }
@@ -101,7 +101,7 @@ fun SearchScreen(
             query,
             mode,
             modifier = Modifier.padding(horizontal = 24.dp)
-                .padding(top = 16.dp)
+                .padding(top = 8.dp)
         )
         content(mode.value, query)
     }

@@ -17,6 +17,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -54,6 +55,7 @@ fun MemberScreen(
         viewModelStoreOwner = viewModelStoreOwner,
         factory = component.viewModelFactory()
     )
+    val handleClick by rememberUpdatedState(onClick)
     val state by viewModel.state.collectAsStateWithLifecycle()
     val derivedState = remember {
         derivedStateOf {
@@ -94,7 +96,7 @@ fun MemberScreen(
                     Box(modifier = Modifier.fillMaxWidth()
                         .padding(vertical = 16.dp)
                         .clickable(role = Role.Button) {
-                            onClick(member.id)
+                            handleClick(member.id)
                         }) {
                         Text(
                             text = "@${member.username}",

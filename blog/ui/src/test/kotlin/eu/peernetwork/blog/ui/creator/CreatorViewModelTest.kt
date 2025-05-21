@@ -8,7 +8,7 @@ import eu.peernetwork.blog.ui.mapper.mapToPhoto
 import eu.peernetwork.blog.ui.model.UiDraft
 import eu.peernetwork.core.common.usecase.TextEncoderUsecase
 import eu.peernetwork.core.ui.usecase.AnnotationUsecase
-import eu.peernetwork.media.core.model.MimeType
+import eu.peernetwork.media.core.model.UiMimeType
 import eu.peernetwork.media.core.usecase.MediaEncoderUsecase
 import io.mockk.coEvery
 import io.mockk.every
@@ -59,7 +59,7 @@ internal class CreatorViewModelTest {
         val draft = UiDraft(
             title = text,
             description = description,
-            media = MimeType.Text,
+            media = UiMimeType.Text,
             attachments = listOf()
         )
         val mockData = mockk<Content>(relaxed = true)
@@ -80,7 +80,7 @@ internal class CreatorViewModelTest {
         val text = "<test-text>"
         val draft = mockk<UiDraft>(relaxed = true)
         val error = RuntimeException()
-        every { draft.media } returns MimeType.Text
+        every { draft.media } returns UiMimeType.Text
         every { textEncoderUsecase(any()) } returns text
         coEvery { contentCreationUsecase(any()) } throws error
         viewModel.create(draft)

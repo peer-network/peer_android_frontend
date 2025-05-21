@@ -3,6 +3,7 @@ package eu.peernetwork.wallet.remote.api
 import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.ApolloResponse
 import com.apollographql.apollo3.api.Operation
+import eu.peernetwork.core.remote.api.RequestClient
 import eu.peernetwork.wallet.data.api.WalletApi
 import eu.peernetwork.wallet.remote.mapper.toBigDecimalOrNull
 import eu.peernetwork.wallet.remote.mock.WalletMock
@@ -23,7 +24,9 @@ internal class WalletApiDelegateTest {
 
     @Before
     fun setup() {
-        api = WalletApiDelegate(client)
+        api = WalletApiDelegate(object : RequestClient {
+            override fun invoke(): ApolloClient = client
+        })
     }
 
     @Test

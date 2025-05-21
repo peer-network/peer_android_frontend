@@ -1,10 +1,12 @@
 package eu.peernetwork.app.ui.profile
 
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -26,6 +28,7 @@ import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.core.ui.model.ViewModelState
 import eu.peernetwork.social.ui.member.MemberScreen
 import eu.peernetwork.user.ui.settings.SettingsScreen
+import kotlinx.coroutines.launch
 import java.net.URLEncoder
 
 @Composable
@@ -40,12 +43,15 @@ fun ProfileScreen(
     val component = remember {
         provider.builder(Profile.Builder::class.java).build(context)
     }
+    val coroutine = rememberCoroutineScope()
     var id by remember { mutableStateOf<String>("") }
     DesignRouter(navController = navController, startDestination = "profile/$userId") {
         composable(
             "profile/{id}",
             arguments = listOf(navArgument("id") { this.type = NavType.StringType })
         ) { backStackEntry ->
+            val photoState = rememberLazyListState()
+            val videoState = rememberLazyListState()
             id = backStackEntry.arguments?.getString("id") ?: ""
             MemberScreen(
                 id = id,
@@ -53,10 +59,24 @@ fun ProfileScreen(
                 onSettings = { navController.navigateIfNecessary("settings") },
                 provider = component,
                 viewModelStoreOwner = viewModelStore.get(id),
+                photoState = photoState,
+                videoState = videoState,
                 onHashtagClick = { navController.navigateToTagSearch(it) },
                 onMentionClick = { navController.navigateToUsernameSearch(it) },
-                imageOnClick = { navController.navigateIfNecessary("profile/$it") }
+                imageOnClick = { navController.navigateIfNecessary("profile/$it") },
             )
+            DesignTitleBarHost("ProfileScreen$id", {
+                coroutine.launch {
+                    photoState.animateScrollToItem(0)
+                    videoState.animateScrollToItem(0)
+                }
+            }) {
+                titleBar {
+                    DesignTitle {
+                        Text(title ?: stringResource(R.string.profile_label))
+                    }
+                }
+            }
         }
         composable("settings") { SettingsScreen(component, viewModelStore.get(userId)) }
         composable(
@@ -80,13 +100,6 @@ fun ProfileScreen(
                 viewModelStore = viewModelStore,
                 searchState = searchState,
             )
-        }
-    }
-    DesignTitleBarHost("ProfileScreen$id") {
-        titleBar {
-            DesignTitle {
-                Text(title ?: stringResource(R.string.profile_label))
-            }
         }
     }
 }
