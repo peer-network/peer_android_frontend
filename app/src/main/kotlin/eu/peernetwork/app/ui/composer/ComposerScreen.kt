@@ -48,7 +48,6 @@ fun ComposerScreen(
         attachment = attachment,
         controller = controller,
         provider = component,
-        viewModelStoreOwner = viewModelStoreOwner
     ) {
         ComposerScreen({
             AttachmentScreen(

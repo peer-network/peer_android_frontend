@@ -5,29 +5,29 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import eu.peernetwork.app.BuildConfig
-import eu.peernetwork.app.service.NetworkResource
+import eu.peernetwork.app.provider.UrlProvider
+import eu.peernetwork.core.common.provider.Dispatcher
 import eu.peernetwork.core.common.usecase.SuspendableUseCase
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class VersionControlUseCase @Inject constructor(
-    private val provider: NetworkResource,
-    private val remoteConfig: FirebaseRemoteConfig
+    private val provider: UrlProvider,
+    private val remoteConfig: FirebaseRemoteConfig,
+    private val dispatcher: Dispatcher
 ) : SuspendableUseCase<VersionControlUseCase.Result> {
 
-    override suspend fun invoke(): Result {
-        return try {
-            remoteConfig.fetch(0).await()
-            remoteConfig.activate().await()
+    override suspend fun invoke(): Result = withContext(dispatcher.io) {
+        try {
+            remoteConfig.fetchAndActivate().await()
             val json = remoteConfig.getString("minimum_required_version")
             Log.d("VersionControl", "Fetched minimum_required_version JSON: $json")
-
             val listType = object : TypeToken<List<MinimumRequiredVersion>>() {}.type
             val versionList: List<MinimumRequiredVersion> = Gson().fromJson(json, listType)
             val minimumVersion = versionList.firstOrNull()
 
-            val currentVersion = BuildConfig.VERSION_NAME
-            Log.d("VersionControl", "Current app version: $currentVersion")
+            Log.d("VersionControl", "Current app version: ${BuildConfig.VERSION_NAME}")
             Log.d("VersionControl", "Minimum required version from remote config: ${minimumVersion?.version}")
             Log.d("VersionControl", "Base URL from remote config: ${minimumVersion?.url}")
 
@@ -36,7 +36,7 @@ class VersionControlUseCase @Inject constructor(
                 provider.baseUrl(it)
             } ?: Log.d("VersionControl", "No base URL found in minimum required version")
 
-            return if (minimumVersion != null && isOutdated(currentVersion, minimumVersion.version)) {
+            if (minimumVersion != null && isOutdated(minimumVersion.version)) {
                 Log.d("VersionControl", "App version is outdated")
                 Result.Outdated(minimumVersion.url)
             } else {
@@ -49,13 +49,11 @@ class VersionControlUseCase @Inject constructor(
         }
     }
 
-
-    private fun isOutdated(current: String, required: String): Boolean {
-        val currentBase = current.split("-").first()
+    private fun isOutdated(required: String): Boolean {
+        val currentBase = BuildConfig.VERSION_NAME.split("-").first()
         val requiredBase = required.split("-").first()
         val currentParts = currentBase.split(".").mapNotNull { it.toIntOrNull() }
         val requiredParts = requiredBase.split(".").mapNotNull { it.toIntOrNull() }
-
         if (currentParts.isEmpty() || requiredParts.isEmpty()) {
             return currentBase < requiredBase
         }

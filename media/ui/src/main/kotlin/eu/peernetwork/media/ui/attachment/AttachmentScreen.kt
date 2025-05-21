@@ -10,6 +10,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.platform.LocalContext
@@ -56,6 +57,7 @@ fun AttachmentScreen(
             listOf(Manifest.permission.READ_EXTERNAL_STORAGE)
         }
     )
+    val handleOnAttach by rememberUpdatedState(onAttach)
     ThumbnailScreen(
         type = attachment.value.media,
         provider = component,
@@ -63,9 +65,26 @@ fun AttachmentScreen(
     ) { thumbnail, onLoad ->
         Crossfade(attachment.value) { target ->
             if (target.files.isEmpty()) {
-                AttachmentPlaceholder(onAttach)
+                AttachmentPlaceholder {
+                    if (permissionsState.allPermissionsGranted) {
+                        handleOnAttach()
+                    } else {
+                        timestamp = System.currentTimeMillis()
+                    }
+                }
             } else {
-                AttachmentPreview(onAttach, thumbnail, onLoad, attachment)
+                AttachmentPreview(
+                    {
+                        if (permissionsState.allPermissionsGranted) {
+                            handleOnAttach()
+                        } else {
+                            timestamp = System.currentTimeMillis()
+                        }
+                    },
+                    thumbnail,
+                    onLoad,
+                    attachment
+                )
             }
         }
     }
@@ -80,7 +99,7 @@ fun AttachmentScreen(
                         viewModel.bump()
                         permissionsState.launchMultiplePermissionRequest()
                     } else {
-                        onAttach()
+                        handleOnAttach()
                     }
                 }
             }

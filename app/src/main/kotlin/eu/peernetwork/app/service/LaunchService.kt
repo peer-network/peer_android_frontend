@@ -1,5 +1,5 @@
 package eu.peernetwork.app.service
 
-interface ResourceLoader {
+interface LaunchService {
     suspend fun initialize()
 }

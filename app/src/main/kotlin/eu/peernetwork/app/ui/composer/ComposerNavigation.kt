@@ -4,7 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.lifecycle.ViewModelStoreOwner
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import eu.peernetwork.core.ui.component.UiComponentProvider
@@ -17,7 +16,6 @@ fun ComposerNavigation(
     attachment: MutableState<UiAttachment>,
     controller: NavHostController,
     provider: UiComponentProvider,
-    viewModelStoreOwner: ViewModelStoreOwner,
     content: @Composable () -> Unit
 ) {
     val updatedContent by rememberUpdatedState(content)
@@ -29,8 +27,8 @@ fun ComposerNavigation(
         composable("explorer") {
             ExplorerScreen(
                 attachment = attachment,
+                onFinish = { controller.popBackStack() },
                 provider = provider,
-                viewModelStoreOwner = viewModelStoreOwner,
             )
         }
     }

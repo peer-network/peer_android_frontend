@@ -12,13 +12,13 @@ import eu.peernetwork.core.common.model.Pageable
 import eu.peernetwork.core.remote.extension.assertOrThrow
 import eu.peernetwork.core.remote.extension.executeOrThrow
 import eu.peernetwork.core.remote.extension.getOrThrow
-import eu.peernetwork.core.remote.provider.NetworkProvider
+import eu.peernetwork.core.remote.api.RequestClient
 import type.CommentType
 import javax.inject.Inject
 import javax.inject.Named
 
 class CommentApiDelegate @Inject constructor(
-    private val provider: NetworkProvider,
+    private val client: RequestClient,
     @Named("mediaUrl") private val url: String,
 ) : CommentApi {
     override suspend fun getAll(id: String, page: Pageable): Page<Comment> {
@@ -27,7 +27,7 @@ class CommentApiDelegate @Inject constructor(
             offset = Optional.present(page.offset),
             limit = Optional.present(page.limit)
         )
-        val response = provider.client().query(query).executeOrThrow()
+        val response = client().query(query).executeOrThrow()
         val data = response.getOrThrow().listPosts
         val contents = data.affectedRows?.map {
             it.mapToDomain().map {
@@ -48,7 +48,7 @@ class CommentApiDelegate @Inject constructor(
             postId = postId,
             content = text
         )
-        val response = provider.client().mutation(mutation).executeOrThrow()
+        val response = client().mutation(mutation).executeOrThrow()
         val data = response.getOrThrow().createComment
         val content = data.affectedRows?.map { it?.mapToDomain() }
         response.assertOrThrow(data.status, data.ResponseCode)

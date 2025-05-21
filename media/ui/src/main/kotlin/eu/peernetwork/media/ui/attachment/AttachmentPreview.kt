@@ -32,6 +32,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.media.core.model.UiAttachment
 import eu.peernetwork.media.ui.R
@@ -111,7 +112,8 @@ fun AttachmentPlaceholder(onAttach: () -> Unit) {
                             style = stroke,
                             cornerRadius = androidx.compose.ui.geometry.CornerRadius(24.dp.toPx())
                         )
-                    }
+                    }.clip(RoundedCornerShape(24.dp))
+                    .clickable(role = Role.Button, onClick = onAttach)
             ) {
                 Text(
                     stringResource(R.string.media_label),

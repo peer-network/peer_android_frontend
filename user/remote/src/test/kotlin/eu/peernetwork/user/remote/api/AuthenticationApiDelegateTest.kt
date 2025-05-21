@@ -4,6 +4,7 @@ import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.ApolloResponse
 import com.apollographql.apollo3.api.Operation
 import eu.peernetwork.core.remote.model.Status
+import eu.peernetwork.core.remote.api.RequestClient
 import eu.peernetwork.user.data.api.AuthenticationApi
 import eu.peernetwork.user.remote.mock.AuthenticationMock
 import eu.peernetwork.user.remote.usecase.JwtExpiryUsecase
@@ -32,7 +33,9 @@ internal class AuthenticationApiDelegateTest {
     @Before
     fun setup() {
         every { usecase(any()) } returns 1L
-        api = AuthenticationApiDelegate(client, usecase, listener)
+        api = AuthenticationApiDelegate(object : RequestClient {
+            override fun invoke(): ApolloClient = client
+        }, usecase, listener)
     }
 
     @Test

@@ -1,6 +1,5 @@
 package eu.peernetwork.blog.remote.api
 
-import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.Optional
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -21,7 +20,7 @@ import eu.peernetwork.core.common.model.Pageable
 import eu.peernetwork.core.remote.extension.assertOrThrow
 import eu.peernetwork.core.remote.extension.executeOrThrow
 import eu.peernetwork.core.remote.extension.getOrThrow
-import eu.peernetwork.core.remote.provider.NetworkProvider
+import eu.peernetwork.core.remote.api.RequestClient
 import type.PostType
 import javax.inject.Inject
 import javax.inject.Named
@@ -29,7 +28,7 @@ import javax.inject.Named
 class ContentApiDelegate @Inject constructor(
     private val gson: Gson,
     @Named("mediaUrl") private val url: String,
-    private val provider: NetworkProvider,
+    private val client: RequestClient,
 ) : ContentApi {
     override suspend fun get(filter: Filter, page: Pageable): Page<Content> {
         val post = filter.postId?.let { Optional.present(it) } ?: Optional.absent()
@@ -66,7 +65,7 @@ class ContentApiDelegate @Inject constructor(
             offset = Optional.present(page.offset),
             limit = Optional.present(page.limit)
         )
-        val response = provider.client().query(query).executeOrThrow()
+        val response = client().query(query).executeOrThrow()
         val data = response.getOrThrow().listPosts
         val contents = data.affectedRows?.map { content ->
             content.mapToDomain(url, gson.fromJson<List<MediaModel>>(
@@ -96,7 +95,7 @@ class ContentApiDelegate @Inject constructor(
                 Optional.absent()
             } else { Optional.present(draft.tags) }
         )
-        val response = provider.client().mutation(mutation).executeOrThrow()
+        val response = client().mutation(mutation).executeOrThrow()
         val data = response.getOrThrow().createPost
         response.assertOrThrow(data.status, data.ResponseCode)
         val content = data.affectedRows?.mapToDomain(

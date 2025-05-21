@@ -9,6 +9,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.derivedStateOf
@@ -134,6 +135,11 @@ fun VideoScreen(
         if (directory.value != current.value) {
             current.value = directory.value
             viewModel.initialize(directory.value)
+        }
+    }
+    DisposableEffect(Unit) {
+        onDispose {
+            current.value = null
         }
     }
 }

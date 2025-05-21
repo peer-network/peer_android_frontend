@@ -11,6 +11,7 @@ import eu.peernetwork.blog.remote.engagement.ReportCommentMutation
 import eu.peernetwork.blog.remote.engagement.ResolveActionPostMutation
 import eu.peernetwork.blog.remote.mock.EngagementMock
 import eu.peernetwork.core.remote.model.Status
+import eu.peernetwork.core.remote.api.RequestClient
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -30,7 +31,9 @@ internal class EngagementApiDelegateTest {
 
     @Before
     fun setup() {
-        api = EngagementApiDelegate(client)
+        api = EngagementApiDelegate(object : RequestClient {
+            override fun invoke(): ApolloClient = client
+        })
     }
 
     @Test

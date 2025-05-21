@@ -3,8 +3,8 @@ package eu.peernetwork.app.module.core
 import dagger.Module
 import dagger.Provides
 import eu.peernetwork.app.BuildConfig
-import eu.peernetwork.app.service.NetworkResource
-import eu.peernetwork.core.remote.provider.NetworkProvider
+import eu.peernetwork.app.service.NetworkService
+import eu.peernetwork.core.remote.api.RequestClient
 import okhttp3.OkHttpClient
 import java.util.concurrent.TimeUnit
 import javax.inject.Named
@@ -29,9 +29,9 @@ internal object NetworkModule {
 
     @Provides
     @Singleton
-    fun providesNetworkResource(delegate: NetworkResource.Delegate): NetworkResource = delegate
+    fun providesNetworkResource(delegate: NetworkService.Delegate): NetworkService = delegate
 
     @Provides
     @Singleton
-    fun providesNetworkProvider(delegate: NetworkResource): NetworkProvider = delegate
+    fun providesNetworkProvider(delegate: NetworkService): RequestClient = delegate
 }

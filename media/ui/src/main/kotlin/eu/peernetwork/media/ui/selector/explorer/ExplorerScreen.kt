@@ -1,15 +1,19 @@
 package eu.peernetwork.media.ui.selector.explorer
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -26,20 +30,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModelStoreOwner
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.compose.DesignBottomSheet
 import eu.peernetwork.core.ui.design.compose.DesignDropDown
+import eu.peernetwork.core.ui.design.compose.DesignOutlinedButton
 import eu.peernetwork.core.ui.design.compose.DesignOverlayBackground
 import eu.peernetwork.core.ui.design.compose.DesignTitle
 import eu.peernetwork.core.ui.design.compose.DesignTitleBarHost
 import eu.peernetwork.core.ui.extension.builder
+import eu.peernetwork.core.ui.model.ViewModelState
 import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.media.core.model.UiAttachment
 import eu.peernetwork.media.core.model.UiMimeType
@@ -52,10 +58,11 @@ import eu.peernetwork.media.ui.selector.video.VideoScreen
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
 fun ExplorerScreen(
     attachment: MutableState<UiAttachment>,
-    provider: UiComponentProvider,
-    viewModelStoreOwner: ViewModelStoreOwner
+    onFinish: () -> Unit,
+    provider: UiComponentProvider
 ) {
     val context = LocalContext.current
+    val viewModelStore = remember { ViewModelState() }
     val component = remember { provider.builder(Explorer.Builder::class.java).build(context) }
     val default = stringResource(R.string.photo_label)
     val title = rememberSaveable { mutableStateOf(default) }
@@ -63,22 +70,26 @@ fun ExplorerScreen(
     val showDirectory = rememberSaveable { mutableStateOf<Boolean>(false) }
     ExplorerScreen(
         title = title,
+        onFinish = onFinish,
         attachment = attachment,
         onClick = { showDirectory.value = true },
-        onSelect = { attachment.value = UiAttachment.File(it, emptyList()) },
+        onSelect = {
+            directory.value = null
+            attachment.value = UiAttachment.File(it, emptyList()) },
     ) { type ->
+        val tag = "${type.id}${directory.value}"
         when(type) {
             UiMimeType.Video -> VideoScreen(
                 directory,
                 attachment,
                 component,
-                viewModelStoreOwner
+                viewModelStore.get(tag)
             )
             else -> PhotoScreen(
                 directory,
                 attachment,
                 component,
-                viewModelStoreOwner
+                viewModelStore.get(tag)
             )
         }
         DesignBottomSheet(
@@ -98,7 +109,7 @@ fun ExplorerScreen(
                     directory.value = it
                     showDirectory.value = false },
                 provider = component,
-                viewModelStoreOwner = viewModelStoreOwner,
+                viewModelStoreOwner = viewModelStore.get(tag),
             )
         }
         DesignTitleBarHost("ExplorerScreen") {
@@ -116,6 +127,7 @@ fun ExplorerScreen(
     title: MutableState<String>,
     attachment: MutableState<UiAttachment>,
     onClick: () -> Unit,
+    onFinish: () -> Unit,
     onSelect: (UiMimeType) -> Unit,
     content: @Composable (UiMimeType) -> Unit
 ) {
@@ -213,6 +225,27 @@ fun ExplorerScreen(
                     )
                 }
             }
+            Spacer(modifier = Modifier.width(8.dp))
+            DesignOutlinedButton(
+                onClick = onFinish,
+                modifier = Modifier.background(
+                    color = border,
+                    shape = RoundedCornerShape(28),
+                ),
+                enabled = attachment.value.files.isNotEmpty(),
+                shape = RoundedCornerShape(28),
+                textStyle = MaterialTheme.typography.bodySmall.copy(
+                    color = MaterialTheme.colorScheme.onBackground
+                ),
+                colors = ButtonDefaults.outlinedButtonColors(
+                    containerColor = Color.Transparent,
+                    contentColor = MaterialTheme.colorScheme.onBackground,
+                    disabledContainerColor = Color.Transparent
+                ),
+                minHeight = 32.dp,
+                border = BorderStroke(1.dp, border),
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp)
+            ) { Text(stringResource(R.string.done_label)) }
         }
         updatedContent(type.value)
     }
@@ -226,6 +259,7 @@ fun PreviewExplorerScreen() {
         ExplorerScreen(
             remember { mutableStateOf(photo) },
             remember { mutableStateOf(UiAttachment.Text) },
+            {},
             {},
             {}
         ) { Box(modifier = Modifier.fillMaxSize()) }

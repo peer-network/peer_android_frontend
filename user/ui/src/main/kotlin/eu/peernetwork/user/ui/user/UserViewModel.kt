@@ -10,7 +10,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -22,22 +21,25 @@ class UserViewModel @Inject constructor(
 ) : ViewModel() {
     private val mutableState = MutableStateFlow<State>(State.Empty)
 
+    private val mutableAccountState = MutableStateFlow<UiAccount?>(null)
+
+    val account: StateFlow<UiAccount?> = mutableAccountState.asStateFlow()
+
     val state: StateFlow<State> = mutableState.asStateFlow()
+
+    fun initialize() {
+        viewModelScope.launch {
+            observerUsecase().collectLatest {
+                mutableAccountState.tryEmit(it)
+            }
+        }
+    }
 
     fun getAccount(id: String) {
         mutableState.tryEmit(State.Loading)
         viewModelScope.launch {
             try {
-                val account = observerUsecase().firstOrNull()
-                if (account?.id == id) {
-                    observerUsecase().collectLatest {
-                        if (it != null) {
-                            mutableState.tryEmit(State.Success(it, true))
-                        }
-                    }
-                } else {
-                    mutableState.tryEmit(State.Success(userUsecase(usecase(id)), false))
-                }
+                mutableState.tryEmit(State.Success(userUsecase(usecase(id))))
             } catch (error: Throwable) {
                 mutableState.tryEmit(State.Error(error))
             }
@@ -47,10 +49,7 @@ class UserViewModel @Inject constructor(
     sealed interface State {
         data object Empty : State
         data object Loading : State
-        data class Success(
-            val account: UiAccount,
-            val isOwner: Boolean
-        ) : State
+        data class Success(val account: UiAccount) : State
         data class Error(val error: Throwable) : State
     }
 }
