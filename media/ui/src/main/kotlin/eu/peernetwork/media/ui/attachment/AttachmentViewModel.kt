@@ -33,7 +33,9 @@ class AttachmentViewModel @Inject constructor(
     fun bump() {
         viewModelScope.launch {
             val tag = this::class.java.name
-            publishableInteger(tag, (retrievableInteger(tag) ?: 0) + 1)
+            val update = (retrievableInteger(tag) ?: 0) + 1
+            publishableInteger(tag, update)
+            mutableState.tryEmit(State.Success(update))
         }
     }
 

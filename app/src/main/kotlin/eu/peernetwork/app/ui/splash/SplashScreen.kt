@@ -3,8 +3,6 @@ package eu.peernetwork.app.ui.splash
 import android.content.Intent
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationEndReason
-import androidx.compose.animation.core.Easing
-import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
@@ -63,7 +61,7 @@ fun SplashScreen(
     }
     var play = remember { mutableStateOf(true) }
     val isLoading = remember(state) { derivedStateOf { state is SplashViewModel.State.Loading } }
-    val isReady = remember(state) { derivedStateOf { state is SplashViewModel.State.Ready } }
+    val isReady = remember(state) { derivedStateOf { state is SplashViewModel.State.Success } }
     val onFinish by rememberUpdatedState(onAnimationFinished)
     DesignStatefulScaffold<Unit>(
         state = derivedState,
@@ -79,7 +77,7 @@ fun SplashScreen(
                 viewModel.initialize() },
             modifier = Modifier.fillMaxSize()
             ) }
-    ) { SplashScreen(play, isLoading, isReady) {
+    ) { SplashScreen(play, isLoading) {
         if (it == AnimationEndReason.Finished && isReady.value) {
             if (!play.value) {
                 onFinish()
@@ -112,8 +110,8 @@ fun SplashScreen(
         )
     }
     LaunchedEffect(state) {
-        if (state is SplashViewModel.State.Outdated) {
-            updateUrl.value = (state as SplashViewModel.State.Outdated).url
+        (state as? SplashViewModel.State.Success?)?.update?.let {
+            updateUrl.value = it
             showDialog.value = true
         }
     }
@@ -123,9 +121,6 @@ fun SplashScreen(
 fun SplashScreen(
     play: State<Boolean>,
     isReady: State<Boolean>,
-    isLoading: State<Boolean>,
-    durationMillis: Int = 1000,
-    easing: Easing = FastOutSlowInEasing,
     onAnimationFinished: (AnimationEndReason) -> Unit
 ) {
     val composition by rememberLottieComposition(

@@ -12,11 +12,11 @@ import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-class VersionControlUseCase @Inject constructor(
+class VersionUseCase @Inject constructor(
     private val provider: UrlProvider,
     private val remoteConfig: FirebaseRemoteConfig,
     private val dispatcher: Dispatcher
-) : SuspendableUseCase<VersionControlUseCase.Result> {
+) : SuspendableUseCase<VersionUseCase.Result> {
 
     override suspend fun invoke(): Result = withContext(dispatcher.io) {
         try {

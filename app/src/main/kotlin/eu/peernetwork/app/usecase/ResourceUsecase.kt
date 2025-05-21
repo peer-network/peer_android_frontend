@@ -6,7 +6,7 @@ import eu.peernetwork.core.common.usecase.SuspendableUseCase
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-class ResourceLoaderUsecase @Inject constructor(
+class ResourceUsecase @Inject constructor(
     private val loader: LaunchService,
     private val dispatcher: Dispatcher
 ) : SuspendableUseCase<Unit> {

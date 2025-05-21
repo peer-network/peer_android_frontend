@@ -68,8 +68,6 @@ fun FeedScreen(
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
     val pageState = remember { mutableIntStateOf(state.page) }
-    val photoState = rememberLazyListState()
-    val videoState = rememberLazyListState()
     FeedNavigation(
         userId = id,
         postLimit = postLimit,
@@ -80,6 +78,8 @@ fun FeedScreen(
             provider = component,
             viewModelStoreOwner = viewModelStoreOwner
         ) { connectionController ->
+            val photoState = rememberLazyListState()
+            val videoState = rememberLazyListState()
             val connection by connectionController.observe().collectAsStateWithLifecycle()
             FeedScreen(
                 state = pageState,

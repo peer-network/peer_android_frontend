@@ -44,14 +44,14 @@ fun ProfileScreen(
         provider.builder(Profile.Builder::class.java).build(context)
     }
     val coroutine = rememberCoroutineScope()
-    val photoState = rememberLazyListState()
-    val videoState = rememberLazyListState()
     var id by remember { mutableStateOf<String>("") }
     DesignRouter(navController = navController, startDestination = "profile/$userId") {
         composable(
             "profile/{id}",
             arguments = listOf(navArgument("id") { this.type = NavType.StringType })
         ) { backStackEntry ->
+            val photoState = rememberLazyListState()
+            val videoState = rememberLazyListState()
             id = backStackEntry.arguments?.getString("id") ?: ""
             MemberScreen(
                 id = id,

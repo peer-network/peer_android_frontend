@@ -28,11 +28,11 @@ class ThumbnailViewModel @Inject constructor(
     fun initialize(thumbnail: String, type: UiMimeType) {
         viewModelScope.launch {
             try {
+                mutableState.tryEmit(State.Loading)
                 if (cache[thumbnail] != null) {
                     mutableThumbnails.tryEmit(cache.toMap())
                     mutableState.tryEmit(State.Success(thumbnail, cache[thumbnail]))
                 } else {
-                    mutableState.tryEmit(State.Loading)
                     val bitmap = usecase(ThumbnailUsecase.Parameter(thumbnail, type))
                     cache[thumbnail] = bitmap
                     mutableThumbnails.tryEmit(cache.toMap())

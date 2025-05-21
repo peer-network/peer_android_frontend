@@ -8,7 +8,6 @@ import eu.peernetwork.core.ui.provider.UiProvider
 import eu.peernetwork.media.ui.thumbnail.Thumbnail
 
 interface Photo : UiProvider {
-
     @javax.inject.Scope
     @Retention(AnnotationRetention.RUNTIME)
     annotation class Scope
