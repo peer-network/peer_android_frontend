@@ -21,21 +21,22 @@ class VersionControlUseCase @Inject constructor(
             remoteConfig.activate().await()
             val json = remoteConfig.getString("minimum_required_version")
             Log.d("VersionControl", "Fetched minimum_required_version JSON: $json")
-
             val listType = object : TypeToken<List<MinimumRequiredVersion>>() {}.type
             val versionList: List<MinimumRequiredVersion> = Gson().fromJson(json, listType)
-            val minimumVersion = versionList.firstOrNull()
-
             val currentVersion = BuildConfig.VERSION_NAME
             Log.d("VersionControl", "Current app version: $currentVersion")
-            Log.d("VersionControl", "Minimum required version from remote config: ${minimumVersion?.version}")
-            Log.d("VersionControl", "Base URL from remote config: ${minimumVersion?.url}")
-
+            val matchedVersion = versionList.firstOrNull { it.version == currentVersion }
+            val minimumVersion = matchedVersion ?: run {
+                val isDebug = currentVersion.contains("-DEBUG")
+                val fallbackList = versionList.filter { it.version.contains("-DEBUG") == isDebug }
+                fallbackList.maxByOrNull { it.version.split("-").first() }
+            }
+            Log.d("VersionControl", "Matched version: ${minimumVersion?.version}")
+            Log.d("VersionControl", "Matched URL: ${minimumVersion?.url}")
             minimumVersion?.url?.let {
                 Log.d("VersionControl", "Updating provider baseUrl to: $it")
                 provider.baseUrl(it)
-            } ?: Log.d("VersionControl", "No base URL found in minimum required version")
-
+            } ?: Log.d("VersionControl", "No base URL found in matched version")
             return if (minimumVersion != null && isOutdated(currentVersion, minimumVersion.version)) {
                 Log.d("VersionControl", "App version is outdated")
                 Result.Outdated(minimumVersion.url)
@@ -49,7 +50,6 @@ class VersionControlUseCase @Inject constructor(
         }
     }
 
-
     private fun isOutdated(current: String, required: String): Boolean {
         val currentBase = current.split("-").first()
         val requiredBase = required.split("-").first()
@@ -59,6 +59,7 @@ class VersionControlUseCase @Inject constructor(
         if (currentParts.isEmpty() || requiredParts.isEmpty()) {
             return currentBase < requiredBase
         }
+
         for (i in 0 until maxOf(currentParts.size, requiredParts.size)) {
             val currentPart = currentParts.getOrElse(i) { 0 }
             val requiredPart = requiredParts.getOrElse(i) { 0 }
