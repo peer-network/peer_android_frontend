@@ -2,7 +2,9 @@ package eu.peernetwork.user.ui.user
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import eu.peernetwork.user.domain.usecase.AuthUserUsecase
 import eu.peernetwork.user.domain.usecase.ProfileUsecase
+import eu.peernetwork.user.ui.mapper.mapFromDomain
 import eu.peernetwork.user.ui.model.UiAccount
 import eu.peernetwork.user.ui.usecase.ObserveAuthUserUsecase
 import eu.peernetwork.user.ui.usecase.UserUsecase
@@ -17,6 +19,7 @@ import javax.inject.Inject
 class UserViewModel @Inject constructor(
     private val usecase: ProfileUsecase,
     private val userUsecase: UserUsecase,
+    private val authUserUsecase: AuthUserUsecase,
     private val observerUsecase: ObserveAuthUserUsecase
 ) : ViewModel() {
     private val mutableState = MutableStateFlow<State>(State.Empty)
@@ -30,7 +33,11 @@ class UserViewModel @Inject constructor(
     fun initialize() {
         viewModelScope.launch {
             observerUsecase().collectLatest {
-                mutableAccountState.tryEmit(it)
+                if (it == null) {
+                    mutableAccountState.tryEmit(authUserUsecase().mapFromDomain())
+                } else {
+                    mutableAccountState.tryEmit(it)
+                }
             }
         }
     }

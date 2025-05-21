@@ -2,6 +2,7 @@ package eu.peernetwork.user.ui.user
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import app.cash.turbine.test
+import eu.peernetwork.user.domain.usecase.AuthUserUsecase
 import eu.peernetwork.user.domain.usecase.ProfileUsecase
 import eu.peernetwork.user.ui.model.UiAccount
 import eu.peernetwork.user.ui.usecase.ObserveAuthUserUsecase
@@ -32,6 +33,8 @@ internal class UserViewModelTest {
 
     private val userUsecase = mockk<UserUsecase>()
 
+    private val authUserUsecase = mockk<AuthUserUsecase>()
+
     private val observeAuthUserUsecase = mockk<ObserveAuthUserUsecase>()
 
     private lateinit var viewModel: UserViewModel
@@ -39,7 +42,7 @@ internal class UserViewModelTest {
     @Before
     fun setup() {
         Dispatchers.setMain(dispatcher)
-        viewModel = UserViewModel(usecase, userUsecase, observeAuthUserUsecase)
+        viewModel = UserViewModel(usecase, userUsecase, authUserUsecase, observeAuthUserUsecase)
     }
 
     @Test
