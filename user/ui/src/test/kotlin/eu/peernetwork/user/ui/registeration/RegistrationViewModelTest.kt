@@ -46,7 +46,7 @@ internal class RegistrationViewModelTest {
             delay(100)
             uuid
         }
-        viewModel.register("<test-username>", "<test-email>", "<test-password>")
+        viewModel.register("<test-username>", "<test-email>", "<test-password>", "<test-referral>")
         viewModel.state.test {
             assertEquals(RegistrationViewModel.State.Loading, awaitItem())
             assertEquals(RegistrationViewModel.State.Success(uuid), awaitItem())
@@ -57,7 +57,7 @@ internal class RegistrationViewModelTest {
     fun `test registration error`() = runTest {
         val error = RuntimeException("<test-uuid>")
         coEvery { usecase(any()) } throws error
-        viewModel.register("<test-username>", "<test-email>", "<test-password>")
+        viewModel.register("<test-username>", "<test-email>", "<test-password>", null)
         viewModel.state.test {
             assertEquals(RegistrationViewModel.State.Error(error), awaitItem())
         }
@@ -67,7 +67,7 @@ internal class RegistrationViewModelTest {
     fun `test reset state`() = runTest {
         val error = RuntimeException("<test-uuid>")
         coEvery { usecase(any()) } throws error
-        viewModel.register("<test-username>", "<test-email>", "<test-password>")
+        viewModel.register("<test-username>", "<test-email>", "<test-password>", null)
         viewModel.state.test {
             assertEquals(RegistrationViewModel.State.Error(error), awaitItem())
 

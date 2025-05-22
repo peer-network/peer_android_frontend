@@ -5,6 +5,7 @@ import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -58,30 +59,23 @@ fun SettingsScreen(
     viewModelStoreOwner: ViewModelStoreOwner = UiViewModel.Owner(),
 ) {
     val context = LocalContext.current
-
-    // Build the settings component from the provider?
     val component = remember {
         provider.builder(Settings.Builder::class.java).build(context)
     }
-
-    // So this Initializes the ViewModel
     val viewModel = viewModel(
         modelClass = SettingsViewModel::class.java,
         viewModelStoreOwner = viewModelStoreOwner,
         factory = component.viewModelFactory()
     )
-
-    // Observe current state from ViewModel
     val state by viewModel.state.collectAsStateWithLifecycle()
-
-    // This Converts raw state -> scaffold-ready format
     val derivedState = remember {
         derivedStateOf {
             when (state) {
                 SettingsViewModel.State.Empty -> DesignStatefulScaffoldState.Empty
                 SettingsViewModel.State.Loading -> DesignStatefulScaffoldState.Loading
                 is SettingsViewModel.State.Content -> {
-                    DesignStatefulScaffoldState.Success((state as SettingsViewModel.State.Content).account)
+                    val content = (state as SettingsViewModel.State.Content)
+                    DesignStatefulScaffoldState.Success(Pair(content.account, content.inviteUrl))
                 }
                 is SettingsViewModel.State.Failure -> {
                     DesignStatefulScaffoldState.Error((state as SettingsViewModel.State.Failure).error)
@@ -89,21 +83,11 @@ fun SettingsScreen(
             }
         }
     }
-
-    // Extracts content?  And It is only valid when -> successs
     val content = remember { derivedStateOf { state as? SettingsViewModel.State.Content? } }
-
-    // This Checks for errors
     val error = remember { derivedStateOf { content.value?.error } }
-
-    // Ok here this Loading state based on ViewModel content
     val isLoading = remember { derivedStateOf { content.value?.processing == true } }
-
-    // Internal flag to track if update has occurred
     var status by remember { mutableStateOf(false) }
-
-    // Main scaffold for displaying settings screen or error or the loading states
-    DesignRefreshableScaffold<UiAccount>(
+    DesignRefreshableScaffold<Pair<UiAccount, String>>(
         state = derivedState,
         onRefresh = { viewModel.getAccount() },
         placeholder = {
@@ -115,33 +99,28 @@ fun SettingsScreen(
             )
         }
     ) {
-        // Main screen with user profile settings
         SettingsScreen(
-            account = it,
+            account = it.first,
+            inviteLink = it.second,
             isLoading = isLoading,
             error = error,
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = 24.dp),
-            requiresPassword = { models -> it.isPasswordRequired(models) },
+            requiresPassword = { models -> it.first.isPasswordRequired(models) },
             onLogout = { viewModel.logout() },
             onDeactivate = { viewModel.deactivate(it) }
         ) { model, password ->
             status = true
-            viewModel.update(it, model, password ?: "")
+            viewModel.update(it.first, model, password ?: "")
         }
     }
-
-    // Reset ViewModel state on first launch
     LaunchedEffect(Unit) { viewModel.reset() }
-
-    // Initialize data + show success toast only when appropriate
     LaunchedEffect(content.value) {
         if (content.value == null) {
             viewModel.initialize()
         }
-        // Show toast only if update completed successfully and no error brought
         if (isLoading.value == false && status && error.value == null) {
             status = false
             Toast.makeText(context, "Profile updated", Toast.LENGTH_SHORT).show()
@@ -153,6 +132,7 @@ fun SettingsScreen(
 @Composable
 fun SettingsScreen(
     account: UiAccount,
+    inviteLink: String,
     isLoading: State<Boolean>,
     modifier: Modifier = Modifier,
     error: State<Throwable?>,
@@ -162,13 +142,9 @@ fun SettingsScreen(
     onSubmit: (List<UiSettings>, String?) -> Unit,
 ) {
     val context = LocalContext.current
-
-    // Input field states
     val image = remember { mutableStateOf<Uri?>(null) }
     val username = remember { TextFieldState(account.username) }
     val bio = remember { TextFieldState(account.bio ?: "") }
-
-    // Visibility toggles for bottom sheets
     var showPassword = remember { mutableStateOf(false) }
     var showLogout = remember { mutableStateOf(false) }
     var showDeactivation = remember { mutableStateOf(false) }
@@ -184,9 +160,9 @@ fun SettingsScreen(
     val deactivateHandler by rememberUpdatedState(onDeactivate)
     val passwordValidatorHandler by rememberUpdatedState(requiresPassword)
     Column(modifier = modifier) {
-        // Header section: avatar, username, update button
         SettingsHeader(
             account = account,
+            inviteLink = inviteLink,
             modifier = Modifier.padding(top = 8.dp),
             isLoading = isLoading.value,
             enabled = !isLoading.value && fields.value != account.mapToModels(),
@@ -200,18 +176,16 @@ fun SettingsScreen(
                 image.value = null
             }
         )
-
-        // Input fields: username, bio, validation
         SettingsForm(username, bio, isLoading, error)
-
-        // Logout / Deactivate buttons
         Row(modifier = Modifier.padding(top = 16.dp)) {
             DesignOutlinedButton(
                 onClick = { showLogout.value = true },
                 shape = RoundedCornerShape(16.dp),
+                contentPadding = PaddingValues(14.dp),
                 modifier = Modifier
                     .weight(1f)
                     .padding(end = 6.dp),
+                textStyle = MaterialTheme.typography.bodySmall,
                 content = { Text(stringResource(R.string.logout_text)) }
             )
             DesignOutlinedButton(
@@ -220,7 +194,9 @@ fun SettingsScreen(
                 modifier = Modifier
                     .weight(1f)
                     .padding(start = 6.dp),
+                contentPadding = PaddingValues(14.dp),
                 content = { Text(stringResource(R.string.deactivate_text)) },
+                textStyle = MaterialTheme.typography.bodySmall,
                 border = BorderStroke(1.dp, MaterialTheme.colorScheme.errorContainer),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color.Transparent,
@@ -230,22 +206,16 @@ fun SettingsScreen(
                 )
             )
         }
-
-        // Sheet for confirming deactivation
         PasswordSheet(showDeactivation, label = stringResource(R.string.deactivate_text)) {
             showDeactivation.value = false
             deactivateHandler(it)
             Toast.makeText(context, "Account deactivated", Toast.LENGTH_SHORT).show()
         }
-
-        // Sheet for confirming logout
         LogoutSheet(showLogout) {
             showLogout.value = false
             logoutHandler()
             Toast.makeText(context, "Logged out successfully", Toast.LENGTH_SHORT).show()
         }
-
-        // Sheet for entering password when required
         PasswordSheet(showPassword, label = stringResource(R.string.confirmation_label)) {
             showPassword.value = false
             submitHandler(fields.value, it)
@@ -274,6 +244,7 @@ fun PreviewSettingsScreen() {
         )
         SettingsScreen(
             account = model,
+            inviteLink = "http://localhost/",
             isLoading = remember { mutableStateOf(false) },
             modifier = Modifier
                 .fillMaxWidth()

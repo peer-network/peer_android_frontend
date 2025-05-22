@@ -54,13 +54,14 @@ internal class AccountRepositoryDelegateTest {
 
     @Test
     fun `test register user`(): Unit = runBlocking {
+        val code = "<test-code>"
         val mockResponse = "<test-user-id>"
         val mockUser = mockk<UserDetail>()
-        coEvery { api.register(any()) } returns mockResponse
+        coEvery { api.register(any(), any()) } returns mockResponse
 
-        val result = repository.register(mockUser)
+        val result = repository.register(mockUser, code)
 
-        coVerify { api.register(mockUser) }
+        coVerify { api.register(mockUser, code) }
         assertEquals(mockResponse, result)
     }
 

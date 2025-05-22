@@ -4,7 +4,7 @@ import com.apollographql.apollo3.ApolloClient
 import dagger.Module
 import dagger.Provides
 import eu.peernetwork.app.interceptor.LoggingInterceptor
-import eu.peernetwork.app.provider.UrlProvider
+import eu.peernetwork.core.common.interactor.UrlInteractor
 import eu.peernetwork.user.data.api.AccountApi
 import eu.peernetwork.user.data.api.AuthenticationApi
 import eu.peernetwork.user.data.api.ResourceApi
@@ -33,7 +33,7 @@ internal object ApiModule {
 
     @Provides
     fun providesTokenApi(
-        provider: UrlProvider,
+        provider: UrlInteractor,
         logger: LoggingInterceptor,
         usecase: JwtExpiryUsecase
     ): TokenApi = TokenApiDelegate(

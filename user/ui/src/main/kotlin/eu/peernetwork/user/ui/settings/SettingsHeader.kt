@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
@@ -32,9 +33,12 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
@@ -53,12 +57,16 @@ import java.io.File
 @Composable
 fun SettingsHeader(
     account: UiAccount,
+    inviteLink: String,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     isLoading: Boolean = false,
     onChange: (Uri?) -> Unit,
     onSubmit: () -> Unit,
 ) {
+    val context = LocalContext.current
+    val clipboardManager = LocalClipboardManager.current
+    val referralMessage = stringResource(R.string.referral_copy_message)
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
@@ -85,6 +93,18 @@ fun SettingsHeader(
                     style = MaterialTheme.typography.bodySmall
                 )
             }
+        )
+        Spacer(modifier = Modifier.width(12.dp))
+        Icon(
+            painterResource(eu.peernetwork.core.ui.R.drawable.ic_copy),
+            contentDescription = stringResource(R.string.referral_label),
+            tint = MaterialTheme.colorScheme.surfaceTint,
+            modifier = Modifier.size(36.dp)
+                .padding(8.dp)
+                .clickable(role = Role.Button) {
+                    clipboardManager.setText(AnnotatedString(inviteLink))
+                    Toast.makeText(context, referralMessage, Toast.LENGTH_LONG).show()
+                }
         )
     }
 }
@@ -167,6 +187,7 @@ fun PreviewSettingsAvatar() {
         )
         SettingsHeader(
             account = model,
+            inviteLink = "http://localhost",
             onSubmit = {},
             onChange = {}
         )

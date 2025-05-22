@@ -56,18 +56,6 @@ fun RegistrationForm(
                 .padding(horizontal = 24.dp)
                 .padding(top = 12.dp)
         )
-        DesignTextField(
-            state = referralCode,
-            enabled = enabled,
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Text,
-                imeAction = ImeAction.Done
-            ),
-            placeholder = { Text(stringResource(id = R.string.referral_code_label)) },
-            modifier = Modifier
-                .padding(horizontal = 24.dp)
-                .padding(top = 12.dp)
-        )
         DesignPassword(
             state = password,
             enabled = enabled,
@@ -104,7 +92,18 @@ fun RegistrationForm(
                 .padding(horizontal = 24.dp)
                 .padding(top = 12.dp)
         )
-
+        DesignTextField(
+            state = referralCode,
+            enabled = enabled,
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Text,
+                imeAction = ImeAction.Done
+            ),
+            placeholder = { Text(stringResource(id = R.string.referral_code_label)) },
+            modifier = Modifier
+                .padding(horizontal = 24.dp)
+                .padding(top = 12.dp)
+        )
     }
 }
 

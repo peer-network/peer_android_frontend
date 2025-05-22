@@ -15,6 +15,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalContext
@@ -108,8 +109,8 @@ fun CreatorScreen(
     onSubmit: (UiDraft.Field) -> Unit = {},
     header: @Composable () -> Unit = {}
 ) {
-    val title = rememberSaveable(stateSaver = TextFieldState.Saver) { mutableStateOf(TextFieldState()) }
-    val description = rememberSaveable(stateSaver = TextFieldState.Saver) {
+    var title by rememberSaveable(stateSaver = TextFieldState.Saver) { mutableStateOf(TextFieldState()) }
+    var description by rememberSaveable(stateSaver = TextFieldState.Saver) {
         mutableStateOf(TextFieldState())
     }
     DesignLabel(
@@ -133,10 +134,10 @@ fun CreatorScreen(
                 .padding(top = 8.dp)
         ) {
             Column {
-                CreatorForm(title.value, focus, description.value, isLoading, header)
+                CreatorForm(title, focus, description, isLoading, header)
                 CreatorFooter(
-                    title = title.value,
-                    description = description.value,
+                    title = title,
+                    description = description,
                     isLoading = isLoading,
                     enabled = enabled,
                     onSubmit = onSubmit,
@@ -146,8 +147,8 @@ fun CreatorScreen(
     }
     LaunchedEffect(shouldReset.value) {
         if (shouldReset.value) {
-            title.value = TextFieldState()
-            description.value = TextFieldState()
+            title = TextFieldState()
+            description = TextFieldState()
             attachment.value = UiAttachment.Text
         }
     }

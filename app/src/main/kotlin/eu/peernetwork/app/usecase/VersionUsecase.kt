@@ -5,7 +5,7 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import eu.peernetwork.app.BuildConfig
-import eu.peernetwork.app.provider.UrlProvider
+import eu.peernetwork.core.common.interactor.UrlInteractor
 import eu.peernetwork.core.common.provider.Dispatcher
 import eu.peernetwork.core.common.usecase.SuspendableUseCase
 import kotlinx.coroutines.tasks.await
@@ -13,7 +13,7 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class VersionUseCase @Inject constructor(
-    private val provider: UrlProvider,
+    private val interactor: UrlInteractor,
     private val remoteConfig: FirebaseRemoteConfig,
     private val dispatcher: Dispatcher
 ) : SuspendableUseCase<VersionUseCase.Result> {
@@ -35,9 +35,10 @@ class VersionUseCase @Inject constructor(
             }
             Log.d("VersionControl", "Matched version: ${minimumVersion?.version}")
             Log.d("VersionControl", "Matched URL: ${minimumVersion?.url}")
+            minimumVersion?.invite?.let { interactor.invite(it) }
             minimumVersion?.url?.let {
                 Log.d("VersionControl", "Updating provider baseUrl to: $it")
-                provider.baseUrl(it)
+                interactor.set(it)
             } ?: Log.d("VersionControl", "No base URL found in matched version")
             if (minimumVersion != null && isOutdated(minimumVersion.version)) {
                 Log.d("VersionControl", "App version is outdated")
@@ -80,6 +81,7 @@ class VersionUseCase @Inject constructor(
 
     data class MinimumRequiredVersion(
         val version: String,
-        val url: String
+        val url: String,
+        val invite: String?
     )
 }

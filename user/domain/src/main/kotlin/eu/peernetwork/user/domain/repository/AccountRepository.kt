@@ -6,7 +6,7 @@ import eu.peernetwork.user.domain.model.Account
 interface AccountRepository {
     suspend fun get(id: String, refresh: Boolean = false): Account
 
-    suspend fun register(detail: UserDetail): String
+    suspend fun register(detail: UserDetail, referral: String?): String
 
     suspend fun update(properties: Map<String, Any>)
 

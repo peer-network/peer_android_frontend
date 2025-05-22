@@ -2,6 +2,7 @@ package eu.peernetwork.user.ui.settings
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import app.cash.turbine.test
+import eu.peernetwork.core.common.interactor.UrlInteractor
 import eu.peernetwork.user.domain.usecase.DeactivationUsecase
 import eu.peernetwork.user.domain.usecase.LogoutUsecase
 import eu.peernetwork.user.domain.usecase.ProtectedSettingsUsecase
@@ -43,6 +44,8 @@ internal class SettingsViewModelTest {
 
     private val observeAuthUserUsecase = mockk<ObserveAuthUserUsecase>()
 
+    private val urlInteractor = mockk<UrlInteractor>()
+
     private val logoutUsecase = mockk<LogoutUsecase>()
 
     private val deactivationUsecase = mockk<DeactivationUsecase>()
@@ -54,6 +57,7 @@ internal class SettingsViewModelTest {
         Dispatchers.setMain(dispatcher)
 
         every { observeAuthUserUsecase() } returns user
+        every { urlInteractor.invite() } returns "%s"
 
         viewModel = SettingsViewModel(
             profileRefreshUsecase,
@@ -61,7 +65,8 @@ internal class SettingsViewModelTest {
             protectedSettingsUsecase,
             observeAuthUserUsecase,
             logoutUsecase,
-            deactivationUsecase
+            deactivationUsecase,
+            urlInteractor
         )
     }
 
@@ -82,7 +87,7 @@ internal class SettingsViewModelTest {
         viewModel.update(account, listOf(model), password)
         viewModel.state.test {
             assertEquals(SettingsViewModel.State.Loading, awaitItem())
-            assertEquals(SettingsViewModel.State.Content(account, false), awaitItem())
+            assertEquals(SettingsViewModel.State.Content(account, account.id, false), awaitItem())
         }
     }
 
@@ -101,7 +106,7 @@ internal class SettingsViewModelTest {
         viewModel.update(account, listOf(model), password)
         viewModel.state.test {
             assertEquals(SettingsViewModel.State.Loading, awaitItem())
-            assertEquals(SettingsViewModel.State.Content(account, false, error), awaitItem())
+            assertEquals(SettingsViewModel.State.Content(account, account.id, false, error), awaitItem())
         }
     }
 
@@ -121,7 +126,7 @@ internal class SettingsViewModelTest {
         viewModel.update(account, listOf(model), password)
         viewModel.state.test {
             assertEquals(SettingsViewModel.State.Loading, awaitItem())
-            assertEquals(SettingsViewModel.State.Content(account, false), awaitItem())
+            assertEquals(SettingsViewModel.State.Content(account, account.id, false), awaitItem())
         }
     }
 

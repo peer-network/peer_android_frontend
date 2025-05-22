@@ -3,9 +3,7 @@ package eu.peernetwork.user.ui.registeration
 import android.content.res.Configuration
 import android.widget.Toast
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.MaterialTheme
@@ -13,13 +11,15 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -39,6 +39,7 @@ import eu.peernetwork.core.ui.theme.PeerTheme
 
 @Composable
 fun RegistrationScreen(
+    referral: String?,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
     onRegistrationSuccess: () -> Unit
@@ -55,14 +56,19 @@ fun RegistrationScreen(
         factory = component.viewModelFactory()
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
-    RegistrationScreen(
-        loading = state is RegistrationViewModel.State.Loading,
-        error = (state as? RegistrationViewModel.State.Error?)?.error?.message?.let {
+    val loading = remember { derivedStateOf { state is RegistrationViewModel.State.Loading } }
+    val error = remember { derivedStateOf {
+        (state as? RegistrationViewModel.State.Error?)?.error?.message?.let {
             component.resource().string(it)
-        },
+        }
+    } }
+    RegistrationScreen(
+        referral = referral,
+        loading = loading,
+        error = error,
         onReset = { viewModel.reset() }
-    ) { email, username, password ->
-        viewModel.register(username, email, password)
+    ) { email, username, password, referral ->
+        viewModel.register(username, email, password, referral)
     }
     LaunchedEffect(state) {
         if (state is RegistrationViewModel.State.Success) {
@@ -74,19 +80,18 @@ fun RegistrationScreen(
 
 @Composable
 fun RegistrationScreen(
-    loading: Boolean = false,
-    error: String? = null,
+    loading: State<Boolean>,
+    error: State<String?>,
+    referral: String? = null,
     onReset: (() -> Unit)? = null,
-    onSubmit: (String, String, String) -> Unit
+    onSubmit: (String, String, String, String) -> Unit
 ) {
-    val email = remember { TextFieldState() }
-    val username = remember { TextFieldState() }
-    val referralCode = remember { TextFieldState() }
-    val password = remember { TextFieldState() }
-
-    val loadingState = rememberUpdatedState(loading)
-    val errorState = rememberUpdatedState(error)
-    val imeHeight = WindowInsets.ime.getBottom(LocalDensity.current) / 4
+    val email by rememberSaveable(stateSaver = TextFieldState.Saver) { mutableStateOf(TextFieldState()) }
+    val username by rememberSaveable(stateSaver = TextFieldState.Saver) { mutableStateOf(TextFieldState()) }
+    val referralCode by rememberSaveable(stateSaver = TextFieldState.Saver) {
+        mutableStateOf(referral?.let { TextFieldState(it) } ?: TextFieldState())
+    }
+    var password = remember { TextFieldState() }
     val validate by remember(email, username, password) {
         derivedStateOf {
             email.isValidEmail() &&
@@ -96,29 +101,24 @@ fun RegistrationScreen(
     }
     val handleReset by rememberUpdatedState(onReset)
     val handleSubmit by rememberUpdatedState(onSubmit)
-
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(bottom = imeHeight.dp)
-    ) {
+    Column(modifier = Modifier.fillMaxWidth()) {
         RegistrationForm(
             email = email,
             username = username,
             password = password,
             referralCode = referralCode,
-            error = errorState.value,
-            enabled = !loadingState.value,
+            error = error.value,
+            enabled = !loading.value,
         )
         DesignButton(
-            enabled = !loadingState.value && validate,
-            isLoading = loadingState.value,
+            enabled = !loading.value && validate,
+            isLoading = loading.value,
             onClick = {
                 handleSubmit(
                     email.text.toString(),
                     username.text.toString(),
-                    password.text.toString()
-                    // No referralCode in submission logic yet
+                    password.text.toString(),
+                    referralCode.text.toString()
                 )
             },
             modifier = Modifier
@@ -134,7 +134,6 @@ fun RegistrationScreen(
             )
         }
     }
-
     DisposableEffect(email) { onDispose { handleReset?.invoke() } }
 }
 
@@ -142,6 +141,8 @@ fun RegistrationScreen(
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun PreviewRegistrationScreen() {
     PeerTheme {
-        RegistrationScreen { email, username, password -> }
+        val isLoading = remember { mutableStateOf<Boolean>(false) }
+        val error = remember { mutableStateOf<String?>(null) }
+        RegistrationScreen(isLoading, error) { email, username, password, referral -> }
     }
 }

@@ -18,8 +18,8 @@ class AccountRepositoryDelegate @Inject constructor(
         return api.get(id, refresh).mapToDomain()
     }
 
-    override suspend fun register(detail: UserDetail): String {
-        return api.register(detail)
+    override suspend fun register(detail: UserDetail, referral: String?): String {
+        return api.register(detail, referral)
     }
 
     @Suppress("UNCHECKED_CAST")

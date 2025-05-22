@@ -37,11 +37,12 @@ class AccountApiDelegate @Inject constructor(
         return account.copy(imageUrl = image)
     }
 
-    override suspend fun register(detail: UserDetail): String {
+    override suspend fun register(detail: UserDetail, referral: String?): String {
         val mutation = RegisterMutation(
             email = detail.email,
             username = detail.username,
-            password = detail.password
+            password = detail.password,
+            referral = Optional.presentIfNotNull(referral)
         )
         val response = client().mutation(mutation).executeOrThrow()
         val data = response.getOrThrow().register

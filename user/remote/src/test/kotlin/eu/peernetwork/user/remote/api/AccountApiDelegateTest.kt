@@ -93,7 +93,7 @@ internal class AccountApiDelegateTest {
         every { mockData.register } returns mockModel
         coEvery { client.mutation(any<RegisterMutation>()).execute() } returns mockResponse
 
-        val result = api.register(AccountMock.user())
+        val result = api.register(AccountMock.user(), "<test-code>")
 
         assertEquals(result, mockModel.userid)
     }
@@ -113,7 +113,7 @@ internal class AccountApiDelegateTest {
         coEvery { client.mutation(any<RegisterMutation>()).execute() } returns mockResponse
 
         val result = try {
-            api.register(AccountMock.user())
+            api.register(AccountMock.user(), null)
         } catch (error: Throwable) {
             null
         }

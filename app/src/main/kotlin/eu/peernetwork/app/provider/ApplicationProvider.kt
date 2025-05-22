@@ -11,8 +11,6 @@ import eu.peernetwork.wallet.ui.provider.WalletProvider
 interface ApplicationProvider : UserProvider, ResourceProvider, ContentProvider, WalletProvider, CoreProvider {
     fun context(): Context
 
-    fun urlProvider(): UrlProvider
-
     fun firebaseRemoteConfig(): FirebaseRemoteConfig
 
     fun networkProvider(): RequestClient
