@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
@@ -27,6 +29,7 @@ fun PostSummary(
     color: Color = MaterialTheme.colorScheme.onBackground,
     modifier: Modifier = Modifier
 ) {
+    val handleUserClick by rememberUpdatedState(userOnClick)
     Row(modifier = modifier) {
         Text(
             text = username,
@@ -36,7 +39,7 @@ fun PostSummary(
             ),
             modifier = Modifier
                 .padding(end = 8.dp)
-                .clickable { userOnClick() }
+                .clickable { handleUserClick() }
         )
         DesignRichTitle(
             title = title,

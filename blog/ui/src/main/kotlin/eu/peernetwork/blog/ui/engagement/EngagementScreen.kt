@@ -109,7 +109,6 @@ fun EngagementScreen(
             viewModel.clear()
         }
     }
-
     CommentScreen(
         tag,
         post,
@@ -143,6 +142,9 @@ fun EngagementScreen(
     spec: EngagementSpec,
 ) {
     val engagement by remember(model) { derivedStateOf { spec.onLoad(model) } }
+    val handleOnLike by rememberUpdatedState(spec.onLike)
+    val handleOnDisLike by rememberUpdatedState(spec.onDisLike)
+    val handleOnComment by rememberUpdatedState(spec.onComment)
     Row {
         PostIcon(
             action = UiAction.Like,
@@ -152,7 +154,7 @@ fun EngagementScreen(
             } else {
                 MaterialTheme.colorScheme.tertiary
             },
-        ) { spec.onLike(engagement) }
+        ) { handleOnLike(engagement) }
         PostIcon(
             action = UiAction.Dislike,
             value = engagement.dislikes.toString(),
@@ -161,9 +163,9 @@ fun EngagementScreen(
             } else {
                 MaterialTheme.colorScheme.tertiary
             },
-        ) { spec.onDisLike(engagement) }
+        ) { handleOnDisLike(engagement) }
         PostIcon(UiAction.Comment, engagement.comment.toString()) {
-            spec.onComment(model)
+            handleOnComment(model)
         }
     }
 }

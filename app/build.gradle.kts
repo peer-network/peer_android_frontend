@@ -20,6 +20,7 @@ android {
             versionNameSuffix = "-DEBUG"
             buildConfigField("String", "BASE_URL", "\"https://getpeer.eu\"")
             buildConfigField("String", "MEDIA_URL", "\"https://media.getpeer.eu\"")
+            buildConfigField("String", "INVITE_URL", "\"https://testing.getpeer.eu/invite.php?%s\"")
             buildConfigField("boolean", "USE_SYSTEM_THEME", "false")
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
@@ -28,6 +29,7 @@ android {
             isShrinkResources = true
             buildConfigField("String", "BASE_URL", "\"https://peernetwork.eu\"")
             buildConfigField("String", "MEDIA_URL", "\"https://media.peernetwork.eu\"")
+            buildConfigField("String", "INVITE_URL", "\"https://testing.getpeer.eu/invite.php?%s\"")
             buildConfigField("boolean", "USE_SYSTEM_THEME", "false")
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
             signingConfig = signingConfigs.getByName("debug")

@@ -77,15 +77,17 @@ fun ExplorerScreen(
             directory.value = null
             attachment.value = UiAttachment.File(it, emptyList()) },
     ) { type ->
-        val tag = "${type.id}${directory.value}"
+        val tag = directory.value ?: type.id.toString()
         when(type) {
             UiMimeType.Video -> VideoScreen(
+                type = type,
                 directory,
                 attachment,
                 component,
                 viewModelStore.get(tag)
             )
             else -> PhotoScreen(
+                type = type,
                 directory,
                 attachment,
                 component,

@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -147,10 +148,17 @@ fun VideoScreen(
                                 }
                             }
                         }
-                        if (lazyPagingItems.loadState.append is LoadState.Loading) {
-                            item { CircularProgressIndicator(modifier = Modifier.padding(16.dp)) }
+                        item(key = id) {
+                            Box(
+                                modifier = Modifier.fillMaxWidth()
+                                    .height(56.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                if (lazyPagingItems.loadState.append is LoadState.Loading) {
+                                    CircularProgressIndicator(modifier = Modifier.padding(16.dp))
+                                }
+                            }
                         }
-                        item { Spacer(modifier = Modifier.height(56.dp)) }
                     }
                 }
             }
