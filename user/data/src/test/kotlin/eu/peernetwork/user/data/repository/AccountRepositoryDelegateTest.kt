@@ -121,6 +121,27 @@ internal class AccountRepositoryDelegateTest {
     }
 
     @Test
+    fun `test request password reset`(): Unit = runBlocking {
+        val email = "<test-email>"
+        coEvery { api.passwordReset(any()) } returns Unit
+
+        repository.passwordReset(email)
+
+        coVerify { api.passwordReset(email) }
+    }
+
+    @Test
+    fun `test reset password`(): Unit = runBlocking {
+        val token = "<test-token>"
+        val email = "<test-email>"
+        coEvery { api.resetPassword(any(), any()) } returns Unit
+
+        repository.resetPassword(token, email)
+
+        coVerify { api.resetPassword(token, email) }
+    }
+
+    @Test
     fun `test activate user`(): Unit = runBlocking {
         val code = "<test-code>"
         coEvery { api.activate(any()) } returns Unit

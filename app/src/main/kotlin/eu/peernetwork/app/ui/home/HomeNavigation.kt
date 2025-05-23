@@ -3,7 +3,9 @@ package eu.peernetwork.app.ui.home
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import eu.peernetwork.core.ui.R
@@ -17,13 +19,14 @@ fun HomeNavigation(
     onNavigate: (Int) -> Unit,
     content: @Composable (HomeRoute) -> Unit
 ) {
+    val updatedContent by rememberUpdatedState(content)
     val startDestination = remember { HomeRoute.get(state.value).path }
     DesignNavigation(
         navController = navController,
         startDestination = startDestination
     ) {
         HomeRoute.ROUTES.forEach { route ->
-            composable(route.path) { content(route) }
+            composable(route.path) { updatedContent(route) }
         }
     }
     LaunchedEffect(state.value) {

@@ -15,6 +15,8 @@ import protected.eu.peernetwork.user.remote.DeleteAccountMutation
 import `protected`.eu.peernetwork.user.remote.ProfileQuery
 import protected.eu.peernetwork.user.remote.UpdatePasswordMutation
 import public.eu.peernetwork.user.remote.RegisterMutation
+import public.eu.peernetwork.user.remote.RequestPasswordResetMutation
+import public.eu.peernetwork.user.remote.ResetPasswordMutation
 import public.eu.peernetwork.user.remote.VerifiedAccountMutation
 import javax.inject.Inject
 import javax.inject.Named
@@ -58,6 +60,20 @@ class AccountApiDelegate @Inject constructor(
         val response = client().mutation(mutation).executeOrThrow()
         val data = response.getOrThrow().updatePassword
         response.assertOrThrow(data.status, data.ResponseCode)
+    }
+
+    override suspend fun passwordReset(email: String) {
+        val mutation = RequestPasswordResetMutation(email)
+        val response = client().mutation(mutation).executeOrThrow()
+        val data = response.getOrThrow().requestPasswordReset
+        response.assertOrThrow(data.status, data.ResponseCode)
+    }
+
+    override suspend fun resetPassword(token: String, password: String) {
+        val mutation = ResetPasswordMutation(token, password)
+        val response = client().mutation(mutation).executeOrThrow()
+        val data = response.getOrThrow().resetPassword
+        response.assertOrThrow(data?.status, data?.ResponseCode)
     }
 
     override suspend fun activate(code: String) {

@@ -227,7 +227,7 @@ fun VideoScreen(
     ) {
         Box(modifier = Modifier.clickable(
             role = Role.Button,
-            onClick = selectHandler
+            onClick = { selectHandler() }
         )) { updatedContent(post) }
     }
 }

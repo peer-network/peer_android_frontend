@@ -49,13 +49,13 @@ fun RegistrationScreen(
     val component = remember {
         provider.builder(Registration.Builder::class.java).build(context)
     }
-    val handleRegistrationSuccess by rememberUpdatedState(onRegistrationSuccess)
     val viewModel = viewModel(
         modelClass = RegistrationViewModel::class.java,
         viewModelStoreOwner = viewModelStoreOwner,
         factory = component.viewModelFactory()
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val handleRegistrationSuccess by rememberUpdatedState(onRegistrationSuccess)
     val loading = remember { derivedStateOf { state is RegistrationViewModel.State.Loading } }
     val error = remember { derivedStateOf {
         (state as? RegistrationViewModel.State.Error?)?.error?.message?.let {

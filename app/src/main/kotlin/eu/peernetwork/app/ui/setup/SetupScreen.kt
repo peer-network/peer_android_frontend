@@ -30,6 +30,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.compose.DesignContainer
 import eu.peernetwork.core.ui.extension.builder
+import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.user.ui.login.LoginScreen
 import eu.peernetwork.user.ui.registeration.RegistrationScreen
@@ -53,23 +54,27 @@ fun SetupScreen(
     val page = remember(referral) { referral?.let { 1 } ?: state.page }
     val contentState = remember { mutableIntStateOf(page) }
     val imeHeight = WindowInsets.ime.getBottom(LocalDensity.current) * .15
-    DesignContainer {
-        SetupScaffold(
-            header = { SetupHeader(state = contentState) },
-            footer = { SetupFooter(onPrivacy = {}) },
-            modifier = Modifier.padding(bottom = imeHeight.dp)
-        ) {
-            SetupScreen(
-                state = contentState,
-                register = { RegistrationScreen(
-                    referral,
-                    component,
-                    viewModelStoreOwner,
-                    onRegistrationSuccess = { contentState.intValue = 0 }
-                ) },
-                login = { LoginScreen(component, viewModelStoreOwner) },
-                onOptionChange = { viewModel.lastVisited(it) }
-            )
+    SetupNavigation(component) { controller ->
+        DesignContainer {
+            SetupScaffold(
+                header = { SetupHeader(state = contentState) },
+                footer = { SetupFooter(onPrivacy = {}) },
+                modifier = Modifier.padding(bottom = imeHeight.dp)
+            ) {
+                SetupScreen(
+                    state = contentState,
+                    register = { RegistrationScreen(
+                        referral,
+                        component,
+                        viewModelStoreOwner,
+                        onRegistrationSuccess = { contentState.intValue = 0 }
+                    ) },
+                    login = { LoginScreen(component, viewModelStoreOwner) {
+                        controller.navigateIfNecessary("passwordRequest/$it")
+                    } },
+                    onOptionChange = { viewModel.lastVisited(it) }
+                )
+            }
         }
     }
 }

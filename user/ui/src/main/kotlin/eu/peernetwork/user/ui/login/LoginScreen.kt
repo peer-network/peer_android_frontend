@@ -36,7 +36,8 @@ import eu.peernetwork.core.ui.extension.isValidInput
 @Composable
 fun LoginScreen(
     provider: UiComponentProvider,
-    viewModelStoreOwner: ViewModelStoreOwner
+    viewModelStoreOwner: ViewModelStoreOwner,
+    onForgotPassword: (String) -> Unit,
 ) {
     val context = LocalContext.current
     val component = remember {
@@ -57,7 +58,8 @@ fun LoginScreen(
     LoginScreen(
         loading = loading,
         error = error,
-        onReset = { viewModel.reset() }
+        onReset = { viewModel.reset() },
+        onForgotPassword = onForgotPassword,
     ) { email, password -> viewModel.login(email, password) }
 }
 
@@ -66,6 +68,7 @@ fun LoginScreen(
     loading: State<Boolean>,
     error: State<String?>,
     onReset: (() -> Unit)? = null,
+    onForgotPassword: (String) -> Unit,
     onSubmit: (String, String) -> Unit
 ) {
     val password = remember { TextFieldState() }
@@ -80,7 +83,8 @@ fun LoginScreen(
             email = email,
             password = password,
             error = error.value,
-            enabled = !loading.value
+            enabled = !loading.value,
+            onForgotPassword = onForgotPassword
         )
         DesignButton(
             enabled = !loading.value && validate,
@@ -111,7 +115,8 @@ fun PreviewLoginScreen() {
         LoginScreen(
             loading = isLoading,
             error = error,
-            onReset = {}
+            onReset = {},
+            onForgotPassword = {},
         ) { email, password -> }
     }
 }

@@ -6,6 +6,8 @@ import protected.eu.peernetwork.user.remote.DeleteAccountMutation
 import protected.eu.peernetwork.user.remote.ProfileQuery
 import protected.eu.peernetwork.user.remote.UpdatePasswordMutation
 import public.eu.peernetwork.user.remote.RegisterMutation
+import public.eu.peernetwork.user.remote.RequestPasswordResetMutation
+import public.eu.peernetwork.user.remote.ResetPasswordMutation
 import public.eu.peernetwork.user.remote.VerifiedAccountMutation
 
 object AccountMock {
@@ -47,6 +49,20 @@ object AccountMock {
 
     fun password(): UpdatePasswordMutation.UpdatePassword {
         return UpdatePasswordMutation.UpdatePassword(
+            status = Status.SUCCESS.value,
+            ResponseCode = null,
+        )
+    }
+
+    fun passwordResetRequest(): RequestPasswordResetMutation.RequestPasswordReset {
+        return RequestPasswordResetMutation.RequestPasswordReset(
+            status = Status.SUCCESS.value,
+            ResponseCode = null,
+        )
+    }
+
+    fun passwordReset(): ResetPasswordMutation.ResetPassword {
+        return ResetPasswordMutation.ResetPassword(
             status = Status.SUCCESS.value,
             ResponseCode = null,
         )
