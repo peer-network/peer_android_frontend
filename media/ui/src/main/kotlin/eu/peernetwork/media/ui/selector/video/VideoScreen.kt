@@ -9,13 +9,13 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -38,6 +38,7 @@ import eu.peernetwork.media.ui.thumbnail.ThumbnailScreen
 
 @Composable
 fun VideoScreen(
+    type: UiMimeType,
     directory: MutableState<String?>,
     attachment: MutableState<UiAttachment>,
     provider: UiComponentProvider,
@@ -67,7 +68,7 @@ fun VideoScreen(
             }
         }
     }
-    val current = remember { mutableStateOf(directory.value) }
+    val current = rememberSaveable(directory.value) { mutableStateOf(directory.value) }
     val selected = remember(attachment.value) { mutableStateOf<UiFile?>(
         if (attachment.value.media is UiMimeType.Video) {
             attachment.value.files.firstOrNull()
@@ -83,7 +84,7 @@ fun VideoScreen(
         modifier = Modifier.fillMaxSize()
     ) {
         ThumbnailScreen(
-            type = attachment.value.media,
+            type = type,
             provider = component,
             viewModelStoreOwner = viewModelStoreOwner
         ) { thumbnail, onLoad ->
@@ -131,15 +132,7 @@ fun VideoScreen(
             }
         }
     }
-    LaunchedEffect(directory.value) {
-        if (directory.value != current.value) {
-            current.value = directory.value
-            viewModel.initialize(directory.value)
-        }
-    }
-    DisposableEffect(Unit) {
-        onDispose {
-            current.value = null
-        }
+    LaunchedEffect(current.value) {
+        viewModel.initialize(directory.value)
     }
 }

@@ -6,7 +6,8 @@ import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
 import eu.peernetwork.app.BuildConfig
-import eu.peernetwork.app.provider.UrlProvider
+import eu.peernetwork.app.interactor.UrlInteractorDelegate
+import eu.peernetwork.core.common.interactor.UrlInteractor
 import eu.peernetwork.core.common.provider.Dispatcher
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -30,7 +31,7 @@ object CoreModule {
 
     @Provides
     @Singleton
-    fun provideUrlProvider(delegate: UrlProvider.Delegate): UrlProvider = delegate
+    fun provideUrlProvider(delegate: UrlInteractorDelegate): UrlInteractor = delegate
 
     @Provides
     fun provideDispatcher(): Dispatcher {

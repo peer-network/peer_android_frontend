@@ -22,8 +22,8 @@ class ThumbnailUsecase @Inject constructor(
         } else {
             ThumbnailUtils.extractThumbnail(
                 BitmapFactory.decodeFile(param.thumbnail),
-                650,
-                650
+                250,
+                250
             )
         }
     }

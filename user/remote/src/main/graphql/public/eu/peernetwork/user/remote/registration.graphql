@@ -1,5 +1,5 @@
-mutation Register($email: String!, $password: String!, $username: String!) {
-    register(input: { email: $email, password: $password, username: $username }) {
+mutation Register($email: String!, $password: String!, $username: String!, $referral: ID) {
+    register(input: { email: $email, password: $password, username: $username, referralUuid: $referral }) {
         status
         ResponseCode
         userid

@@ -2,6 +2,7 @@ package eu.peernetwork.user.ui.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import eu.peernetwork.core.common.interactor.UrlInteractor
 import eu.peernetwork.user.domain.usecase.DeactivationUsecase
 import eu.peernetwork.user.domain.usecase.LogoutUsecase
 import eu.peernetwork.user.domain.usecase.ProtectedSettingsUsecase
@@ -28,6 +29,7 @@ class SettingsViewModel @Inject constructor(
     private val observerUsecase: ObserveAuthUserUsecase,
     private val logoutUsecase: LogoutUsecase,
     private val deactivationUsecase: DeactivationUsecase,
+    private val urlInteractor: UrlInteractor
 ) : ViewModel() {
     private val mutableState = MutableStateFlow<State>(State.Empty)
 
@@ -36,6 +38,7 @@ class SettingsViewModel @Inject constructor(
             account?.let {
                 State.Content(
                     account = account,
+                    inviteUrl = String.format(urlInteractor.invite(), account.id),
                     processing = state is State.Loading,
                     error = (state as? State.Failure?)?.error
                 )
@@ -58,7 +61,9 @@ class SettingsViewModel @Inject constructor(
         mutableState.tryEmit(State.Loading)
         viewModelScope.launch {
             try {
-                mutableState.tryEmit(State.Content(refreshUsecase()))
+                val account = refreshUsecase()
+                val inviteLink = String.format(urlInteractor.invite(), account.id)
+                mutableState.tryEmit(State.Content(account, inviteLink))
             } catch (error: Throwable) {
                 mutableState.tryEmit(State.Failure(error))
             }
@@ -70,7 +75,9 @@ class SettingsViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 handleUpdate(account, update, password)
-                mutableState.tryEmit(State.Content(refreshUsecase()))
+                val account = refreshUsecase()
+                val inviteLink = String.format(urlInteractor.invite(), account.id)
+                mutableState.tryEmit(State.Content(account, inviteLink))
             } catch (error: Throwable) {
                 mutableState.tryEmit(State.Failure(error))
             }
@@ -129,6 +136,7 @@ class SettingsViewModel @Inject constructor(
         data object Loading : State
         data class Content(
             val account: UiAccount,
+            val inviteUrl: String,
             val processing: Boolean = false,
             val error: Throwable? = null
         ) : State

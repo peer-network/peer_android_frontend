@@ -74,7 +74,7 @@ fun ModerationScreen(
     spec: ModerationSpec
 ) {
     var expanded by remember { mutableStateOf(false) }
-
+    val handleOnReport by rememberUpdatedState(spec.onReport)
     Box {
         DesignTextButton(
             onClick = { expanded = true },
@@ -87,7 +87,6 @@ fun ModerationScreen(
                 modifier = Modifier.size(28.dp)
             )
         }
-
         DropdownMenu(
             modifier = Modifier.background(color = MaterialTheme.colorScheme.background),
             expanded = expanded,
@@ -97,17 +96,9 @@ fun ModerationScreen(
                 text = { Text("Report") },
                 onClick = {
                     expanded = false
-                    spec.onReport(model.id)
+                    handleOnReport(model.id)
                 }
             )
-// Uncomment this if you want to allow Save option later
-//            DropdownMenuItem(
-//                text = { Text("Save") },
-//                onClick = {
-//                    expanded = false
-//                    spec.onSave(model.id)
-//                }
-//            )
         }
     }
 }

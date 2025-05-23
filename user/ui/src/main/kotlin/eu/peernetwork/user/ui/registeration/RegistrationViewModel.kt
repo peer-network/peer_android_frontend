@@ -24,7 +24,7 @@ class RegistrationViewModel @Inject constructor(
         initialValue = State.Initial
     )
 
-    fun register(username: String, email: String, password: String) {
+    fun register(username: String, email: String, password: String, referral: String?) {
         mutableState.tryEmit(State.Loading)
         viewModelScope.launch {
             try {
@@ -32,7 +32,8 @@ class RegistrationViewModel @Inject constructor(
                     RegistrationUsecase.Parameter(
                         email = email,
                         username = username,
-                        password = password
+                        password = password,
+                        referral = referral
                     )
                 )
                 activationUsecase(code)

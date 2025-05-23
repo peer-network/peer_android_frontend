@@ -59,7 +59,7 @@ fun ThumbnailScreen(
             contentScale = ContentScale.Crop
         )
     } ?: Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surfaceVariant))
-    LaunchedEffect(Unit) {
+    LaunchedEffect(thumbnail) {
         onRefresh(thumbnail)
     }
 }

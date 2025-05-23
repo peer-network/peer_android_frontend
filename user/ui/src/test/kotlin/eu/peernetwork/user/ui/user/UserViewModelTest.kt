@@ -49,6 +49,7 @@ internal class UserViewModelTest {
     fun `test get user success`() = runTest {
         val mockData = mockk<UiAccount>(relaxed = true)
         coEvery { usecase(any()) } returns mockk(relaxed = true)
+        coEvery { observeAuthUserUsecase() } returns flowOf(mockData)
         coEvery { userUsecase(any()) } coAnswers {
             delay(100)
             mockData
@@ -56,7 +57,21 @@ internal class UserViewModelTest {
         viewModel.getAccount("<test-id>")
         viewModel.state.test {
             assertEquals(UserViewModel.State.Loading, awaitItem())
-            assertEquals(UserViewModel.State.Success(mockData), awaitItem())
+            assertEquals(UserViewModel.State.Success(mockData, true), awaitItem())
+        }
+    }
+
+    @Test
+    fun `test get guest user success`() = runTest {
+        val guest = mockk<UiAccount>(relaxed = true)
+        val mockData = mockk<UiAccount>(relaxed = true)
+        every { guest.id } returns "<test-guest-id>"
+        coEvery { usecase(any()) } returns mockk(relaxed = true)
+        coEvery { observeAuthUserUsecase() } returns flowOf(guest)
+        coEvery { userUsecase(any()) } returns mockData
+        viewModel.getAccount("<test-id>")
+        viewModel.state.test {
+            assertEquals(UserViewModel.State.Success(mockData, false), awaitItem())
         }
     }
 
