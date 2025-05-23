@@ -37,14 +37,15 @@ import eu.peernetwork.core.ui.theme.PeerTheme
 @Composable
 fun SetupHeader(
     state: MutableIntState,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    useSystemUi: Boolean = BuildConfig.USE_SYSTEM_THEME
 ) {
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
-            painter = if (isSystemInDarkTheme() || !BuildConfig.USE_SYSTEM_THEME) {
+            painter = if (isSystemInDarkTheme() || !useSystemUi) {
                 painterResource(id = R.drawable.ic_logo)
             } else {
                 painterResource(id = R.drawable.ic_logo_dark)
@@ -56,7 +57,7 @@ fun SetupHeader(
         )
         Text(
             text = stringResource(id = R.string.slogan_text)
-                .annotate(stringResource(id = R.string.app_name), SpanStyle(
+                .annotate(stringResource(id = R.string.label), SpanStyle(
                     fontWeight = FontWeight.Bold
                 )),
             textAlign = TextAlign.Center,

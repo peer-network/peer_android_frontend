@@ -6,6 +6,8 @@ import eu.peernetwork.app.provider.ApplicationProvider
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.user.ui.login.Login
+import eu.peernetwork.user.ui.password.request.PasswordRequest
+import eu.peernetwork.user.ui.password.reset.PasswordReset
 import eu.peernetwork.user.ui.registeration.Registration
 
 interface Setup : ApplicationProvider {
@@ -18,7 +20,7 @@ interface Setup : ApplicationProvider {
         dependencies = [ Setup::class ],
         modules = [ SetupModule::class ]
     )
-    interface Component : Setup, Login, Registration, UiComponentProvider {
+    interface Component : Setup, Login, Registration, PasswordReset, PasswordRequest, UiComponentProvider {
         fun viewModelFactory(): ViewModelProvider.Factory
     }
 

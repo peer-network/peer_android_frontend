@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.navigation.compose.composable
@@ -24,6 +25,7 @@ fun LauncherScreen(
     viewModelStoreOwner: ViewModelStoreOwner,
 ) {
     val context = LocalContext.current
+    val clipboardManager = LocalClipboardManager.current
     val component = remember {
         provider.builder(Launcher.Builder::class.java).build(context)
     }
@@ -32,7 +34,9 @@ fun LauncherScreen(
         composable("launcher") {  }
         composable("setup") {
             SetupScreen(
-                referral = id,
+                referral = id ?: clipboardManager.getText()?.text
+                    ?.takeIf { it.startsWith("peer://invite/") }
+                    ?.substringAfter("peer://invite/"),
                 provider = component,
                 viewModelStoreOwner = viewModelStoreOwner
             )

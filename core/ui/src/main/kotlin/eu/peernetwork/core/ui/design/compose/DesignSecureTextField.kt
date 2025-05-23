@@ -127,8 +127,14 @@ fun DesignSecureTextField(
             contentPadding = contentPadding,
             leading = leading,
             trailing = trailing ?: {
-                DesignPasswordIcon(textObfuscationMode = obfuscationMode) {
-                    obfuscationMode = it
+                CompositionLocalProvider(
+                    LocalTextStyle provides textStyle.copy(
+                        color = placeholderTextColor
+                    )
+                ) {
+                    DesignPasswordIcon(textObfuscationMode = obfuscationMode) {
+                        obfuscationMode = it
+                    }
                 }
             },
         ) {

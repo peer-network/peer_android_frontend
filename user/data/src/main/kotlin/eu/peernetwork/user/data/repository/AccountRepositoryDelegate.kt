@@ -50,6 +50,14 @@ class AccountRepositoryDelegate @Inject constructor(
         return api.changePassword(old, new)
     }
 
+    override suspend fun resetPassword(token: String, password: String) {
+        return api.resetPassword(token, password)
+    }
+
+    override suspend fun passwordReset(email: String) {
+        return api.passwordReset(email)
+    }
+
     override suspend fun activate(code: String) {
         return api.activate(code)
     }

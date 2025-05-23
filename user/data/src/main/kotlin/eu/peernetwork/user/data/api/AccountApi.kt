@@ -10,6 +10,10 @@ interface AccountApi {
 
     suspend fun changePassword(old: String, new: String)
 
+    suspend fun resetPassword(token: String, password: String)
+
+    suspend fun passwordReset(email: String)
+
     suspend fun activate(code: String)
 
     suspend fun delete(password: String)

@@ -83,7 +83,7 @@ fun RegistrationForm(
                     width = 24.dp,
                     modifier = Modifier
                         .padding(horizontal = 16.dp)
-                        .padding(top = 8.dp)
+                        .padding(top = 12.dp)
                         .height(2.dp)
                 )
             },
@@ -102,7 +102,7 @@ fun RegistrationForm(
             placeholder = { Text(stringResource(id = R.string.referral_code_label)) },
             modifier = Modifier
                 .padding(horizontal = 24.dp)
-                .padding(top = 12.dp)
+                .padding(top = 16.dp)
         )
     }
 }
