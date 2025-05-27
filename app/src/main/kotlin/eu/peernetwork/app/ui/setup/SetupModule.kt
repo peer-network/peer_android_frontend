@@ -13,7 +13,6 @@ import eu.peernetwork.core.ui.factory.UiBuilderFactory
 import eu.peernetwork.core.ui.factory.UiViewModelFactory
 import eu.peernetwork.user.ui.login.Login
 import eu.peernetwork.user.ui.password.request.PasswordRequest
-import eu.peernetwork.user.ui.password.reset.PasswordReset
 import eu.peernetwork.user.ui.registeration.Registration
 import javax.inject.Provider
 
@@ -52,14 +51,6 @@ object SetupModule {
     @UiBuilder(Registration.Builder::class)
     fun provideRegistrationBuilder(component: Setup.Component): UiComponent.Builder {
         return Registration.Builder(component)
-    }
-
-    @Setup.Scope
-    @Provides
-    @IntoMap
-    @UiBuilder(PasswordReset.Builder::class)
-    fun providePasswordResetBuilder(component: Setup.Component): UiComponent.Builder {
-        return PasswordReset.Builder(component)
     }
 
     @Setup.Scope

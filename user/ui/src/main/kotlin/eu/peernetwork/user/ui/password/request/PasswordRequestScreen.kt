@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.verticalScroll
@@ -24,13 +25,18 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.rememberNavController
 import eu.peernetwork.core.ui.annotation.UiViewModel
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.compose.DesignButton
@@ -39,6 +45,7 @@ import eu.peernetwork.core.ui.design.compose.DesignTitle
 import eu.peernetwork.core.ui.design.compose.DesignTitleBarHost
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.extension.isValidEmail
+import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.user.ui.R
 
@@ -57,7 +64,6 @@ fun PasswordRequestScreen(
         viewModelStoreOwner = UiViewModel.Owner(),
         factory = component.viewModelFactory()
     )
-    val handleOnFinish by rememberUpdatedState(onFinish)
     val state by viewModel.state.collectAsStateWithLifecycle()
     val isLoading = remember(state) { derivedStateOf {
         state is PasswordRequestViewModel.State.Loading
@@ -68,21 +74,29 @@ fun PasswordRequestScreen(
             component.resource().string(it)
         }
     } }
-    PasswordRequestScreen(
-        email,
-        isLoading,
-        error
-    ) { viewModel.requestPassword(it) }
-    DesignTitleBarHost("PasswordRequestScreen") {
-        titleBar {
-            DesignTitle {
-                Text(stringResource(R.string.password_reset_label))
+    val controller = rememberNavController()
+    PasswordRequestNavigation(
+        controller,
+        component,
+        onFinish
+    ) {
+        PasswordRequestScreen(
+            email,
+            isLoading,
+            error,
+            { controller.navigateIfNecessary("passwordReset") }
+        ) { viewModel.requestPassword(it) }
+        DesignTitleBarHost("PasswordRequestScreen", onFinish) {
+            titleBar {
+                DesignTitle {
+                    Text(stringResource(R.string.password_recovery_label))
+                }
             }
         }
     }
     LaunchedEffect(isFinished.value) {
         if (isFinished.value) {
-            handleOnFinish()
+            controller.navigateIfNecessary("passwordReset")
         }
     }
 }
@@ -92,28 +106,54 @@ fun PasswordRequestScreen(
     email: String?,
     loading: State<Boolean>,
     error: State<String?>,
+    onFinish: () -> Unit,
     onSubmit: (String) -> Unit
 ) {
     var emailField = remember(email) { email?.let { TextFieldState(it) } ?: TextFieldState()  }
+    val handleOnFinish by rememberUpdatedState(onFinish)
     val handleOnSubmit by rememberUpdatedState(onSubmit)
+    val annotatedText = buildAnnotatedString {
+        append(stringResource(R.string.password_reset_instruction))
+        append(" ")
+        append(stringResource(R.string.password_alternative_question))
+        pushStringAnnotation(tag = "TOKEN", annotation = "token")
+        withStyle(style = SpanStyle(
+            color = MaterialTheme.colorScheme.tertiary,
+            fontWeight = FontWeight.SemiBold,
+            textDecoration = TextDecoration.Underline
+        )) {
+            append(" ")
+            append(stringResource(R.string.click_here).lowercase())
+        }
+        pop()
+    }
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(vertical = 16.dp, horizontal = 24.dp)
             .verticalScroll(rememberScrollState())
-            .padding(24.dp)
     ) {
         Text(
             stringResource(R.string.password_reset_header),
             style = MaterialTheme.typography.titleMedium.copy(
                 color = MaterialTheme.colorScheme.onBackground,
                 fontWeight = FontWeight.SemiBold
-            )
+            ),
+            modifier = Modifier.padding(horizontal = 16.dp)
         )
-        Spacer(modifier = Modifier.height(12.dp))
-        Text(
-            stringResource(R.string.password_reset_instruction),
+        Spacer(modifier = Modifier.height(8.dp))
+        ClickableText(
+            annotatedText,
             style = MaterialTheme.typography.bodySmall.copy(
                 color = MaterialTheme.colorScheme.tertiary
-            )
+            ),
+            modifier = Modifier.padding(horizontal = 16.dp),
+            onClick = { offset ->
+                annotatedText.getStringAnnotations(tag = "TOKEN", start = offset, end = offset)
+                    .firstOrNull()?.let {
+                        handleOnFinish()
+                    }
+            }
         )
         DesignTextField(
             state = emailField,
@@ -125,8 +165,9 @@ fun PasswordRequestScreen(
                         text = this,
                         fontSize = MaterialTheme.typography.bodySmall.fontSize,
                         color = MaterialTheme.colorScheme.error,
-                        modifier = Modifier.padding(horizontal = 16.dp)
-                            .padding(top = 8.dp)
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp)
+                            .padding(top = 6.dp)
                     )
                 }
             },
@@ -135,7 +176,7 @@ fun PasswordRequestScreen(
                 imeAction = ImeAction.Send
             ),
             placeholder = { Text(stringResource(id = R.string.email_label)) },
-            modifier = Modifier.padding(top = 12.dp)
+            modifier = Modifier.padding(top = 16.dp)
         )
         DesignButton(
             isLoading = loading.value,
@@ -145,7 +186,7 @@ fun PasswordRequestScreen(
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 16.dp)
+                .padding(vertical = 12.dp)
         ) {
             Text(
                 text = stringResource(R.string.confirmation_label),
@@ -165,6 +206,7 @@ fun PreviewPasswordRequestScreen() {
             "johnDoe@gmail.com",
             remember { mutableStateOf(false) },
             remember { mutableStateOf(null) },
+            {}
         ) {}
     }
 }

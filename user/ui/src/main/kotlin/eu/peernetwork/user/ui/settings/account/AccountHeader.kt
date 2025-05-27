@@ -1,4 +1,4 @@
-package eu.peernetwork.user.ui.settings
+package eu.peernetwork.user.ui.settings.account
 
 import android.app.Activity
 import android.content.Context
@@ -55,7 +55,7 @@ import eu.peernetwork.user.ui.activity.CropActivity
 import java.io.File
 
 @Composable
-fun SettingsHeader(
+fun AccountHeader(
     account: UiAccount,
     inviteLink: String,
     modifier: Modifier = Modifier,
@@ -185,7 +185,7 @@ fun PreviewSettingsAvatar() {
             isfollowing = false,
             isfollowed = false
         )
-        SettingsHeader(
+        AccountHeader(
             account = model,
             inviteLink = "http://localhost",
             onSubmit = {},

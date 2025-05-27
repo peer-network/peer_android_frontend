@@ -6,6 +6,7 @@ import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
 import eu.peernetwork.app.BuildConfig
+import eu.peernetwork.app.interactor.SettingsInteractor
 import eu.peernetwork.app.interactor.UrlInteractorDelegate
 import eu.peernetwork.core.common.interactor.UrlInteractor
 import eu.peernetwork.core.common.provider.Dispatcher
@@ -30,8 +31,10 @@ object CoreModule {
     }
 
     @Provides
-    @Singleton
     fun provideUrlProvider(delegate: UrlInteractorDelegate): UrlInteractor = delegate
+
+    @Provides
+    fun provideSettingsInteractor(delegate: UrlInteractorDelegate): SettingsInteractor = delegate
 
     @Provides
     fun provideDispatcher(): Dispatcher {

@@ -5,7 +5,7 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import eu.peernetwork.app.BuildConfig
-import eu.peernetwork.core.common.interactor.UrlInteractor
+import eu.peernetwork.app.interactor.SettingsInteractor
 import eu.peernetwork.core.common.provider.Dispatcher
 import eu.peernetwork.core.common.usecase.SuspendableUseCase
 import kotlinx.coroutines.tasks.await
@@ -13,7 +13,7 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class VersionUseCase @Inject constructor(
-    private val interactor: UrlInteractor,
+    private val interactor: SettingsInteractor,
     private val remoteConfig: FirebaseRemoteConfig,
     private val dispatcher: Dispatcher
 ) : SuspendableUseCase<VersionUseCase.Result> {

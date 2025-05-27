@@ -21,7 +21,7 @@ import kotlin.test.assertNull
 internal class AvatarSettingsApiTest {
     private val client = mockk<ApolloClient>()
 
-    private lateinit var api: SettingsApi.Updatable<String>
+    private lateinit var api: SettingsApi.Attribute<String>
 
     @Before
     fun setup() {

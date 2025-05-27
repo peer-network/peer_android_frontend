@@ -1,29 +1,29 @@
-package eu.peernetwork.user.ui.settings
+package eu.peernetwork.user.ui.settings.account
 
 import android.content.Context
 import androidx.lifecycle.ViewModelProvider
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.user.ui.provider.UserProvider
 
-interface Settings : UserProvider {
+interface Account : UserProvider {
     @javax.inject.Scope
     @Retention(AnnotationRetention.RUNTIME)
     annotation class Scope
 
     @Scope
     @dagger.Component(
-        dependencies = [ Settings::class ],
-        modules = [ SettingsModule::class ]
+        dependencies = [ Account::class ],
+        modules = [ AccountModule::class ]
     )
-    interface Component : Settings {
+    interface Component : Account {
         fun viewModelFactory(): ViewModelProvider.Factory
     }
 
-    class Builder(private val dependency: Settings) : UiComponent.DefaultBuilder<Settings, Component>() {
+    class Builder(private val dependency: Account) : UiComponent.DefaultBuilder<Account, Component>() {
         override fun build(context: Context): Component {
-            return DaggerSettings_Component.builder()
-                .settings(dependency)
-                .settingsModule(SettingsModule(context))
+            return DaggerAccount_Component.builder()
+                .account(dependency)
+                .accountModule(AccountModule(context))
                 .build()
         }
     }
