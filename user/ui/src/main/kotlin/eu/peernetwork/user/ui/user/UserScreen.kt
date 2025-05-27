@@ -57,7 +57,7 @@ fun UserScreen(
         factory = component.viewModelFactory()
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val derivedState = remember { derivedStateOf {
+    val derivedState = remember(state) { derivedStateOf {
         when(state) {
             UserViewModel.State.Empty -> DesignStatefulScaffoldState.Empty
             UserViewModel.State.Loading -> DesignStatefulScaffoldState.Loading
@@ -99,6 +99,7 @@ fun UserScreen(
             loadState.value = false
         }
     }
+    LaunchedEffect(Unit) { viewModel.initialize() }
 }
 
 @Composable

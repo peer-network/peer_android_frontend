@@ -6,13 +6,20 @@
     <string name="deactivate_text">Deactivate</string>
 
     <string name="email_label">E-mail</string>
+    <string name="email_update_label">Change e-mail</string>
     <string name="username_label">Username</string>
     <string name="password_label">Password</string>
+    <string name="password_update_label">New password</string>
+    <string name="current_password_label">Current password</string>
     <string name="password_reset_label">Password reset</string>
+    <string name="password_recovery_label">Password recovery</string>
     <string name="password_reset_header">Reset your password</string>
     <string name="description_label">Description</string>
     <string name="confirmation_label">Confirm</string>
     <string name="token_label">Token</string>
+    <string name="address_label">Address</string>
+    <string name="preference_label">Preferences</string>
+    <string name="account_label">Account</string>
 
     <string name="post_label">Posts</string>
     <string name="follow_label">Follow</string>
@@ -27,9 +34,11 @@
     <string name="referral_label">Referral Code (Optional)</string>
     <string name="referral_code_label">Referral Code (Optional)</string>
 
+    <string name="click_here">Click here</string>
     <string name="referral_copy_message">Referral link copied</string>
     <string name="forgot_password_label">Forgot password?</string>
     <string name="new_password_label">Create new password</string>
     <string name="password_reset_instruction">Enter the email associated with your account and we\'ll send an email with instructions to reset your password.</string>
     <string name="password_instruction">We\'ve sent a password recovery token to your email. Please enter the token along with your new password to proceed.</string>
+    <string name="password_alternative_question">Already received the token?</string>
 </resources>

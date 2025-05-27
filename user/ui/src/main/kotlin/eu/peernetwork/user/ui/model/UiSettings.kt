@@ -28,5 +28,6 @@ sealed class UiSettings(
         const val AVATAR = "avatar"
         const val USERNAME = "username"
         const val BIO = "description"
+        const val EMAIL = "email"
     }
 }

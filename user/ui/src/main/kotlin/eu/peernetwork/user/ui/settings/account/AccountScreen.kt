@@ -1,4 +1,4 @@
-package eu.peernetwork.user.ui.settings
+package eu.peernetwork.user.ui.settings.account
 
 import android.content.res.Configuration
 import android.net.Uri
@@ -54,16 +54,16 @@ import eu.peernetwork.user.ui.compose.PasswordSheet
 import eu.peernetwork.user.ui.compose.ProfileScaffold
 
 @Composable
-fun SettingsScreen(
+fun AccountScreen(
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner = UiViewModel.Owner(),
 ) {
     val context = LocalContext.current
     val component = remember {
-        provider.builder(Settings.Builder::class.java).build(context)
+        provider.builder(Account.Builder::class.java).build(context)
     }
     val viewModel = viewModel(
-        modelClass = SettingsViewModel::class.java,
+        modelClass = AccountViewModel::class.java,
         viewModelStoreOwner = viewModelStoreOwner,
         factory = component.viewModelFactory()
     )
@@ -71,19 +71,19 @@ fun SettingsScreen(
     val derivedState = remember {
         derivedStateOf {
             when (state) {
-                SettingsViewModel.State.Empty -> DesignStatefulScaffoldState.Empty
-                SettingsViewModel.State.Loading -> DesignStatefulScaffoldState.Loading
-                is SettingsViewModel.State.Content -> {
-                    val content = (state as SettingsViewModel.State.Content)
+                AccountViewModel.State.Empty -> DesignStatefulScaffoldState.Empty
+                AccountViewModel.State.Loading -> DesignStatefulScaffoldState.Loading
+                is AccountViewModel.State.Content -> {
+                    val content = (state as AccountViewModel.State.Content)
                     DesignStatefulScaffoldState.Success(Pair(content.account, content.inviteUrl))
                 }
-                is SettingsViewModel.State.Failure -> {
-                    DesignStatefulScaffoldState.Error((state as SettingsViewModel.State.Failure).error)
+                is AccountViewModel.State.Failure -> {
+                    DesignStatefulScaffoldState.Error((state as AccountViewModel.State.Failure).error)
                 }
             }
         }
     }
-    val content = remember { derivedStateOf { state as? SettingsViewModel.State.Content? } }
+    val content = remember { derivedStateOf { state as? AccountViewModel.State.Content? } }
     val error = remember { derivedStateOf { content.value?.error } }
     val isLoading = remember { derivedStateOf { content.value?.processing == true } }
     var status by remember { mutableStateOf(false) }
@@ -95,11 +95,10 @@ fun SettingsScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(vertical = 16.dp, horizontal = 24.dp)
-                    .verticalScroll(rememberScrollState())
             )
         }
     ) {
-        SettingsScreen(
+        AccountScreen(
             account = it.first,
             inviteLink = it.second,
             isLoading = isLoading,
@@ -130,7 +129,7 @@ fun SettingsScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsScreen(
+fun AccountScreen(
     account: UiAccount,
     inviteLink: String,
     isLoading: State<Boolean>,
@@ -160,7 +159,7 @@ fun SettingsScreen(
     val deactivateHandler by rememberUpdatedState(onDeactivate)
     val passwordValidatorHandler by rememberUpdatedState(requiresPassword)
     Column(modifier = modifier) {
-        SettingsHeader(
+        AccountHeader(
             account = account,
             inviteLink = inviteLink,
             modifier = Modifier.padding(top = 8.dp),
@@ -176,7 +175,7 @@ fun SettingsScreen(
                 image.value = null
             }
         )
-        SettingsForm(username, bio, isLoading, error)
+        AccountForm(username, bio, isLoading, error)
         Row(modifier = Modifier.padding(top = 16.dp)) {
             DesignOutlinedButton(
                 onClick = { showLogout.value = true },
@@ -225,7 +224,7 @@ fun SettingsScreen(
 
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
-fun PreviewSettingsScreen() {
+fun PreviewAccountScreen() {
     PeerTheme {
         val model = UiAccount(
             id = System.currentTimeMillis().toString(),
@@ -242,7 +241,7 @@ fun PreviewSettingsScreen() {
             isfollowing = false,
             isfollowed = false
         )
-        SettingsScreen(
+        AccountScreen(
             account = model,
             inviteLink = "http://localhost/",
             isLoading = remember { mutableStateOf(false) },

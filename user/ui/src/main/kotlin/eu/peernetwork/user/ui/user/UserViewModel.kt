@@ -11,6 +11,7 @@ import eu.peernetwork.user.ui.usecase.UserUsecase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -25,6 +26,19 @@ class UserViewModel @Inject constructor(
     private val mutableState = MutableStateFlow<State>(State.Empty)
 
     val state: StateFlow<State> = mutableState.asStateFlow()
+
+    fun initialize() {
+        viewModelScope.launch {
+            observerUsecase().collectLatest {
+                (mutableState.value as? State.Success?)?.let { state ->
+                    val isConfigurable = it?.id == state.account.id
+                    if (isConfigurable) {
+                        mutableState.tryEmit(State.Success(it!!, true))
+                    }
+                }
+            }
+        }
+    }
 
     fun getAccount(id: String) {
         mutableState.tryEmit(State.Loading)

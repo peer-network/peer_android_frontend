@@ -49,6 +49,7 @@ import eu.peernetwork.user.ui.R
 @Composable
 fun PasswordResetScreen(
     provider: UiComponentProvider,
+    onBackPressed: () -> Unit,
     onFinish: () -> Unit,
 ) {
     val context = LocalContext.current
@@ -75,7 +76,7 @@ fun PasswordResetScreen(
         isLoading,
         error
     ) { token, password -> viewModel.reset(token, password) }
-    DesignTitleBarHost("PasswordResetScreen") {
+    DesignTitleBarHost("PasswordResetScreen", onBackPressed) {
         titleBar {
             DesignTitle {
                 Text(stringResource(R.string.password_reset_label))
@@ -106,22 +107,24 @@ fun PasswordResetScreen(
     val handleOnSubmit by rememberUpdatedState(onSubmit)
     Column(
         modifier = Modifier.fillMaxSize()
+            .padding(vertical = 16.dp, horizontal = 24.dp)
             .verticalScroll(rememberScrollState())
-            .padding(24.dp)
     ) {
         Text(
             stringResource(R.string.new_password_label),
             style = MaterialTheme.typography.titleMedium.copy(
                 color = MaterialTheme.colorScheme.onBackground,
                 fontWeight = FontWeight.SemiBold
-            )
+            ),
+            modifier = Modifier.padding(horizontal = 16.dp)
         )
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(8.dp))
         Text(
             stringResource(R.string.password_instruction),
             style = MaterialTheme.typography.bodySmall.copy(
                 color = MaterialTheme.colorScheme.tertiary
-            )
+            ),
+            modifier = Modifier.padding(horizontal = 16.dp)
         )
         DesignTextField(
             state = token,
@@ -131,7 +134,7 @@ fun PasswordResetScreen(
                 imeAction = ImeAction.Send
             ),
             placeholder = { Text(stringResource(id = R.string.token_label)) },
-            modifier = Modifier.padding(top = 12.dp)
+            modifier = Modifier.padding(top = 16.dp)
         )
         DesignPassword(
             state = password,

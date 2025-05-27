@@ -1,4 +1,4 @@
-package eu.peernetwork.user.ui.settings
+package eu.peernetwork.user.ui.settings.account
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -21,8 +21,8 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-@Settings.Scope
-class SettingsViewModel @Inject constructor(
+@Account.Scope
+class AccountViewModel @Inject constructor(
     private val refreshUsecase: ProfileRefreshUsecase,
     private val settingsUsecase: SettingsUsecase,
     private val protectedSettingsUsecase: ProtectedSettingsUsecase,

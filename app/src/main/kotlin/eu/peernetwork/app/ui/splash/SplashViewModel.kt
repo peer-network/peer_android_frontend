@@ -2,7 +2,7 @@ package eu.peernetwork.app.ui.splash
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import eu.peernetwork.app.usecase.ResourceUsecase
+import eu.peernetwork.app.usecase.BootstrapUsecase
 import eu.peernetwork.app.usecase.VersionUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -11,7 +11,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class SplashViewModel @Inject constructor(
-    private val usecase: ResourceUsecase,
+    private val usecase: BootstrapUsecase,
     private val versionUseCase: VersionUseCase
 ) : ViewModel() {
     private val mutableState = MutableStateFlow<State>(State.Empty)

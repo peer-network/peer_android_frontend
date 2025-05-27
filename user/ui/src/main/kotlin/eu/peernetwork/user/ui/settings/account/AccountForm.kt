@@ -1,4 +1,4 @@
-package eu.peernetwork.user.ui.settings
+package eu.peernetwork.user.ui.settings.account
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.*
@@ -19,7 +19,7 @@ import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.user.ui.R
 
 @Composable
-fun ColumnScope.SettingsForm(
+fun ColumnScope.AccountForm(
     username: TextFieldState,
     bio: TextFieldState,
     isLoading: State<Boolean>,
@@ -114,7 +114,7 @@ fun PreviewSettingsForm() {
         val username = remember { TextFieldState() }
         val bio = remember { TextFieldState() }
         Column {
-            SettingsForm(
+            AccountForm(
                 username,
                 bio,
                 remember { mutableStateOf(false) },

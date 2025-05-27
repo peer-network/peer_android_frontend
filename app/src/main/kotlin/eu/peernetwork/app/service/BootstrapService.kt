@@ -1,5 +1,5 @@
 package eu.peernetwork.app.service
 
-interface LaunchService {
+interface BootstrapService {
     suspend fun initialize()
 }

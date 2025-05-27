@@ -3,6 +3,8 @@ package eu.peernetwork.user.ui.password.request
 import android.content.Context
 import androidx.lifecycle.ViewModelProvider
 import eu.peernetwork.core.ui.component.UiComponent
+import eu.peernetwork.core.ui.component.UiComponentProvider
+import eu.peernetwork.user.ui.password.reset.PasswordReset
 import eu.peernetwork.user.ui.provider.UserProvider
 
 interface PasswordRequest : UserProvider {
@@ -15,7 +17,7 @@ interface PasswordRequest : UserProvider {
         dependencies = [ PasswordRequest::class ],
         modules = [ PasswordRequestModule::class ]
     )
-    interface Component : PasswordRequest {
+    interface Component : PasswordRequest, PasswordReset, UiComponentProvider {
         fun viewModelFactory(): ViewModelProvider.Factory
     }
 
