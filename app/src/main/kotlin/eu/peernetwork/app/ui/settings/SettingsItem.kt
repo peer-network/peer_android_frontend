@@ -17,6 +17,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -30,17 +32,27 @@ fun ColumnScope.SettingsItem(
     label: String,
     onClick: () -> Unit,
 ) {
+    val border = MaterialTheme.colorScheme.tertiaryContainer
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.clickable(role = Role.Button, onClick = onClick)
-            .padding(
-                horizontal = 24.dp,
-                vertical = 8.dp
-            )
+            .drawBehind {
+                val strokeWidth = 1.dp.toPx()
+                drawLine(
+                    color = border,
+                    start = Offset(0f, size.height),
+                    end = Offset(size.width, size.height),
+                    strokeWidth = strokeWidth
+                )
+            }.padding(horizontal = 24.dp, vertical = 10.dp)
     ) {
-        Text(label, style = MaterialTheme.typography.bodyMedium.copy(
-            color = MaterialTheme.colorScheme.onBackground
-        ))
+        Text(
+            label,
+            modifier = Modifier.padding(start = 4.dp),
+            style = MaterialTheme.typography.bodyMedium.copy(
+                color = MaterialTheme.colorScheme.onBackground
+            )
+        )
         Spacer(modifier = Modifier.weight(1f))
         Icon(
             painterResource(eu.peernetwork.core.ui.R.drawable.ic_next),
