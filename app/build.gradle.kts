@@ -12,6 +12,7 @@ android {
             useSupportLibrary = true
         }
         buildConfigField("int", "PAGING_LIMIT", "20")
+
     }
     buildTypes {
         debug {
@@ -22,6 +23,7 @@ android {
             buildConfigField("String", "MEDIA_URL", "\"https://media.getpeer.eu\"")
             buildConfigField("String", "INVITE_URL", "\"https://testing.getpeer.eu/invite.php?%s\"")
             buildConfigField("boolean", "USE_SYSTEM_THEME", "false")
+            buildConfigField("String","PRIVACY_POLICY_URL","\"https://www.freeprivacypolicy.com/live/02865c3a-79db-4baf-9ca1-7d91e2cf1724\"")
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
         release {
@@ -31,6 +33,7 @@ android {
             buildConfigField("String", "MEDIA_URL", "\"https://media.peernetwork.eu\"")
             buildConfigField("String", "INVITE_URL", "\"https://testing.getpeer.eu/invite.php?%s\"")
             buildConfigField("boolean", "USE_SYSTEM_THEME", "false")
+            buildConfigField("String","PRIVACY_POLICY_URL","\"https://www.freeprivacypolicy.com/live/02865c3a-79db-4baf-9ca1-7d91e2cf1724\"")
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
             signingConfig = signingConfigs.getByName("debug")
         }
@@ -82,6 +85,7 @@ dependencies {
     implementation(libs.firebase.messaging)
 
     implementation(libs.lottie)
+
 
     implementation(libs.dagger)
     ksp(libs.dagger.compiler)
