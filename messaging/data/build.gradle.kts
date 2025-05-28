@@ -1,7 +1,7 @@
 
 dependencies {
     implementation(project(":core:common"))
-    implementation(project(":wallet:domain"))
+    implementation(project(":messaging:domain"))
 
     testImplementation(libs.junit)
     testImplementation(libs.kotlin.test)

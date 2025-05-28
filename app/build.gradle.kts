@@ -79,6 +79,11 @@ dependencies {
     implementation(project(":wallet:remote"))
     implementation(project(":wallet:ui"))
 
+    implementation(project(":messaging:domain"))
+    implementation(project(":messaging:data"))
+    implementation(project(":messaging:remote"))
+    implementation(project(":messaging:ui"))
+
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.config)

@@ -15,7 +15,7 @@ dependencies {
     implementation(project(":core:common"))
     implementation(project(":core:ui"))
 
-    implementation(project(":wallet:domain"))
+    implementation(project(":messaging:domain"))
 
     implementation(libs.dagger)
     ksp(libs.dagger.compiler)

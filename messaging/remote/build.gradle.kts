@@ -1,9 +1,9 @@
 plugins { id(libs.plugins.graphql.get().pluginId) }
 
 apollo {
-    service("wallet") {
-        packageNamesFromFilePaths("wallet")
-        schemaFile.set(file("src/main/graphql/wallet.schema.graphqls"))
+    service("messaging") {
+        packageNamesFromFilePaths("messaging")
+        schemaFile.set(file("src/main/graphql/messaging.schema.graphqls"))
         srcDir("src/main/graphql")
     }
 }
@@ -12,8 +12,8 @@ dependencies {
     implementation(project(":core:common"))
     implementation(project(":core:remote"))
 
-    implementation(project(":wallet:domain"))
-    implementation(project(":wallet:data"))
+    implementation(project(":messaging:domain"))
+    implementation(project(":messaging:data"))
 
     testImplementation(libs.junit)
     testImplementation(libs.kotlin.test)

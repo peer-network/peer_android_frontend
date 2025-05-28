@@ -1,4 +1,6 @@
 package eu.peernetwork.messaging.ui.chat
 
-object ChatModule {
-}
+import dagger.Module
+
+@Module
+object ChatModule
