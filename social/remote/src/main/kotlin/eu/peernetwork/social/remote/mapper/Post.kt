@@ -12,6 +12,7 @@ fun GetallpostsQuery.AffectedRow.mapToDomain(url: String): Post {
         description = mediadescription,
         author = Member(
             id = user.id,
+            slug = user.slug.toString(),
             username = user.username!!,
             imageUrl = "$url${user.img}"
         )
