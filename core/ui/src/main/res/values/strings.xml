@@ -13,6 +13,7 @@
     <string name="settings_label">Settings</string>
     <string name="retry_label">Try again</string>
     <string name="error_label">Error</string>
+    <string name="back_label">Back</string>
 
     <string name="text_label">Text</string>
     <string name="photo_label">Photo</string>

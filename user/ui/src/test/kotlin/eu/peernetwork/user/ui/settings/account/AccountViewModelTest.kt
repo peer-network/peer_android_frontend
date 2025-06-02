@@ -1,4 +1,4 @@
-package eu.peernetwork.user.ui.settings
+package eu.peernetwork.user.ui.settings.account
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import app.cash.turbine.test
@@ -28,7 +28,7 @@ import org.junit.Test
 import kotlin.test.assertEquals
 
 @OptIn(ExperimentalCoroutinesApi::class)
-internal class SettingsViewModelTest {
+internal class AccountViewModelTest {
     @get:Rule
     val instantExecutorRule = InstantTaskExecutorRule()
 
@@ -50,7 +50,7 @@ internal class SettingsViewModelTest {
 
     private val deactivationUsecase = mockk<DeactivationUsecase>()
 
-    private lateinit var viewModel: SettingsViewModel
+    private lateinit var viewModel: AccountViewModel
 
     @Before
     fun setup() {
@@ -59,7 +59,7 @@ internal class SettingsViewModelTest {
         every { observeAuthUserUsecase() } returns user
         every { urlInteractor.invite() } returns "%s"
 
-        viewModel = SettingsViewModel(
+        viewModel = AccountViewModel(
             profileRefreshUsecase,
             settingsUsecase,
             protectedSettingsUsecase,
@@ -78,7 +78,7 @@ internal class SettingsViewModelTest {
 
         coEvery { model.protected } returns true
         coEvery { protectedSettingsUsecase(any()) } returns Unit
-        coEvery { profileRefreshUsecase() } coAnswers  {
+        coEvery { profileRefreshUsecase() } coAnswers {
             delay(100)
             user.tryEmit(account)
             account
@@ -86,8 +86,8 @@ internal class SettingsViewModelTest {
 
         viewModel.update(account, listOf(model), password)
         viewModel.state.test {
-            assertEquals(SettingsViewModel.State.Loading, awaitItem())
-            assertEquals(SettingsViewModel.State.Content(account, account.id, false), awaitItem())
+            assertEquals(AccountViewModel.State.Loading, awaitItem())
+            assertEquals(AccountViewModel.State.Content(account, account.id, false), awaitItem())
         }
     }
 
@@ -105,8 +105,11 @@ internal class SettingsViewModelTest {
         }
         viewModel.update(account, listOf(model), password)
         viewModel.state.test {
-            assertEquals(SettingsViewModel.State.Loading, awaitItem())
-            assertEquals(SettingsViewModel.State.Content(account, account.id, false, error), awaitItem())
+            assertEquals(AccountViewModel.State.Loading, awaitItem())
+            assertEquals(
+                AccountViewModel.State.Content(account, account.id, false, error),
+                awaitItem()
+            )
         }
     }
 
@@ -117,7 +120,7 @@ internal class SettingsViewModelTest {
         val password = "<test-password>"
 
         coEvery { settingsUsecase(any()) } returns Unit
-        coEvery { profileRefreshUsecase() } coAnswers  {
+        coEvery { profileRefreshUsecase() } coAnswers {
             delay(100)
             user.tryEmit(account)
             account
@@ -125,8 +128,8 @@ internal class SettingsViewModelTest {
 
         viewModel.update(account, listOf(model), password)
         viewModel.state.test {
-            assertEquals(SettingsViewModel.State.Loading, awaitItem())
-            assertEquals(SettingsViewModel.State.Content(account, account.id, false), awaitItem())
+            assertEquals(AccountViewModel.State.Loading, awaitItem())
+            assertEquals(AccountViewModel.State.Content(account, account.id, false), awaitItem())
         }
     }
 
@@ -138,8 +141,8 @@ internal class SettingsViewModelTest {
         }
         viewModel.logout()
         viewModel.state.test {
-            assertEquals(SettingsViewModel.State.Loading, awaitItem())
-            assertEquals(SettingsViewModel.State.Empty, awaitItem())
+            assertEquals(AccountViewModel.State.Loading, awaitItem())
+            assertEquals(AccountViewModel.State.Empty, awaitItem())
         }
         coVerify { logoutUsecase() }
     }
@@ -154,8 +157,8 @@ internal class SettingsViewModelTest {
         }
         viewModel.deactivate(password)
         viewModel.state.test {
-            assertEquals(SettingsViewModel.State.Loading, awaitItem())
-            assertEquals(SettingsViewModel.State.Empty, awaitItem())
+            assertEquals(AccountViewModel.State.Loading, awaitItem())
+            assertEquals(AccountViewModel.State.Empty, awaitItem())
         }
         coVerify { deactivationUsecase(password) }
     }

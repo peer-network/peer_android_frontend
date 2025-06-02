@@ -10,7 +10,7 @@ import javax.inject.Inject
 
 class AvatarSettingsApi @Inject constructor(
     private val client: RequestClient,
-) : SettingsApi.Updatable<String> {
+) : SettingsApi.Attribute<String> {
     override suspend fun invoke(value: String) {
         val mutation = UpdateProfilePictureMutation(value)
         val response = client().mutation(mutation).executeOrThrow()

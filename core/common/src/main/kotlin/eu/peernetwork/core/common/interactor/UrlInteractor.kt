@@ -4,8 +4,4 @@ interface UrlInteractor {
     fun get(): String
 
     fun invite(): String
-
-    fun set(url: String)
-
-    fun invite(url: String)
 }

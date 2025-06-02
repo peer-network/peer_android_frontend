@@ -8,9 +8,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,6 +29,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import eu.peernetwork.core.common.service.ResourceService
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.design.compose.DesignOutlinedButton
 import eu.peernetwork.core.ui.theme.PeerTheme
@@ -94,6 +98,20 @@ fun DesignErrorText(
         modifier = modifier,
         textAlign = textAlign,
         style = style
+    )
+}
+
+@Composable
+fun DesignError(
+    onRefresh: () -> Unit = {},
+    error: Throwable,
+    resource: ResourceService
+) {
+    val errorMessage = stringResource(R.string.unknown_error_message)
+    DesignErrorContent(
+        Throwable(resource.string(error.message ?: errorMessage), error), onRetry = onRefresh,
+        modifier = Modifier.fillMaxSize()
+            .verticalScroll(rememberScrollState())
     )
 }
 

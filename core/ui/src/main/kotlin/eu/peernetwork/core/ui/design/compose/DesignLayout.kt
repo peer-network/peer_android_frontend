@@ -85,6 +85,7 @@ fun DesignDetail(
     lead: @Composable (() -> Unit)? = null,
     trailing: @Composable (() -> Unit)? = null,
     options: @Composable (() -> Unit)? = null,
+    verticalAlignment: Alignment.Vertical = Alignment.Top,
     content: @Composable RowScope.() -> Unit,
 ) {
     val updatedLead by rememberUpdatedState(lead)
@@ -94,6 +95,7 @@ fun DesignDetail(
     DesignDetailLayout(
         modifier = modifier,
         lead = { updatedLead?.invoke() },
+        verticalAlignment = verticalAlignment
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             CompositionLocalProvider(LocalTextStyle provides textStyle.copy(

@@ -10,7 +10,7 @@ import javax.inject.Inject
 
 class UsernameSettingsApi @Inject constructor(
     private val client: RequestClient,
-) : SettingsApi.SecureUpdatable<String> {
+) : SettingsApi.SecureAttribute<String> {
     override suspend fun invoke(value: String, password: String) {
         val mutation = UpdateNameMutation(value, password)
         val response = client().mutation(mutation).executeOrThrow()
