@@ -82,7 +82,7 @@ fun ConnectionScreen(
     }
     LaunchedEffect(error.value) {
         error.value?.message?.let {
-            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, component.resource().string(it), Toast.LENGTH_SHORT).show()
             viewModel.reset()
         }
     }

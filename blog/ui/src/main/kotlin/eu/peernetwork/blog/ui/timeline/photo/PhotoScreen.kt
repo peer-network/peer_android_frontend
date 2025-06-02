@@ -19,6 +19,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import eu.peernetwork.core.ui.extension.builder
@@ -37,6 +38,7 @@ import eu.peernetwork.core.common.model.Pageable
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
 import eu.peernetwork.blog.ui.moderation.ModerationScreen
 import eu.peernetwork.blog.ui.moderation.ModerationSpec
+import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.design.component.DesignPagingScaffold
 import eu.peernetwork.core.ui.design.component.DesignRefreshableScaffold
 import eu.peernetwork.media.core.renderer.ImageView
@@ -67,6 +69,7 @@ fun PhotoScreen(
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
     val currentTime = remember { mutableLongStateOf(System.currentTimeMillis()) }
+    val errorMessage = stringResource(R.string.unknown_error_message)
     LaunchedEffect(Unit) {
         while (true) {
             delay(60_000L)
@@ -82,7 +85,9 @@ fun PhotoScreen(
                     (state as PhotoViewModel.State.Success).content
                 )
                 is PhotoViewModel.State.Error -> DesignStatefulScaffoldState.Error(
-                    (state as PhotoViewModel.State.Error).error
+                    (state as PhotoViewModel.State.Error).error.let {
+                        Throwable(component.resource().string(it.message ?: errorMessage), it)
+                    }
                 )
             }
         }
