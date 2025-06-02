@@ -1,7 +1,6 @@
 package eu.peernetwork.wallet.ui.transfer
 
 import android.content.res.Configuration
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -53,11 +52,12 @@ fun TransferForm(
     recipient: UiRecipient,
     error: String? = null,
     isLoading: Boolean = false,
-    onClick: () -> Unit = {},
+    onClick: (UiRecipient) -> Unit = {},
     onClear: () -> Unit = {},
     onSubmit: (BigDecimal) -> Unit,
 ) {
     val isValidated = remember { derivedStateOf { state.text.toString().toBigDecimalOrNull() != null } }
+    val handleOnClick by rememberUpdatedState(onClick)
     val handleSubmission by rememberUpdatedState {
         state.text.toString().toBigDecimalOrNull()?.let {
             onSubmit(it)
@@ -80,7 +80,9 @@ fun TransferForm(
                                 color = MaterialTheme.colorScheme.tertiary,
                             ),
                             color = MaterialTheme.colorScheme.background,
-                            modifier = Modifier.clickable(role = Role.Button, onClick = onClick)
+                            modifier = Modifier.clickable(role = Role.Button) {
+                                handleOnClick(recipient)
+                            }
                         )
                     }
                 } },

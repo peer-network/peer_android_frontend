@@ -17,11 +17,14 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -33,7 +36,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
 import eu.peernetwork.core.ui.design.compose.DesignCard
 import eu.peernetwork.core.ui.design.compose.DesignOutlinedButton
 import eu.peernetwork.core.ui.extension.builder
@@ -48,6 +50,7 @@ fun TransferScreen(
     recipient: MutableState<UiRecipient?>,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
+    onRecipientClick: (UiRecipient) -> Unit,
     onClick: () -> Unit,
 ) {
     val context = LocalContext.current
@@ -60,25 +63,15 @@ fun TransferScreen(
         factory = component.viewModelFactory()
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val derivedState = remember {
-        derivedStateOf {
-            when (state) {
-                TransferViewModel.State.Empty -> DesignStatefulScaffoldState.Empty
-                TransferViewModel.State.Loading -> DesignStatefulScaffoldState.Loading
-                is TransferViewModel.State.Success -> {
-                    DesignStatefulScaffoldState.Success(
-                        (state as TransferViewModel.State.Success).transfer
-                    )
-                }
-                is TransferViewModel.State.Error -> DesignStatefulScaffoldState.Error(
-                    (state as TransferViewModel.State.Error).error
-                )
-            }
+    val isLoading = remember { derivedStateOf { state is TransferViewModel.State.Loading } }
+    val transaction = remember { derivedStateOf { (state as? TransferViewModel.State.Success?)?.transfer } }
+    val error = remember { derivedStateOf {
+        (state as? TransferViewModel.State.Error?)?.error?.message?.let {
+            component.resource().string(it)
         }
-    }
-    val hardcodedRecipientId = "42935fcd-4e4e-4d89-944f-bfeb1486fc64"
-    val hardcodedTokenAmount = 10
-    TransferScreen {
+    } }
+    var showLabel = rememberSaveable { mutableStateOf(false) }
+    TransferScreen(showLabel) {
         val amount = remember { TextFieldState() }
         Box(modifier = Modifier.padding(top = 8.dp, bottom = 16.dp)) {
             Crossfade(recipient.value) { target ->
@@ -100,21 +93,34 @@ fun TransferScreen(
                         }
                     )
                 } else {
-                    TransferForm(amount, target) {}
+                    TransferForm(amount, target, error.value, isLoading.value, onRecipientClick, {
+                        recipient.value = null
+                    }) {
+                        viewModel.transferToken(target.id, amount.text.toString().toBigDecimal())
+                    }
                 }
             }
+        }
+    }
+    LaunchedEffect(transaction.value) {
+        if (transaction.value != null) {
+            recipient.value = null
         }
     }
 }
 
 @Composable
-fun TransferScreen(content: @Composable () -> Unit) {
+fun TransferScreen(
+    state: MutableState<Boolean>,
+    content: @Composable () -> Unit
+) {
     val updatedContent by rememberUpdatedState(content)
     DesignCard(
         color = MaterialTheme.colorScheme.surfaceVariant,
         contentPadding = PaddingValues(0.dp)
     ) {
         ExpandableOption(
+            state = state,
             icon = {
                 Box(
                     modifier = Modifier
@@ -148,8 +154,9 @@ fun PreviewTransferScreen() {
             username = "johnDoe",
             imageUrl = "http://localhost"
         )
+        var showLabel = rememberSaveable { mutableStateOf(false) }
         Column {
-            TransferScreen {
+            TransferScreen(showLabel) {
                 Box(modifier = Modifier.padding(top = 8.dp, bottom = 16.dp)) {
                     DesignOutlinedButton(
                         onClick = {  },
@@ -170,7 +177,7 @@ fun PreviewTransferScreen() {
                 }
             }
             Spacer(modifier = Modifier.size(8.dp))
-            TransferScreen {
+            TransferScreen(showLabel) {
                 Box(modifier = Modifier.padding(top = 8.dp, bottom = 16.dp)) {
                     TransferForm(amount, recipient) {}
                 }

@@ -1,16 +1,11 @@
 package eu.peernetwork.social.ui.search.member
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -21,7 +16,6 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -44,7 +38,7 @@ import kotlinx.coroutines.flow.debounce
 fun MemberScreen(
     query: TextFieldState,
     postLimit: Int,
-    onClick: (String) -> Unit,
+    onClick: (UiMember) -> Unit,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
 ) {
@@ -93,19 +87,16 @@ fun MemberScreen(
             DesignError(refresh, error, component.resource())
         }
     ) { state, lazyPagingItems ->
-
         LazyColumn(modifier = Modifier.fillMaxSize()) {
             items(
                 count = lazyPagingItems.itemCount,
                 key = { index -> index }
             ) { index ->
                 lazyPagingItems[index]?.let { member ->
-                    // if condition
-                    if (!member.imageUrl.isNullOrBlank()) {
+                    if (member.imageUrl.isNotBlank()) {
                         MemberItem(
                             model = member,
-                            onClick = { handleClick(member.id) }
-
+                            onClick = { handleClick(member) }
                         )
                     }
                 }

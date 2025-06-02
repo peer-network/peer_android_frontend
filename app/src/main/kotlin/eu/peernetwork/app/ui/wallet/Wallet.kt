@@ -2,8 +2,10 @@ package eu.peernetwork.app.ui.wallet
 
 import android.content.Context
 import eu.peernetwork.app.provider.ApplicationProvider
+import eu.peernetwork.app.ui.profile.Profile
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
+import eu.peernetwork.social.ui.search.member.Member
 import eu.peernetwork.wallet.ui.overview.Overview
 import eu.peernetwork.wallet.ui.transfer.Transfer
 
@@ -17,7 +19,7 @@ interface Wallet : ApplicationProvider {
         dependencies = [ Wallet::class ],
         modules = [ WalletModule::class ]
     )
-    interface Component : Wallet, Overview, Transfer, UiComponentProvider
+    interface Component : Wallet, Overview, Transfer, Member, Profile, UiComponentProvider
 
     class Builder(private val dependency: Wallet): UiComponent.DefaultBuilder<Wallet, Component>() {
         override fun build(context: Context): Component {

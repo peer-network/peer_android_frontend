@@ -18,7 +18,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModelStoreOwner
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.component.DesignRefreshableScaffold
@@ -26,6 +25,8 @@ import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
 import eu.peernetwork.core.ui.design.compose.DesignTitle
 import eu.peernetwork.core.ui.design.compose.DesignTitleBarHost
 import eu.peernetwork.core.ui.extension.builder
+import eu.peernetwork.core.ui.extension.navigateIfNecessary
+import eu.peernetwork.core.ui.model.ViewModelState
 import eu.peernetwork.social.ui.search.member.MemberDialog
 import eu.peernetwork.wallet.ui.model.UiRecipient
 import eu.peernetwork.wallet.ui.overview.OverviewScreen
@@ -33,21 +34,29 @@ import eu.peernetwork.wallet.ui.transfer.TransferScreen
 
 @Composable
 fun WalletScreen(
+    postLimit: Int,
     provider: UiComponentProvider,
-    viewModelStoreOwner: ViewModelStoreOwner
+    viewModelState: ViewModelState
 ) {
     val context = LocalContext.current
     val component = remember {
         provider.builder(Wallet.Builder::class.java).build(context)
     }
+    val viewModelStoreOwner = remember { viewModelState.get("WalletScreen") }
     val recipient = remember { mutableStateOf<UiRecipient?>(null) }
-    WalletNavigation {
+    val showSheet = remember { mutableStateOf(false) }
+    WalletNavigation(
+        provider = component,
+        viewModelStore = viewModelState
+    ) { controller ->
         WalletScreen(
             onRefresh = { },
             header = { OverviewScreen(component, viewModelStoreOwner) }
         ) {
-            TransferScreen(recipient, component, viewModelStoreOwner) {
-
+            TransferScreen(recipient, component, viewModelStoreOwner, {
+                controller.navigateIfNecessary("profile/${it.id}")
+            }) {
+                showSheet.value = true
             }
         }
         DesignTitleBarHost("WalletScreen") {
@@ -57,7 +66,15 @@ fun WalletScreen(
                 }
             }
         }
-        MemberDialog()
+        MemberDialog(postLimit, showSheet, component, viewModelStoreOwner) {
+            recipient.value = UiRecipient(
+                id = it.id,
+                username = it.username,
+                slug = it.slug,
+                imageUrl = it.imageUrl
+            )
+            showSheet.value = false
+        }
     }
 }
 

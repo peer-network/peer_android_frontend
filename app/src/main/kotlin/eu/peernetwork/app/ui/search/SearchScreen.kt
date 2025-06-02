@@ -55,7 +55,7 @@ fun SearchScreen(
         SearchScreen(state = searchState) { mode, query ->
             if (mode == SearchMode.USERNAME) {
                 MemberScreen(query, postLimit, {
-                    controller.navigateIfNecessary("profile/$it")
+                    controller.navigateIfNecessary("profile/${it.id}")
                 }, component, viewModelStore.get(id))
             } else if (mode == SearchMode.TAG) {
                 TagScreen(query, postLimit, {

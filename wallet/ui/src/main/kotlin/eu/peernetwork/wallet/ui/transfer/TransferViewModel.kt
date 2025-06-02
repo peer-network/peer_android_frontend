@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.math.BigDecimal
 import javax.inject.Inject
 
 class TransferViewModel @Inject constructor(
@@ -18,11 +19,11 @@ class TransferViewModel @Inject constructor(
 
     val state: StateFlow<State> = mutableState.asStateFlow()
 
-    fun transferToken(param: TransferUsecase.Parameter) {
+    fun transferToken(recipient: String, tokens: BigDecimal) {
         viewModelScope.launch {
             mutableState.tryEmit(State.Loading)
             try {
-                val result = usecase(param).mapFromDomain()
+                val result = usecase(TransferUsecase.Parameter(recipient, tokens)).mapFromDomain()
                 mutableState.tryEmit(State.Success(result))
             } catch (error: Throwable) {
                 mutableState.tryEmit(State.Error(error))

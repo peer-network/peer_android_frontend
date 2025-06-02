@@ -52,7 +52,9 @@ fun CreatorScreen(
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
     val error = remember { derivedStateOf {
-        (state as? CreatorViewModel.State.Error?)?.error
+        (state as? CreatorViewModel.State.Error?)?.error?.message?.let {
+            component.resource().string(it)
+        }
     } }
     val isLoading = remember { derivedStateOf {
         state is CreatorViewModel.State.Loading
@@ -104,7 +106,7 @@ fun CreatorScreen(
     enabled: State<Boolean>,
     shouldReset: State<Boolean>,
     attachment: MutableState<UiAttachment>,
-    error: State<Throwable?>,
+    error: State<String?>,
     modifier: Modifier = Modifier,
     onSubmit: (UiDraft.Field) -> Unit = {},
     header: @Composable () -> Unit = {}
@@ -114,7 +116,7 @@ fun CreatorScreen(
         mutableStateOf(TextFieldState())
     }
     DesignLabel(
-        label = { error.value?.message?.let {
+        label = { error.value?.let {
             Text(it,
                 modifier = Modifier.padding(horizontal = 24.dp)
                     .padding(vertical = 8.dp),

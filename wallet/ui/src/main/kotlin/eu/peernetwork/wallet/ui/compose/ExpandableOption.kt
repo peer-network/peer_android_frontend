@@ -19,11 +19,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,6 +41,7 @@ import eu.peernetwork.core.ui.theme.PeerTheme
 
 @Composable
 fun ExpandableOption(
+    state: MutableState<Boolean>,
     style: TextStyle = MaterialTheme.typography.bodyMedium,
     icon: @Composable () -> Unit,
     items: @Composable ColumnScope.() -> Unit,
@@ -49,7 +50,6 @@ fun ExpandableOption(
     val updatedIcon by rememberUpdatedState(icon)
     val updatedItems by rememberUpdatedState(items)
     val updatedContent by rememberUpdatedState(content)
-    var showLabel by remember { mutableStateOf(false) }
     CompositionLocalProvider(
         LocalContentColor provides MaterialTheme.colorScheme.onBackground,
         LocalTextStyle provides style.copy(
@@ -57,7 +57,7 @@ fun ExpandableOption(
         )
     ) {
         DesignLabel(
-            visible = showLabel,
+            visible = state.value,
             label = {
                 Column(modifier = Modifier.padding(horizontal = 16.dp)) {
                     updatedItems()
@@ -73,7 +73,7 @@ fun ExpandableOption(
                     ) { updatedIcon() } },
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.clickable(role = Role.Button) {
-                        showLabel = !showLabel
+                        state.value = !state.value
                     }.padding(16.dp)
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -84,7 +84,7 @@ fun ExpandableOption(
                         contentDescription = null,
                         modifier = Modifier.size(12.dp)
                             .graphicsLayer {
-                                rotationZ = if (showLabel) {
+                                rotationZ = if (state.value) {
                                     45f
                                 } else {
                                     0f
@@ -102,7 +102,8 @@ fun ExpandableOption(
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun PreviewOption() {
     PeerTheme {
-        ExpandableOption(icon = { Box(modifier = Modifier
+        var state = remember { mutableStateOf(false) }
+        ExpandableOption(state, icon = { Box(modifier = Modifier
             .size(32.dp)
             .background(MaterialTheme.colorScheme.background)) },
             items = { Text("Items") }
