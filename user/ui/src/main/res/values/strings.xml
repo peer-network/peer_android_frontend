@@ -34,6 +34,12 @@
 
     <string name="referral_label">Referral Code (Optional)</string>
     <string name="referral_code_label">Referral Code (Optional)</string>
+    <string name="referral_copy_message">Referral link copied</string>
+  
+    <string name="age_confirmation_checkbox">I confirm that I am 18 years or older.</string>
+    <string name="age_confirmation_title">Age Confirmation</string>
+    <string name="age_confirmation_continue">Continue</string>
+    <string name="age_confirmation_message">You must be 18 years or older to use this app.</string>
 
     <string name="click_here">Click here</string>
     <string name="referral_copy_message">Referral link copied</string>
