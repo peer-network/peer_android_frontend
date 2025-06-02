@@ -23,7 +23,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import eu.peernetwork.blog.ui.model.UiPoint
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.compose.DesignOption
+import eu.peernetwork.core.ui.design.compose.DesignLabeledIcon
 import eu.peernetwork.core.ui.extension.builder
 
 @Composable
@@ -72,7 +72,7 @@ fun PointScreen(points: List<UiPoint> = listOf()) {
         ) {
             points.forEach { point ->
                 PointModel.MAP[point.name]?.let { model ->
-                    DesignOption(
+                    DesignLabeledIcon(
                         text = point.available.toString(),
                         painter = painterResource(id = model.icon),
                         contentDescription = stringResource(model.label),

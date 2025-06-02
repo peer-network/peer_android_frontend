@@ -15,6 +15,7 @@ class TransferViewModel @Inject constructor(
     private val usecase: TransferUsecase
 ) : ViewModel() {
     private val mutableState = MutableStateFlow<State>(State.Empty)
+
     val state: StateFlow<State> = mutableState.asStateFlow()
 
     fun transferToken(param: TransferUsecase.Parameter) {

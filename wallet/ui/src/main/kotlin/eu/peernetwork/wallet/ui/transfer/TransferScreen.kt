@@ -1,34 +1,55 @@
 package eu.peernetwork.wallet.ui.transfer
 
-import androidx.compose.foundation.layout.Arrangement
+import android.content.res.Configuration
+import androidx.compose.animation.Crossfade
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
+import eu.peernetwork.core.ui.design.compose.DesignCard
+import eu.peernetwork.core.ui.design.compose.DesignOutlinedButton
 import eu.peernetwork.core.ui.extension.builder
-import eu.peernetwork.wallet.domain.usecase.TransferUsecase
+import eu.peernetwork.core.ui.theme.PeerTheme
+import eu.peernetwork.wallet.ui.R
+import eu.peernetwork.wallet.ui.compose.ExpandableOption
+import eu.peernetwork.wallet.ui.model.UiRecipient
+import java.util.UUID
 
 @Composable
 fun TransferScreen(
+    recipient: MutableState<UiRecipient?>,
     provider: UiComponentProvider,
-    viewModelStoreOwner: ViewModelStoreOwner
-){
+    viewModelStoreOwner: ViewModelStoreOwner,
+    onClick: () -> Unit,
+) {
     val context = LocalContext.current
     val component = remember {
         provider.builder(Transfer.Builder::class.java).build(context)
@@ -55,44 +76,104 @@ fun TransferScreen(
             }
         }
     }
-
-    val hardcodedRecipientId = "42935fcd-4e4e-4d89-944f-bfeb1486fc64"  // Test user ID
-    val hardcodedTokenAmount = 10    // Test token amount
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Center
-    ) {
-        Button(
-            onClick = {
-                viewModel.transferToken(
-                    TransferUsecase.Parameter(
-                        recipient = hardcodedRecipientId,
-                        numberOfTokens = hardcodedTokenAmount
+    val hardcodedRecipientId = "42935fcd-4e4e-4d89-944f-bfeb1486fc64"
+    val hardcodedTokenAmount = 10
+    TransferScreen {
+        val amount = remember { TextFieldState() }
+        Box(modifier = Modifier.padding(top = 8.dp, bottom = 16.dp)) {
+            Crossfade(recipient.value) { target ->
+                if (target == null) {
+                    DesignOutlinedButton(
+                        onClick = onClick,
+                        shape = RoundedCornerShape(8.dp),
+                        textStyle = MaterialTheme.typography.bodySmall,
+                        contentPadding = PaddingValues(vertical = 8.dp, horizontal = 32.dp),
+                        modifier = Modifier
+                            .padding(start = 12.dp)
+                            .height(36.dp)
+                            .fillMaxWidth(),
+                        content = {
+                            Text(
+                                text = stringResource(R.string.recipient_selection_label),
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                        }
                     )
-                )
-            },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Test Hardcoded Transfer")
+                } else {
+                    TransferForm(amount, target) {}
+                }
+            }
         }
+    }
+}
 
-        Spacer(modifier = Modifier.height(16.dp))
+@Composable
+fun TransferScreen(content: @Composable () -> Unit) {
+    val updatedContent by rememberUpdatedState(content)
+    DesignCard(
+        color = MaterialTheme.colorScheme.surfaceVariant,
+        contentPadding = PaddingValues(0.dp)
+    ) {
+        ExpandableOption(
+            icon = {
+                Box(
+                    modifier = Modifier
+                        .size(36.dp)
+                        .background(MaterialTheme.colorScheme.background)
+                        .padding(12.dp)
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_transaction),
+                        contentDescription = stringResource(R.string.transfer_label),
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                }
+            },
+            items = { updatedContent() }
+        ) { Text(
+            stringResource(R.string.transfer_label),
+            modifier = Modifier.padding(start = 12.dp)
+        ) }
+    }
+}
 
-        when (val current = state) {
-            is TransferViewModel.State.Empty -> {
-                Text("Idle – ready to transfer")
+@Composable
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
+fun PreviewTransferScreen() {
+    PeerTheme {
+        val amount = remember { TextFieldState() }
+        val recipient = UiRecipient(
+            id = UUID.randomUUID().toString(),
+            slug = "1234",
+            username = "johnDoe",
+            imageUrl = "http://localhost"
+        )
+        Column {
+            TransferScreen {
+                Box(modifier = Modifier.padding(top = 8.dp, bottom = 16.dp)) {
+                    DesignOutlinedButton(
+                        onClick = {  },
+                        shape = RoundedCornerShape(8.dp),
+                        textStyle = MaterialTheme.typography.bodySmall,
+                        contentPadding = PaddingValues(vertical = 8.dp, horizontal = 32.dp),
+                        modifier = Modifier
+                            .padding(start = 48.dp)
+                            .height(36.dp)
+                            .fillMaxWidth(),
+                        content = {
+                            Text(
+                                text = stringResource(R.string.recipient_selection_label),
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                        }
+                    )
+                }
             }
-            is TransferViewModel.State.Loading -> {
-                Text("Sending tokens...")
-            }
-            is TransferViewModel.State.Success -> {
-                Text("Success: ${current.transfer.numberOfToken} to ${current.transfer.recipient}")
-            }
-            is TransferViewModel.State.Error -> {
-                Text("Error: ${current.error.message}")
+            Spacer(modifier = Modifier.size(8.dp))
+            TransferScreen {
+                Box(modifier = Modifier.padding(top = 8.dp, bottom = 16.dp)) {
+                    TransferForm(amount, recipient) {}
+                }
             }
         }
     }

@@ -29,9 +29,9 @@ import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.user.ui.model.UiAccount
 import eu.peernetwork.user.ui.model.UiOverview
 import eu.peernetwork.core.ui.design.compose.DesignAsyncImage
-import eu.peernetwork.core.ui.design.compose.DesignTitle
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffold
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
+import eu.peernetwork.core.ui.design.compose.DesignLead
 import eu.peernetwork.user.ui.R
 import eu.peernetwork.user.ui.compose.Overview
 import eu.peernetwork.user.ui.compose.ProfileScaffold
@@ -141,7 +141,7 @@ fun UserScreen(
             )
         }
     ) {
-        DesignTitle(
+        DesignLead(
             account.username,
             account.slug.toString(),
             account.bio ?: emptyDescription

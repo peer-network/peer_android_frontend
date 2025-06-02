@@ -3,9 +3,7 @@ package eu.peernetwork.wallet.ui.overview
 import android.content.Context
 import androidx.lifecycle.ViewModelProvider
 import eu.peernetwork.core.ui.component.UiComponent
-import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.wallet.ui.provider.WalletProvider
-import eu.peernetwork.wallet.ui.transfer.Transfer
 
 interface Overview : WalletProvider {
     @javax.inject.Scope
@@ -17,7 +15,7 @@ interface Overview : WalletProvider {
         dependencies = [ Overview::class ],
         modules = [ OverviewModule::class ]
     )
-    interface Component : Overview, Transfer, UiComponentProvider {
+    interface Component : Overview {
         fun viewModelFactory(): ViewModelProvider.Factory
     }
 

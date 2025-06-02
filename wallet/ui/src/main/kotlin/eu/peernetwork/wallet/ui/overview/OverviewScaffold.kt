@@ -12,12 +12,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -33,37 +36,34 @@ fun OverviewScaffold(
     title: @Composable () -> Unit,
     content: @Composable () -> Unit,
 ) {
+    val updatedTitle by rememberUpdatedState(title)
+    val updatedContent by rememberUpdatedState(content)
     Column(
         modifier = modifier
-            .fillMaxSize()
+            .fillMaxWidth()
+            .wrapContentHeight()
             .padding(
                 vertical = 16.dp,
                 horizontal = 24.dp,
-            ).verticalScroll(rememberScrollState()),
+            ),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.weight(.1f))
-        Column(
-            modifier = Modifier.weight(.9f),
-            horizontalAlignment = Alignment.CenterHorizontally
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth(),
         ) {
-            Row(
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth(),
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_icon),
-                    contentDescription = stringResource(eu.peernetwork.core.ui.R.string.wallet_label),
-                    modifier = Modifier.size(52.dp),
-                    tint = MaterialTheme.colorScheme.onBackground
-                )
-                title()
-            }
-            content()
+            Icon(
+                painter = painterResource(id = R.drawable.ic_icon),
+                contentDescription = stringResource(eu.peernetwork.core.ui.R.string.wallet_label),
+                modifier = Modifier.size(52.dp),
+                tint = MaterialTheme.colorScheme.onBackground
+            )
+            updatedTitle()
         }
+        updatedContent()
     }
 }
 

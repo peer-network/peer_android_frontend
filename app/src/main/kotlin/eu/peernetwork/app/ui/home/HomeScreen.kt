@@ -35,10 +35,10 @@ import eu.peernetwork.blog.ui.point.PointScreen
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffold
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
 import eu.peernetwork.app.ui.search.SearchScreen
+import eu.peernetwork.app.ui.wallet.WalletScreen
 import eu.peernetwork.core.ui.design.compose.DesignTitleBar
 import eu.peernetwork.core.ui.model.ViewModelState
 import eu.peernetwork.messaging.ui.chat.ChatScreen
-import eu.peernetwork.wallet.ui.overview.OverviewScreen
 
 @Composable
 fun HomeScreen(provider: UiComponentProvider) {
@@ -90,7 +90,7 @@ fun HomeScreen(provider: UiComponentProvider) {
                     viewModelStore,
                 )
                 is HomeRoute.Add -> ComposerScreen(component, viewModelStore.get(data.first))
-                is HomeRoute.Wallet -> OverviewScreen(component, viewModelStore.get(data.first))
+                is HomeRoute.Wallet -> WalletScreen(component, viewModelStore.get(data.first))
                 is HomeRoute.Search -> SearchScreen(
                     id = data.first,
                     BuildConfig.PAGING_LIMIT,

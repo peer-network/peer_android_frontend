@@ -1,54 +1,39 @@
 package eu.peernetwork.core.ui.design.compose
 
-import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import eu.peernetwork.core.ui.extension.annotate
-import eu.peernetwork.core.ui.theme.PeerTheme
-
-data class DesignTitleTextStyle(
-    val span: SpanStyle,
-    val style: TextStyle,
-    val descriptionStyle: TextStyle,
-)
 
 @Composable
-fun DesignTitle(
-    title: String,
-    caption: String,
-    description: String,
+fun DesignRichText(
+    title: AnnotatedString,
+    description: AnnotatedString,
     modifier: Modifier = Modifier,
     maxLines: Int = Int.MAX_VALUE,
     maxContentLines: Int = Int.MAX_VALUE,
     spacer: @Composable () -> Unit = {},
-    style: DesignTitleTextStyle? = null,
+    style: DesignTitleStyle? = null,
     verticalArrangement: Arrangement.Vertical = Arrangement.Top,
     horizontalAlignment: Alignment.Horizontal = Alignment.Start,
+    titleOnClick: (() -> Unit)? = null,
+    onMentionClick: (String) -> Unit = {},
+    onHashtagClick: (String) -> Unit = {}
 ) {
-    val slug = if (caption.isEmpty()) {
-        caption
-    } else {
-        "#${caption}"
-    }
-    val updateSpacer by rememberUpdatedState(spacer)
-    val textStyle = style ?: DesignTitleTextStyle(
+    val textStyle = style ?: DesignTitleStyle(
         span = SpanStyle(
             fontStyle = FontStyle.Italic,
             fontWeight = FontWeight.Normal,
@@ -63,51 +48,49 @@ fun DesignTitle(
             color = MaterialTheme.colorScheme.tertiary
         )
     )
+    val uriHandler = LocalUriHandler.current
+    val handleTitleOnClick by rememberUpdatedState(titleOnClick)
+    val handleMentionClick by rememberUpdatedState(onMentionClick)
+    val handleHashtagClick by rememberUpdatedState(onHashtagClick)
     Column(
         modifier = modifier,
         verticalArrangement = verticalArrangement,
         horizontalAlignment = horizontalAlignment
     ) {
-        Text(
-            text = "$title $slug".annotate(slug, textStyle.span),
+        ClickableText(
+            text = title,
             style = textStyle.style,
             overflow = TextOverflow.Ellipsis,
             maxLines = maxLines,
+            onClick = { offset ->
+                val annotations = title.getStringAnnotations(start = offset, end = offset)
+                annotations.firstOrNull()?.let { annotation ->
+                    when (annotation.tag) {
+                        "URL" -> uriHandler.openUri(annotation.item.lowercase())
+                        "MENTION" -> handleMentionClick(annotation.item)
+                        "HASHTAG" -> handleHashtagClick(annotation.item)
+                    }
+                } ?: handleTitleOnClick?.invoke()
+            }
         )
-        updateSpacer()
+        spacer()
         if (description.isNotEmpty()) {
-            Text(
+            ClickableText(
                 text = description,
                 maxLines = maxContentLines,
                 overflow = TextOverflow.Ellipsis,
                 style = textStyle.descriptionStyle,
-                modifier = Modifier.padding(top = 2.dp)
-            )
-        }
-    }
-}
-
-@Composable
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
-fun PreviewDesignDetail() {
-    PeerTheme {
-        Column {
-            DesignTitle(
-                title = "John Doe",
-                caption = "1675262",
-                description = "Hello, John...",
-            )
-            Spacer(modifier = Modifier.height(12.dp))
-            DesignTitle(
-                title = "John Doe",
-                caption = "",
-                description = "Hello, John...",
-            )
-            Spacer(modifier = Modifier.height(12.dp))
-            DesignTitle(
-                title = "John Doe",
-                caption = "1675262",
-                description = "",
+                modifier = Modifier.padding(top = 2.dp),
+                onClick = { offset ->
+                    val annotations = description.getStringAnnotations(start = offset, end = offset)
+                    annotations.firstOrNull()?.let { annotation ->
+                        when (annotation.tag) {
+                            "URL" -> uriHandler.openUri(annotation.item.lowercase())
+                            "MENTION" -> handleMentionClick(annotation.item)
+                            "HASHTAG" -> handleHashtagClick(annotation.item)
+                        }
+                    }
+                }
             )
         }
     }
