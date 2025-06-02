@@ -58,7 +58,9 @@ fun SetupScreen(
         DesignContainer {
             SetupScaffold(
                 header = { SetupHeader(state = contentState) },
-                footer = { SetupFooter(onPrivacy = {}) },
+                footer = { SetupFooter(onPrivacy = {
+                    controller.navigateIfNecessary("privacy")
+                }) },
                 modifier = Modifier.padding(bottom = imeHeight.dp)
             ) {
                 SetupScreen(

@@ -3,6 +3,7 @@ package eu.peernetwork.app.ui.setup
 import android.content.Context
 import androidx.lifecycle.ViewModelProvider
 import eu.peernetwork.app.provider.ApplicationProvider
+import eu.peernetwork.app.ui.privacy.Privacy
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.user.ui.login.Login
@@ -19,7 +20,7 @@ interface Setup : ApplicationProvider {
         dependencies = [ Setup::class ],
         modules = [ SetupModule::class ]
     )
-    interface Component : Setup, Login, Registration, PasswordRequest, UiComponentProvider {
+    interface Component : Setup, Login, Registration, PasswordRequest, Privacy, UiComponentProvider {
         fun viewModelFactory(): ViewModelProvider.Factory
     }
 
