@@ -6,9 +6,13 @@ import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
 import eu.peernetwork.app.BuildConfig
+import eu.peernetwork.app.interactor.SettingsInteractor
+import eu.peernetwork.app.interactor.UrlInteractorDelegate
+import eu.peernetwork.core.common.interactor.UrlInteractor
 import eu.peernetwork.core.common.provider.Dispatcher
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import javax.inject.Singleton
 
 @Module(includes = [
     NetworkModule::class,
@@ -25,6 +29,12 @@ object CoreModule {
     fun provideSharedPreferences(context: Context): SharedPreferences {
         return context.getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE)
     }
+
+    @Provides
+    fun provideUrlProvider(delegate: UrlInteractorDelegate): UrlInteractor = delegate
+
+    @Provides
+    fun provideSettingsInteractor(delegate: UrlInteractorDelegate): SettingsInteractor = delegate
 
     @Provides
     fun provideDispatcher(): Dispatcher {

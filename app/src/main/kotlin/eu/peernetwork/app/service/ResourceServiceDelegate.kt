@@ -11,7 +11,7 @@ import javax.inject.Singleton
 class ResourceServiceDelegate @Inject constructor(
     private val gson: Gson,
     private val resourceRepository: ResourceRepository
-) : ResourceService, ResourceLoader {
+) : ResourceService, BootstrapService {
     private var mapper: Map<String, ResponseCode.Message> = mapOf<String, ResponseCode.Message>()
 
     override suspend fun initialize() {

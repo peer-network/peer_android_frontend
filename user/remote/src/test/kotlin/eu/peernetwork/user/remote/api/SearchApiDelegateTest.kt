@@ -5,6 +5,7 @@ import com.apollographql.apollo3.api.ApolloResponse
 import com.apollographql.apollo3.api.Operation
 import eu.peernetwork.core.common.model.Pageable
 import eu.peernetwork.core.remote.model.Status
+import eu.peernetwork.core.remote.api.RequestClient
 import eu.peernetwork.user.data.api.SearchApi
 import eu.peernetwork.user.remote.mock.SearchMock
 import io.mockk.coEvery
@@ -19,13 +20,17 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
 internal class SearchApiDelegateTest {
+    private val url = "http://locahost"
+
     private val client = mockk<ApolloClient>()
 
     private lateinit var api: SearchApi
 
     @Before
     fun setup() {
-        api = SearchApiDelegate(client)
+        api = SearchApiDelegate(url, object : RequestClient {
+            override fun invoke(): ApolloClient = client
+        })
     }
 
     @Test

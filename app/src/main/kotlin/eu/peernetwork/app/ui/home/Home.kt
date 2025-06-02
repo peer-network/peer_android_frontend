@@ -3,11 +3,11 @@ package eu.peernetwork.app.ui.home
 import android.content.Context
 import androidx.lifecycle.ViewModelProvider
 import eu.peernetwork.app.provider.ApplicationProvider
+import eu.peernetwork.app.ui.composer.Composer
 import eu.peernetwork.app.ui.profile.Profile
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.app.ui.feed.Feed
-import eu.peernetwork.blog.ui.creator.Creator
 import eu.peernetwork.blog.ui.point.Point
 import eu.peernetwork.app.ui.search.Search
 import eu.peernetwork.wallet.ui.overview.Overview
@@ -22,7 +22,7 @@ interface Home : ApplicationProvider {
         dependencies = [ Home::class ],
         modules = [ HomeModule::class ]
     )
-    interface Component : Home, Feed, Profile, UiComponentProvider, Point, Creator, Overview, Search {
+    interface Component : Home, Feed, Profile, UiComponentProvider, Point, Composer, Overview, Search {
         fun viewModelFactory(): ViewModelProvider.Factory
     }
 

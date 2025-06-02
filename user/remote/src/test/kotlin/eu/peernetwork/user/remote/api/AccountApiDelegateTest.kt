@@ -4,6 +4,7 @@ import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.ApolloResponse
 import com.apollographql.apollo3.api.Operation
 import eu.peernetwork.core.remote.model.Status
+import eu.peernetwork.core.remote.api.RequestClient
 import eu.peernetwork.user.data.api.AccountApi
 import eu.peernetwork.user.remote.mock.AccountMock
 import io.mockk.coEvery
@@ -17,6 +18,8 @@ import protected.eu.peernetwork.user.remote.DeleteAccountMutation
 import `protected`.eu.peernetwork.user.remote.ProfileQuery
 import protected.eu.peernetwork.user.remote.UpdatePasswordMutation
 import public.eu.peernetwork.user.remote.RegisterMutation
+import public.eu.peernetwork.user.remote.RequestPasswordResetMutation
+import public.eu.peernetwork.user.remote.ResetPasswordMutation
 import public.eu.peernetwork.user.remote.VerifiedAccountMutation
 import java.util.UUID
 import kotlin.test.assertEquals
@@ -31,7 +34,9 @@ internal class AccountApiDelegateTest {
 
     @Before
     fun setup() {
-        api = AccountApiDelegate(url, client)
+        api = AccountApiDelegate(url, object : RequestClient {
+            override fun invoke(): ApolloClient = client
+        })
     }
 
     @Test
@@ -71,6 +76,7 @@ internal class AccountApiDelegateTest {
         val result = try {
             api.get("<test-id>")
         } catch (error: Throwable) {
+            error.printStackTrace()
             null
         }
         assertNull(result)
@@ -90,7 +96,7 @@ internal class AccountApiDelegateTest {
         every { mockData.register } returns mockModel
         coEvery { client.mutation(any<RegisterMutation>()).execute() } returns mockResponse
 
-        val result = api.register(AccountMock.user())
+        val result = api.register(AccountMock.user(), "<test-code>")
 
         assertEquals(result, mockModel.userid)
     }
@@ -110,8 +116,9 @@ internal class AccountApiDelegateTest {
         coEvery { client.mutation(any<RegisterMutation>()).execute() } returns mockResponse
 
         val result = try {
-            api.register(AccountMock.user())
+            api.register(AccountMock.user(), null)
         } catch (error: Throwable) {
+            error.printStackTrace()
             null
         }
         assertNull(result)
@@ -157,10 +164,101 @@ internal class AccountApiDelegateTest {
         val result = try {
             api.changePassword(password, newPassword)
         } catch (error: Throwable) {
+            error.printStackTrace()
             null
         }
         assertNull(result)
         coVerify { client.mutation(UpdatePasswordMutation(newPassword, password)) }
+    }
+
+    @Test
+    fun `test request user password reset`(): Unit = runBlocking {
+        val email = "<test-email>"
+        val mockModel = AccountMock.passwordResetRequest()
+        val mockData = mockk<RequestPasswordResetMutation.Data>()
+        val operation = mockk<Operation<RequestPasswordResetMutation.Data>>(relaxed = true)
+        val mockResponse = ApolloResponse.Builder(
+            operation,
+            UUID.randomUUID(),
+            mockData
+        ).build()
+
+        every { mockData.requestPasswordReset } returns mockModel
+        coEvery { client.mutation(any<RequestPasswordResetMutation>()).execute() } returns mockResponse
+
+        api.passwordReset(email)
+        coVerify { client.mutation(RequestPasswordResetMutation(email)) }
+    }
+
+    @Test
+    fun `test request user password reset error`(): Unit = runBlocking {
+        val email = "<test-email>"
+        val mockModel = AccountMock.passwordResetRequest().copy(status = Status.ERROR.value)
+        val mockData = mockk<RequestPasswordResetMutation.Data>()
+        val operation = mockk<Operation<RequestPasswordResetMutation.Data>>(relaxed = true)
+        val mockResponse = ApolloResponse.Builder(
+            operation,
+            UUID.randomUUID(),
+            mockData
+        ).build()
+
+        every { mockData.requestPasswordReset } returns mockModel
+        coEvery { client.mutation(any<RequestPasswordResetMutation>()).execute() } returns mockResponse
+
+        val result = try {
+            api.passwordReset(email)
+        } catch (error: Throwable) {
+            error.printStackTrace()
+            null
+        }
+        assertNull(result)
+        coVerify { client.mutation(RequestPasswordResetMutation(email)) }
+    }
+
+    @Test
+    fun `test reset user password`(): Unit = runBlocking {
+        val token = "<test-token>"
+        val password = "<test-password>"
+        val mockModel = AccountMock.passwordReset()
+        val mockData = mockk<ResetPasswordMutation.Data>()
+        val operation = mockk<Operation<ResetPasswordMutation.Data>>(relaxed = true)
+        val mockResponse = ApolloResponse.Builder(
+            operation,
+            UUID.randomUUID(),
+            mockData
+        ).build()
+
+        every { mockData.resetPassword } returns mockModel
+        coEvery { client.mutation(any<ResetPasswordMutation>()).execute() } returns mockResponse
+
+        api.resetPassword(token, password)
+        coVerify { client.mutation(ResetPasswordMutation(token, password)) }
+    }
+
+    @Test
+    fun `test reset user password error`(): Unit = runBlocking {
+        val token = "<test-token>"
+        val password = "<test-password>"
+        val mockModel = AccountMock.passwordReset().copy(status = Status.ERROR.value)
+        val mockData = mockk<ResetPasswordMutation.Data>()
+        val operation = mockk<Operation<ResetPasswordMutation.Data>>(relaxed = true)
+        val mockResponse = ApolloResponse.Builder(
+            operation,
+            UUID.randomUUID(),
+            mockData
+        ).build()
+
+        every { mockData.resetPassword } returns mockModel
+        coEvery { client.mutation(any<ResetPasswordMutation>()).execute() } returns mockResponse
+
+        val result = try {
+            api.resetPassword(token, password)
+        } catch (error: Throwable) {
+            error.printStackTrace()
+            null
+        }
+        assertNull(result)
+        coVerify { client.mutation(ResetPasswordMutation(token, password)) }
     }
 
     @Test
@@ -201,6 +299,7 @@ internal class AccountApiDelegateTest {
         val result = try {
             api.activate(code)
         } catch (error: Throwable) {
+            error.printStackTrace()
             null
         }
         assertNull(result)
@@ -245,6 +344,7 @@ internal class AccountApiDelegateTest {
         val result = try {
             api.delete(password)
         } catch (error: Throwable) {
+            error.printStackTrace()
             null
         }
         assertNull(result)

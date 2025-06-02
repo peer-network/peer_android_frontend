@@ -14,7 +14,8 @@ class RegistrationUsecase @Inject constructor(
                 email = param.email,
                 username = param.username,
                 password = param.password
-            )
+            ),
+            param.referral
         )
     }
 
@@ -22,5 +23,6 @@ class RegistrationUsecase @Inject constructor(
         val email: String,
         val username: String,
         val password: String,
+        val referral: String?
     )
 }

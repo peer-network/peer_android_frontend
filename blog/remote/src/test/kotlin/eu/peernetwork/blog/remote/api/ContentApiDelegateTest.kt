@@ -14,6 +14,7 @@ import eu.peernetwork.blog.remote.content.GetallpostsQuery
 import eu.peernetwork.blog.remote.mock.ContentMock
 import eu.peernetwork.core.common.model.Pageable
 import eu.peernetwork.core.remote.model.Status
+import eu.peernetwork.core.remote.api.RequestClient
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -41,7 +42,9 @@ internal class ContentApiDelegateTest {
 
     @Before
     fun setup() {
-        api = ContentApiDelegate(gson, url, client)
+        api = ContentApiDelegate(gson, url, object : RequestClient {
+            override fun invoke(): ApolloClient = client
+        })
     }
 
     @Test

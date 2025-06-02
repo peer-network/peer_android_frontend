@@ -5,6 +5,7 @@ import com.apollographql.apollo3.api.ApolloResponse
 import com.apollographql.apollo3.api.Operation
 import eu.peernetwork.core.common.model.Pageable
 import eu.peernetwork.core.remote.model.Status
+import eu.peernetwork.core.remote.api.RequestClient
 import eu.peernetwork.social.data.api.FollowApi
 import eu.peernetwork.social.remote.mock.FollowMock
 import io.mockk.coEvery
@@ -32,7 +33,9 @@ internal class FollowApiDelegateTest {
 
     @Before
     fun setup() {
-        api = FollowApiDelegate(url, client)
+        api = FollowApiDelegate(url, object : RequestClient {
+            override fun invoke(): ApolloClient = client
+        })
     }
 
     @Test

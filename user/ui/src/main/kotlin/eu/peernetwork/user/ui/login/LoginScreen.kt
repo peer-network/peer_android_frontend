@@ -2,22 +2,22 @@ package eu.peernetwork.user.ui.login
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -36,7 +36,8 @@ import eu.peernetwork.core.ui.extension.isValidInput
 @Composable
 fun LoginScreen(
     provider: UiComponentProvider,
-    viewModelStoreOwner: ViewModelStoreOwner
+    viewModelStoreOwner: ViewModelStoreOwner,
+    onForgotPassword: (String) -> Unit,
 ) {
     val context = LocalContext.current
     val component = remember {
@@ -48,45 +49,46 @@ fun LoginScreen(
         factory = component.viewModelFactory()
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
-    LoginScreen(
-        loading = state is LoginViewModel.State.Loading,
-        error = (state as? LoginViewModel.State.Error?)?.error?.message?.let {
+    val loading = remember { derivedStateOf { state is LoginViewModel.State.Loading } }
+    val error = remember { derivedStateOf {
+        (state as? LoginViewModel.State.Error?)?.error?.message?.let {
             component.resource().string(it)
-        },
-        onReset = { viewModel.reset() }
+        }
+    } }
+    LoginScreen(
+        loading = loading,
+        error = error,
+        onReset = { viewModel.reset() },
+        onForgotPassword = onForgotPassword,
     ) { email, password -> viewModel.login(email, password) }
 }
 
 @Composable
 fun LoginScreen(
-    loading: Boolean = false,
-    error: String? = null,
+    loading: State<Boolean>,
+    error: State<String?>,
     onReset: (() -> Unit)? = null,
+    onForgotPassword: (String) -> Unit,
     onSubmit: (String, String) -> Unit
 ) {
-    val email = remember { TextFieldState() }
     val password = remember { TextFieldState() }
-    val loadingState = rememberUpdatedState(loading)
-    val errorState = rememberUpdatedState(error)
+    val email by rememberSaveable(stateSaver = TextFieldState.Saver) { mutableStateOf(TextFieldState()) }
     val validate by remember(email, password) { derivedStateOf {
         email.isValidEmail() && password.isValidInput()
     } }
-    val imeHeight = WindowInsets.ime.getBottom(LocalDensity.current) / 4
     val handleReset by rememberUpdatedState(onReset)
     val handleSubmit by rememberUpdatedState(onSubmit)
-    Column(
-        modifier = Modifier.fillMaxWidth()
-            .padding(bottom = imeHeight.dp)
-    ) {
+    Column(modifier = Modifier.fillMaxWidth()) {
         LoginForm(
             email = email,
             password = password,
-            error = errorState.value,
-            enabled = !loadingState.value
+            error = error.value,
+            enabled = !loading.value,
+            onForgotPassword = onForgotPassword
         )
         DesignButton(
-            enabled = !loadingState.value && validate,
-            isLoading = loading,
+            enabled = !loading.value && validate,
+            isLoading = loading.value,
             onClick = { handleSubmit(email.text.toString(), password.text.toString()) },
             modifier = Modifier.fillMaxWidth().padding(
                 top = 16.dp,
@@ -108,8 +110,13 @@ fun LoginScreen(
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun PreviewLoginScreen() {
     PeerTheme {
+        val isLoading = remember { mutableStateOf<Boolean>(false) }
+        val error = remember { mutableStateOf<String?>(null) }
         LoginScreen(
-            onReset = {}
+            loading = isLoading,
+            error = error,
+            onReset = {},
+            onForgotPassword = {},
         ) { email, password -> }
     }
 }

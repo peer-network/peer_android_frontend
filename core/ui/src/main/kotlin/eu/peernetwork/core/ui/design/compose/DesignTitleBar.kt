@@ -8,14 +8,18 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 
 interface DesignTitleBarBuilder {
     fun titleBar(content: @Composable () -> Unit)
@@ -28,9 +32,7 @@ interface DesignTitleBarRegistry {
         content: @Composable () -> Unit
     )
 
-    fun current(): DesignTitleBar?
-
-    fun detach()
+    fun titleBar(): State<DesignTitleBar?>
 }
 
 @Immutable
@@ -44,7 +46,7 @@ data class DesignTitleBar(
 fun DesignTitleBar(
     content: @Composable DesignTitleBarRegistry.() -> Unit
 ) {
-    val elements = remember { mutableStateMapOf<Int, DesignTitleBar>() }
+    val mutableToolBar = remember { mutableStateOf<DesignTitleBar?>(null) }
     val updatedContent by rememberUpdatedState(content)
     val builders = remember {
         object : DesignTitleBarRegistry {
@@ -53,18 +55,10 @@ fun DesignTitleBar(
                 listener: () -> Unit,
                 content: @Composable () -> Unit
             ) {
-                elements[elements.keys.size] = DesignTitleBar(tag, listener, content)
+                mutableToolBar.value = DesignTitleBar(tag, listener, content)
             }
 
-            override fun current(): DesignTitleBar? = elements.keys.lastOrNull()?.let {
-                elements[it]
-            }
-
-            override fun detach() {
-                elements.keys.lastOrNull()?.let {
-                    elements.remove(it)
-                }
-            }
+            override fun titleBar(): State<DesignTitleBar?> = mutableToolBar
         }
     }
     CompositionLocalProvider(LocalDesignTitleBarRegistry provides builders) {
@@ -93,6 +87,7 @@ fun DesignTitleBarHost(
     builder: DesignTitleBarBuilder.() -> Unit,
 ) {
     val toolbar = rememberDesignToolbar()
+    val lifecycleOwner = LocalLifecycleOwner.current
     val updatedBuilder by rememberUpdatedState(builder)
     val titleBarBuilder = remember {
         object : DesignTitleBarBuilder {
@@ -101,14 +96,19 @@ fun DesignTitleBarHost(
             ) { toolbar.attach(tag, listener, content) }
         }
     }
+    val observer = remember {
+        LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_START) {
+                updatedBuilder(titleBarBuilder)
+            }
+        }
+    }
     LaunchedEffect(Unit) {
-        updatedBuilder(titleBarBuilder)
+        lifecycleOwner.lifecycle.addObserver(observer)
     }
     DisposableEffect(Unit) {
         onDispose {
-            if (toolbar.current()?.tag == tag) {
-                toolbar.detach()
-            }
+            lifecycleOwner.lifecycle.removeObserver(observer)
         }
     }
 }

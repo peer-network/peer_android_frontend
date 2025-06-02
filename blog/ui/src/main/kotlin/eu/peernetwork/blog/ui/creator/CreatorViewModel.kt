@@ -9,7 +9,7 @@ import eu.peernetwork.blog.ui.model.UiDraft
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.core.common.usecase.TextEncoderUsecase
 import eu.peernetwork.core.ui.usecase.AnnotationUsecase
-import eu.peernetwork.media.core.model.MimeType
+import eu.peernetwork.media.core.model.UiMimeType
 import eu.peernetwork.media.core.usecase.MediaEncoderUsecase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -42,8 +42,8 @@ class CreatorViewModel @Inject constructor(
 
     private fun UiDraft.mapToDomain(): Draft {
         val type = when(media) {
-            MimeType.Photo -> Draft.Type.Image(attachments.mapNotNull { mediaEncoderUsecase(it) })
-            MimeType.Video -> Draft.Type.Video(attachments.mapNotNull { mediaEncoderUsecase(it) })
+            UiMimeType.Photo -> Draft.Type.Image(attachments.mapNotNull { mediaEncoderUsecase(it) })
+            UiMimeType.Video -> Draft.Type.Video(attachments.mapNotNull { mediaEncoderUsecase(it) })
             else -> Draft.Type.Text(listOf(textEncoderUsecase(description)))
         }
         return Draft(
@@ -58,6 +58,12 @@ class CreatorViewModel @Inject constructor(
         return Regex("#\\w+").findAll(this)
             .map { it.value.replace("#", "") }
             .toList()
+    }
+
+    fun reset() {
+        viewModelScope.launch {
+            mutableState.tryEmit(State.Empty)
+        }
     }
 
     sealed interface State {

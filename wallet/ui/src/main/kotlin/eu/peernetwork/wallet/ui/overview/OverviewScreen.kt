@@ -1,5 +1,7 @@
 package eu.peernetwork.wallet.ui.overview
 
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -24,6 +26,7 @@ import eu.peernetwork.core.ui.design.compose.DesignTitle
 import eu.peernetwork.core.ui.design.compose.DesignTitleBarHost
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.wallet.ui.model.UiWallet
+import eu.peernetwork.wallet.ui.transfer.TransferScreen
 
 @Composable
 fun OverviewScreen(
@@ -66,6 +69,11 @@ fun OverviewScreen(
             onRefresh = { viewModel.getBalance() },
         ) { wallet ->
             OverviewScreen(wallet)
+            Spacer(modifier = Modifier.height(32.dp))
+            TransferScreen(
+                provider = component,
+                viewModelStoreOwner = viewModelStoreOwner
+            )
         }
     }
     DesignTitleBarHost("WalletScreen") {

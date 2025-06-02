@@ -6,13 +6,17 @@ import eu.peernetwork.user.domain.model.Account
 interface AccountRepository {
     suspend fun get(id: String, refresh: Boolean = false): Account
 
-    suspend fun register(detail: UserDetail): String
+    suspend fun register(detail: UserDetail, referral: String?): String
 
     suspend fun update(properties: Map<String, Any>)
 
     suspend fun update(properties: Map<String, Any>, password: String)
 
     suspend fun changePassword(old: String, new: String)
+
+    suspend fun passwordReset(email: String)
+
+    suspend fun resetPassword(token: String, password: String)
 
     suspend fun activate(code: String)
 

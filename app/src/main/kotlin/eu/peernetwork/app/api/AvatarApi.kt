@@ -9,7 +9,7 @@ import javax.inject.Inject
 class AvatarApi @Inject constructor(
     private val api: AvatarSettingsApi,
     private val mediaEncoderUsecase: MediaEncoderUsecase
-) : SettingsApi.Updatable<Uri> {
+) : SettingsApi.Attribute<Uri> {
     override suspend fun invoke(value: Uri) {
         mediaEncoderUsecase(value)?.let { api(it) }
     }

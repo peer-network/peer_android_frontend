@@ -5,12 +5,14 @@ import androidx.lifecycle.ViewModelProvider
 import dagger.android.AndroidInjector
 import eu.peernetwork.app.provider.ApplicationProvider
 import eu.peernetwork.app.ui.home.Home
+import eu.peernetwork.app.ui.launcher.Launcher
 import eu.peernetwork.app.ui.setup.Setup
 import eu.peernetwork.app.ui.splash.Splash
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
+import eu.peernetwork.media.ui.selector.explorer.Explorer
 
-interface Main : ApplicationProvider {
+interface Main : ApplicationProvider, Explorer {
     @javax.inject.Scope
     @Retention(AnnotationRetention.RUNTIME)
     annotation class Scope
@@ -22,9 +24,8 @@ interface Main : ApplicationProvider {
     )
     interface Component : Main,
         AndroidInjector<MainActivity>,
-        Home,
-        Setup,
         Splash,
+        Launcher,
         UiComponentProvider {
         fun viewModelFactory(): ViewModelProvider.Factory
     }

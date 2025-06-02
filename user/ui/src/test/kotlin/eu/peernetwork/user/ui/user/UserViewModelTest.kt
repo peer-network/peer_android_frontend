@@ -2,6 +2,7 @@ package eu.peernetwork.user.ui.user
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import app.cash.turbine.test
+import eu.peernetwork.user.domain.usecase.AuthUserUsecase
 import eu.peernetwork.user.domain.usecase.ProfileUsecase
 import eu.peernetwork.user.ui.model.UiAccount
 import eu.peernetwork.user.ui.usecase.ObserveAuthUserUsecase
@@ -32,6 +33,8 @@ internal class UserViewModelTest {
 
     private val userUsecase = mockk<UserUsecase>()
 
+    private val authUserUsecase = mockk<AuthUserUsecase>()
+
     private val observeAuthUserUsecase = mockk<ObserveAuthUserUsecase>()
 
     private lateinit var viewModel: UserViewModel
@@ -39,14 +42,14 @@ internal class UserViewModelTest {
     @Before
     fun setup() {
         Dispatchers.setMain(dispatcher)
-        viewModel = UserViewModel(usecase, userUsecase, observeAuthUserUsecase)
+        viewModel = UserViewModel(usecase, userUsecase, authUserUsecase, observeAuthUserUsecase)
     }
 
     @Test
     fun `test get user success`() = runTest {
         val mockData = mockk<UiAccount>(relaxed = true)
-        every { observeAuthUserUsecase() } returns flowOf(null)
         coEvery { usecase(any()) } returns mockk(relaxed = true)
+        coEvery { observeAuthUserUsecase() } returns flowOf(mockData)
         coEvery { userUsecase(any()) } coAnswers {
             delay(100)
             mockData
@@ -54,6 +57,20 @@ internal class UserViewModelTest {
         viewModel.getAccount("<test-id>")
         viewModel.state.test {
             assertEquals(UserViewModel.State.Loading, awaitItem())
+            assertEquals(UserViewModel.State.Success(mockData, true), awaitItem())
+        }
+    }
+
+    @Test
+    fun `test get guest user success`() = runTest {
+        val guest = mockk<UiAccount>(relaxed = true)
+        val mockData = mockk<UiAccount>(relaxed = true)
+        every { guest.id } returns "<test-guest-id>"
+        coEvery { usecase(any()) } returns mockk(relaxed = true)
+        coEvery { observeAuthUserUsecase() } returns flowOf(guest)
+        coEvery { userUsecase(any()) } returns mockData
+        viewModel.getAccount("<test-id>")
+        viewModel.state.test {
             assertEquals(UserViewModel.State.Success(mockData, false), awaitItem())
         }
     }
@@ -61,7 +78,6 @@ internal class UserViewModelTest {
     @Test
     fun `test get user error`() = runTest {
         val error = RuntimeException()
-        every { observeAuthUserUsecase() } returns flowOf(null)
         coEvery { usecase(any()) } returns mockk(relaxed = true)
         coEvery { userUsecase(any()) } throws error
         viewModel.getAccount("<test-id>")

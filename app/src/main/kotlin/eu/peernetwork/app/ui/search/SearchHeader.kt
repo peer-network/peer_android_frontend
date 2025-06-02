@@ -135,8 +135,7 @@ fun SearchBar(
 }
 
 @Composable
-fun SearchBarItem(mode: SearchMode, onClick: (SearchMode) -> Unit) {
-    Text(
+fun SearchBarItem(mode: SearchMode, onClick: (SearchMode) -> Unit) { Text(
         "${mode.symbol}${stringResource(mode.value)}",
         style = MaterialTheme.typography.bodyMedium.copy(
             color = MaterialTheme.colorScheme.tertiary

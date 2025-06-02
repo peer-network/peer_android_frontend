@@ -5,8 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
-import eu.peernetwork.app.ui.home.Home
-import eu.peernetwork.app.ui.setup.Setup
+import eu.peernetwork.app.ui.launcher.Launcher
 import eu.peernetwork.app.ui.splash.Splash
 import eu.peernetwork.core.ui.annotation.UiBuilder
 import eu.peernetwork.core.ui.annotation.UiViewModel
@@ -48,16 +47,8 @@ object MainModule {
     @Main.Scope
     @Provides
     @IntoMap
-    @UiBuilder(Home.Builder::class)
-    fun provideHomeBuilder(component: Main.Component): UiComponent.Builder {
-        return Home.Builder(component)
-    }
-
-    @Main.Scope
-    @Provides
-    @IntoMap
-    @UiBuilder(Setup.Builder::class)
-    fun provideSetupBuilder(component: Main.Component): UiComponent.Builder {
-        return Setup.Builder(component)
+    @UiBuilder(Launcher.Builder::class)
+    fun provideLauncherBuilder(component: Main.Component): UiComponent.Builder {
+        return Launcher.Builder(component)
     }
 }

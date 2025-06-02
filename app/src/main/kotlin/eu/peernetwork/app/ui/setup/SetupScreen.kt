@@ -2,7 +2,10 @@ package eu.peernetwork.app.ui.setup
 
 import android.content.res.Configuration
 import androidx.compose.animation.Crossfade
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.ime
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.MaterialTheme
@@ -17,20 +20,24 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.compose.DesignContainer
 import eu.peernetwork.core.ui.extension.builder
+import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.user.ui.login.LoginScreen
 import eu.peernetwork.user.ui.registeration.RegistrationScreen
 
 @Composable
 fun SetupScreen(
+    referral: String? = null,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner
 ) {
@@ -44,22 +51,32 @@ fun SetupScreen(
         factory = component.viewModelFactory()
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val contentState = remember { mutableIntStateOf(state.page) }
-    DesignContainer {
-        SetupScaffold(
-            header = { SetupHeader(state = contentState) },
-            footer = { SetupFooter(onPrivacy = {}) }
-        ) {
-            SetupScreen(
-                state = contentState,
-                register = { RegistrationScreen(
-                    component,
-                    viewModelStoreOwner,
-                    onRegistrationSuccess = { contentState.intValue = 0 }
-                ) },
-                login = { LoginScreen(component, viewModelStoreOwner) },
-                onOptionChange = { viewModel.lastVisited(it) }
-            )
+    val page = remember(referral) { referral?.let { 1 } ?: state.page }
+    val contentState = remember { mutableIntStateOf(page) }
+    val imeHeight = WindowInsets.ime.getBottom(LocalDensity.current) * .15
+    SetupNavigation(component) { controller ->
+        DesignContainer {
+            SetupScaffold(
+                header = { SetupHeader(state = contentState) },
+                footer = { SetupFooter(onPrivacy = {
+                    controller.navigateIfNecessary("privacy")
+                }) },
+                modifier = Modifier.padding(bottom = imeHeight.dp)
+            ) {
+                SetupScreen(
+                    state = contentState,
+                    register = { RegistrationScreen(
+                        referral,
+                        component,
+                        viewModelStoreOwner,
+                        onRegistrationSuccess = { contentState.intValue = 0 }
+                    ) },
+                    login = { LoginScreen(component, viewModelStoreOwner) {
+                        controller.navigateIfNecessary("passwordRequest/$it")
+                    } },
+                    onOptionChange = { viewModel.lastVisited(it) }
+                )
+            }
         }
     }
 }

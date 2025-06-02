@@ -17,6 +17,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -32,6 +33,7 @@ import eu.peernetwork.core.ui.design.component.DesignPagingScaffold
 import eu.peernetwork.core.ui.design.component.DesignStatefulContentPlaceholder
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
 import eu.peernetwork.core.ui.extension.builder
+import eu.peernetwork.social.ui.compose.MemberItem
 import eu.peernetwork.social.ui.model.UiMember
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.collectLatest
@@ -55,6 +57,7 @@ fun MemberScreen(
         viewModelStoreOwner = viewModelStoreOwner,
         factory = component.viewModelFactory()
     )
+    val handleClick by rememberUpdatedState(onClick)
     val state by viewModel.state.collectAsStateWithLifecycle()
     val derivedState = remember {
         derivedStateOf {
@@ -90,21 +93,19 @@ fun MemberScreen(
             DesignError(refresh, error, component.resource())
         }
     ) { state, lazyPagingItems ->
+
         LazyColumn(modifier = Modifier.fillMaxSize()) {
             items(
                 count = lazyPagingItems.itemCount,
                 key = { index -> index }
             ) { index ->
                 lazyPagingItems[index]?.let { member ->
-                    Box(modifier = Modifier.fillMaxWidth()
-                        .padding(vertical = 16.dp)
-                        .clickable(role = Role.Button) {
-                            onClick(member.id)
-                        }) {
-                        Text(
-                            text = "@${member.username}",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.tertiary,
+                    // if condition
+                    if (!member.imageUrl.isNullOrBlank()) {
+                        MemberItem(
+                            model = member,
+                            onClick = { handleClick(member.id) }
+
                         )
                     }
                 }

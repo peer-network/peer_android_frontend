@@ -12,12 +12,13 @@ android {
 dependencies {
     implementation(project(":core:common"))
     implementation(project(":core:ui"))
+    implementation(project(":persistence:domain"))
 
     implementation(project(":media:core"))
 
+    implementation(libs.permissions)
     implementation(libs.media3)
     implementation(libs.media3.ui)
-    implementation(libs.permissions)
 
     implementation(libs.dagger)
     ksp(libs.dagger.compiler)

@@ -49,7 +49,7 @@ fun DesignTitleBarRegistry.HomeHeader(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Box(modifier = Modifier.padding(start = 16.dp))
-            current()?.content?.invoke()
+            titleBar().value?.content?.invoke()
             Spacer(modifier = Modifier.weight(1f))
             options()
             IconButton(onClick = { onClick(HomeRoute.Comment) }) {

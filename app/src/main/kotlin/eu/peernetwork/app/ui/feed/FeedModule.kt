@@ -9,7 +9,6 @@ import eu.peernetwork.app.ui.profile.Profile
 import eu.peernetwork.app.ui.renderer.BlogRendererDelegate
 import eu.peernetwork.app.ui.renderer.UserRendererDelegate
 import eu.peernetwork.app.ui.search.Search
-import eu.peernetwork.blog.ui.timeline.music.Music
 import eu.peernetwork.blog.ui.timeline.photo.Photo
 import eu.peernetwork.blog.ui.timeline.video.Video
 import eu.peernetwork.core.ui.annotation.UiBuilder
@@ -51,14 +50,6 @@ object FeedModule {
     @UiBuilder(Profile.Builder::class)
     fun provideProfileBuilder(component: Feed.Component): UiComponent.Builder {
         return Profile.Builder(component)
-    }
-
-    @Feed.Scope
-    @Provides
-    @IntoMap
-    @UiBuilder(Music.Builder::class)
-    fun provideMusicBuilder(component: Feed.Component): UiComponent.Builder {
-        return Music.Builder(component)
     }
 
     @Feed.Scope

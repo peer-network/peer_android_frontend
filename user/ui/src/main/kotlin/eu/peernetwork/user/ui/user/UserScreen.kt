@@ -57,16 +57,15 @@ fun UserScreen(
         factory = component.viewModelFactory()
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val isOwner = remember { derivedStateOf {
-        (state as? UserViewModel.State.Success?)?.isOwner == true
-    } }
-    val derivedState = remember { derivedStateOf {
+    val derivedState = remember(state) { derivedStateOf {
         when(state) {
             UserViewModel.State.Empty -> DesignStatefulScaffoldState.Empty
             UserViewModel.State.Loading -> DesignStatefulScaffoldState.Loading
             is UserViewModel.State.Success -> {
                 DesignStatefulScaffoldState.Success(
-                    (state as UserViewModel.State.Success).account
+                    (state as UserViewModel.State.Success).let {
+                        Pair(it.account, it.configurable)
+                    }
                 )
             }
             is UserViewModel.State.Error -> {
@@ -76,7 +75,7 @@ fun UserScreen(
             }
         }
     } }
-    DesignStatefulScaffold<UiAccount>(
+    DesignStatefulScaffold<Pair<UiAccount, Boolean>>(
         state = derivedState,
         onRefresh = { viewModel.getAccount(id) },
         placeholder = { ProfileScaffold(modifier = modifier.padding(end = 8.dp)) },
@@ -84,9 +83,9 @@ fun UserScreen(
     ) {
         UserScreen(
             modifier = modifier,
-            account = it,
+            account = it.first,
             connection = onFollow,
-            onSettings = if (isOwner.value) {
+            onSettings = if (it.second) {
                 onSettings
             } else {
                 null
@@ -100,6 +99,7 @@ fun UserScreen(
             loadState.value = false
         }
     }
+    LaunchedEffect(Unit) { viewModel.initialize() }
 }
 
 @Composable

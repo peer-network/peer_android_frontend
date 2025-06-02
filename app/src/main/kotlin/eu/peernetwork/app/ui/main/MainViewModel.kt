@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import eu.peernetwork.user.domain.model.Token
 import eu.peernetwork.user.domain.usecase.TokenObserverUsecase
+import eu.peernetwork.user.domain.usecase.TokenUsecase
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
@@ -12,24 +13,17 @@ import javax.inject.Inject
 
 @Main.Scope
 class MainViewModel @Inject constructor(
+    tokenUsecase: TokenUsecase,
     tokenObserverUsecase: TokenObserverUsecase,
 ) : ViewModel() {
     val state: StateFlow<State> = tokenObserverUsecase()
         .map { token ->
-            if (token != null) {
-                State.Home(token)
-            } else {
-                State.Startup
-            }
+            State(token)
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = State.Splash
+            initialValue = State(tokenUsecase())
         )
 
-    sealed interface State {
-        data object Splash : State
-        data object Startup : State
-        data class Home(val token: Token): State
-    }
+    data class State(val token: Token?)
 }

@@ -2,6 +2,8 @@ package eu.peernetwork.social.ui.member
 
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -35,6 +37,8 @@ fun MemberScreen(
     onMentionClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
     imageOnClick: (String) -> Unit = {},
+    photoState: LazyListState = rememberLazyListState(),
+    videoState: LazyListState = rememberLazyListState(),
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
 ) {
@@ -94,7 +98,9 @@ fun MemberScreen(
                     viewModelStoreOwner,
                     onMentionClick,
                     onHashtagClick,
-                    imageOnClick
+                    imageOnClick,
+                    photoState,
+                    videoState
                 )
             )
         }

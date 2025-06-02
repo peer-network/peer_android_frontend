@@ -1,18 +1,9 @@
 package eu.peernetwork.blog.ui.creator
 
-import android.net.Uri
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.input.TextFieldState
-import androidx.compose.foundation.text.input.clearText
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,12 +14,11 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
@@ -36,22 +26,18 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import eu.peernetwork.blog.ui.author.AuthorScreen
 import eu.peernetwork.blog.ui.model.UiDraft
-import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.compose.DesignButton
 import eu.peernetwork.core.ui.design.compose.DesignCard
-import eu.peernetwork.core.ui.design.compose.DesignCheckButton
 import eu.peernetwork.core.ui.design.compose.DesignLabel
-import eu.peernetwork.core.ui.design.compose.DesignTitle
-import eu.peernetwork.core.ui.design.compose.DesignTitleBarHost
 import eu.peernetwork.core.ui.extension.builder
-import eu.peernetwork.core.ui.extension.isValidInput
-import eu.peernetwork.media.core.model.MimeType
-import eu.peernetwork.media.core.renderer.MediaSelector
+import eu.peernetwork.media.core.model.UiAttachment
+import eu.peernetwork.media.core.model.UiMimeType
 
 @Composable
 fun CreatorScreen(
+    attachment: MutableState<UiAttachment>,
+    focus: FocusRequester,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
 ) {
@@ -74,25 +60,39 @@ fun CreatorScreen(
     val shouldReset = remember { derivedStateOf {
         state is CreatorViewModel.State.Success
     } }
-    val attachments = remember { mutableStateOf<List<Uri>>(emptyList()) }
+    val media = remember(attachment.value) { derivedStateOf {
+        if (attachment.value.files.isEmpty()) {
+            UiMimeType.Text
+        } else { attachment.value.media }
+    } }
+    val enabled = remember(attachment.value) { derivedStateOf {
+        if (media.value != UiMimeType.Text) {
+            true
+        } else {
+            attachment.value.files.isNotEmpty()
+        }
+    } }
     CreatorScreen(
-        attachments = attachments,
-        onSubmit = { viewModel.create(it) },
+        focus = focus,
+        onSubmit = {
+            viewModel.create(UiDraft(
+                title = it.title,
+                description = it.description,
+                media = if (attachment.value.files.isEmpty()) {
+                    UiMimeType.Text
+                } else { attachment.value.media },
+                attachments = attachment.value.files.map { it.uri }
+            )) },
         header = { AuthorScreen(component, viewModelStoreOwner) },
-        footer = {
-            component.mediaSelector()(
-                modifier = Modifier,
-                spec = MediaSelector.Spec(it, attachments)
-            ) },
         isLoading = isLoading,
+        enabled = enabled,
         shouldReset = shouldReset,
+        attachment = attachment,
         error = error
     )
-    DesignTitleBarHost("CreatorScreen") {
-        titleBar {
-            DesignTitle {
-                Text(stringResource(R.string.add_label))
-            }
+    LaunchedEffect(shouldReset.value) {
+        if (shouldReset.value) {
+            viewModel.reset()
         }
     }
 }
@@ -100,132 +100,56 @@ fun CreatorScreen(
 @Composable
 fun CreatorScreen(
     isLoading: State<Boolean>,
+    focus: FocusRequester,
+    enabled: State<Boolean>,
     shouldReset: State<Boolean>,
+    attachment: MutableState<UiAttachment>,
     error: State<Throwable?>,
     modifier: Modifier = Modifier,
-    attachments: MutableState<List<Uri>>,
-    onSubmit: (UiDraft) -> Unit = {},
-    header: @Composable () -> Unit = {},
-    footer: @Composable (MimeType?) -> Unit = {}
+    onSubmit: (UiDraft.Field) -> Unit = {},
+    header: @Composable () -> Unit = {}
 ) {
-    val title = remember { TextFieldState() }
-    val description = remember { TextFieldState() }
-    val selected = remember { mutableStateOf<MimeType?>(null) }
-    val state = remember { mutableStateOf<MimeType?>(null) }
-    CreatorScaffold(
-        isLoading = isLoading,
-        type = selected,
-        modifier = modifier.fillMaxSize(),
-        footer = { footer(state.value) },
-    ) {
-        DesignLabel(
-            label = { error.value?.message?.let {
-                Text(it,
-                    modifier = Modifier.padding(horizontal = 24.dp)
-                        .padding(vertical = 8.dp),
-                    style = MaterialTheme.typography.bodySmall.copy(
-                        color = MaterialTheme.colorScheme.error
-                    )
+    var title by rememberSaveable(stateSaver = TextFieldState.Saver) { mutableStateOf(TextFieldState()) }
+    var description by rememberSaveable(stateSaver = TextFieldState.Saver) {
+        mutableStateOf(TextFieldState())
+    }
+    DesignLabel(
+        label = { error.value?.message?.let {
+            Text(it,
+                modifier = Modifier.padding(horizontal = 24.dp)
+                    .padding(vertical = 8.dp),
+                style = MaterialTheme.typography.bodySmall.copy(
+                    color = MaterialTheme.colorScheme.error
                 )
-            }},
-            visible = error.value != null,
-            modifier = Modifier.padding(bottom = 6.dp)
+            )
+        }},
+        visible = error.value != null,
+        modifier = modifier.padding(bottom = 4.dp)
+    ) {
+        DesignCard(
+            shape = RoundedCornerShape(24.dp),
+            color = MaterialTheme.colorScheme.surfaceVariant,
+            modifier = Modifier
+                .padding(horizontal = 8.dp)
+                .padding(top = 8.dp)
         ) {
-            DesignCard(
-                shape = RoundedCornerShape(24.dp),
-                color = MaterialTheme.colorScheme.surfaceVariant,
-                modifier = Modifier
-                    .padding(horizontal = 8.dp)
-                    .padding(bottom = 8.dp)
-            ) {
-                Column {
-                    CreatorForm(title, description, isLoading, header)
-                    CreatorActions(
-                        title = title,
-                        description = description,
-                        isLoading = isLoading,
-                        selected = selected,
-                        state = state,
-                        attachments = attachments,
-                        onSubmit = onSubmit,
-                    )
-                }
+            Column {
+                CreatorForm(title, focus, description, isLoading, header)
+                CreatorFooter(
+                    title = title,
+                    description = description,
+                    isLoading = isLoading,
+                    enabled = enabled,
+                    onSubmit = onSubmit,
+                )
             }
         }
     }
     LaunchedEffect(shouldReset.value) {
         if (shouldReset.value) {
-            title.clearText()
-            description.clearText()
-            attachments.value = emptyList()
-        }
-    }
-}
-
-@Composable
-private fun CreatorActions(
-    title: TextFieldState,
-    description: TextFieldState,
-    isLoading: State<Boolean>,
-    selected: MutableState<MimeType?>,
-    state: MutableState<MimeType?>,
-    attachments: MutableState<List<Uri>>,
-    onSubmit: (UiDraft) -> Unit = {},
-) {
-    val isFormValid = remember { derivedStateOf {
-        title.isValidInput() && (selected.value != null || description.isValidInput())
-                && (selected.value?.let { it !is MimeType.Text
-                && attachments.value.isNotEmpty() } == true || selected.value == null)
-    } }
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        MimeType.TYPES.forEach {
-            val buttonState = remember(selected.value) {
-                mutableStateOf(selected.value == it)
-            }
-            DesignCheckButton(
-                check = buttonState,
-                onCheck = { isChecked ->
-                    attachments.value = emptyList()
-                    state.value = it
-                    selected.value = if (isChecked) {
-                        it
-                    } else {
-                        null
-                    }
-                }
-            ) {
-                Icon(
-                    painter = painterResource(it.id),
-                    contentDescription = it.label?.let { stringResource(it) },
-                )
-            }
-            Spacer(modifier = Modifier.width(4.dp))
-        }
-        Spacer(modifier = Modifier.weight(1f))
-        DesignButton(
-            onClick = {
-                onSubmit(UiDraft(
-                    title.text.toString(),
-                    description.text.toString(),
-                    selected.value ?: if (attachments.value.isEmpty()) {
-                        MimeType.Text
-                    } else {
-                        MimeType.Photo
-                    },
-                    attachments.value)
-                ) },
-            isLoading = isLoading.value,
-            enabled = isFormValid.value,
-            shape = RoundedCornerShape(10.dp),
-            contentPadding = PaddingValues(vertical = 4.dp, horizontal = 32.dp),
-            modifier = Modifier.height(36.dp),
-        ) {
-            Text(
-                stringResource(eu.peernetwork.blog.ui.R.string.post_label),
-                style = MaterialTheme.typography.bodyMedium.copy(
-                    fontWeight = FontWeight.Bold
-                )
-            )
+            title = TextFieldState()
+            description = TextFieldState()
+            attachment.value = UiAttachment.Text
         }
     }
 }
@@ -234,11 +158,14 @@ private fun CreatorActions(
 @Composable
 fun PreviewCreatorScreen() {
     PeerTheme {
+        val focus = remember { FocusRequester() }
         CreatorScreen(
+            focus = focus,
             isLoading = remember { mutableStateOf(false) },
-            shouldReset = remember { mutableStateOf(false) },
+            enabled = remember { mutableStateOf(false) },
             error = remember { mutableStateOf(null) },
-            attachments = remember { mutableStateOf<List<Uri>>(emptyList()) },
+            shouldReset = remember { mutableStateOf(false) },
+            attachment = remember { mutableStateOf(UiAttachment.Text) },
         ) {}
     }
 }

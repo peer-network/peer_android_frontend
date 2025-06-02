@@ -17,6 +17,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -56,6 +57,7 @@ fun TagScreen(
         factory = component.viewModelFactory()
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val handleClick by rememberUpdatedState(onClick)
     val derivedState = remember {
         derivedStateOf {
             when (state) {
@@ -98,7 +100,7 @@ fun TagScreen(
                     Box(modifier = Modifier.fillMaxWidth()
                         .padding(vertical = 16.dp)
                         .clickable(role = Role.Button) {
-                            onClick(tag.value)
+                            handleClick(tag.value)
                         }) {
                         Text(
                             text = "#${tag.value}",

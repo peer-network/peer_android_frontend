@@ -4,6 +4,7 @@ import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.ApolloResponse
 import com.apollographql.apollo3.api.Operation
 import eu.peernetwork.core.remote.model.Status
+import eu.peernetwork.core.remote.api.RequestClient
 import eu.peernetwork.user.data.api.SettingsApi
 import eu.peernetwork.user.remote.mock.SettingsMock
 import io.mockk.coEvery
@@ -20,11 +21,13 @@ import kotlin.test.assertNull
 internal class AvatarSettingsApiTest {
     private val client = mockk<ApolloClient>()
 
-    private lateinit var api: SettingsApi.Updatable<String>
+    private lateinit var api: SettingsApi.Attribute<String>
 
     @Before
     fun setup() {
-        api = AvatarSettingsApi(client)
+        api = AvatarSettingsApi(object : RequestClient {
+            override fun invoke(): ApolloClient = client
+        })
     }
 
     @Test

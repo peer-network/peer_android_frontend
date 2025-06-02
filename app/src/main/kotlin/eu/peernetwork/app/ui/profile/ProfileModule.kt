@@ -6,7 +6,7 @@ import dagger.multibindings.IntoMap
 import eu.peernetwork.app.ui.renderer.BlogRendererDelegate
 import eu.peernetwork.app.ui.renderer.UserRendererDelegate
 import eu.peernetwork.app.ui.search.Search
-import eu.peernetwork.blog.ui.post.music.Music
+import eu.peernetwork.app.ui.settings.Settings
 import eu.peernetwork.blog.ui.post.photo.Photo
 import eu.peernetwork.blog.ui.post.video.Video
 import eu.peernetwork.core.ui.annotation.UiBuilder
@@ -16,7 +16,6 @@ import eu.peernetwork.core.ui.factory.UiBuilderFactory
 import eu.peernetwork.social.ui.member.Member
 import eu.peernetwork.social.ui.renderder.BlogRenderer
 import eu.peernetwork.social.ui.renderder.UserRenderer
-import eu.peernetwork.user.ui.settings.Settings
 import eu.peernetwork.user.ui.user.User
 
 @Module
@@ -31,14 +30,6 @@ object ProfileModule {
     @UiBuilder(Member.Builder::class)
     fun provideMemberBuilder(component: Profile.Component): UiComponent.Builder {
         return Member.Builder(component)
-    }
-
-    @Profile.Scope
-    @Provides
-    @IntoMap
-    @UiBuilder(Settings.Builder::class)
-    fun provideUserSettingsBuilder(component: Profile.Component): UiComponent.Builder {
-        return Settings.Builder(component)
     }
 
     @Profile.Scope
@@ -68,17 +59,17 @@ object ProfileModule {
     @Profile.Scope
     @Provides
     @IntoMap
-    @UiBuilder(Music.Builder::class)
-    fun provideMusicBuilder(component: Profile.Component): UiComponent.Builder {
-        return Music.Builder(component)
+    @UiBuilder(Search.Builder::class)
+    fun provideSearchBuilder(component: Profile.Component): UiComponent.Builder {
+        return Search.Builder(component)
     }
 
     @Profile.Scope
     @Provides
     @IntoMap
-    @UiBuilder(Search.Builder::class)
-    fun provideSearchBuilder(component: Profile.Component): UiComponent.Builder {
-        return Search.Builder(component)
+    @UiBuilder(Settings.Builder::class)
+    fun provideSettingsBuilder(component: Profile.Component): UiComponent.Builder {
+        return Settings.Builder(component)
     }
 
     @Profile.Scope

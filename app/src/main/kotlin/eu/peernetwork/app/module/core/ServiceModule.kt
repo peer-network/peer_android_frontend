@@ -1,16 +1,20 @@
 package eu.peernetwork.app.module.core
 
-import dagger.Binds
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import dagger.Module
-import eu.peernetwork.app.service.ResourceLoader
+import dagger.Provides
+import eu.peernetwork.app.service.BootstrapService
 import eu.peernetwork.app.service.ResourceServiceDelegate
 import eu.peernetwork.core.common.service.ResourceService
 
 @Module
-interface ServiceModule {
-    @Binds
-    fun resourceLoader(delegate: ResourceServiceDelegate): ResourceLoader
+object ServiceModule {
+    @Provides
+    fun resourceLoader(delegate: ResourceServiceDelegate): BootstrapService = delegate
 
-    @Binds
-    fun resourceService(delegate: ResourceServiceDelegate): ResourceService
+    @Provides
+    fun resourceService(delegate: ResourceServiceDelegate): ResourceService = delegate
+
+    @Provides
+    fun provideRemoteConfig(): FirebaseRemoteConfig = FirebaseRemoteConfig.getInstance()
 }

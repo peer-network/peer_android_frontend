@@ -13,7 +13,7 @@ interface Splash : ApplicationProvider {
     @Scope
     @dagger.Component(
         dependencies = [ Splash::class ],
-        modules = [ SplashModule::class ]
+        modules = [ SplashModule::class]
     )
     interface Component : Splash {
         fun viewModelFactory(): ViewModelProvider.Factory

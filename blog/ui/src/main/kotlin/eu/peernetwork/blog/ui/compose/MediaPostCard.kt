@@ -72,7 +72,7 @@ fun MediaPostCard(
         Box {
             updatedContent()
             Image(
-                painter = painterResource(eu.peernetwork.blog.ui.R.drawable.overlay_gradient),
+                painter = painterResource(R.drawable.overlay_gradient),
                 contentDescription = null,
                 modifier = Modifier.fillMaxWidth()
                     .height(120.dp)

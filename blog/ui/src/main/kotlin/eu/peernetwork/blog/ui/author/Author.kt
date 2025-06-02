@@ -4,8 +4,9 @@ import android.content.Context
 import androidx.lifecycle.ViewModelProvider
 import eu.peernetwork.blog.ui.provider.BlogProvider
 import eu.peernetwork.core.ui.component.UiComponent
+import eu.peernetwork.media.core.provider.RendererProvider
 
-interface Author : BlogProvider {
+interface Author : BlogProvider, RendererProvider {
     @javax.inject.Scope
     @Retention(AnnotationRetention.RUNTIME)
     annotation class Scope

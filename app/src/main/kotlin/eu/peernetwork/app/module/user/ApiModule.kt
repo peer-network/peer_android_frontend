@@ -4,6 +4,7 @@ import com.apollographql.apollo3.ApolloClient
 import dagger.Module
 import dagger.Provides
 import eu.peernetwork.app.interceptor.LoggingInterceptor
+import eu.peernetwork.core.common.interactor.UrlInteractor
 import eu.peernetwork.user.data.api.AccountApi
 import eu.peernetwork.user.data.api.AuthenticationApi
 import eu.peernetwork.user.data.api.ResourceApi
@@ -15,7 +16,6 @@ import eu.peernetwork.user.remote.api.ResourceApiDelegate
 import eu.peernetwork.user.remote.api.SearchApiDelegate
 import eu.peernetwork.user.remote.api.TokenApiDelegate
 import eu.peernetwork.user.remote.usecase.JwtExpiryUsecase
-import javax.inject.Named
 
 @Module
 internal object ApiModule {
@@ -33,12 +33,12 @@ internal object ApiModule {
 
     @Provides
     fun providesTokenApi(
-        @Named("baseUrl") baseUrl: String,
+        provider: UrlInteractor,
         logger: LoggingInterceptor,
         usecase: JwtExpiryUsecase
     ): TokenApi = TokenApiDelegate(
         ApolloClient.Builder()
-            .serverUrl("$baseUrl/graphql")
+            .serverUrl("${provider.get()}/graphql")
             .addInterceptor(logger).build(),
         usecase
     )
