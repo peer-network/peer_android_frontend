@@ -26,8 +26,8 @@ class AccountRepositoryDelegate @Inject constructor(
     override suspend fun update(properties: Map<String, Any>) {
         for (entry in properties) {
             val instance = provider.get(entry.key)
-            if (instance is SettingsApi.Updatable<*>) {
-                (instance as? SettingsApi.Updatable<Any>)?.invoke(entry.value)
+            if (instance is SettingsApi.Attribute<*>) {
+                (instance as? SettingsApi.Attribute<Any>)?.invoke(entry.value)
             } else {
                 throw AuthorizationException(entry.key)
             }
@@ -38,10 +38,10 @@ class AccountRepositoryDelegate @Inject constructor(
     override suspend fun update(properties: Map<String, Any>, password: String) {
         for (entry in properties) {
             val instance = provider.get(entry.key)
-            if (instance is SettingsApi.SecureUpdatable<*>) {
-                (instance as? SettingsApi.SecureUpdatable<Any>)?.invoke(entry.value, password)
+            if (instance is SettingsApi.SecureAttribute<*>) {
+                (instance as? SettingsApi.SecureAttribute<Any>)?.invoke(entry.value, password)
             } else {
-                (instance as? SettingsApi.Updatable<Any>)?.invoke(entry.value)
+                (instance as? SettingsApi.Attribute<Any>)?.invoke(entry.value)
             }
         }
     }

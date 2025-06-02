@@ -32,6 +32,7 @@ import eu.peernetwork.core.ui.design.component.DesignPagingScaffold
 import eu.peernetwork.core.ui.design.component.DesignStatefulContentPlaceholder
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
 import eu.peernetwork.core.ui.extension.builder
+import eu.peernetwork.social.ui.compose.MemberItem
 import eu.peernetwork.social.ui.model.UiMember
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.collectLatest
@@ -87,21 +88,19 @@ fun MemberScreen(
                 .verticalScroll(rememberScrollState())
         ) }
     ) { state, lazyPagingItems ->
+
         LazyColumn(modifier = Modifier.fillMaxSize()) {
             items(
                 count = lazyPagingItems.itemCount,
                 key = { index -> index }
             ) { index ->
                 lazyPagingItems[index]?.let { member ->
-                    Box(modifier = Modifier.fillMaxWidth()
-                        .padding(vertical = 16.dp)
-                        .clickable(role = Role.Button) {
-                            handleClick(member.id)
-                        }) {
-                        Text(
-                            text = "@${member.username}",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.tertiary,
+                    // if condition
+                    if (!member.imageUrl.isNullOrBlank()) {
+                        MemberItem(
+                            model = member,
+                            onClick = { handleClick(member.id) }
+
                         )
                     }
                 }

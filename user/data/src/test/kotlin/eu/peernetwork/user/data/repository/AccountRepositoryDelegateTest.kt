@@ -68,7 +68,7 @@ internal class AccountRepositoryDelegateTest {
     @Test
     fun `test update user attribute`(): Unit = runBlocking {
         val attr = Pair("<test-key>", 0)
-        val settings = mockk<SettingsApi.Updatable<Int>>()
+        val settings = mockk<SettingsApi.Attribute<Int>>()
         coEvery { settings(any()) } returns Unit
         coEvery { provider.get(any()) } returns settings
 
@@ -82,7 +82,7 @@ internal class AccountRepositoryDelegateTest {
     fun `test update user secured attribute success`(): Unit = runBlocking {
         val attr = Pair("<test-key>", "<test-value>")
         val password = "<test-password>"
-        val settings = mockk<SettingsApi.SecureUpdatable<String>>()
+        val settings = mockk<SettingsApi.SecureAttribute<String>>()
         coEvery { settings(any(), any()) } returns Unit
         coEvery { provider.get(any()) } returns settings
 
@@ -95,7 +95,7 @@ internal class AccountRepositoryDelegateTest {
     @Test
     fun `test update user secured attribute error`(): Unit = runBlocking {
         val attr = Pair("<test-key>", "<test-value>")
-        val settings = mockk<SettingsApi.SecureUpdatable<String>>()
+        val settings = mockk<SettingsApi.SecureAttribute<String>>()
         coEvery { settings(any(), any()) } returns Unit
         coEvery { provider.get(any()) } returns settings
 

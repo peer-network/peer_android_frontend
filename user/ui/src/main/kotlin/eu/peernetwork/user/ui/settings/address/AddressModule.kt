@@ -1,6 +1,5 @@
-package eu.peernetwork.user.ui.settings
+package eu.peernetwork.user.ui.settings.address
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import dagger.Module
@@ -11,13 +10,9 @@ import eu.peernetwork.core.ui.factory.UiViewModelFactory
 import javax.inject.Provider
 
 @Module
-class SettingsModule(private val context: Context) {
+object AddressModule {
     @Provides
-    @Settings.Scope
-    fun provideContext(): Context = context
-
-    @Provides
-    @Settings.Scope
+    @Address.Scope
     fun provideViewModelFactory(
         classToViewModel:
         @JvmSuppressWildcards Map<Class<out ViewModel>, Provider<ViewModel>>
@@ -27,7 +22,7 @@ class SettingsModule(private val context: Context) {
 
     @Provides
     @IntoMap
-    @Settings.Scope
-    @UiViewModel(SettingsViewModel::class)
-    fun provideViewModel(viewModel: SettingsViewModel): ViewModel = viewModel
+    @Address.Scope
+    @UiViewModel(AddressViewModel::class)
+    fun provideViewModel(viewModel: AddressViewModel): ViewModel = viewModel
 }

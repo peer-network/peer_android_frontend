@@ -10,7 +10,7 @@ import javax.inject.Inject
 
 class BiographySettingsApi @Inject constructor(
     private val client: RequestClient,
-) : SettingsApi.Updatable<String> {
+) : SettingsApi.Attribute<String> {
     override suspend fun invoke(value: String) {
         val mutation = UpdateBiographyMutation(value)
         val response = client().mutation(mutation).executeOrThrow()

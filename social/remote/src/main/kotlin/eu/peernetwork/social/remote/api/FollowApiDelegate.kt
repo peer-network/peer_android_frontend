@@ -42,6 +42,7 @@ class FollowApiDelegate @Inject constructor(
         val followers = data.affectedRows?.followers?.map {
             Member(
                 id = it.id,
+                slug = it.slug!!.toString(),
                 username = it.username!!,
                 imageUrl = "$url/${it.img!!}".removeSuffix("/")
             )
@@ -68,6 +69,7 @@ class FollowApiDelegate @Inject constructor(
         val following = data.affectedRows?.following?.map {
             Member(
                 id = it.id,
+                slug = it.slug!!.toString(),
                 username = it.username!!,
                 imageUrl = "$url/${it.img!!}".removeSuffix("/")
             )
@@ -92,8 +94,9 @@ class FollowApiDelegate @Inject constructor(
         val friends = data.affectedRows?.map {
             Member(
                 id = it?.userid ?: "",
-                username = it?.username ?: "Unknown",
-                imageUrl = "$url/${it?.img!!}".removeSuffix("/")
+                slug = it?.slug!!.toString(),
+                username = it.username ?: "Unknown",
+                imageUrl = "$url/${it.img!!}".removeSuffix("/")
             )
         }
         return Page(

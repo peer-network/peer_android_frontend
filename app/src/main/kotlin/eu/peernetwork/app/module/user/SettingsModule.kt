@@ -22,7 +22,7 @@ internal interface SettingsModule {
 
     @Binds
     @IntoMap
-    @Settings("email")
+    @Settings(UiSettings.EMAIL)
     fun bindEmailSettingsApi(api: EmailSettingsApi): SettingsApi<*>
 
     @Binds
