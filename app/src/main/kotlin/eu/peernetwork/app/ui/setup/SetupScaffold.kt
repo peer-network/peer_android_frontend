@@ -42,7 +42,7 @@ fun SetupScaffold(
             },
         ) { updatedHeader() }
         DesignBox(
-            minHeight = 0.45f,
+            minHeight = 0.3f,
             contentAlignment = Alignment.TopCenter,
             modifier = Modifier.constrainAs(sectionTag) {
                 top.linkTo(headerTag.bottom)
