@@ -26,17 +26,25 @@ fun SettingsNavigation(
     val password = stringResource(R.string.password_label)
     val preference = stringResource(R.string.preference_label)
     val account = stringResource(R.string.account_label)
+
     DesignRouter(
         navController = controller,
         startDestination = "settings",
     ) {
         composable("settings") { updatedSettings(controller) }
         composable(account) { AccountScreen(provider, viewModelStoreOwner) }
-        composable(password) { PasswordUpdateScreen(provider) {
-            controller.popBackStack()
-        } }
-        composable(preference) { AddressScreen(provider) {
-            controller.popBackStack()
-        } }
+        composable(password) {
+            PasswordUpdateScreen(provider) {
+                controller.popBackStack()
+            }
+        }
+        composable(preference) {
+            AddressScreen(provider) {
+                controller.popBackStack()
+            }
+        }
+        composable("about_us") {
+            AboutUsScreen()
+        }
     }
 }
