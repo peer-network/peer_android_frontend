@@ -41,4 +41,12 @@
     <string name="password_reset_instruction">Enter the email associated with your account and we\'ll send an email with instructions to reset your password.</string>
     <string name="password_instruction">We\'ve sent a password recovery token to your email. Please enter the token along with your new password to proceed.</string>
     <string name="password_alternative_question">Already received the token?</string>
+
+    <string name="app_information_label">App Information</string>
+    <string name="about_us_label">About Us</string>
+    <string name="app_name_label">App Name: Peer</string>
+    <string name="version_text_label">Version:</string>
+    <string name="developed_by_label">Developed by: Peer Network Team</string>
+    <string name="copyright_label">© 2024 Peer Network. All rights reserved.</string>
+    <string name="about_us_description_label">The first social platform Returning 96% of ad revenue to creators through blockchain technology.</string>
 </resources>
