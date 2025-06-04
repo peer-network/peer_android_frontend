@@ -1,25 +1,14 @@
 package eu.peernetwork.blog.ui.creator
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -44,6 +33,11 @@ fun CreatorForm(
     isLoading: State<Boolean>,
     avatar: @Composable () -> Unit = {}
 ) {
+    val maxText = 500
+    val isValidLength = remember {
+        derivedStateOf { description.text.length <= maxText }
+    }
+
     Column {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -70,34 +64,54 @@ fun CreatorForm(
                 ),
             ) { Text(stringResource(R.string.post_title)) }
         }
-        DesignRichTextField(
-            description,
-            contentPadding = PaddingValues(
-                top = 16.dp,
-                start = 16.dp,
-                end = 16.dp,
-                bottom = 48.dp,
-            ),
-            enabled = !isLoading.value,
-            keyboardOptions = KeyboardOptions(
-                capitalization = KeyboardCapitalization.Sentences,
-                keyboardType = KeyboardType.Text,
-                imeAction = ImeAction.Next
-            ),
-            verticalAlignment = Alignment.Top,
-            maxLines = 3,
-            modifier = Modifier.fillMaxWidth()
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
                 .padding(vertical = 12.dp),
-            leading = { },
-            colors = TextFieldDefaults.colors(
-                unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLow,
-                focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLow,
-                focusedTextColor = MaterialTheme.colorScheme.onBackground,
-                unfocusedTextColor = MaterialTheme.colorScheme.tertiary,
-                focusedPlaceholderColor = MaterialTheme.colorScheme.surfaceDim,
-                unfocusedPlaceholderColor = MaterialTheme.colorScheme.surfaceTint,
-            ),
-        ) { Text(text = stringResource(R.string.post_description)) }
+            contentAlignment = Alignment.BottomEnd
+        ) {
+            DesignRichTextField(
+                description,
+                contentPadding = PaddingValues(
+                    top = 16.dp,
+                    start = 16.dp,
+                    end = 16.dp,
+                    bottom = 48.dp,
+                ),
+                enabled = !isLoading.value,
+                keyboardOptions = KeyboardOptions(
+                    capitalization = KeyboardCapitalization.Sentences,
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Next
+                ),
+                verticalAlignment = Alignment.Top,
+                maxLines = 3,
+                modifier = Modifier.fillMaxWidth(),
+                leading = { },
+                colors = TextFieldDefaults.colors(
+                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                    focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                    focusedTextColor = MaterialTheme.colorScheme.onBackground,
+                    unfocusedTextColor = MaterialTheme.colorScheme.tertiary,
+                    focusedPlaceholderColor = MaterialTheme.colorScheme.surfaceDim,
+                    unfocusedPlaceholderColor = MaterialTheme.colorScheme.surfaceTint,
+                ),
+            ) { Text(text = stringResource(R.string.post_description)) }
+
+            Text(
+                text = "${description.text.length}/$maxText",
+                modifier = Modifier.padding(16.dp),
+                style = MaterialTheme.typography.bodySmall.copy(
+                    color = if (isValidLength.value) {
+                        MaterialTheme.colorScheme.surfaceDim
+                    } else {
+                        MaterialTheme.colorScheme.error
+                    }
+                )
+            )
+        }
+
         Spacer(modifier = Modifier.height(4.dp))
     }
 }
@@ -118,9 +132,10 @@ fun PreviewCreatorForm() {
             DesignAvatar(
                 modifier = Modifier.padding(end = 8.dp)
             ) {
-                Box(modifier = Modifier
-                    .size(48.dp)
-                    .background(MaterialTheme.colorScheme.tertiaryContainer)
+                Box(
+                    modifier = Modifier
+                        .size(48.dp)
+                        .background(MaterialTheme.colorScheme.tertiaryContainer)
                 )
             }
         }
