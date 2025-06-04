@@ -16,7 +16,7 @@ class UserRendererDelegate(val provider: UiComponentProvider) : UserRenderer {
     ) {
         UserScreen(
             id = spec.id,
-            loadState = spec.state,
+            lastUpdated = spec.lastUpdated,
             onFollow = spec.onFollow,
             onClick = spec.onClick,
             onSettings = spec.onSettings,

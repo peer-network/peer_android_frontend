@@ -12,6 +12,7 @@ import eu.peernetwork.blog.ui.mapper.mapToVideo
 import eu.peernetwork.blog.ui.model.UiVideo
 import eu.peernetwork.core.common.model.Pageable
 import eu.peernetwork.core.common.provider.Dispatcher
+import eu.peernetwork.core.ui.exception.NoContentException
 import eu.peernetwork.core.ui.usecase.AnnotationUsecase
 import eu.peernetwork.core.ui.usecase.PagingUsecase
 import kotlinx.coroutines.flow.Flow
@@ -52,11 +53,15 @@ class UserVideosUsecase @Inject constructor(
         if (currentOffset <= 0) {
             engagementRefreshUsecase()
         }
-        LoadResult.Page(
-            data = response.items.map { it.mapToVideo { annotationUsecase(it) } },
-            prevKey = if (currentOffset <= 0) null else currentOffset - 1,
-            nextKey = if (response.items.isEmpty()) null else currentOffset + response.items.size
-        )
+        if (response.items.isEmpty() && currentPage.offset == 0) {
+            LoadResult.Error(NoContentException())
+        } else {
+            LoadResult.Page(
+                data = response.items.map { it.mapToVideo { annotationUsecase(it) } },
+                prevKey = if (currentOffset <= 0) null else currentOffset - 1,
+                nextKey = if (response.items.isEmpty()) null else currentOffset + response.items.size
+            )
+        }
     }
 
     data class Parameter(

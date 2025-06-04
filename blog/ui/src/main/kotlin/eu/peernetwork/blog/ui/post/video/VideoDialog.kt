@@ -1,6 +1,5 @@
 package eu.peernetwork.blog.ui.post.video
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,7 +14,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -44,7 +43,6 @@ import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.media.core.renderer.VideoPlayer
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.launch
 
 @Composable
 fun VideoDialog(
@@ -64,8 +62,7 @@ fun VideoDialog(
         factory = component.viewModelFactory()
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val isVisible = remember { derivedStateOf { initialPage.value != null } }
-    val coroutineScope = rememberCoroutineScope()
+    val isVisible = rememberSaveable(initialPage.value) { mutableStateOf(initialPage.value != null) }
     val derivedState = remember {
         derivedStateOf {
             when (state) {
@@ -93,7 +90,15 @@ fun VideoDialog(
     val pullRefreshState = rememberPullRefreshState(refreshing = isRefreshing, onRefresh = {
         viewModel.load(author, Pageable(0, postLimit))
     })
-    DesignDialogSheet(tag = "VideoDialog", visible = isVisible.value) {
+    DesignDialogSheet(
+        tag = "VideoDialog",
+        visible = isVisible,
+        onAnimationComplete = {
+            if (!it) {
+                initialPage.value = null
+            }
+        }
+    ) {
         DragRefreshLayout(state = pullRefreshState) {
             DesignStatefulScaffold<Flow<PagingData<UiVideo>>>(
                 state = derivedState,
@@ -141,11 +146,6 @@ fun VideoDialog(
                     }
                 }
             }
-        }
-    }
-    BackHandler(enabled = isVisible.value) {
-        coroutineScope.launch {
-            initialPage.value = null
         }
     }
 }

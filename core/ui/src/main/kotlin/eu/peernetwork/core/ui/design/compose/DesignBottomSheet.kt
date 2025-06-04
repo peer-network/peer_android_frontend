@@ -1,6 +1,5 @@
 package eu.peernetwork.core.ui.design.compose
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Box
@@ -76,7 +75,19 @@ fun DesignBottomSheet(
     val updatedContent by rememberUpdatedState(content)
     val dismissRequest by rememberUpdatedState(onDismissRequest)
     val scaffoldState = rememberBottomSheetScaffoldState(bottomSheetState = sheetState)
-    DesignOverlayHost(tag, visible = showSheet.value) { overlayState ->
+    DesignOverlayHost(
+        tag,
+        visible = showSheet,
+        handleBackPress = handleBackPress,
+        onAnimationComplete = {
+            if (!it) {
+                coroutineScope.launch {
+                    dismissRequest()
+                    sheetState.hide()
+                }
+            }
+        }
+    ) { overlayState ->
         overlay {
             updatedBackground(overlayState)
             BottomSheetScaffold(
@@ -146,12 +157,6 @@ fun DesignBottomSheet(
     LaunchedEffect(showSheet.value) {
         if (!showSheet.value) {
             dismissRequest()
-        }
-    }
-    BackHandler(enabled = showSheet.value && handleBackPress) {
-        coroutineScope.launch {
-            dismissRequest()
-            sheetState.hide()
         }
     }
 }

@@ -5,13 +5,11 @@ import androidx.lifecycle.ViewModelProvider
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
-import eu.peernetwork.core.ui.annotation.UiBuilder
 import eu.peernetwork.core.ui.annotation.UiViewModel
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.factory.UiBuilderFactory
 import eu.peernetwork.core.ui.factory.UiViewModelFactory
-import eu.peernetwork.wallet.ui.transfer.Transfer
 import javax.inject.Provider
 
 @Module
@@ -37,12 +35,4 @@ object OverviewModule {
     @Overview.Scope
     @UiViewModel(OverviewViewModel::class)
     fun viewModel(viewModel: OverviewViewModel): ViewModel = viewModel
-
-    @Provides
-    @Overview.Scope
-    @IntoMap
-    @UiBuilder(Transfer.Builder::class)
-    fun provideTransferBuilder(component: Overview.Component): UiComponent.Builder {
-        return Transfer.Builder(component)
-    }
 }

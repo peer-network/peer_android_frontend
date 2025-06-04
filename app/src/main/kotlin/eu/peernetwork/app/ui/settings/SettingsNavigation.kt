@@ -8,6 +8,8 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import eu.peernetwork.app.BuildConfig
+import eu.peernetwork.app.ui.about.AboutScreen
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.compose.DesignRouter
 import eu.peernetwork.user.ui.R
@@ -32,11 +34,23 @@ fun SettingsNavigation(
     ) {
         composable("settings") { updatedSettings(controller) }
         composable(account) { AccountScreen(provider, viewModelStoreOwner) }
-        composable(password) { PasswordUpdateScreen(provider) {
-            controller.popBackStack()
-        } }
-        composable(preference) { AddressScreen(provider) {
-            controller.popBackStack()
-        } }
+        composable(password) {
+            PasswordUpdateScreen(provider) {
+                controller.popBackStack()
+            }
+        }
+        composable(preference) {
+            AddressScreen(provider) {
+                controller.popBackStack()
+            }
+        }
+        composable("about") {
+            AboutScreen(
+                BuildConfig.VERSION_NAME,
+                BuildConfig.VERSION_CODE,
+                provider,
+                stringResource(R.string.about_us_label),
+            )
+        }
     }
 }

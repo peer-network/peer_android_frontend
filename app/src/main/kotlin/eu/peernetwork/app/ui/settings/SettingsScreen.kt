@@ -1,20 +1,15 @@
 package eu.peernetwork.app.ui.settings
 
+import androidx.compose.runtime.remember
 import android.content.res.Configuration
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -66,7 +61,10 @@ fun SettingsScreen(
     val handleOnNavigate by rememberUpdatedState(onNavigate)
     val password = stringResource(R.string.password_label)
     val preference = stringResource(R.string.preference_label)
-    Column(modifier = Modifier.fillMaxSize()
+    val aboutUsLabel = stringResource(R.string.about_us_label)
+
+    Column(modifier = Modifier
+        .fillMaxSize()
         .verticalScroll(rememberScrollState())) {
         Box(modifier = Modifier.padding(12.dp)) {
             updateHeader()
@@ -77,6 +75,9 @@ fun SettingsScreen(
         SettingsItem(label = preference) {
             handleOnNavigate(preference)
         }
+        SettingsItem(label = aboutUsLabel) {
+            handleOnNavigate("about")
+        }
     }
 }
 
@@ -85,9 +86,12 @@ fun SettingsScreen(
 fun PreviewSettingsScreen() {
     PeerTheme {
         SettingsScreen({}) {
-            Box(modifier = Modifier.fillMaxWidth()
-                .height(96.dp)
-                .background(MaterialTheme.colorScheme.tertiaryContainer))
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(96.dp)
+                    .background(MaterialTheme.colorScheme.tertiaryContainer)
+            )
         }
     }
 }

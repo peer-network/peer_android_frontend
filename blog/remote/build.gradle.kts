@@ -15,6 +15,8 @@ dependencies {
     implementation(project(":blog:domain"))
     implementation(project(":blog:data"))
 
+    implementation(libs.apache)
+
     testImplementation(libs.junit)
     testImplementation(libs.kotlin.test)
     testImplementation(libs.coroutines.test)

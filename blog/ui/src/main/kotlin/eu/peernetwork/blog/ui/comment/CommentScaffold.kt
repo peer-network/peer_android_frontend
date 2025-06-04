@@ -49,7 +49,7 @@ fun CommentScaffold(
         background = {},
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.BottomCenter,
-        visible = showSheet.value
+        visible = showSheet
     ) { overlayState ->
         Box(modifier = Modifier
             .background(MaterialTheme.colorScheme.tertiaryContainer)

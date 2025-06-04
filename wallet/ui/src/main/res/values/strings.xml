@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="wallet_title">Your account</string>
+    <string name="transfer_label">Transfer</string>
+    <string name="transfer_disclaimer">A fee of %s applies</string>
+    <string name="amount_label">Amount to send</string>
+    <string name="recipient_selection_label">Choose recipient</string>
+    <string name="checkout_label">Confirm transaction</string>
+    <string name="transaction_label">Transaction successful</string>
+    <string name="transfer_caption">peer tokens to %s</string>
+    <string name="transfer_confirmation">peer tokens sent to %s</string>
+    <string name="send_label">Send</string>
+    <string name="done_label">Finish</string>
+</resources>

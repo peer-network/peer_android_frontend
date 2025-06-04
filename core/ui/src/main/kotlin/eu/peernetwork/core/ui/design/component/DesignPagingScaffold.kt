@@ -45,7 +45,7 @@ fun<T : Any> DesignPagingScaffold(
         placeholder = placeholder,
         errorContent = {
             updatedErrorContent?.invoke(it, onRefresh)
-                ?: DesignErrorContent(
+                ?: DesignError(
                     it, onRetry = onRefresh,
                     modifier = Modifier.fillMaxSize()
                         .verticalScroll(rememberScrollState())
@@ -75,7 +75,7 @@ fun<T : Any> DesignPagingScaffold(
             placeholder = placeholder,
             errorContent = {
                 updatedErrorContent?.invoke(it, onRefresh)
-                    ?: DesignErrorContent(
+                    ?: DesignError(
                         it, onRetry = onRefresh,
                         modifier = Modifier.fillMaxSize()
                             .padding(bottom = 64.dp)

@@ -11,7 +11,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -40,6 +39,7 @@ import eu.peernetwork.blog.ui.moderation.ModerationSpec
 import eu.peernetwork.blog.ui.post.photo.formatTimeAgo
 import eu.peernetwork.core.common.model.Pageable
 import eu.peernetwork.core.ui.component.UiComponentProvider
+import eu.peernetwork.core.ui.design.component.DesignError
 import eu.peernetwork.core.ui.design.component.DesignPagingScaffold
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
 import eu.peernetwork.core.ui.extension.builder
@@ -50,7 +50,7 @@ import kotlinx.coroutines.delay
 fun VideoScreen(
     author: String,
     postLimit: Int,
-    loadState: MutableState<Boolean>,
+    lastUpdated: State<Long>,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
     onMentionClick: (String) -> Unit = {},
@@ -84,10 +84,14 @@ fun VideoScreen(
         }
     } }
     var selectedClip = remember { mutableStateOf<Int?>(null) }
+    val updatedAt = remember { mutableLongStateOf(lastUpdated.value) }
     DesignPagingScaffold<UiVideo>(
         state = derivedState,
         placeholder = { PostPageSkeleton() },
-        onRefresh = { viewModel.load(author, Pageable(0, postLimit)) }
+        onRefresh = { viewModel.load(author, Pageable(0, postLimit)) },
+        errorContent = { error, refresh ->
+            DesignError(refresh, error, component.resource())
+        }
     ) { contentState, lazyPagingItems ->
         val refreshed = remember { derivedStateOf {
             lazyPagingItems.loadState.refresh is LoadState.NotLoading
@@ -142,10 +146,10 @@ fun VideoScreen(
                 }
             }
         }
-        LaunchedEffect(loadState.value) {
-            if (loadState.value) {
+        LaunchedEffect(lastUpdated.value) {
+            if (updatedAt.longValue != lastUpdated.value) {
                 lazyPagingItems.refresh()
-                loadState.value = false
+                updatedAt.longValue = lastUpdated.value
             }
         }
         VideoDialog(author, postLimit, selectedClip, provider, viewModelStoreOwner)

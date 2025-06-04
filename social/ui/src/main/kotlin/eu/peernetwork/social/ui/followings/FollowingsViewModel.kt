@@ -2,31 +2,45 @@ package eu.peernetwork.social.ui.followings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import eu.peernetwork.core.common.model.Page
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import eu.peernetwork.core.common.model.Pageable
-import eu.peernetwork.social.domain.model.Member
-import eu.peernetwork.social.domain.usecase.FollowingsUsecase
+import eu.peernetwork.social.ui.model.UiMember
+import eu.peernetwork.social.ui.usecase.FollowingPagingUsecase
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class FollowingsViewModel @Inject constructor(
-    private val followingsUsecase: FollowingsUsecase
+    private val followingsUsecase: FollowingPagingUsecase
 ): ViewModel() {
     private val mutableState = MutableStateFlow<State>(State.Empty)
     val state: StateFlow<State> = mutableState.asStateFlow()
 
-    fun followings(userId: String, pageable: Pageable) {
+    fun followers(userId: String, pageable: Pageable) {
         viewModelScope.launch {
-            val result = followingsUsecase(FollowingsUsecase.Params(userId, pageable))
-            mutableState.value = State.Success(result)
+            mutableState.tryEmit(State.Loading)
+            followingsUsecase(
+                FollowingPagingUsecase.Parameter(userId, pageable)
+            ).catch { mutableState.tryEmit(State.Error(it)) }
+                .onStart { mutableState.tryEmit(State.Loading) }
+                .cachedIn(viewModelScope)
+                .apply {
+                    collectLatest { mutableState.tryEmit(State.Success(this)) }
+                }
         }
     }
 
     sealed interface State {
         data object Empty: State
-        data class Success(val page: Page<Member>): State
+        data object Loading: State
+        data class Success(val content: Flow<PagingData<UiMember>>): State
+        data class Error(val error: Throwable): State
     }
 }

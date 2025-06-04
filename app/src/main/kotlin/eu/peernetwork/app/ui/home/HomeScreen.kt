@@ -32,9 +32,9 @@ import eu.peernetwork.blog.ui.point.PointScreen
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffold
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
 import eu.peernetwork.app.ui.search.SearchScreen
+import eu.peernetwork.app.ui.wallet.WalletScreen
 import eu.peernetwork.core.ui.design.compose.DesignTitleBar
 import eu.peernetwork.core.ui.model.ViewModelState
-import eu.peernetwork.wallet.ui.overview.OverviewScreen
 
 @Composable
 fun HomeScreen(provider: UiComponentProvider) {
@@ -70,7 +70,7 @@ fun HomeScreen(provider: UiComponentProvider) {
         HomeScreen(
             index = data.second,
             onNavigate = { viewModel.lastVisited(it) },
-            options = { PointScreen(component, viewModelStore.get(data.first)) }
+            options = { PointScreen(component, viewModelStore.get(data.first)) },
         ) { state, route ->
             when(route) {
                 is HomeRoute.Home -> FeedScreen(
@@ -85,7 +85,7 @@ fun HomeScreen(provider: UiComponentProvider) {
                     viewModelStore,
                 )
                 is HomeRoute.Add -> ComposerScreen(component, viewModelStore.get(data.first))
-                is HomeRoute.Wallet -> OverviewScreen(component, viewModelStore.get(data.first))
+                is HomeRoute.Wallet -> WalletScreen(BuildConfig.PAGING_LIMIT, component, viewModelStore)
                 is HomeRoute.Search -> SearchScreen(
                     id = data.first,
                     BuildConfig.PAGING_LIMIT,
@@ -96,9 +96,7 @@ fun HomeScreen(provider: UiComponentProvider) {
             }
         }
     }
-    DisposableEffect(Unit) {
-        onDispose { viewModelStore.clear() }
-    }
+    DisposableEffect(Unit) { onDispose { viewModelStore.clear() } }
 }
 
 @Composable

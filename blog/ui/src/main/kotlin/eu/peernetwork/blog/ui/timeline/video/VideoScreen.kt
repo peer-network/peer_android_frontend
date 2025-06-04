@@ -33,6 +33,7 @@ import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.moderation.ModerationScreen
 import eu.peernetwork.blog.ui.moderation.ModerationSpec
 import eu.peernetwork.blog.ui.post.photo.formatTimeAgo
+import eu.peernetwork.core.ui.design.component.DesignError
 import eu.peernetwork.core.ui.design.component.DesignPagingScaffold
 import eu.peernetwork.core.ui.design.component.DesignRefreshableScaffold
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
@@ -87,7 +88,10 @@ fun VideoScreen(
     DesignPagingScaffold<UiVideo>(
         state = derivedState,
         onRefresh = { viewModel.load(Pageable(0, postLimit), criteria) },
-        placeholder = { PostPageSkeleton() }
+        placeholder = { PostPageSkeleton() },
+        errorContent = { error, refresh ->
+            DesignError(refresh, error, component.resource())
+        }
     ) { state, lazyPagingItems ->
         val refreshState = remember { derivedStateOf {
             if (lazyPagingItems.loadState.refresh is LoadState.Loading) {
@@ -186,7 +190,7 @@ fun VideoScreen(
     val selectHandler by rememberUpdatedState { onSelect(index) }
     val updatedContent by rememberUpdatedState(content)
     val updatedConnection by rememberUpdatedState(connection)
-    val engagement = remember(post) { post.mapToContent() }
+    val engagement = remember(id) { post.mapToContent() }
     MediaPostCard(
         author = post.author,
         onClick = { clickHandler(post.author.id) },

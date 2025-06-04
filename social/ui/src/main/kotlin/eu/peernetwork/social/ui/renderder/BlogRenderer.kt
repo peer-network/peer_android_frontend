@@ -1,7 +1,7 @@
 package eu.peernetwork.social.ui.renderder
 
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.lifecycle.ViewModelStoreOwner
 import eu.peernetwork.core.ui.renderer.Renderer
 
@@ -14,7 +14,7 @@ interface BlogRenderer : Renderer.Stateful<BlogRenderer.Spec> {
 
     data class Spec(
         val id: String,
-        val state: MutableState<Boolean>,
+        val lastUpdated: State<Long>,
         val limit: Int,
         val type: Type,
         val viewModelStoreOwner: ViewModelStoreOwner,

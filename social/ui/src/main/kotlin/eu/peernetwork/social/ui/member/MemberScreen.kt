@@ -1,26 +1,24 @@
 package eu.peernetwork.social.ui.member
 
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.component.DesignRefreshableScaffold
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
-import eu.peernetwork.core.ui.design.compose.DesignBottomSheet
 import eu.peernetwork.core.ui.design.compose.DesignScaffold
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.social.ui.connection.ConnectionScreen
@@ -28,8 +26,8 @@ import eu.peernetwork.social.ui.connection.ConnectionStatus
 import eu.peernetwork.social.ui.renderder.BlogRenderer
 import eu.peernetwork.social.ui.renderder.UserRenderer
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
+@OptIn(ExperimentalMaterial3Api::class)
 fun MemberScreen(
     id: String,
     limit: Int,
@@ -46,26 +44,23 @@ fun MemberScreen(
     val component = remember {
         provider.builder(Member.Builder::class.java).build(context)
     }
-    val userState = remember { mutableStateOf(false) }
-    val refreshing = remember { mutableStateOf(false) }
+    val handleImageOnClick by rememberUpdatedState(imageOnClick)
+    val lastUpdated = rememberSaveable { mutableLongStateOf(System.currentTimeMillis()) }
     var connection = remember { mutableStateOf<ConnectionStatus?>(null) }
+    val showSheet = remember { mutableStateOf(false) }
     ConnectionScreen(
         provider = component,
         viewModelStoreOwner = viewModelStoreOwner
     ) { controller ->
         val connectionState by controller.observe().collectAsStateWithLifecycle()
         MemberScreen(
-            onRefresh = {
-                refreshing.value = true
-                userState.value = true
-            },
-            connection = connection,
+            onRefresh = { lastUpdated.longValue = System.currentTimeMillis() },
             header = { scrollState ->
                 component.userRenderer()(
                     modifier = Modifier,
                     UserRenderer.Spec(
                         id,
-                        userState,
+                        lastUpdated,
                         viewModelStoreOwner,
                         onSettings,
                         {
@@ -77,22 +72,22 @@ fun MemberScreen(
                         },
                         { sheetType ->
                             connection.value = when (sheetType) {
-                                0 -> ConnectionStatus.FOLLOW
+                                0 -> ConnectionStatus.FOLLOWER
                                 1 -> ConnectionStatus.FOLLOWING
                                 2 -> ConnectionStatus.PEER
                                 else -> null
                             }
+                            showSheet.value = connection.value != null
                         }
                     )
                 )
             },
-            sheet = { MemberSheet(id, limit, it, component, viewModelStoreOwner) }
         ) {
             component.blogRenderer()(
                 modifier = Modifier,
                 BlogRenderer.Spec(
                     id,
-                    refreshing,
+                    lastUpdated,
                     limit,
                     BlogRenderer.Type.UNSPECIFIED,
                     viewModelStoreOwner,
@@ -104,6 +99,14 @@ fun MemberScreen(
                 )
             )
         }
+        MemberSheet(
+            id,
+            showSheet,
+            limit,
+            connection,
+            component,
+            viewModelStoreOwner
+        ) { handleImageOnClick(it.id) }
     }
 }
 
@@ -112,16 +115,12 @@ fun MemberScreen(
 fun MemberScreen(
     modifier: Modifier = Modifier,
     onRefresh: () -> Unit = {},
-    connection: MutableState<ConnectionStatus?>,
     header: @Composable (State<Float>) -> Unit,
-    sheet: @Composable (ConnectionStatus) -> Unit,
     content: @Composable () -> Unit
 ) {
     val state = remember { mutableStateOf(DesignStatefulScaffoldState.Success(Unit)) }
-    val showSheet = remember(connection.value) { mutableStateOf(connection.value != null) }
     val updatedHeader by rememberUpdatedState(header)
     val updatedContent by rememberUpdatedState(content)
-    val updatedSheet by rememberUpdatedState(sheet)
     DesignRefreshableScaffold<Unit>(
         state = state,
         modifier = Modifier.fillMaxSize(),
@@ -132,15 +131,6 @@ fun MemberScreen(
             header = updatedHeader,
         ) { state -> updatedContent() }
     }
-    DesignBottomSheet(
-        onDismissRequest = { connection.value = null },
-        tag = "SocialMemberConnection",
-        showSheet = showSheet,
-        sheetPeekHeight = 500.dp,
-        modifier = Modifier
-            .defaultMinSize(minHeight = 500.dp),
-        content = { connection.value?.let { updatedSheet(it) } }
-    )
 }
 
 fun Pair<Boolean, Boolean>.status(): ConnectionStatus {
@@ -149,6 +139,6 @@ fun Pair<Boolean, Boolean>.status(): ConnectionStatus {
     } else if (first) {
         ConnectionStatus.FOLLOWING
     } else {
-        ConnectionStatus.FOLLOW
+        ConnectionStatus.FOLLOWER
     }
 }

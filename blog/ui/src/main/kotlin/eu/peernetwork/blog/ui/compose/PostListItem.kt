@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -29,6 +30,7 @@ fun LazyItemScope.PostListItem(
     content: @Composable (UiPost) -> Unit
 ) {
     val updatedContent by rememberUpdatedState(content)
+    val timer = remember(state.value) { post.createdAt.formatTimeAgo(state.value) }
     Spacer(modifier = Modifier.height(
         if (position == 0 && post.type == UiPost.Type.TEXT) {
             12.dp
@@ -39,7 +41,7 @@ fun LazyItemScope.PostListItem(
     if (post.type != UiPost.Type.TEXT) {
         MediaPostCard(
             author = post.author,
-            description = post.createdAt.formatTimeAgo(state.value),
+            description = timer,
             modifier = Modifier.padding(bottom = 16.dp),
             caption = {
                 PostSummary(
@@ -59,7 +61,7 @@ fun LazyItemScope.PostListItem(
     } else {
         TextPostCard(
             author = post.author,
-            description = post.createdAt.formatTimeAgo(state.value),
+            description = timer,
             modifier = Modifier.padding(bottom = 12.dp)
                 .padding(horizontal = 8.dp),
             engagements = engagements,
