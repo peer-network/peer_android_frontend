@@ -82,7 +82,7 @@ fun<T> DesignStatefulScaffold(
             is DesignStatefulScaffoldState.Error -> {
                 val error = (state.value as DesignStatefulScaffoldState.Error)
                 updatedErrorContent?.invoke(error.error)
-                    ?: DesignErrorContent(error.error, onRetry = onRefresh)
+                    ?: DesignError(error.error, onRetry = onRefresh)
             }
         }
     }

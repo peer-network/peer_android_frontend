@@ -43,6 +43,7 @@ import eu.peernetwork.core.ui.theme.PeerTheme
 fun ExpandableOption(
     state: MutableState<Boolean>,
     style: TextStyle = MaterialTheme.typography.bodyMedium,
+    onAnimationEnd: (Boolean) -> Unit = { },
     icon: @Composable () -> Unit,
     items: @Composable ColumnScope.() -> Unit,
     content: @Composable () -> Unit,
@@ -58,10 +59,11 @@ fun ExpandableOption(
     ) {
         DesignLabel(
             visible = state.value,
+            onAnimationEnd = onAnimationEnd,
             label = {
-                Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-                    updatedItems()
-                }
+                Column(
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                ) { updatedItems() }
             }
         ) {
             DesignDetailLayout(

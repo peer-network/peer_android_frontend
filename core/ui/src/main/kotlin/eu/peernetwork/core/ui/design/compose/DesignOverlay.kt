@@ -1,5 +1,6 @@
 package eu.peernetwork.core.ui.design.compose
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.AnimationConstants.DefaultDurationMillis
 import androidx.compose.animation.core.Easing
 import androidx.compose.animation.core.FastOutSlowInEasing
@@ -17,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
@@ -126,18 +128,20 @@ fun DesignOverlay(modifier: Modifier = Modifier, content: @Composable () -> Unit
 @Composable
 fun DesignOverlayHost(
     tag: String,
-    visible: Boolean = false,
+    visible: MutableState<Boolean>,
+    handleBackPress: Boolean = true,
+    onAnimationComplete: (Boolean) -> Unit = {},
     durationMillis: Int = DefaultDurationMillis,
     builder: DesignOverlayBuilder.(State<Boolean>) -> Unit,
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
     val controller = rememberDesignOverlayController()
-    val isVisible = remember { mutableStateOf(visible) }
+    val isVisible = remember { mutableStateOf(visible.value) }
     val overlayRegistry = LocalDesignOverlayRegistry.current
     val overlayBuilder = remember(tag) {
         object : DesignOverlayBuilder {
             override fun overlay(zIndex: Float, content: @Composable () -> Unit) {
-                overlayRegistry.attach(tag, zIndex, visible, content)
+                overlayRegistry.attach(tag, zIndex, visible.value, content)
             }
         }
     }
@@ -146,11 +150,12 @@ fun DesignOverlayHost(
         LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_START) {
                 updatedBuilder(overlayBuilder, isVisible)
-            } else if (event == Lifecycle.Event.ON_STOP) {
+            } else if (event == Lifecycle.Event.ON_STOP && !isVisible.value) {
                 overlayRegistry.detach(tag)
             }
         }
     }
+    val handleOnAnimationComplete by rememberUpdatedState(onAnimationComplete)
     LaunchedEffect(Unit) {
         lifecycleOwner.lifecycle.addObserver(observer)
     }
@@ -159,20 +164,24 @@ fun DesignOverlayHost(
             lifecycleOwner.lifecycle.removeObserver(observer)
         }
     }
-    LaunchedEffect(visible) {
-        snapshotFlow { visible }
+    LaunchedEffect(visible.value) {
+        snapshotFlow { visible.value }
             .collectLatest { value ->
                 if (value) {
                     controller.show(tag)
                     delay(50)
-                    isVisible.value = visible
+                    isVisible.value = true
+                    delay(durationMillis.toLong())
+                    handleOnAnimationComplete(isVisible.value)
                 } else {
-                    isVisible.value = visible
+                    isVisible.value = false
                     delay(durationMillis.toLong())
                     controller.dismiss(tag)
+                    handleOnAnimationComplete(isVisible.value)
                 }
             }
     }
+    BackHandler(enabled = visible.value && handleBackPress) { visible.value = false }
 }
 
 @Composable
@@ -237,9 +246,10 @@ fun PreviewDesignOverlay() {
                 }) { Text("toggle overlay") }
                 DesignOverlayBackground(
                     state = state,
-                    modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)
+                    modifier = Modifier.fillMaxSize()
+                        .background(MaterialTheme.colorScheme.background)
                 )
-                DesignOverlayHost(tag, false) {
+                DesignOverlayHost(tag, remember { mutableStateOf(false) }) {
                     overlay {
                         Text("Hello, world!",
                             color = MaterialTheme.colorScheme.error,

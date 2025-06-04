@@ -1,16 +1,18 @@
 package eu.peernetwork.wallet.ui.overview
 
-import androidx.compose.foundation.layout.padding
+import android.content.res.Configuration
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -18,10 +20,14 @@ import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffold
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
 import eu.peernetwork.core.ui.extension.builder
+import eu.peernetwork.core.ui.theme.PeerAppGreen
+import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.wallet.ui.model.UiWallet
+import java.math.BigDecimal
 
 @Composable
 fun OverviewScreen(
+    lastUpdated: State<Long>,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
 ) {
@@ -51,38 +57,59 @@ fun OverviewScreen(
             }
         }
     }
+    val updatedAt = remember { mutableLongStateOf(lastUpdated.value) }
     DesignStatefulScaffold<UiWallet>(
         state = derivedState,
         onRefresh = { viewModel.getBalance() },
         placeholder = { OverviewScaffold() }
     ) { OverviewScreen(it) }
+    LaunchedEffect(lastUpdated.value) {
+        if (updatedAt.longValue != lastUpdated.value) {
+            viewModel.getBalance()
+            updatedAt.longValue = lastUpdated.value
+        }
+    }
 }
 
 @Composable
 fun OverviewScreen(wallet: UiWallet) {
     OverviewScaffold(
-        title = {
+        rate = {
             Text(
-                text = "${wallet.balance}",
+                text = wallet.rate.toString(),
+                color = PeerAppGreen,
+                textAlign = TextAlign.Center,
+            )
+        },
+        token = {
+            Text(
+                text = wallet.balance.toString(),
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onBackground,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.padding(bottom = 8.dp)
             )
         }
     ) {
         Text(
-            text = "Each token is ${wallet.rate}${wallet.currency}",
+            text = "~ ${wallet.converted}${wallet.currency}",
             style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.tertiary,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.padding(bottom = 4.dp)
-        )
-        Text(
-            text = "Now you own ${wallet.converted}${wallet.currency}",
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.tertiary,
+            color = MaterialTheme.colorScheme.onBackground,
             textAlign = TextAlign.Center
+        )
+    }
+}
+
+@Composable
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
+fun PreviewOverviewScreen() {
+    PeerTheme {
+        OverviewScreen(
+            UiWallet(
+                balance = BigDecimal(1000),
+                rate = 0.1f,
+                converted = BigDecimal(10),
+                currency = "$"
+            )
         )
     }
 }

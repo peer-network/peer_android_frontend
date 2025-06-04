@@ -4,13 +4,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import android.content.res.Configuration
 import android.widget.Toast
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.input.TextFieldState
-import androidx.compose.material3.AlertDialog
-//import androidx.compose.material3.Button
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,8 +18,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -68,7 +62,6 @@ fun RegistrationScreen(
             component.resource().string(it)
         }
     } }
-
     RegistrationScreen(
         referral = referral,
         loading = loading,
@@ -77,7 +70,6 @@ fun RegistrationScreen(
     ) { email, username, password, referral ->
         viewModel.register(username, email, password, referral)
     }
-
     LaunchedEffect(state) {
         if (state is RegistrationViewModel.State.Success) {
             Toast.makeText(context, successMessage, Toast.LENGTH_SHORT).show()
@@ -104,7 +96,6 @@ fun RegistrationScreen(
         mutableStateOf(referral?.let { TextFieldState(it) } ?: TextFieldState())
     }
     var password = remember { TextFieldState() }
-
     val validate by remember(email, username, password) {
         derivedStateOf {
             email.isValidEmail() &&
@@ -112,13 +103,10 @@ fun RegistrationScreen(
                     password.passwordStrength().value >= DesignPasswordStrength.STRONG.value
         }
     }
-
     val handleReset by rememberUpdatedState(onReset)
     val handleSubmit by rememberUpdatedState(onSubmit)
-
-    // State to control showing age confirmation dialog
+    var isChecked = remember { mutableStateOf(false) }
     val showAgeConfirmDialog = remember { mutableStateOf(false) }
-
     Column(modifier = Modifier.fillMaxWidth()) {
         RegistrationForm(
             email = email,
@@ -128,14 +116,10 @@ fun RegistrationScreen(
             error = error.value,
             enabled = !loading.value,
         )
-
         DesignButton(
             enabled = !loading.value && validate,
             isLoading = loading.value,
-            onClick = {
-                // Show age confirmation popup on register button click?
-                showAgeConfirmDialog.value = true
-            },
+            onClick = { showAgeConfirmDialog.value = true },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 16.dp, bottom = 24.dp)
@@ -149,49 +133,15 @@ fun RegistrationScreen(
             )
         }
     }
-
-    // Age confirmation popup dialog appears
-    if (showAgeConfirmDialog.value) {
-        var isChecked by remember { mutableStateOf(false) }
-        AlertDialog(
-            onDismissRequest = { /* Prevent dismiss by clicking outside or back button */ },
-            title = { Text(text = stringResource(id = R.string.age_confirmation_title)) },
-            text = {
-                Column {
-                    Text(text = stringResource(id = R.string.age_confirmation_message))
-
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.padding(top = 8.dp)
-                    ) {
-                        Checkbox(
-                            checked = isChecked,
-                            onCheckedChange = { isChecked = it }
-                        )
-                        Text(text = stringResource(id = R.string.age_confirmation_checkbox))
-                    }
-                }
-            },
-            confirmButton = {
-                DesignButton(
-                    enabled = isChecked,
-                    onClick = {
-                        showAgeConfirmDialog.value = false
-                        // Proceed with registration after age confirmation
-                        handleSubmit(
-                            email.text.toString(),
-                            username.text.toString(),
-                            password.text.toString(),
-                            referralCode.text.toString()
-                        )
-                    }
-                ) {
-                    Text(text = stringResource(id = R.string.age_confirmation_continue))
-                }
-            }
+    RegistrationDialog(showAgeConfirmDialog, isChecked) {
+        showAgeConfirmDialog.value = false
+        handleSubmit(
+            email.text.toString(),
+            username.text.toString(),
+            password.text.toString(),
+            referralCode.text.toString()
         )
     }
-
     DisposableEffect(email) { onDispose { handleReset?.invoke() } }
 }
 

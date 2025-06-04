@@ -11,6 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -56,6 +57,7 @@ fun SearchScreen(
             if (mode == SearchMode.USERNAME) {
                 MemberScreen(query, postLimit, {
                     controller.navigateIfNecessary("profile/${it.id}")
+                    false
                 }, component, viewModelStore.get(id))
             } else if (mode == SearchMode.TAG) {
                 TagScreen(query, postLimit, {
@@ -63,7 +65,10 @@ fun SearchScreen(
                 }, component, viewModelStore.get(id))
             } else if (mode == SearchMode.TITLE) {
                 TitleScreen(query, postLimit, {
-                    controller.navigateIfNecessary("search/${it.title}")
+                    controller.navigateIfNecessary("search/${it.title
+                        .replace(Regex("""\b\w+://"""), "")
+                        .replace(Regex("""#(\w+)"""), "")
+                        .trim()}")
                 }, component, viewModelStore.get(id))
             } else {
                 Box(modifier = Modifier.fillMaxSize()
@@ -86,8 +91,10 @@ fun SearchScreen(
     state: SearchState? = null,
     content: @Composable (SearchMode?, TextFieldState) -> Unit
 ) {
-    val query = remember(state) { TextFieldState((state as? SearchState.Active)?.value ?: "") }
-    val mode = remember(state) {
+    val query = rememberSaveable(stateSaver = TextFieldState.Saver) {
+        mutableStateOf(TextFieldState((state as? SearchState.Active)?.value ?: ""))
+    }
+    val mode = rememberSaveable(state) {
         mutableStateOf(
             when (state) {
                 is SearchState.Active.Username -> SearchMode.USERNAME
@@ -98,12 +105,12 @@ fun SearchScreen(
     }
     Column(modifier = modifier.fillMaxSize()) {
         SearchHeader(
-            query,
+            query.value,
             mode,
             modifier = Modifier.padding(horizontal = 24.dp)
                 .padding(top = 8.dp)
         )
-        content(mode.value, query)
+        content(mode.value, query.value)
     }
 }
 

@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
@@ -22,11 +23,13 @@ import androidx.compose.ui.Modifier
 fun  DesignDialog(
     tag: String,
     modifier: Modifier = Modifier,
-    visible: Boolean = false,
+    visible: MutableState<Boolean>,
+    handleBackPress: Boolean = true,
     durationMillis: Int = DefaultDurationMillis,
     enter: EnterTransition = fadeIn(animationSpec = tween(durationMillis = durationMillis)),
     exit: ExitTransition = fadeOut(animationSpec = tween(durationMillis = durationMillis)),
     contentAlignment: Alignment = Alignment.TopStart,
+    onAnimationComplete: (Boolean) -> Unit = {},
     background: (@Composable () -> Unit)? = null,
     builder: @Composable (State<Boolean>) -> Unit,
 ) {
@@ -35,6 +38,8 @@ fun  DesignDialog(
     DesignOverlayHost(
         tag = tag,
         visible = visible,
+        handleBackPress = handleBackPress,
+        onAnimationComplete = onAnimationComplete,
         durationMillis = durationMillis
     ) { dialogState ->
         overlay {

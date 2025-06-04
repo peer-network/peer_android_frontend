@@ -6,14 +6,17 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
@@ -66,34 +69,31 @@ fun TransferForm(
     Column {
         DesignDetailLayout(
             lead = {
-                Box(modifier = Modifier
-                    .clip(CircleShape)
-                    .wrapContentSize()
-                    .clipToBounds()
-                ) {
-                    DesignAvatar {
-                        DesignAsyncImage(
-                            label = recipient.username,
-                            imageUrl = recipient.imageUrl,
-                            size = 36.dp,
-                            style = MaterialTheme.typography.bodySmall.copy(
-                                color = MaterialTheme.colorScheme.tertiary,
-                            ),
-                            color = MaterialTheme.colorScheme.background,
-                            modifier = Modifier.clickable(role = Role.Button) {
+                DesignAvatar {
+                    DesignAsyncImage(
+                        label = recipient.username,
+                        imageUrl = recipient.imageUrl,
+                        size = 36.dp,
+                        style = MaterialTheme.typography.bodySmall.copy(
+                            color = MaterialTheme.colorScheme.tertiary,
+                        ),
+                        color = MaterialTheme.colorScheme.background,
+                        modifier = Modifier.clip(CircleShape)
+                            .wrapContentSize()
+                            .clipToBounds()
+                            .clickable(role = Role.Button) {
                                 handleOnClick(recipient)
                             }
-                        )
-                    }
+                    )
                 } },
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(bottom = 8.dp)
+            modifier = Modifier.padding(bottom = 12.dp)
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
                     recipient.username,
                     modifier = Modifier.padding(start = 12.dp),
-                    style = MaterialTheme.typography.bodySmall.copy(
+                    style = MaterialTheme.typography.bodyMedium.copy(
                         color = MaterialTheme.colorScheme.onBackground,
                     ),
                 )
@@ -109,7 +109,7 @@ fun TransferForm(
             }
         }
         Row {
-            Column(modifier = Modifier.padding(start = 48.dp)) {
+            Column {
                 DesignLabel(
                     visible = error != null,
                     label = {
@@ -126,39 +126,46 @@ fun TransferForm(
                         }
                     }
                 ) {
-                    DesignTextField(
-                        state = state,
-                        enabled = !isLoading,
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Decimal,
-                            imeAction = ImeAction.Done
-                        ),
-                        trailing = {
+                    Box(contentAlignment = Alignment.CenterEnd) {
+                        DesignTextField(
+                            state = state,
+                            enabled = !isLoading,
+                            keyboardOptions = KeyboardOptions(
+                                keyboardType = KeyboardType.Decimal,
+                                imeAction = ImeAction.Send
+                            ),
+                            onKeyboardAction = KeyboardActions(
+                                onSend = { handleSubmission() }
+                            ),
+                            colors = TextFieldDefaults.colors(
+                                unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                                focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                                focusedTextColor = MaterialTheme.colorScheme.onBackground,
+                                unfocusedTextColor = MaterialTheme.colorScheme.tertiary,
+                                focusedPlaceholderColor = MaterialTheme.colorScheme.surfaceDim,
+                                unfocusedPlaceholderColor = MaterialTheme.colorScheme.surfaceTint,
+                            ),
+                        ) { Text(stringResource(R.string.amount_label)) }
+                        IconButton(
+                            { handleSubmission() },
+                            modifier = Modifier.padding(end = 8.dp)
+                                .size(32.dp)
+                                .graphicsLayer { alpha = isValidated.value.toFloat() }
+                        ) {
                             Icon(
                                 painter = painterResource(eu.peernetwork.core.ui.R.drawable.ic_share),
                                 contentDescription = stringResource(R.string.transfer_label),
-                                modifier = Modifier.size(12.dp)
-                                    .clickable(role = Role.Button) {
-                                        handleSubmission() }
-                                    .graphicsLayer { alpha = isValidated.value.toFloat() },
+                                modifier = Modifier.fillMaxSize().padding(8.dp),
                                 tint = MaterialTheme.colorScheme.surfaceDim
                             )
-                        },
-                        colors = TextFieldDefaults.colors(
-                            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLow,
-                            focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLow,
-                            focusedTextColor = MaterialTheme.colorScheme.onBackground,
-                            unfocusedTextColor = MaterialTheme.colorScheme.tertiary,
-                            focusedPlaceholderColor = MaterialTheme.colorScheme.surfaceDim,
-                            unfocusedPlaceholderColor = MaterialTheme.colorScheme.surfaceTint,
-                        ),
-                    ) { Text(stringResource(R.string.amount_label)) }
+                        }
+                    }
                 }
                 Text(
                     stringResource(R.string.transfer_disclaimer, "4%"),
                     modifier = Modifier.padding(top = 12.dp)
                         .padding(horizontal = 16.dp),
-                    style = MaterialTheme.typography.labelSmall.copy(
+                    style = MaterialTheme.typography.bodySmall.copy(
                         color = MaterialTheme.colorScheme.tertiary,
                     ),
                 )

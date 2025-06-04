@@ -3,8 +3,6 @@ package eu.peernetwork.app.ui.home
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -15,7 +13,6 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
@@ -38,7 +35,6 @@ import eu.peernetwork.app.ui.search.SearchScreen
 import eu.peernetwork.app.ui.wallet.WalletScreen
 import eu.peernetwork.core.ui.design.compose.DesignTitleBar
 import eu.peernetwork.core.ui.model.ViewModelState
-import eu.peernetwork.messaging.ui.chat.ChatScreen
 
 @Composable
 fun HomeScreen(provider: UiComponentProvider) {
@@ -75,7 +71,6 @@ fun HomeScreen(provider: UiComponentProvider) {
             index = data.second,
             onNavigate = { viewModel.lastVisited(it) },
             options = { PointScreen(component, viewModelStore.get(data.first)) },
-            messaging = { ChatScreen(it, component, viewModelStore.get(data.first)) }
         ) { state, route ->
             when(route) {
                 is HomeRoute.Home -> FeedScreen(
@@ -109,14 +104,11 @@ fun HomeScreen(
     index: Int,
     onNavigate: (Int) -> Unit,
     options: @Composable () -> Unit,
-    messaging: @Composable (Boolean) -> Unit,
     content: @Composable (State<Float>, HomeRoute) -> Unit
 ) {
     val controller = rememberNavController()
     val navigationState = rememberSaveable { mutableIntStateOf(index) }
     val updatedContent by rememberUpdatedState(content)
-    val updatedMessaging by rememberUpdatedState(messaging)
-    val contentState = rememberPagerState(pageCount = { 2 }, initialPage = 0)
     DesignTitleBar {
         HomeScaffold(
             header = { HomeHeader(options = options, modifier = Modifier.padding(top = 8.dp)) },
@@ -126,22 +118,12 @@ fun HomeScreen(
                     onClick = { titleBar().value?.listener?.invoke() }
                 ) }
         ) { state ->
-            HorizontalPager(
-                state = contentState,
-                verticalAlignment = Alignment.Top,
-            ) { page ->
-                when (page) {
-                    0 -> {
-                        HomeNavigation(
-                            state = navigationState,
-                            onNavigate = onNavigate,
-                            navController = controller,
-                            content = { updatedContent(state, it) }
-                        )
-                    }
-                    1 -> { updatedMessaging(contentState.currentPage == page) }
-                }
-            }
+            HomeNavigation(
+                state = navigationState,
+                onNavigate = onNavigate,
+                navController = controller,
+                content = { updatedContent(state, it) }
+            )
         }
     }
 }
@@ -153,8 +135,7 @@ fun PreviewHomeScreen() {
         HomeScreen(
             index = 0,
             onNavigate = {},
-            options = {},
-            messaging = {}
+            options = {}
         ) { state, route ->
             Text(
                 text = "",

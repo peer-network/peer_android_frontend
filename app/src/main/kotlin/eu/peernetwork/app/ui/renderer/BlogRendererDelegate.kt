@@ -31,7 +31,7 @@ class BlogRendererDelegate(val provider: UiComponentProvider) : BlogRenderer {
             BlogRenderer.Type.PHOTO -> PhotoScreen(
                 spec.id,
                 BuildConfig.PAGING_LIMIT,
-                spec.state,
+                spec.lastUpdated,
                 provider,
                 spec.viewModelStoreOwner,
                 spec.onMentionClick,
@@ -42,7 +42,7 @@ class BlogRendererDelegate(val provider: UiComponentProvider) : BlogRenderer {
             BlogRenderer.Type.VIDEO -> VideoScreen(
                 spec.id,
                 BuildConfig.PAGING_LIMIT,
-                spec.state,
+                spec.lastUpdated,
                 provider,
                 spec.viewModelStoreOwner,
                 spec.onMentionClick,
@@ -55,7 +55,7 @@ class BlogRendererDelegate(val provider: UiComponentProvider) : BlogRenderer {
                     0 -> PhotoScreen(
                         spec.id,
                         BuildConfig.PAGING_LIMIT,
-                        spec.state,
+                        spec.lastUpdated,
                         provider,
                         spec.viewModelStoreOwner,
                         spec.onMentionClick,
@@ -66,7 +66,7 @@ class BlogRendererDelegate(val provider: UiComponentProvider) : BlogRenderer {
                     1 -> VideoScreen(
                         spec.id,
                         BuildConfig.PAGING_LIMIT,
-                        spec.state,
+                        spec.lastUpdated,
                         provider,
                         spec.viewModelStoreOwner,
                         spec.onMentionClick,

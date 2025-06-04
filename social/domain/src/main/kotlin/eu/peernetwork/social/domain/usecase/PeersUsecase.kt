@@ -9,12 +9,8 @@ import javax.inject.Inject
 
 class PeersUsecase @Inject constructor(
     private val repository: FollowRepository
-) : ParameterizedSuspendableUseCase<PeersUsecase.Params, Page<Member>> {
-    override suspend fun invoke(param: Params): Page<Member> {
-        return repository.friends(param.pageable)
+) : ParameterizedSuspendableUseCase<Pageable, Page<Member>> {
+    override suspend fun invoke(param: Pageable): Page<Member> {
+        return repository.friends(param)
     }
-
-    data class Params(
-        val pageable: Pageable
-    )
 }

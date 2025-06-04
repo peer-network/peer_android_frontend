@@ -1,10 +1,14 @@
 package eu.peernetwork.social.ui.search.member
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.clearText
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -22,12 +26,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import eu.peernetwork.core.common.model.Pageable
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.component.DesignError
+import eu.peernetwork.core.ui.design.component.DesignErrorLabel
 import eu.peernetwork.core.ui.design.component.DesignPagingScaffold
-import eu.peernetwork.core.ui.design.component.DesignStatefulContentPlaceholder
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
 import eu.peernetwork.core.ui.extension.builder
-import eu.peernetwork.social.ui.compose.MemberItem
+import eu.peernetwork.social.ui.compose.SearchItemSkeleton
 import eu.peernetwork.social.ui.model.UiMember
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.collectLatest
@@ -38,7 +41,7 @@ import kotlinx.coroutines.flow.debounce
 fun MemberScreen(
     query: TextFieldState,
     postLimit: Int,
-    onClick: (UiMember) -> Unit,
+    onClick: (UiMember) -> Boolean,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
 ) {
@@ -51,6 +54,7 @@ fun MemberScreen(
         viewModelStoreOwner = viewModelStoreOwner,
         factory = component.viewModelFactory()
     )
+    val page = remember(postLimit) { Pageable(0, postLimit) }
     val handleClick by rememberUpdatedState(onClick)
     val state by viewModel.state.collectAsStateWithLifecycle()
     val derivedState = remember {
@@ -69,25 +73,31 @@ fun MemberScreen(
             }
         }
     }
-
+    val lastSearch = remember {
+        derivedStateOf {
+            (state as? MemberViewModel.State.Success?)?.username
+        }
+    }
     DesignPagingScaffold<UiMember>(
         state = derivedState,
         onRefresh = {
             if (query.text.length >= 3) {
-                viewModel.search(query.text.toString(), Pageable(0, postLimit))
+                viewModel.search(query.text.toString(), page)
             }
         },
         modifier = Modifier.fillMaxSize()
             .padding(horizontal = 24.dp),
-        placeholder = { DesignStatefulContentPlaceholder(
-            modifier = Modifier.fillMaxSize()
-                .verticalScroll(rememberScrollState())
-        ) },
+        placeholder = { SearchItemSkeleton() },
         errorContent = { error, refresh ->
-            DesignError(refresh, error, component.resource())
+            Column(modifier = Modifier.fillMaxSize()
+                .verticalScroll(rememberScrollState())) {
+                Spacer(modifier = Modifier.height(4.dp))
+                DesignErrorLabel(refresh, error, component.resource())
+            }
         }
     ) { state, lazyPagingItems ->
         LazyColumn(modifier = Modifier.fillMaxSize()) {
+            item(key = "MemberListHeader") { Spacer(modifier = Modifier.height(8.dp)) }
             items(
                 count = lazyPagingItems.itemCount,
                 key = { index -> index }
@@ -96,7 +106,11 @@ fun MemberScreen(
                     if (member.imageUrl.isNotBlank()) {
                         MemberItem(
                             model = member,
-                            onClick = { handleClick(member) }
+                            onClick = {
+                                if (handleClick(member)) {
+                                    query.clearText()
+                                }
+                            }
                         )
                     }
                 }
@@ -107,16 +121,18 @@ fun MemberScreen(
         snapshotFlow { query.text.toString() }
             .debounce(300)
             .collectLatest { text ->
-                if (text.length >= 3) {
-                    viewModel.search(text, Pageable(0, postLimit))
-                } else {
+                if (text.length >= 3 && lastSearch.value != text) {
+                    viewModel.search(text, page)
+                } else if (lastSearch.value != text) {
                     viewModel.reset()
                 }
             }
     }
     DisposableEffect(query.text) {
         onDispose {
-            viewModel.reset()
+            if (query.text.length < 3) {
+                viewModel.reset()
+            }
         }
     }
 }

@@ -14,6 +14,10 @@ class ResourceServiceDelegate @Inject constructor(
 ) : ResourceService, BootstrapService {
     private var mapper: Map<String, ResponseCode.Message> = mapOf<String, ResponseCode.Message>()
 
+    override fun isReady(): Boolean {
+        return mapper.isNotEmpty()
+    }
+
     override suspend fun initialize() {
         val response = resourceRepository.string("/assets/response-codes.json")
         val model = gson.fromJson(response, ResponseCode::class.java)

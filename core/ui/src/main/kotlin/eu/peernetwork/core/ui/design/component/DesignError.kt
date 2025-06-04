@@ -32,10 +32,11 @@ import androidx.compose.ui.unit.dp
 import eu.peernetwork.core.common.service.ResourceService
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.design.compose.DesignOutlinedButton
+import eu.peernetwork.core.ui.exception.NoContentException
 import eu.peernetwork.core.ui.theme.PeerTheme
 
 @Composable
-fun DesignErrorContent(
+fun DesignError(
     error: Throwable,
     modifier: Modifier = Modifier,
     onRetry: () -> Unit,
@@ -47,12 +48,17 @@ fun DesignErrorContent(
 ) {
     val updatedLabel by rememberUpdatedState(label)
     val updatedContent by rememberUpdatedState(content)
+    val noContentMessage = stringResource(R.string.empty_message)
     Column(
         modifier = modifier.padding(contentPaddingValues),
         verticalArrangement = verticalArrangement,
         horizontalAlignment = horizontalAlignment
     ) {
-        updatedContent?.invoke(error) ?: DesignError(error)
+        updatedContent?.invoke(if (error is NoContentException) {
+            Throwable(noContentMessage, error)
+        } else { error }) ?: DesignError(if (error is NoContentException) {
+            Throwable(noContentMessage, error)
+        } else { error })
         DesignOutlinedButton(
             onClick = onRetry,
             modifier = Modifier.padding(top = 16.dp),
@@ -108,8 +114,14 @@ fun DesignError(
     resource: ResourceService
 ) {
     val errorMessage = stringResource(R.string.unknown_error_message)
-    DesignErrorContent(
-        Throwable(resource.string(error.message ?: errorMessage), error), onRetry = onRefresh,
+    val noContentMessage = stringResource(R.string.empty_message)
+    DesignError(
+        if (error is NoContentException) {
+            Throwable(noContentMessage, error)
+        } else {
+            Throwable(resource.string(error.message ?: errorMessage), error)
+        },
+        onRetry = onRefresh,
         modifier = Modifier.fillMaxSize()
             .verticalScroll(rememberScrollState())
     )
@@ -120,15 +132,23 @@ fun DesignError(
 fun PreviewDesignError() {
     PeerTheme {
         Column {
-            DesignErrorContent(
+            DesignError(
                 error = RuntimeException(),
                 modifier = Modifier.fillMaxWidth().weight(1f),
                 onRetry = {  }
             )
             Spacer(modifier = Modifier.fillMaxWidth().height(1.dp)
                 .background(MaterialTheme.colorScheme.onBackground))
-            DesignErrorContent(
+            DesignError(
                 error = RuntimeException(),
+                modifier = Modifier.fillMaxWidth().weight(1f),
+                label = { Text("Hello, world!") },
+                onRetry = {  }
+            )
+            Spacer(modifier = Modifier.fillMaxWidth().height(1.dp)
+                .background(MaterialTheme.colorScheme.onBackground))
+            DesignError(
+                error = NoContentException(),
                 modifier = Modifier.fillMaxWidth().weight(1f),
                 label = { Text("Hello, world!") },
                 onRetry = {  }

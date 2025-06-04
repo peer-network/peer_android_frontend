@@ -11,9 +11,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -30,6 +32,7 @@ import eu.peernetwork.core.ui.model.ViewModelState
 import eu.peernetwork.social.ui.search.member.MemberDialog
 import eu.peernetwork.wallet.ui.model.UiRecipient
 import eu.peernetwork.wallet.ui.overview.OverviewScreen
+import eu.peernetwork.wallet.ui.saver.UiRecipientSaver
 import eu.peernetwork.wallet.ui.transfer.TransferScreen
 
 @Composable
@@ -43,21 +46,22 @@ fun WalletScreen(
         provider.builder(Wallet.Builder::class.java).build(context)
     }
     val viewModelStoreOwner = remember { viewModelState.get("WalletScreen") }
-    val recipient = remember { mutableStateOf<UiRecipient?>(null) }
-    val showSheet = remember { mutableStateOf(false) }
+    val recipient = rememberSaveable(saver = UiRecipientSaver) {
+        mutableStateOf<UiRecipient?>(null)
+    }
+    val showSheet = rememberSaveable { mutableStateOf(false) }
+    val lastUpdated = remember { mutableLongStateOf(System.currentTimeMillis()) }
     WalletNavigation(
         provider = component,
         viewModelStore = viewModelState
     ) { controller ->
         WalletScreen(
-            onRefresh = { },
-            header = { OverviewScreen(component, viewModelStoreOwner) }
+            onRefresh = { lastUpdated.longValue = System.currentTimeMillis() },
+            header = { OverviewScreen(lastUpdated, component, viewModelStoreOwner) }
         ) {
             TransferScreen(recipient, component, viewModelStoreOwner, {
                 controller.navigateIfNecessary("profile/${it.id}")
-            }) {
-                showSheet.value = true
-            }
+            }) { showSheet.value = true }
         }
         DesignTitleBarHost("WalletScreen") {
             titleBar {
@@ -74,6 +78,7 @@ fun WalletScreen(
                 imageUrl = it.imageUrl
             )
             showSheet.value = false
+            true
         }
     }
 }

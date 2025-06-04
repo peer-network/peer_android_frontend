@@ -5,12 +5,13 @@ import eu.peernetwork.blog.domain.model.Content
 import eu.peernetwork.blog.domain.model.Media
 import eu.peernetwork.blog.remote.content.CreatePostMutation
 import eu.peernetwork.blog.remote.content.GetallpostsQuery
+import org.apache.commons.lang3.StringEscapeUtils
 
 fun CreatePostMutation.AffectedRows.mapToDomain(url: String, media: List<Media>): Content {
     return Content(
         id = id,
-        title = title,
-        description = mediadescription,
+        title = StringEscapeUtils.unescapeJava(title).replace("\\'", "'"),
+        description = StringEscapeUtils.unescapeJava(mediadescription).replace("\\'", "'"),
         media = media,
         author = Author(
             id = user.id,
@@ -33,8 +34,8 @@ fun CreatePostMutation.AffectedRows.mapToDomain(url: String, media: List<Media>)
 fun GetallpostsQuery.AffectedRow.mapToDomain(url: String, media: List<Media>): Content {
     return Content(
         id = id,
-        title = title,
-        description = mediadescription,
+        title = StringEscapeUtils.unescapeJava(title).replace("\\'", "'"),
+        description = StringEscapeUtils.unescapeJava(mediadescription).replace("\\'", "'"),
         media = media,
         author = Author(
             id = user.id,

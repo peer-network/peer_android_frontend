@@ -22,8 +22,8 @@ class TransferApiDelegate @Inject constructor(
         val data = response.getOrThrow().resolveTransfer
         response.assertOrThrow(data.status, data.ResponseCode)
         return Transfer(
-            recepient = recipient,
-            numberoftokens = tokens.toInt()
+            recipient = recipient,
+            token = tokens
         )
     }
 }

@@ -1,5 +1,8 @@
 package eu.peernetwork.wallet.ui.model
 
+import androidx.compose.runtime.Immutable
+
+@Immutable
 data class UiRecipient(
     val id: String,
     val slug: String,

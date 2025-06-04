@@ -9,9 +9,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
@@ -39,7 +40,7 @@ import eu.peernetwork.user.ui.compose.ProfileScaffold
 @Composable
 fun UserScreen(
     id: String,
-    loadState: MutableState<Boolean>,
+    lastUpdated: State<Long>,
     modifier: Modifier = Modifier,
     provider: UiComponentProvider,
     onFollow: @Composable (Pair<Boolean, Boolean>) -> Unit,
@@ -75,6 +76,7 @@ fun UserScreen(
             }
         }
     } }
+    val updatedAt = remember { mutableLongStateOf(lastUpdated.value) }
     DesignStatefulScaffold<Pair<UiAccount, Boolean>>(
         state = derivedState,
         onRefresh = { viewModel.getAccount(id) },
@@ -93,10 +95,10 @@ fun UserScreen(
             onClick = onClick,
         )
     }
-    LaunchedEffect(loadState.value) {
-        if (loadState.value) {
+    LaunchedEffect(lastUpdated.value) {
+        if (updatedAt.longValue != lastUpdated.value) {
             viewModel.getAccount(id)
-            loadState.value = false
+            updatedAt.longValue = lastUpdated.value
         }
     }
     LaunchedEffect(Unit) { viewModel.initialize() }

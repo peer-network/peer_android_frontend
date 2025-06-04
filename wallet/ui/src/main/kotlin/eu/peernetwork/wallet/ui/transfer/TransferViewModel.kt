@@ -19,7 +19,7 @@ class TransferViewModel @Inject constructor(
 
     val state: StateFlow<State> = mutableState.asStateFlow()
 
-    fun transferToken(recipient: String, tokens: BigDecimal) {
+    fun transfer(recipient: String, tokens: BigDecimal) {
         viewModelScope.launch {
             mutableState.tryEmit(State.Loading)
             try {
@@ -28,6 +28,12 @@ class TransferViewModel @Inject constructor(
             } catch (error: Throwable) {
                 mutableState.tryEmit(State.Error(error))
             }
+        }
+    }
+
+    fun reset() {
+        viewModelScope.launch {
+            mutableState.tryEmit(State.Empty)
         }
     }
 

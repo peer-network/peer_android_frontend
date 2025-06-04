@@ -21,6 +21,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
@@ -40,11 +41,13 @@ fun DesignLabel(
     modifier: Modifier = Modifier,
     textStyle: TextStyle = MaterialTheme.typography.bodySmall,
     visible: Boolean = true,
+    onAnimationEnd: (Boolean) -> Unit = { },
     label: @Composable (() -> Unit)? = null,
     content: @Composable (BoxScope.() -> Unit),
 ) {
     val updatedLabel by rememberUpdatedState(label)
     val updatedContent by rememberUpdatedState(content)
+    val handleOnAnimationEnd by rememberUpdatedState(onAnimationEnd)
     ConstraintLayout(modifier = modifier) {
         val (contentTag, labelTag) = createRefs()
         Box(modifier = Modifier.constrainAs(contentTag) {
@@ -65,6 +68,11 @@ fun DesignLabel(
         }) {
             updatedLabel?.run {
                 CompositionLocalProvider(LocalTextStyle provides textStyle) { this() }
+            }
+            LaunchedEffect(transition.currentState, transition.targetState) {
+                if (transition.currentState != transition.targetState) {
+                    handleOnAnimationEnd(visible)
+                }
             }
         }
     }

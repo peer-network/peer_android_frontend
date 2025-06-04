@@ -45,7 +45,7 @@ data class ConnectionState(
 enum class ConnectionStatus {
     PEER,
     FOLLOWING,
-    FOLLOW
+    FOLLOWER
 }
 
 @Composable
@@ -114,7 +114,7 @@ fun ConnectionScreen(
                 onPrimary,
                 false
             )
-            ConnectionStatus.FOLLOW -> ConnectionState(
+            ConnectionStatus.FOLLOWER -> ConnectionState(
                 R.string.follow_label,
                 onPrimary,
                 onPrimary,
