@@ -76,7 +76,7 @@ fun SettingsScreen(
             handleOnNavigate(preference)
         }
         SettingsItem(label = aboutUsLabel) {
-            handleOnNavigate("about_us") // hardcoded route
+            handleOnNavigate("about")
         }
     }
 }

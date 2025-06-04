@@ -3,6 +3,7 @@ package eu.peernetwork.app.ui.settings
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
+import eu.peernetwork.app.ui.about.About
 import eu.peernetwork.core.ui.annotation.UiBuilder
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
@@ -39,5 +40,13 @@ object SettingsModule {
     @UiBuilder(PasswordUpdate.Builder::class)
     fun providePasswordUpdateBuilder(component: Settings.Component): UiComponent.Builder {
         return PasswordUpdate.Builder(component)
+    }
+
+    @Settings.Scope
+    @Provides
+    @IntoMap
+    @UiBuilder(About.Builder::class)
+    fun provideAboutBuilder(component: Settings.Component): UiComponent.Builder {
+        return About.Builder(component)
     }
 }

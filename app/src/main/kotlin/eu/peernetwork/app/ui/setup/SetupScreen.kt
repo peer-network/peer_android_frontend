@@ -60,7 +60,7 @@ fun SetupScreen(
                 header = { SetupHeader(state = contentState) },
                 footer = { SetupFooter(onPrivacy = {
                     controller.navigateIfNecessary("privacy")
-                }) },
+                }) { controller.navigateIfNecessary("about") } },
                 modifier = Modifier.padding(bottom = imeHeight.dp)
             ) {
                 SetupScreen(
@@ -119,7 +119,7 @@ fun PreviewSetupScreen() {
     PeerTheme {
         SetupScaffold(
             header = { SetupHeader(state = state) },
-            footer = { SetupFooter(onPrivacy = {}) },
+            footer = { SetupFooter({}) {} },
         ) {
             SetupScreen(
                 state = state,

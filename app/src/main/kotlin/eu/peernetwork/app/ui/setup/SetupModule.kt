@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
+import eu.peernetwork.app.ui.about.About
 import eu.peernetwork.app.ui.privacy.Privacy
 import eu.peernetwork.core.ui.annotation.UiBuilder
 import eu.peernetwork.core.ui.annotation.UiViewModel
@@ -68,5 +69,13 @@ object SetupModule {
     @UiBuilder(Privacy.Builder::class)
     fun providePrivacyBuilder(component: Setup.Component): UiComponent.Builder {
         return Privacy.Builder(component)
+    }
+
+    @Setup.Scope
+    @Provides
+    @IntoMap
+    @UiBuilder(About.Builder::class)
+    fun provideAboutBuilder(component: Setup.Component): UiComponent.Builder {
+        return About.Builder(component)
     }
 }
