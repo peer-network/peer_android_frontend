@@ -33,6 +33,7 @@ import eu.peernetwork.core.ui.design.compose.DesignAsyncImage
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffold
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
 import eu.peernetwork.core.ui.design.compose.DesignLead
+import eu.peernetwork.core.ui.extension.toInt
 import eu.peernetwork.user.ui.R
 import eu.peernetwork.user.ui.compose.Overview
 import eu.peernetwork.user.ui.compose.ProfileScaffold
@@ -87,6 +88,7 @@ fun UserScreen(
             modifier = modifier,
             account = it.first,
             connection = onFollow,
+            showPeers = it.second,
             onSettings = if (it.second) {
                 onSettings
             } else {
@@ -108,6 +110,7 @@ fun UserScreen(
 fun UserScreen(
     account: UiAccount,
     modifier: Modifier = Modifier,
+    showPeers: Boolean,
     connection: @Composable (Pair<Boolean, Boolean>) -> Unit,
     onSettings: (() -> Unit)? = null,
     onClick: (Int) -> Unit,
@@ -139,7 +142,7 @@ fun UserScreen(
             Overview(
                 overview = account.overview,
                 modifier = Modifier.fillMaxWidth(),
-                onClick = { if (it < 2) clickHandler(it) }
+                onClick = { if (it < (2 + showPeers.toInt())) clickHandler(it) }
             )
         }
     ) {
@@ -170,6 +173,6 @@ fun PreviewUserScreen() {
             isfollowing = false,
             isfollowed = false
         )
-        UserScreen(connection = { }, account = model) {}
+        UserScreen(connection = { }, account = model, showPeers = true) {}
     }
 }
