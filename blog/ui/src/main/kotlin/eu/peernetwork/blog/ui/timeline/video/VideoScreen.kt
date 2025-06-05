@@ -164,8 +164,13 @@ fun VideoScreen(
             }
         }
         VideoDialog(postLimit, selectedClip, provider, viewModelStoreOwner)
+
+    }
+    LaunchedEffect(criteria) {
+        criteria?.let { viewModel.load(Pageable(0, postLimit), criteria) }
     }
 }
+
 
 @Composable
 fun VideoScreen(

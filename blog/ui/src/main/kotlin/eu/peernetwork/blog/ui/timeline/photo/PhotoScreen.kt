@@ -169,6 +169,9 @@ fun PhotoScreen(
             }
         }
     }
+    LaunchedEffect(criteria) {
+        criteria?.let { viewModel.load(Pageable(0, postLimit), criteria) }
+    }
 }
 
 @Composable
