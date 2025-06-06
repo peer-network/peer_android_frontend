@@ -2,29 +2,37 @@ package eu.peernetwork.media.ui.usecase
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.media.ThumbnailUtils
-import android.provider.MediaStore
+import android.media.MediaMetadataRetriever
 import eu.peernetwork.core.common.provider.Dispatcher
 import eu.peernetwork.core.common.usecase.ParameterizedSuspendableUseCase
 import eu.peernetwork.media.core.model.UiMimeType
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import androidx.core.graphics.scale
+import kotlin.math.min
 
 class ThumbnailUsecase @Inject constructor(
     private val dispatcher: Dispatcher
 ) : ParameterizedSuspendableUseCase<ThumbnailUsecase.Parameter, Bitmap?> {
     override suspend fun invoke(param: Parameter): Bitmap? = withContext(dispatcher.io) {
         if (param.type == UiMimeType.Video) {
-            ThumbnailUtils.createVideoThumbnail(
-                param.thumbnail,
-                MediaStore.Images.Thumbnails.MINI_KIND
-            )
+            val retriever = MediaMetadataRetriever()
+            try {
+                retriever.setDataSource(param.thumbnail)
+                retriever.getFrameAtTime(100_000, MediaMetadataRetriever.OPTION_CLOSEST_SYNC)
+            } catch (error: Throwable) {
+                error.printStackTrace()
+                null
+            } finally {
+                retriever.release()
+            }
         } else {
-            ThumbnailUtils.extractThumbnail(
-                BitmapFactory.decodeFile(param.thumbnail),
-                250,
-                250
-            )
+            BitmapFactory.decodeFile(param.thumbnail)
+        }?.let{
+            val scale = min(200f / it.width, 200f / it.height)
+            val scaledWidth = (it.width * scale).toInt()
+            val scaledHeight = (it.height * scale).toInt()
+            it.scale(scaledWidth, scaledHeight)
         }
     }
 

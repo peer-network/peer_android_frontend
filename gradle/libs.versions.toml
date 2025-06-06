@@ -32,7 +32,7 @@ material = "1.12.0"
 ucrop = "2.2.9"
 permissions = "0.28.0"
 media3 = "1.6.1"
-lottie = "6.0.0"
+lottie = "6.6.6"
 
 [libraries]
 androidx-splash = { module = "androidx.core:core-splashscreen", version.ref = "androidx-splash" }

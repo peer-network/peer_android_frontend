@@ -147,7 +147,7 @@ fun TransferSheet(
                 color = MaterialTheme.colorScheme.onBackground,
             ),
         )
-        Spacer(modifier = Modifier.height(4.dp))
+        Spacer(modifier = Modifier.height(6.dp))
         Text(
             if (isSuccessful.value) {
                 stringResource(R.string.sent_label)
@@ -215,7 +215,7 @@ fun TransferSheet(
                 }
             }
         }
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(14.dp))
         DesignButton(
             onClick = onSubmit,
             isLoading = state.value,
