@@ -32,7 +32,7 @@ import eu.peernetwork.core.ui.model.ViewModelState
 import eu.peernetwork.social.ui.search.member.MemberDialog
 import eu.peernetwork.wallet.ui.model.UiRecipient
 import eu.peernetwork.wallet.ui.overview.OverviewScreen
-import eu.peernetwork.wallet.ui.saver.UiRecipientSaver
+import eu.peernetwork.wallet.ui.util.UiRecipientSaver
 import eu.peernetwork.wallet.ui.transfer.TransferScreen
 
 @Composable
@@ -93,7 +93,7 @@ fun WalletScreen(
     val updatedContent by rememberUpdatedState(content)
     val state = remember { derivedStateOf { DesignStatefulScaffoldState.Success(Unit) } }
     DesignRefreshableScaffold<Unit>(state, onRefresh = onRefresh) {
-        Column(modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp)
+        Column(modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp)
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
         ) {

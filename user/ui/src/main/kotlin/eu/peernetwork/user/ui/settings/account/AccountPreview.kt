@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -19,6 +20,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -81,7 +83,7 @@ fun AccountPreview(
             AccountPreview("", onClick = null) {
                 DesignAvatar {
                     Box(modifier = Modifier
-                        .size(56.dp)
+                        .size(48.dp)
                         .background(MaterialTheme.colorScheme.tertiaryContainer))
                 }
             }
@@ -89,7 +91,7 @@ fun AccountPreview(
     ) {
         AccountPreview(it.first.username, onClick = onClick) {
             DesignAvatar {
-                DesignAsyncImage(it.first.username, it.first.imageUrl, size = 56.dp)
+                DesignAsyncImage(it.first.username, it.first.imageUrl, size = 48.dp)
             }
         }
     }
@@ -106,6 +108,7 @@ fun AccountPreview(
     DesignCard(
         color = MaterialTheme.colorScheme.surfaceVariant,
         contentPadding = PaddingValues(12.dp),
+        shape = RoundedCornerShape(24.dp),
         modifier = Modifier
             .fillMaxWidth()
             .clickable(role = Role.Button) {
@@ -120,7 +123,7 @@ fun AccountPreview(
                     Icon(
                         painterResource(R.drawable.ic_next),
                         contentDescription = stringResource(R.string.settings_label),
-                        tint = MaterialTheme.colorScheme.surfaceDim.copy(alpha = .6f),
+                        tint = MaterialTheme.colorScheme.surfaceDim.copy(alpha = .5f),
                         modifier = Modifier.padding(horizontal = 8.dp)
                             .size(16.dp)
                     )
@@ -131,7 +134,7 @@ fun AccountPreview(
                 text = username,
                 style = MaterialTheme.typography.bodyMedium.copy(
                     fontWeight = FontWeight.SemiBold,
-                    color = MaterialTheme.colorScheme.tertiary
+                    color = MaterialTheme.colorScheme.onBackground
                 ),
                 modifier = Modifier
                     .weight(1f)
@@ -148,12 +151,12 @@ fun PreviewAccountPreview() {
         Column(
             Modifier
                 .fillMaxWidth()
-                .padding(vertical = 16.dp, horizontal = 24.dp)
+                .padding(vertical = 16.dp, horizontal = 16.dp)
         ) {
             AccountPreview("John Doe", {}) {
                 DesignAvatar {
                     Box(modifier = Modifier
-                        .size(56.dp)
+                        .size(48.dp)
                         .background(MaterialTheme.colorScheme.tertiaryContainer)
                     )
                 }

@@ -69,7 +69,7 @@ internal class EmailSettingsApiTest {
 
         val result = try {
             api(email, password)
-        } catch (error: Throwable) {
+        } catch (_: Throwable) {
             null
         }
         assertNull(result)

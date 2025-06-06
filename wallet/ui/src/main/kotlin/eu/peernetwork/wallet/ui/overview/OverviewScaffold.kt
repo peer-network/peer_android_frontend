@@ -1,5 +1,6 @@
 package eu.peernetwork.wallet.ui.overview
 
+import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -44,10 +45,9 @@ fun OverviewScaffold(
     val updatedRate by rememberUpdatedState(rate)
     val updatedToken by rememberUpdatedState(token)
     val updatedBalance by rememberUpdatedState(balance)
-    val top = with(LocalDensity.current) { 56.dp.toPx() }
-    val start = with(LocalDensity.current) { 120.dp.toPx() }
+    val top = with(LocalDensity.current) { 280.dp.toPx() }
     val verticalGradient = Brush.linearGradient(
-        start = Offset(top, start),
+        start = Offset(top, 0f),
         colors = listOf(
             MaterialTheme.colorScheme.surfaceVariant,
             MaterialTheme.colorScheme.primary
@@ -122,8 +122,8 @@ fun OverviewScaffold(modifier: Modifier = Modifier) {
     }
 }
 
-@Preview
 @Composable
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun PreviewOverviewScaffold() {
     PeerTheme {
         OverviewScaffold()

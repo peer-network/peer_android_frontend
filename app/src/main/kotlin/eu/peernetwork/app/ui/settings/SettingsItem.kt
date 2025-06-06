@@ -55,7 +55,7 @@ fun ColumnScope.SettingsItem(
             contentDescription = stringResource(R.string.referral_label),
             tint = MaterialTheme.colorScheme.surfaceDim.copy(alpha = .6f),
             modifier = Modifier
-                .size(32.dp)
+                .size(28.dp)
                 .padding(8.dp)
         )
     }

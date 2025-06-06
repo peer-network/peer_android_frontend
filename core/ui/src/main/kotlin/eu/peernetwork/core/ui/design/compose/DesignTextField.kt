@@ -8,14 +8,12 @@ import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
@@ -97,7 +95,6 @@ fun DesignTextField(
     placeholder: @Composable (() -> Unit)? = null,
 ) {
     var isFocused by remember { mutableStateOf(false) }
-    val scrollState = rememberScrollState()
     val backgroundColor by animateColorAsState(
         targetValue = if (isFocused) {
             colors.focusedContainerColor
@@ -160,7 +157,6 @@ fun DesignTextField(
                     }
                 },
                 modifier = Modifier.fillMaxWidth()
-                    .horizontalScroll(scrollState)
                     .focusRequester(focusRequester),
                 enabled = enabled,
                 readOnly = readOnly,

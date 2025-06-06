@@ -105,7 +105,8 @@ fun EngagementScreen(
     LaunchedEffect(hasError.value) {
         if (hasError.value) {
             val error = (state as? EngagementViewModel.State.Error)?.error?.message
-            Toast.makeText(context, error?.let { component.resource().string(it) } ?: errorMessage, Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, error?.let { component.resource().string(it) }
+                ?: errorMessage, Toast.LENGTH_SHORT).show()
             viewModel.clear()
         }
     }

@@ -62,11 +62,10 @@ fun SettingsScreen(
     val password = stringResource(R.string.password_label)
     val preference = stringResource(R.string.preference_label)
     val aboutUsLabel = stringResource(R.string.about_us_label)
-
     Column(modifier = Modifier
         .fillMaxSize()
         .verticalScroll(rememberScrollState())) {
-        Box(modifier = Modifier.padding(12.dp)) {
+        Box(modifier = Modifier.padding(vertical = 16.dp, horizontal = 8.dp)) {
             updateHeader()
         }
         SettingsItem(label = password) {

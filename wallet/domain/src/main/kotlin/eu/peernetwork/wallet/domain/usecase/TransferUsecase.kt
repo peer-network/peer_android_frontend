@@ -1,16 +1,16 @@
 package eu.peernetwork.wallet.domain.usecase
 
 import eu.peernetwork.core.common.usecase.ParameterizedSuspendableUseCase
+import eu.peernetwork.wallet.domain.interactor.WalletInteractor
 import eu.peernetwork.wallet.domain.model.Transfer
-import eu.peernetwork.wallet.domain.repository.TransferRepository
 import java.math.BigDecimal
 import javax.inject.Inject
 
 class TransferUsecase @Inject constructor(
-    private val repository: TransferRepository
+    private val interactor: WalletInteractor
 ) : ParameterizedSuspendableUseCase<TransferUsecase.Parameter, Transfer> {
     override suspend fun invoke(param: Parameter): Transfer {
-        return repository.get(param.recipient, param.tokens)
+        return interactor.send(param.recipient, param.tokens)
     }
 
     data class Parameter(

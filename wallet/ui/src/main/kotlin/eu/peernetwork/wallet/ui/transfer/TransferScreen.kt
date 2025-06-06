@@ -90,6 +90,7 @@ fun TransferScreen(
         }
     }
     var showLabel = rememberSaveable { mutableStateOf(false) }
+    val showSheet = remember { mutableStateOf(false) }
     var transaction = remember { mutableStateOf<UiTransfer?>(null) }
     val lastRecipient = remember(recipient.value) { mutableStateOf(recipient.value) }
     val amount by rememberSaveable(stateSaver = TextFieldState.Saver) { mutableStateOf(TextFieldState()) }
@@ -107,7 +108,7 @@ fun TransferScreen(
                     textStyle = MaterialTheme.typography.bodySmall,
                     contentPadding = PaddingValues(vertical = 8.dp, horizontal = 32.dp),
                     modifier = Modifier
-                        .padding(start = 48.dp)
+                        .padding(start = 4.dp)
                         .height(36.dp)
                         .fillMaxWidth(),
                     content = {
@@ -131,17 +132,23 @@ fun TransferScreen(
                 ) {
                     viewModel.reset()
                     transaction.value = UiTransfer(target.id, amount.text.toString().toBigDecimal())
+                    showSheet.value = true
                 }
             }
         }
     }
     recipient.value?.let {
-        TransferDialog(derivedState, transaction, it, {
-            lastRecipient.value = null
-            showLabel.value = false
-            amount.clearText()
-            viewModel.reset()
-        }) { viewModel.transfer(it.recipient, it.token) }
+        TransferSheet(
+            derivedState,
+            showSheet,
+            transaction,
+            it, {
+                lastRecipient.value = null
+                showSheet.value = false
+                showLabel.value = false
+                amount.clearText() },
+            onRecipientClick
+        ) { viewModel.transfer(it.recipient, it.token) }
     }
 }
 
@@ -189,10 +196,12 @@ fun TransferScreen(
                         .padding(vertical = 16.dp)
                 ) { updatedContent() }
             }
-        ) { Text(
-            stringResource(R.string.transfer_label),
-            modifier = Modifier.padding(start = 12.dp)
-        ) }
+        ) {
+            Text(
+                stringResource(R.string.transfer_label),
+                modifier = Modifier.padding(start = 12.dp)
+            )
+        }
     }
 }
 
@@ -217,7 +226,7 @@ fun PreviewTransferScreen() {
                         textStyle = MaterialTheme.typography.bodySmall,
                         contentPadding = PaddingValues(vertical = 8.dp, horizontal = 32.dp),
                         modifier = Modifier
-                            .padding(start = 48.dp)
+                            .padding(start = 4.dp)
                             .height(36.dp)
                             .fillMaxWidth(),
                         content = {

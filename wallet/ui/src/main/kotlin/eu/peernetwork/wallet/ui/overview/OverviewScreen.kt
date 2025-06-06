@@ -24,6 +24,7 @@ import eu.peernetwork.core.ui.theme.PeerAppGreen
 import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.wallet.ui.model.UiWallet
 import java.math.BigDecimal
+import java.math.RoundingMode
 
 @Composable
 fun OverviewScreen(
@@ -61,8 +62,10 @@ fun OverviewScreen(
     DesignStatefulScaffold<UiWallet>(
         state = derivedState,
         onRefresh = { viewModel.getBalance() },
-        placeholder = { OverviewScaffold() }
+        placeholder = { OverviewScaffold() },
+        errorContent = { OverviewError(it, component.resource()) }
     ) { OverviewScreen(it) }
+    LaunchedEffect(Unit) { viewModel.initialize() }
     LaunchedEffect(lastUpdated.value) {
         if (updatedAt.longValue != lastUpdated.value) {
             viewModel.getBalance()
@@ -83,7 +86,7 @@ fun OverviewScreen(wallet: UiWallet) {
         },
         token = {
             Text(
-                text = wallet.balance.toString(),
+                text = wallet.balance.setScale(4, RoundingMode.HALF_UP).toString(),
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onBackground,
                 textAlign = TextAlign.Center,

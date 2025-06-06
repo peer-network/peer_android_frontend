@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.core.common.service.ResourceService
@@ -47,7 +48,7 @@ fun DesignErrorLabel(
             .background(MaterialTheme.colorScheme.surfaceVariant)
         ) {
             Icon(
-                painter = painterResource(R.drawable.ic_error),
+                painter = painterResource(R.drawable.ic_warning),
                 contentDescription = stringResource(R.string.error_label),
                 tint = MaterialTheme.colorScheme.tertiary,
                 modifier = Modifier.padding(14.dp)
@@ -59,17 +60,18 @@ fun DesignErrorLabel(
             if (error is NoContentException) {
                 Throwable(noContentMessage, error)
             } else { Throwable(resource.string(error.message ?: errorMessage), error) },
+            textAlign = TextAlign.Start,
             style = MaterialTheme.typography.bodyMedium.copy(
                 color = MaterialTheme.colorScheme.tertiary
-            )
+            ),
+            modifier = Modifier.weight(1f)
         )
-        Spacer(modifier = Modifier.weight(1f))
         Spacer(modifier = Modifier.width(12.dp))
         IconButton(onRefresh) {
             Icon(
                 painterResource(R.drawable.ic_refresh),
                 contentDescription = stringResource(R.string.retry_label),
-                tint = MaterialTheme.colorScheme.onBackground,
+                tint = MaterialTheme.colorScheme.surfaceDim,
                 modifier = Modifier.padding(12.dp)
                     .size(24.dp)
             )

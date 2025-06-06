@@ -67,7 +67,7 @@ internal class AvatarSettingsApiTest {
 
         val result = try {
             api(avatar)
-        } catch (error: Throwable) {
+        } catch (_: Throwable) {
             null
         }
         assertNull(result)

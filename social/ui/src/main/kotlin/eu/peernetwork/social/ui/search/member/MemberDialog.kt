@@ -1,5 +1,6 @@
 package eu.peernetwork.social.ui.search.member
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -70,9 +71,12 @@ fun MemberDialog(
     content: @Composable () -> Unit
 ) {
     val updateContent by rememberUpdatedState(content)
-    Column(modifier = Modifier
+    Box(modifier = Modifier
         .statusBarsPadding()
         .padding(vertical = 16.dp)) {
+        Box(modifier = Modifier.padding(top = 28.dp)) {
+            updateContent()
+        }
         DesignTextField(
             state,
             enabled = enable.value,
@@ -96,7 +100,6 @@ fun MemberDialog(
             },
             modifier = Modifier.padding(horizontal = 24.dp)
         ) { Text(stringResource(R.string.search_label)) }
-        updateContent()
     }
 }
 
@@ -107,7 +110,8 @@ fun PreviewMemberDialog() {
         val state = remember { TextFieldState() }
         val enable = remember { mutableStateOf(true) }
         MemberDialog(state, enable) {
-            Box(modifier = Modifier.fillMaxSize())
+            Box(modifier = Modifier.fillMaxSize()
+                .background(MaterialTheme.colorScheme.background))
         }
     }
 }

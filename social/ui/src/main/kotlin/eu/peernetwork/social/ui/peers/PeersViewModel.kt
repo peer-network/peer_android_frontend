@@ -21,6 +21,7 @@ class PeersViewModel @Inject constructor(
     private val peersUsecase: PeerPagingUsecase
 ): ViewModel() {
     private val mutableState = MutableStateFlow<State>(State.Empty)
+
     val state: StateFlow<State> = mutableState.asStateFlow()
 
     fun peers(pageable: Pageable) {
@@ -32,6 +33,12 @@ class PeersViewModel @Inject constructor(
                 .apply {
                     collectLatest { mutableState.tryEmit(State.Success(this)) }
                 }
+        }
+    }
+
+    fun reset() {
+        viewModelScope.launch {
+            mutableState.tryEmit(State.Empty)
         }
     }
 

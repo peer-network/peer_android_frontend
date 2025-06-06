@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -91,5 +92,8 @@ fun FollowingsScreen(
             }
             item(key = "FollowingsListFooter") { Spacer(modifier = Modifier.height(56.dp)) }
         }
+    }
+    DisposableEffect(Unit) {
+        onDispose { viewModel.reset() }
     }
 }
