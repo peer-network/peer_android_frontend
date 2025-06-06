@@ -146,8 +146,7 @@ fun TransferScreen(
                 lastRecipient.value = null
                 showSheet.value = false
                 showLabel.value = false
-                amount.clearText()
-                viewModel.reset() },
+                amount.clearText() },
             onRecipientClick
         ) { viewModel.transfer(it.recipient, it.token) }
     }
