@@ -93,7 +93,7 @@ internal class AuthenticationApiDelegateTest {
 
         val result = try {
             api.login("<test-email>", "<test-password>")
-        } catch (error: Throwable) {
+        } catch (_: Throwable) {
             null
         }
         assertNull(result)

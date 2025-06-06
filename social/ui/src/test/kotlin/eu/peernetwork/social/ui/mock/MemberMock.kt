@@ -6,6 +6,7 @@ object MemberMock {
     fun model(): UiMember {
         return UiMember(
             id = "<test-id>",
+            slug = "<test-slug>",
             username = "<test-username>",
             imageUrl = "<test-image-url>"
         )

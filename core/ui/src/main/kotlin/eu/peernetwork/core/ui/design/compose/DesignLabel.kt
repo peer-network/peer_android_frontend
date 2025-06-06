@@ -92,7 +92,7 @@ fun DesignLabeledIcon(
     onClick: () -> Unit = {},
     contentPaddingValues: PaddingValues = PaddingValues(horizontal = 6.dp),
     tint: Color = LocalContentColor.current,
-    textStyle: TextStyle = MaterialTheme.typography.bodySmall,
+    textStyle: TextStyle = MaterialTheme.typography.bodySmall.copy(color = tint),
     position: DesignLabelAlignment = DesignLabelAlignment.START
 ) {
     when (position) {
@@ -132,7 +132,6 @@ fun DesignLabeledIcon(
         }
     }
 }
-
 
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)

@@ -9,11 +9,13 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -25,6 +27,7 @@ import eu.peernetwork.blog.ui.model.UiPoint
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.compose.DesignLabeledIcon
 import eu.peernetwork.core.ui.extension.builder
+import eu.peernetwork.core.ui.theme.LightAccentColor
 
 @Composable
 fun PointScreen(
@@ -41,29 +44,21 @@ fun PointScreen(
         factory = component.viewModelFactory()
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val points = remember { mutableStateOf<List<UiPoint>?>(
-        (state as? PointViewModel.State.Success?)?.points
-    ) }
-    Crossfade(targetState = points.value) {
-        when (it) {
-            null -> Box {}
-            else -> PointScreen(it)
+    val points = remember { derivedStateOf { (state as? PointViewModel.State.Success?)?.points } }
+    Crossfade(targetState = points.value) { target ->
+        if (target != null) {
+            PointScreen(target)
         }
     }
-    LaunchedEffect(state) {
-        when (state) {
-            is PointViewModel.State.Initialize -> viewModel.getPoints()
-            is PointViewModel.State.Loading -> points.value = null
-            is PointViewModel.State.Success -> {
-                points.value = (state as PointViewModel.State.Success).points
-            }
-            is PointViewModel.State.Error -> {}
-        }
+    LaunchedEffect(Unit) {
+        viewModel.getPoints()
     }
 }
 
 @Composable
 fun PointScreen(points: List<UiPoint> = listOf()) {
+    var showPopup = remember { mutableStateOf(false) }
+    var selectedPoint = remember { mutableStateOf<UiPoint?>(null) }
     Column {
         Row (
             modifier = Modifier
@@ -72,14 +67,47 @@ fun PointScreen(points: List<UiPoint> = listOf()) {
         ) {
             points.forEach { point ->
                 PointModel.MAP[point.name]?.let { model ->
-                    DesignLabeledIcon(
-                        text = point.available.toString(),
-                        painter = painterResource(id = model.icon),
-                        contentDescription = stringResource(model.label),
-                        onClick = {  }
-                    )
+                    val enabled = remember { derivedStateOf {
+                        showPopup.value && selectedPoint.value?.name == point.name
+                    } }
+                    Box {
+                        DesignLabeledIcon(
+                            text = point.available.toString(),
+                            painter = painterResource(id = model.icon),
+                            contentDescription = stringResource(model.label),
+                            onClick = {
+                                showPopup.value = true
+                                selectedPoint.value = point
+                            },
+                            tint = LightAccentColor,
+                            modifier = Modifier.graphicsLayer {
+                                alpha = if (enabled.value) {
+                                    1f
+                                } else {
+                                    .0f
+                                }
+                            }
+                        )
+                        DesignLabeledIcon(
+                            text = point.available.toString(),
+                            painter = painterResource(id = model.icon),
+                            contentDescription = stringResource(model.label),
+                            onClick = {
+                                showPopup.value = true
+                                selectedPoint.value = point
+                            },
+                            modifier = Modifier.graphicsLayer {
+                                alpha = if (enabled.value) {
+                                    0f
+                                } else {
+                                    1f
+                                }
+                            }
+                        )
+                    }
                 }
             }
         }
     }
+    PointPopup(showPopup, selectedPoint)
 }

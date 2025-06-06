@@ -12,7 +12,7 @@ import javax.inject.Inject
 class TransferApiDelegate @Inject constructor(
     private val client: RequestClient
 ) : TransferApi {
-    override suspend fun get(recipient: String, tokens: BigDecimal): Transfer {
+    override suspend fun send(recipient: String, tokens: BigDecimal): Transfer {
         val response = client().mutation(
             ResolveTransferMutation(
                 recipient = recipient,

@@ -69,7 +69,7 @@ internal class SearchApiDelegateTest {
 
         val result = try {
             api.findByUsername("<test-username>", Pageable(0, 1))
-        } catch (error: Throwable) {
+        } catch (_: Throwable) {
             null
         }
         assertNull(result)

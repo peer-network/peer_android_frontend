@@ -67,7 +67,7 @@ internal class BiographySettingsApiTest {
 
         val result = try {
             api(bio)
-        } catch (error: Throwable) {
+        } catch (_: Throwable) {
             null
         }
         assertNull(result)

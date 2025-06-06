@@ -5,7 +5,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.ViewModelStoreOwner
 import eu.peernetwork.core.ui.component.UiComponentProvider
@@ -28,42 +34,54 @@ fun MemberSheet(
     viewModelStoreOwner: ViewModelStoreOwner,
     onClick: (UiMember) -> Unit
 ) {
+    var selected by remember { mutableStateOf<UiMember?>(null) }
+    val handleOnClick by rememberUpdatedState(onClick)
     DesignBottomSheet(
         onDismissRequest = { state.value = false },
+        onAnimationComplete = {
+            if (!it) {
+                selected?.let { handleOnClick(it) }
+            } else {
+                selected = null
+            }
+        },
         tag = "MemberBottomSheet",
         showSheet = state,
         background = {
             DesignOverlayBackground(
                 state = it,
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier
+                    .fillMaxSize()
                     .background(MaterialTheme.colorScheme.background.copy(alpha = .6f))
             )
         },
         content = {
-            status.value?.let {
+            val connection = remember(it.value) { mutableStateOf<ConnectionStatus?>(status.value) }
+            connection.value?.let {
                 when (it) {
                     ConnectionStatus.FOLLOWER -> FollowersScreen(
                         userId = id,
                         provider = provider,
                         viewModelStoreOwner = viewModelStoreOwner,
                         postLimit = limit,
-                        onClick = onClick
+                        onClick = { selected = it }
                     )
                     ConnectionStatus.FOLLOWING -> FollowingsScreen(
                         userId = id,
                         provider = provider,
                         viewModelStoreOwner = viewModelStoreOwner,
                         postLimit = limit,
-                        onClick = onClick
+                        onClick = { selected = it }
                     )
                     ConnectionStatus.PEER -> PeersScreen(
                         provider = provider,
                         viewModelStoreOwner = viewModelStoreOwner,
                         postLimit = limit,
-                        onClick = onClick
+                        onClick = { selected = it }
                     )
                 }
             }
         }
     )
+    LaunchedEffect(selected) { selected?.let { state.value = false } }
 }

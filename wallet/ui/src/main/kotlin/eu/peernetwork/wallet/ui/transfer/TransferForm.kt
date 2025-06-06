@@ -23,6 +23,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
@@ -59,6 +60,7 @@ fun TransferForm(
     onClear: () -> Unit = {},
     onSubmit: (BigDecimal) -> Unit,
 ) {
+    val errorMessage = remember { mutableStateOf(error) }
     val isValidated = remember { derivedStateOf { state.text.toString().toBigDecimalOrNull() != null } }
     val handleOnClick by rememberUpdatedState(onClick)
     val handleSubmission by rememberUpdatedState {
@@ -112,8 +114,13 @@ fun TransferForm(
             Column {
                 DesignLabel(
                     visible = error != null,
+                    onAnimationEnd = {
+                        if (it) {
+                            errorMessage.value = error
+                        }
+                    },
                     label = {
-                        error?.run {
+                        errorMessage.value?.run {
                             Text(
                                 text = this,
                                 style = MaterialTheme.typography.bodySmall.copy(

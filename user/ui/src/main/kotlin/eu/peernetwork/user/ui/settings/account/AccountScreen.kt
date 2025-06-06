@@ -19,6 +19,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
@@ -41,6 +42,8 @@ import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.component.DesignRefreshableScaffold
 import eu.peernetwork.core.ui.design.compose.DesignOutlinedButton
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
+import eu.peernetwork.core.ui.design.compose.DesignTitle
+import eu.peernetwork.core.ui.design.compose.DesignTitleBarHost
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.user.ui.R
@@ -84,9 +87,12 @@ fun AccountScreen(
         }
     }
     val content = remember { derivedStateOf { state as? AccountViewModel.State.Content? } }
-    val error = remember { derivedStateOf { content.value?.error } }
+    val error = remember { derivedStateOf {
+        content.value?.error?.message?.let { component.resource().string(it) }
+    } }
     val isLoading = remember { derivedStateOf { content.value?.processing == true } }
     var status by remember { mutableStateOf(false) }
+    val message = stringResource(R.string.profile_update_message)
     DesignRefreshableScaffold<Pair<UiAccount, String>>(
         state = derivedState,
         onRefresh = { viewModel.getAccount() },
@@ -115,15 +121,24 @@ fun AccountScreen(
             viewModel.update(it.first, model, password ?: "")
         }
     }
-    LaunchedEffect(Unit) { viewModel.reset() }
+    DesignTitleBarHost("AccountScreen") {
+        titleBar {
+            DesignTitle {
+                Text(stringResource(R.string.account_label))
+            }
+        }
+    }
     LaunchedEffect(content.value) {
         if (content.value == null) {
             viewModel.initialize()
         }
         if (isLoading.value == false && status && error.value == null) {
             status = false
-            Toast.makeText(context, "Profile updated", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
         }
+    }
+    DisposableEffect(Unit) {
+        onDispose { viewModel.reset() }
     }
 }
 
@@ -134,7 +149,7 @@ fun AccountScreen(
     inviteLink: String,
     isLoading: State<Boolean>,
     modifier: Modifier = Modifier,
-    error: State<Throwable?>,
+    error: State<String?>,
     requiresPassword: (List<UiSettings>) -> Boolean = { false },
     onLogout: () -> Unit = {},
     onDeactivate: (String) -> Unit = {},
@@ -158,6 +173,7 @@ fun AccountScreen(
     val submitHandler by rememberUpdatedState(onSubmit)
     val deactivateHandler by rememberUpdatedState(onDeactivate)
     val passwordValidatorHandler by rememberUpdatedState(requiresPassword)
+    val deactivationMessage = stringResource(R.string.profile_deactivation_message)
     Column(modifier = modifier) {
         AccountHeader(
             account = account,
@@ -208,12 +224,11 @@ fun AccountScreen(
         PasswordSheet(showDeactivation, label = stringResource(R.string.deactivate_text)) {
             showDeactivation.value = false
             deactivateHandler(it)
-            Toast.makeText(context, "Account deactivated", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, deactivationMessage, Toast.LENGTH_SHORT).show()
         }
         LogoutSheet(showLogout) {
             showLogout.value = false
             logoutHandler()
-            Toast.makeText(context, "Logged out successfully", Toast.LENGTH_SHORT).show()
         }
         PasswordSheet(showPassword, label = stringResource(R.string.confirmation_label)) {
             showPassword.value = false
@@ -248,7 +263,7 @@ fun PreviewAccountScreen() {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 24.dp, vertical = 8.dp),
-            error = remember { mutableStateOf(RuntimeException("Error message...")) },
+            error = remember { mutableStateOf("Error message...") },
             onSubmit = { model, password -> }
         )
     }

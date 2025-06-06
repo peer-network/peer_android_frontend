@@ -51,6 +51,7 @@ fun DesignBottomSheet(
     showSheet: MutableState<Boolean>,
     modifier: Modifier = Modifier,
     onDismissRequest: () -> Unit = {},
+    onAnimationComplete: (Boolean) -> Unit = {},
     tag: String,
     handleBackPress: Boolean = true,
     initialValue: SheetValue = SheetValue.Hidden,
@@ -86,6 +87,7 @@ fun DesignBottomSheet(
                     sheetState.hide()
                 }
             }
+            onAnimationComplete(it)
         }
     ) { overlayState ->
         overlay {

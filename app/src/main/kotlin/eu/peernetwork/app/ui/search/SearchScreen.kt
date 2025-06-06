@@ -1,5 +1,6 @@
 package eu.peernetwork.app.ui.search
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -7,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -48,6 +50,7 @@ fun SearchScreen(
 ) {
     val context = LocalContext.current
     val component = remember { provider.builder(Search.Builder::class.java).build(context) }
+    val session = rememberSaveable { System.currentTimeMillis() }
     SearchNavigation(
         id,
         component,
@@ -58,18 +61,18 @@ fun SearchScreen(
                 MemberScreen(query, postLimit, {
                     controller.navigateIfNecessary("profile/${it.id}")
                     false
-                }, component, viewModelStore.get(id))
+                }, component, viewModelStore.get("$session"))
             } else if (mode == SearchMode.TAG) {
                 TagScreen(query, postLimit, {
                     controller.navigateIfNecessary("feed/$it")
-                }, component, viewModelStore.get(id))
+                }, component, viewModelStore.get("$session"))
             } else if (mode == SearchMode.TITLE) {
                 TitleScreen(query, postLimit, {
                     controller.navigateIfNecessary("search/${it.title
                         .replace(Regex("""\b\w+://"""), "")
                         .replace(Regex("""#(\w+)"""), "")
                         .trim()}")
-                }, component, viewModelStore.get(id))
+                }, component, viewModelStore.get("$session"))
             } else {
                 Box(modifier = Modifier.fillMaxSize()
                     .verticalScroll(rememberScrollState()))
@@ -103,14 +106,16 @@ fun SearchScreen(
             }
         )
     }
-    Column(modifier = modifier.fillMaxSize()) {
+    Box(modifier = modifier.fillMaxSize()) {
+        Box(modifier = Modifier.padding(top = 36.dp)) {
+            content(mode.value, query.value)
+        }
         SearchHeader(
             query.value,
             mode,
             modifier = Modifier.padding(horizontal = 24.dp)
                 .padding(top = 8.dp)
         )
-        content(mode.value, query.value)
     }
 }
 
@@ -118,6 +123,9 @@ fun SearchScreen(
 @Composable
 fun PreviewSearchScreen() {
     PeerTheme {
-        SearchScreen { mode, query -> }
+        SearchScreen { mode, query ->
+            Box(modifier = Modifier.fillMaxSize()
+                .background(MaterialTheme.colorScheme.surfaceVariant))
+        }
     }
 }

@@ -14,7 +14,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.core.ui.design.compose.DesignTextField
-import eu.peernetwork.core.ui.design.component.DesignErrorText
 import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.user.ui.R
 
@@ -23,7 +22,7 @@ fun ColumnScope.AccountForm(
     username: TextFieldState,
     bio: TextFieldState,
     isLoading: State<Boolean>,
-    error: State<Throwable?>,
+    error: State<String?>,
     maxText: Int = 500,
 ) {
     val isValidLength = remember {
@@ -31,7 +30,6 @@ fun ColumnScope.AccountForm(
             bio.text.length <= maxText
         }
     }
-
     Box(contentAlignment = Alignment.BottomEnd) {
         DesignTextField(
             bio,
@@ -45,6 +43,7 @@ fun ColumnScope.AccountForm(
             enabled = !isLoading.value,
             verticalAlignment = Alignment.Top,
             maxLines = 3,
+            maxLength = 500,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 16.dp),
@@ -73,34 +72,20 @@ fun ColumnScope.AccountForm(
             )
         )
     }
-
     DesignTextField(
         username,
         enabled = !isLoading.value,
         hasError = error.value != null,
         modifier = Modifier.padding(top = 12.dp),
         error = {
-            error.value?.let { originalError ->
-
-                // BEFORE --------->> Show raw error from server I guess
-
-                /*
-                DesignErrorText(
-                    originalError,
-                    modifier = Modifier.padding(top = 8.dp, styhyrt = 16.dp)
-                )
-                */
-
-                // AFTER -------->> Intercept and replace known error codes? I guess
-
-                val mappedMessage = when (originalError.message) {
-                    "40306" -> "Description is required."
-                    else -> originalError.message ?: "An unexpected error occurred."
-                }
-
-                DesignErrorText(
-                    Throwable(mappedMessage),
-                    modifier = Modifier.padding(top = 8.dp, start = 16.dp)
+            error.value?.run {
+                Text(
+                    text = this,
+                    fontSize = MaterialTheme.typography.bodySmall.fontSize,
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                        .padding(top = 6.dp)
                 )
             }
         }

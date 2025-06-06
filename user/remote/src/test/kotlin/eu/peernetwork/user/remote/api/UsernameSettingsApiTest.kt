@@ -69,7 +69,7 @@ internal class UsernameSettingsApiTest {
 
         val result = try {
             api(username, password)
-        } catch (error: Throwable) {
+        } catch (_: Throwable) {
             null
         }
         assertNull(result)

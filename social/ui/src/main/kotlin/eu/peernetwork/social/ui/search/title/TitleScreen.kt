@@ -10,7 +10,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -83,17 +82,17 @@ fun TitleScreen(
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 24.dp),
-        placeholder = { SearchItemSkeleton() },
+        placeholder = { SearchItemSkeleton(modifier = Modifier.padding(top = 16.dp)) },
         errorContent = { error, refresh ->
             Column(modifier = Modifier.fillMaxSize()
                 .verticalScroll(rememberScrollState())) {
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(24.dp))
                 DesignErrorLabel(refresh, error, component.resource())
             }
         }
     ) { state, lazyPagingItems ->
         LazyColumn(modifier = Modifier.fillMaxSize()) {
-            item(key = "TitleListHeader") { Spacer(modifier = Modifier.height(8.dp)) }
+            item(key = "TitleListHeader") { Spacer(modifier = Modifier.height(24.dp)) }
             items(
                 count = lazyPagingItems.itemCount,
                 key = { index -> index }
@@ -118,11 +117,9 @@ fun TitleScreen(
                 }
             }
     }
-    DisposableEffect(query.text) {
-        onDispose {
-            if (query.text.length < 3) {
-                viewModel.reset()
-            }
+    LaunchedEffect(Unit) {
+        if (lastSearch.value != query.text.toString()) {
+            viewModel.reset()
         }
     }
 }

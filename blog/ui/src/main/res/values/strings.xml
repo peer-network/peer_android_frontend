@@ -6,4 +6,5 @@
     <string name="send_label">Send</string>
 
     <string name="action_message">Action successfully completed</string>
+    <string name="point_description">You have %d Free %s</string>
 </resources>

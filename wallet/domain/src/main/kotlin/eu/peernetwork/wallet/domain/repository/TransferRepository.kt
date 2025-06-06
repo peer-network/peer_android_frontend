@@ -4,5 +4,5 @@ import eu.peernetwork.wallet.domain.model.Transfer
 import java.math.BigDecimal
 
 interface TransferRepository {
-    suspend fun get(recipient: String, tokens: BigDecimal): Transfer
+    suspend fun send(recipient: String, tokens: BigDecimal): Transfer
 }
