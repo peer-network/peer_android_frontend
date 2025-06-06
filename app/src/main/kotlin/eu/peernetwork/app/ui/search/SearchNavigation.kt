@@ -32,43 +32,7 @@ fun SearchNavigation(
         navController = controller,
         startDestination = "search",
     ) {
-        composable("search") { backStackEntry ->
-            val query = backStackEntry.arguments?.getString("query")
-            if (query.isNullOrEmpty()) {
-                updatedContent(controller)
-            } else {
-                FeedScreen(
-                    userId,
-                    BuildConfig.PAGING_LIMIT,
-                    component,
-                    viewModelStore = viewModelStore,
-                    title = query,
-                    criteria = Filter.Criteria.Content(title = query)
-                )
-            }
-        }
-        composable(
-            route = "search?query={query}",
-            arguments = listOf(navArgument("query") {
-                type = NavType.StringType
-                defaultValue = ""
-                nullable = true
-            })
-        ) { backStackEntry ->
-            val query = backStackEntry.arguments?.getString("query")
-            if (query.isNullOrEmpty()) {
-                updatedContent(controller)
-            } else {
-                FeedScreen(
-                    userId,
-                    BuildConfig.PAGING_LIMIT,
-                    component,
-                    viewModelStore = viewModelStore,
-                    title = query,
-                    criteria = Filter.Criteria.Content(title = query)
-                )
-            }
-        }
+        composable("search") { updatedContent(controller) }
         composable(
             "profile/{id}",
             arguments = listOf(navArgument("id") {
@@ -98,5 +62,24 @@ fun SearchNavigation(
                 criteria = tag?.let { Filter.Criteria.Content(tag = it) }
             )
         }
+        composable(
+            route = "search?query={query}",
+            arguments = listOf(navArgument("query") {
+                type = NavType.StringType
+                defaultValue = ""
+                nullable = true
+            })
+        ) { backStackEntry ->
+            val query = backStackEntry.arguments?.getString("query")
+            FeedScreen(
+                userId,
+                BuildConfig.PAGING_LIMIT,
+                component,
+                viewModelStore = viewModelStore,
+                title = query,
+                criteria = query?.let { Filter.Criteria.Content(title = it) }
+            )
+        }
     }
 }
+
