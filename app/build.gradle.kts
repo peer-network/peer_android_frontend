@@ -12,6 +12,7 @@ android {
             useSupportLibrary = true
         }
         buildConfigField("int", "PAGING_LIMIT", "20")
+        buildConfigField("String", "PLAYSTORE_URL", "\"https://play.google.com/store/apps/details?id=eu.peernetwork.app\"")
     }
     buildTypes {
         debug {

@@ -42,7 +42,8 @@ class VersionUseCase @Inject constructor(
             } ?: Log.d("VersionControl", "No base URL found in matched version")
             if (minimumVersion != null && isOutdated(minimumVersion.version)) {
                 Log.d("VersionControl", "App version is outdated")
-                Result.Outdated(minimumVersion.url)
+//                Result.Outdated(minimumVersion.url)
+                  Result.Outdated(BuildConfig.PLAYSTORE_URL)
             } else {
                 Log.d("VersionControl", "App version is up to date")
                 Result.UpToDate
