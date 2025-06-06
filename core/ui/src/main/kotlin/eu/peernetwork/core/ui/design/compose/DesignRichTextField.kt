@@ -72,6 +72,7 @@ fun DesignRichTextField(
     shape: Shape = RoundedCornerShape(16.dp),
     contentPadding: PaddingValues = PaddingValues(16.dp),
     singleLine: Boolean = false,
+    maxLength: Int = Int.MAX_VALUE,
     maxLines: Int = if (singleLine) 1 else Int.MAX_VALUE,
     minLines: Int = 1,
     mentionColor: Color = MaterialTheme.colorScheme.primary,
@@ -169,7 +170,9 @@ fun DesignRichTextField(
                 BasicTextField(
                     value = state.text.toString(),
                     onValueChange = { input ->
-                        state.edit { replace(0, length, input) }
+                        if (maxLength == Int.MAX_VALUE || input.length <= maxLength) {
+                            state.edit { replace(0, length, input) }
+                        }
                     },
                     modifier = Modifier.fillMaxWidth()
                         .focusRequester(focusRequester),

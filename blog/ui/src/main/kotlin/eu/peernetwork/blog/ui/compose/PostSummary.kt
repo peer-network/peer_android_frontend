@@ -15,8 +15,8 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import eu.peernetwork.core.ui.design.compose.DesignRichTitle
-import eu.peernetwork.core.ui.design.compose.DesignTitleTextStyle
+import eu.peernetwork.core.ui.design.compose.DesignRichText
+import eu.peernetwork.core.ui.design.compose.DesignTitleStyle
 
 @Composable
 fun PostSummary(
@@ -41,10 +41,10 @@ fun PostSummary(
                 .padding(end = 8.dp)
                 .clickable { handleUserClick() }
         )
-        DesignRichTitle(
+        DesignRichText(
             title = title,
             description = description,
-            style = DesignTitleTextStyle(
+            style = DesignTitleStyle(
                 style = MaterialTheme.typography.bodyMedium.copy(color = color),
                 descriptionStyle = MaterialTheme.typography.bodySmall.copy(
                     color = MaterialTheme.colorScheme.tertiary

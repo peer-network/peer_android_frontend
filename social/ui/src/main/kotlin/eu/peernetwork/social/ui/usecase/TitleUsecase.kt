@@ -7,6 +7,7 @@ import androidx.paging.PagingSource.LoadParams
 import androidx.paging.PagingSource.LoadResult
 import eu.peernetwork.core.common.model.Pageable
 import eu.peernetwork.core.common.provider.Dispatcher
+import eu.peernetwork.core.ui.exception.NoContentException
 import eu.peernetwork.core.ui.usecase.PagingUsecase
 import eu.peernetwork.social.domain.usecase.SearchByTitleUsecase
 import eu.peernetwork.social.ui.mapper.mapFromDomain
@@ -39,11 +40,15 @@ class TitleUsecase @Inject constructor(
             limit = param.page.limit
         )
         val response = usecase(SearchByTitleUsecase.Parameter(param.title, page = currentPage))
-        LoadResult.Page(
-            data = response.items.map { it.mapFromDomain() },
-            prevKey = if (currentOffset <= 0) null else currentOffset - 1,
-            nextKey = if (response.items.isEmpty()) null else currentOffset + response.items.size
-        )
+        if (response.items.isEmpty() && currentPage.offset == 0) {
+            LoadResult.Error(NoContentException())
+        } else {
+            LoadResult.Page(
+                data = response.items.map { it.mapFromDomain() },
+                prevKey = if (currentOffset <= 0) null else currentOffset - 1,
+                nextKey = if (response.items.isEmpty()) null else currentOffset + response.items.size
+            )
+        }
     }
 
     data class Parameter(

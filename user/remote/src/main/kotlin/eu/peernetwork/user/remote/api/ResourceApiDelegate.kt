@@ -5,6 +5,7 @@ import eu.peernetwork.user.data.api.ResourceApi
 import eu.peernetwork.user.domain.exception.ResourceNotFoundException
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import org.apache.commons.lang3.StringEscapeUtils
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -18,6 +19,8 @@ class ResourceApiDelegate @Inject constructor(
         if (!response.isSuccessful) {
             throw NetworkException(response.message)
         }
-        return response.body?.string() ?: throw ResourceNotFoundException()
+        return response.body?.string()?.let {
+            StringEscapeUtils.unescapeJava(it).replace("\\'", "'")
+        } ?: throw ResourceNotFoundException()
     }
 }

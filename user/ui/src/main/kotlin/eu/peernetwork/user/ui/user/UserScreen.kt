@@ -9,9 +9,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
@@ -29,9 +30,10 @@ import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.user.ui.model.UiAccount
 import eu.peernetwork.user.ui.model.UiOverview
 import eu.peernetwork.core.ui.design.compose.DesignAsyncImage
-import eu.peernetwork.core.ui.design.compose.DesignTitle
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffold
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
+import eu.peernetwork.core.ui.design.compose.DesignLead
+import eu.peernetwork.core.ui.extension.toInt
 import eu.peernetwork.user.ui.R
 import eu.peernetwork.user.ui.compose.Overview
 import eu.peernetwork.user.ui.compose.ProfileScaffold
@@ -39,7 +41,7 @@ import eu.peernetwork.user.ui.compose.ProfileScaffold
 @Composable
 fun UserScreen(
     id: String,
-    loadState: MutableState<Boolean>,
+    lastUpdated: State<Long>,
     modifier: Modifier = Modifier,
     provider: UiComponentProvider,
     onFollow: @Composable (Pair<Boolean, Boolean>) -> Unit,
@@ -75,6 +77,7 @@ fun UserScreen(
             }
         }
     } }
+    val updatedAt = remember { mutableLongStateOf(lastUpdated.value) }
     DesignStatefulScaffold<Pair<UiAccount, Boolean>>(
         state = derivedState,
         onRefresh = { viewModel.getAccount(id) },
@@ -85,6 +88,7 @@ fun UserScreen(
             modifier = modifier,
             account = it.first,
             connection = onFollow,
+            showPeers = it.second,
             onSettings = if (it.second) {
                 onSettings
             } else {
@@ -93,10 +97,10 @@ fun UserScreen(
             onClick = onClick,
         )
     }
-    LaunchedEffect(loadState.value) {
-        if (loadState.value) {
+    LaunchedEffect(lastUpdated.value) {
+        if (updatedAt.longValue != lastUpdated.value) {
             viewModel.getAccount(id)
-            loadState.value = false
+            updatedAt.longValue = lastUpdated.value
         }
     }
     LaunchedEffect(Unit) { viewModel.initialize() }
@@ -106,6 +110,7 @@ fun UserScreen(
 fun UserScreen(
     account: UiAccount,
     modifier: Modifier = Modifier,
+    showPeers: Boolean,
     connection: @Composable (Pair<Boolean, Boolean>) -> Unit,
     onSettings: (() -> Unit)? = null,
     onClick: (Int) -> Unit,
@@ -137,11 +142,11 @@ fun UserScreen(
             Overview(
                 overview = account.overview,
                 modifier = Modifier.fillMaxWidth(),
-                onClick = { if (it < 2) clickHandler(it) }
+                onClick = { if (it < (2 + showPeers.toInt())) clickHandler(it) }
             )
         }
     ) {
-        DesignTitle(
+        DesignLead(
             account.username,
             account.slug.toString(),
             account.bio ?: emptyDescription
@@ -168,6 +173,6 @@ fun PreviewUserScreen() {
             isfollowing = false,
             isfollowed = false
         )
-        UserScreen(connection = { }, account = model) {}
+        UserScreen(connection = { }, account = model, showPeers = true) {}
     }
 }

@@ -86,6 +86,7 @@ fun CreatorForm(
             ),
             verticalAlignment = Alignment.Top,
             maxLines = 3,
+            maxLength = 500,
             modifier = Modifier.fillMaxWidth()
                 .padding(vertical = 12.dp),
             leading = { },

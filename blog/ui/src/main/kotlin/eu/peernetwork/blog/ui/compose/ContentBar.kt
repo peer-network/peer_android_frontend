@@ -21,8 +21,8 @@ import eu.peernetwork.blog.ui.model.UiContent
 import eu.peernetwork.core.ui.design.compose.DesignAsyncImage
 import eu.peernetwork.core.ui.design.compose.DesignAvatar
 import eu.peernetwork.core.ui.design.compose.DesignDetailLayout
-import eu.peernetwork.core.ui.design.compose.DesignRichTitle
-import eu.peernetwork.core.ui.design.compose.DesignTitleTextStyle
+import eu.peernetwork.core.ui.design.compose.DesignRichText
+import eu.peernetwork.core.ui.design.compose.DesignTitleStyle
 import eu.peernetwork.core.ui.theme.PeerTheme
 
 @Composable
@@ -64,7 +64,7 @@ fun ContentBar(
         modifier = modifier
     ) {
         Row(modifier = Modifier.padding(start = 16.dp)) {
-            DesignRichTitle(
+            DesignRichText(
                 title = model.title,
                 description = model.description,
                 verticalArrangement = Arrangement.Center,
@@ -73,7 +73,7 @@ fun ContentBar(
                 maxContentLines = 3,
                 modifier = Modifier.weight(1f),
                 titleOnClick = titleOnClick,
-                style = DesignTitleTextStyle(
+                style = DesignTitleStyle(
                     span = SpanStyle(
                         fontStyle = FontStyle.Italic,
                         fontWeight = FontWeight.Normal,

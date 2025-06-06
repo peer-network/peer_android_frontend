@@ -8,12 +8,14 @@ import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
@@ -82,6 +84,7 @@ fun DesignTextField(
     shape: Shape = RoundedCornerShape(16.dp),
     contentPadding: PaddingValues = PaddingValues(16.dp),
     singleLine: Boolean = false,
+    maxLength: Int = Int.MAX_VALUE,
     maxLines: Int = if (singleLine) 1 else Int.MAX_VALUE,
     minLines: Int = 1,
     visualTransformation: VisualTransformation = VisualTransformation.None,
@@ -94,6 +97,7 @@ fun DesignTextField(
     placeholder: @Composable (() -> Unit)? = null,
 ) {
     var isFocused by remember { mutableStateOf(false) }
+    val scrollState = rememberScrollState()
     val backgroundColor by animateColorAsState(
         targetValue = if (isFocused) {
             colors.focusedContainerColor
@@ -151,9 +155,12 @@ fun DesignTextField(
             BasicTextField(
                 value = state.text.toString(),
                 onValueChange = { input ->
-                    state.edit { replace(0, length, input) }
+                    if (maxLength == Int.MAX_VALUE || input.length <= maxLength) {
+                        state.edit { replace(0, length, input) }
+                    }
                 },
                 modifier = Modifier.fillMaxWidth()
+                    .horizontalScroll(scrollState)
                     .focusRequester(focusRequester),
                 enabled = enabled,
                 readOnly = readOnly,

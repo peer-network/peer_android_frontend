@@ -11,13 +11,17 @@ import eu.peernetwork.blog.domain.usecase.EngagementRefreshUsecase
 import eu.peernetwork.blog.ui.mapper.mapToPhoto
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.core.common.model.Pageable
+import eu.peernetwork.core.common.provider.Dispatcher
+import eu.peernetwork.core.ui.exception.NoContentException
 import eu.peernetwork.core.ui.usecase.AnnotationUsecase
 import eu.peernetwork.core.ui.usecase.PagingUsecase
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class UserPostsUsecase @Inject constructor(
     private val usecase: PhotosUsecase,
+    private val dispatcher: Dispatcher,
     private val engagementRefreshUsecase: EngagementRefreshUsecase,
     private val annotationUsecase: AnnotationUsecase
 ) : PagingUsecase<UserPostsUsecase.Parameter, UiPost>() {
@@ -34,7 +38,7 @@ class UserPostsUsecase @Inject constructor(
         ).flow
     }
 
-    override suspend fun getData(params: LoadParams<Int>): LoadResult<Int, UiPost> {
+    override suspend fun getData(params: LoadParams<Int>): LoadResult<Int, UiPost> = withContext(dispatcher.io) {
         val currentOffset = params.key ?: param.page.offset
         val currentPage = Pageable(
             offset = currentOffset,
@@ -49,15 +53,19 @@ class UserPostsUsecase @Inject constructor(
         if (currentOffset <= 0) {
             engagementRefreshUsecase()
         }
-        return LoadResult.Page(
-            data = response.items.map { it.mapToPhoto { annotationUsecase(it) } },
-            prevKey = if (currentOffset <= 0) null else currentOffset - 1,
-            nextKey = if (response.items.isNotEmpty()) {
-                currentOffset + response.items.size
-            } else {
-                null
-            }
-        )
+        if (response.items.isEmpty() && currentPage.offset == 0) {
+            LoadResult.Error(NoContentException())
+        } else {
+            LoadResult.Page(
+                data = response.items.map { it.mapToPhoto { annotationUsecase(it) } },
+                prevKey = if (currentOffset <= 0) null else currentOffset - 1,
+                nextKey = if (response.items.isNotEmpty()) {
+                    currentOffset + response.items.size
+                } else {
+                    null
+                }
+            )
+        }
     }
 
     data class Parameter(

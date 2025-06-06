@@ -4,6 +4,7 @@ import eu.peernetwork.blog.domain.model.Author
 import eu.peernetwork.blog.domain.model.Comment
 import eu.peernetwork.blog.remote.comment.CreateCommentMutation
 import eu.peernetwork.blog.remote.comment.GetCommentsQuery
+import org.apache.commons.lang3.StringEscapeUtils
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.TimeZone
@@ -12,7 +13,7 @@ fun GetCommentsQuery.AffectedRow.mapToDomain(): List<Comment> {
     return comments.map {
         Comment(
             id = it.commentid,
-            content = it.content,
+            content = StringEscapeUtils.unescapeJava(it.content).replace("\\'", "'"),
             author = Author(
                 id = it.user.id,
                 slug = it.user.slug!!,
@@ -31,7 +32,7 @@ fun GetCommentsQuery.AffectedRow.mapToDomain(): List<Comment> {
 fun CreateCommentMutation.AffectedRow.mapToDomain(): Comment {
     return Comment(
         id = commentid,
-        content = content,
+        content = StringEscapeUtils.unescapeJava(content).replace("\\'", "'"),
         author = Author(
             id = user.id,
             slug = user.slug!!,

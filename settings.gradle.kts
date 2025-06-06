@@ -37,6 +37,11 @@ include(":blog:data")
 include(":blog:remote")
 include(":blog:ui")
 
+include(":messaging:domain")
+include(":messaging:data")
+include(":messaging:remote")
+include(":messaging:ui")
+
 include(":wallet:domain")
 include(":wallet:data")
 include(":wallet:remote")

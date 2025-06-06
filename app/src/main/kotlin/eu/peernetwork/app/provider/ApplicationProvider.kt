@@ -20,7 +20,7 @@ interface ApplicationProvider : UserProvider, PreferenceProvider, ContentProvide
 
     fun networkProvider(): RequestClient
 
-    fun networkResource(): NetworkService
+    fun networkService(): NetworkService
 
     fun settingsInteractor(): SettingsInteractor
 }

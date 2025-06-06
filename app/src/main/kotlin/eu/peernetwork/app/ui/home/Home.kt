@@ -10,7 +10,8 @@ import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.app.ui.feed.Feed
 import eu.peernetwork.blog.ui.point.Point
 import eu.peernetwork.app.ui.search.Search
-import eu.peernetwork.wallet.ui.overview.Overview
+import eu.peernetwork.app.ui.wallet.Wallet
+import eu.peernetwork.messaging.ui.chat.Chat
 
 interface Home : ApplicationProvider {
     @javax.inject.Scope
@@ -22,7 +23,7 @@ interface Home : ApplicationProvider {
         dependencies = [ Home::class ],
         modules = [ HomeModule::class ]
     )
-    interface Component : Home, Feed, Profile, UiComponentProvider, Point, Composer, Overview, Search {
+    interface Component : Home, Feed, Profile, UiComponentProvider, Point, Composer, Wallet, Search, Chat {
         fun viewModelFactory(): ViewModelProvider.Factory
     }
 
