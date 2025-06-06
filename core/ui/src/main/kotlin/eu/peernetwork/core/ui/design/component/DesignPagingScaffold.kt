@@ -30,7 +30,7 @@ fun<T : Any> DesignPagingScaffold(
     easing: Easing = FastOutSlowInEasing,
     contentAlignment: Alignment = Alignment.Center,
     placeholder: (@Composable () -> Unit)? = null,
-    errorContent: (@Composable (Throwable) -> Unit)? = null,
+    errorContent: (@Composable (Throwable, () -> Unit) -> Unit)? = null,
     content: @Composable (State<DesignStatefulScaffoldState>, LazyPagingItems<T>) -> Unit,
 ) {
     val updatedContent by rememberUpdatedState(content)
@@ -44,8 +44,8 @@ fun<T : Any> DesignPagingScaffold(
         contentAlignment = contentAlignment,
         placeholder = placeholder,
         errorContent = {
-            updatedErrorContent?.invoke(it)
-                ?: DesignErrorContent(
+            updatedErrorContent?.invoke(it, onRefresh)
+                ?: DesignError(
                     it, onRetry = onRefresh,
                     modifier = Modifier.fillMaxSize()
                         .verticalScroll(rememberScrollState())
@@ -74,8 +74,8 @@ fun<T : Any> DesignPagingScaffold(
             contentAlignment = contentAlignment,
             placeholder = placeholder,
             errorContent = {
-                updatedErrorContent?.invoke(it)
-                    ?: DesignErrorContent(
+                updatedErrorContent?.invoke(it, onRefresh)
+                    ?: DesignError(
                         it, onRetry = onRefresh,
                         modifier = Modifier.fillMaxSize()
                             .padding(bottom = 64.dp)

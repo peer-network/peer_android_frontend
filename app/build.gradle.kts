@@ -5,8 +5,8 @@ plugins {
 
 android {
     defaultConfig {
-        versionCode = 7
-        versionName = "1.0.7"
+        versionCode = 9
+        versionName = "1.0.9"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
@@ -23,6 +23,7 @@ android {
             buildConfigField("String", "MEDIA_URL", "\"https://media.getpeer.eu\"")
             buildConfigField("String", "INVITE_URL", "\"https://testing.getpeer.eu/invite.php?%s\"")
             buildConfigField("boolean", "USE_SYSTEM_THEME", "false")
+            buildConfigField("String","PRIVACY_POLICY_URL","\"https://www.freeprivacypolicy.com/live/02865c3a-79db-4baf-9ca1-7d91e2cf1724\"")
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
         release {
@@ -32,6 +33,7 @@ android {
             buildConfigField("String", "MEDIA_URL", "\"https://media.peernetwork.eu\"")
             buildConfigField("String", "INVITE_URL", "\"https://testing.getpeer.eu/invite.php?%s\"")
             buildConfigField("boolean", "USE_SYSTEM_THEME", "false")
+            buildConfigField("String","PRIVACY_POLICY_URL","\"https://www.freeprivacypolicy.com/live/02865c3a-79db-4baf-9ca1-7d91e2cf1724\"")
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
             signingConfig = signingConfigs.getByName("debug")
         }
@@ -77,12 +79,18 @@ dependencies {
     implementation(project(":wallet:remote"))
     implementation(project(":wallet:ui"))
 
+    implementation(project(":messaging:domain"))
+    implementation(project(":messaging:data"))
+    implementation(project(":messaging:remote"))
+    implementation(project(":messaging:ui"))
+
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.config)
     implementation(libs.firebase.messaging)
 
     implementation(libs.lottie)
+
 
     implementation(libs.dagger)
     ksp(libs.dagger.compiler)

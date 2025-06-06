@@ -20,8 +20,8 @@ import eu.peernetwork.blog.ui.model.UiAuthor
 import eu.peernetwork.core.ui.design.compose.DesignAsyncImage
 import eu.peernetwork.core.ui.design.compose.DesignAvatar
 import eu.peernetwork.core.ui.design.compose.DesignDetailLayout
-import eu.peernetwork.core.ui.design.compose.DesignTitle
-import eu.peernetwork.core.ui.design.compose.DesignTitleTextStyle
+import eu.peernetwork.core.ui.design.compose.DesignLead
+import eu.peernetwork.core.ui.design.compose.DesignTitleStyle
 import eu.peernetwork.core.ui.theme.PeerTheme
 
 @Composable
@@ -51,14 +51,14 @@ fun AuthorBar(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        DesignTitle(
+        DesignLead(
             title = author.username,
             caption = author.slug.toString(),
             description = description,
             verticalArrangement = Arrangement.Center,
             spacer = {},
             modifier = Modifier.padding(start = 8.dp),
-            style = DesignTitleTextStyle(
+            style = DesignTitleStyle(
                 span = SpanStyle(
                     fontStyle = FontStyle.Italic,
                     fontWeight = FontWeight.Normal,

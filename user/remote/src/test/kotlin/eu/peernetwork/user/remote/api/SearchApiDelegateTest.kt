@@ -20,13 +20,15 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
 internal class SearchApiDelegateTest {
+    private val url = "http://locahost"
+
     private val client = mockk<ApolloClient>()
 
     private lateinit var api: SearchApi
 
     @Before
     fun setup() {
-        api = SearchApiDelegate(object : RequestClient {
+        api = SearchApiDelegate(url, object : RequestClient {
             override fun invoke(): ApolloClient = client
         })
     }

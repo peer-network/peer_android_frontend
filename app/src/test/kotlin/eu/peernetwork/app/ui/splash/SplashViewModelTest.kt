@@ -2,7 +2,6 @@ package eu.peernetwork.app.ui.splash
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import app.cash.turbine.test
-import eu.peernetwork.app.usecase.BootstrapUsecase
 import eu.peernetwork.app.usecase.VersionUseCase
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -26,8 +25,6 @@ internal class SplashViewModelTest {
 
     private val dispatcher = UnconfinedTestDispatcher()
 
-    private val bootstrapUsecase = mockk<BootstrapUsecase>()
-
     private val versionUseCase = mockk<VersionUseCase>()
 
     private lateinit var viewModel: SplashViewModel
@@ -35,7 +32,7 @@ internal class SplashViewModelTest {
     @Before
     fun setup() {
         Dispatchers.setMain(dispatcher)
-        viewModel = SplashViewModel(bootstrapUsecase, versionUseCase)
+        viewModel = SplashViewModel(versionUseCase)
     }
 
     @After
@@ -45,8 +42,10 @@ internal class SplashViewModelTest {
 
     @Test
     fun `test initialize state`() = runTest {
-        coEvery { bootstrapUsecase() } coAnswers { delay(100) }
-        coEvery { versionUseCase() } returns VersionUseCase.Result.UpToDate
+        coEvery { versionUseCase() } coAnswers {
+            delay(100)
+            VersionUseCase.Result.UpToDate
+        }
         viewModel.initialize()
         viewModel.state.test {
             assertEquals(SplashViewModel.State.Loading, awaitItem())

@@ -36,7 +36,7 @@ class MemberViewModel @Inject constructor(
                 .onStart { mutableState.tryEmit(State.Loading) }
                 .cachedIn(viewModelScope)
                 .apply {
-                    collectLatest { mutableState.tryEmit(State.Success(this)) }
+                    collectLatest { mutableState.tryEmit(State.Success(username, this)) }
                 }
         }
     }
@@ -50,7 +50,10 @@ class MemberViewModel @Inject constructor(
     sealed interface State {
         data object Empty : State
         data object Loading : State
-        data class Success(val content: Flow<PagingData<UiMember>>) : State
+        data class Success(
+            val username: String,
+            val content: Flow<PagingData<UiMember>>
+        ) : State
         data class Error(val error: Throwable) : State
     }
 }

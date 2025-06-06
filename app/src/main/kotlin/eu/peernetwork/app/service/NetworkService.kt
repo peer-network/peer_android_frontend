@@ -2,6 +2,7 @@ package eu.peernetwork.app.service
 
 import com.apollographql.apollo3.ApolloClient
 import eu.peernetwork.app.interceptor.LoggingInterceptor
+import eu.peernetwork.app.interceptor.ResourceInterceptor
 import eu.peernetwork.core.common.interactor.UrlInteractor
 import eu.peernetwork.core.remote.api.RequestClient
 import eu.peernetwork.user.remote.interceptor.JwtInterceptor
@@ -12,6 +13,7 @@ interface NetworkService : RequestClient {
         private val provider: UrlInteractor,
         private val logger: LoggingInterceptor,
         private val jwtInterceptor: JwtInterceptor,
+        private val resourceInterceptor: ResourceInterceptor
     ) : NetworkService {
         private var cache: String = provider.get()
 
@@ -26,6 +28,7 @@ interface NetworkService : RequestClient {
                 cache = provider.get()
                 client = ApolloClient.Builder()
                     .serverUrl("$cache/graphql")
+                    .addInterceptor(resourceInterceptor)
                     .addInterceptor(logger)
                     .addInterceptor(jwtInterceptor)
                     .build()

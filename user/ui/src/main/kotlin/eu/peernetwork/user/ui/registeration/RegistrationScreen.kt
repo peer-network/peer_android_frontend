@@ -1,5 +1,6 @@
 package eu.peernetwork.user.ui.registeration
 
+import androidx.compose.runtime.saveable.rememberSaveable
 import android.content.res.Configuration
 import android.widget.Toast
 import androidx.compose.foundation.layout.Column
@@ -17,7 +18,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -87,7 +87,11 @@ fun RegistrationScreen(
     onSubmit: (String, String, String, String) -> Unit
 ) {
     val email by rememberSaveable(stateSaver = TextFieldState.Saver) { mutableStateOf(TextFieldState()) }
-    val username by rememberSaveable(stateSaver = TextFieldState.Saver) { mutableStateOf(TextFieldState()) }
+    val username by rememberSaveable(stateSaver = TextFieldState.Saver) {
+        mutableStateOf(
+            TextFieldState()
+        )
+    }
     val referralCode by rememberSaveable(stateSaver = TextFieldState.Saver) {
         mutableStateOf(referral?.let { TextFieldState(it) } ?: TextFieldState())
     }
@@ -101,6 +105,8 @@ fun RegistrationScreen(
     }
     val handleReset by rememberUpdatedState(onReset)
     val handleSubmit by rememberUpdatedState(onSubmit)
+    var isChecked = remember { mutableStateOf(false) }
+    val showAgeConfirmDialog = remember { mutableStateOf(false) }
     Column(modifier = Modifier.fillMaxWidth()) {
         RegistrationForm(
             email = email,
@@ -113,14 +119,7 @@ fun RegistrationScreen(
         DesignButton(
             enabled = !loading.value && validate,
             isLoading = loading.value,
-            onClick = {
-                handleSubmit(
-                    email.text.toString(),
-                    username.text.toString(),
-                    password.text.toString(),
-                    referralCode.text.toString()
-                )
-            },
+            onClick = { showAgeConfirmDialog.value = true },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 16.dp, bottom = 24.dp)
@@ -134,6 +133,15 @@ fun RegistrationScreen(
             )
         }
     }
+    RegistrationDialog(showAgeConfirmDialog, isChecked) {
+        showAgeConfirmDialog.value = false
+        handleSubmit(
+            email.text.toString(),
+            username.text.toString(),
+            password.text.toString(),
+            referralCode.text.toString()
+        )
+    }
     DisposableEffect(email) { onDispose { handleReset?.invoke() } }
 }
 
@@ -141,7 +149,7 @@ fun RegistrationScreen(
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun PreviewRegistrationScreen() {
     PeerTheme {
-        val isLoading = remember { mutableStateOf<Boolean>(false) }
+        val isLoading = remember { mutableStateOf(false) }
         val error = remember { mutableStateOf<String?>(null) }
         RegistrationScreen(isLoading, error) { email, username, password, referral -> }
     }

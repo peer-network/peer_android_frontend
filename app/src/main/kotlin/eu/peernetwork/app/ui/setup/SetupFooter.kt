@@ -1,8 +1,8 @@
 package eu.peernetwork.app.ui.setup
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import eu.peernetwork.app.BuildConfig
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -19,10 +20,14 @@ import eu.peernetwork.core.ui.theme.PeerTheme
 @Composable
 fun SetupFooter(
     onPrivacy: () -> Unit,
+    onAbout: (Int) -> Unit,
 ) {
-    Box(
-        modifier = Modifier.fillMaxWidth(),
-        contentAlignment = Alignment.TopCenter
+    val versionName = BuildConfig.VERSION_NAME
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight(),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         TextButton(
             onClick = onPrivacy,
@@ -36,6 +41,14 @@ fun SetupFooter(
                 )
             )
         }
+        ClickableText(
+            text = buildAnnotatedString { append("v$versionName") },
+            modifier = Modifier.padding(horizontal = 24.dp),
+            style = MaterialTheme.typography.labelSmall.copy(
+                color = MaterialTheme.colorScheme.tertiary
+            ),
+            onClick = onAbout
+        )
     }
 }
 
@@ -43,6 +56,6 @@ fun SetupFooter(
 @Composable
 fun PreviewSetupFooter() {
     PeerTheme {
-        SetupFooter {}
+        SetupFooter({}) {}
     }
 }

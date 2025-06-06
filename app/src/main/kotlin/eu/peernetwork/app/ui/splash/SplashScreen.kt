@@ -1,6 +1,5 @@
 package eu.peernetwork.app.ui.splash
 
-import android.content.Intent
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationEndReason
 import androidx.compose.animation.core.LinearEasing
@@ -9,9 +8,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
@@ -32,11 +28,12 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.rememberLottieComposition
 import eu.peernetwork.app.R
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.component.DesignErrorContent
+import eu.peernetwork.core.ui.design.component.DesignError
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffold
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
 import eu.peernetwork.core.ui.extension.builder
 import androidx.core.net.toUri
+import eu.peernetwork.app.ui.compose.UpdateDialog
 
 @Composable
 fun SplashScreen(
@@ -61,7 +58,11 @@ fun SplashScreen(
     }
     var play = remember { mutableStateOf(true) }
     val isLoading = remember(state) { derivedStateOf { state is SplashViewModel.State.Loading } }
-    val isReady = remember(state) { derivedStateOf { state is SplashViewModel.State.Success } }
+    val isReady = remember(state) { derivedStateOf {
+        (state as? SplashViewModel.State.Success?)?.let {
+            it.update == null
+        } == true
+    } }
     val onFinish by rememberUpdatedState(onAnimationFinished)
     DesignStatefulScaffold<Unit>(
         state = derivedState,
@@ -69,7 +70,7 @@ fun SplashScreen(
             derivedState.value = DesignStatefulScaffoldState.Success(Unit)
             play.value = true
             viewModel.initialize() },
-        errorContent = { DesignErrorContent(
+        errorContent = { DesignError(
             it,
             onRetry = {
                 derivedState.value = DesignStatefulScaffoldState.Success(Unit)
@@ -92,23 +93,7 @@ fun SplashScreen(
             play.value = false
         }
     } }
-    if (showDialog.value) {
-        AlertDialog(
-            onDismissRequest = { showDialog.value = false },
-            title = { Text("Update Required") },
-            text = { Text("This version of the app is outdated. Please update to continue.") },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        val intent = Intent(Intent.ACTION_VIEW, updateUrl.value.toUri())
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                        context.startActivity(intent)
-                    }
-                ) { Text("Update Now") }
-            },
-            dismissButton = {}
-        )
-    }
+    UpdateDialog(showDialog, updateUrl.value.toUri())
     LaunchedEffect(state) {
         (state as? SplashViewModel.State.Success?)?.update?.let {
             updateUrl.value = it

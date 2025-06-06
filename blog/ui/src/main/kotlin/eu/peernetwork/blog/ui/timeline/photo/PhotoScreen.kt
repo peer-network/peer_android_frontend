@@ -19,6 +19,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import eu.peernetwork.core.ui.extension.builder
@@ -37,13 +38,15 @@ import eu.peernetwork.core.common.model.Pageable
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
 import eu.peernetwork.blog.ui.moderation.ModerationScreen
 import eu.peernetwork.blog.ui.moderation.ModerationSpec
+import eu.peernetwork.core.ui.R
+import eu.peernetwork.core.ui.design.component.DesignError
 import eu.peernetwork.core.ui.design.component.DesignPagingScaffold
 import eu.peernetwork.core.ui.design.component.DesignRefreshableScaffold
 import eu.peernetwork.media.core.renderer.ImageView
 import kotlinx.coroutines.delay
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
 @Composable
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
 fun PhotoScreen(
     id: String,
     postLimit: Int,
@@ -67,6 +70,7 @@ fun PhotoScreen(
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
     val currentTime = remember { mutableLongStateOf(System.currentTimeMillis()) }
+    val errorMessage = stringResource(R.string.unknown_error_message)
     LaunchedEffect(Unit) {
         while (true) {
             delay(60_000L)
@@ -82,7 +86,9 @@ fun PhotoScreen(
                     (state as PhotoViewModel.State.Success).content
                 )
                 is PhotoViewModel.State.Error -> DesignStatefulScaffoldState.Error(
-                    (state as PhotoViewModel.State.Error).error
+                    (state as PhotoViewModel.State.Error).error.let {
+                        Throwable(component.resource().string(it.message ?: errorMessage), it)
+                    }
                 )
             }
         }
@@ -90,7 +96,10 @@ fun PhotoScreen(
     DesignPagingScaffold<UiPost>(
         state = derivedState,
         onRefresh = { viewModel.load(Pageable(0, postLimit), criteria) },
-        placeholder = { PostPageSkeleton() }
+        placeholder = { PostPageSkeleton() },
+        errorContent = { error, refresh ->
+            DesignError(refresh, error, component.resource())
+        }
     ) { state, lazyPagingItems ->
         val refreshState = remember { derivedStateOf {
             if (lazyPagingItems.loadState.refresh is LoadState.Loading) {
@@ -132,6 +141,7 @@ fun PhotoScreen(
                             key = { index -> lazyPagingItems[index]?.id ?: index }
                         ) { index ->
                             lazyPagingItems[index]?.let { post ->
+                                val media = remember(post.id) { post.media.first() }
                                 PhotoScreen(
                                     id = id,
                                     post = post,
@@ -144,7 +154,6 @@ fun PhotoScreen(
                                     onMentionClick = onMentionClick,
                                     connection = connection,
                                     content = {
-                                        val media = post.media.first()
                                         component.imageView()(
                                             Modifier,
                                             ImageView.Spec(media.path, media.mapToProperty())
@@ -185,7 +194,7 @@ fun LazyItemScope.PhotoScreen(
     connection: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit,
     content: @Composable (UiPost) -> Unit = {}
 ) {
-    val engagement = remember(post) { post.mapToContent() }
+    val engagement = remember(id) { post.mapToContent() }
     val clickHandler by rememberUpdatedState { onClick(post.author.id) }
     val updatedConnection by rememberUpdatedState(connection)
     PostListItem(

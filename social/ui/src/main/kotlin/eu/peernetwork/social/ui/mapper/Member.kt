@@ -6,6 +6,7 @@ import eu.peernetwork.social.ui.model.UiMember
 fun Member.mapFromDomain(): UiMember {
     return UiMember(
         id = id,
+        slug = slug,
         username = username,
         imageUrl = imageUrl
     )

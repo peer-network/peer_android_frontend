@@ -6,11 +6,21 @@ import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
 import eu.peernetwork.core.ui.annotation.UiViewModel
+import eu.peernetwork.core.ui.component.UiComponent
+import eu.peernetwork.core.ui.component.UiComponentProvider
+import eu.peernetwork.core.ui.factory.UiBuilderFactory
 import eu.peernetwork.core.ui.factory.UiViewModelFactory
 import javax.inject.Provider
 
 @Module
 object OverviewModule {
+    @Provides
+    @Overview.Scope
+    fun provideBuilderFactory(factory: Map<Class<out UiComponent.Builder>,
+            @JvmSuppressWildcards Provider<UiComponent.Builder>>): UiComponentProvider.Factory {
+        return UiBuilderFactory(factory)
+    }
+
     @Provides
     @Overview.Scope
     fun provideViewModelFactory(

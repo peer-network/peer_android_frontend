@@ -16,7 +16,8 @@ import eu.peernetwork.app.ui.feed.Feed
 import eu.peernetwork.app.ui.profile.Profile
 import eu.peernetwork.blog.ui.point.Point
 import eu.peernetwork.app.ui.search.Search
-import eu.peernetwork.wallet.ui.overview.Overview
+import eu.peernetwork.app.ui.wallet.Wallet
+import eu.peernetwork.messaging.ui.chat.Chat
 import javax.inject.Provider
 
 @Module
@@ -75,9 +76,9 @@ object HomeModule {
     @Home.Scope
     @Provides
     @IntoMap
-    @UiBuilder(Overview.Builder::class)
-    fun provideOverviewBuilder(component: Home.Component): UiComponent.Builder {
-        return Overview.Builder(component)
+    @UiBuilder(Wallet.Builder::class)
+    fun provideWalletBuilder(component: Home.Component): UiComponent.Builder {
+        return Wallet.Builder(component)
     }
 
     @Home.Scope
@@ -86,5 +87,13 @@ object HomeModule {
     @UiBuilder(Search.Builder::class)
     fun provideSearchBuilder(component: Home.Component): UiComponent.Builder {
         return Search.Builder(component)
+    }
+
+    @Home.Scope
+    @Provides
+    @IntoMap
+    @UiBuilder(Chat.Builder::class)
+    fun provideChatBuilder(component: Home.Component): UiComponent.Builder {
+        return Chat.Builder(component)
     }
 }

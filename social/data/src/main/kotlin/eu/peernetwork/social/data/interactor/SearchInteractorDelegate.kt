@@ -21,6 +21,7 @@ class SearchInteractorDelegate @Inject constructor(
             items = response.items.map {
                 Member(
                     id = it.id,
+                    slug = it.slug.toString(),
                     username = it.username,
                     imageUrl = it.imageUrl
                 )
