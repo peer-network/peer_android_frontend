@@ -96,7 +96,6 @@ fun MediaPostCard(
     }
 }
 
-
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun PreviewImagePostCard() {

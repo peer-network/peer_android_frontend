@@ -14,6 +14,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -38,6 +39,8 @@ import eu.peernetwork.media.core.model.UiMimeType
 fun CreatorScreen(
     attachment: MutableState<UiAttachment>,
     focus: FocusRequester,
+    onConfirm: () -> Boolean,
+    onReset: () -> Unit,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
 ) {
@@ -74,17 +77,21 @@ fun CreatorScreen(
             attachment.value.files.isNotEmpty()
         }
     } }
+    val handleOnConfirm by rememberUpdatedState(onConfirm)
+    val handleOnReset by rememberUpdatedState(onReset)
     CreatorScreen(
         focus = focus,
         onSubmit = {
-            viewModel.create(UiDraft(
-                title = it.title,
-                description = it.description,
-                media = if (attachment.value.files.isEmpty()) {
-                    UiMimeType.Text
-                } else { attachment.value.media },
-                attachments = attachment.value.files.map { it.uri }
-            )) },
+            if (handleOnConfirm()) {
+                viewModel.create(UiDraft(
+                    title = it.title,
+                    description = it.description,
+                    media = if (attachment.value.files.isEmpty()) {
+                        UiMimeType.Text
+                    } else { attachment.value.media },
+                    attachments = attachment.value.files.map { it.uri }
+                ))
+            } },
         header = { AuthorScreen(component, viewModelStoreOwner) },
         isLoading = isLoading,
         enabled = enabled,
@@ -95,6 +102,7 @@ fun CreatorScreen(
     LaunchedEffect(shouldReset.value) {
         if (shouldReset.value) {
             viewModel.reset()
+            handleOnReset()
         }
     }
 }
@@ -108,7 +116,7 @@ fun CreatorScreen(
     attachment: MutableState<UiAttachment>,
     error: State<String?>,
     modifier: Modifier = Modifier,
-    onSubmit: (UiDraft.Field) -> Unit = {},
+    onSubmit: (UiDraft.Field) -> Unit = { },
     header: @Composable () -> Unit = {}
 ) {
     var title by rememberSaveable(stateSaver = TextFieldState.Saver) { mutableStateOf(TextFieldState()) }

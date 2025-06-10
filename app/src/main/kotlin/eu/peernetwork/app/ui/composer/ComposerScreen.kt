@@ -29,6 +29,7 @@ import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.media.core.model.UiAttachment
 import eu.peernetwork.media.ui.attachment.AttachmentPlaceholder
 import eu.peernetwork.media.ui.attachment.AttachmentScreen
+import eu.peernetwork.wallet.ui.confirmation.ConfirmationScreen
 import kotlinx.coroutines.FlowPreview
 
 @Composable
@@ -42,6 +43,8 @@ fun ComposerScreen(
         provider.builder(Composer.Builder::class.java).build(context)
     }
     val controller = rememberNavController()
+    val isConfirmed = remember { mutableStateOf(false) }
+    val showConfirmation = remember { mutableStateOf(false) }
     val attachment = remember { mutableStateOf<UiAttachment>(UiAttachment.Text) }
     val focus = remember { FocusRequester() }
     ComposerNavigation(
@@ -60,6 +63,11 @@ fun ComposerScreen(
             CreatorScreen(
                 attachment,
                 focus,
+                {
+                    showConfirmation.value = !isConfirmed.value
+                    isConfirmed.value
+                },
+                { isConfirmed.value = false },
                 component,
                 viewModelStoreOwner
             )
@@ -71,6 +79,9 @@ fun ComposerScreen(
                 }
             }
         }
+    }
+    ConfirmationScreen(showConfirmation, component, viewModelStoreOwner) {
+        isConfirmed.value = true
     }
 }
 

@@ -11,7 +11,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -29,6 +31,7 @@ fun CreatorFooter(
     isLoading: State<Boolean>,
     onSubmit: (UiDraft.Field) -> Unit = {},
 ) {
+    val handleOnSubmit by rememberUpdatedState(onSubmit)
     val isFormValid = remember(title, description) { derivedStateOf {
         title.isValidInput() && (description.isValidInput()) || (enabled.value && title.isValidInput())
     } }
@@ -36,7 +39,7 @@ fun CreatorFooter(
         Spacer(modifier = Modifier.weight(1f))
         DesignButton(
             onClick = {
-                onSubmit(UiDraft.Field(
+                handleOnSubmit(UiDraft.Field(
                     title.text.toString(),
                     description.text.toString())
                 ) },

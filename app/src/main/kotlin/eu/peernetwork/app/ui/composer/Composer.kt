@@ -8,6 +8,7 @@ import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.media.ui.attachment.Attachment
 import eu.peernetwork.media.ui.selector.explorer.Explorer
+import eu.peernetwork.wallet.ui.confirmation.Confirmation
 
 interface Composer : ApplicationProvider {
     @javax.inject.Scope
@@ -19,7 +20,7 @@ interface Composer : ApplicationProvider {
         dependencies = [ Composer::class ],
         modules = [ ComposerModule::class ]
     )
-    interface Component : Composer, Author, Creator, Explorer, Attachment, UiComponentProvider
+    interface Component : Composer, Author, Creator, Explorer, Attachment, Confirmation, UiComponentProvider
 
     class Builder(private val dependency: Composer) : UiComponent.DefaultBuilder<Composer, Component>() {
         override fun build(context: Context): Component {

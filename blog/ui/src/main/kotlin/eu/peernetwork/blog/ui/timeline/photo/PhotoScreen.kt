@@ -158,16 +158,16 @@ fun PhotoScreen(
                                     onMentionClick = onMentionClick,
                                     connection = connection,
                                     content = {
-                                        Box(contentAlignment = Alignment.BottomEnd) {
-                                            val pagerState = rememberPagerState(initialPage = 0) { post.media.size }
-                                            HorizontalPager(state = pagerState) {
-                                                val media = post.media[it]
-                                                component.imageView()(
-                                                    Modifier,
-                                                    ImageView.Spec(media.path, post.aspectRatio)
-                                                )
-                                            }
-                                            if (post.media.size > 1) {
+                                        if (post.media.size > 1) {
+                                            Box(contentAlignment = Alignment.BottomEnd) {
+                                                val pagerState = rememberPagerState(initialPage = 0) { post.media.size }
+                                                HorizontalPager(state = pagerState) {
+                                                    val media = post.media[it]
+                                                    component.imageView()(
+                                                        Modifier,
+                                                        ImageView.Spec(media.path, post.aspectRatio)
+                                                    )
+                                                }
                                                 Icon(
                                                     painter = painterResource(eu.peernetwork.blog.ui.R.drawable.ic_gallery),
                                                     contentDescription = stringResource(eu.peernetwork.blog.ui.R.string.post_description),
@@ -176,6 +176,12 @@ fun PhotoScreen(
                                                         .size(16.dp)
                                                 )
                                             }
+                                        } else {
+                                            val media = post.media.first()
+                                            component.imageView()(
+                                                Modifier,
+                                                ImageView.Spec(media.path, post.aspectRatio)
+                                            )
                                         }
                                     }
                                 )

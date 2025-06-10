@@ -10,6 +10,7 @@ import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.factory.UiBuilderFactory
 import eu.peernetwork.media.ui.attachment.Attachment
 import eu.peernetwork.media.ui.selector.explorer.Explorer
+import eu.peernetwork.wallet.ui.confirmation.Confirmation
 import javax.inject.Provider
 
 @Module
@@ -43,5 +44,13 @@ object ComposerModule {
     @UiBuilder(Explorer.Builder::class)
     fun provideExplorerBuilder(component: Composer.Component): UiComponent.Builder {
         return Explorer.Builder(component)
+    }
+
+    @Composer.Scope
+    @Provides
+    @IntoMap
+    @UiBuilder(Confirmation.Builder::class)
+    fun provideConfirmationBuilder(component: Composer.Component): UiComponent.Builder {
+        return Confirmation.Builder(component)
     }
 }

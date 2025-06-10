@@ -132,16 +132,16 @@ fun PhotoScreen(
                                 engagementSpec = engagement,
                                 moderationSpec = spec
                             ) {
-                                Box(contentAlignment = Alignment.BottomEnd) {
-                                    val pagerState = rememberPagerState(initialPage = 0) { photo.media.size }
-                                    HorizontalPager(state = pagerState) {
-                                        val media = photo.media[it]
-                                        component.imageView()(
-                                            Modifier,
-                                            ImageView.Spec(media.path, photo.aspectRatio)
-                                        )
-                                    }
-                                    if (photo.media.size > 1) {
+                                if (photo.media.size > 1) {
+                                    Box(contentAlignment = Alignment.BottomEnd) {
+                                        val pagerState = rememberPagerState(initialPage = 0) { photo.media.size }
+                                        HorizontalPager(state = pagerState) {
+                                            val media = photo.media[it]
+                                            component.imageView()(
+                                                Modifier,
+                                                ImageView.Spec(media.path, photo.aspectRatio)
+                                            )
+                                        }
                                         Icon(
                                             painter = painterResource(eu.peernetwork.blog.ui.R.drawable.ic_gallery),
                                             contentDescription = stringResource(eu.peernetwork.blog.ui.R.string.post_description),
@@ -150,6 +150,12 @@ fun PhotoScreen(
                                                 .size(16.dp)
                                         )
                                     }
+                                } else {
+                                    val media = photo.media.first()
+                                    component.imageView()(
+                                        Modifier,
+                                        ImageView.Spec(media.path, photo.aspectRatio)
+                                    )
                                 }
                             }
                         }
