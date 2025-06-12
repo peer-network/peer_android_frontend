@@ -20,6 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.navigation.compose.rememberNavController
 import eu.peernetwork.blog.ui.creator.CreatorScreen
+import eu.peernetwork.blog.ui.model.UiDraft
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.compose.DesignTitle
 import eu.peernetwork.core.ui.design.compose.DesignTitleBarHost
@@ -30,6 +31,7 @@ import eu.peernetwork.media.core.model.UiAttachment
 import eu.peernetwork.media.ui.attachment.AttachmentPlaceholder
 import eu.peernetwork.media.ui.attachment.AttachmentScreen
 import eu.peernetwork.wallet.ui.confirmation.ConfirmationScreen
+import eu.peernetwork.wallet.ui.model.UiIntent
 import kotlinx.coroutines.FlowPreview
 
 @Composable
@@ -43,8 +45,8 @@ fun ComposerScreen(
         provider.builder(Composer.Builder::class.java).build(context)
     }
     val controller = rememberNavController()
-    val isConfirmed = remember { mutableStateOf(false) }
-    val showConfirmation = remember { mutableStateOf(false) }
+    val draft = remember { mutableStateOf<UiDraft?>(null) }
+    val showConfirmation = remember(draft.value) { mutableStateOf(draft.value != null) }
     val attachment = remember { mutableStateOf<UiAttachment>(UiAttachment.Text) }
     val focus = remember { FocusRequester() }
     ComposerNavigation(
@@ -61,13 +63,9 @@ fun ComposerScreen(
             )
         }) {
             CreatorScreen(
+                draft,
                 attachment,
                 focus,
-                {
-                    showConfirmation.value = !isConfirmed.value
-                    isConfirmed.value
-                },
-                { isConfirmed.value = false },
                 component,
                 viewModelStoreOwner
             )
@@ -80,9 +78,13 @@ fun ComposerScreen(
             }
         }
     }
-    ConfirmationScreen(showConfirmation, component, viewModelStoreOwner) {
-        isConfirmed.value = true
-    }
+    ConfirmationScreen(
+        UiIntent.Post,
+        showConfirmation,
+        component,
+        viewModelStoreOwner,
+        { draft.value = null }
+    ) { draft.value = draft.value?.copy(confirmed = it) }
 }
 
 @Composable

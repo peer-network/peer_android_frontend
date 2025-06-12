@@ -2,7 +2,7 @@ package eu.peernetwork.wallet.ui.transfer
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import app.cash.turbine.test
-import eu.peernetwork.wallet.domain.model.Transfer
+import eu.peernetwork.wallet.domain.model.Receipt
 import eu.peernetwork.wallet.domain.usecase.TransferUsecase
 import eu.peernetwork.wallet.ui.mapper.mapFromDomain
 import io.mockk.coEvery
@@ -45,15 +45,15 @@ internal class TransferViewModelTest {
 
     @Test
     fun `test get transfer success`() = runTest {
-        val transfer = Transfer("<test-recipient>", BigDecimal(1.0))
+        val receipt = Receipt("<test-recipient>", BigDecimal(1.0))
         coEvery { usecase(any()) } coAnswers {
             delay(100)
-            transfer
+            receipt
         }
-        viewModel.transfer(transfer.recipient, transfer.token)
+        viewModel.transfer(receipt.recipient, receipt.price)
         viewModel.state.test {
             assertEquals(TransferViewModel.State.Loading, awaitItem())
-            assertEquals(TransferViewModel.State.Success(transfer.mapFromDomain()), awaitItem())
+            assertEquals(TransferViewModel.State.Success(receipt.mapFromDomain()), awaitItem())
         }
     }
 

@@ -44,7 +44,7 @@ fun CreatorFooter(
                     description.text.toString())
                 ) },
             isLoading = isLoading.value,
-            enabled = isFormValid.value,
+            enabled = isFormValid.value && !isLoading.value,
             shape = RoundedCornerShape(10.dp),
             contentPadding = PaddingValues(vertical = 4.dp, horizontal = 32.dp),
             modifier = Modifier.height(36.dp),
@@ -52,7 +52,7 @@ fun CreatorFooter(
             Text(
                 stringResource(eu.peernetwork.blog.ui.R.string.post_label),
                 style = MaterialTheme.typography.bodyMedium.copy(
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.SemiBold
                 )
             )
         }

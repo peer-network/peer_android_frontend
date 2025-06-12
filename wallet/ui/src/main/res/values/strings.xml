@@ -13,5 +13,10 @@
     <string name="recipient_label">Recipient address</string>
     <string name="sent_label">Transferred to</string>
     <string name="send_label">Send</string>
+    <string name="confirm_label">Confirm</string>
     <string name="done_label">Finish</string>
+    <string name="cancel_label">Cancel</string>
+    <string name="post_caption">You\'r about to make a post</string>
+    <string name="post_condition">Creating this post deducts %s from your balance of %s.</string>
+    <string name="balance_label">Current balance %s</string>
 </resources>

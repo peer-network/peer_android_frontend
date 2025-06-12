@@ -37,10 +37,9 @@ import eu.peernetwork.media.core.model.UiMimeType
 
 @Composable
 fun CreatorScreen(
+    draft: MutableState<UiDraft?>,
     attachment: MutableState<UiAttachment>,
     focus: FocusRequester,
-    onConfirm: () -> Boolean,
-    onReset: () -> Unit,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
 ) {
@@ -77,32 +76,36 @@ fun CreatorScreen(
             attachment.value.files.isNotEmpty()
         }
     } }
-    val handleOnConfirm by rememberUpdatedState(onConfirm)
-    val handleOnReset by rememberUpdatedState(onReset)
     CreatorScreen(
         focus = focus,
         onSubmit = {
-            if (handleOnConfirm()) {
-                viewModel.create(UiDraft(
-                    title = it.title,
-                    description = it.description,
-                    media = if (attachment.value.files.isEmpty()) {
-                        UiMimeType.Text
-                    } else { attachment.value.media },
-                    attachments = attachment.value.files.map { it.uri }
-                ))
-            } },
+            draft.value = UiDraft(
+                title = it.title,
+                description = it.description,
+                media = if (attachment.value.files.isEmpty()) {
+                    UiMimeType.Text
+                } else { attachment.value.media },
+                confirmed = false,
+                attachments = attachment.value.files.map { it.uri }
+            ) },
+        onReset = { attachment.value = UiAttachment.Text },
         header = { AuthorScreen(component, viewModelStoreOwner) },
         isLoading = isLoading,
         enabled = enabled,
         shouldReset = shouldReset,
-        attachment = attachment,
         error = error
     )
     LaunchedEffect(shouldReset.value) {
         if (shouldReset.value) {
             viewModel.reset()
-            handleOnReset()
+        }
+    }
+    LaunchedEffect(draft.value) {
+        draft.value?.let {
+            if (it.confirmed) {
+                viewModel.create(it)
+                draft.value = null
+            }
         }
     }
 }
@@ -113,9 +116,9 @@ fun CreatorScreen(
     focus: FocusRequester,
     enabled: State<Boolean>,
     shouldReset: State<Boolean>,
-    attachment: MutableState<UiAttachment>,
     error: State<String?>,
     modifier: Modifier = Modifier,
+    onReset: () -> Unit = { },
     onSubmit: (UiDraft.Field) -> Unit = { },
     header: @Composable () -> Unit = {}
 ) {
@@ -123,6 +126,7 @@ fun CreatorScreen(
     var description by rememberSaveable(stateSaver = TextFieldState.Saver) {
         mutableStateOf(TextFieldState())
     }
+    val handleOnReset by rememberUpdatedState(onReset)
     DesignLabel(
         label = { error.value?.let {
             Text(it,
@@ -159,7 +163,7 @@ fun CreatorScreen(
         if (shouldReset.value) {
             title = TextFieldState()
             description = TextFieldState()
-            attachment.value = UiAttachment.Text
+            handleOnReset()
         }
     }
 }
@@ -175,7 +179,6 @@ fun PreviewCreatorScreen() {
             enabled = remember { mutableStateOf(false) },
             error = remember { mutableStateOf(null) },
             shouldReset = remember { mutableStateOf(false) },
-            attachment = remember { mutableStateOf(UiAttachment.Text) },
         ) {}
     }
 }

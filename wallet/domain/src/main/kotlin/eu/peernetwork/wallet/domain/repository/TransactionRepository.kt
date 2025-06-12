@@ -1,12 +1,12 @@
-package eu.peernetwork.wallet.data.api
+package eu.peernetwork.wallet.domain.repository
 
 import eu.peernetwork.wallet.domain.model.Intent
 import eu.peernetwork.wallet.domain.model.Quote
 import eu.peernetwork.wallet.domain.model.Receipt
 import java.math.BigDecimal
 
-interface TransferApi {
+interface TransactionRepository {
     suspend fun getQuote(intent: Intent): Quote
 
-    suspend fun send(recipient: String, tokens: BigDecimal): Receipt
+    suspend fun send(recipient: String, price: BigDecimal): Receipt
 }

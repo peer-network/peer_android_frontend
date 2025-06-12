@@ -19,11 +19,11 @@ class TransferViewModel @Inject constructor(
 
     val state: StateFlow<State> = mutableState.asStateFlow()
 
-    fun transfer(recipient: String, tokens: BigDecimal) {
+    fun transfer(recipient: String, price: BigDecimal) {
         viewModelScope.launch {
             mutableState.tryEmit(State.Loading)
             try {
-                val result = usecase(TransferUsecase.Parameter(recipient, tokens)).mapFromDomain()
+                val result = usecase(TransferUsecase.Parameter(recipient, price)).mapFromDomain()
                 mutableState.tryEmit(State.Success(result))
             } catch (error: Throwable) {
                 mutableState.tryEmit(State.Error(error))

@@ -21,7 +21,7 @@
     <string name="preference_label">Preferences</string>
     <string name="account_label">Account</string>
 
-    <string name="post_label">Posts</string>
+    <string name="posts_label">Posts</string>
     <string name="follow_label">Follow</string>
     <string name="follower_label">Followers</string>
     <string name="following_label">Following</string>
