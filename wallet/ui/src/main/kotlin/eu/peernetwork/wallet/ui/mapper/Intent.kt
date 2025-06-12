@@ -17,10 +17,20 @@ fun UiIntent.mapToDomain(): Intent {
 
 @Composable
 fun UiIntent.title(): String {
-    return stringResource(R.string.post_caption)
+    return when(this) {
+        UiIntent.Post -> stringResource(R.string.post_caption)
+        UiIntent.Like -> stringResource(R.string.like_caption)
+        UiIntent.Comment -> stringResource(R.string.comment_caption)
+        UiIntent.DisLike -> stringResource(R.string.dislike_caption)
+    }
 }
 
 @Composable
 fun UiIntent.summary(vararg formatArgs: Any): String {
-    return stringResource(R.string.post_condition, *formatArgs)
+    return when(this) {
+        UiIntent.Post -> stringResource(R.string.post_summary, *formatArgs)
+        UiIntent.Like -> stringResource(R.string.like_summary, *formatArgs)
+        UiIntent.Comment -> stringResource(R.string.comment_summary, *formatArgs)
+        UiIntent.DisLike -> stringResource(R.string.dislike_summary, *formatArgs)
+    }
 }

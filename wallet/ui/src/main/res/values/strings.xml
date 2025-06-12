@@ -17,6 +17,12 @@
     <string name="done_label">Finish</string>
     <string name="cancel_label">Cancel</string>
     <string name="post_caption">You\'r about to make a post</string>
-    <string name="post_condition">Creating this post deducts %s from your balance of %s.</string>
+    <string name="like_caption">You\'r about to make a post</string>
+    <string name="dislike_caption">You\'r about to make a post</string>
+    <string name="comment_caption">You\'r about to make a post</string>
+    <string name="post_summary">Creating this post deducts %s from your balance of %s.</string>
+    <string name="like_summary">Creating this post deducts %s from your balance of %s.</string>
+    <string name="dislike_summary">Creating this post deducts %s from your balance of %s.</string>
+    <string name="comment_summary">Creating this post deducts %s from your balance of %s.</string>
     <string name="balance_label">Current balance %s</string>
 </resources>
