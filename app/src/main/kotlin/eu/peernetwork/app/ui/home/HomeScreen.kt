@@ -84,7 +84,7 @@ fun HomeScreen(provider: UiComponentProvider) {
                     component,
                     viewModelStore,
                 )
-                is HomeRoute.Add -> ComposerScreen(component, viewModelStore.get(data.first))
+                is HomeRoute.Add -> ComposerScreen(component, viewModelStore)
                 is HomeRoute.Wallet -> WalletScreen(BuildConfig.PAGING_LIMIT, component, viewModelStore)
                 is HomeRoute.Search -> SearchScreen(
                     id = data.first,
