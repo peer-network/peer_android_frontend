@@ -3,16 +3,12 @@ package eu.peernetwork.wallet.ui.confirmation
 import android.content.res.Configuration
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
@@ -47,9 +43,13 @@ import eu.peernetwork.core.ui.design.compose.DesignOverlayBackground
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.wallet.ui.R
+import eu.peernetwork.wallet.ui.mapper.summary
+import eu.peernetwork.wallet.ui.mapper.title
 import eu.peernetwork.wallet.ui.model.UiIntent
 import eu.peernetwork.wallet.ui.model.UiQuote
 import eu.peernetwork.wallet.ui.model.UiWallet
+import java.math.BigDecimal
+import java.math.RoundingMode
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
@@ -104,26 +104,31 @@ fun ConfirmationScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .navigationBarsPadding(),
-            placeholder = { Box(Modifier.height(300.dp)) }
+            placeholder = { ConfirmationScaffold() },
+            errorContent = { ConfirmationError(it, component.resource()) { viewModel.initialize(intent) } }
         ) {
-            ConfirmationScreen({ showSheet.value = false }) {
-                handleOnConfirm(true)
-            }
+            ConfirmationScreen(
+                intent,
+                it.first.value,
+                it.second.balance,
+                { showSheet.value = false }
+            ) { handleOnConfirm(true) }
         }
     }
 }
 
 @Composable
 fun ConfirmationScreen(
+    intent: UiIntent,
+    price: BigDecimal,
+    balance: BigDecimal,
     onCancel: () -> Unit,
     onSend: () -> Unit,
 ) {
     val textColor = MaterialTheme.colorScheme.surfaceVariant
     val onPrimary = MaterialTheme.colorScheme.onPrimary
     ConfirmationScaffold(
-        title = {
-            Text(stringResource(R.string.post_caption))
-        },
+        title = { Text(intent.title()) },
         footer = {
             Row {
                 DesignOutlinedButton(
@@ -173,7 +178,10 @@ fun ConfirmationScreen(
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
-                stringResource(R.string.post_condition, "$5", "$10"),
+                intent.summary(
+                    "${price.setScale(4, RoundingMode.HALF_UP)}",
+                    "${balance.setScale(4, RoundingMode.HALF_UP)}"
+                ),
                 modifier = Modifier.weight(1f)
             )
             Spacer(modifier = Modifier.weight(.3f))
@@ -185,6 +193,6 @@ fun ConfirmationScreen(
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun PreviewConfirmationScreen() {
     PeerTheme {
-        ConfirmationScreen({}) {}
+        ConfirmationScreen(UiIntent.Post, BigDecimal(5), BigDecimal(10), {}) {}
     }
 }
