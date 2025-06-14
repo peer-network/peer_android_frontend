@@ -17,6 +17,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -109,11 +110,12 @@ fun ConfirmationScreen(
         ) {
             ConfirmationScreen(
                 intent,
-                it.first.value,
+                it.first.value / it.second.rate.toBigDecimal(),
                 it.second.balance,
                 { showSheet.value = false }
             ) { handleOnConfirm(true) }
         }
+        LaunchedEffect(Unit) { viewModel.observe(intent) }
     }
 }
 
@@ -172,15 +174,15 @@ fun ConfirmationScreen(
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(
-                painter = painterResource(eu.peernetwork.core.ui.R.drawable.ic_chat),
+                painter = painterResource(R.drawable.ic_icon),
                 contentDescription = stringResource(eu.peernetwork.core.ui.R.string.chat_label),
                 tint = MaterialTheme.colorScheme.tertiary
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
                 intent.summary(
-                    "${price.setScale(4, RoundingMode.HALF_UP)}",
-                    "${balance.setScale(4, RoundingMode.HALF_UP)}"
+                    "${price.setScale(2, RoundingMode.HALF_UP)}",
+                    "${balance.setScale(2, RoundingMode.HALF_UP)}"
                 ),
                 modifier = Modifier.weight(1f)
             )

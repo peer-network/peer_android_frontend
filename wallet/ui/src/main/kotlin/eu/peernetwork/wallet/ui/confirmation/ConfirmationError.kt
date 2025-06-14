@@ -62,6 +62,7 @@ fun ConfirmationError(
             border = BorderStroke(1.dp, onPrimary),
         ) { Text(stringResource(R.string.retry_label)) }
     }) {
+        Spacer(modifier = Modifier.height(8.dp))
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(
                 painter = painterResource(R.drawable.ic_warning),

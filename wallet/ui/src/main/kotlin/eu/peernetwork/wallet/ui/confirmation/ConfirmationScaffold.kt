@@ -39,16 +39,16 @@ fun ConfirmationScaffold(
         CompositionLocalProvider(LocalTextStyle provides MaterialTheme.typography.bodyLarge.copy(
             color = MaterialTheme.colorScheme.onPrimary
         )) { updatedTitle() }
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(6.dp))
         CompositionLocalProvider(
             LocalContentColor provides MaterialTheme.colorScheme.tertiary,
             LocalTextStyle provides MaterialTheme.typography.bodySmall.copy(
                 color = MaterialTheme.colorScheme.tertiary
             )
         ) { updatedContent() }
-        Spacer(modifier = Modifier.height(18.dp))
+        Spacer(modifier = Modifier.height(14.dp))
         updatedFooter()
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(42.dp))
     }
 }
 
@@ -63,6 +63,11 @@ fun ConfirmationScaffold() {
             .height(42.dp)
             .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(12.dp)))
     }) {
+        Spacer(modifier = Modifier.height(8.dp))
+        Box(modifier = Modifier.width(160.dp)
+            .height(16.dp)
+            .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(6.dp)))
+        Spacer(modifier = Modifier.height(8.dp))
         Box(modifier = Modifier.width(96.dp)
             .height(16.dp)
             .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(6.dp)))

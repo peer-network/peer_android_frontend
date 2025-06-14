@@ -155,7 +155,7 @@ fun TransferScreen(
 @Composable
 fun TransferScreen(
     state: MutableState<Boolean>,
-    onAnimationEnd: (Boolean) -> Unit = { },
+    onAnimationEnd: (Boolean) -> Unit = {},
     content: @Composable () -> Unit
 ) {
     val border = MaterialTheme.colorScheme.tertiaryContainer

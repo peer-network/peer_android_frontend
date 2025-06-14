@@ -10,6 +10,7 @@ import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.factory.UiBuilderFactory
 import eu.peernetwork.social.ui.search.member.Member
 import eu.peernetwork.wallet.ui.overview.Overview
+import eu.peernetwork.wallet.ui.service.Service
 import eu.peernetwork.wallet.ui.transfer.Transfer
 import javax.inject.Provider
 
@@ -36,6 +37,14 @@ object WalletModule {
     @UiBuilder(Transfer.Builder::class)
     fun provideTransferBuilder(component: Wallet.Component): UiComponent.Builder {
         return Transfer.Builder(component)
+    }
+
+    @Provides
+    @Wallet.Scope
+    @IntoMap
+    @UiBuilder(Service.Builder::class)
+    fun provideServiceBuilder(component: Wallet.Component): UiComponent.Builder {
+        return Service.Builder(component)
     }
 
     @Wallet.Scope

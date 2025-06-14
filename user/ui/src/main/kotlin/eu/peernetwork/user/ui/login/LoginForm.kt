@@ -2,6 +2,7 @@ package eu.peernetwork.user.ui.login
 
 import android.content.res.Configuration
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -48,14 +49,17 @@ internal fun LoginForm(
             modifier = Modifier.padding(horizontal = 24.dp)
         )
         DesignLabel(
-            label = { Text(
-                text = stringResource(R.string.forgot_password_label),
-                modifier = Modifier.padding(horizontal = 24.dp)
-                    .padding(horizontal = 16.dp)
-                    .fillMaxWidth()
-                    .padding(top = 8.dp)
-                    .clickable { handleOnForgotPassword(email.text.toString()) }
-            ) },
+            label = {
+                Box {
+                    Text(
+                        text = stringResource(R.string.forgot_password_label),
+                        modifier = Modifier.padding(horizontal = 24.dp)
+                            .padding(horizontal = 16.dp)
+                            .padding(top = 8.dp)
+                            .clickable { handleOnForgotPassword(email.text.toString()) }
+                    )
+                }
+            },
             visible = true,
             textStyle = MaterialTheme.typography.bodySmall.copy(
                 color = MaterialTheme.colorScheme.tertiary
