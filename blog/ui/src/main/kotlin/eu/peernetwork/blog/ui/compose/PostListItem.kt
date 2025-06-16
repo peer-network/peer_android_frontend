@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.post.photo.formatTimeAgo
+import java.util.TimeZone
 
 @Composable
 fun LazyItemScope.PostListItem(
@@ -30,7 +31,12 @@ fun LazyItemScope.PostListItem(
     content: @Composable (UiPost) -> Unit
 ) {
     val updatedContent by rememberUpdatedState(content)
-    val timer = remember(state.value) { post.createdAt.formatTimeAgo(state.value) }
+    val localCreatedAtMillis = remember(post.createdAt) {
+        post.createdAt + TimeZone.getDefault().getOffset(post.createdAt)
+    }
+    val timer = remember(state.value) {
+        localCreatedAtMillis.formatTimeAgo(state.value)
+    }
     Spacer(modifier = Modifier.height(
         if (position == 0 && post.type == UiPost.Type.TEXT) {
             12.dp

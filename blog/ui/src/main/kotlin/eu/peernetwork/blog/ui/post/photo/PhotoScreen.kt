@@ -1,3 +1,5 @@
+@file:Suppress("KotlinConstantConditions")
+
 package eu.peernetwork.blog.ui.post.photo
 
 import androidx.compose.foundation.layout.Box
@@ -12,7 +14,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -166,13 +167,15 @@ fun PhotoScreen(
 
 fun Long.formatTimeAgo(time: Long): String {
     val diff = time - this
+    val seconds = TimeUnit.MILLISECONDS.toSeconds(diff)
     val minutes = TimeUnit.MILLISECONDS.toMinutes(diff)
     val hours = TimeUnit.MILLISECONDS.toHours(diff)
     val days = TimeUnit.MILLISECONDS.toDays(diff)
     return when {
-        minutes < 1 -> "Just now"
-        minutes < 60 -> "$minutes minutes ago"
-        hours < 24 -> "$hours hours ago"
+        seconds < 5 -> "Just now"
+        seconds < 60 -> "$seconds second${if (seconds == 1L) "" else "s"} ago"
+        minutes < 60 -> "$minutes minute${if (minutes == 1L) "" else "s"} ago"
+        hours < 24 -> "$hours hour${if (hours == 1L) "" else "s"} ago"
         days == 1L -> "Yesterday"
         days < 7 -> "$days days ago"
         else -> {
