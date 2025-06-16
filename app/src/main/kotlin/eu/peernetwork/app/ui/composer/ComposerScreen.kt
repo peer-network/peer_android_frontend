@@ -31,7 +31,7 @@ import eu.peernetwork.media.core.model.UiAttachment
 import eu.peernetwork.media.ui.attachment.AttachmentPlaceholder
 import eu.peernetwork.media.ui.attachment.AttachmentScreen
 import eu.peernetwork.wallet.ui.confirmation.ConfirmationScreen
-import eu.peernetwork.wallet.ui.model.UiIntent
+import eu.peernetwork.wallet.ui.model.UiToken
 import kotlinx.coroutines.FlowPreview
 
 @Composable
@@ -49,7 +49,7 @@ fun ComposerScreen(
     val showConfirmation = remember(draft.value) { mutableStateOf(draft.value != null) }
     val attachment = remember { mutableStateOf<UiAttachment>(UiAttachment.Text) }
     val focus = remember { FocusRequester() }
-    val intent = UiIntent.Post
+    val intent = UiToken.Post
     val key = intent::class.java.name
     ComposerNavigation(
         attachment = attachment,

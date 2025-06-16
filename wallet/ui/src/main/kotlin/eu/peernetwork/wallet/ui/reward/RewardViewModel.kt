@@ -1,11 +1,11 @@
-package eu.peernetwork.blog.ui.point
+package eu.peernetwork.wallet.ui.reward
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import eu.peernetwork.blog.domain.usecase.ObservePointUsecase
-import eu.peernetwork.blog.domain.usecase.PointUsecase
-import eu.peernetwork.blog.ui.mapper.mapFromDomain
-import eu.peernetwork.blog.ui.model.UiPoint
+import eu.peernetwork.wallet.domain.usecase.ObservableRewardUsecase
+import eu.peernetwork.wallet.domain.usecase.RewardUsecase
+import eu.peernetwork.wallet.ui.mapper.mapFromDomain
+import eu.peernetwork.wallet.ui.model.UiReward
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -14,20 +14,20 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class PointViewModel @Inject constructor(
-    private val usecase: PointUsecase,
-    observePointUsecase: ObservePointUsecase
+class RewardViewModel @Inject constructor(
+    private val usecase: RewardUsecase,
+    observableUsecase: ObservableRewardUsecase
 ) : ViewModel() {
     private val mutableState = MutableStateFlow<State>(State.Loading)
 
     val state: StateFlow<State> = combine(
-        observePointUsecase(),
+        observableUsecase(),
         mutableState
-    ) { point, state ->
-        if (point.isEmpty()) {
+    ) { rewards, state ->
+        if (rewards.isEmpty()) {
             state
         } else {
-            State.Success(point.map { it.mapFromDomain() })
+            State.Success(rewards.map { it.mapFromDomain() })
         }
     }.stateIn(
         scope = viewModelScope,
@@ -35,7 +35,7 @@ class PointViewModel @Inject constructor(
         initialValue = State.Initialize
     )
 
-    fun getPoints() {
+    fun getRewards() {
         mutableState.tryEmit(State.Loading)
         viewModelScope.launch {
             try {
@@ -49,7 +49,7 @@ class PointViewModel @Inject constructor(
     sealed interface State {
         data object Initialize : State
         data object Loading : State
-        data class Success(val points: List<UiPoint>) : State
+        data class Success(val rewards: List<UiReward>) : State
         data class Error(val error: Throwable) : State
     }
 }

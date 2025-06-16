@@ -1,4 +1,4 @@
-package eu.peernetwork.blog.ui.point
+package eu.peernetwork.wallet.ui.reward
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -10,9 +10,9 @@ import eu.peernetwork.core.ui.factory.UiViewModelFactory
 import javax.inject.Provider
 
 @Module
-object PointModule {
+object RewardModule {
     @Provides
-    @Point.Scope
+    @Reward.Scope
     fun provideViewModelFactory(
         classToViewModel:
         @JvmSuppressWildcards Map<Class<out ViewModel>, Provider<ViewModel>>
@@ -22,7 +22,7 @@ object PointModule {
 
     @Provides
     @IntoMap
-    @Point.Scope
-    @UiViewModel(PointViewModel::class)
-    fun provideViewModel(viewModel: PointViewModel): ViewModel = viewModel
+    @Reward.Scope
+    @UiViewModel(RewardViewModel::class)
+    fun provideViewModel(viewModel: RewardViewModel): ViewModel = viewModel
 }

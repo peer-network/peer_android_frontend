@@ -4,7 +4,7 @@ import eu.peernetwork.core.remote.api.RequestClient
 import eu.peernetwork.core.remote.extension.assertOrThrow
 import eu.peernetwork.core.remote.extension.getOrThrow
 import eu.peernetwork.wallet.data.api.TransferApi
-import eu.peernetwork.wallet.domain.model.Intent
+import eu.peernetwork.wallet.domain.model.Token
 import eu.peernetwork.wallet.domain.model.Quote
 import eu.peernetwork.wallet.domain.model.Receipt
 import wallet.wallet.eu.peernetwork.wallet.remote.GetActionPricesQuery
@@ -15,15 +15,15 @@ import javax.inject.Inject
 class TransferApiDelegate @Inject constructor(
     private val client: RequestClient
 ) : TransferApi {
-    override suspend fun getQuote(intent: Intent): Quote {
+    override suspend fun getQuote(token: Token): Quote {
         val response = client().query(GetActionPricesQuery()).execute()
         val data = response.getOrThrow().getActionPrices
         response.assertOrThrow(data.status, data.ResponseCode)
-        return when(intent) {
-            Intent.Like -> Quote(BigDecimal(data.affectedRows.likePrice))
-            Intent.DisLike -> Quote(BigDecimal(data.affectedRows.dislikePrice))
-            Intent.Comment -> Quote(BigDecimal(data.affectedRows.commentPrice))
-            Intent.Post -> Quote(BigDecimal(data.affectedRows.postPrice))
+        return when(token) {
+            Token.Like -> Quote(BigDecimal(data.affectedRows.likePrice))
+            Token.DisLike -> Quote(BigDecimal(data.affectedRows.dislikePrice))
+            Token.Comment -> Quote(BigDecimal(data.affectedRows.commentPrice))
+            Token.Post -> Quote(BigDecimal(data.affectedRows.postPrice))
         }
     }
 

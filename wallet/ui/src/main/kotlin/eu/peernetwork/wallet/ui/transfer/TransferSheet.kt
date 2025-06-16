@@ -1,27 +1,17 @@
 package eu.peernetwork.wallet.ui.transfer
 
 import android.content.res.Configuration
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
@@ -29,58 +19,90 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModelStoreOwner
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
-import eu.peernetwork.core.ui.design.compose.DesignAsyncImage
-import eu.peernetwork.core.ui.design.compose.DesignAvatar
 import eu.peernetwork.core.ui.design.compose.DesignBottomSheet
-import eu.peernetwork.core.ui.design.compose.DesignButton
-import eu.peernetwork.core.ui.design.compose.DesignCard
-import eu.peernetwork.core.ui.design.compose.DesignDetailLayout
 import eu.peernetwork.core.ui.design.compose.DesignOverlayBackground
-import eu.peernetwork.core.ui.extension.annotate
+import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.theme.PeerAppGreen
 import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.wallet.ui.R
 import eu.peernetwork.wallet.ui.model.UiRecipient
 import eu.peernetwork.wallet.ui.model.UiTransfer
 import java.math.BigDecimal
-import java.math.RoundingMode
+import java.util.UUID
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 fun TransferSheet(
-    state: State<DesignStatefulScaffoldState>,
-    showSheet: MutableState<Boolean>,
     transfer: MutableState<UiTransfer?>,
+    provider: UiComponentProvider,
+    viewModelStoreOwner: ViewModelStoreOwner,
     recipient: UiRecipient,
     onFinish: () -> Unit = {},
-    onRecipientClick: (UiRecipient) -> Unit,
-    onSubmit: (UiTransfer) -> Unit = {}
+    onRecipientClick: (UiRecipient) -> Unit
 ) {
-    val isLoading = remember { derivedStateOf { state.value is DesignStatefulScaffoldState.Loading } }
-    val isSuccessful = remember { derivedStateOf { state.value is DesignStatefulScaffoldState.Success<*> } }
-    val hasError = remember { derivedStateOf { state.value is DesignStatefulScaffoldState.Error } }
+    val context = LocalContext.current
+    val component = remember {
+        provider.builder(Transfer.Builder::class.java).build(context)
+    }
+    val viewModel = viewModel(
+        modelClass = TransferViewModel::class.java,
+        viewModelStoreOwner = viewModelStoreOwner,
+        factory = component.viewModelFactory()
+    )
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    val derivedState = remember {
+        derivedStateOf {
+            when (state) {
+                TransferViewModel.State.Empty -> DesignStatefulScaffoldState.Empty
+                TransferViewModel.State.Loading -> DesignStatefulScaffoldState.Loading
+                is TransferViewModel.State.Success -> {
+                    DesignStatefulScaffoldState.Success(
+                        (state as TransferViewModel.State.Success).transfer
+                    )
+                }
+                is TransferViewModel.State.Error -> DesignStatefulScaffoldState.Error(
+                    (state as TransferViewModel.State.Error).error
+                )
+            }
+        }
+    }
+    val isLoading = remember { derivedStateOf { state is TransferViewModel.State.Loading } }
+    val isSuccessful = remember { derivedStateOf { derivedState.value is DesignStatefulScaffoldState.Success<*> } }
+    val error = remember { derivedStateOf {
+        (derivedState.value as? DesignStatefulScaffoldState.Error?)?.error?.message?.let {
+            component.resource().string(it)
+        }
+    } }
+    val showRecipient = remember { mutableStateOf(false) }
+    val showSheet = remember(transfer.value) { mutableStateOf(transfer.value != null) }
     val handleOnFinish by rememberUpdatedState(onFinish)
     val handleOnRecipientClick by rememberUpdatedState(onRecipientClick)
-    val handleOnSubmit by rememberUpdatedState(onSubmit)
     DesignBottomSheet(
         tag = "TransferSheet",
         showSheet = showSheet,
         onDismissRequest = {
             if (isSuccessful.value) {
+                viewModel.reset()
                 handleOnFinish()
             }
-            showSheet.value = false
+            transfer.value = null
+        },
+        onAnimationComplete = {
+            if (!it && showRecipient.value) {
+                showRecipient.value = false
+                handleOnRecipientClick(recipient)
+            }
         },
         background = {
             DesignOverlayBackground(
@@ -91,28 +113,25 @@ fun TransferSheet(
             )
         }
     ) {
-        val model = remember(it.value) { mutableStateOf<UiTransfer?>(transfer.value) }
-        model.value?.let { transaction ->
-            TransferSheet(
-                isLoading,
-                isSuccessful,
-                recipient.username,
-                recipient.slug,
-                recipient.imageUrl,
-                transaction.token,
-                { handleOnRecipientClick(recipient) }
-            ) {
-                if (isSuccessful.value) {
-                    handleOnFinish()
-                } else {
-                    handleOnSubmit(transaction)
+        Crossfade(transfer.value) { target ->
+            if (target != null) {
+                TransferSheet(
+                    isLoading,
+                    error,
+                    isSuccessful,
+                    recipient,
+                    target.token,
+                    {
+                        showSheet.value = false
+                        showRecipient.value = true }
+                ) {
+                    if (isSuccessful.value) {
+                        showSheet.value = false
+                    } else {
+                        viewModel.transfer(target.recipient, target.token)
+                    }
                 }
             }
-        }
-    }
-    LaunchedEffect(hasError.value) {
-        if (hasError.value) {
-            showSheet.value = false
         }
     }
 }
@@ -120,120 +139,51 @@ fun TransferSheet(
 @Composable
 fun TransferSheet(
     state: State<Boolean>,
+    error: State<String?>,
     isSuccessful: State<Boolean>,
-    username: String,
-    slug: String,
-    imageUrl: String,
+    recipient: UiRecipient,
     token: BigDecimal,
     onClick: () -> Unit = {},
     onSubmit: () -> Unit
 ) {
-    val slugTag = "#$slug"
-    Column(
-        modifier = Modifier.padding(16.dp)
-            .navigationBarsPadding()
-    ) {
-        Text(
-            stringResource(R.string.amount_text),
-            style = MaterialTheme.typography.bodySmall.copy(
-                color = MaterialTheme.colorScheme.tertiary
-            ),
-            modifier = Modifier.padding(horizontal = 12.dp)
-        )
-        Text(
-            "${token.setScale(4, RoundingMode.HALF_UP)}",
-            modifier = Modifier.padding(start = 12.dp),
-            style = MaterialTheme.typography.titleMedium.copy(
-                color = MaterialTheme.colorScheme.onBackground,
-            ),
-        )
-        Spacer(modifier = Modifier.height(6.dp))
-        Text(
-            if (isSuccessful.value) {
-                stringResource(R.string.sent_label)
-            } else {
-                stringResource(R.string.recipient_label)
-            },
-            style = MaterialTheme.typography.bodySmall.copy(
-                color = MaterialTheme.colorScheme.tertiary
-            ),
-            modifier = Modifier.padding(horizontal = 12.dp)
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        DesignCard(
-            shape = RoundedCornerShape(24.dp),
-            contentPadding = PaddingValues(14.dp),
-            color = MaterialTheme.colorScheme.surfaceVariant
-        ) {
-            DesignDetailLayout(
-                lead = {
-                    DesignAvatar {
-                        DesignAsyncImage(
-                            label = username,
-                            imageUrl = imageUrl,
-                            size = 36.dp,
-                            style = MaterialTheme.typography.bodySmall.copy(
-                                color = MaterialTheme.colorScheme.tertiary,
-                            ),
-                            color = MaterialTheme.colorScheme.background,
-                            modifier = Modifier.clip(CircleShape)
-                                .wrapContentSize()
-                                .clipToBounds()
-                                .clickable(role = Role.Button, onClick = onClick)
-                        )
-                    } },
-                verticalAlignment = Alignment.CenterVertically
+    Crossfade(isSuccessful.value) { target ->
+        if (target) {
+            TransferSheetScaffold(
+                state = state,
+                error = error,
+                title = stringResource(R.string.sent_label),
+                recipient = recipient,
+                token = token,
+                action = stringResource(R.string.close_label),
+                onClick = onClick,
+                onSubmit = onSubmit,
             ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        "$username $slugTag".annotate(
-                            slugTag,
-                            style = MaterialTheme.typography.bodySmall.toSpanStyle().copy(
-                                color = MaterialTheme.colorScheme.tertiary
-                            )
-                        ),
-                        modifier = Modifier.padding(start = 12.dp)
-                            .weight(1f),
-                        style = MaterialTheme.typography.bodyMedium.copy(
-                            color = MaterialTheme.colorScheme.onBackground,
-                        ),
-                    )
-                    Icon(
-                        painter = if (isSuccessful.value) {
-                            painterResource(R.drawable.ic_check)
-                        } else {
-                            painterResource(R.drawable.ic_transfer)
-                        },
-                        contentDescription = null,
-                        modifier = Modifier.size(18.dp),
-                        tint = if (isSuccessful.value) {
-                            PeerAppGreen
-                        } else {
-                            MaterialTheme.colorScheme.surfaceDim
-                        }
-                    )
-                }
+                Icon(
+                    painter = painterResource(R.drawable.ic_check),
+                    contentDescription = null,
+                    modifier = Modifier.size(18.dp),
+                    tint = PeerAppGreen
+                )
+            }
+        } else {
+            TransferSheetScaffold(
+                state = state,
+                error = error,
+                title = stringResource(R.string.recipient_label),
+                recipient = recipient,
+                token = token,
+                action = stringResource(R.string.send_label),
+                onClick = onClick,
+                onSubmit = onSubmit,
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_transfer),
+                    contentDescription = null,
+                    modifier = Modifier.size(18.dp),
+                    tint = MaterialTheme.colorScheme.surfaceDim
+                )
             }
         }
-        Spacer(modifier = Modifier.height(14.dp))
-        DesignButton(
-            onClick = onSubmit,
-            isLoading = state.value,
-            enabled = !state.value,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(
-                text = if (isSuccessful.value) {
-                    stringResource(R.string.done_label)
-                } else {
-                    stringResource(R.string.send_label)
-                },
-                style = MaterialTheme.typography.bodyMedium.copy(
-                    fontWeight = FontWeight.Bold
-                )
-            )
-        }
-        Spacer(modifier = Modifier.height(24.dp))
     }
 }
 
@@ -242,22 +192,37 @@ fun TransferSheet(
 fun PreviewTransferSheet() {
     PeerTheme {
         Column {
+            val recipient = UiRecipient(
+                id = UUID.randomUUID().toString(),
+                slug = "1234",
+                username = "johnDoe",
+                imageUrl = "http://localhost"
+            )
             TransferSheet(
                 state = remember { mutableStateOf(true) },
-                isSuccessful = remember { mutableStateOf(true) },
-                username = "johnDoe",
-                slug = "1234",
-                imageUrl = "http://localhost",
-                token = BigDecimal(1.0)
+                error = remember { mutableStateOf(null) },
+                isSuccessful = remember { mutableStateOf(false) },
+                recipient = recipient,
+                token = BigDecimal(1.0),
+                {}
             ) {}
             Spacer(modifier = Modifier.height(16.dp))
             TransferSheet(
                 state = remember { mutableStateOf(false) },
+                error = remember { mutableStateOf("Error message...") },
                 isSuccessful = remember { mutableStateOf(false) },
-                username = "johnDoe",
-                slug = "1234",
-                imageUrl = "http://localhost",
-                token = BigDecimal(1.0)
+                recipient = recipient,
+                token = BigDecimal(1.0),
+                {}
+            ) {}
+            Spacer(modifier = Modifier.height(16.dp))
+            TransferSheet(
+                state = remember { mutableStateOf(false) },
+                error = remember { mutableStateOf(null) },
+                isSuccessful = remember { mutableStateOf(true) },
+                recipient = recipient,
+                token = BigDecimal(1.0),
+                {}
             ) {}
         }
     }

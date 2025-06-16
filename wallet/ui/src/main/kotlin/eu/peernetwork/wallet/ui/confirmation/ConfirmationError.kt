@@ -36,7 +36,7 @@ import eu.peernetwork.core.ui.theme.PeerTheme
 fun ConfirmationError(
     error: Throwable,
     resource: ResourceService,
-    onClose: () -> Unit
+    onRetry: () -> Unit
 ) {
     val errorMessage = stringResource(R.string.unknown_error_message)
     val noContentMessage = stringResource(R.string.empty_message)
@@ -47,7 +47,7 @@ fun ConfirmationError(
             .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(4.dp)))
     }, {
         DesignOutlinedButton(
-            onClick = onClose,
+            onClick = onRetry,
             shape = RoundedCornerShape(28),
             modifier = Modifier.fillMaxWidth(),
             textStyle = MaterialTheme.typography.bodySmall.copy(

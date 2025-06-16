@@ -46,16 +46,15 @@ import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.wallet.ui.R
 import eu.peernetwork.wallet.ui.mapper.summary
 import eu.peernetwork.wallet.ui.mapper.title
-import eu.peernetwork.wallet.ui.model.UiIntent
+import eu.peernetwork.wallet.ui.model.UiToken
 import eu.peernetwork.wallet.ui.model.UiQuote
 import eu.peernetwork.wallet.ui.model.UiWallet
 import java.math.BigDecimal
-import java.math.RoundingMode
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 fun ConfirmationScreen(
-    intent: UiIntent,
+    token: UiToken,
     showSheet: MutableState<Boolean>,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
@@ -79,7 +78,9 @@ fun ConfirmationScreen(
             ConfirmationViewModel.State.Loading -> DesignStatefulScaffoldState.Loading
             is ConfirmationViewModel.State.Success -> {
                 val data = (state as ConfirmationViewModel.State.Success)
-                DesignStatefulScaffoldState.Success(Pair(data.quote, data.wallet))
+                data.rewards.firstOrNull { it.name == token.name && it.available > 0 }?.let {
+                    DesignStatefulScaffoldState.Success(Pair(data.quote.copy(BigDecimal(0)), data.wallet))
+                } ?: DesignStatefulScaffoldState.Success(Pair(data.quote, data.wallet))
             }
             is ConfirmationViewModel.State.Error -> {
                 DesignStatefulScaffoldState.Error((state as ConfirmationViewModel.State.Error).error)
@@ -101,27 +102,27 @@ fun ConfirmationScreen(
     ) {
         DesignStatefulScaffold<Pair<UiQuote, UiWallet>>(
             derivedState,
-            onRefresh = { viewModel.initialize(intent) },
+            onRefresh = { viewModel.initialize(token) },
             modifier = Modifier
                 .fillMaxWidth()
                 .navigationBarsPadding(),
             placeholder = { ConfirmationScaffold() },
-            errorContent = { ConfirmationError(it, component.resource()) { viewModel.initialize(intent) } }
+            errorContent = { ConfirmationError(it, component.resource()) { viewModel.initialize(token) } }
         ) {
             ConfirmationScreen(
-                intent,
+                token,
                 it.first.value / it.second.rate.toBigDecimal(),
                 it.second.balance,
                 { showSheet.value = false }
             ) { handleOnConfirm(true) }
         }
-        LaunchedEffect(Unit) { viewModel.observe(intent) }
+        LaunchedEffect(Unit) { viewModel.observe(token) }
     }
 }
 
 @Composable
 fun ConfirmationScreen(
-    intent: UiIntent,
+    token: UiToken,
     price: BigDecimal,
     balance: BigDecimal,
     onCancel: () -> Unit,
@@ -130,7 +131,7 @@ fun ConfirmationScreen(
     val textColor = MaterialTheme.colorScheme.surfaceVariant
     val onPrimary = MaterialTheme.colorScheme.onPrimary
     ConfirmationScaffold(
-        title = { Text(intent.title()) },
+        title = { Text(token.title()) },
         footer = {
             Row {
                 DesignOutlinedButton(
@@ -180,10 +181,7 @@ fun ConfirmationScreen(
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
-                intent.summary(
-                    "${price.setScale(2, RoundingMode.HALF_UP)}",
-                    "${balance.setScale(2, RoundingMode.HALF_UP)}"
-                ),
+                token.summary(price, balance),
                 modifier = Modifier.weight(1f)
             )
             Spacer(modifier = Modifier.weight(.3f))
@@ -195,6 +193,6 @@ fun ConfirmationScreen(
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun PreviewConfirmationScreen() {
     PeerTheme {
-        ConfirmationScreen(UiIntent.Post, BigDecimal(5), BigDecimal(10), {}) {}
+        ConfirmationScreen(UiToken.Post, BigDecimal(5), BigDecimal(10), {}) {}
     }
 }

@@ -1,6 +1,6 @@
-package eu.peernetwork.blog.domain.model
+package eu.peernetwork.wallet.domain.model
 
-data class Point(
+data class Reward(
     val type: String,
     val used: Int,
     val available: Int

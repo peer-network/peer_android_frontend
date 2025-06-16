@@ -1,9 +1,9 @@
 package eu.peernetwork.blog.data.interactor
 
 import eu.peernetwork.blog.domain.interactor.EngagementInteractor
-import eu.peernetwork.blog.domain.interactor.PointInteractor
 import eu.peernetwork.blog.domain.model.Engagement
 import eu.peernetwork.blog.domain.repository.EngagementRepository
+import eu.peernetwork.wallet.domain.repository.RewardRepository
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.onSubscription
@@ -13,7 +13,7 @@ import kotlin.collections.set
 
 class EngagementInteractorDelegate @Inject constructor(
     private val repository: EngagementRepository,
-    private val interactor: PointInteractor
+    private val rewardRepository: RewardRepository
 ) : EngagementInteractor {
     private val mutexes = ConcurrentHashMap.newKeySet<String>()
 
@@ -82,7 +82,7 @@ class EngagementInteractorDelegate @Inject constructor(
 
     private suspend fun refresh() {
         try {
-            interactor.refresh()
+            rewardRepository.get()
         } catch (error: Throwable) {
             error.printStackTrace()
         }

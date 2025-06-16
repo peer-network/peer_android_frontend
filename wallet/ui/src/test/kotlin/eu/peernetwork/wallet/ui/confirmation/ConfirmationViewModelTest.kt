@@ -3,12 +3,14 @@ package eu.peernetwork.wallet.ui.confirmation
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import app.cash.turbine.test
 import eu.peernetwork.wallet.domain.model.Quote
+import eu.peernetwork.wallet.domain.model.Reward
 import eu.peernetwork.wallet.domain.model.Wallet
 import eu.peernetwork.wallet.domain.usecase.ObservableOverviewUsecase
 import eu.peernetwork.wallet.domain.usecase.OverviewUsecase
 import eu.peernetwork.wallet.domain.usecase.QuoteUsecase
+import eu.peernetwork.wallet.domain.usecase.RewardUsecase
 import eu.peernetwork.wallet.ui.mapper.mapFromDomain
-import eu.peernetwork.wallet.ui.model.UiIntent
+import eu.peernetwork.wallet.ui.model.UiToken
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -35,6 +37,8 @@ internal class ConfirmationViewModelTest {
 
     private val overviewUsecase = mockk<OverviewUsecase>()
 
+    private val rewardUsecase = mockk<RewardUsecase>()
+
     private val quoteUsecase = mockk<QuoteUsecase>()
 
     private val observableOverviewUsecase = mockk<ObservableOverviewUsecase>()
@@ -44,7 +48,7 @@ internal class ConfirmationViewModelTest {
     @Before
     fun setup() {
         Dispatchers.setMain(dispatcher)
-        viewModel = ConfirmationViewModel(overviewUsecase, observableOverviewUsecase, quoteUsecase)
+        viewModel = ConfirmationViewModel(overviewUsecase, rewardUsecase, observableOverviewUsecase, quoteUsecase)
     }
 
     @After
@@ -57,16 +61,22 @@ internal class ConfirmationViewModelTest {
         val balance = BigDecimal(100)
         val quote = Quote(balance)
         val mockData = mockk<Wallet>(relaxed = true)
+        val rewards = emptyList<Reward>()
         every { mockData.balance } returns balance
         coEvery { quoteUsecase(any()) } returns quote
+        coEvery { rewardUsecase() } returns rewards
         coEvery { overviewUsecase() } coAnswers {
             delay(100)
             mockData
         }
-        viewModel.initialize(UiIntent.Post)
+        viewModel.initialize(UiToken.Post)
         viewModel.state.test {
             assertEquals(ConfirmationViewModel.State.Loading, awaitItem())
-            assertEquals(ConfirmationViewModel.State.Success(quote.mapFromDomain(), mockData.mapFromDomain()), awaitItem())
+            assertEquals(ConfirmationViewModel.State.Success(
+                quote.mapFromDomain(),
+                mockData.mapFromDomain(),
+                rewards.map { it.mapFromDomain() }
+            ), awaitItem())
         }
     }
 
@@ -77,7 +87,7 @@ internal class ConfirmationViewModelTest {
         val error = RuntimeException()
         coEvery { quoteUsecase(any()) } returns quote
         coEvery { overviewUsecase() } throws error
-        viewModel.initialize(UiIntent.Post)
+        viewModel.initialize(UiToken.Post)
         viewModel.state.test {
             assertEquals(ConfirmationViewModel.State.Error(error), awaitItem())
         }

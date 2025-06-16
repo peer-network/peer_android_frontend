@@ -1,4 +1,4 @@
-query Dailyfreestatus {
+query DailyRewards {
     getDailyFreeStatus {
         status
         ResponseCode

@@ -1,4 +1,4 @@
-package eu.peernetwork.blog.ui.point
+package eu.peernetwork.wallet.ui.reward
 
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.padding
@@ -16,13 +16,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
-import eu.peernetwork.blog.ui.R
-import eu.peernetwork.blog.ui.model.UiPoint
+import eu.peernetwork.wallet.ui.R
+import eu.peernetwork.wallet.ui.model.UiReward
 
 @Composable
-fun PointPopup(
+fun RewardPopup(
     state: MutableState<Boolean>,
-    selected: MutableState<UiPoint?>,
+    selected: MutableState<UiReward?>,
 ) {
     val context = LocalContext.current
     if (state.value) {
@@ -40,9 +40,9 @@ fun PointPopup(
             ) {
                 Crossfade(selected.value) { target ->
                     target?.let {
-                        PointModel.MAP[target.name]?.let { model ->
+                        RewardType.MAP[target.name]?.let { model ->
                             Text(
-                                text = stringResource(R.string.point_description, target.available, target.name),
+                                text = stringResource(R.string.reward_description, target.available, target.name),
                                 style = MaterialTheme.typography.labelMedium.copy(
                                     color = MaterialTheme.colorScheme.tertiary,
                                     fontWeight = FontWeight.Normal

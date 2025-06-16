@@ -1,4 +1,4 @@
-package eu.peernetwork.blog.ui.point
+package eu.peernetwork.wallet.ui.reward
 
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.background
@@ -23,42 +23,42 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import eu.peernetwork.blog.ui.model.UiPoint
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.compose.DesignLabeledIcon
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.theme.LightAccentColor
+import eu.peernetwork.wallet.ui.model.UiReward
 
 @Composable
-fun PointScreen(
+fun RewardScreen(
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
 ) {
     val context = LocalContext.current
     val component = remember {
-        provider.builder(Point.Builder::class.java).build(context)
+        provider.builder(Reward.Builder::class.java).build(context)
     }
     val viewModel = viewModel(
-        modelClass = PointViewModel::class.java,
+        modelClass = RewardViewModel::class.java,
         viewModelStoreOwner = viewModelStoreOwner,
         factory = component.viewModelFactory()
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val points = remember { derivedStateOf { (state as? PointViewModel.State.Success?)?.points } }
+    val points = remember { derivedStateOf { (state as? RewardViewModel.State.Success?)?.rewards } }
     Crossfade(targetState = points.value) { target ->
         if (target != null) {
             PointScreen(target)
         }
     }
     LaunchedEffect(Unit) {
-        viewModel.getPoints()
+        viewModel.getRewards()
     }
 }
 
 @Composable
-fun PointScreen(points: List<UiPoint> = listOf()) {
+fun PointScreen(points: List<UiReward> = listOf()) {
     var showPopup = remember { mutableStateOf(false) }
-    var selectedPoint = remember { mutableStateOf<UiPoint?>(null) }
+    var selectedPoint = remember { mutableStateOf<UiReward?>(null) }
     Column {
         Row (
             modifier = Modifier
@@ -66,7 +66,7 @@ fun PointScreen(points: List<UiPoint> = listOf()) {
                 .background(MaterialTheme.colorScheme.tertiaryContainer)
         ) {
             points.forEach { point ->
-                PointModel.MAP[point.name]?.let { model ->
+                RewardType.MAP[point.name]?.let { model ->
                     val enabled = remember { derivedStateOf {
                         showPopup.value && selectedPoint.value?.name == point.name
                     } }
@@ -109,5 +109,5 @@ fun PointScreen(points: List<UiPoint> = listOf()) {
             }
         }
     }
-    PointPopup(showPopup, selectedPoint)
+    RewardPopup(showPopup, selectedPoint)
 }

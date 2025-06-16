@@ -32,8 +32,9 @@ import eu.peernetwork.core.ui.model.ViewModelState
 import eu.peernetwork.social.ui.search.member.MemberDialog
 import eu.peernetwork.wallet.ui.model.UiRecipient
 import eu.peernetwork.wallet.ui.overview.OverviewScreen
+import eu.peernetwork.wallet.ui.service.ServiceScreen
+import eu.peernetwork.wallet.ui.service.ServiceState
 import eu.peernetwork.wallet.ui.util.UiRecipientSaver
-import eu.peernetwork.wallet.ui.transfer.TransferScreen
 
 @Composable
 fun WalletScreen(
@@ -49,6 +50,11 @@ fun WalletScreen(
     val recipient = rememberSaveable(saver = UiRecipientSaver) {
         mutableStateOf<UiRecipient?>(null)
     }
+    val service = remember(recipient.value) {
+        mutableStateOf<ServiceState>(recipient.value?.let {
+            ServiceState.Transfer(it)
+        } ?: ServiceState.Default)
+    }
     val showSheet = rememberSaveable { mutableStateOf(false) }
     val lastUpdated = remember { mutableLongStateOf(System.currentTimeMillis()) }
     WalletNavigation(
@@ -59,9 +65,9 @@ fun WalletScreen(
             onRefresh = { lastUpdated.longValue = System.currentTimeMillis() },
             header = { OverviewScreen(lastUpdated, component, viewModelStoreOwner) }
         ) {
-            TransferScreen(recipient, component, viewModelStoreOwner, {
-                controller.navigateIfNecessary("profile/${it.id}")
-            }) { showSheet.value = true }
+            ServiceScreen(service, component, viewModelStoreOwner, {
+                controller.navigateIfNecessary("profile/${it}")
+            }, { recipient.value = null }) { showSheet.value = true }
         }
         DesignTitleBarHost("WalletScreen") {
             titleBar {
