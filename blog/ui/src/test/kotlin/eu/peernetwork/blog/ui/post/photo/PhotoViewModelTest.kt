@@ -62,7 +62,8 @@ internal class PhotoViewModelTest {
             dislikes = 0,
             isLiked = false,
             isDisliked = false,
-            comment = 0
+            comment = 0,
+            aspectRatio = 0.1f
         )
         val mockPagingData = PagingData.from(listOf(mockData))
         coEvery { usecase(any()) } returns flow {

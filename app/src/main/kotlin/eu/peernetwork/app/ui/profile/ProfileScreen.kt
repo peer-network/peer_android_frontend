@@ -16,7 +16,7 @@ import eu.peernetwork.core.ui.design.compose.DesignTitleBarHost
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.core.ui.model.ViewModelState
-import eu.peernetwork.social.ui.member.MemberScreen
+import eu.peernetwork.app.ui.member.MemberScreen
 import kotlinx.coroutines.launch
 import java.net.URLEncoder
 

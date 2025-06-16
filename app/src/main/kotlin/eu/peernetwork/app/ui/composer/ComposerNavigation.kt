@@ -21,9 +21,9 @@ fun ComposerNavigation(
     val updatedContent by rememberUpdatedState(content)
     DesignRouter(
         navController = controller,
-        startDestination = "gallery"
+        startDestination = "editor"
     ) {
-        composable("gallery") { updatedContent() }
+        composable("editor") { updatedContent() }
         composable("explorer") {
             ExplorerScreen(
                 attachment = attachment,

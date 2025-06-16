@@ -3,8 +3,6 @@ package eu.peernetwork.app.ui.profile
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
-import eu.peernetwork.app.ui.renderer.BlogRendererDelegate
-import eu.peernetwork.app.ui.renderer.UserRendererDelegate
 import eu.peernetwork.app.ui.search.Search
 import eu.peernetwork.app.ui.settings.Settings
 import eu.peernetwork.blog.ui.post.photo.Photo
@@ -13,9 +11,7 @@ import eu.peernetwork.core.ui.annotation.UiBuilder
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.factory.UiBuilderFactory
-import eu.peernetwork.social.ui.member.Member
-import eu.peernetwork.social.ui.renderder.BlogRenderer
-import eu.peernetwork.social.ui.renderder.UserRenderer
+import eu.peernetwork.app.ui.member.Member
 import eu.peernetwork.user.ui.user.User
 
 @Module
@@ -70,17 +66,5 @@ object ProfileModule {
     @UiBuilder(Settings.Builder::class)
     fun provideSettingsBuilder(component: Profile.Component): UiComponent.Builder {
         return Settings.Builder(component)
-    }
-
-    @Profile.Scope
-    @Provides
-    fun provideBlogRenderer(component: Profile.Component): BlogRenderer {
-        return BlogRendererDelegate(component)
-    }
-
-    @Profile.Scope
-    @Provides
-    fun provideProfileDetail(component: Profile.Component): UserRenderer {
-        return UserRendererDelegate(component)
     }
 }

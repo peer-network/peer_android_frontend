@@ -17,7 +17,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -72,6 +71,7 @@ fun ConfirmationScreen(
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
     val handleOnConfirm by rememberUpdatedState(onConfirm)
+    val handleOnDismiss by rememberUpdatedState(onDismiss)
     val derivedState = remember { derivedStateOf {
         when(state) {
             ConfirmationViewModel.State.Empty -> DesignStatefulScaffoldState.Empty
@@ -90,7 +90,10 @@ fun ConfirmationScreen(
     DesignBottomSheet(
         showSheet = showSheet,
         tag = "ConfirmationScreen",
-        onDismissRequest = onDismiss,
+        onDismissRequest = {
+            viewModel.reset()
+            handleOnDismiss()
+        },
         background = {
             DesignOverlayBackground(
                 state = it,
@@ -116,7 +119,6 @@ fun ConfirmationScreen(
                 { showSheet.value = false }
             ) { handleOnConfirm(true) }
         }
-        LaunchedEffect(Unit) { viewModel.observe(token) }
     }
 }
 
@@ -153,10 +155,12 @@ fun ConfirmationScreen(
                 Spacer(modifier = Modifier.width(12.dp))
                 DesignOutlinedButton(
                     onClick = onSend,
-                    modifier = Modifier.background(
-                        color = onPrimary,
-                        shape = RoundedCornerShape(28),
-                    ).weight(1f),
+                    modifier = Modifier
+                        .background(
+                            color = onPrimary,
+                            shape = RoundedCornerShape(28),
+                        )
+                        .weight(1f),
                     shape = RoundedCornerShape(28),
                     textStyle = MaterialTheme.typography.bodyMedium.copy(
                         color = textColor,

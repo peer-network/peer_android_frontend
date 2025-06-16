@@ -5,7 +5,6 @@ import app.cash.turbine.test
 import eu.peernetwork.wallet.domain.model.Quote
 import eu.peernetwork.wallet.domain.model.Reward
 import eu.peernetwork.wallet.domain.model.Wallet
-import eu.peernetwork.wallet.domain.usecase.ObservableOverviewUsecase
 import eu.peernetwork.wallet.domain.usecase.OverviewUsecase
 import eu.peernetwork.wallet.domain.usecase.QuoteUsecase
 import eu.peernetwork.wallet.domain.usecase.RewardUsecase
@@ -41,14 +40,12 @@ internal class ConfirmationViewModelTest {
 
     private val quoteUsecase = mockk<QuoteUsecase>()
 
-    private val observableOverviewUsecase = mockk<ObservableOverviewUsecase>()
-
     private lateinit var viewModel: ConfirmationViewModel
 
     @Before
     fun setup() {
         Dispatchers.setMain(dispatcher)
-        viewModel = ConfirmationViewModel(overviewUsecase, rewardUsecase, observableOverviewUsecase, quoteUsecase)
+        viewModel = ConfirmationViewModel(overviewUsecase, rewardUsecase, quoteUsecase)
     }
 
     @After

@@ -1,8 +1,10 @@
-package eu.peernetwork.social.ui.member
+package eu.peernetwork.app.ui.member
 
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
+import eu.peernetwork.blog.ui.post.photo.Photo
+import eu.peernetwork.blog.ui.post.video.Video
 import eu.peernetwork.core.ui.annotation.UiBuilder
 import eu.peernetwork.core.ui.component.UiComponent
 import javax.inject.Provider
@@ -12,6 +14,7 @@ import eu.peernetwork.social.ui.connection.Connection
 import eu.peernetwork.social.ui.followers.Followers
 import eu.peernetwork.social.ui.followings.Followings
 import eu.peernetwork.social.ui.peers.Peers
+import eu.peernetwork.user.ui.user.User
 
 @Module
 object MemberModule {
@@ -20,6 +23,30 @@ object MemberModule {
     fun provideBuilderFactory(factory: Map<Class<out UiComponent.Builder>,
             @JvmSuppressWildcards Provider<UiComponent.Builder>>): UiComponentProvider.Factory {
         return UiBuilderFactory(factory)
+    }
+
+    @Member.Scope
+    @Provides
+    @IntoMap
+    @UiBuilder(User.Builder::class)
+    fun provideUserBuilder(component: Member.Component): UiComponent.Builder {
+        return User.Builder(component)
+    }
+
+    @Member.Scope
+    @Provides
+    @IntoMap
+    @UiBuilder(Photo.Builder::class)
+    fun providePhotoBuilder(component: Member.Component): UiComponent.Builder {
+        return Photo.Builder(component)
+    }
+
+    @Member.Scope
+    @Provides
+    @IntoMap
+    @UiBuilder(Video.Builder::class)
+    fun provideVideoBuilder(component: Member.Component): UiComponent.Builder {
+        return Video.Builder(component)
     }
 
     @Provides

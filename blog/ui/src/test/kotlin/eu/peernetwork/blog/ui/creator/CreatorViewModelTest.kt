@@ -60,7 +60,8 @@ internal class CreatorViewModelTest {
             title = text,
             description = description,
             media = UiMimeType.Text,
-            attachments = listOf()
+            attachments = listOf(),
+            confirmed = false
         )
         val mockData = mockk<Content>(relaxed = true)
         every { textEncoderUsecase(any()) } returns text

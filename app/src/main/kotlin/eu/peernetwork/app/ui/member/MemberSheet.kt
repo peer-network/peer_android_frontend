@@ -1,4 +1,4 @@
-package eu.peernetwork.social.ui.member
+package eu.peernetwork.app.ui.member
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize

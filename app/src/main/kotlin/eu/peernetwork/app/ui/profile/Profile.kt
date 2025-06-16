@@ -8,7 +8,7 @@ import eu.peernetwork.blog.ui.post.photo.Photo
 import eu.peernetwork.blog.ui.post.video.Video
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.social.ui.member.Member
+import eu.peernetwork.app.ui.member.Member
 import eu.peernetwork.user.ui.user.User
 
 interface Profile : ApplicationProvider {

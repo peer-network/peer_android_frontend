@@ -97,5 +97,6 @@ class EngagementInteractorDelegate @Inject constructor(
         dislikes.clear()
         comments.clear()
         invalidate()
+        refresh()
     }
 }
