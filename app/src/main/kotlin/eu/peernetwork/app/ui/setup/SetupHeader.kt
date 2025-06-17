@@ -16,7 +16,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableIntState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,9 +39,11 @@ import eu.peernetwork.core.ui.theme.PeerTheme
 @Composable
 fun SetupHeader(
     state: MutableIntState,
+    onClick: (Int) -> Unit,
     modifier: Modifier = Modifier,
     useSystemUi: Boolean = BuildConfig.USE_SYSTEM_THEME
 ) {
+    val handleOnClick by rememberUpdatedState(onClick)
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally
@@ -69,7 +73,9 @@ fun SetupHeader(
         )
         Row(modifier = Modifier.padding(vertical = 16.dp)) {
             TextButton(
-                onClick = { state.intValue = 0 },
+                onClick = {
+                    handleOnClick(0)
+                    state.intValue = 0 },
                 modifier = Modifier.padding(end = 8.dp)
             ) {
                 Box {
@@ -103,7 +109,9 @@ fun SetupHeader(
                     .align(Alignment.CenterVertically)
             )
             TextButton(
-                onClick = { state.intValue = 1 },
+                onClick = {
+                    handleOnClick(1)
+                    state.intValue = 1 },
                 modifier = Modifier.padding(start = 8.dp)
             ) {
                 Box {
@@ -137,6 +145,6 @@ fun SetupHeader(
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun PreviewSetupHeader() {
     PeerTheme {
-        SetupHeader(state = rememberSaveable { mutableIntStateOf(0) })
+        SetupHeader(state = rememberSaveable { mutableIntStateOf(0) }, {})
     }
 }

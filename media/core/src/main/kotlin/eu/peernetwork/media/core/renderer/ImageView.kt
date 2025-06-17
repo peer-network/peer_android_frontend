@@ -6,6 +6,6 @@ import eu.peernetwork.media.core.model.UiMediaProperty
 interface ImageView : Renderer.Stateful<ImageView.Spec> {
     data class Spec(
         val url: String,
-        val property: UiMediaProperty? = null
+        val ratio: Float
     )
 }

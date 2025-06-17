@@ -1,9 +1,9 @@
 package eu.peernetwork.wallet.data.interactor
 
 import eu.peernetwork.wallet.domain.interactor.WalletInteractor
-import eu.peernetwork.wallet.domain.model.Transfer
+import eu.peernetwork.wallet.domain.model.Receipt
 import eu.peernetwork.wallet.domain.model.Wallet
-import eu.peernetwork.wallet.domain.repository.TransferRepository
+import eu.peernetwork.wallet.domain.repository.TransactionRepository
 import eu.peernetwork.wallet.domain.repository.WalletRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 class WalletInteractorDelegate @Inject constructor(
     private val walletRepository: WalletRepository,
-    private val transferRepository: TransferRepository,
+    private val transactionRepository: TransactionRepository,
 ) : WalletInteractor {
     private val mutableWallet = MutableSharedFlow<Wallet>(replay = 1)
 
@@ -25,8 +25,8 @@ class WalletInteractorDelegate @Inject constructor(
 
     override fun observe(): Flow<Wallet> = mutableWallet
 
-    override suspend fun send(recipient: String, token: BigDecimal): Transfer {
-        val transfer = transferRepository.send(recipient, token)
+    override suspend fun send(recipient: String, token: BigDecimal): Receipt {
+        val transfer = transactionRepository.send(recipient, token)
         if (mutableWallet.replayCache.isNotEmpty()) {
             mutableWallet.firstOrNull()?.let {
                 mutableWallet.tryEmit(it.copy(balance = it.balance - token))

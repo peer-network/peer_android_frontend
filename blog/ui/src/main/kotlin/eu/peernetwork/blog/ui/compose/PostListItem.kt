@@ -42,7 +42,8 @@ fun LazyItemScope.PostListItem(
         MediaPostCard(
             author = post.author,
             description = timer,
-            modifier = Modifier.padding(bottom = 16.dp),
+            modifier = Modifier
+                .padding(bottom = 16.dp),
             caption = {
                 PostSummary(
                     post.author.username,

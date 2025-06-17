@@ -1,0 +1,11 @@
+query DailyRewards {
+    getDailyFreeStatus {
+        status
+        ResponseCode
+        affectedRows {
+            name
+            used
+            available
+        }
+    }
+}

@@ -2,6 +2,7 @@
 dependencies {
     implementation(project(":core:common"))
     implementation(project(":user:domain"))
+    implementation(project(":wallet:domain"))
     implementation(project(":blog:domain"))
 
     testImplementation(libs.junit)

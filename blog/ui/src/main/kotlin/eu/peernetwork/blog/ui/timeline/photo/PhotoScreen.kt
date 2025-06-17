@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.ViewModelStoreOwner
 import eu.peernetwork.core.ui.component.UiComponentProvider
@@ -13,12 +14,16 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -33,7 +38,6 @@ import eu.peernetwork.blog.ui.compose.PostPageSkeleton
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
 import eu.peernetwork.blog.ui.engagement.EngagementSpec
 import eu.peernetwork.blog.ui.mapper.mapToContent
-import eu.peernetwork.blog.ui.mapper.mapToProperty
 import eu.peernetwork.core.common.model.Pageable
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
 import eu.peernetwork.blog.ui.moderation.ModerationScreen
@@ -42,6 +46,7 @@ import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.design.component.DesignError
 import eu.peernetwork.core.ui.design.component.DesignPagingScaffold
 import eu.peernetwork.core.ui.design.component.DesignRefreshableScaffold
+import eu.peernetwork.core.ui.theme.LightAccentColor
 import eu.peernetwork.media.core.renderer.ImageView
 import kotlinx.coroutines.delay
 
@@ -141,7 +146,6 @@ fun PhotoScreen(
                             key = { index -> lazyPagingItems[index]?.id ?: index }
                         ) { index ->
                             lazyPagingItems[index]?.let { post ->
-                                val media = remember(post.id) { post.media.first() }
                                 PhotoScreen(
                                     id = id,
                                     post = post,
@@ -154,10 +158,31 @@ fun PhotoScreen(
                                     onMentionClick = onMentionClick,
                                     connection = connection,
                                     content = {
-                                        component.imageView()(
-                                            Modifier,
-                                            ImageView.Spec(media.path, media.mapToProperty())
-                                        )
+                                        if (post.media.size > 1) {
+                                            Box(contentAlignment = Alignment.BottomEnd) {
+                                                val pagerState = rememberPagerState(initialPage = 0) { post.media.size }
+                                                HorizontalPager(state = pagerState) {
+                                                    val media = post.media[it]
+                                                    component.imageView()(
+                                                        Modifier,
+                                                        ImageView.Spec(media.path, post.aspectRatio)
+                                                    )
+                                                }
+                                                Icon(
+                                                    painter = painterResource(eu.peernetwork.blog.ui.R.drawable.ic_gallery),
+                                                    contentDescription = stringResource(eu.peernetwork.blog.ui.R.string.post_description),
+                                                    tint = LightAccentColor,
+                                                    modifier = Modifier.padding(16.dp)
+                                                        .size(16.dp)
+                                                )
+                                            }
+                                        } else {
+                                            val media = post.media.first()
+                                            component.imageView()(
+                                                Modifier,
+                                                ImageView.Spec(media.path, post.aspectRatio)
+                                            )
+                                        }
                                     }
                                 )
                             }

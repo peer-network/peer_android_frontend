@@ -1,0 +1,9 @@
+query GetReferral {
+    getUserInfo {
+        status
+        ResponseCode
+        affectedRows {
+            invited
+        }
+    }
+}

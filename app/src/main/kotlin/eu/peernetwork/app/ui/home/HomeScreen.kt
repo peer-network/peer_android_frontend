@@ -28,13 +28,13 @@ import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.app.ui.feed.FeedScreen
 import eu.peernetwork.app.ui.profile.ProfileScreen
-import eu.peernetwork.blog.ui.point.PointScreen
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffold
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
 import eu.peernetwork.app.ui.search.SearchScreen
 import eu.peernetwork.app.ui.wallet.WalletScreen
 import eu.peernetwork.core.ui.design.compose.DesignTitleBar
 import eu.peernetwork.core.ui.model.ViewModelState
+import eu.peernetwork.wallet.ui.reward.RewardScreen
 
 @Composable
 fun HomeScreen(provider: UiComponentProvider) {
@@ -70,7 +70,7 @@ fun HomeScreen(provider: UiComponentProvider) {
         HomeScreen(
             index = data.second,
             onNavigate = { viewModel.lastVisited(it) },
-            options = { PointScreen(component, viewModelStore.get(data.first)) },
+            options = { RewardScreen(component, viewModelStore.get(data.first)) },
         ) { state, route ->
             when(route) {
                 is HomeRoute.Home -> FeedScreen(
@@ -84,7 +84,7 @@ fun HomeScreen(provider: UiComponentProvider) {
                     component,
                     viewModelStore,
                 )
-                is HomeRoute.Add -> ComposerScreen(component, viewModelStore.get(data.first))
+                is HomeRoute.Add -> ComposerScreen(component, viewModelStore)
                 is HomeRoute.Wallet -> WalletScreen(BuildConfig.PAGING_LIMIT, component, viewModelStore)
                 is HomeRoute.Search -> SearchScreen(
                     id = data.first,

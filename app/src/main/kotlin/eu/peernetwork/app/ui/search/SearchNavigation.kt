@@ -63,12 +63,14 @@ fun SearchNavigation(
             )
         }
         composable(
-            "search/{title}",
-            arguments = listOf(navArgument("title") {
+            route = "search?query={query}",
+            arguments = listOf(navArgument("query") {
                 type = NavType.StringType
+                defaultValue = ""
+                nullable = true
             })
         ) { backStackEntry ->
-            val query = backStackEntry.arguments?.getString("title")
+            val query = backStackEntry.arguments?.getString("query")
             FeedScreen(
                 userId,
                 BuildConfig.PAGING_LIMIT,
@@ -80,3 +82,4 @@ fun SearchNavigation(
         }
     }
 }
+

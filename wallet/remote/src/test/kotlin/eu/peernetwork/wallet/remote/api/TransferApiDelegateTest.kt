@@ -48,7 +48,7 @@ internal class TransferApiDelegateTest {
 
         val result = api.send(recipient, tokens)
 
-        assertEquals(result.token, tokens)
+        assertEquals(result.price, tokens)
         assertEquals(result.recipient, recipient)
 
         coEvery { client.mutation(any<ResolveTransferMutation>()).execute() } returns mockResponse

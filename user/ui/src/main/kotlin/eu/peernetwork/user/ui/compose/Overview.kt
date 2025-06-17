@@ -53,7 +53,7 @@ fun Overview(
         )
         Overview(
             title = { Text("${overview.posts}") },
-            subTitle = { Text(stringResource(R.string.post_label)) },
+            subTitle = { Text(stringResource(R.string.posts_label)) },
             modifier = Modifier.padding(horizontal = 8.dp).clickable { onClick(3) },
             horizontalAlignment = Alignment.Start
         )

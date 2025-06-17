@@ -1,5 +1,6 @@
 package eu.peernetwork.app.ui.splash
 
+import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationEndReason
 import androidx.compose.animation.core.LinearEasing
@@ -128,10 +129,10 @@ fun SplashScreen(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center,
     ) {
-        if (composition != null) {
-            Column {
+        Crossfade(composition) { target ->
+            if (target != null) {
                 LottieAnimation(
-                    composition = composition,
+                    composition = target,
                     progress = { progressAnim.value },
                     modifier = Modifier.size(200.dp)
                 )

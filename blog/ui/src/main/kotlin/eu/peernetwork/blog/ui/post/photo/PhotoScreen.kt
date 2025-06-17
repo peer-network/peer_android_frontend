@@ -4,15 +4,18 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -21,6 +24,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -32,7 +37,6 @@ import eu.peernetwork.blog.ui.compose.PostPageSkeleton
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
 import eu.peernetwork.blog.ui.engagement.EngagementSpec
 import eu.peernetwork.blog.ui.mapper.mapToContent
-import eu.peernetwork.blog.ui.mapper.mapToProperty
 import eu.peernetwork.blog.ui.moderation.ModerationScreen
 import eu.peernetwork.blog.ui.moderation.ModerationSpec
 import eu.peernetwork.core.common.model.Pageable
@@ -41,6 +45,7 @@ import eu.peernetwork.core.ui.design.component.DesignError
 import eu.peernetwork.core.ui.design.component.DesignPagingScaffold
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
 import eu.peernetwork.core.ui.extension.builder
+import eu.peernetwork.core.ui.theme.LightAccentColor
 import eu.peernetwork.media.core.renderer.ImageView
 import kotlinx.coroutines.delay
 import java.util.Calendar
@@ -127,11 +132,31 @@ fun PhotoScreen(
                                 engagementSpec = engagement,
                                 moderationSpec = spec
                             ) {
-                                val media = photo.media.first()
-                                component.imageView()(
-                                    Modifier,
-                                    ImageView.Spec(media.path, media.mapToProperty())
-                                )
+                                if (photo.media.size > 1) {
+                                    Box(contentAlignment = Alignment.BottomEnd) {
+                                        val pagerState = rememberPagerState(initialPage = 0) { photo.media.size }
+                                        HorizontalPager(state = pagerState) {
+                                            val media = photo.media[it]
+                                            component.imageView()(
+                                                Modifier,
+                                                ImageView.Spec(media.path, photo.aspectRatio)
+                                            )
+                                        }
+                                        Icon(
+                                            painter = painterResource(eu.peernetwork.blog.ui.R.drawable.ic_gallery),
+                                            contentDescription = stringResource(eu.peernetwork.blog.ui.R.string.post_description),
+                                            tint = LightAccentColor,
+                                            modifier = Modifier.padding(16.dp)
+                                                .size(16.dp)
+                                        )
+                                    }
+                                } else {
+                                    val media = photo.media.first()
+                                    component.imageView()(
+                                        Modifier,
+                                        ImageView.Spec(media.path, photo.aspectRatio)
+                                    )
+                                }
                             }
                         }
                     }

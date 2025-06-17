@@ -1,0 +1,12 @@
+query GetActionPrices {
+    getActionPrices {
+        status
+        ResponseCode
+        affectedRows {
+            postPrice
+            likePrice
+            dislikePrice
+            commentPrice
+        }
+    }
+}

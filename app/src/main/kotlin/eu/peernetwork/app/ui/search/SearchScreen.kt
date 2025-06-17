@@ -2,7 +2,6 @@ package eu.peernetwork.app.ui.search
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -68,10 +67,7 @@ fun SearchScreen(
                 }, component, viewModelStore.get("$session"))
             } else if (mode == SearchMode.TITLE) {
                 TitleScreen(query, postLimit, {
-                    controller.navigateIfNecessary("search/${it.title
-                        .replace(Regex("""\b\w+://"""), "")
-                        .replace(Regex("""#(\w+)"""), "")
-                        .trim()}")
+                    controller.navigateIfNecessary("search?query=${it.title}")
                 }, component, viewModelStore.get("$session"))
             } else {
                 Box(modifier = Modifier.fillMaxSize()

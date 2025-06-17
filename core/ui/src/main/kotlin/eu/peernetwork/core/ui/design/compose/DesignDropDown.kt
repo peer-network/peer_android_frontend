@@ -60,12 +60,18 @@ fun DesignDropDown(
     var size by remember { mutableStateOf<IntSize>(IntSize.Zero) }
     val current = remember { mutableStateOf<DesignDropDownItem?>(null) }
     val factory = remember { mutableStateMapOf<String, DesignDropDownItem>() }
+    val items = remember { mutableStateMapOf<Int, DesignDropDownItem>() }
     val builder = remember { object : DesignDropDownBuilder {
         override fun item(
             tag: String,
             onClick: (() -> Boolean)?,
             content: @Composable ((String) -> Unit)
-        ) { factory[tag] = DesignDropDownItem(tag, onClick, content) }
+        ) {
+            DesignDropDownItem(tag, onClick, content).let {
+                factory[tag] = it
+                items[items.size] = it
+            }
+        }
     } }
     Box(modifier = Modifier.clip(shape)
         .background(color = color)
@@ -93,7 +99,7 @@ fun DesignDropDown(
             properties = PopupProperties(focusable = true)
         ) {
             Column(modifier = modifier.then(Modifier.width(IntrinsicSize.Max))) {
-                factory.forEach { item ->
+                items.forEach { item ->
                     key(item.key) {
                         Box(modifier = Modifier.fillMaxWidth()
                             .clickable(

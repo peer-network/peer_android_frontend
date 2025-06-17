@@ -9,9 +9,20 @@
     <string name="checkout_label">Confirm transaction</string>
     <string name="transaction_label">Transaction successful</string>
     <string name="transfer_caption">peer tokens to %s</string>
-    <string name="transfer_confirmation">peer tokens sent to %s</string>
     <string name="recipient_label">Recipient address</string>
     <string name="sent_label">Transferred to</string>
     <string name="send_label">Send</string>
-    <string name="done_label">Finish</string>
+    <string name="confirm_label">Confirm</string>
+    <string name="close_label">Close</string>
+    <string name="cancel_label">Cancel</string>
+    <string name="post_caption">You\'r about to make a post</string>
+    <string name="like_caption">You\'r about to like a post</string>
+    <string name="dislike_caption">You\'r about to dislike a post</string>
+    <string name="comment_caption">You\'r about to make a comment</string>
+    <string name="post_summary">Creating this post deducts %s from your balance of %s tokens.</string>
+    <string name="like_summary">Liking this post deducts %s from your balance of %s tokens.</string>
+    <string name="dislike_summary">Disliking this post deducts %s from your balance of %s tokens.</string>
+    <string name="comment_summary">Commenting on this post deducts %s from your balance of %s tokens.</string>
+    <string name="balance_label">Current balance %s</string>
+    <string name="reward_description">You have %d Free %s</string>
 </resources>

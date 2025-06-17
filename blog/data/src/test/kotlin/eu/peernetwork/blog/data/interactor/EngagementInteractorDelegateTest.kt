@@ -2,8 +2,8 @@ package eu.peernetwork.blog.data.interactor
 
 import app.cash.turbine.test
 import eu.peernetwork.blog.domain.interactor.EngagementInteractor
-import eu.peernetwork.blog.domain.interactor.PointInteractor
 import eu.peernetwork.blog.domain.repository.EngagementRepository
+import eu.peernetwork.wallet.domain.repository.RewardRepository
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
@@ -23,14 +23,14 @@ internal class EngagementInteractorDelegateTest {
 
     private val repository = mockk<EngagementRepository>()
 
-    private val pointInteractor = mockk<PointInteractor>()
+    private val rewardRepository = mockk<RewardRepository>()
 
     private lateinit var interactor: EngagementInteractor
 
     @Before
     fun setup() {
         Dispatchers.setMain(dispatcher)
-        interactor = EngagementInteractorDelegate(repository, pointInteractor)
+        interactor = EngagementInteractorDelegate(repository, rewardRepository)
     }
 
     @After
@@ -41,7 +41,7 @@ internal class EngagementInteractorDelegateTest {
     @Test
     fun `test like content`(): Unit = runBlocking {
         val id = "<test-id>"
-        coEvery { pointInteractor.refresh() } returns listOf()
+        coEvery { rewardRepository.get() } returns listOf()
         coEvery { repository.post(any(), any()) } returns Unit
         interactor.observe().test {
             assertEquals(emptyMap(), awaitItem())
@@ -54,7 +54,7 @@ internal class EngagementInteractorDelegateTest {
     @Test
     fun `test like content error`(): Unit = runBlocking {
         val id = "<test-id>"
-        coEvery { pointInteractor.refresh() } returns listOf()
+        coEvery { rewardRepository.get() } returns listOf()
         coEvery { repository.post(any(), any()) } throws RuntimeException()
         interactor.observe().test {
             assertEquals(emptyMap(), awaitItem())
@@ -70,7 +70,7 @@ internal class EngagementInteractorDelegateTest {
     @Test
     fun `test dislike content`(): Unit = runBlocking {
         val id = "<test-id>"
-        coEvery { pointInteractor.refresh() } returns listOf()
+        coEvery { rewardRepository.get() } returns listOf()
         coEvery { repository.post(any(), any()) } returns Unit
         interactor.observe().test {
             assertEquals(emptyMap(), awaitItem())
@@ -83,7 +83,7 @@ internal class EngagementInteractorDelegateTest {
     @Test
     fun `test dislike content error`(): Unit = runBlocking {
         val id = "<test-id>"
-        coEvery { pointInteractor.refresh() } returns listOf()
+        coEvery { rewardRepository.get() } returns listOf()
         coEvery { repository.post(any(), any()) } throws RuntimeException()
         interactor.observe().test {
             assertEquals(emptyMap(), awaitItem())
@@ -99,7 +99,7 @@ internal class EngagementInteractorDelegateTest {
     @Test
     fun `test comment content`(): Unit = runBlocking {
         val id = "<test-id>"
-        coEvery { pointInteractor.refresh() } returns listOf()
+        coEvery { rewardRepository.get() } returns listOf()
         coEvery { repository.post(any(), any()) } returns Unit
         interactor.observe().test {
             assertEquals(emptyMap(), awaitItem())

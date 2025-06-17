@@ -26,7 +26,6 @@ import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.compose.DesignOutlinedButton
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.social.ui.R
-import eu.peernetwork.social.ui.member.status
 import kotlinx.coroutines.flow.StateFlow
 
 interface ConnectionController {
@@ -85,6 +84,16 @@ fun ConnectionScreen(
             Toast.makeText(context, component.resource().string(it), Toast.LENGTH_SHORT).show()
             viewModel.reset()
         }
+    }
+}
+
+fun Pair<Boolean, Boolean>.status(): ConnectionStatus {
+    return if (first && second) {
+        ConnectionStatus.PEER
+    } else if (first) {
+        ConnectionStatus.FOLLOWING
+    } else {
+        ConnectionStatus.FOLLOWER
     }
 }
 

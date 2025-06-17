@@ -10,6 +10,7 @@ data class UiPost(
     val media: List<UiMedia>,
     val author: UiAuthor,
     val type: Type,
+    val aspectRatio: Float,
     val createdAt: Long,
     val description: AnnotatedString,
     val likes: Int,

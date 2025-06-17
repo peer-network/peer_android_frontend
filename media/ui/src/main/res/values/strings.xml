@@ -8,4 +8,5 @@
 
     <string name="gallery">Select media</string>
     <string name="media_label">Upload media</string>
+    <string name="remove_label">Delete media</string>
 </resources>

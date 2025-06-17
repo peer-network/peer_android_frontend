@@ -1,8 +1,8 @@
 package eu.peernetwork.wallet.data.repository
 
 import eu.peernetwork.wallet.data.api.TransferApi
-import eu.peernetwork.wallet.domain.model.Transfer
-import eu.peernetwork.wallet.domain.repository.TransferRepository
+import eu.peernetwork.wallet.domain.model.Receipt
+import eu.peernetwork.wallet.domain.repository.TransactionRepository
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
@@ -14,22 +14,22 @@ import kotlin.test.assertEquals
 internal class TransferRepositoryDelegateTest {
     private val api = mockk<TransferApi>()
 
-    private lateinit var repository: TransferRepository
+    private lateinit var repository: TransactionRepository
 
     @Before
     fun setup() {
-        repository = TransferRepositoryDelegate(api)
+        repository = TransactionRepositoryDelegate(api)
     }
 
     @Test
     fun `test token transfer`(): Unit = runBlocking {
         val token = BigDecimal(1.0)
         val recipient = "<test-recipient>"
-        val transfer = mockk<Transfer>()
-        coEvery { api.send(any(), any()) } returns transfer
+        val receipt = mockk<Receipt>()
+        coEvery { api.send(any(), any()) } returns receipt
 
         val result = repository.send(recipient, token)
 
-        assertEquals(result, transfer)
+        assertEquals(result, receipt)
     }
 }

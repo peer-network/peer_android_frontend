@@ -14,6 +14,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -36,6 +37,7 @@ import eu.peernetwork.media.core.model.UiMimeType
 
 @Composable
 fun CreatorScreen(
+    draft: MutableState<UiDraft?>,
     attachment: MutableState<UiAttachment>,
     focus: FocusRequester,
     provider: UiComponentProvider,
@@ -77,24 +79,33 @@ fun CreatorScreen(
     CreatorScreen(
         focus = focus,
         onSubmit = {
-            viewModel.create(UiDraft(
+            draft.value = UiDraft(
                 title = it.title,
                 description = it.description,
                 media = if (attachment.value.files.isEmpty()) {
                     UiMimeType.Text
                 } else { attachment.value.media },
+                confirmed = false,
                 attachments = attachment.value.files.map { it.uri }
-            )) },
+            ) },
+        onReset = { attachment.value = UiAttachment.Text },
         header = { AuthorScreen(component, viewModelStoreOwner) },
         isLoading = isLoading,
         enabled = enabled,
         shouldReset = shouldReset,
-        attachment = attachment,
         error = error
     )
     LaunchedEffect(shouldReset.value) {
         if (shouldReset.value) {
             viewModel.reset()
+        }
+    }
+    LaunchedEffect(draft.value) {
+        draft.value?.let {
+            if (it.confirmed) {
+                viewModel.create(it)
+                draft.value = null
+            }
         }
     }
 }
@@ -105,16 +116,17 @@ fun CreatorScreen(
     focus: FocusRequester,
     enabled: State<Boolean>,
     shouldReset: State<Boolean>,
-    attachment: MutableState<UiAttachment>,
     error: State<String?>,
     modifier: Modifier = Modifier,
-    onSubmit: (UiDraft.Field) -> Unit = {},
+    onReset: () -> Unit = { },
+    onSubmit: (UiDraft.Field) -> Unit = { },
     header: @Composable () -> Unit = {}
 ) {
     var title by rememberSaveable(stateSaver = TextFieldState.Saver) { mutableStateOf(TextFieldState()) }
     var description by rememberSaveable(stateSaver = TextFieldState.Saver) {
         mutableStateOf(TextFieldState())
     }
+    val handleOnReset by rememberUpdatedState(onReset)
     DesignLabel(
         label = { error.value?.let {
             Text(it,
@@ -151,7 +163,7 @@ fun CreatorScreen(
         if (shouldReset.value) {
             title = TextFieldState()
             description = TextFieldState()
-            attachment.value = UiAttachment.Text
+            handleOnReset()
         }
     }
 }
@@ -167,7 +179,6 @@ fun PreviewCreatorScreen() {
             enabled = remember { mutableStateOf(false) },
             error = remember { mutableStateOf(null) },
             shouldReset = remember { mutableStateOf(false) },
-            attachment = remember { mutableStateOf(UiAttachment.Text) },
         ) {}
     }
 }

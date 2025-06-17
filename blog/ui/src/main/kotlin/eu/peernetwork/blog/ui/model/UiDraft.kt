@@ -10,7 +10,8 @@ data class UiDraft(
     val title: String,
     val description: String,
     val media: UiMimeType,
-    val attachments: List<Uri>
+    val confirmed: Boolean,
+    val attachments: List<Uri>,
 ) {
     @Immutable
     data class Field(
