@@ -16,7 +16,6 @@ import eu.peernetwork.core.ui.design.compose.DesignTitleBarHost
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.core.ui.model.ViewModelState
-import eu.peernetwork.app.ui.member.MemberScreen
 import kotlinx.coroutines.launch
 import java.net.URLEncoder
 
@@ -35,11 +34,11 @@ fun ProfileScreen(
     ProfileNavigation(userId, component, viewModelStore) { id, controller ->
         val photoState = rememberLazyListState()
         val videoState = rememberLazyListState()
-        MemberScreen(
+        ProfilePreview(
             id = id,
             limit = BuildConfig.PAGING_LIMIT,
             onSettings = { controller.navigateIfNecessary("settings") },
-            provider = component,
+            component = component,
             viewModelStoreOwner = viewModelStore.get(id),
             photoState = photoState,
             videoState = videoState,

@@ -1,4 +1,4 @@
-package eu.peernetwork.app.ui.member
+package eu.peernetwork.app.ui.profile
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -23,7 +23,7 @@ import eu.peernetwork.core.ui.design.compose.DesignTab
 import eu.peernetwork.media.core.model.UiMimeType
 
 @Composable
-fun MemberBlog(
+fun ProfileBlog(
     id: String,
     lastUpdated: State<Long>,
     limit: Int,
@@ -35,7 +35,7 @@ fun MemberBlog(
     photoState: LazyListState,
     videoState: LazyListState
 ) {
-    MemberBlog { offset ->
+    ProfileBlog { offset ->
         when (offset) {
             0 -> PhotoScreen(
                 id,
@@ -64,7 +64,7 @@ fun MemberBlog(
 }
 
 @Composable
-private fun MemberBlog(
+private fun ProfileBlog(
     onNavigate: (Int) -> Unit = {},
     content: @Composable (Int) -> Unit
 ) {

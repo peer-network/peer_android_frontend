@@ -8,7 +8,10 @@ import eu.peernetwork.blog.ui.post.photo.Photo
 import eu.peernetwork.blog.ui.post.video.Video
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.app.ui.member.Member
+import eu.peernetwork.social.ui.connection.Connection
+import eu.peernetwork.social.ui.followers.Followers
+import eu.peernetwork.social.ui.followings.Followings
+import eu.peernetwork.social.ui.peers.Peers
 import eu.peernetwork.user.ui.user.User
 
 interface Profile : ApplicationProvider {
@@ -21,7 +24,17 @@ interface Profile : ApplicationProvider {
         dependencies = [ Profile::class ],
         modules = [ ProfileModule::class ]
     )
-    interface Component : Profile, UiComponentProvider, Member, User, Photo, Video, Search, Settings
+    interface Component : Profile,
+        UiComponentProvider,
+        User,
+        Photo,
+        Video,
+        Search,
+        Settings,
+        Followers,
+        Followings,
+        Peers,
+        Connection
 
     class Builder(private val dependency: Profile) : UiComponent.DefaultBuilder<Profile, Component>() {
         override fun build(context: Context): Component {

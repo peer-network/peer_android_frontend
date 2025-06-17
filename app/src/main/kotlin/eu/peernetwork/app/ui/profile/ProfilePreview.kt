@@ -1,4 +1,4 @@
-package eu.peernetwork.app.ui.member
+package eu.peernetwork.app.ui.profile
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -14,22 +14,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.component.DesignRefreshableScaffold
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
 import eu.peernetwork.core.ui.design.compose.DesignScaffold
-import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.social.ui.connection.ConnectionScreen
 import eu.peernetwork.social.ui.connection.ConnectionStatus
 import eu.peernetwork.user.ui.user.UserScreen
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun MemberScreen(
+fun ProfilePreview(
     id: String,
     limit: Int,
     onSettings: () -> Unit = {},
@@ -38,13 +35,9 @@ fun MemberScreen(
     imageOnClick: (String) -> Unit = {},
     photoState: LazyListState = rememberLazyListState(),
     videoState: LazyListState = rememberLazyListState(),
-    provider: UiComponentProvider,
+    component: Profile.Component,
     viewModelStoreOwner: ViewModelStoreOwner,
 ) {
-    val context = LocalContext.current
-    val component = remember {
-        provider.builder(Member.Builder::class.java).build(context)
-    }
     val handleImageOnClick by rememberUpdatedState(imageOnClick)
     val lastUpdated = rememberSaveable { mutableLongStateOf(System.currentTimeMillis()) }
     var connection = remember { mutableStateOf<ConnectionStatus?>(null) }
@@ -54,7 +47,7 @@ fun MemberScreen(
         viewModelStoreOwner = viewModelStoreOwner
     ) { controller ->
         val connectionState by controller.observe().collectAsStateWithLifecycle()
-        MemberScreen(
+        ProfilePreview(
             onRefresh = { lastUpdated.longValue = System.currentTimeMillis() },
             header = { scrollState ->
                 UserScreen(
@@ -77,14 +70,14 @@ fun MemberScreen(
                         showSheet.value = connection.value != null
                     },
                     onSettings = onSettings,
-                    provider = provider,
+                    provider = component,
                     viewModelStoreOwner = viewModelStoreOwner,
                     modifier = Modifier.Companion.padding(bottom = 8.dp)
                         .padding(end = 16.dp, start = 24.dp)
                 )
             },
         ) {
-            MemberBlog(
+            ProfileBlog(
                 id,
                 lastUpdated,
                 limit,
@@ -97,7 +90,7 @@ fun MemberScreen(
                 videoState
             )
         }
-        MemberSheet(
+        ProfileSheet(
             id,
             showSheet,
             limit,
@@ -110,7 +103,7 @@ fun MemberScreen(
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun MemberScreen(
+fun ProfilePreview(
     modifier: Modifier = Modifier,
     onRefresh: () -> Unit = {},
     header: @Composable (State<Float>) -> Unit,

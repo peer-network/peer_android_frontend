@@ -11,7 +11,10 @@ import eu.peernetwork.core.ui.annotation.UiBuilder
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.factory.UiBuilderFactory
-import eu.peernetwork.app.ui.member.Member
+import eu.peernetwork.social.ui.connection.Connection
+import eu.peernetwork.social.ui.followers.Followers
+import eu.peernetwork.social.ui.followings.Followings
+import eu.peernetwork.social.ui.peers.Peers
 import eu.peernetwork.user.ui.user.User
 
 @Module
@@ -19,14 +22,6 @@ object ProfileModule {
     @Provides
     @Profile.Scope
     fun provideBuilderFactory(factory: UiBuilderFactory): UiComponentProvider.Factory = factory
-
-    @Profile.Scope
-    @Provides
-    @IntoMap
-    @UiBuilder(Member.Builder::class)
-    fun provideMemberBuilder(component: Profile.Component): UiComponent.Builder {
-        return Member.Builder(component)
-    }
 
     @Profile.Scope
     @Provides
@@ -66,5 +61,37 @@ object ProfileModule {
     @UiBuilder(Settings.Builder::class)
     fun provideSettingsBuilder(component: Profile.Component): UiComponent.Builder {
         return Settings.Builder(component)
+    }
+
+    @Provides
+    @IntoMap
+    @Profile.Scope
+    @UiBuilder(Connection.Builder::class)
+    fun provideConnectionBuilder(component: Profile.Component): UiComponent.Builder {
+        return Connection.Builder(component)
+    }
+
+    @Provides
+    @IntoMap
+    @Profile.Scope
+    @UiBuilder(Followers.Builder::class)
+    fun provideFollowersBuilder(component: Profile.Component): UiComponent.Builder {
+        return Followers.Builder(component)
+    }
+
+    @Provides
+    @IntoMap
+    @Profile.Scope
+    @UiBuilder(Followings.Builder::class)
+    fun provideFollowingsBuilder(component: Profile.Component): UiComponent.Builder {
+        return Followings.Builder(component)
+    }
+
+    @Provides
+    @IntoMap
+    @Profile.Scope
+    @UiBuilder(Peers.Builder::class)
+    fun providePeersBuilder(component: Profile.Component): UiComponent.Builder {
+        return Peers.Builder(component)
     }
 }

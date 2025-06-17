@@ -16,7 +16,6 @@ import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.factory.UiBuilderFactory
 import eu.peernetwork.core.ui.factory.UiViewModelFactory
 import eu.peernetwork.social.ui.connection.Connection
-import eu.peernetwork.app.ui.member.Member
 import javax.inject.Provider
 
 @Module
@@ -62,14 +61,6 @@ object FeedModule {
     @UiBuilder(Video.Builder::class)
     fun provideVideoBuilder(component: Feed.Component): UiComponent.Builder {
         return Video.Builder(component)
-    }
-
-    @Feed.Scope
-    @Provides
-    @IntoMap
-    @UiBuilder(Member.Builder::class)
-    fun provideMemberBuilder(component: Feed.Component): UiComponent.Builder {
-        return Member.Builder(component)
     }
 
     @Feed.Scope

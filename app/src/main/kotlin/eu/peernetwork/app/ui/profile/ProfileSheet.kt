@@ -1,4 +1,4 @@
-package eu.peernetwork.app.ui.member
+package eu.peernetwork.app.ui.profile
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,7 +25,7 @@ import eu.peernetwork.social.ui.peers.PeersScreen
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun MemberSheet(
+fun ProfileSheet(
     id: String,
     state: MutableState<Boolean>,
     limit: Int,
