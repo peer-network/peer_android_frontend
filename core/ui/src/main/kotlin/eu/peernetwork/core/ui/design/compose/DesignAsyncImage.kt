@@ -33,16 +33,25 @@ fun DesignAsyncImage(
     style: TextStyle = MaterialTheme.typography.titleLarge.copy(
         color = MaterialTheme.colorScheme.tertiary,
         fontWeight = FontWeight.Normal
-    )
+    ),
+    onImageLoaded: (Boolean) -> Unit = {}
 ) {
     val isAvatarLoaded = remember { mutableStateOf(false) }
+
     Box(modifier = modifier.size(size).background(color)) {
         AsyncImage(
             model = imageUrl,
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop,
             contentDescription = null,
-            onSuccess = { isAvatarLoaded.value = true }
+            onSuccess = {
+                isAvatarLoaded.value = true
+                onImageLoaded(true)
+            },
+            onError = {
+                isAvatarLoaded.value = false
+                onImageLoaded(false)
+            }
         )
         Text(
             text = label[0].toString().uppercase(),
@@ -50,11 +59,13 @@ fun DesignAsyncImage(
             modifier = Modifier
                 .align(Alignment.Center)
                 .graphicsLayer {
-                    if (isAvatarLoaded.value) alpha = 0f else 1f
-                }
+                if (isAvatarLoaded.value) alpha = 0f else 1f
+            }
+
         )
     }
 }
+
 
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
