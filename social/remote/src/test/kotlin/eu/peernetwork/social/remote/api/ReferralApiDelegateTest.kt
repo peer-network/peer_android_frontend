@@ -6,6 +6,7 @@ import com.apollographql.apollo3.api.Operation
 import com.apollographql.apollo3.api.Optional
 import eu.peernetwork.core.common.model.Pageable
 import eu.peernetwork.core.remote.api.RequestClient
+import eu.peernetwork.core.remote.model.Status
 import eu.peernetwork.social.data.api.ReferralApi
 import eu.peernetwork.social.remote.mock.ReferralMock
 import io.mockk.coEvery
@@ -19,6 +20,7 @@ import social.social.eu.peernetwork.social.remote.ReferralQuery
 import java.util.UUID
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 
 internal class ReferralApiDelegateTest {
     private val client = mockk<ApolloClient>()
@@ -59,5 +61,29 @@ internal class ReferralApiDelegateTest {
             limit = Optional.present(page.limit),
             offset = Optional.present(page.offset)
         )) }
+    }
+
+    @Test
+    fun `test referral list error`(): Unit = runBlocking {
+        val page = Pageable(0, 1)
+        val id = "<test-id>"
+        val content = ReferralMock.get().copy(status = Status.ERROR.value)
+        val mockData = mockk<ReferralQuery.Data>()
+        val operation = mockk<Operation<ReferralQuery.Data>>(relaxed = true)
+        val mockResponse = ApolloResponse.Builder(
+            operation,
+            UUID.randomUUID(),
+            mockData
+        ).build()
+
+        every { mockData.referralList } returns content
+        coEvery { client.query(any<ReferralQuery>()).execute() } returns mockResponse
+
+        val result = try {
+            api.get(id, page)
+        } catch (_: Throwable) {
+            null
+        }
+        assertNull(result)
     }
 }
