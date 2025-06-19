@@ -1,0 +1,11 @@
+package eu.peernetwork.social.domain.repository
+
+import eu.peernetwork.core.common.model.Page
+import eu.peernetwork.core.common.model.Pageable
+import eu.peernetwork.social.domain.model.Block
+
+interface BlockRepository {
+    suspend fun get(userId: String, pageable: Pageable): Page<Block>
+
+    suspend fun block(userId: String): Boolean
+}

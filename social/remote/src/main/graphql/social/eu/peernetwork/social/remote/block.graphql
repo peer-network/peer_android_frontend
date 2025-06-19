@@ -1,0 +1,6 @@
+mutation ToggleBlockUserStatus($userid: ID!) {
+    toggleBlockUserStatus(userid: $userid) {
+        status
+        ResponseCode
+    }
+}

@@ -1,0 +1,15 @@
+query ListBlockedUsers($offset: Int, $limit: Int) {
+    listBlockedUsers(offset: $offset, limit: $limit) {
+        status
+        counter
+        ResponseCode
+        affectedRows {
+            iBlocked {
+                userid
+                img
+                username
+                slug
+            }
+        }
+    }
+}
