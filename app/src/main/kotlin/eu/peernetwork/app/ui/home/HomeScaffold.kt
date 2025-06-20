@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -33,7 +35,7 @@ fun PreviewHomeScaffold() {
     PeerTheme {
         HomeScaffold(
             header = {  },
-            footer = { HomeFooter(0) { prev, next -> } }
+            footer = { HomeFooter(remember { mutableIntStateOf(0) }) { prev, next -> } }
         ) { state ->
             Text(
                 text = "",

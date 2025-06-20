@@ -1,6 +1,7 @@
 package eu.peernetwork.app.ui.home
 
 import android.content.res.Configuration
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,8 +12,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -26,12 +29,12 @@ import eu.peernetwork.core.ui.theme.PeerTheme
 
 @Composable
 fun HomeFooter(
-    start: Int,
+    start: State<Int>,
     modifier: Modifier = Modifier,
     onClick: (Int, Int) -> Unit,
 ) {
     val handleClick by rememberUpdatedState(onClick)
-    val state = rememberSaveable { mutableIntStateOf(start) }
+    val state = rememberSaveable(start.value) { mutableIntStateOf(start.value) }
     Box(modifier = Modifier
         .fillMaxWidth()
         .background(MaterialTheme.colorScheme.background)
@@ -69,12 +72,16 @@ fun HomeFooter(
             }
         }
     }
+    BackHandler(enabled = state.intValue != 0) {
+        handleClick(state.intValue, 0)
+        state.intValue = 0
+    }
 }
 
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun PreviewHomeBottomBar() {
     PeerTheme {
-        HomeFooter(start = 0) { prev, next -> }
+        HomeFooter(start = remember { mutableIntStateOf(0) }) { prev, next -> }
     }
 }

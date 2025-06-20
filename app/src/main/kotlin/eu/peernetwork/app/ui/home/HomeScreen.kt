@@ -66,7 +66,7 @@ fun HomeScreen(provider: UiComponentProvider) {
         val navigationState = rememberSaveable { mutableIntStateOf(data.second) }
         val startDestination = remember { HomeRoute.get(navigationState.intValue).path }
         HomeScreen(
-            start = data.second,
+            start = navigationState,
             options = { RewardScreen(component, viewModelStore.get(data.first)) },
             onClick = {
                 viewModel.lastVisited(it)
@@ -87,7 +87,7 @@ fun HomeScreen(provider: UiComponentProvider) {
 
 @Composable
 fun HomeScreen(
-    start: Int,
+    start: State<Int>,
     options: @Composable () -> Unit,
     onClick: (Int) -> Unit,
     content: @Composable (State<Float>) -> Unit
@@ -117,7 +117,7 @@ fun HomeScreen(
 fun PreviewHomeScreen() {
     PeerTheme {
         HomeScreen(
-            start = 0,
+            start = remember { mutableIntStateOf(0) },
             options = {},
             onClick = {},
         ) { state ->
