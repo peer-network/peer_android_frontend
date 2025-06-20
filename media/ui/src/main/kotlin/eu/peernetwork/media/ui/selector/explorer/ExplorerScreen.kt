@@ -53,11 +53,15 @@ import eu.peernetwork.media.ui.R
 import eu.peernetwork.media.ui.selector.directory.DirectoryScreen
 import eu.peernetwork.media.ui.selector.photo.PhotoScreen
 import eu.peernetwork.media.ui.selector.video.VideoScreen
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.ui.res.painterResource
 
 @Composable
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
 fun ExplorerScreen(
     attachment: MutableState<UiAttachment>,
+    onEdit: () -> Unit,
     onFinish: () -> Unit,
     provider: UiComponentProvider
 ) {
@@ -71,6 +75,7 @@ fun ExplorerScreen(
     ExplorerScreen(
         title = title,
         onFinish = onFinish,
+        onEdit = onEdit,
         attachment = attachment,
         onClick = { showDirectory.value = true },
         onSelect = {
@@ -78,6 +83,7 @@ fun ExplorerScreen(
             attachment.value = UiAttachment.File(it, emptyList()) },
     ) { type ->
         val tag = directory.value ?: type.id.toString()
+        val viewModelStore = remember { ViewModelState() }
         when(type) {
             UiMimeType.Video -> VideoScreen(
                 type = type,
@@ -129,6 +135,7 @@ fun ExplorerScreen(
     title: MutableState<String>,
     attachment: MutableState<UiAttachment>,
     onClick: () -> Unit,
+    onEdit: () -> Unit,
     onFinish: () -> Unit,
     onSelect: (UiMimeType) -> Unit,
     content: @Composable (UiMimeType) -> Unit
@@ -151,18 +158,18 @@ fun ExplorerScreen(
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
-            .fillMaxWidth()
-            .drawBehind {
-                val strokeWidth = 1.dp.toPx()
-                val y = size.height - strokeWidth / 2
-                drawLine(
-                    color = border,
-                    start = Offset(0f, y),
-                    end = Offset(size.width, y),
-                    strokeWidth = strokeWidth
-                )
-            }
-            .padding(vertical = 12.dp, horizontal = 24.dp)) {
+                .fillMaxWidth()
+                .drawBehind {
+                    val strokeWidth = 1.dp.toPx()
+                    val y = size.height - strokeWidth / 2
+                    drawLine(
+                        color = border,
+                        start = Offset(0f, y),
+                        end = Offset(size.width, y),
+                        strokeWidth = strokeWidth
+                    )
+                }
+                .padding(vertical = 12.dp, horizontal = 24.dp)) {
             DesignDropDown(
                 expanded,
                 default = title.value,
@@ -215,8 +222,8 @@ fun ExplorerScreen(
                 Box(
                     contentAlignment = Alignment.Center,
                     modifier = Modifier.size(28.dp)
-                    .clip(RoundedCornerShape(14.dp))
-                    .background(MaterialTheme.colorScheme.onBackground)
+                        .clip(RoundedCornerShape(14.dp))
+                        .background(MaterialTheme.colorScheme.onBackground)
                 ) {
                     Text(
                         "${attachment.value.files.size}",
@@ -227,6 +234,26 @@ fun ExplorerScreen(
                     )
                 }
             }
+            Spacer(modifier = Modifier.width(8.dp))
+
+            if (attachment.value.files.isNotEmpty() && type.value == UiMimeType.Video && !expanded.value) {
+                IconButton(
+                    onClick = { onEdit() },
+                    modifier = Modifier
+                        .size(32.dp) // Smaller size
+                        .padding(end = 7.dp)
+                ) {
+                    Icon(
+                        painter = painterResource(eu.peernetwork.core.ui.R.drawable.ic_edit),
+                        contentDescription = "Edit",
+                        tint = MaterialTheme.colorScheme.onBackground
+                    )
+                }
+
+                Spacer(modifier = Modifier.width(8.dp))
+            }
+
+
             Spacer(modifier = Modifier.width(8.dp))
             DesignOutlinedButton(
                 onClick = onFinish,
@@ -261,6 +288,7 @@ fun PreviewExplorerScreen() {
         ExplorerScreen(
             remember { mutableStateOf(photo) },
             remember { mutableStateOf(UiAttachment.Text) },
+            {},
             {},
             {},
             {}
