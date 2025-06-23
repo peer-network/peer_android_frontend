@@ -24,7 +24,10 @@ class PhotoViewModel @Inject constructor(
 
     val state: StateFlow<State> = mutableState.asStateFlow()
 
-    fun load(author: String, page: Pageable) {
+    fun load(
+        author: String,
+        page: Pageable
+    ) {
         viewModelScope.launch {
             usecase(
                 AuthorPostUsecase.Parameter(

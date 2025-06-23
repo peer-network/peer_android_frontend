@@ -1,7 +1,7 @@
 package eu.peernetwork.app.ui.feed
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -16,13 +16,14 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -31,11 +32,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.blog.domain.model.Filter.Criteria
+import eu.peernetwork.blog.domain.model.Relation
 import eu.peernetwork.blog.ui.timeline.photo.PhotoScreen
 import eu.peernetwork.blog.ui.timeline.video.VideoScreen
 import eu.peernetwork.core.ui.R
+import eu.peernetwork.core.ui.design.compose.DesignDropdownMenu
 import eu.peernetwork.core.ui.design.compose.DesignTab
-import eu.peernetwork.core.ui.design.compose.DesignTitle
 import eu.peernetwork.core.ui.design.compose.DesignTitleBarHost
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.core.ui.theme.PeerTheme
@@ -65,6 +67,7 @@ fun FeedPreview(
     val videoState = rememberLazyListState()
     val coroutine = rememberCoroutineScope()
     val connection by connectionController.observe().collectAsStateWithLifecycle()
+    var relation by rememberSaveable { mutableStateOf(Relation.NONE) }
     FeedPreview(
         state = state,
         modifier = Modifier.fillMaxSize(),
@@ -73,6 +76,7 @@ fun FeedPreview(
             PhotoScreen(
                 id,
                 BuildConfig.PAGING_LIMIT,
+                relation,
                 criteria,
                 onMentionClick,
                 onHashtagClick,
@@ -93,6 +97,7 @@ fun FeedPreview(
             VideoScreen(
                 id,
                 BuildConfig.PAGING_LIMIT,
+                relation,
                 criteria,
                 { controller.navigateToUsernameSearch(it) },
                 { controller.navigateToTagSearch(it) },
@@ -114,22 +119,42 @@ fun FeedPreview(
         "FeedScreen$id$title",
         {
             coroutine.launch {
-                photoState.animateScrollToItem(0)
-                videoState.animateScrollToItem(0)
+                if (state.intValue == 0) {
+                    photoState.animateScrollToItem(0)
+                } else {
+                    videoState.animateScrollToItem(0)
+                }
             }
         }
     ) {
         titleBar {
-            DesignTitle(modifier = Modifier
-                .clickable(
-                    role = Role.Button,
-                    onClick = {  })) {
-                Text(
-                    title ?: stringResource(R.string.feed_label),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-            }
+            DesignDropdownMenu(
+                items = listOf("All", "Followed", "Follower"),
+                onSelect = { label ->
+                    relation = when (label) {
+                        "Followed" -> Relation.FOLLOWED
+                        "Follower" -> Relation.FOLLOWER
+                        else -> Relation.NONE
+                    }
+                },
+                anchor = {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            text = title ?: stringResource(R.string.feed_label),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                        Icon(
+                            painter = painterResource(R.drawable.ic_caret_down),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .padding(start = 6.dp)
+                                .size(20.dp),
+                            tint = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                }
+            )
         }
     }
 }

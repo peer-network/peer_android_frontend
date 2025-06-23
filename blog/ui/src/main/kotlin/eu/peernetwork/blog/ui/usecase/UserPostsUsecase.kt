@@ -7,6 +7,7 @@ import androidx.paging.PagingData
 import androidx.paging.PagingSource.LoadParams
 import androidx.paging.PagingSource.LoadResult
 import eu.peernetwork.blog.domain.model.Filter.Criteria
+import eu.peernetwork.blog.domain.model.Relation
 import eu.peernetwork.blog.domain.usecase.PhotosUsecase
 import eu.peernetwork.blog.domain.usecase.EngagementRefreshUsecase
 import eu.peernetwork.blog.ui.mapper.mapToPhoto
@@ -48,6 +49,7 @@ class UserPostsUsecase @Inject constructor(
         )
         val response = usecase(
             PhotosUsecase.Parameter(
+                relation = param.relation,
                 criteria = param.criteria,
                 page = currentPage
             )
@@ -71,6 +73,7 @@ class UserPostsUsecase @Inject constructor(
     }
 
     data class Parameter(
+        val relation: Relation = Relation.NONE,
         val criteria: Criteria? = null,
         val page: Pageable
     )
