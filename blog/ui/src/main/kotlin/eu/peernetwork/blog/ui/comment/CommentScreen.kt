@@ -22,8 +22,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import eu.peernetwork.blog.ui.compose.ContentBar
-import eu.peernetwork.blog.ui.compose.ContentSkeleton
+import eu.peernetwork.blog.ui.compose.PostSummary
+import eu.peernetwork.blog.ui.compose.Placeholder
 import eu.peernetwork.blog.ui.mapper.mapToContent
 import eu.peernetwork.blog.ui.model.UiComment
 import eu.peernetwork.blog.ui.model.UiContent
@@ -45,7 +45,7 @@ fun CommentScreen(
     modifier: Modifier = Modifier,
     onMentionClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
-    imageOnClick: (String) -> Unit = {},
+    onAuthorClick: (String) -> Unit = {},
 ) {
     val context = LocalContext.current
     val component = remember { provider.builder(Comment.Builder::class.java).build(context) }
@@ -97,12 +97,12 @@ fun CommentScreen(
         DesignPagingScaffold<UiComment>(
             state = derivedState,
             onRefresh = { state.value?.let { viewModel.load(it.id, Pageable(0, postLimit)) } },
-            placeholder = { ContentSkeleton(modifier = Modifier.padding(horizontal = 24.dp)) }
+            placeholder = { Placeholder(modifier = Modifier.padding(horizontal = 24.dp)) }
         ) { pageState, items ->
             LazyColumn(modifier = Modifier.fillMaxSize()) {
                 items(items.itemCount) { index ->
                     items[index]?.let { comment ->
-                        ContentBar(
+                        PostSummary(
                             model = comment.mapToContent(),
                             modifier = Modifier
                                 .padding(horizontal = 24.dp)
@@ -112,7 +112,7 @@ fun CommentScreen(
                             },
                             onMentionClick = onMentionClick,
                             onHashtagClick = onHashtagClick,
-                            imageOnClick = imageOnClick
+                            onAuthorClick = onAuthorClick
                         ) {
                             val liked = remember { derivedStateOf {
                                 contents.value?.likes?.firstOrNull { it.id == comment.id }

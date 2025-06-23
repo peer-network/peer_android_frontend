@@ -1,50 +1,29 @@
 package eu.peernetwork.blog.ui.post.video
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.LoadState
 import eu.peernetwork.blog.ui.model.UiVideo
-import eu.peernetwork.blog.ui.compose.MediaPostCard
-import eu.peernetwork.blog.ui.compose.PostSummary
 import eu.peernetwork.blog.ui.compose.PostPageSkeleton
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
-import eu.peernetwork.blog.ui.engagement.EngagementSpec
-import eu.peernetwork.blog.ui.mapper.mapToContent
 import eu.peernetwork.blog.ui.moderation.ModerationScreen
-import eu.peernetwork.blog.ui.moderation.ModerationSpec
-import eu.peernetwork.blog.ui.post.photo.formatTimeAgo
 import eu.peernetwork.core.common.model.Pageable
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.component.DesignError
 import eu.peernetwork.core.ui.design.component.DesignPagingScaffold
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
 import eu.peernetwork.core.ui.extension.builder
-import eu.peernetwork.media.core.renderer.VideoThumbnail
-import kotlinx.coroutines.delay
 
 @Composable
 fun VideoScreen(
@@ -55,7 +34,8 @@ fun VideoScreen(
     viewModelStoreOwner: ViewModelStoreOwner,
     onMentionClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
-    imageOnClick: (String) -> Unit = {},
+    onAuthorClick: (String) -> Unit = {},
+    onPostClick: (String, Int) -> Unit,
     listState: LazyListState = rememberLazyListState(),
 ) {
     val context = LocalContext.current
@@ -68,7 +48,6 @@ fun VideoScreen(
         factory = component.viewModelFactory()
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val currentTime = remember { mutableLongStateOf(System.currentTimeMillis()) }
     val derivedState = remember { derivedStateOf {
         when(state) {
             VideoViewModel.State.Empty -> DesignStatefulScaffoldState.Empty
@@ -83,7 +62,6 @@ fun VideoScreen(
             }
         }
     } }
-    var selectedClip = remember { mutableStateOf<Int?>(null) }
     val updatedAt = remember { mutableLongStateOf(lastUpdated.value) }
     DesignPagingScaffold<UiVideo>(
         state = derivedState,
@@ -101,49 +79,25 @@ fun VideoScreen(
             refreshed,
             onMentionClick,
             onHashtagClick,
-            imageOnClick,
+            onAuthorClick,
             component,
             viewModelStoreOwner
         ) { engagement ->
             ModerationScreen(
                 component,
                 viewModelStoreOwner
-            ) { spec ->
-                LazyColumn(state = listState) {
-                    items(
-                        count = lazyPagingItems.itemCount,
-                        key = { index -> index }
-                    ) { index ->
-                        lazyPagingItems[index]?.let { post ->
-                            VideoScreen(
-                                post = post,
-                                index = index,
-                                currentTime = currentTime,
-                                onMentionClick = onMentionClick,
-                                onHashtagClick = onHashtagClick,
-                                engagementSpec = engagement,
-                                moderationSpec = spec,
-                                onSelect = { selectedClip.value = it },
-                            ) {
-                                component.videoThumbnail()(
-                                    Modifier,
-                                    VideoThumbnail.Spec(post.media, post.resolution)
-                                )
-                            }
-                        }
-                    }
-                    item(key = author) {
-                        Box(
-                            modifier = Modifier.fillMaxWidth()
-                                .height(56.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            if (lazyPagingItems.loadState.append is LoadState.Loading) {
-                                CircularProgressIndicator(modifier = Modifier.padding(16.dp))
-                            }
-                        }
-                    }
-                }
+            ) { moderation ->
+                VideoListing(
+                    author = author,
+                    component = component,
+                    lazyPagingItems = lazyPagingItems,
+                    listState = listState,
+                    engagement = engagement,
+                    moderation = moderation,
+                    onMentionClick,
+                    onHashtagClick,
+                    onPostClick,
+                )
             }
         }
         LaunchedEffect(lastUpdated.value) {
@@ -152,53 +106,6 @@ fun VideoScreen(
                 updatedAt.longValue = lastUpdated.value
             }
         }
-        VideoDialog(author, postLimit, selectedClip, provider, viewModelStoreOwner)
-    }
-    LaunchedEffect(Unit) {
-        while (true) {
-            delay(60_000L)
-            currentTime.longValue = System.currentTimeMillis()
-        }
     }
 }
 
-@Composable
-fun VideoScreen(
-    post: UiVideo,
-    index: Int,
-    currentTime: State<Long>,
-    onMentionClick: (String) -> Unit = {},
-    onHashtagClick: (String) -> Unit = {},
-    engagementSpec: EngagementSpec,
-    moderationSpec: ModerationSpec,
-    onSelect: (Int) -> Unit,
-    content: @Composable (UiVideo) -> Unit = {}
-) {
-    val updatedContent by rememberUpdatedState(content)
-    val selectionHandler by rememberUpdatedState { onSelect(index) }
-    MediaPostCard(
-        author = post.author,
-        description = post.createdAt.formatTimeAgo(currentTime.value),
-        modifier = Modifier.padding(bottom = 16.dp),
-        caption = {
-            PostSummary(post.author.username, post.title, post.description,onMentionClick = onMentionClick, onHashtagClick = onHashtagClick)
-        },
-        engagements = {
-            EngagementScreen(
-                post.mapToContent(),
-                engagementSpec
-            )
-        },
-        moderation = {
-            ModerationScreen(
-                post.mapToContent(),
-                moderationSpec
-            )
-        },
-    ) {
-        Box(modifier = Modifier.clickable(
-            role = Role.Button,
-            onClick = selectionHandler
-        )) { updatedContent(post) }
-    }
-}

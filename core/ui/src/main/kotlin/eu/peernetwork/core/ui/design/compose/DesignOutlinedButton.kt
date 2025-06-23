@@ -114,22 +114,23 @@ fun DesignOutlinedButton(
             modifier = Modifier.padding(contentPadding),
             contentAlignment = Alignment.Center
         ) {
-            if (isLoading) {
-                val infiniteTransition = rememberInfiniteTransition()
-                val alpha by infiniteTransition.animateFloat(
-                    initialValue = 1f,
-                    targetValue = 0.3f,
-                    animationSpec = infiniteRepeatable(
-                        animation = tween(durationMillis, easing = easing),
-                        repeatMode = RepeatMode.Reverse
-                    )
+            val infiniteTransition = rememberInfiniteTransition()
+            val alpha by infiniteTransition.animateFloat(
+                initialValue = 1f,
+                targetValue = 0.3f,
+                animationSpec = infiniteRepeatable(
+                    animation = tween(durationMillis, easing = easing),
+                    repeatMode = RepeatMode.Reverse
                 )
-                Text(
-                    text = stringResource(id = R.string.loading_text),
-                    modifier = Modifier.graphicsLayer { this.alpha = alpha },
-                    style = textStyle.copy(color = contentColor)
-                )
-            } else {
+            )
+            Text(
+                text = stringResource(id = R.string.loading_text),
+                modifier = Modifier.graphicsLayer {
+                    this.alpha = if (isLoading) alpha else 0f },
+                style = textStyle.copy(color = contentColor)
+            )
+            Box(modifier = Modifier.graphicsLayer {
+                this.alpha = if (!isLoading) 1f else 0f }) {
                 CompositionLocalProvider(
                     LocalContentColor provides contentColor,
                     LocalTextStyle provides textStyle

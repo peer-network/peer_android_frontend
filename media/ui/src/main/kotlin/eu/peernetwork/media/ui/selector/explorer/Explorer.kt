@@ -4,12 +4,14 @@ import android.content.Context
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.provider.UiProvider
+import eu.peernetwork.media.core.interactor.ThumbnailInteractor
 import eu.peernetwork.media.ui.camera.Camera
 import eu.peernetwork.media.ui.selector.directory.Directory
 import eu.peernetwork.media.ui.selector.photo.Photo
 import eu.peernetwork.media.ui.selector.video.Video
 
 interface Explorer : UiProvider {
+    fun thumbnailInteractor(): ThumbnailInteractor
 
     @javax.inject.Scope
     @Retention(AnnotationRetention.RUNTIME)

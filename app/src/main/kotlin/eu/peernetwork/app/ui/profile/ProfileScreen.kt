@@ -1,22 +1,15 @@
 package eu.peernetwork.app.ui.profile
 
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import eu.peernetwork.app.BuildConfig
-import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.compose.DesignTitle
-import eu.peernetwork.core.ui.design.compose.DesignTitleBarHost
 import eu.peernetwork.core.ui.extension.builder
-import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.core.ui.model.ViewModelState
-import kotlinx.coroutines.launch
 import java.net.URLEncoder
 
 @Composable
@@ -30,34 +23,22 @@ fun ProfileScreen(
     val component = remember {
         provider.builder(Profile.Builder::class.java).build(context)
     }
-    val coroutine = rememberCoroutineScope()
-    ProfileNavigation(userId, component, viewModelStore) { id, controller ->
-        val photoState = rememberLazyListState()
-        val videoState = rememberLazyListState()
-        ProfilePreview(
-            id = id,
+    val overlay = remember { mutableStateOf<ProfileOverlayState>(ProfileOverlayState.Empty) }
+    val controller = rememberNavController()
+    ProfileOverlay(overlay, userId, title, BuildConfig.PAGING_LIMIT, component, viewModelStore) {
+        ProfileNavigation(
+            userId = userId,
+            title = title,
             limit = BuildConfig.PAGING_LIMIT,
-            onSettings = { controller.navigateIfNecessary("settings") },
+            controller = controller,
             component = component,
-            viewModelStoreOwner = viewModelStore.get(id),
-            photoState = photoState,
-            videoState = videoState,
-            onHashtagClick = { controller.navigateToTagSearch(it) },
-            onMentionClick = { controller.navigateToUsernameSearch(it) },
-            imageOnClick = { controller.navigateIfNecessary("profile/$it") },
+            viewModelStore = viewModelStore,
+            onPhotoClick = { id, index -> },
+            onVideoClick = { id, index ->
+                component.videoInteractor().save()
+                overlay.value = ProfileOverlayState.Video(id, index)
+            }
         )
-        DesignTitleBarHost("ProfileScreen$id", {
-            coroutine.launch {
-                photoState.animateScrollToItem(0)
-                videoState.animateScrollToItem(0)
-            }
-        }) {
-            titleBar {
-                DesignTitle {
-                    Text(title ?: stringResource(R.string.profile_label))
-                }
-            }
-        }
     }
 }
 

@@ -22,7 +22,7 @@ scalar String
 
 """
 The `Int` scalar type represents non-fractional signed whole numeric
-values. Int can represent values between -(2^31) and 2^31 - 1.
+values. Int can represent values between -(2^31) and 2^31 - 1. 
 """
 scalar Int
 
@@ -69,13 +69,26 @@ type Query {
 
   listPaymentLogs(day: DayFilterType!, offset: Int, limit: Int): UserLogWins!
 
-  listTodaysInteractions: StandardResponse!
+  getReferralInfo: ReferralInfoResponse!
+
+  referralList(offset: Int, limit: Int): ReferralListResponse!
+
+  listTodaysInteractions: ListTodaysInteractionsResponse!
+
+  getActionPrices: GetActionPricesResponse!
 }
 
 """
 The `Boolean` scalar type represents `true` or `false`.
 """
 scalar Boolean
+
+"""
+The `Float` scalar type represents signed double-precision fractional
+values as specified by
+[IEEE 754](http://en.wikipedia.org/wiki/IEEE_floating_point). 
+"""
+scalar Float
 
 type Mutation {
   updateUsername(username: String!, password: String!): DefaultResponse!
@@ -127,11 +140,7 @@ type Mutation {
 
 scalar Decimal
 
-scalar DATEN
-
 scalar Date
-
-scalar TagList
 
 enum PostActionType {
   LIKE
@@ -219,12 +228,38 @@ enum DayFilterType {
   Y0
 }
 
-type StandardResponse {
+type ListTodaysInteractionsResponse {
   status: String!
 
   ResponseCode: String
 
-  affectedRows: DATEN
+  affectedRows: TodaysInteractionsData
+}
+
+type TodaysInteractionsData {
+  totalInteractions: Decimal
+
+  totalScore: Decimal
+
+  totalDetails: TodaysInteractionsDetailsData
+}
+
+type TodaysInteractionsDetailsData {
+  views: Decimal
+
+  likes: Decimal
+
+  dislikes: Decimal
+
+  comments: Decimal
+
+  viewsScore: Decimal
+
+  likesScore: Decimal
+
+  dislikesScore: Decimal
+
+  commentsScore: Decimal
 }
 
 type HelloResponse {
@@ -233,6 +268,8 @@ type HelloResponse {
   currentVersion: String
 
   wikiLink: String
+
+  lastMergedPullRequestNumber: String
 }
 
 type LogWins {
@@ -278,6 +315,10 @@ type DailyFreeResponse {
 }
 
 type CurrentLiquidity {
+  status: String!
+
+  ResponseCode: String!
+
   currentliquidity: Decimal
 }
 
@@ -303,6 +344,8 @@ type UserInfo {
   amountfollowed: Int!
 
   amountfriends: Int!
+
+  invited: ID!
 
   updatedat: Date
 }
@@ -708,7 +751,7 @@ type Post {
 
   issaved: Boolean!
 
-  tags: TagList!
+  tags: [String]!
 
   user: ProfileUser!
 
@@ -747,12 +790,30 @@ type CommentResponse {
   affectedRows: [Comment]
 }
 
-input RegistrationInput {
-  email: String!
+type ReferralInfoResponse {
+  status: String
 
-  password: String!
+  ResponseCode: String
 
-  username: String!
+  referralUuid: ID
+
+  referralLink: String
+}
+
+type ReferralListResponse {
+  status: String!
+
+  counter: Int!
+
+  ResponseCode: String!
+
+  affectedRows: ReferralUsers!
+}
+
+type ReferralUsers {
+  invitedBy: ProfileUser
+
+  iInvited: [ProfileUser!]!
 }
 
 input PostInput {
@@ -801,6 +862,24 @@ input FeedInput {
   mediadescription: String
 
   contenttype: String!
+}
+
+type ActionPriceResult {
+  postPrice: Float!
+
+  likePrice: Float!
+
+  dislikePrice: Float!
+
+  commentPrice: Float!
+}
+
+type GetActionPricesResponse {
+  status: String!
+
+  ResponseCode: String!
+
+  affectedRows: ActionPriceResult!
 }
 
 """

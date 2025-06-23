@@ -3,12 +3,10 @@ package eu.peernetwork.blog.ui.creator
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import eu.peernetwork.blog.domain.model.Draft
-import eu.peernetwork.blog.domain.usecase.ContentCreationUsecase
-import eu.peernetwork.blog.ui.mapper.mapToPhoto
 import eu.peernetwork.blog.ui.model.UiDraft
 import eu.peernetwork.blog.ui.model.UiPost
+import eu.peernetwork.blog.ui.usecase.CreateUsecase
 import eu.peernetwork.core.common.usecase.TextEncoderUsecase
-import eu.peernetwork.core.ui.usecase.AnnotationUsecase
 import eu.peernetwork.media.core.model.UiMimeType
 import eu.peernetwork.media.core.usecase.MediaEncoderUsecase
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,10 +16,9 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class CreatorViewModel @Inject constructor(
-    private val usecase: ContentCreationUsecase,
+    private val usecase: CreateUsecase,
     private val mediaEncoderUsecase: MediaEncoderUsecase,
-    private val textEncoderUsecase: TextEncoderUsecase,
-    private val annotationUsecase: AnnotationUsecase
+    private val textEncoderUsecase: TextEncoderUsecase
 ) : ViewModel() {
     private val mutableState = MutableStateFlow<State>(State.Empty)
 
@@ -32,7 +29,7 @@ class CreatorViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val model = draft.mapToDomain()
-                val photo = usecase(model).mapToPhoto { annotationUsecase(it) }
+                val photo = usecase(model)
                 mutableState.tryEmit(State.Success(photo))
             } catch (error: Throwable) {
                 mutableState.tryEmit(State.Error(error))

@@ -1,19 +1,8 @@
 package eu.peernetwork.blog.ui.post.photo
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
@@ -21,39 +10,24 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.LoadState
 import eu.peernetwork.blog.ui.model.UiPost
-import eu.peernetwork.blog.ui.compose.PostListItem
 import eu.peernetwork.blog.ui.compose.PostPageSkeleton
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
-import eu.peernetwork.blog.ui.engagement.EngagementSpec
-import eu.peernetwork.blog.ui.mapper.mapToContent
 import eu.peernetwork.blog.ui.moderation.ModerationScreen
-import eu.peernetwork.blog.ui.moderation.ModerationSpec
 import eu.peernetwork.core.common.model.Pageable
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.component.DesignError
 import eu.peernetwork.core.ui.design.component.DesignPagingScaffold
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
 import eu.peernetwork.core.ui.extension.builder
-import eu.peernetwork.core.ui.theme.LightAccentColor
-import eu.peernetwork.media.core.renderer.ImageView
-import kotlinx.coroutines.delay
-import java.util.Calendar
-import java.util.Locale
-import java.util.concurrent.TimeUnit
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
+@OptIn(ExperimentalMaterial3Api::class)
 fun PhotoScreen(
     author: String,
     postLimit: Int,
@@ -62,7 +36,8 @@ fun PhotoScreen(
     viewModelStoreOwner: ViewModelStoreOwner,
     onMentionClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
-    imageOnClick: (String) -> Unit = {},
+    onPostClick: (String, Int) -> Unit,
+    onAuthorClick: (String) -> Unit = {},
     listState: LazyListState = rememberLazyListState(),
 ) {
     val context = LocalContext.current
@@ -76,7 +51,6 @@ fun PhotoScreen(
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
     val updatedAt = remember { mutableLongStateOf(lastUpdated.value) }
-    val currentTime = remember { mutableLongStateOf(System.currentTimeMillis()) }
     val derivedState = remember {
         derivedStateOf {
             when (state) {
@@ -109,69 +83,25 @@ fun PhotoScreen(
             refreshed,
             onMentionClick = onMentionClick,
             onHashtagClick = onHashtagClick,
-            imageOnClick,
+            onAuthorClick,
             component,
             viewModelStoreOwner
         ) { engagement ->
             ModerationScreen(
                 component,
                 viewModelStoreOwner
-            ) { spec ->
-                LazyColumn(state = listState) {
-                    items(
-                        count = lazyPagingItems.itemCount,
-                        key = { index -> index }
-                    ) { index ->
-                        lazyPagingItems[index]?.let { photo ->
-                            PhotoScreen(
-                                post = photo,
-                                index = index,
-                                currentTime = currentTime,
-                                onMentionClick = onMentionClick,
-                                onHashtagClick = onHashtagClick,
-                                engagementSpec = engagement,
-                                moderationSpec = spec
-                            ) {
-                                if (photo.media.size > 1) {
-                                    Box(contentAlignment = Alignment.BottomEnd) {
-                                        val pagerState = rememberPagerState(initialPage = 0) { photo.media.size }
-                                        HorizontalPager(state = pagerState) {
-                                            val media = photo.media[it]
-                                            component.imageView()(
-                                                Modifier,
-                                                ImageView.Spec(media.path, photo.aspectRatio)
-                                            )
-                                        }
-                                        Icon(
-                                            painter = painterResource(eu.peernetwork.blog.ui.R.drawable.ic_gallery),
-                                            contentDescription = stringResource(eu.peernetwork.blog.ui.R.string.post_description),
-                                            tint = LightAccentColor,
-                                            modifier = Modifier.padding(16.dp)
-                                                .size(16.dp)
-                                        )
-                                    }
-                                } else {
-                                    val media = photo.media.first()
-                                    component.imageView()(
-                                        Modifier,
-                                        ImageView.Spec(media.path, photo.aspectRatio)
-                                    )
-                                }
-                            }
-                        }
-                    }
-                    item(key = author) {
-                        Box(
-                            modifier = Modifier.fillMaxWidth()
-                                .height(56.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            if (lazyPagingItems.loadState.append is LoadState.Loading) {
-                                CircularProgressIndicator(modifier = Modifier.padding(16.dp))
-                            }
-                        }
-                    }
-                }
+            ) { moderation ->
+                PhotoListing(
+                    author = author,
+                    component = component,
+                    lazyPagingItems = lazyPagingItems,
+                    listState = listState,
+                    engagement = engagement,
+                    moderation = moderation,
+                    onMentionClick,
+                    onHashtagClick,
+                    onPostClick,
+                )
             }
         }
         LaunchedEffect(lastUpdated.value) {
@@ -181,61 +111,4 @@ fun PhotoScreen(
             }
         }
     }
-    LaunchedEffect(Unit) {
-        while (true) {
-            delay(60_000L)
-            currentTime.longValue = System.currentTimeMillis()
-        }
-    }
-}
-
-fun Long.formatTimeAgo(time: Long): String {
-    val diff = time - this
-    val minutes = TimeUnit.MILLISECONDS.toMinutes(diff)
-    val hours = TimeUnit.MILLISECONDS.toHours(diff)
-    val days = TimeUnit.MILLISECONDS.toDays(diff)
-    return when {
-        minutes < 1 -> "Just now"
-        minutes < 60 -> "$minutes minutes ago"
-        hours < 24 -> "$hours hours ago"
-        days == 1L -> "Yesterday"
-        days < 7 -> "$days days ago"
-        else -> {
-            val calendar = Calendar.getInstance()
-            calendar.timeInMillis = this
-            String.format(Locale.getDefault(), "%1\$tb %1\$td, %1\$tY", calendar)
-        }
-    }
-}
-
-@Composable
-fun LazyItemScope.PhotoScreen(
-    post: UiPost,
-    index: Int,
-    currentTime: State<Long>,
-    onMentionClick: (String) -> Unit = {},
-    onHashtagClick: (String) -> Unit = {},
-    engagementSpec: EngagementSpec,
-    moderationSpec: ModerationSpec,
-    content: @Composable (UiPost) -> Unit = {}
-) {
-    val model = remember(post) { post.mapToContent() }
-    PostListItem(
-        post,
-        index,
-        currentTime,
-        onMentionClick = onMentionClick,
-        onHashtagClick = onHashtagClick,
-        engagements = { EngagementScreen(
-            model,
-            engagementSpec
-        ) },
-        moderation = {
-            ModerationScreen(
-                model = model,
-                spec = moderationSpec
-            )
-        },
-        content = content
-    )
 }

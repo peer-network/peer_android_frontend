@@ -23,7 +23,7 @@ interface Creator : BlogProvider {
 
     class Builder(private val dependency: Creator) : UiComponent.DefaultBuilder<Creator, Component>() {
         override fun build(context: Context): Component {
-            return DaggerCreator_Component.builder().creator(dependency).build()
+            return DaggerCreator_Component.builder().creator(dependency).creatorModule(CreatorModule(context)).build()
         }
     }
 }

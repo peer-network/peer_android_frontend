@@ -5,6 +5,7 @@ import androidx.paging.PagingData
 import app.cash.turbine.test
 import eu.peernetwork.blog.domain.model.Comment
 import eu.peernetwork.blog.domain.usecase.CommentLikeUsecase
+import eu.peernetwork.blog.domain.usecase.CommentUpdateUsecase
 import eu.peernetwork.blog.domain.usecase.CommentUsecase
 import eu.peernetwork.blog.ui.model.UiComment
 import eu.peernetwork.blog.ui.usecase.CommentsUsecase
@@ -35,6 +36,8 @@ internal class CommentViewModelTest {
 
     private val commentsUsecase = mockk<CommentsUsecase>()
 
+    private val updateUsecase = mockk<CommentUpdateUsecase>()
+
     private val commentLikeUsecase = mockk<CommentLikeUsecase>()
 
     private lateinit var viewModel: CommentViewModel
@@ -42,7 +45,8 @@ internal class CommentViewModelTest {
     @Before
     fun setup() {
         Dispatchers.setMain(dispatcher)
-        viewModel = CommentViewModel(usecase, commentsUsecase, commentLikeUsecase)
+        coEvery { updateUsecase(any()) } returns Unit
+        viewModel = CommentViewModel(usecase, commentsUsecase, updateUsecase, commentLikeUsecase)
     }
 
     @Test

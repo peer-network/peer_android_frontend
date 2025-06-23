@@ -3,11 +3,12 @@ package eu.peernetwork.media.ui.selector.photo
 import android.content.Context
 import androidx.lifecycle.ViewModelProvider
 import eu.peernetwork.core.ui.component.UiComponent
-import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.provider.UiProvider
-import eu.peernetwork.media.ui.thumbnail.Thumbnail
+import eu.peernetwork.media.core.interactor.ThumbnailInteractor
 
 interface Photo : UiProvider {
+    fun thumbnailInteractor(): ThumbnailInteractor
+
     @javax.inject.Scope
     @Retention(AnnotationRetention.RUNTIME)
     annotation class Scope
@@ -17,7 +18,7 @@ interface Photo : UiProvider {
         dependencies = [ Photo::class ],
         modules = [ PhotoModule::class ]
     )
-    interface Component : Photo, Thumbnail, UiComponentProvider {
+    interface Component : Photo {
         fun viewModelFactory(): ViewModelProvider.Factory
     }
 

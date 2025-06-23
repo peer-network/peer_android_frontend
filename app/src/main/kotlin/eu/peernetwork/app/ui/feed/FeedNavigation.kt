@@ -2,13 +2,10 @@ package eu.peernetwork.app.ui.feed
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import eu.peernetwork.app.ui.profile.ProfileScreen
 import eu.peernetwork.app.ui.search.SearchScreen
@@ -21,26 +18,27 @@ import java.net.URLEncoder
 fun FeedNavigation(
     userId: String,
     postLimit: Int,
+    startDestination: String = "content",
+    controller: NavHostController,
     component: Feed.Component,
     viewModelStore: ViewModelState,
-    feed: @Composable (NavHostController) -> Unit
+    content: @Composable (NavHostController) -> Unit = {}
 ) {
-    val controller = rememberNavController()
-    var id by remember { mutableStateOf<String>("") }
+    val updatedContent by rememberUpdatedState(content)
     DesignRouter(
         navController = controller,
-        startDestination = "feed",
+        startDestination = startDestination,
     ) {
-        composable("feed") { feed(controller) }
+        composable("content") { updatedContent(controller) }
+        composable("overlay") { updatedContent(controller) }
         composable(
             "profile/{id}",
             arguments = listOf(navArgument("id") {
                 type = NavType.StringType
             })
         ) { backStackEntry ->
-            id = backStackEntry.arguments?.getString("id") ?: ""
             ProfileScreen(
-                userId = id,
+                userId = backStackEntry.arguments?.getString("id") ?: "",
                 provider = component,
                 viewModelStore = viewModelStore,
             )

@@ -1,5 +1,6 @@
 package eu.peernetwork.blog.ui.usecase
 
+import android.content.Context
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
@@ -20,6 +21,7 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class UserPostsUsecase @Inject constructor(
+    private val context: Context,
     private val usecase: PhotosUsecase,
     private val dispatcher: Dispatcher,
     private val engagementRefreshUsecase: EngagementRefreshUsecase,
@@ -57,7 +59,7 @@ class UserPostsUsecase @Inject constructor(
             LoadResult.Error(NoContentException())
         } else {
             LoadResult.Page(
-                data = response.items.map { it.mapToPhoto { annotationUsecase(it) } },
+                data = response.items.map { it.mapToPhoto(context) { annotationUsecase(it) } },
                 prevKey = if (currentOffset <= 0) null else currentOffset - 1,
                 nextKey = if (response.items.isNotEmpty()) {
                     currentOffset + response.items.size

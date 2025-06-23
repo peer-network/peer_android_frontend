@@ -34,7 +34,7 @@ import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.media.core.model.UiAttachment
 import eu.peernetwork.media.core.model.UiFile
 import eu.peernetwork.media.core.model.UiMimeType
-import eu.peernetwork.media.ui.thumbnail.ThumbnailScreen
+import eu.peernetwork.core.ui.design.compose.DesignThumbnail
 
 @Composable
 fun VideoScreen(
@@ -77,57 +77,55 @@ fun VideoScreen(
         }
     ) }
     val color = MaterialTheme.colorScheme.primary
+    val thumbnail = viewModel.thumbnail.collectAsStateWithLifecycle().value
     DesignStatefulScaffold<List<UiFile>>(
         state = derivedState,
         onRefresh = { viewModel.initialize(directory.value) },
         contentAlignment = Alignment.TopCenter,
         modifier = Modifier.fillMaxSize()
     ) {
-        ThumbnailScreen(
-            type = type,
-            provider = component,
-            viewModelStoreOwner = viewModelStoreOwner
-        ) { thumbnail, onLoad ->
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(4),
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.spacedBy(4.dp),
-                horizontalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
-                items(it.size) { index ->
-                    Box(modifier = Modifier.aspectRatio(1f)
-                        .clickable(role = Role.Button) {
-                            if (selected.value != null) {
-                                selected.value = null
-                                attachment.value = UiAttachment.File(
-                                    UiMimeType.Video,
-                                    emptyList()
-                                )
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(4),
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+            horizontalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            items(it.size) { index ->
+                Box(modifier = Modifier.aspectRatio(1f)
+                    .clickable(role = Role.Button) {
+                        if (selected.value != null) {
+                            selected.value = null
+                            attachment.value = UiAttachment.File(
+                                UiMimeType.Video,
+                                emptyList()
+                            )
+                        } else {
+                            selected.value = it[index]
+                            attachment.value = UiAttachment.File(
+                                UiMimeType.Video,
+                                listOf(it[index])
+                            )
+                        }
+                    }) {
+                    DesignThumbnail(
+                        it[index].thumbnail,
+                        thumbnail[it[index].thumbnail]
+                    ) { viewModel.thumbnail(it, type) }
+                    Box(modifier = Modifier.fillMaxSize()
+                        .graphicsLayer {
+                            alpha = if (selected.value == it[index]) {
+                                1f
                             } else {
-                                selected.value = it[index]
-                                attachment.value = UiAttachment.File(
-                                    UiMimeType.Video,
-                                    listOf(it[index])
-                                )
+                                0f
                             }
-                        }) {
-                        ThumbnailScreen(it[index].thumbnail, thumbnail, onLoad)
-                        Box(modifier = Modifier.fillMaxSize()
-                            .graphicsLayer {
-                                alpha = if (selected.value == it[index]) {
-                                    1f
-                                } else {
-                                    0f
-                                }
-                            }.drawBehind {
-                                drawRoundRect(
-                                    color = color,
-                                    size = size,
-                                    style = Stroke(width = 4.dp.toPx())
-                                )
-                            }
-                        )
-                    }
+                        }.drawBehind {
+                            drawRoundRect(
+                                color = color,
+                                size = size,
+                                style = Stroke(width = 4.dp.toPx())
+                            )
+                        }
+                    )
                 }
             }
         }

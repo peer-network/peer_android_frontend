@@ -2,15 +2,18 @@ package eu.peernetwork.media.ui.selector.directory
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import app.cash.turbine.test
+import eu.peernetwork.media.core.interactor.ThumbnailInteractor
 import eu.peernetwork.media.core.model.UiMimeType
 import eu.peernetwork.media.core.model.UiDirectory
 import eu.peernetwork.media.ui.usecase.PhotoDirectoryUsecase
 import eu.peernetwork.media.ui.usecase.VideoDirectoryUsecase
 import io.mockk.coEvery
+import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -30,6 +33,8 @@ internal class DirectoryViewModelTest {
 
     private val videoUsecase = mockk<VideoDirectoryUsecase>()
 
+    private val thumbnailInteractor = mockk<ThumbnailInteractor>()
+
     private val dispatcher = UnconfinedTestDispatcher()
 
     private lateinit var viewModel: DirectoryViewModel
@@ -37,7 +42,8 @@ internal class DirectoryViewModelTest {
     @Before
     fun setup() {
         Dispatchers.setMain(dispatcher)
-        viewModel = DirectoryViewModel(usecase, videoUsecase)
+        every { thumbnailInteractor.observe() } returns flowOf(emptyMap())
+        viewModel = DirectoryViewModel(usecase, videoUsecase, thumbnailInteractor)
     }
 
     @After

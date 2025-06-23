@@ -19,6 +19,8 @@ dependencies {
     implementation(libs.permissions)
     implementation(libs.media3)
     implementation(libs.media3.ui)
+    implementation(libs.lrucache)
+    implementation(libs.blur)
 
     implementation(libs.dagger)
     ksp(libs.dagger.compiler)
