@@ -34,34 +34,34 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
+import eu.peernetwork.core.ui.design.compose.DesignThumbnail
 import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.media.core.model.UiAttachment
 import eu.peernetwork.media.ui.R
-import eu.peernetwork.media.ui.thumbnail.ThumbnailScreen
-import kotlinx.coroutines.flow.StateFlow
 import kotlin.math.absoluteValue
 
 @Composable
 @SuppressLint("UnusedBoxWithConstraintsScope")
 fun AttachmentPreview(
     onAttach: () -> Unit,
-    state: StateFlow<Map<String, Bitmap?>>,
-    onRefresh: (String) -> Unit,
+    onLoad: (String) -> Bitmap?,
+    onRefresh: (Int) -> Unit,
     attachment: MutableState<UiAttachment>
 ) {
     val attached = remember(attachment.value) { attachment.value }
     val pagerState = rememberPagerState(initialPage = 0) { attached.files.size + 1 }
+    val handleOnLoad by rememberUpdatedState(onLoad)
+    val handleOnRefresh by rememberUpdatedState(onRefresh)
     AttachmentPreview(pagerState, onAttach, {
         attachment.value = UiAttachment.File(
             attachment.value.media,
             attachment.value.files - attachment.value.files[it]
         )
-    }) {
-        ThumbnailScreen(
-            attached.files[it].thumbnail,
-            state,
-            onRefresh
-        )
+    }) { index ->
+        DesignThumbnail(
+            attached.files[index].thumbnail,
+            handleOnLoad(attached.files[index].thumbnail),
+        ) { handleOnRefresh(index) }
     }
 }
 

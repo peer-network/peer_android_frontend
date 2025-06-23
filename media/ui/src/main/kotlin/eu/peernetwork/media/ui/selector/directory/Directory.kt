@@ -3,11 +3,11 @@ package eu.peernetwork.media.ui.selector.directory
 import android.content.Context
 import androidx.lifecycle.ViewModelProvider
 import eu.peernetwork.core.ui.component.UiComponent
-import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.provider.UiProvider
-import eu.peernetwork.media.ui.thumbnail.Thumbnail
+import eu.peernetwork.media.core.interactor.ThumbnailInteractor
 
 interface Directory : UiProvider {
+    fun thumbnailInteractor(): ThumbnailInteractor
 
     @javax.inject.Scope
     @Retention(AnnotationRetention.RUNTIME)
@@ -18,7 +18,7 @@ interface Directory : UiProvider {
         dependencies = [ Directory::class ],
         modules = [ DirectoryModule::class ]
     )
-    interface Component : Directory, Thumbnail, UiComponentProvider {
+    interface Component : Directory {
         fun viewModelFactory(): ViewModelProvider.Factory
     }
 

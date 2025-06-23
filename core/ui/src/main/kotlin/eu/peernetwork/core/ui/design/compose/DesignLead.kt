@@ -81,7 +81,10 @@ fun DesignLead(
                 maxLines = maxContentLines,
                 overflow = TextOverflow.Ellipsis,
                 style = textStyle.descriptionStyle,
-                modifier = Modifier.padding(top = 2.dp)
+                modifier = Modifier.padding(
+                    top = 2.dp,
+                    end = 4.dp
+                )
             )
         }
     }

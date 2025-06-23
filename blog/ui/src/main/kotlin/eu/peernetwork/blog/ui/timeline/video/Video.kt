@@ -24,7 +24,10 @@ interface Video : BlogProvider {
 
     class Builder(private val dependency: Video) : UiComponent.DefaultBuilder<Video, Component>() {
         override fun build(context: Context): Component {
-            return DaggerVideo_Component.builder().video(dependency).build()
+            return DaggerVideo_Component.builder()
+                .video(dependency)
+                .videoModule(VideoModule(context))
+                .build()
         }
     }
 }

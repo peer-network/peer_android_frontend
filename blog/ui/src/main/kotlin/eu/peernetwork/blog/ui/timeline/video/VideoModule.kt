@@ -1,5 +1,6 @@
 package eu.peernetwork.blog.ui.timeline.video
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import dagger.Module
@@ -16,8 +17,13 @@ import eu.peernetwork.core.ui.factory.UiViewModelFactory
 import javax.inject.Provider
 
 @Module
-object VideoModule {
+class VideoModule(private val context: Context) {
     @Provides
+    @Video.Scope
+    fun provideContext(): Context = context
+
+    @Provides
+    @Video.Scope
     fun provideBuilderFactory(factory: UiBuilderFactory): UiComponentProvider.Factory = factory
 
     @Provides

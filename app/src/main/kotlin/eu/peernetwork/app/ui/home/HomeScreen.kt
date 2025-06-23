@@ -21,18 +21,13 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
-import eu.peernetwork.app.BuildConfig
-import eu.peernetwork.app.ui.composer.ComposerScreen
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.theme.PeerTheme
-import eu.peernetwork.app.ui.feed.FeedScreen
-import eu.peernetwork.app.ui.profile.ProfileScreen
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffold
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
-import eu.peernetwork.app.ui.search.SearchScreen
-import eu.peernetwork.app.ui.wallet.WalletScreen
 import eu.peernetwork.core.ui.design.compose.DesignTitleBar
+import eu.peernetwork.core.ui.extension.attachIfNecessary
 import eu.peernetwork.core.ui.model.ViewModelState
 import eu.peernetwork.wallet.ui.reward.RewardScreen
 
@@ -67,33 +62,24 @@ fun HomeScreen(provider: UiComponentProvider) {
         onRefresh = { viewModel() },
         modifier = Modifier.fillMaxSize()
     ) { data ->
+        val controller = rememberNavController()
+        val navigationState = rememberSaveable { mutableIntStateOf(data.second) }
+        val startDestination = remember { HomeRoute.get(navigationState.intValue).path }
         HomeScreen(
-            index = data.second,
-            onNavigate = { viewModel.lastVisited(it) },
+            start = data.second,
             options = { RewardScreen(component, viewModelStore.get(data.first)) },
-        ) { state, route ->
-            when(route) {
-                is HomeRoute.Home -> FeedScreen(
-                    data.first,
-                    BuildConfig.PAGING_LIMIT,
-                    component,
-                    viewModelStore,
-                )
-                is HomeRoute.Profile -> ProfileScreen(
-                    data.first,
-                    component,
-                    viewModelStore,
-                )
-                is HomeRoute.Add -> ComposerScreen(component, viewModelStore)
-                is HomeRoute.Wallet -> WalletScreen(BuildConfig.PAGING_LIMIT, component, viewModelStore)
-                is HomeRoute.Search -> SearchScreen(
-                    id = data.first,
-                    BuildConfig.PAGING_LIMIT,
-                    component,
-                    viewModelStore,
-                )
-                else -> {}
+            onClick = {
+                viewModel.lastVisited(it)
+                controller.attachIfNecessary(HomeRoute.get(it).path)
             }
+        ) { state ->
+            HomeNavigation(
+                id = data.first,
+                startDestination = startDestination,
+                navController = controller,
+                component = component,
+                viewModelStore = viewModelStore
+            )
         }
     }
     DisposableEffect(Unit) { onDispose { viewModelStore.clear() } }
@@ -101,30 +87,28 @@ fun HomeScreen(provider: UiComponentProvider) {
 
 @Composable
 fun HomeScreen(
-    index: Int,
-    onNavigate: (Int) -> Unit,
+    start: Int,
     options: @Composable () -> Unit,
-    content: @Composable (State<Float>, HomeRoute) -> Unit
+    onClick: (Int) -> Unit,
+    content: @Composable (State<Float>) -> Unit
 ) {
-    val controller = rememberNavController()
-    val navigationState = rememberSaveable { mutableIntStateOf(index) }
     val updatedContent by rememberUpdatedState(content)
+    val handleOnClick by rememberUpdatedState(onClick)
     DesignTitleBar {
         HomeScaffold(
             header = { HomeHeader(options = options, modifier = Modifier.padding(top = 8.dp)) },
             footer = {
                 HomeFooter(
-                    navigationState,
-                    onClick = { titleBar().value?.listener?.invoke() }
+                    start,
+                    onClick = { prev, next ->
+                        if (prev == next) {
+                            titleBar().value?.listener?.invoke()
+                        } else {
+                            handleOnClick(next)
+                        }
+                    }
                 ) }
-        ) { state ->
-            HomeNavigation(
-                state = navigationState,
-                onNavigate = onNavigate,
-                navController = controller,
-                content = { updatedContent(state, it) }
-            )
-        }
+        ) { state -> updatedContent(state) }
     }
 }
 
@@ -133,10 +117,10 @@ fun HomeScreen(
 fun PreviewHomeScreen() {
     PeerTheme {
         HomeScreen(
-            index = 0,
-            onNavigate = {},
-            options = {}
-        ) { state, route ->
+            start = 0,
+            options = {},
+            onClick = {},
+        ) { state ->
             Text(
                 text = "",
                 textAlign = TextAlign.Center

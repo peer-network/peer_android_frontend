@@ -1,31 +1,15 @@
 package eu.peernetwork.blog.ui.timeline.photo
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.ViewModelStoreOwner
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import eu.peernetwork.core.ui.extension.builder
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -33,22 +17,15 @@ import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.blog.ui.model.UiPost
-import eu.peernetwork.blog.ui.compose.PostListItem
 import eu.peernetwork.blog.ui.compose.PostPageSkeleton
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
-import eu.peernetwork.blog.ui.engagement.EngagementSpec
-import eu.peernetwork.blog.ui.mapper.mapToContent
 import eu.peernetwork.core.common.model.Pageable
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
 import eu.peernetwork.blog.ui.moderation.ModerationScreen
-import eu.peernetwork.blog.ui.moderation.ModerationSpec
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.design.component.DesignError
 import eu.peernetwork.core.ui.design.component.DesignPagingScaffold
 import eu.peernetwork.core.ui.design.component.DesignRefreshableScaffold
-import eu.peernetwork.core.ui.theme.LightAccentColor
-import eu.peernetwork.media.core.renderer.ImageView
-import kotlinx.coroutines.delay
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
@@ -58,9 +35,10 @@ fun PhotoScreen(
     criteria: Criteria? = null,
     onMentionClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
+    onPostClick: (String, Int) -> Unit,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
-    onClick: (String) -> Unit = {},
+    onAuthorClick: (String) -> Unit = {},
     listState: LazyListState = rememberLazyListState(),
     connection: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit = {}
 ) {
@@ -74,14 +52,7 @@ fun PhotoScreen(
         factory = component.viewModelFactory()
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val currentTime = remember { mutableLongStateOf(System.currentTimeMillis()) }
     val errorMessage = stringResource(R.string.unknown_error_message)
-    LaunchedEffect(Unit) {
-        while (true) {
-            delay(60_000L)
-            currentTime.longValue = System.currentTimeMillis()
-        }
-    }
     val derivedState = remember {
         derivedStateOf {
             when (state) {
@@ -129,129 +100,29 @@ fun PhotoScreen(
                 refreshed,
                 onMentionClick,
                 onHashtagClick,
-                onClick,
+                onAuthorClick,
                 component,
                 viewModelStoreOwner
             ) { engagement ->
                 ModerationScreen(
                     component,
                     viewModelStoreOwner
-                ) { spec ->
-                    LazyColumn(
-                        state = listState,
-                        modifier = Modifier.fillMaxSize()
-                    ) {
-                        items(
-                            count = lazyPagingItems.itemCount,
-                            key = { index -> lazyPagingItems[index]?.id ?: index }
-                        ) { index ->
-                            lazyPagingItems[index]?.let { post ->
-                                PhotoScreen(
-                                    id = id,
-                                    post = post,
-                                    index = index,
-                                    currentTime = currentTime,
-                                    engagementSpec = engagement,
-                                    moderationSpec = spec,
-                                    onClick = onClick,
-                                    onHashtagClick = onHashtagClick,
-                                    onMentionClick = onMentionClick,
-                                    connection = connection,
-                                    content = {
-                                        if (post.media.size > 1) {
-                                            Box(contentAlignment = Alignment.BottomEnd) {
-                                                val pagerState = rememberPagerState(initialPage = 0) { post.media.size }
-                                                HorizontalPager(state = pagerState) {
-                                                    val media = post.media[it]
-                                                    component.imageView()(
-                                                        Modifier,
-                                                        ImageView.Spec(media.path, post.aspectRatio)
-                                                    )
-                                                }
-                                                Icon(
-                                                    painter = painterResource(eu.peernetwork.blog.ui.R.drawable.ic_gallery),
-                                                    contentDescription = stringResource(eu.peernetwork.blog.ui.R.string.post_description),
-                                                    tint = LightAccentColor,
-                                                    modifier = Modifier.padding(16.dp)
-                                                        .size(16.dp)
-                                                )
-                                            }
-                                        } else {
-                                            val media = post.media.first()
-                                            component.imageView()(
-                                                Modifier,
-                                                ImageView.Spec(media.path, post.aspectRatio)
-                                            )
-                                        }
-                                    }
-                                )
-                            }
-                        }
-                        item(key = id) {
-                            Box(
-                                modifier = Modifier.fillMaxWidth()
-                                    .height(56.dp),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                if (lazyPagingItems.loadState.append is LoadState.Loading) {
-                                    CircularProgressIndicator(modifier = Modifier.padding(16.dp))
-                                }
-                            }
-                        }
-                    }
+                ) { moderation ->
+                    PhotoListing(
+                        id = id,
+                        component = component,
+                        listState = listState,
+                        lazyPagingItems = lazyPagingItems,
+                        engagement = engagement,
+                        moderation = moderation,
+                        onPostClick = onPostClick,
+                        onAuthorClick = onAuthorClick,
+                        onHashtagClick = onHashtagClick,
+                        onMentionClick = onMentionClick,
+                        connection = connection
+                    )
                 }
             }
         }
     }
-}
-
-@Composable
-fun LazyItemScope.PhotoScreen(
-    id: String,
-    post: UiPost,
-    index: Int,
-    currentTime: State<Long>,
-    engagementSpec: EngagementSpec,
-    moderationSpec: ModerationSpec,
-    onClick: (String) -> Unit = {},
-    onMentionClick: (String) -> Unit = {},
-    onHashtagClick: (String) -> Unit = {},
-    connection: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit,
-    content: @Composable (UiPost) -> Unit = {}
-) {
-    val engagement = remember(id) { post.mapToContent() }
-    val clickHandler by rememberUpdatedState { onClick(post.author.id) }
-    val updatedConnection by rememberUpdatedState(connection)
-    PostListItem(
-        post = post,
-        position = index,
-        state = currentTime,
-        onClick = clickHandler,
-        userOnClick = clickHandler,
-        onMentionClick = onMentionClick,
-        onHashtagClick = onHashtagClick,
-        engagements = {
-            EngagementScreen(
-                engagement,
-                engagementSpec,
-            ) },
-        moderation = {
-            ModerationScreen(
-                engagement,
-                moderationSpec
-            )
-        },
-        content = content,
-        actions = {
-            if (id != post.author.id) {
-                updatedConnection(
-                    Triple(
-                        post.author.id,
-                        post.author.isfollowing,
-                        post.author.isfollowed
-                    )
-                )
-            }
-        }
-    )
 }

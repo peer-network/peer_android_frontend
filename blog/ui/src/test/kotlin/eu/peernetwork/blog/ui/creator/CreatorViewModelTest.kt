@@ -2,12 +2,10 @@ package eu.peernetwork.blog.ui.creator
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import app.cash.turbine.test
-import eu.peernetwork.blog.domain.model.Content
-import eu.peernetwork.blog.domain.usecase.ContentCreationUsecase
-import eu.peernetwork.blog.ui.mapper.mapToPhoto
 import eu.peernetwork.blog.ui.model.UiDraft
+import eu.peernetwork.blog.ui.model.UiPost
+import eu.peernetwork.blog.ui.usecase.CreateUsecase
 import eu.peernetwork.core.common.usecase.TextEncoderUsecase
-import eu.peernetwork.core.ui.usecase.AnnotationUsecase
 import eu.peernetwork.media.core.model.UiMimeType
 import eu.peernetwork.media.core.usecase.MediaEncoderUsecase
 import io.mockk.coEvery
@@ -31,13 +29,11 @@ internal class CreatorViewModelTest {
 
     private val dispatcher = UnconfinedTestDispatcher()
 
-    private val contentCreationUsecase = mockk<ContentCreationUsecase>(relaxed = true)
+    private val contentCreationUsecase = mockk<CreateUsecase>(relaxed = true)
 
     private val mediaEncoderUsecase = mockk<MediaEncoderUsecase>(relaxed = true)
 
     private val textEncoderUsecase = mockk<TextEncoderUsecase>(relaxed = true)
-
-    private val annotationUsecase = mockk<AnnotationUsecase>(relaxed = true)
 
     private lateinit var viewModel: CreatorViewModel
 
@@ -48,7 +44,6 @@ internal class CreatorViewModelTest {
             contentCreationUsecase,
             mediaEncoderUsecase,
             textEncoderUsecase,
-            annotationUsecase
         )
     }
 
@@ -63,7 +58,7 @@ internal class CreatorViewModelTest {
             attachments = listOf(),
             confirmed = false
         )
-        val mockData = mockk<Content>(relaxed = true)
+        val mockData = mockk<UiPost>(relaxed = true)
         every { textEncoderUsecase(any()) } returns text
         coEvery { contentCreationUsecase(any()) } coAnswers {
             delay(100)
@@ -72,7 +67,7 @@ internal class CreatorViewModelTest {
         viewModel.create(draft)
         viewModel.state.test {
             assertEquals(CreatorViewModel.State.Loading, awaitItem())
-            assertEquals(CreatorViewModel.State.Success(mockData.mapToPhoto { annotationUsecase(it) }), awaitItem())
+            assertEquals(CreatorViewModel.State.Success(mockData), awaitItem())
         }
     }
 

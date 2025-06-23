@@ -3,8 +3,11 @@ package eu.peernetwork.media.ui.camera
 import android.content.Context
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.provider.UiProvider
+import eu.peernetwork.media.core.interactor.ThumbnailInteractor
 
 interface Camera : UiProvider {
+    fun thumbnailInteractor(): ThumbnailInteractor
+
     @javax.inject.Scope
     @Retention(AnnotationRetention.RUNTIME)
     annotation class Scope

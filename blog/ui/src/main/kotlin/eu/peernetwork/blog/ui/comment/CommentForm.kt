@@ -37,7 +37,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.blog.ui.R
-import eu.peernetwork.blog.ui.compose.ContentBar
+import eu.peernetwork.blog.ui.compose.PostSummary
 import eu.peernetwork.blog.ui.model.UiAuthor
 import eu.peernetwork.blog.ui.model.UiContent
 import eu.peernetwork.core.ui.design.compose.DesignRichTextField
@@ -64,7 +64,7 @@ fun CommentForm(
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.surfaceDim.copy(alpha = .1f)))
         Column(modifier = modifier) {
-            ContentBar(
+            PostSummary(
                 model = model,
                 modifier = Modifier.padding(top = 16.dp, end = 16.dp),
                 onMentionClick = onMentionClick,

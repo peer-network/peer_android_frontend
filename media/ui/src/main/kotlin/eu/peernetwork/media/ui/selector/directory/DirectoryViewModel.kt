@@ -1,24 +1,36 @@
 package eu.peernetwork.media.ui.selector.directory
 
+import android.graphics.Bitmap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import eu.peernetwork.media.core.interactor.ThumbnailInteractor
 import eu.peernetwork.media.core.model.UiMimeType
 import eu.peernetwork.media.core.model.UiDirectory
 import eu.peernetwork.media.ui.usecase.PhotoDirectoryUsecase
 import eu.peernetwork.media.ui.usecase.VideoDirectoryUsecase
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class DirectoryViewModel @Inject constructor(
     private val usecase: PhotoDirectoryUsecase,
     private val videoUsecase: VideoDirectoryUsecase,
+    private val interactor: ThumbnailInteractor
 ) : ViewModel() {
     private val mutableState = MutableStateFlow<State>(State.Empty)
 
     val state: StateFlow<State> = mutableState.asStateFlow()
+
+    val thumbnail: StateFlow<Map<String, Bitmap?>> = interactor.observe()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = emptyMap()
+        )
 
     fun initialize(type: UiMimeType) {
         viewModelScope.launch {
@@ -31,6 +43,16 @@ class DirectoryViewModel @Inject constructor(
                 }
             } catch (error: Throwable) {
                 mutableState.tryEmit(State.Error(error))
+            }
+        }
+    }
+
+    fun thumbnail(thumbnail: String, type: UiMimeType) {
+        viewModelScope.launch {
+            try {
+                interactor.load(thumbnail, type)
+            } catch (error: Throwable) {
+                error.printStackTrace()
             }
         }
     }

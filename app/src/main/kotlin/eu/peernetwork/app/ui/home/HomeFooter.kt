@@ -11,11 +11,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
@@ -27,11 +26,12 @@ import eu.peernetwork.core.ui.theme.PeerTheme
 
 @Composable
 fun HomeFooter(
-    state: MutableState<Int>,
+    start: Int,
     modifier: Modifier = Modifier,
-    onClick: (Int) -> Unit = {},
+    onClick: (Int, Int) -> Unit,
 ) {
     val handleClick by rememberUpdatedState(onClick)
+    val state = rememberSaveable { mutableIntStateOf(start) }
     Box(modifier = Modifier
         .fillMaxWidth()
         .background(MaterialTheme.colorScheme.background)
@@ -44,10 +44,8 @@ fun HomeFooter(
         ) {
             HomeRoute.ROUTES.forEachIndexed { index, navigation ->
                 IconButton(onClick = {
-                    if (state.value == index) {
-                        handleClick(index)
-                    }
-                    state.value = index
+                    handleClick(state.intValue, index)
+                    state.intValue = index
                 }) {
                     Box {
                         Icon(
@@ -55,7 +53,7 @@ fun HomeFooter(
                             painter = painterResource(id = navigation.icon),
                             contentDescription = stringResource(id = navigation.label),
                             modifier = Modifier.size(32.dp).graphicsLayer {
-                                alpha = if (index == state.value) 0f else 1f
+                                alpha = if (index == state.intValue) 0f else 1f
                             }
                         )
                         Icon(
@@ -63,7 +61,7 @@ fun HomeFooter(
                             painter = painterResource(id = navigation.activeIcon),
                             contentDescription = stringResource(id = navigation.label),
                             modifier = Modifier.size(32.dp).graphicsLayer {
-                                alpha = if (index == state.value) 1f else 0f
+                                alpha = if (index == state.intValue) 1f else 0f
                             }
                         )
                     }
@@ -77,6 +75,6 @@ fun HomeFooter(
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun PreviewHomeBottomBar() {
     PeerTheme {
-        HomeFooter(state = remember { mutableIntStateOf(0) })
+        HomeFooter(start = 0) { prev, next -> }
     }
 }

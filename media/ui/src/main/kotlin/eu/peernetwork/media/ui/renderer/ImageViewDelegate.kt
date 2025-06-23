@@ -30,7 +30,8 @@ class ImageViewDelegate @Inject constructor(
             contentDescription = null,
             contentScale = ContentScale.Fit,
             modifier = Modifier.fillMaxWidth()
-                .aspectRatio(spec.ratio),
+                .aspectRatio(spec.ratio)
+                .then(modifier),
         )
     }
 }

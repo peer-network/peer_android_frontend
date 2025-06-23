@@ -25,16 +25,11 @@ import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.compose.DesignTextButton
 import eu.peernetwork.core.ui.extension.builder
 
-data class ModerationSpec(
-    val onReport: (String) -> Unit,
-    val onSave: (String) -> Unit = {}
-)
-
 @Composable
 fun ModerationScreen(
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
-    content: @Composable (ModerationSpec) -> Unit
+    content: @Composable (ModerationEvent) -> Unit
 ) {
     val context = LocalContext.current
     val component = remember {
@@ -50,12 +45,13 @@ fun ModerationScreen(
     val success by remember { derivedStateOf { state as? ModerationViewModel.State.Success? } }
     val message = stringResource(eu.peernetwork.blog.ui.R.string.action_message)
     val updatedContent by rememberUpdatedState(content)
-    updatedContent(
-        ModerationSpec(
+    val event = remember(state) {
+        ModerationEvent(
             onSave = { viewModel.save(it) },
             onReport = { viewModel.report(it) }
         )
-    )
+    }
+    updatedContent(event)
     LaunchedEffect(error, success) {
         success?.postId?.let {
             Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
@@ -71,10 +67,10 @@ fun ModerationScreen(
 @Composable
 fun ModerationScreen(
     model: UiContent,
-    spec: ModerationSpec
+    event: ModerationEvent
 ) {
     var expanded by remember { mutableStateOf(false) }
-    val handleOnReport by rememberUpdatedState(spec.onReport)
+    val handleOnReport by rememberUpdatedState(event.onReport)
     Box {
         DesignTextButton(
             onClick = { expanded = true },
@@ -88,7 +84,7 @@ fun ModerationScreen(
             )
         }
         DropdownMenu(
-            modifier = Modifier.background(color = MaterialTheme.colorScheme.background),
+            modifier = Modifier.background(MaterialTheme.colorScheme.background),
             expanded = expanded,
             onDismissRequest = { expanded = false }
         ) {

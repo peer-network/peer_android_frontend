@@ -31,7 +31,9 @@ fun ProfileBlog(
     viewModelStoreOwner: ViewModelStoreOwner,
     onMentionClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
-    imageOnClick: (String) -> Unit = {},
+    onAuthorClicked: (String) -> Unit = {},
+    onPhotoClick: (String, Int) -> Unit = { id, position -> },
+    onVideoClick: (String, Int) -> Unit = { id, position -> },
     photoState: LazyListState,
     videoState: LazyListState
 ) {
@@ -45,7 +47,8 @@ fun ProfileBlog(
                 viewModelStoreOwner,
                 onMentionClick,
                 onHashtagClick,
-                imageOnClick,
+                onPhotoClick,
+                onAuthorClicked,
                 photoState
             )
             1 -> VideoScreen(
@@ -56,7 +59,8 @@ fun ProfileBlog(
                 viewModelStoreOwner,
                 onMentionClick,
                 onHashtagClick,
-                imageOnClick,
+                onAuthorClicked,
+                onVideoClick,
                 videoState
             )
         }

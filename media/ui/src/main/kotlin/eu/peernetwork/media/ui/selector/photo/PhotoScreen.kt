@@ -1,5 +1,6 @@
 package eu.peernetwork.media.ui.selector.photo
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -34,7 +35,7 @@ import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.media.core.model.UiAttachment
 import eu.peernetwork.media.core.model.UiFile
 import eu.peernetwork.media.core.model.UiMimeType
-import eu.peernetwork.media.ui.thumbnail.ThumbnailScreen
+import eu.peernetwork.core.ui.design.compose.DesignThumbnail
 
 @Composable
 fun PhotoScreen(
@@ -71,56 +72,58 @@ fun PhotoScreen(
     val color = MaterialTheme.colorScheme.primary
     val current = rememberSaveable(directory.value) { mutableStateOf(directory.value) }
     val selected = remember(attachment.value) { attachment.value.files.associateBy { it.uri } }
+    val thumbnail = viewModel.thumbnail.collectAsStateWithLifecycle().value
     DesignStatefulScaffold<List<UiFile>>(
         state = derivedState,
         onRefresh = { viewModel.initialize(directory.value) },
         contentAlignment = Alignment.TopCenter,
         modifier = Modifier.fillMaxSize()
     ) {
-        ThumbnailScreen(
-            type = type,
-            provider = component,
-            viewModelStoreOwner = viewModelStoreOwner
-        ) { thumbnail, onLoad ->
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(4),
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.spacedBy(4.dp),
-                horizontalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
-                items(it.size) { index ->
-                    val isSelected = selected.containsKey(it[index].uri)
-                    Box(modifier = Modifier.aspectRatio(1f)
-                        .clickable(role = Role.Button) {
-                            attachment.value = if (isSelected) {
-                                UiAttachment.File(
-                                    UiMimeType.Photo,
-                                    attachment.value.files - it[index]
-                                )
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(4),
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+            horizontalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            items(it.size) { index ->
+                val isSelected = selected.containsKey(it[index].uri)
+                Box(modifier = Modifier
+                    .aspectRatio(1f)
+                    .background(MaterialTheme.colorScheme.surfaceVariant)
+                    .clickable(role = Role.Button) {
+                        attachment.value = if (isSelected) {
+                            UiAttachment.File(
+                                UiMimeType.Photo,
+                                attachment.value.files - it[index]
+                            )
+                        } else {
+                            UiAttachment.File(
+                                UiMimeType.Photo,
+                                attachment.value.files + it[index]
+                            )
+                        }
+                    }) {
+                    DesignThumbnail(
+                        it[index].thumbnail,
+                        thumbnail[it[index].thumbnail]
+                    ) { viewModel.thumbnail(it, type) }
+                    Box(modifier = Modifier
+                        .fillMaxSize()
+                        .graphicsLayer {
+                            alpha = if (isSelected) {
+                                1f
                             } else {
-                                UiAttachment.File(
-                                    UiMimeType.Photo,
-                                    attachment.value.files + it[index]
-                                )
+                                0f
                             }
-                        }) {
-                        ThumbnailScreen(it[index].thumbnail, thumbnail, onLoad)
-                        Box(modifier = Modifier.fillMaxSize()
-                            .graphicsLayer {
-                                alpha = if (isSelected) {
-                                    1f
-                                } else {
-                                    0f
-                                }
-                            }.drawBehind {
-                                drawRoundRect(
-                                    color = color,
-                                    size = size,
-                                    style = Stroke(width = 4.dp.toPx())
-                                )
-                            }
-                        )
-                    }
+                        }
+                        .drawBehind {
+                            drawRoundRect(
+                                color = color,
+                                size = size,
+                                style = Stroke(width = 4.dp.toPx())
+                            )
+                        }
+                    )
                 }
             }
         }

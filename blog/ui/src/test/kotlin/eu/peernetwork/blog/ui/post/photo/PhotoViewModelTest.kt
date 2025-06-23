@@ -56,6 +56,7 @@ internal class PhotoViewModelTest {
                 isfollowing = false
             ),
             type = UiPost.Type.IMAGE,
+            time = "<test-time>",
             createdAt = System.currentTimeMillis(),
             description = buildAnnotatedString { append("<test-description>") },
             likes = 0,

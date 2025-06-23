@@ -1,12 +1,12 @@
 package eu.peernetwork.blog.ui.mapper
 
+import android.content.Context
 import androidx.compose.ui.text.AnnotatedString
 import eu.peernetwork.blog.domain.model.Content
 import eu.peernetwork.blog.ui.model.UiContent
-import eu.peernetwork.blog.ui.model.UiMedia
 import eu.peernetwork.blog.ui.model.UiPost
 
-fun Content.mapToPhoto(annotate: (String) -> AnnotatedString): UiPost {
+fun Content.mapToPhoto(context: Context, annotate: (String) -> AnnotatedString): UiPost {
     val media = media.map { it.mapFromDomain() }
     return UiPost(
         id = id,
@@ -16,6 +16,7 @@ fun Content.mapToPhoto(annotate: (String) -> AnnotatedString): UiPost {
         author = author.mapFromDomain(),
         type = type.mapFromDomain(),
         aspectRatio = media.getAspectRatio(),
+        time = context.timeAgo(createdAt, System.currentTimeMillis()),
         createdAt = createdAt,
         likes = likes,
         isLiked = isLiked,
@@ -46,16 +47,4 @@ fun UiPost.mapToContent(): UiContent {
         dislikes = dislikes,
         comment = comment
     )
-}
-
-fun List<UiMedia>.getAspectRatio(): Float {
-    return minOfOrNull { media ->
-        val options = media.options
-        when {
-            options.resolution != null -> {
-                options.resolution.let { (it.first.toFloat() / it.second.toFloat()) }
-            }
-            else -> 1f
-        }
-    } ?: 1f
 }

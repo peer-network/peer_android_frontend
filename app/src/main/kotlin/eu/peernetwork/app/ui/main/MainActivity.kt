@@ -4,7 +4,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.runtime.DisposableEffect
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModelProvider
@@ -45,12 +44,6 @@ class MainActivity : ComponentActivity(), UiComponent.Provider<Main.Component> {
                         component = injector,
                         viewModelStoreOwner = this
                     )
-                }
-                DisposableEffect(Unit) {
-                    onDispose {
-                        injector.videoProvider().preview.dispose()
-                        injector.videoProvider().timeline.dispose()
-                    }
                 }
             }
         }
