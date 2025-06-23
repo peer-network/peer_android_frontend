@@ -17,7 +17,6 @@ import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -71,7 +70,6 @@ fun FeedPreview(
     val coroutine = rememberCoroutineScope()
     val connection by connectionController.observe().collectAsStateWithLifecycle()
     var relation by rememberSaveable { mutableStateOf(Relation.NONE) }
-    var expanded = remember { mutableStateOf(false) }
     val relations = mapOf(
         stringResource(UiRelation.ALL.value) to Relation.NONE,
         stringResource(UiRelation.FOLLOWER.value) to Relation.FOLLOWER,
