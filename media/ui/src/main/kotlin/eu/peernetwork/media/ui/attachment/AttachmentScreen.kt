@@ -1,6 +1,7 @@
 package eu.peernetwork.media.ui.attachment
 
 import android.Manifest
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
 import androidx.compose.animation.AnimatedVisibility
@@ -113,28 +114,28 @@ fun AttachmentScreen(
                     attachment = attachment
                 )
             }
-
-            if (imageToCrop.value == null && attachment.value.files.isNotEmpty()) {
-                imageToCrop.value = attachment.value.files.first().uri
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            AnimatedVisibility(visible = imageToCrop.value != null) {
-                CropRatioSelection(
-                    onSquareClick = {
-                        selectedRatio.value = CropRatio.Square
-                        shouldLaunchCrop.value = true
-                    },
-                    onPortraitClick = {
-                        selectedRatio.value = CropRatio.Portrait
-                        shouldLaunchCrop.value = true
-                    }
-                )
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
         }
+
+        if (imageToCrop.value == null && attachment.value.files.isNotEmpty()) {
+            imageToCrop.value = attachment.value.files.first().uri
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        AnimatedVisibility(visible = imageToCrop.value != null) {
+            CropRatioSelection(
+                onSquareClick = {
+                    selectedRatio.value = CropRatio.Square
+                    shouldLaunchCrop.value = true
+                },
+                onPortraitClick = {
+                    selectedRatio.value = CropRatio.Portrait
+                    shouldLaunchCrop.value = true
+                }
+            )
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
     }
 
     LaunchedEffect(permissionsState.allPermissionsGranted) {
@@ -165,12 +166,16 @@ fun AttachmentScreen(
         onLaunched = { shouldLaunchCrop.value = false },
         onCropDone = { croppedFile ->
             val uri = croppedFile.uri
-            val croppedUiFile = UiFile(uri = uri, thumbnail = uri.toString())
+            val thumbnailKey = uri.toString()
+            val croppedUiFile = UiFile(uri = uri, thumbnail = thumbnailKey)
 
             attachment.value = UiAttachment.File(
                 UiMimeType.Photo,
                 listOf(croppedUiFile)
             )
+
+            val bitmap = BitmapFactory.decodeStream(context.contentResolver.openInputStream(uri))
+            viewModel.setThumbnail(thumbnailKey, UiMimeType.Photo, bitmap)
 
             imageToCrop.value = null
         }

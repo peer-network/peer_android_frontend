@@ -89,7 +89,8 @@ fun HomeScreen(provider: UiComponentProvider) {
                 startDestination = startDestination,
                 navController = controller,
                 component = component,
-                viewModelStore = viewModelStore
+                viewModelStore = viewModelStore,
+                snackbarHostState = snackbarHostState
             )
         }
         BackHandler(enabled = currentStack.value != HomeRoute.Home.path) {
