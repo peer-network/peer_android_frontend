@@ -15,10 +15,10 @@
     <string name="confirm_label">Confirm</string>
     <string name="close_label">Close</string>
     <string name="cancel_label">Cancel</string>
-    <string name="post_caption">You\'r about to make a post</string>
-    <string name="like_caption">You\'r about to like a post</string>
-    <string name="dislike_caption">You\'r about to dislike a post</string>
-    <string name="comment_caption">You\'r about to make a comment</string>
+    <string name="post_caption">You\'re about to make a post</string>
+    <string name="like_caption">You\'re about to like a post</string>
+    <string name="dislike_caption">You\'re about to dislike a post</string>
+    <string name="comment_caption">You\'re about to make a comment</string>
     <string name="post_summary">Creating this post deducts %s from your balance of %s tokens.</string>
     <string name="like_summary">Liking this post deducts %s from your balance of %s tokens.</string>
     <string name="dislike_summary">Disliking this post deducts %s from your balance of %s tokens.</string>

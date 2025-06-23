@@ -37,7 +37,6 @@ fun AttachmentPlaceholder(onAttach: () -> Unit) {
         Box(
             contentAlignment = Alignment.BottomEnd,
             modifier = Modifier
-                .wrapContentSize()
                 .align(Alignment.Center)
                 .padding(8.dp)
         ) {
@@ -45,7 +44,7 @@ fun AttachmentPlaceholder(onAttach: () -> Unit) {
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
                     .size(dimension)
-                    .padding(16.dp)
+                    .padding(start = 12.dp, end = 12.dp, top = 24.dp, bottom = 20.dp)
                     .drawBehind {
                         val stroke = Stroke(
                             width = 4.dp.toPx(),

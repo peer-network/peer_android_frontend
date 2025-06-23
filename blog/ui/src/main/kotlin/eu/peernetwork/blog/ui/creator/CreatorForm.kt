@@ -1,7 +1,5 @@
 package eu.peernetwork.blog.ui.creator
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -9,7 +7,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -30,26 +27,22 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.blog.ui.R
-import eu.peernetwork.core.ui.design.compose.DesignAvatar
 import eu.peernetwork.core.ui.design.compose.DesignRichTextField
 import eu.peernetwork.core.ui.design.compose.DesignTextField
 import eu.peernetwork.core.ui.theme.PeerTheme
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreatorForm(
     title: TextFieldState,
     focus: FocusRequester,
     description: TextFieldState,
     isLoading: State<Boolean>,
-    avatar: @Composable () -> Unit = {}
 ) {
     Column {
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            avatar()
             DesignTextField(
                 state = title,
                 enabled = !isLoading.value,
@@ -61,7 +54,7 @@ fun CreatorForm(
                     imeAction = ImeAction.Next
                 ),
                 colors = TextFieldDefaults.colors(
-                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                    unfocusedContainerColor = MaterialTheme.colorScheme.surface,
                     focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
                     focusedTextColor = MaterialTheme.colorScheme.onBackground,
                     unfocusedTextColor = MaterialTheme.colorScheme.tertiary,
@@ -91,8 +84,8 @@ fun CreatorForm(
                 .padding(vertical = 12.dp),
             leading = { },
             colors = TextFieldDefaults.colors(
-                unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLow,
-                focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
                 focusedTextColor = MaterialTheme.colorScheme.onBackground,
                 unfocusedTextColor = MaterialTheme.colorScheme.tertiary,
                 focusedPlaceholderColor = MaterialTheme.colorScheme.surfaceDim,
@@ -106,7 +99,7 @@ fun CreatorForm(
 @Preview
 @Composable
 fun PreviewCreatorForm() {
-    PeerTheme {
+    PeerTheme(isDarkMode = true) {
         val title = remember { TextFieldState() }
         val description = remember { TextFieldState() }
         val focus = remember { FocusRequester() }
@@ -115,15 +108,6 @@ fun PreviewCreatorForm() {
             focus = focus,
             description = description,
             isLoading = remember { mutableStateOf(false) }
-        ) {
-            DesignAvatar(
-                modifier = Modifier.padding(end = 8.dp)
-            ) {
-                Box(modifier = Modifier
-                    .size(48.dp)
-                    .background(MaterialTheme.colorScheme.tertiaryContainer)
-                )
-            }
-        }
+        )
     }
 }

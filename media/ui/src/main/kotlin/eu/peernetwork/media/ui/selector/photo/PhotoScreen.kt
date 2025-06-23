@@ -73,6 +73,7 @@ fun PhotoScreen(
     val current = rememberSaveable(directory.value) { mutableStateOf(directory.value) }
     val selected = remember(attachment.value) { attachment.value.files.associateBy { it.uri } }
     val thumbnail = viewModel.thumbnail.collectAsStateWithLifecycle().value
+
     DesignStatefulScaffold<List<UiFile>>(
         state = derivedState,
         onRefresh = { viewModel.initialize(directory.value) },
