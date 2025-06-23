@@ -1,8 +1,6 @@
 package eu.peernetwork.app.ui.home
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import eu.peernetwork.app.BuildConfig
