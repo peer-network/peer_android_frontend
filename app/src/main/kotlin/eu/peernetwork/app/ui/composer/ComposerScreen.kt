@@ -1,15 +1,19 @@
 package eu.peernetwork.app.ui.composer
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,13 +36,13 @@ import eu.peernetwork.media.ui.attachment.AttachmentPlaceholder
 import eu.peernetwork.media.ui.attachment.AttachmentScreen
 import eu.peernetwork.wallet.ui.confirmation.ConfirmationScreen
 import eu.peernetwork.wallet.ui.model.UiToken
-import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.launch
 
 @Composable
-@OptIn(FlowPreview::class)
 fun ComposerScreen(
     provider: UiComponentProvider,
-    viewModelStore: ViewModelState
+    viewModelStore: ViewModelState,
+    snackbarHostState: SnackbarHostState
 ) {
     val context = LocalContext.current
     val component = remember {
@@ -51,42 +55,56 @@ fun ComposerScreen(
     val focus = remember { FocusRequester() }
     val intent = UiToken.Post
     val key = intent::class.java.name
-    ComposerNavigation(
-        attachment = attachment,
-        controller = controller,
-        provider = component,
-    ) {
-        ComposerScreen({
-            AttachmentScreen(
-                attachment,
-                { controller.navigateIfNecessary("explorer") },
-                component,
-                viewModelStore.get(key)
-            )
-        }) {
-            CreatorScreen(
-                draft,
-                attachment,
-                focus,
-                component,
-                viewModelStore.get(key)
-            )
-            DesignTitleBarHost("CreatorScreen") {
-                titleBar {
-                    DesignTitle {
-                        Text(stringResource(eu.peernetwork.core.ui.R.string.add_label))
+    val coroutineScope = rememberCoroutineScope()
+
+    Box(modifier = Modifier.padding()) {
+           ComposerNavigation(
+                attachment = attachment,
+                controller = controller,
+                provider = component,
+            ) {
+                ComposerScreen(
+                    footer = {
+                        AttachmentScreen(
+                            attachment,
+                            onAttach = { controller.navigateIfNecessary("explorer") },
+                            component,
+                            viewModelStore.get(key)
+                        )
+                    },
+                    content = {
+                        CreatorScreen(
+                            draft,
+                            attachment,
+                            focus,
+                            component,
+                            viewModelStore.get(key),
+                        )
+                        DesignTitleBarHost("CreatorScreen") {
+                            titleBar {
+                                DesignTitle {
+                                    Text(stringResource(eu.peernetwork.core.ui.R.string.add_label))
+                                }
+                            }
+                        }
                     }
-                }
+                )
             }
         }
-    }
+
     ConfirmationScreen(
-        intent,
-        showConfirmation,
-        component,
-        viewModelStore.get(key),
-        { draft.value = null }
-    ) { draft.value = draft.value?.copy(confirmed = it) }
+        token = intent,
+        showSheet = showConfirmation,
+        provider = component,
+        viewModelStoreOwner = viewModelStore.get(key),
+        onDismiss = { draft.value = null },
+        onConfirm = {
+            draft.value = draft.value?.copy(confirmed = it)
+            coroutineScope.launch {
+                snackbarHostState.showSnackbar("Post shared successfully 🎉")
+            }
+        }
+    )
 }
 
 @Composable
@@ -94,16 +112,18 @@ fun ComposerScreen(
 fun ComposerScreen(
     footer: @Composable () -> Unit,
     content: @Composable () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val updatedContent by rememberUpdatedState(content)
     val updatedFooter by rememberUpdatedState(footer)
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.fillMaxSize()
+        modifier = modifier
+            .fillMaxSize()
             .verticalScroll(rememberScrollState())
     ) {
-        updatedContent()
         updatedFooter()
+        updatedContent()
     }
 }
 
@@ -111,8 +131,11 @@ fun ComposerScreen(
 @Composable
 fun PreviewComposerScreen() {
     PeerTheme {
-        ComposerScreen({
-            AttachmentPlaceholder {  }
-        }) {}
+        ComposerScreen(
+            footer = {
+                AttachmentPlaceholder { }
+            },
+            content = {}
+        )
     }
 }

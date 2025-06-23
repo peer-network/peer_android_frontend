@@ -25,7 +25,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import eu.peernetwork.blog.ui.author.AuthorScreen
 import eu.peernetwork.blog.ui.model.UiDraft
 import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.core.ui.component.UiComponentProvider
@@ -89,7 +88,6 @@ fun CreatorScreen(
                 attachments = attachment.value.files.map { it.uri }
             ) },
         onReset = { attachment.value = UiAttachment.Text },
-        header = { AuthorScreen(component, viewModelStoreOwner) },
         isLoading = isLoading,
         enabled = enabled,
         shouldReset = shouldReset,
@@ -120,7 +118,6 @@ fun CreatorScreen(
     modifier: Modifier = Modifier,
     onReset: () -> Unit = { },
     onSubmit: (UiDraft.Field) -> Unit = { },
-    header: @Composable () -> Unit = {}
 ) {
     var title by rememberSaveable(stateSaver = TextFieldState.Saver) { mutableStateOf(TextFieldState()) }
     var description by rememberSaveable(stateSaver = TextFieldState.Saver) {
@@ -148,7 +145,7 @@ fun CreatorScreen(
                 .padding(top = 8.dp)
         ) {
             Column {
-                CreatorForm(title, focus, description, isLoading, header)
+                CreatorForm(title, focus, description, isLoading)
                 CreatorFooter(
                     title = title,
                     description = description,

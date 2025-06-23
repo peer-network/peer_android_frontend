@@ -7,16 +7,17 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -46,18 +47,18 @@ fun AttachmentPreview(
     onAttach: () -> Unit,
     onLoad: (String) -> Bitmap?,
     onRefresh: (Int) -> Unit,
+    onRemove: (Int) -> Unit,
     attachment: MutableState<UiAttachment>
 ) {
     val attached = remember(attachment.value) { attachment.value }
     val pagerState = rememberPagerState(initialPage = 0) { attached.files.size + 1 }
     val handleOnLoad by rememberUpdatedState(onLoad)
     val handleOnRefresh by rememberUpdatedState(onRefresh)
-    AttachmentPreview(pagerState, onAttach, {
-        attachment.value = UiAttachment.File(
-            attachment.value.media,
-            attachment.value.files - attachment.value.files[it]
-        )
-    }) { index ->
+    AttachmentPreview(
+        state = pagerState,
+        onAttach = onAttach,
+        onRemove = onRemove
+    ) { index ->
         DesignThumbnail(
             attached.files[index].thumbnail,
             handleOnLoad(attached.files[index].thumbnail),
@@ -77,25 +78,29 @@ fun AttachmentPreview(
     val handleOnRemove by rememberUpdatedState(onRemove)
     HorizontalPager(
         state = state,
-        modifier = Modifier.fillMaxWidth()
-            .padding(vertical = 24.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
         pageSpacing = 2.dp,
-        contentPadding = PaddingValues(horizontal = 48.dp)
+        contentPadding = PaddingValues(horizontal = 72.dp)
     ) { page ->
-        Box(modifier = Modifier
-            .aspectRatio(1f)
-            .graphicsLayer {
-                val pageOffset = (state.currentPage - page + state.currentPageOffsetFraction).absoluteValue
-                val scale = lerp(
-                    start = 0.9f,
-                    stop = 1f,
-                    fraction = 1f - pageOffset.coerceIn(0f, 1f)
-                )
-                scaleX = scale
-                scaleY = scale
-                shadowElevation = if (scale == 1f) 8.dp.toPx() else 4.dp.toPx()
-                translationX = pageOffset
-            }.clip(RoundedCornerShape(24.dp))
+        Box(
+            modifier = Modifier
+                .aspectRatio(1f)
+                .graphicsLayer {
+                    val pageOffset =
+                        (state.currentPage - page + state.currentPageOffsetFraction).absoluteValue
+                    val scale = lerp(
+                        start = 0.9f,
+                        stop = 1f,
+                        fraction = 1f - pageOffset.coerceIn(0f, 1f)
+                    )
+                    scaleX = scale
+                    scaleY = scale
+                    shadowElevation = if (scale == 1f) 8.dp.toPx() else 4.dp.toPx()
+                    translationX = pageOffset
+                }
+                .clip(RoundedCornerShape(24.dp))
         ) {
             if (page == state.pageCount - 1) {
                 Box(
@@ -115,22 +120,22 @@ fun AttachmentPreview(
             } else {
                 Box(contentAlignment = Alignment.BottomEnd) {
                     updatedContent(page)
-                    Box(
-                        contentAlignment = Alignment.Center,
-                        modifier = Modifier.padding(16.dp)
-                            .size(28.dp)
-                            .clip(RoundedCornerShape(14.dp))
-                            .background(MaterialTheme.colorScheme.surfaceVariant)
-                            .padding(6.dp)
-                            .clickable(role = Role.Button) {
-                                handleOnRemove(page)
-                            }
+                    Row(
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .background(
+                                MaterialTheme.colorScheme.surface.copy(alpha = 0.6f),
+                                shape = RoundedCornerShape(12.dp)
+                            )
+                            .padding(horizontal = 4.dp, vertical = 2.dp)
                     ) {
-                        Icon(
-                            painter = painterResource(eu.peernetwork.core.ui.R.drawable.ic_cancel),
-                            contentDescription = stringResource(R.string.remove_label),
-                            tint = MaterialTheme.colorScheme.surfaceTint
-                        )
+                        IconButton(onClick = { handleOnRemove(page) }) {
+                            Icon(
+                                painter = painterResource(eu.peernetwork.core.ui.R.drawable.ic_cancel),
+                                contentDescription = "Remove",
+                                tint = MaterialTheme.colorScheme.onSurface
+                            )
+                        }
                     }
                 }
             }
@@ -144,9 +149,11 @@ fun PreviewAttachmentPreview() {
     PeerTheme {
         val pagerState = rememberPagerState(initialPage = 0) { 2 }
         AttachmentPreview(pagerState, {}, {}) {
-            Box(modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.surfaceVariant))
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.surfaceVariant)
+            )
         }
     }
 }
