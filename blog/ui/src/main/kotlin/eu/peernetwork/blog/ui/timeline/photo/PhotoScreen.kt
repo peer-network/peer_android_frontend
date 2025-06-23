@@ -16,6 +16,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import eu.peernetwork.blog.domain.model.Filter.Criteria
+import eu.peernetwork.blog.domain.model.Relation
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.compose.PostPageSkeleton
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
@@ -32,6 +33,7 @@ import eu.peernetwork.core.ui.design.component.DesignRefreshableScaffold
 fun PhotoScreen(
     id: String,
     postLimit: Int,
+    relation: Relation,
     criteria: Criteria? = null,
     onMentionClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
@@ -69,9 +71,10 @@ fun PhotoScreen(
             }
         }
     }
+    var lastRelation = remember { mutableStateOf(relation) }
     DesignPagingScaffold<UiPost>(
         state = derivedState,
-        onRefresh = { viewModel.load(Pageable(0, postLimit), criteria) },
+        onRefresh = { viewModel.load(Pageable(0, postLimit), relation, criteria) },
         placeholder = { PostPageSkeleton() },
         errorContent = { error, refresh ->
             DesignError(refresh, error, component.resource())
@@ -123,6 +126,12 @@ fun PhotoScreen(
                     )
                 }
             }
+        }
+    }
+    LaunchedEffect(relation, criteria) {
+        if (relation != lastRelation.value) {
+            lastRelation.value = relation
+            viewModel.load(Pageable(0, postLimit), relation, criteria)
         }
     }
 }

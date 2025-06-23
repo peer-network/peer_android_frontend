@@ -12,6 +12,7 @@ import eu.peernetwork.blog.ui.usecase.UserVideosUsecase
 import eu.peernetwork.core.common.model.Pageable
 import eu.peernetwork.media.core.interactor.ThumbnailInteractor
 import eu.peernetwork.media.core.model.UiMimeType
+import eu.peernetwork.blog.domain.model.Relation
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -40,14 +41,20 @@ class VideoViewModel @Inject constructor(
             initialValue = emptyMap()
         )
 
-    fun load(page: Pageable, criteria: Criteria? = null) {
+    fun load(
+        page: Pageable,
+        relation: Relation = Relation.NONE,
+        criteria: Criteria? = null
+    ) {
         viewModelScope.launch {
             usecase(
                 UserVideosUsecase.Parameter(
+                    relation = relation,
                     criteria = criteria,
                     page = page
                 )
-            ).catch { mutableState.tryEmit(State.Error(it)) }
+            )
+                .catch { mutableState.tryEmit(State.Error(it)) }
                 .onStart { mutableState.tryEmit(State.Loading) }
                 .cachedIn(viewModelScope)
                 .apply {

@@ -15,7 +15,6 @@ dependencies {
     implementation(project(":media:core"))
 
     implementation(project(":blog:domain"))
-
     implementation(libs.dagger)
     ksp(libs.dagger.compiler)
 
