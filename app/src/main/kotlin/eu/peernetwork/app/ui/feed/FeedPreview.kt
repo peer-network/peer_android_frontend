@@ -17,6 +17,7 @@ import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -31,6 +32,8 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import eu.peernetwork.app.BuildConfig
+import eu.peernetwork.app.mapper.mapFromDomain
+import eu.peernetwork.app.model.UiRelation
 import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.blog.domain.model.Relation
 import eu.peernetwork.blog.ui.timeline.photo.PhotoScreen
@@ -68,6 +71,12 @@ fun FeedPreview(
     val coroutine = rememberCoroutineScope()
     val connection by connectionController.observe().collectAsStateWithLifecycle()
     var relation by rememberSaveable { mutableStateOf(Relation.NONE) }
+    var expanded = remember { mutableStateOf(false) }
+    val relations = mapOf(
+        stringResource(UiRelation.ALL.value) to Relation.NONE,
+        stringResource(UiRelation.FOLLOWER.value) to Relation.FOLLOWER,
+        stringResource(UiRelation.FOLLOWED.value) to Relation.FOLLOWED,
+    )
     FeedPreview(
         state = state,
         modifier = Modifier.fillMaxSize(),
@@ -129,18 +138,12 @@ fun FeedPreview(
     ) {
         titleBar {
             DesignDropdownMenu(
-                items = listOf("All", "Followed", "Follower"),
-                onSelect = { label ->
-                    relation = when (label) {
-                        "Followed" -> Relation.FOLLOWED
-                        "Follower" -> Relation.FOLLOWER
-                        else -> Relation.NONE
-                    }
-                },
+                items = relations.keys.toList(),
+                onSelect = { relations[it]?.let { relation = it } },
                 anchor = {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
-                            text = title ?: stringResource(R.string.feed_label),
+                            text = title ?: stringResource(relation.mapFromDomain().value),
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )

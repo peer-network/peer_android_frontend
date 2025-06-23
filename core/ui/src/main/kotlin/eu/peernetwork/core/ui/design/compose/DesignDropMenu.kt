@@ -1,6 +1,7 @@
 package eu.peernetwork.core.ui.design.compose
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.runtime.*
@@ -14,23 +15,20 @@ fun DesignDropdownMenu(
     anchor   : @Composable () -> Unit,
 ) {
     var expanded by remember { mutableStateOf(false) }
-
-
-    androidx.compose.foundation.layout.Box(
-        modifier = modifier
-            .clickable { expanded = true }
+    val handleOnSelect by rememberUpdatedState(onSelect)
+    Box(
+        modifier = modifier.clickable { expanded = true }
     ) { anchor() }
-
     DropdownMenu(
-        expanded          = expanded,
+        expanded = expanded,
         onDismissRequest  = { expanded = false }
     ) {
         items.forEach { label ->
             DropdownMenuItem(
-                text    = { androidx.compose.material3.Text(label) },
+                text = { androidx.compose.material3.Text(label) },
                 onClick = {
                     expanded = false
-                    onSelect(label)
+                    handleOnSelect(label)
                 }
             )
         }

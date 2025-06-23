@@ -69,6 +69,7 @@ fun VideoScreen(
         }
     }
     val thumbnail = viewModel.thumbnail.collectAsStateWithLifecycle().value
+    var lastRelation = remember { mutableStateOf(relation) }
     DesignPagingScaffold<UiVideo>(
         state = derivedState,
         onRefresh = { viewModel.load(Pageable(0, postLimit), relation, criteria) },
@@ -133,7 +134,10 @@ fun VideoScreen(
             }
         }
         LaunchedEffect(relation, criteria) {
-            viewModel.load(Pageable(0, postLimit), relation, criteria)
+            if (relation != lastRelation.value) {
+                lastRelation.value = relation
+                viewModel.load(Pageable(0, postLimit), relation, criteria)
+            }
         }
     }
 }

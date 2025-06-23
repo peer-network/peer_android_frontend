@@ -71,6 +71,7 @@ fun PhotoScreen(
             }
         }
     }
+    var lastRelation = remember { mutableStateOf(relation) }
     DesignPagingScaffold<UiPost>(
         state = derivedState,
         onRefresh = { viewModel.load(Pageable(0, postLimit), relation, criteria) },
@@ -128,6 +129,9 @@ fun PhotoScreen(
         }
     }
     LaunchedEffect(relation, criteria) {
-        viewModel.load(Pageable(0, postLimit), relation, criteria)
+        if (relation != lastRelation.value) {
+            lastRelation.value = relation
+            viewModel.load(Pageable(0, postLimit), relation, criteria)
+        }
     }
 }
