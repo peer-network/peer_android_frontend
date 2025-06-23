@@ -2,19 +2,23 @@ package eu.peernetwork.core.ui.design.compose
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -28,6 +32,7 @@ fun DesignAsyncImage(
     label: String,
     imageUrl: String,
     modifier: Modifier = Modifier,
+    onClick: (String) -> Unit = {},
     size: Dp = 64.dp,
     color: Color = MaterialTheme.colorScheme.tertiaryContainer,
     style: TextStyle = MaterialTheme.typography.titleLarge.copy(
@@ -36,10 +41,14 @@ fun DesignAsyncImage(
     )
 ) {
     val isAvatarLoaded = remember { mutableStateOf(false) }
+    val handleClick by rememberUpdatedState(onClick)
     Box(modifier = modifier.size(size).background(color)) {
         AsyncImage(
             model = imageUrl,
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize()
+                .clickable(role = Role.Button, enabled = true) {
+                    handleClick(imageUrl)
+                },
             contentScale = ContentScale.Crop,
             contentDescription = null,
             onSuccess = { isAvatarLoaded.value = true }
