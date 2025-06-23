@@ -15,10 +15,7 @@ dependencies {
 
     implementation(project(":user:domain"))
 
-    implementation(libs.accompanist.systemuicontroller)
-
     implementation(libs.ucrop)
-
     implementation(libs.dagger)
     ksp(libs.dagger.compiler)
 
