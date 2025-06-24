@@ -26,6 +26,8 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import eu.peernetwork.blog.ui.author.AuthorScreen
+import eu.peernetwork.blog.ui.engagement.EngagementConfirmation
+import eu.peernetwork.blog.ui.engagement.EngagementType
 import eu.peernetwork.blog.ui.model.UiDraft
 import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.core.ui.component.UiComponentProvider
@@ -76,6 +78,9 @@ fun CreatorScreen(
             attachment.value.files.isNotEmpty()
         }
     } }
+    val type = remember(draft.value) {
+        mutableStateOf<EngagementType?>(draft.value?.let { EngagementType.Post(it) })
+    }
     CreatorScreen(
         focus = focus,
         onSubmit = {
@@ -85,7 +90,6 @@ fun CreatorScreen(
                 media = if (attachment.value.files.isEmpty()) {
                     UiMimeType.Text
                 } else { attachment.value.media },
-                confirmed = false,
                 attachments = attachment.value.files.map { it.uri }
             ) },
         onReset = { attachment.value = UiAttachment.Text },
@@ -95,17 +99,24 @@ fun CreatorScreen(
         shouldReset = shouldReset,
         error = error
     )
+    component.engagementConfirmation()(
+        Modifier,
+        EngagementConfirmation.Spec(
+            type,
+            viewModelStoreOwner,
+        ) {
+            when(it) {
+                is EngagementType.Post -> {
+                    viewModel.create(it.draft)
+                    draft.value = null
+                }
+                else -> {}
+            }
+        }
+    )
     LaunchedEffect(shouldReset.value) {
         if (shouldReset.value) {
             viewModel.reset()
-        }
-    }
-    LaunchedEffect(draft.value) {
-        draft.value?.let {
-            if (it.confirmed) {
-                viewModel.create(it)
-                draft.value = null
-            }
         }
     }
 }

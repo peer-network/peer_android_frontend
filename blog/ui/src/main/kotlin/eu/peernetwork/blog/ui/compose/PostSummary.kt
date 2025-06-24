@@ -60,7 +60,6 @@ fun PostSummary(
                     modifier = Modifier.clickable {
                         handleAuthorClick(model.author.id)
                     }
-
                 )
             }
         },

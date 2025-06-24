@@ -19,7 +19,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,7 +39,6 @@ import eu.peernetwork.core.ui.design.compose.DesignSecureTextField
 import eu.peernetwork.core.ui.extension.isValidInput
 import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.user.ui.R
-import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
@@ -55,6 +53,13 @@ fun PasswordSheet(
     DesignBottomSheet(
         showSheet = state,
         tag = label,
+        onAnimationComplete = {
+            if (!it) {
+                password.clearText()
+            } else {
+                focus.requestFocus()
+            }
+        },
         onDismissRequest = { state.value = false },
         initialValue = initialValue,
         color = MaterialTheme.colorScheme.surfaceContainerLow,
@@ -97,14 +102,6 @@ fun PasswordSheet(
                 )
             }
             Spacer(modifier = Modifier.navigationBarsPadding())
-        }
-    }
-    LaunchedEffect(state.value) {
-        if (!state.value) {
-            password.clearText()
-        } else {
-            delay(200)
-            focus.requestFocus()
         }
     }
 }

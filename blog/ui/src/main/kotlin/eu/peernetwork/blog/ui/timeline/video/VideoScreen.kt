@@ -45,6 +45,7 @@ fun VideoScreen(
     connection: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit = {}
 ) {
     val context = LocalContext.current
+    val configuration = LocalConfiguration.current
     val component = remember {
         provider.builder(Video.Builder::class.java).build(context)
     }
@@ -92,7 +93,6 @@ fun VideoScreen(
         val refreshed = remember { derivedStateOf {
             lazyPagingItems.loadState.refresh is LoadState.NotLoading
         } }
-        val configuration = LocalConfiguration.current
         DesignRefreshableScaffold<LazyPagingItems<UiPost>>(
             state = refreshState,
             onRefresh = { lazyPagingItems.refresh() }

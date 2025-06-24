@@ -9,6 +9,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -24,6 +25,7 @@ import eu.peernetwork.core.ui.design.component.DesignError
 import eu.peernetwork.core.ui.design.component.DesignPagingScaffold
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
 import eu.peernetwork.core.ui.extension.builder
+import eu.peernetwork.media.core.model.UiMimeType
 
 @Composable
 fun VideoScreen(
@@ -39,6 +41,7 @@ fun VideoScreen(
     listState: LazyListState = rememberLazyListState(),
 ) {
     val context = LocalContext.current
+    val configuration = LocalConfiguration.current
     val component = remember {
         provider.builder(Video.Builder::class.java).build(context)
     }
@@ -62,6 +65,7 @@ fun VideoScreen(
             }
         }
     } }
+    val thumbnail = viewModel.thumbnail.collectAsStateWithLifecycle().value
     val updatedAt = remember { mutableLongStateOf(lastUpdated.value) }
     DesignPagingScaffold<UiVideo>(
         state = derivedState,
@@ -94,6 +98,13 @@ fun VideoScreen(
                     listState = listState,
                     engagement = engagement,
                     moderation = moderation,
+                    onLoadBitmap = { thumbnail[it] },
+                    onLoad = { url, ratio ->
+                        viewModel.thumbnail(
+                            url,
+                            UiMimeType.Video,
+                            configuration.screenWidthDp,
+                            ratio) },
                     onMentionClick,
                     onHashtagClick,
                     onPostClick,

@@ -174,9 +174,9 @@ fun ExplorerScreen(
                     title.value = photo
                     onSelect(UiMimeType.Photo)
                     true
-                }) {
+                }) { label, isActive ->
                     Text(
-                        it,
+                        label,
                         modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
                         style = MaterialTheme.typography.bodySmall.copy(
                             color = MaterialTheme.colorScheme.onBackground
@@ -187,9 +187,9 @@ fun ExplorerScreen(
                     title.value = video
                     onSelect(UiMimeType.Video)
                     true
-                }) {
+                }) { label, isActive ->
                     Text(
-                        it,
+                        label,
                         modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
                         style = MaterialTheme.typography.bodySmall.copy(
                             color = MaterialTheme.colorScheme.onBackground
@@ -200,9 +200,9 @@ fun ExplorerScreen(
                     handleOnClick()
                     expanded.value = false
                     false
-                }) {
+                }) { label, isActive ->
                     Text(
-                        it,
+                        label,
                         modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
                         style = MaterialTheme.typography.bodySmall.copy(
                             color = MaterialTheme.colorScheme.onBackground

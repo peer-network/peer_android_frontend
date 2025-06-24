@@ -1,6 +1,7 @@
 package eu.peernetwork.app.ui.home
 
 import android.content.res.Configuration
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
@@ -10,6 +11,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -20,6 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.extension.builder
@@ -65,11 +68,14 @@ fun HomeScreen(provider: UiComponentProvider) {
         val controller = rememberNavController()
         val navigationState = rememberSaveable { mutableIntStateOf(data.second) }
         val startDestination = remember { HomeRoute.get(navigationState.intValue).path }
+        val navBackStackEntry by controller.currentBackStackEntryAsState()
+        val currentStack = remember(navBackStackEntry?.id) { mutableStateOf(controller.currentDestination?.route) }
         HomeScreen(
             start = navigationState,
             options = { RewardScreen(component, viewModelStore.get(data.first)) },
             onClick = {
                 viewModel.lastVisited(it)
+                navigationState.intValue = it
                 controller.attachIfNecessary(HomeRoute.get(it).path)
             }
         ) { state ->
@@ -80,6 +86,11 @@ fun HomeScreen(provider: UiComponentProvider) {
                 component = component,
                 viewModelStore = viewModelStore
             )
+        }
+        BackHandler(enabled = currentStack.value != HomeRoute.Home.path) {
+            viewModel.lastVisited(0)
+            navigationState.intValue = 0
+            controller.attachIfNecessary(HomeRoute.Home.path)
         }
     }
     DisposableEffect(Unit) { onDispose { viewModelStore.clear() } }

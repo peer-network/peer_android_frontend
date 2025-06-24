@@ -6,7 +6,9 @@ import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
 import eu.peernetwork.app.ui.profile.Profile
+import eu.peernetwork.app.ui.renderer.EngagementRenderer
 import eu.peernetwork.app.ui.search.Search
+import eu.peernetwork.blog.ui.engagement.EngagementConfirmation
 import eu.peernetwork.blog.ui.timeline.photo.Photo
 import eu.peernetwork.blog.ui.timeline.video.Video
 import eu.peernetwork.core.ui.annotation.UiBuilder
@@ -16,6 +18,7 @@ import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.factory.UiBuilderFactory
 import eu.peernetwork.core.ui.factory.UiViewModelFactory
 import eu.peernetwork.social.ui.connection.Connection
+import eu.peernetwork.wallet.ui.confirmation.Confirmation
 import javax.inject.Provider
 
 @Module
@@ -77,5 +80,19 @@ object FeedModule {
     @UiBuilder(Connection.Builder::class)
     fun provideConnectionBuilder(component: Feed.Component): UiComponent.Builder {
         return Connection.Builder(component)
+    }
+
+    @Feed.Scope
+    @Provides
+    @IntoMap
+    @UiBuilder(Confirmation.Builder::class)
+    fun provideConfirmationBuilder(component: Feed.Component): UiComponent.Builder {
+        return Confirmation.Builder(component)
+    }
+
+    @Feed.Scope
+    @Provides
+    fun provideEngagementRenderer(component: Feed.Component): EngagementConfirmation {
+        return EngagementRenderer(component)
     }
 }

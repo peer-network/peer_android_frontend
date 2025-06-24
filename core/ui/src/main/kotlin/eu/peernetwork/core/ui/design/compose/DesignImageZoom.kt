@@ -38,7 +38,7 @@ fun DesignImageZoom(
 ) {
     val key = remember { System.currentTimeMillis().toString() }
     val visible = remember(imageUrl.value) { mutableStateOf(imageUrl.value != null) }
-    DesignDialog(
+    DesignDialogSheet(
         key,
         visible,
         onDismiss = onDismiss,

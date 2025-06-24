@@ -5,14 +5,12 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.Crossfade
-import androidx.compose.animation.core.AnimationConstants.DefaultDurationMillis
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.viewinterop.AndroidView
-import kotlinx.coroutines.delay
 
 @Composable
 @SuppressLint("SetJavaScriptEnabled")
@@ -44,9 +42,5 @@ fun PrivacyScreen(
                 }
             }
         }
-    }
-    LaunchedEffect(url) {
-        delay(DefaultDurationMillis.toLong())
-        link.value = url
     }
 }

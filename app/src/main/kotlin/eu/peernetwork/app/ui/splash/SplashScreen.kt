@@ -6,7 +6,6 @@ import androidx.compose.animation.core.AnimationEndReason
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
@@ -34,7 +33,6 @@ import eu.peernetwork.core.ui.design.component.DesignStatefulScaffold
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
 import eu.peernetwork.core.ui.extension.builder
 import androidx.core.net.toUri
-import eu.peernetwork.app.ui.compose.UpdateDialog
 
 @Composable
 fun SplashScreen(
@@ -94,7 +92,7 @@ fun SplashScreen(
             play.value = false
         }
     } }
-    UpdateDialog(showDialog, updateUrl.value.toUri())
+    SplashConfirmation(showDialog, updateUrl.value.toUri())
     LaunchedEffect(state) {
         (state as? SplashViewModel.State.Success?)?.update?.let {
             updateUrl.value = it

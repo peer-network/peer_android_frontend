@@ -1,7 +1,6 @@
 package eu.peernetwork.blog.ui.engagement
 
 import android.widget.Toast
-import androidx.compose.animation.core.AnimationConstants.DefaultDurationMillis
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -13,6 +12,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModelStoreOwner
@@ -29,7 +29,6 @@ import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.extension.toInt
 import eu.peernetwork.core.ui.theme.LightAccentColor
 import eu.peernetwork.core.ui.theme.PeerAppRed
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
@@ -41,7 +40,7 @@ fun EngagementScreen(
     onAuthorClick: (String) -> Unit = {},
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
-    content: @Composable (EngagementEvent) -> Unit
+    content: @Composable (Engagements) -> Unit
 ) {
     val context = LocalContext.current
     val component = remember {
@@ -59,7 +58,6 @@ fun EngagementScreen(
             (state as? EngagementViewModel.State.Error?)?.error
         }
     }
-    val tag = remember { System.currentTimeMillis().toString() }
     var post = remember { mutableStateOf<UiContent?>(null) }
     val scope = rememberCoroutineScope()
     val errorMessage = stringResource(R.string.unknown_error_message)
@@ -68,7 +66,8 @@ fun EngagementScreen(
     val handleMentionClick by rememberUpdatedState(onMentionClick)
     val handleHashtagClick by rememberUpdatedState(onHashtagClick)
     val handleAuthorClick by rememberUpdatedState(onAuthorClick)
-    val event = remember(state, reactionState.values) { EngagementEvent(
+    val type = remember { mutableStateOf<EngagementType?>(null) }
+    val event = remember(state, reactionState.values) { Engagements(
         onLoad = {
             val isLiked = reactionState[it.id]?.isLiked
             val isDisliked = reactionState[it.id]?.isDisliked
@@ -81,14 +80,12 @@ fun EngagementScreen(
                 comment = it.comment + commented
             )
         },
-        onLike = { viewModel.like(it.id) },
-        onDisLike = { viewModel.dislike(it.id) },
+        onLike = { type.value = EngagementType.Like(it.id) },
+        onDisLike = { type.value = EngagementType.DisLike(it.id) },
         onComment = { post.value = it }
     ) }
     updatedContent(event)
-    LaunchedEffect(Unit) {
-        viewModel.initialize()
-    }
+    LaunchedEffect(Unit) { viewModel.initialize() }
     LaunchedEffect(refresh.value) {
         if (refresh.value) {
             viewModel.reset()
@@ -103,36 +100,42 @@ fun EngagementScreen(
         }
     }
     CommentScreen(
-        tag,
         post,
         postLimit,
         component,
         viewModelStoreOwner,
         onMentionClick = {
             scope.launch {
-                post.value = null
-                delay(DefaultDurationMillis.toLong())
                 handleMentionClick(it)
             } },
         onHashtagClick = {
             scope.launch {
-                post.value = null
-                delay(DefaultDurationMillis.toLong())
                 handleHashtagClick(it)
             } },
         onAuthorClick = {
             scope.launch {
-                post.value = null
-                delay(DefaultDurationMillis.toLong())
                 handleAuthorClick(it)
             } }
+    )
+    component.engagementConfirmation()(
+        Modifier,
+        EngagementConfirmation.Spec(
+            type,
+            viewModelStoreOwner,
+        ) {
+            when(it) {
+                is EngagementType.Like -> viewModel.like(it.id)
+                is EngagementType.DisLike -> viewModel.dislike(it.id)
+                else -> {}
+            }
+        }
     )
 }
 
 @Composable
 fun EngagementScreen(
     model: UiContent,
-    event: EngagementEvent,
+    event: Engagements,
 ) {
     val engagement by remember(model) { derivedStateOf { event.onLoad(model) } }
     val handleOnLike by rememberUpdatedState(event.onLike)

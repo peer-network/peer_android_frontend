@@ -29,7 +29,7 @@ import eu.peernetwork.core.ui.extension.builder
 fun ModerationScreen(
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
-    content: @Composable (ModerationEvent) -> Unit
+    content: @Composable (Moderations) -> Unit
 ) {
     val context = LocalContext.current
     val component = remember {
@@ -46,7 +46,7 @@ fun ModerationScreen(
     val message = stringResource(eu.peernetwork.blog.ui.R.string.action_message)
     val updatedContent by rememberUpdatedState(content)
     val event = remember(state) {
-        ModerationEvent(
+        Moderations(
             onSave = { viewModel.save(it) },
             onReport = { viewModel.report(it) }
         )
@@ -67,7 +67,7 @@ fun ModerationScreen(
 @Composable
 fun ModerationScreen(
     model: UiContent,
-    event: ModerationEvent
+    event: Moderations
 ) {
     var expanded by remember { mutableStateOf(false) }
     val handleOnReport by rememberUpdatedState(event.onReport)

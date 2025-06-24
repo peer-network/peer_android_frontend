@@ -26,11 +26,11 @@ import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import eu.peernetwork.blog.ui.compose.MediaView
 import eu.peernetwork.blog.ui.compose.TextView
-import eu.peernetwork.blog.ui.engagement.EngagementEvent
+import eu.peernetwork.blog.ui.engagement.Engagements
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
 import eu.peernetwork.blog.ui.mapper.mapToContent
 import eu.peernetwork.blog.ui.model.UiVideo
-import eu.peernetwork.blog.ui.moderation.ModerationEvent
+import eu.peernetwork.blog.ui.moderation.Moderations
 import eu.peernetwork.blog.ui.moderation.ModerationScreen
 import eu.peernetwork.core.ui.design.compose.DesignThumbnail
 import eu.peernetwork.media.core.renderer.VideoThumbnail
@@ -41,8 +41,8 @@ fun VideoListing(
     component: Video.Component,
     lazyPagingItems: LazyPagingItems<UiVideo>,
     listState: LazyListState,
-    engagement: EngagementEvent,
-    moderation: ModerationEvent,
+    engagement: Engagements,
+    moderation: Moderations,
     onLoad: (String, Float) -> Unit = { url, ratio -> },
     onLoadBitmap: (String) -> Bitmap?,
     onMentionClick: (String) -> Unit = {},
@@ -66,8 +66,8 @@ fun VideoListing(
                     id = id,
                     post = post,
                     index = index,
-                    engagementEvent = engagement,
-                    moderationEvent = moderation,
+                    engagements = engagement,
+                    moderations = moderation,
                     onAuthorClick = onAuthorClick,
                     onPostClick = onPostClick,
                     onMentionClick = onMentionClick,
@@ -82,15 +82,15 @@ fun VideoListing(
                         DesignThumbnail(post.media, onLoadBitmap(post.media)) {
                             handleLoad(post.media, post.aspectRatio)
                         }
-                    }
-                    component.videoThumbnail()(
-                        Modifier,
-                        VideoThumbnail.Spec(
-                            post.media,
-                            post.aspectRatio,
-                            post.resolution
+                        component.videoThumbnail()(
+                            Modifier,
+                            VideoThumbnail.Spec(
+                                post.media,
+                                post.aspectRatio,
+                                post.resolution
+                            )
                         )
-                    )
+                    }
                 }
             }
         }
@@ -113,8 +113,8 @@ fun VideoListing(
     id: String,
     post: UiVideo,
     index: Int,
-    engagementEvent: EngagementEvent,
-    moderationEvent: ModerationEvent,
+    engagements: Engagements,
+    moderations: Moderations,
     onAuthorClick: (String) -> Unit = {},
     onPostClick: (String, Int) -> Unit,
     onMentionClick: (String) -> Unit = {},
@@ -143,14 +143,14 @@ fun VideoListing(
         },
         engagements = {
             EngagementScreen(
-                event = engagementEvent,
+                event = engagements,
                 model = uiContent,
             )
         },
         moderation = {
             ModerationScreen(
                 uiContent,
-                moderationEvent
+                moderations
             )
         },
         modifier = Modifier.padding(bottom = 16.dp),

@@ -63,12 +63,10 @@ class VideoViewModel @Inject constructor(
         }
     }
 
-    fun thumbnail(thumbnail: String, type: UiMimeType, width: Int, ratio: Float) {
+    fun thumbnail(url: String, type: UiMimeType, width: Int, ratio: Float) {
         viewModelScope.launch {
             try {
-                backgroundUsecase(
-                    BackgroundUsecase.Parameter(thumbnail, type, width, ratio)
-                )
+                backgroundUsecase(BackgroundUsecase.Parameter(url, type, width, ratio))
             } catch (error: Throwable) {
                 error.printStackTrace()
             }

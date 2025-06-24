@@ -46,7 +46,7 @@ fun CreatorFooter(
             isLoading = isLoading.value,
             enabled = isFormValid.value && !isLoading.value,
             shape = RoundedCornerShape(10.dp),
-            contentPadding = PaddingValues(vertical = 4.dp, horizontal = 32.dp),
+            contentPadding = PaddingValues(vertical = 4.dp, horizontal = 16.dp),
             modifier = Modifier.height(36.dp),
         ) {
             Text(

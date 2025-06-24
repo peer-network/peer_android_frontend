@@ -12,10 +12,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
-import eu.peernetwork.app.ui.compose.ContentOverlay
 import eu.peernetwork.blog.ui.post.photo.PhotoOverlay
 import eu.peernetwork.blog.ui.post.video.VideoOverlay
 import eu.peernetwork.core.ui.design.compose.DesignDialogSheet
+import eu.peernetwork.core.ui.design.compose.DesignOverlayPage
 import eu.peernetwork.core.ui.model.ViewModelState
 
 sealed interface ProfileOverlayState {
@@ -56,7 +56,7 @@ fun ProfileOverlay(
             }
         }
     ) {
-        ContentOverlay(
+        DesignOverlayPage(
             modifier = Modifier.fillMaxSize()
                 .statusBarsPadding()
                 .background(MaterialTheme.colorScheme.background)

@@ -17,9 +17,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
@@ -53,7 +55,7 @@ import java.math.BigDecimal
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 fun ConfirmationScreen(
-    token: UiToken,
+    token: UiToken?,
     showSheet: MutableState<Boolean>,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
@@ -70,15 +72,13 @@ fun ConfirmationScreen(
         factory = component.viewModelFactory()
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val handleOnConfirm by rememberUpdatedState(onConfirm)
-    val handleOnDismiss by rememberUpdatedState(onDismiss)
-    val derivedState = remember { derivedStateOf {
+    val derivedState = remember(token) { derivedStateOf {
         when(state) {
             ConfirmationViewModel.State.Empty -> DesignStatefulScaffoldState.Empty
             ConfirmationViewModel.State.Loading -> DesignStatefulScaffoldState.Loading
             is ConfirmationViewModel.State.Success -> {
                 val data = (state as ConfirmationViewModel.State.Success)
-                data.rewards.firstOrNull { it.name == token.name && it.available > 0 }?.let {
+                data.rewards.firstOrNull { it.name == token?.name && it.available > 0 }?.let {
                     DesignStatefulScaffoldState.Success(Pair(data.quote.copy(BigDecimal(0)), data.wallet))
                 } ?: DesignStatefulScaffoldState.Success(Pair(data.quote, data.wallet))
             }
@@ -87,13 +87,12 @@ fun ConfirmationScreen(
             }
         }
     } }
+    val handleOnConfirm by rememberUpdatedState(onConfirm)
+    val handleOnDismiss by rememberUpdatedState(onDismiss)
     DesignBottomSheet(
         showSheet = showSheet,
         tag = "ConfirmationScreen",
-        onDismissRequest = {
-            viewModel.reset()
-            handleOnDismiss()
-        },
+        onDismissRequest = { handleOnDismiss() },
         background = {
             DesignOverlayBackground(
                 state = it,
@@ -102,22 +101,34 @@ fun ConfirmationScreen(
                     .background(MaterialTheme.colorScheme.background.copy(alpha = .6f))
             )
         }
-    ) {
+    ) { visible ->
+        val uiToken = remember(visible.value) { mutableStateOf<UiToken?>(token) }
         DesignStatefulScaffold<Pair<UiQuote, UiWallet>>(
             derivedState,
-            onRefresh = { viewModel.initialize(token) },
+            onRefresh = { uiToken.value?.let { viewModel.initialize(it) } },
             modifier = Modifier
                 .fillMaxWidth()
                 .navigationBarsPadding(),
             placeholder = { ConfirmationScaffold() },
-            errorContent = { ConfirmationError(it, component.resource()) { viewModel.initialize(token) } }
+            errorContent = {
+                ConfirmationError(it, component.resource()) {
+                    uiToken.value?.let { viewModel.initialize(it) }
+                }
+            }
         ) {
-            ConfirmationScreen(
-                token,
-                it.first.value / it.second.rate.toBigDecimal(),
-                it.second.balance,
-                { showSheet.value = false }
-            ) { handleOnConfirm(true) }
+            uiToken.value?.let { value ->
+                ConfirmationScreen(
+                    value,
+                    it.first.value / it.second.rate.toBigDecimal(),
+                    it.second.balance,
+                    { showSheet.value = false }
+                ) { handleOnConfirm(true) }
+            }
+        }
+    }
+    LaunchedEffect(showSheet.value) {
+        if (showSheet.value) {
+            token?.let { viewModel.initialize(it) }
         }
     }
 }

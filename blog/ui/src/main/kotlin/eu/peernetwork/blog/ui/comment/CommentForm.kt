@@ -96,7 +96,7 @@ fun CommentForm(
                     DesignTextButton(
                         onClick = { onSubmit(model.id, comment.text.toString()) },
                         enabled = comment.isValidInput(),
-                        isLoading = isLoading.value,
+                        isLoading = isLoading.value && comment.isValidInput(),
                         contentPadding = PaddingValues(vertical = 8.dp, horizontal = 16.dp)
                     ) {
                         Text(

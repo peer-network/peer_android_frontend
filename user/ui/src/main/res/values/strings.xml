@@ -22,7 +22,7 @@
     <string name="account_label">Account</string>
 
     <string name="posts_label">Posts</string>
-    <string name="feed_label">Friends</string>
+    <string name="feed_label">Feeds</string>
     <string name="follow_label">Follow</string>
     <string name="follower_label">Followers</string>
     <string name="following_label">Following</string>
