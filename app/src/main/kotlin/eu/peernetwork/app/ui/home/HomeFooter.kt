@@ -1,7 +1,6 @@
 package eu.peernetwork.app.ui.home
 
 import android.content.res.Configuration
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,7 +16,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
@@ -34,7 +32,6 @@ fun HomeFooter(
     onClick: (Int, Int) -> Unit,
 ) {
     val handleClick by rememberUpdatedState(onClick)
-    val state = rememberSaveable(start.value) { mutableIntStateOf(start.value) }
     Box(modifier = Modifier
         .fillMaxWidth()
         .background(MaterialTheme.colorScheme.background)
@@ -47,8 +44,7 @@ fun HomeFooter(
         ) {
             HomeRoute.ROUTES.forEachIndexed { index, navigation ->
                 IconButton(onClick = {
-                    handleClick(state.intValue, index)
-                    state.intValue = index
+                    handleClick(start.value, index)
                 }) {
                     Box {
                         Icon(
@@ -56,7 +52,7 @@ fun HomeFooter(
                             painter = painterResource(id = navigation.icon),
                             contentDescription = stringResource(id = navigation.label),
                             modifier = Modifier.size(32.dp).graphicsLayer {
-                                alpha = if (index == state.intValue) 0f else 1f
+                                alpha = if (index == start.value) 0f else 1f
                             }
                         )
                         Icon(
@@ -64,17 +60,13 @@ fun HomeFooter(
                             painter = painterResource(id = navigation.activeIcon),
                             contentDescription = stringResource(id = navigation.label),
                             modifier = Modifier.size(32.dp).graphicsLayer {
-                                alpha = if (index == state.intValue) 1f else 0f
+                                alpha = if (index == start.value) 1f else 0f
                             }
                         )
                     }
                 }
             }
         }
-    }
-    BackHandler(enabled = state.intValue != 0) {
-        handleClick(state.intValue, 0)
-        state.intValue = 0
     }
 }
 

@@ -10,7 +10,6 @@ data class UiDraft(
     val title: String,
     val description: String,
     val media: UiMimeType,
-    val confirmed: Boolean,
     val attachments: List<Uri>,
 ) {
     @Immutable

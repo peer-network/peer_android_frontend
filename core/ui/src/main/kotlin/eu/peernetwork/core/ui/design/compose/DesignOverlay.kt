@@ -188,6 +188,19 @@ fun DesignOverlayHost(
 }
 
 @Composable
+fun DesignOverlayPage(
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit
+) {
+    val updatedContent by rememberUpdatedState(content)
+    DesignTitleBar {
+        Box(modifier = modifier) {
+            updatedContent()
+        }
+    }
+}
+
+@Composable
 fun DesignOverlayBackground(
     state: State<Boolean>,
     modifier: Modifier = Modifier,

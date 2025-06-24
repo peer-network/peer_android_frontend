@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
@@ -21,8 +22,9 @@ fun DesignThumbnail(
     onRefresh: (String) -> Unit,
 ) {
     val handleOnRefresh by rememberUpdatedState(onRefresh)
+    val image = remember(bitmap) { bitmap?.asImageBitmap() }
     Box(modifier = Modifier.fillMaxSize()) {
-        Crossfade(bitmap?.asImageBitmap()) { target ->
+        Crossfade(image) { target ->
             if (target != null) {
                 Image(
                     bitmap = target,
@@ -30,11 +32,12 @@ fun DesignThumbnail(
                     modifier = Modifier.fillMaxSize(),
                     contentScale = contentScale
                 )
-            } else {
-                LaunchedEffect(Unit) {
-                    handleOnRefresh(thumbnail)
-                }
             }
+        }
+    }
+    LaunchedEffect(thumbnail) {
+        if (bitmap == null) {
+            handleOnRefresh(thumbnail)
         }
     }
 }

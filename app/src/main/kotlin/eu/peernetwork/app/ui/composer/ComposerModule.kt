@@ -3,7 +3,9 @@ package eu.peernetwork.app.ui.composer
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
+import eu.peernetwork.app.ui.renderer.EngagementRenderer
 import eu.peernetwork.blog.ui.creator.Creator
+import eu.peernetwork.blog.ui.engagement.EngagementConfirmation
 import eu.peernetwork.core.ui.annotation.UiBuilder
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
@@ -52,5 +54,11 @@ object ComposerModule {
     @UiBuilder(Confirmation.Builder::class)
     fun provideConfirmationBuilder(component: Composer.Component): UiComponent.Builder {
         return Confirmation.Builder(component)
+    }
+
+    @Composer.Scope
+    @Provides
+    fun provideEngagementRenderer(component: Composer.Component): EngagementConfirmation {
+        return EngagementRenderer(component)
     }
 }

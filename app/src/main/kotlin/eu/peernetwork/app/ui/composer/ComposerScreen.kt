@@ -30,7 +30,6 @@ import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.media.core.model.UiAttachment
 import eu.peernetwork.media.ui.attachment.AttachmentPlaceholder
 import eu.peernetwork.media.ui.attachment.AttachmentScreen
-import eu.peernetwork.wallet.ui.confirmation.ConfirmationScreen
 import eu.peernetwork.wallet.ui.model.UiToken
 import kotlinx.coroutines.FlowPreview
 
@@ -46,7 +45,6 @@ fun ComposerScreen(
     }
     val controller = rememberNavController()
     val draft = remember { mutableStateOf<UiDraft?>(null) }
-    val showConfirmation = remember(draft.value) { mutableStateOf(draft.value != null) }
     val attachment = remember { mutableStateOf<UiAttachment>(UiAttachment.Text) }
     val focus = remember { FocusRequester() }
     val intent = UiToken.Post
@@ -80,13 +78,6 @@ fun ComposerScreen(
             }
         }
     }
-    ConfirmationScreen(
-        intent,
-        showConfirmation,
-        component,
-        viewModelStore.get(key),
-        { draft.value = null }
-    ) { draft.value = draft.value?.copy(confirmed = it) }
 }
 
 @Composable

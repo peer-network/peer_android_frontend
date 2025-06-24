@@ -11,11 +11,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
-import eu.peernetwork.app.ui.compose.ContentOverlay
 import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.blog.ui.timeline.photo.PhotoOverlay
 import eu.peernetwork.blog.ui.timeline.video.VideoOverlay
 import eu.peernetwork.core.ui.design.compose.DesignDialogSheet
+import eu.peernetwork.core.ui.design.compose.DesignOverlayPage
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.core.ui.model.ViewModelState
 
@@ -58,7 +58,7 @@ fun FeedOverlay(
             }
         }
     ) {
-        ContentOverlay(
+        DesignOverlayPage(
             modifier = Modifier.fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
         ) {

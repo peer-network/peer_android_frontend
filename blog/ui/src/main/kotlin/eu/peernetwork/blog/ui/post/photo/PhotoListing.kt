@@ -4,32 +4,26 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import eu.peernetwork.blog.ui.compose.PostItem
-import eu.peernetwork.blog.ui.engagement.EngagementEvent
+import eu.peernetwork.blog.ui.compose.PostPager
+import eu.peernetwork.blog.ui.engagement.Engagements
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
 import eu.peernetwork.blog.ui.mapper.mapToContent
 import eu.peernetwork.blog.ui.model.UiPost
-import eu.peernetwork.blog.ui.moderation.ModerationEvent
+import eu.peernetwork.blog.ui.moderation.Moderations
 import eu.peernetwork.blog.ui.moderation.ModerationScreen
-import eu.peernetwork.core.ui.theme.LightAccentColor
 import eu.peernetwork.media.core.renderer.ImageView
 
 @Composable
@@ -38,8 +32,8 @@ fun PhotoListing(
     component: Photo.Component,
     lazyPagingItems: LazyPagingItems<UiPost>,
     listState: LazyListState,
-    engagement: EngagementEvent,
-    moderation: ModerationEvent,
+    engagement: Engagements,
+    moderation: Moderations,
     onMentionClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
     onPostClick: (String, Int) -> Unit,
@@ -56,25 +50,14 @@ fun PhotoListing(
                     onPostClick = onPostClick,
                     onMentionClick = onMentionClick,
                     onHashtagClick = onHashtagClick,
-                    engagementEvent = engagement,
-                    moderationEvent = moderation
+                    engagements = engagement,
+                    moderations = moderation
                 ) {
                     if (photo.media.size > 1) {
-                        Box(contentAlignment = Alignment.BottomEnd) {
-                            val pagerState = rememberPagerState(initialPage = 0) { photo.media.size }
-                            HorizontalPager(state = pagerState) {
-                                val media = photo.media[it]
-                                component.imageView()(
-                                    Modifier,
-                                    ImageView.Spec(media.path, photo.aspectRatio)
-                                )
-                            }
-                            Icon(
-                                painter = painterResource(eu.peernetwork.blog.ui.R.drawable.ic_gallery),
-                                contentDescription = stringResource(eu.peernetwork.blog.ui.R.string.post_description),
-                                tint = LightAccentColor,
-                                modifier = Modifier.padding(16.dp)
-                                    .size(16.dp)
+                        PostPager(photo.media) { path ->
+                            component.imageView()(
+                                Modifier,
+                                ImageView.Spec(path, photo.aspectRatio)
                             )
                         }
                     } else {
@@ -108,8 +91,8 @@ fun LazyItemScope.PhotoListing(
     onMentionClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
     onPostClick: (String, Int) -> Unit,
-    engagementEvent: EngagementEvent,
-    moderationEvent: ModerationEvent,
+    engagements: Engagements,
+    moderations: Moderations,
     content: @Composable (UiPost) -> Unit = {}
 ) {
     val uiContent = post.mapToContent()
@@ -122,12 +105,12 @@ fun LazyItemScope.PhotoListing(
         onHashtagClick = onHashtagClick,
         engagements = { EngagementScreen(
             uiContent,
-            engagementEvent
+            engagements
         ) },
         moderation = {
             ModerationScreen(
                 model = uiContent,
-                event = moderationEvent
+                event = moderations
             )
         },
         content = content

@@ -1,6 +1,7 @@
 package eu.peernetwork.user.ui.user
 
 import android.content.res.Configuration
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -20,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
@@ -124,9 +126,13 @@ fun UserScreen(
     val emptyDescription = stringResource(R.string.empty_description_message)
     ProfileScaffold(
         modifier = modifier,
-        avatar = { DesignAsyncImage(account.username, account.imageUrl, onClick = {
-            selectedImage.value = it
-        }) },
+        avatar = {
+            DesignAsyncImage(
+                account.username,
+                account.imageUrl,
+                modifier = Modifier.clickable(role = Role.Button, enabled = true) {
+                    selectedImage.value = account.imageUrl
+                }) },
         actions = {
             if (settingsHandler != null) {
                 IconButton(onClick = { settingsHandler?.invoke() }) {
