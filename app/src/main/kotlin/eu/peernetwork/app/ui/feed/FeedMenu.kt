@@ -12,8 +12,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -30,8 +32,10 @@ import eu.peernetwork.core.ui.design.compose.DesignTitleBarHost
 fun FeedMenu(
     id: String,
     title: String? = null,
+    onSelect: (Relation) -> Unit,
     onHome: () -> Unit
 ) {
+    val handleOnSelect by rememberUpdatedState(onSelect)
     val relations = mapOf(
         stringResource(UiRelation.ALL.value) to Relation.NONE,
         stringResource(UiRelation.FOLLOWER.value) to Relation.FOLLOWER,
@@ -52,7 +56,10 @@ fun FeedMenu(
                     .background(MaterialTheme.colorScheme.surfaceVariant),
             ) {
                 relations.entries.forEach {
-                    item(tag = it.key, { true }) { label, isActive ->
+                    item(tag = it.key, {
+                        handleOnSelect(it.value)
+                        true
+                    }) { label, isActive ->
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.padding(start = 8.dp)

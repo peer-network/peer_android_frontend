@@ -64,7 +64,7 @@ fun FeedPreview(
     val videoState = rememberLazyListState()
     val coroutine = rememberCoroutineScope()
     val connection by connectionController.observe().collectAsStateWithLifecycle()
-    var relation by rememberSaveable { mutableStateOf(Relation.NONE) }
+    var relation by rememberSaveable { mutableStateOf<Relation>(Relation.NONE) }
     var position by remember { mutableIntStateOf(state.intValue) }
     val handleOnNavigate by rememberUpdatedState(onNavigate)
     FeedPreview(
@@ -116,7 +116,7 @@ fun FeedPreview(
             }
         },
     )
-    FeedMenu(id, title) {
+    FeedMenu(id, title, { relation = it }) {
         coroutine.launch {
             if (position == 0) {
                 photoState.animateScrollToItem(0)
