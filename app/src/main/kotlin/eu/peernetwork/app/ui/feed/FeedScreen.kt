@@ -1,6 +1,7 @@
 package eu.peernetwork.app.ui.feed
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -37,6 +38,11 @@ fun FeedScreen(
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
     val pageState = remember { mutableIntStateOf(state.page) }
+    val ordinal = remember {
+        derivedStateOf {
+            (state as? FeedViewModel.State.Initialize?)?.filter ?: 0
+        }
+    }
     val overlay = remember { mutableStateOf<FeedOverlayState>(FeedOverlayState.Empty) }
     val controller = rememberNavController()
     FeedOverlay(
@@ -59,6 +65,7 @@ fun FeedScreen(
             ) { connectionController ->
                 FeedPreview(
                     id = id,
+                    ordinal = ordinal.value,
                     state = pageState,
                     component = component,
                     viewModelStoreOwner = viewModelStoreOwner,
@@ -70,6 +77,7 @@ fun FeedScreen(
                     onAuthorClick = { controller.navigateIfNecessary("profile/$it") },
                     title = title,
                     onNavigate = { viewModel.lastVisited(it) },
+                    onFilter = { viewModel.setFilter(it) },
                     onPhotoClick = { id, index -> },
                     onVideoClick = { id, index ->
                         component.videoInteractor().save()

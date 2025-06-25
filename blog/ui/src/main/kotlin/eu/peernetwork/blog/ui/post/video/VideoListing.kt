@@ -23,6 +23,7 @@ import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import eu.peernetwork.blog.ui.compose.MediaView
 import eu.peernetwork.blog.ui.compose.TextView
+import eu.peernetwork.blog.ui.compose.ListPreview
 import eu.peernetwork.blog.ui.engagement.Engagements
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
 import eu.peernetwork.blog.ui.mapper.mapToContent
@@ -47,49 +48,52 @@ fun VideoListing(
     onPostClick: (String, Int) -> Unit,
 ) {
     val handleLoad by rememberUpdatedState(onLoad)
-    LazyColumn(state = listState) {
-        items(
-            count = lazyPagingItems.itemCount,
-            key = { index -> lazyPagingItems[index]?.id?.let { "$it;$index" } ?: index }
-        ) { index ->
-            lazyPagingItems[index]?.let { post ->
-                VideoListing(
-                    post = post,
-                    index = index,
-                    onMentionClick = onMentionClick,
-                    onHashtagClick = onHashtagClick,
-                    engagements = engagement,
-                    moderations = moderation,
-                    onPostClick = onPostClick,
-                ) {
-                    Box(
-                        modifier = Modifier.fillMaxWidth()
-                            .aspectRatio(post.aspectRatio)
-                            .background(MaterialTheme.colorScheme.background)
+    ListPreview(listState) { position ->
+        LazyColumn(state = listState) {
+            items(
+                count = lazyPagingItems.itemCount,
+                key = { index -> lazyPagingItems[index]?.id?.let { "$it;$index" } ?: index }
+            ) { index ->
+                lazyPagingItems[index]?.let { post ->
+                    VideoListing(
+                        post = post,
+                        index = index,
+                        onMentionClick = onMentionClick,
+                        onHashtagClick = onHashtagClick,
+                        engagements = engagement,
+                        moderations = moderation,
+                        onPostClick = onPostClick,
                     ) {
-                        DesignThumbnail(post.media, onLoadBitmap(post.media)) {
-                            handleLoad(post.media, post.aspectRatio)
+                        Box(
+                            modifier = Modifier.fillMaxWidth()
+                                .aspectRatio(post.aspectRatio)
+                                .background(MaterialTheme.colorScheme.background)
+                        ) {
+                            DesignThumbnail(post.media, onLoadBitmap(post.media)) {
+                                handleLoad(post.media, post.aspectRatio)
+                            }
                         }
-                    }
-                    component.videoThumbnail()(
-                        Modifier,
-                        VideoThumbnail.Spec(
-                            post.media,
-                            post.aspectRatio,
-                            post.resolution
+                        component.videoThumbnail()(
+                            Modifier,
+                            VideoThumbnail.Spec(
+                                post.media,
+                                post.aspectRatio,
+                                index == position,
+                                post.resolution
+                            )
                         )
-                    )
+                    }
                 }
             }
-        }
-        item(key = author) {
-            Box(
-                modifier = Modifier.fillMaxWidth()
-                    .height(56.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                if (lazyPagingItems.loadState.append is LoadState.Loading) {
-                    CircularProgressIndicator(modifier = Modifier.padding(16.dp))
+            item(key = author) {
+                Box(
+                    modifier = Modifier.fillMaxWidth()
+                        .height(56.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    if (lazyPagingItems.loadState.append is LoadState.Loading) {
+                        CircularProgressIndicator(modifier = Modifier.padding(16.dp))
+                    }
                 }
             }
         }

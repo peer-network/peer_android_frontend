@@ -1,6 +1,5 @@
 package eu.peernetwork.media.ui.renderer
 
-import android.content.Context
 import android.graphics.SurfaceTexture
 import android.view.TextureView
 import android.view.View
@@ -12,10 +11,6 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.CompositingStrategy
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.layout.boundsInRoot
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -25,9 +20,6 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import eu.peernetwork.media.core.renderer.VideoThumbnail
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.distinctUntilChanged
 import javax.inject.Inject
 import androidx.core.view.isVisible
 import eu.peernetwork.media.core.interactor.VideoInteractor
@@ -37,12 +29,8 @@ import eu.peernetwork.media.ui.view.TextureViewWrapper
 import kotlinx.coroutines.launch
 
 class VideoThumbnailDelegate @Inject constructor(
-    private val context: Context,
     private val interactor: VideoInteractor
 ) : VideoThumbnail {
-
-    private val heightPixels: Int get() = context.resources.displayMetrics.heightPixels
-
     private val media = (interactor as MediaPlayer)
 
     @Composable
@@ -53,8 +41,6 @@ class VideoThumbnailDelegate @Inject constructor(
     ) {
         val context = LocalContext.current
         val lifecycleOwner = LocalLifecycleOwner.current
-        val isVisible = remember { mutableStateOf(false) }
-        val shouldPlay = remember { mutableStateOf(false) }
         val scope = rememberCoroutineScope()
         val surfaceView = remember { TextureViewWrapper(TextureView(context)) }
         val dimension = media.observer.collectAsStateWithLifecycle()
@@ -66,7 +52,7 @@ class VideoThumbnailDelegate @Inject constructor(
                     p1: Int,
                     p2: Int
                 ) {
-                    if (shouldPlay.value && !media.expandedMode()) {
+                    if (!media.expandedMode()) {
                         interactor.attach(texture, spec.url)
                     }
                 }
@@ -89,7 +75,7 @@ class VideoThumbnailDelegate @Inject constructor(
             LifecycleEventObserver { _, event ->
                 if (event == Lifecycle.Event.ON_START) {
                     surfaceView.attachCallback(callback)
-                } else if (event == Lifecycle.Event.ON_STOP && !isVisible.value) {
+                } else if (event == Lifecycle.Event.ON_STOP && !spec.isPlaying) {
                     surfaceView.clearCallback()
                 }
             }
@@ -99,23 +85,11 @@ class VideoThumbnailDelegate @Inject constructor(
             modifier = modifier
                 .fillMaxWidth()
                 .aspectRatio(spec.ratio)
-                .graphicsLayer {
-                    compositingStrategy = CompositingStrategy.Offscreen
-                }
-                .onGloballyPositioned { coordinates ->
-                    val rect = coordinates.boundsInRoot()
-                    val threshold = heightPixels / 4
-                    val isNowVisible =
-                        rect.top <= heightPixels - threshold && rect.bottom >= threshold
-                    if (isNowVisible != isVisible.value) {
-                        isVisible.value = isNowVisible
-                    }
-                }
         ) {
             AndroidView(
                 factory = { surfaceView.view },
                 update = {
-                    it.visibility = if (shouldPlay.value) {
+                    it.visibility = if (spec.isPlaying) {
                         View.VISIBLE
                     } else {
                         View.INVISIBLE
@@ -147,20 +121,8 @@ class VideoThumbnailDelegate @Inject constructor(
                 VolumeControl(mute) { scope.launch { interactor.mute(it) } }
             }
         }
-        LaunchedEffect(isVisible.value) {
-            snapshotFlow { isVisible.value }
-                .distinctUntilChanged()
-                .debounce(1000)
-                .collectLatest { shouldPlay.value = it }
-        }
-        LaunchedEffect(Unit) {
+        LaunchedEffect(spec.isPlaying) {
             lifecycleOwner.lifecycle.addObserver(observer)
-        }
-        DisposableEffect(Unit) {
-            onDispose {
-                surfaceView.clearCallback()
-                lifecycleOwner.lifecycle.removeObserver(observer)
-            }
         }
         LaunchedEffect(mute.value) {
             media.player().volume = if (mute.value) {

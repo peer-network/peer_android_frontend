@@ -22,6 +22,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import eu.peernetwork.app.mapper.mapFromDomain
 import eu.peernetwork.app.model.UiRelation
 import eu.peernetwork.blog.domain.model.Relation
 import eu.peernetwork.core.ui.R
@@ -32,6 +33,7 @@ import eu.peernetwork.core.ui.design.compose.DesignTitleBarHost
 fun FeedMenu(
     id: String,
     title: String? = null,
+    relation: Relation,
     onSelect: (Relation) -> Unit,
     onHome: () -> Unit
 ) {
@@ -49,10 +51,10 @@ fun FeedMenu(
             DesignDropDown(
                 expanded,
                 contentPadding = PaddingValues(vertical = 4.dp),
-                default = relations.entries.first().key,
+                default = stringResource(relation.mapFromDomain().value),
                 modifier = Modifier
                     .padding(vertical = 4.dp)
-                    .clip(RoundedCornerShape(4.dp))
+                    .clip(RoundedCornerShape(6.dp))
                     .background(MaterialTheme.colorScheme.surfaceVariant),
             ) {
                 relations.entries.forEach {

@@ -26,6 +26,7 @@ import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import eu.peernetwork.blog.ui.compose.MediaView
 import eu.peernetwork.blog.ui.compose.TextView
+import eu.peernetwork.blog.ui.compose.ListPreview
 import eu.peernetwork.blog.ui.engagement.Engagements
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
 import eu.peernetwork.blog.ui.mapper.mapToContent
@@ -52,56 +53,59 @@ fun VideoListing(
     connection: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit = {}
 ) {
     val handleLoad by rememberUpdatedState(onLoad)
-    LazyColumn(
-        state = listState,
-        modifier = Modifier.fillMaxSize(),
-        flingBehavior = ScrollableDefaults.flingBehavior(),
-    ) {
-        items(
-            count = lazyPagingItems.itemCount,
-            key = { index -> lazyPagingItems[index]?.id?.let { "$it;$index" } ?: index }
-        ) { index ->
-            lazyPagingItems[index]?.let { post ->
-                VideoListing(
-                    id = id,
-                    post = post,
-                    index = index,
-                    engagements = engagement,
-                    moderations = moderation,
-                    onAuthorClick = onAuthorClick,
-                    onPostClick = onPostClick,
-                    onMentionClick = onMentionClick,
-                    onHashtagClick = onHashtagClick,
-                    connection = connection
-                ) {
-                    Box(
-                        modifier = Modifier.fillMaxWidth()
-                            .aspectRatio(post.aspectRatio)
-                            .background(MaterialTheme.colorScheme.background)
+    ListPreview(listState) { position ->
+        LazyColumn(
+            state = listState,
+            modifier = Modifier.fillMaxSize(),
+            flingBehavior = ScrollableDefaults.flingBehavior(),
+        ) {
+            items(
+                count = lazyPagingItems.itemCount,
+                key = { index -> lazyPagingItems[index]?.id?.let { "$it;$index" } ?: index }
+            ) { index ->
+                lazyPagingItems[index]?.let { post ->
+                    VideoListing(
+                        id = id,
+                        post = post,
+                        index = index,
+                        engagements = engagement,
+                        moderations = moderation,
+                        onAuthorClick = onAuthorClick,
+                        onPostClick = onPostClick,
+                        onMentionClick = onMentionClick,
+                        onHashtagClick = onHashtagClick,
+                        connection = connection
                     ) {
-                        DesignThumbnail(post.media, onLoadBitmap(post.media)) {
-                            handleLoad(post.media, post.aspectRatio)
-                        }
-                        component.videoThumbnail()(
-                            Modifier,
-                            VideoThumbnail.Spec(
-                                post.media,
-                                post.aspectRatio,
-                                post.resolution
+                        Box(
+                            modifier = Modifier.fillMaxWidth()
+                                .aspectRatio(post.aspectRatio)
+                                .background(MaterialTheme.colorScheme.background)
+                        ) {
+                            DesignThumbnail(post.media, onLoadBitmap(post.media)) {
+                                handleLoad(post.media, post.aspectRatio)
+                            }
+                            component.videoThumbnail()(
+                                Modifier,
+                                VideoThumbnail.Spec(
+                                    post.media,
+                                    post.aspectRatio,
+                                    index == position,
+                                    post.resolution
+                                )
                             )
-                        )
+                        }
                     }
                 }
             }
-        }
-        item(key = id) {
-            Box(
-                modifier = Modifier.fillMaxWidth()
-                    .height(56.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                if (lazyPagingItems.loadState.append is LoadState.Loading) {
-                    CircularProgressIndicator(modifier = Modifier.padding(16.dp))
+            item(key = id) {
+                Box(
+                    modifier = Modifier.fillMaxWidth()
+                        .height(56.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    if (lazyPagingItems.loadState.append is LoadState.Loading) {
+                        CircularProgressIndicator(modifier = Modifier.padding(16.dp))
+                    }
                 }
             }
         }
