@@ -23,7 +23,7 @@ fun PostIcon(
     action: UiAction,
     value: String,
     isHorizontal: Boolean = true,
-    color: Color = MaterialTheme.colorScheme.tertiary,
+    color: Color = Color.White,
     onClick: (UiAction) -> Unit,
 ) {
     val clickHandler = remember(action) { { onClick(action) } }

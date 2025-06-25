@@ -55,6 +55,8 @@ fun VideoControl(
     onMute: (Boolean) -> Unit,
     durationMillis: Int = 1000,
     easing: Easing = FastOutSlowInEasing,
+    showProgress: Boolean = true,
+    showVolume:   Boolean = true,
     onPlay: () -> Unit
 ) {
     val infiniteTransition = rememberInfiniteTransition()
@@ -111,6 +113,7 @@ fun VideoControl(
                 .padding(24.dp)
                 .navigationBarsPadding()
         ) {
+            if (showProgress) {
             Box(
                 modifier = Modifier
                     .weight(1f)
@@ -136,7 +139,10 @@ fun VideoControl(
                         .background(MaterialTheme.colorScheme.tertiary)
                 )
             }
+            }
+            if (showVolume) {
             VolumeControl(mute, onMute)
+            }
         }
     }
 }
@@ -152,7 +158,9 @@ fun PreviewVideoControl() {
             remember { mutableStateOf(false) },
             remember { mutableFloatStateOf(0.5f) },
             {},
-            {}
+            {},
+            showProgress = true,
+            showVolume   = true
         ) {}
     }
 }

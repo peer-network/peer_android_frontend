@@ -49,6 +49,7 @@ class VideoPlayerDelegate @Inject constructor(
         spec: VideoPlayer.Spec
     ) {
         val player = remember { media.player() }
+        LaunchedEffect(player) { spec.onPlayerReady(player) }
         val lifecycleOwner = LocalLifecycleOwner.current
         var session by remember { mutableLongStateOf(System.currentTimeMillis()) }
         var isReady by remember { mutableStateOf(false) }
@@ -73,6 +74,9 @@ class VideoPlayerDelegate @Inject constructor(
                             Player.EVENT_TIMELINE_CHANGED)) {
                         totalDuration = player.duration.coerceAtLeast(1L)
                         progress.floatValue = player.currentPosition.toFloat() / totalDuration
+
+                        spec.onProgress(player.currentPosition, totalDuration)
+
                     }
                 }
             }
@@ -148,10 +152,14 @@ class VideoPlayerDelegate @Inject constructor(
                 mute = mute,
                 progress = progress,
                 onMute = { scope.launch { interactor.mute(it) } },
-                onUpdate = {
-                    progress.floatValue = it
-                    player.seekTo((totalDuration * it).toLong())
-                }
+                onUpdate = { fraction ->
+                    progress.floatValue = fraction
+                    val target = (totalDuration * fraction).toLong()
+                    spec.onSeek(target)
+                    player.seekTo(target)
+                },
+                showProgress  = false,
+                showVolume    = false
             ) {
                 if (!player.isPlaying) {
                     player.play()

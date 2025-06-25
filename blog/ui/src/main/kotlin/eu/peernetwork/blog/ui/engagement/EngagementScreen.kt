@@ -1,6 +1,8 @@
 package eu.peernetwork.blog.ui.engagement
 
 import android.widget.Toast
+import androidx.compose.animation.core.AnimationConstants.DefaultDurationMillis
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -29,6 +31,10 @@ import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.extension.toInt
 import eu.peernetwork.core.ui.theme.LightAccentColor
 import eu.peernetwork.core.ui.theme.PeerAppRed
+import androidx.compose.foundation.layout.Column
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
@@ -136,32 +142,41 @@ fun EngagementScreen(
 fun EngagementScreen(
     model: UiContent,
     event: Engagements,
+    vertical  : Boolean = false,           //  ← NEW, default keeps old behaviour
+    modifier  : Modifier  = Modifier
 ) {
     val engagement by remember(model) { derivedStateOf { event.onLoad(model) } }
     val handleOnLike by rememberUpdatedState(event.onLike)
     val handleOnDisLike by rememberUpdatedState(event.onDisLike)
     val handleOnComment by rememberUpdatedState(event.onComment)
-    Row {
+    val container: @Composable (@Composable () -> Unit) -> Unit =
+        if (vertical) {
+            { content -> Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement  = Arrangement.spacedBy(12.dp),
+                modifier             = modifier
+            ) { content() } }
+        } else {
+            { content -> Row(modifier = modifier) { content() } }
+        }
+
+    container {
+
         PostIcon(
             action = UiAction.Like,
-            value = engagement.likes.toString(),
-            color = if (engagement.isLiked) {
-                PeerAppRed
-            } else {
-                MaterialTheme.colorScheme.tertiary
-            },
+            value  = engagement.likes.toString(),
+            color  = if (engagement.isLiked) PeerAppRed else MaterialTheme.colorScheme.tertiary
         ) { handleOnLike(engagement) }
+
         PostIcon(
             action = UiAction.Dislike,
-            value = engagement.dislikes.toString(),
-            color = if (engagement.isDisliked) {
-                LightAccentColor
-            } else {
-                MaterialTheme.colorScheme.tertiary
-            },
+            value  = engagement.dislikes.toString(),
+            color  = if (engagement.isDisliked) LightAccentColor else MaterialTheme.colorScheme.tertiary
         ) { handleOnDisLike(engagement) }
-        PostIcon(UiAction.Comment, engagement.comment.toString()) {
-            handleOnComment(model)
-        }
+
+        PostIcon(
+            action = UiAction.Comment,
+            value  = engagement.comment.toString()
+        ) { handleOnComment(model) }
     }
 }

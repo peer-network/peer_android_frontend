@@ -1,6 +1,7 @@
 package eu.peernetwork.app.ui.feed
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -10,11 +11,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.rememberNavController
 import eu.peernetwork.blog.domain.model.Filter.Criteria
+import eu.peernetwork.blog.ui.engagement.EngagementScreen
+import eu.peernetwork.blog.ui.moderation.ModerationScreen
 import eu.peernetwork.blog.ui.timeline.photo.PhotoOverlay
+import eu.peernetwork.blog.ui.timeline.video.Video
 import eu.peernetwork.blog.ui.timeline.video.VideoOverlay
 import eu.peernetwork.core.ui.design.compose.DesignDialogSheet
+import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.design.compose.DesignOverlayPage
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.core.ui.model.ViewModelState
@@ -41,12 +47,14 @@ fun FeedOverlay(
     criteria: Criteria? = null,
     component: Feed.Component,
     viewModelStore: ViewModelState,
+    connection: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit = {},
     content: @Composable () -> Unit
 ) {
     val key = remember { System.currentTimeMillis().toString() }
     val updatedContent by rememberUpdatedState(content)
     val viewModelStoreOwner = viewModelStore.get(criteria?.toString() ?: userId)
     val visible = remember(overlay.value) { mutableStateOf(overlay.value !is FeedOverlayState.Empty) }
+    val context = LocalContext.current
     updatedContent()
     DesignDialogSheet(
         key,
@@ -86,16 +94,44 @@ fun FeedOverlay(
                     }
                     is FeedOverlayState.Video -> {
                         val state = (overlay.value as FeedOverlayState.Video)
-                        VideoOverlay(
-                            postLimit,
-                            state.position,
-                            visible.value,
-                            component,
-                            viewModelStoreOwner,
-                            onMentionClick = { controller.navigateToUsernameSearch(it) },
-                            onHashtagClick = { controller.navigateToTagSearch(it) },
-                            onAuthorClick = { controller.navigateIfNecessary("profile/$it") },
-                        )
+
+                        val videoComponent = remember {
+                            component.builder(Video.Builder::class.java)
+                                .build(context)
+                        }
+                        EngagementScreen(
+                            postLimit           = postLimit,
+                            refresh             = remember { mutableStateOf(true) },
+                            onMentionClick      = { controller.navigateToUsernameSearch(it) },
+                            onHashtagClick      = { controller.navigateToTagSearch(it) },
+                            onAuthorClick       = { controller.navigateIfNecessary("profile/$it") },
+                            provider            = videoComponent,
+                            viewModelStoreOwner = viewModelStoreOwner
+                        ) { engagementEvent ->
+
+                            ModerationScreen(
+                                provider            = videoComponent,
+                                viewModelStoreOwner = viewModelStoreOwner
+                            ) { moderationEvent ->
+
+                                VideoOverlay(
+                                    id                   = userId,
+                                    limit                = postLimit,
+                                    position             = state.position,
+                                    enabled              = visible.value,
+                                    provider             = component,
+                                    viewModelStoreOwner  = viewModelStoreOwner,
+                                    onAuthorClick        = { controller.navigateIfNecessary("profile/$it") },
+                                    onMentionClick       = { controller.navigateToUsernameSearch(it) },
+                                    onHashtagClick       = { controller.navigateToTagSearch(it) },
+                                    connection           = connection,
+                                    engagementEvent      = engagementEvent,
+                                    moderationEvent      = moderationEvent
+                                )
+                            }
+                        }
+
+
                     }
                     else -> {}
                 }

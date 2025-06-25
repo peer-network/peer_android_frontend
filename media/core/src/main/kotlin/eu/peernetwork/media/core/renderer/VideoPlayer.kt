@@ -1,5 +1,6 @@
 package eu.peernetwork.media.core.renderer
 
+import androidx.media3.exoplayer.ExoPlayer
 import eu.peernetwork.core.ui.renderer.Renderer
 
 interface VideoPlayer : Renderer.Stateful<VideoPlayer.Spec> {
@@ -9,5 +10,8 @@ interface VideoPlayer : Renderer.Stateful<VideoPlayer.Spec> {
         val resolution: Pair<Int, Int>? = null,
         val enabled: Boolean = false,
         val volume: Float = 0f,
+        var onProgress : (positionMs: Long, durationMs: Long) -> Unit = { _, _ -> },
+        val onSeek     : (positionMs: Long) -> Unit = {},
+        val onPlayerReady: (ExoPlayer) -> Unit = { }
     )
 }
