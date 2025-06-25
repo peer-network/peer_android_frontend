@@ -11,4 +11,8 @@
     <string name="mention_label">username</string>
 
     <string name="notification_caption">Open Peer to keep the conversation going.</string>
+
+    <string name="version_update_title">Update Required</string>
+    <string name="version_update_action">Update Now</string>
+    <string name="version_update_message">This version of the app is outdated. Please update to continue.</string>
 </resources>

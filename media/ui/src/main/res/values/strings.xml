@@ -8,5 +8,7 @@
 
     <string name="gallery">Select media</string>
     <string name="media_label">Upload media</string>
+    <string name="mute_label">Mute</string>
+    <string name="un_mute_label">Un-mute</string>
     <string name="remove_label">Delete media</string>
 </resources>

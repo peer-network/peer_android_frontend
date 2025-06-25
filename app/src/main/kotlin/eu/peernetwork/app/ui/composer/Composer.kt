@@ -20,7 +20,13 @@ interface Composer : ApplicationProvider {
         dependencies = [ Composer::class ],
         modules = [ ComposerModule::class ]
     )
-    interface Component : Composer, Author, Creator, Explorer, Attachment, Confirmation, UiComponentProvider
+    interface Component : Composer,
+        Author,
+        Creator,
+        Explorer,
+        Attachment,
+        Confirmation,
+        UiComponentProvider
 
     class Builder(private val dependency: Composer) : UiComponent.DefaultBuilder<Composer, Component>() {
         override fun build(context: Context): Component {

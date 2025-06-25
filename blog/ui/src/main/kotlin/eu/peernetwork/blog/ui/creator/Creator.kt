@@ -3,11 +3,14 @@ package eu.peernetwork.blog.ui.creator
 import android.content.Context
 import androidx.lifecycle.ViewModelProvider
 import eu.peernetwork.blog.ui.author.Author
+import eu.peernetwork.blog.ui.engagement.EngagementConfirmation
 import eu.peernetwork.blog.ui.provider.BlogProvider
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
 
 interface Creator : BlogProvider {
+    fun engagementConfirmation(): EngagementConfirmation
+
     @javax.inject.Scope
     @Retention(AnnotationRetention.RUNTIME)
     annotation class Scope
@@ -23,7 +26,7 @@ interface Creator : BlogProvider {
 
     class Builder(private val dependency: Creator) : UiComponent.DefaultBuilder<Creator, Component>() {
         override fun build(context: Context): Component {
-            return DaggerCreator_Component.builder().creator(dependency).build()
+            return DaggerCreator_Component.builder().creator(dependency).creatorModule(CreatorModule(context)).build()
         }
     }
 }

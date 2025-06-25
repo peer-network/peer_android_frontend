@@ -11,6 +11,8 @@ fun Type.mapToFilter(): PostFilterType {
         Type.AUDIO -> PostFilterType.AUDIO
         Type.IMAGE -> PostFilterType.IMAGE
         Type.VIDEO -> PostFilterType.VIDEO
+        Type.FOLLOWED -> PostFilterType.FOLLOWED
+        Type.FOLLOWER -> PostFilterType.FOLLOWER
     }
 }
 

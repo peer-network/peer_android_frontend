@@ -1,41 +1,62 @@
 package eu.peernetwork.app.ui.profile
 
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.setValue
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.app.ui.search.SearchScreen
 import eu.peernetwork.app.ui.search.SearchState
 import eu.peernetwork.app.ui.settings.SettingsScreen
-import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.compose.DesignRouter
+import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.core.ui.model.ViewModelState
 
 @Composable
 fun ProfileNavigation(
     userId: String,
-    provider: UiComponentProvider,
+    title: String?,
+    limit: Int,
+    startDestination: String? = null,
+    controller: NavHostController,
+    component: Profile.Component,
     viewModelStore: ViewModelState,
-    profile: @Composable (String, NavHostController) -> Unit
+    onPhotoClick: (String, Int) -> Unit = { id, position -> },
+    onVideoClick: (String, Int) -> Unit = { id, position -> },
+    content: @Composable (NavHostController) -> Unit = {}
 ) {
-    val controller = rememberNavController()
-    val updatedProfile by rememberUpdatedState(profile)
-    var id by remember { mutableStateOf<String>("") }
-    DesignRouter(navController = controller, startDestination = "profile/$userId") {
+    val updatedContent by rememberUpdatedState(content)
+    DesignRouter(
+        navController = controller,
+        startDestination = startDestination ?: "profile/$userId"
+    ) {
+        composable("overlay") { updatedContent(controller) }
         composable(
             "profile/{id}",
             arguments = listOf(navArgument("id") { this.type = NavType.StringType })
         ) { backStackEntry ->
-            id = backStackEntry.arguments?.getString("id") ?: ""
-            updatedProfile(id, controller)
+            val id = backStackEntry.arguments?.getString("id") ?: ""
+            val photoState = rememberLazyListState()
+            val videoState = rememberLazyListState()
+            ProfilePreview(
+                id = id,
+                title = title,
+                limit = limit,
+                onSettings = { controller.navigateIfNecessary("settings") },
+                component = component,
+                viewModelStoreOwner = viewModelStore.get(id),
+                photoState = photoState,
+                videoState = videoState,
+                onPhotoClick = onPhotoClick,
+                onVideoClick = onVideoClick,
+                onHashtagClick = { controller.navigateToTagSearch(it) },
+                onMentionClick = { controller.navigateToUsernameSearch(it) },
+                onAuthorClicked = { controller.navigateIfNecessary("profile/$it") },
+            )
         }
         composable("settings") { SettingsScreen(userId, provider, viewModelStore) }
         composable(
@@ -55,7 +76,7 @@ fun ProfileNavigation(
             SearchScreen(
                 id = userId,
                 postLimit = BuildConfig.PAGING_LIMIT,
-                provider = provider,
+                provider = component,
                 viewModelStore = viewModelStore,
                 searchState = searchState,
             )

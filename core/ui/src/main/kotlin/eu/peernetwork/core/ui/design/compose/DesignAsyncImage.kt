@@ -36,7 +36,8 @@ fun DesignAsyncImage(
     )
 ) {
     val isAvatarLoaded = remember { mutableStateOf(false) }
-    Box(modifier = modifier.size(size).background(color)) {
+    Box(modifier = modifier.size(size)
+        .background(color)) {
         AsyncImage(
             model = imageUrl,
             modifier = Modifier.fillMaxSize(),

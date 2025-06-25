@@ -36,10 +36,10 @@ import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffold
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
+import eu.peernetwork.core.ui.design.compose.DesignThumbnail
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.media.core.model.UiMimeType
 import eu.peernetwork.media.core.model.UiDirectory
-import eu.peernetwork.media.ui.thumbnail.ThumbnailScreen
 
 @Composable
 fun DirectoryScreen(
@@ -72,56 +72,54 @@ fun DirectoryScreen(
             }
         }
     }
+    val thumbnail = viewModel.thumbnail.collectAsStateWithLifecycle().value
     DesignStatefulScaffold<Set<UiDirectory>>(
         state = derivedState,
         onRefresh = { viewModel.initialize(type) },
         contentAlignment = Alignment.TopCenter,
         modifier = Modifier.fillMaxSize()
     ) {
-        ThumbnailScreen(
-            type = type,
-            provider = component,
-            viewModelStoreOwner = viewModelStoreOwner
-        ) { thumbnail, onLoad ->
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(3),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                modifier = Modifier.padding(horizontal = 18.dp)
-                    .padding(top = 8.dp)
-            ) {
-                items(it.size) { index ->
-                    val item = it.elementAt(index)
-                    key(item.name) {
-                        Box(
-                            contentAlignment = Alignment.BottomStart,
-                            modifier = Modifier.aspectRatio(1f)
-                                .clip(RoundedCornerShape(24.dp))
-                                .background(MaterialTheme.colorScheme.surfaceVariant)
-                                .clickable(role = Role.Button) {
-                                    onSelect(item.path)
-                                }
-                        ) {
-                            ThumbnailScreen(item.thumbnail, thumbnail, onLoad)
-                            Image(
-                                painter = painterResource(R.drawable.overlay_gradient),
-                                contentDescription = null,
-                                modifier = Modifier.fillMaxSize(),
-                                contentScale = ContentScale.Crop
-                            )
-                            Text(
-                                item.name,
-                                style = MaterialTheme.typography.bodySmall.copy(
-                                    color = MaterialTheme.colorScheme.tertiary
-                                ),
-                                modifier = Modifier.padding(12.dp)
-                            )
-                        }
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(3),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            modifier = Modifier.padding(horizontal = 18.dp)
+                .padding(top = 8.dp)
+        ) {
+            items(it.size) { index ->
+                val item = it.elementAt(index)
+                key(item.name) {
+                    Box(
+                        contentAlignment = Alignment.BottomStart,
+                        modifier = Modifier.aspectRatio(1f)
+                            .clip(RoundedCornerShape(24.dp))
+                            .background(MaterialTheme.colorScheme.surfaceVariant)
+                            .clickable(role = Role.Button) {
+                                onSelect(item.path)
+                            }
+                    ) {
+                        DesignThumbnail(
+                            item.thumbnail,
+                            thumbnail[item.thumbnail],
+                        ) { viewModel.thumbnail(it, type) }
+                        Image(
+                            painter = painterResource(R.drawable.overlay_gradient),
+                            contentDescription = null,
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop
+                        )
+                        Text(
+                            item.name,
+                            style = MaterialTheme.typography.bodySmall.copy(
+                                color = MaterialTheme.colorScheme.tertiary
+                            ),
+                            modifier = Modifier.padding(12.dp)
+                        )
                     }
                 }
-                item(span = { GridItemSpan(maxLineSpan) }) {
-                    Box(modifier = Modifier.height(56.dp))
-                }
+            }
+            item(span = { GridItemSpan(maxLineSpan) }) {
+                Box(modifier = Modifier.height(56.dp))
             }
         }
     }

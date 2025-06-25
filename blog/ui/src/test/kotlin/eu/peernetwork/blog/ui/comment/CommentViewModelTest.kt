@@ -1,11 +1,14 @@
 package eu.peernetwork.blog.ui.comment
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.compose.ui.text.AnnotatedString
 import androidx.paging.PagingData
 import app.cash.turbine.test
 import eu.peernetwork.blog.domain.model.Comment
 import eu.peernetwork.blog.domain.usecase.CommentLikeUsecase
+import eu.peernetwork.blog.domain.usecase.CommentUpdateUsecase
 import eu.peernetwork.blog.domain.usecase.CommentUsecase
+import eu.peernetwork.blog.ui.model.UiAuthor
 import eu.peernetwork.blog.ui.model.UiComment
 import eu.peernetwork.blog.ui.usecase.CommentsUsecase
 import eu.peernetwork.core.common.model.Pageable
@@ -35,6 +38,8 @@ internal class CommentViewModelTest {
 
     private val commentsUsecase = mockk<CommentsUsecase>()
 
+    private val updateUsecase = mockk<CommentUpdateUsecase>()
+
     private val commentLikeUsecase = mockk<CommentLikeUsecase>()
 
     private lateinit var viewModel: CommentViewModel
@@ -42,7 +47,8 @@ internal class CommentViewModelTest {
     @Before
     fun setup() {
         Dispatchers.setMain(dispatcher)
-        viewModel = CommentViewModel(usecase, commentsUsecase, commentLikeUsecase)
+        coEvery { updateUsecase(any()) } returns Unit
+        viewModel = CommentViewModel(usecase, commentsUsecase, updateUsecase, commentLikeUsecase)
     }
 
     @Test
@@ -53,7 +59,7 @@ internal class CommentViewModelTest {
         every { commentsUsecase(any()) } returns flowOf(pager)
         viewModel.load(id, Pageable(0, 1))
         viewModel.state.test {
-            assertTrue(awaitItem() is CommentViewModel.State.Content)
+            assertTrue(awaitItem() is CommentViewModel.State.Success)
         }
     }
 
@@ -65,8 +71,8 @@ internal class CommentViewModelTest {
         coEvery { mock.id } returns id
         coEvery { usecase(any()) } returns mock
         viewModel.comment(id, comment)
-        viewModel.state.test {
-            assertEquals(CommentViewModel.State.Comment(id = id), awaitItem())
+        viewModel.status.test {
+            assertEquals(CommentViewModel.Status.Success(CommentViewModel.Intent.Comment, id), awaitItem())
         }
     }
 
@@ -79,28 +85,36 @@ internal class CommentViewModelTest {
         coEvery { mock.id } returns id
         coEvery { usecase(any()) } throws error
         viewModel.comment(id, comment)
-        viewModel.state.test {
-            assertEquals(CommentViewModel.State.Error(error), awaitItem())
+        viewModel.status.test {
+            assertEquals(CommentViewModel.Status.Error(CommentViewModel.Intent.Comment, error), awaitItem())
         }
     }
 
     @Test
     fun `test like comment success`() = runTest {
         val id = "<post-id>"
-        val mock = mockk<UiComment>(relaxed = true)
+        val mock = UiComment(
+            id = id,
+            author = mockk<UiAuthor>(relaxed = true),
+            content = mockk<AnnotatedString>(relaxed = true),
+            createdAt = System.currentTimeMillis(),
+            likes = 0,
+            isLiked = false
+        )
         val mockData = mockk<UiComment>()
         val pager = PagingData.from(listOf(mockData))
         val mockContent = flowOf(pager)
-        coEvery { mock.id } returns id
-        coEvery { mock.likes } returns 0
-        coEvery { mock.isLiked } returns false
         coEvery { commentLikeUsecase(any()) } returns Unit
         every { commentsUsecase(any()) } returns mockContent
         viewModel.load(id, Pageable(0, 1))
         viewModel.like(mock)
-        viewModel.state.test {
-            val content = awaitItem() as? CommentViewModel.State.Content?
-            assertEquals(content?.likes, setOf(mock.copy(likes = 1, isLiked = true)))
+        viewModel.status.test {
+            val content = awaitItem() as? CommentViewModel.Status.Success<*>?
+            assertEquals(content?.content, id)
+        }
+        viewModel.likes.test {
+            val content = awaitItem() as? Map<String, UiComment>?
+            assertEquals(content?.get(id), mock.copy(likes = 1, isLiked = true))
         }
     }
 
@@ -117,8 +131,8 @@ internal class CommentViewModelTest {
         every { commentsUsecase(any()) } returns mockContent
         viewModel.load(id, Pageable(0, 1))
         viewModel.like(mock)
-        viewModel.state.test {
-            val content = awaitItem() as? CommentViewModel.State.Content?
+        viewModel.status.test {
+            val content = awaitItem() as? CommentViewModel.Status.Error
             assertEquals(content?.error, error)
         }
     }

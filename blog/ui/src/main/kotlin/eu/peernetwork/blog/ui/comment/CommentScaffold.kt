@@ -10,8 +10,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import eu.peernetwork.blog.ui.model.UiContent
@@ -29,20 +31,28 @@ fun CommentScaffold(
     content: @Composable (State<Boolean>) -> Unit
 ) {
     val showSheet = remember(state.value) { mutableStateOf(state.value != null) }
+    val updatedSheet by rememberUpdatedState(sheet)
+    val updatedContent by rememberUpdatedState(content)
     DesignBottomSheet(
         showSheet = showSheet,
         tag = "commentBottomSheet#${tag}",
         modifier = modifier,
         onDismissRequest = { state.value = null },
+        onAnimationComplete = {
+            if (!it) {
+                state.value = null
+            }
+        },
         color = MaterialTheme.colorScheme.tertiaryContainer,
         background = {
             DesignOverlayBackground(
                 state = it,
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier
+                    .fillMaxSize()
                     .background(MaterialTheme.colorScheme.background.copy(alpha = .6f))
             )
         },
-        content = { content(it) }
+        content = { updatedContent(it) }
     )
     DesignDialogSheet(
         "commentDesignBottomSheet#${tag}",
@@ -55,7 +65,7 @@ fun CommentScaffold(
             .background(MaterialTheme.colorScheme.tertiaryContainer)
             .navigationBarsPadding()
             .fillMaxWidth()) {
-            sheet(overlayState)
+            updatedSheet(overlayState)
         }
     }
 }

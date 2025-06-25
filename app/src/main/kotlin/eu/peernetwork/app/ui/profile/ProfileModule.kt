@@ -3,8 +3,10 @@ package eu.peernetwork.app.ui.profile
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
+import eu.peernetwork.app.ui.renderer.EngagementRenderer
 import eu.peernetwork.app.ui.search.Search
 import eu.peernetwork.app.ui.settings.Settings
+import eu.peernetwork.blog.ui.engagement.EngagementConfirmation
 import eu.peernetwork.blog.ui.post.photo.Photo
 import eu.peernetwork.blog.ui.post.video.Video
 import eu.peernetwork.core.ui.annotation.UiBuilder
@@ -16,6 +18,7 @@ import eu.peernetwork.social.ui.followers.Followers
 import eu.peernetwork.social.ui.followings.Followings
 import eu.peernetwork.social.ui.peers.Peers
 import eu.peernetwork.user.ui.user.User
+import eu.peernetwork.wallet.ui.confirmation.Confirmation
 
 @Module
 object ProfileModule {
@@ -93,5 +96,19 @@ object ProfileModule {
     @UiBuilder(Peers.Builder::class)
     fun providePeersBuilder(component: Profile.Component): UiComponent.Builder {
         return Peers.Builder(component)
+    }
+
+    @Profile.Scope
+    @Provides
+    @IntoMap
+    @UiBuilder(Confirmation.Builder::class)
+    fun provideConfirmationBuilder(component: Profile.Component): UiComponent.Builder {
+        return Confirmation.Builder(component)
+    }
+
+    @Profile.Scope
+    @Provides
+    fun provideEngagementRenderer(component: Profile.Component): EngagementConfirmation {
+        return EngagementRenderer(component)
     }
 }

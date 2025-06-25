@@ -24,26 +24,25 @@ class ConfirmationViewModel @Inject constructor(
 ) : ViewModel() {
     private val mutableState = MutableStateFlow<State>(State.Empty)
 
+    private val quotes = HashMap<UiToken, UiQuote>()
+
     val state: StateFlow<State> = mutableState.asStateFlow()
 
     fun initialize(token: UiToken) {
         viewModelScope.launch {
             mutableState.tryEmit(State.Loading)
             try {
+                val quote = quotes.getOrPut(token) {
+                    quoteUsecase(token.mapToDomain()).mapFromDomain()
+                }
                 mutableState.tryEmit(State.Success(
-                    quoteUsecase(token.mapToDomain()).mapFromDomain(),
+                    quote,
                     overview().mapFromDomain(),
                     rewardUsecase().map { it.mapFromDomain() }
                 ))
             } catch (error: Throwable) {
                 mutableState.tryEmit(State.Error(error))
             }
-        }
-    }
-
-    fun reset() {
-        viewModelScope.launch {
-            mutableState.tryEmit(State.Empty)
         }
     }
 

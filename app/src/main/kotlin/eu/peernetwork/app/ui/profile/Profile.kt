@@ -13,6 +13,7 @@ import eu.peernetwork.social.ui.followers.Followers
 import eu.peernetwork.social.ui.followings.Followings
 import eu.peernetwork.social.ui.peers.Peers
 import eu.peernetwork.user.ui.user.User
+import eu.peernetwork.wallet.ui.confirmation.Confirmation
 
 interface Profile : ApplicationProvider {
     @javax.inject.Scope
@@ -34,7 +35,8 @@ interface Profile : ApplicationProvider {
         Followers,
         Followings,
         Peers,
-        Connection
+        Connection,
+        Confirmation
 
     class Builder(private val dependency: Profile) : UiComponent.DefaultBuilder<Profile, Component>() {
         override fun build(context: Context): Component {

@@ -10,8 +10,8 @@ import org.apache.commons.lang3.StringEscapeUtils
 fun CreatePostMutation.AffectedRows.mapToDomain(url: String, media: List<Media>): Content {
     return Content(
         id = id,
-        title = StringEscapeUtils.unescapeJava(title).replace("\\'", "'"),
-        description = StringEscapeUtils.unescapeJava(mediadescription).replace("\\'", "'"),
+        title = StringEscapeUtils.unescapeJava(title).replace("\\'", "'").replace("\\\"", "\""),
+        description = StringEscapeUtils.unescapeJava(mediadescription).replace("\\'", "'").replace("\\\"", "\""),
         media = media,
         author = Author(
             id = user.id,
@@ -34,8 +34,8 @@ fun CreatePostMutation.AffectedRows.mapToDomain(url: String, media: List<Media>)
 fun GetallpostsQuery.AffectedRow.mapToDomain(url: String, media: List<Media>): Content {
     return Content(
         id = id,
-        title = StringEscapeUtils.unescapeJava(title).replace("\\'", "'"),
-        description = StringEscapeUtils.unescapeJava(mediadescription).replace("\\'", "'"),
+        title = StringEscapeUtils.unescapeJava(title).replace("\\'", "'").replace("\\\"", "\""),
+        description = StringEscapeUtils.unescapeJava(mediadescription).replace("\\'", "'").replace("\\\"", "\""),
         media = media,
         author = Author(
             id = user.id,

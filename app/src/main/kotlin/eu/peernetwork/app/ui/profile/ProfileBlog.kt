@@ -10,6 +10,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -29,13 +31,16 @@ fun ProfileBlog(
     limit: Int,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
+    onNavigate: (Int) -> Unit = {},
     onMentionClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
-    imageOnClick: (String) -> Unit = {},
+    onAuthorClicked: (String) -> Unit = {},
+    onPhotoClick: (String, Int) -> Unit = { id, position -> },
+    onVideoClick: (String, Int) -> Unit = { id, position -> },
     photoState: LazyListState,
     videoState: LazyListState
 ) {
-    ProfileBlog { offset ->
+    ProfileBlog(onNavigate) { offset ->
         when (offset) {
             0 -> PhotoScreen(
                 id,
@@ -45,7 +50,8 @@ fun ProfileBlog(
                 viewModelStoreOwner,
                 onMentionClick,
                 onHashtagClick,
-                imageOnClick,
+                onPhotoClick,
+                onAuthorClicked,
                 photoState
             )
             1 -> VideoScreen(
@@ -56,7 +62,8 @@ fun ProfileBlog(
                 viewModelStoreOwner,
                 onMentionClick,
                 onHashtagClick,
-                imageOnClick,
+                onAuthorClicked,
+                onVideoClick,
                 videoState
             )
         }
@@ -72,6 +79,7 @@ private fun ProfileBlog(
         pageCount = { UiMimeType.TYPES.size },
         initialPage = 0
     )
+    val handleNavigation by rememberUpdatedState(onNavigate)
     DesignTab(pageState) { index ->
         UiMimeType.get(index)?.let {
             Icon(
@@ -86,5 +94,5 @@ private fun ProfileBlog(
         state = pageState,
         verticalAlignment = Alignment.Top,
     ) { page -> content(page) }
-    LaunchedEffect(pageState.currentPage) { onNavigate(pageState.currentPage) }
+    LaunchedEffect(pageState.currentPage) { handleNavigation(pageState.currentPage) }
 }

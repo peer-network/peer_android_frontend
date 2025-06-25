@@ -19,5 +19,7 @@ data class Content(
         VIDEO,
         AUDIO,
         TEXT,
+        FOLLOWED,
+        FOLLOWER
     }
 }

@@ -10,6 +10,7 @@ import eu.peernetwork.blog.ui.timeline.video.Video
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.social.ui.connection.Connection
+import eu.peernetwork.wallet.ui.confirmation.Confirmation
 
 interface Feed : ApplicationProvider {
     @javax.inject.Scope
@@ -27,7 +28,8 @@ interface Feed : ApplicationProvider {
         Photo,
         Search,
         Profile,
-        Connection {
+        Connection,
+        Confirmation {
         fun viewModelFactory(): ViewModelProvider.Factory
     }
 

@@ -15,10 +15,11 @@ import androidx.compose.ui.Modifier
 @Composable
 fun  DesignDialogSheet(
     tag: String,
-    modifier: Modifier = Modifier,
     visible: MutableState<Boolean>,
+    modifier: Modifier = Modifier,
     durationMillis: Int = DefaultDurationMillis,
     contentAlignment: Alignment = Alignment.TopStart,
+    onDismiss: () -> Unit = {},
     onAnimationComplete: (Boolean) -> Unit = {},
     background: (@Composable () -> Unit)? = null,
     builder: @Composable (State<Boolean>) -> Unit,
@@ -27,6 +28,7 @@ fun  DesignDialogSheet(
         tag = tag,
         modifier = modifier,
         visible = visible,
+        onDismiss = onDismiss,
         onAnimationComplete = onAnimationComplete,
         enter = slideInVertically(
             initialOffsetY = { fullHeight -> fullHeight },

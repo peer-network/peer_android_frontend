@@ -37,7 +37,6 @@ import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.design.compose.DesignCard
 import eu.peernetwork.core.ui.design.compose.DesignTextField
 import eu.peernetwork.core.ui.theme.PeerTheme
-import kotlinx.coroutines.delay
 
 enum class SearchMode(
     val value: Int,
@@ -108,14 +107,13 @@ fun SearchHeader(
                         )
                     },
                 ) { Text(stringResource(R.string.search_label)) }
+                LaunchedEffect(mode.value) {
+                    if (mode.value != null) {
+                        focus.requestFocus()
+                        keyboardController?.show()
+                    }
+                }
             }
-        }
-    }
-    LaunchedEffect(mode.value) {
-        if (mode.value != null) {
-            delay(200)
-            focus.requestFocus()
-            keyboardController?.show()
         }
     }
 }

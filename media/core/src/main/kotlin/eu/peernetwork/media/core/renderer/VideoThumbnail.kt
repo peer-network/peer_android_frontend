@@ -5,6 +5,8 @@ import eu.peernetwork.core.ui.renderer.Renderer
 interface VideoThumbnail : Renderer.Stateful<VideoThumbnail.Spec> {
     data class Spec(
         val url: String,
+        val ratio: Float,
+        val isPlaying: Boolean,
         val resolution: Pair<Int, Int>? = null,
         val volume: Float = 0f,
     )

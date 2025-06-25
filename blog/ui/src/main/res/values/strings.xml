@@ -5,6 +5,13 @@
     <string name="post_reply">Write a comment…</string>
     <string name="send_label">Send</string>
 
+    <string name="now_label">Just now</string>
+    <string name="minute_label">%d minutes ago</string>
+    <string name="hour_label">%d hours ago</string>
+    <string name="day_label">Yesterday</string>
+    <string name="days_label">%d days ago</string>
+
     <string name="action_message">Action successfully completed</string>
     <string name="point_description">You have %d Free %s</string>
+    <string name="view_more_label">View more…</string>
 </resources>

@@ -22,13 +22,14 @@ import androidx.compose.ui.Modifier
 @Composable
 fun  DesignDialog(
     tag: String,
-    modifier: Modifier = Modifier,
     visible: MutableState<Boolean>,
+    modifier: Modifier = Modifier,
     handleBackPress: Boolean = true,
     durationMillis: Int = DefaultDurationMillis,
     enter: EnterTransition = fadeIn(animationSpec = tween(durationMillis = durationMillis)),
     exit: ExitTransition = fadeOut(animationSpec = tween(durationMillis = durationMillis)),
     contentAlignment: Alignment = Alignment.TopStart,
+    onDismiss: () -> Unit = {},
     onAnimationComplete: (Boolean) -> Unit = {},
     background: (@Composable () -> Unit)? = null,
     builder: @Composable (State<Boolean>) -> Unit,
@@ -39,6 +40,7 @@ fun  DesignDialog(
         tag = tag,
         visible = visible,
         handleBackPress = handleBackPress,
+        onDismiss = onDismiss,
         onAnimationComplete = onAnimationComplete,
         durationMillis = durationMillis
     ) { dialogState ->

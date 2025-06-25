@@ -2,14 +2,17 @@ package eu.peernetwork.media.ui.selector.photo
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import app.cash.turbine.test
+import eu.peernetwork.media.core.interactor.ThumbnailInteractor
 import eu.peernetwork.media.core.model.UiFile
 import eu.peernetwork.media.ui.usecase.PhotoUsecase
 import io.mockk.coEvery
+import io.mockk.every
 import io.mockk.mockk
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
@@ -26,12 +29,15 @@ internal class PhotoViewModelTest {
 
     private val usecase = mockk<PhotoUsecase>()
 
+    private val thumbnailInteractor = mockk<ThumbnailInteractor>()
+
     private lateinit var viewModel: PhotoViewModel
 
     @Before
     fun setup() {
         Dispatchers.setMain(dispatcher)
-        viewModel = PhotoViewModel(usecase)
+        every { thumbnailInteractor.observe() } returns flowOf(emptyMap())
+        viewModel = PhotoViewModel(usecase, thumbnailInteractor)
     }
 
     @Test

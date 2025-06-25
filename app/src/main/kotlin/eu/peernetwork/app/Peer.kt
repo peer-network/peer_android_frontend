@@ -5,6 +5,7 @@ import dagger.android.AndroidInjector
 import eu.peernetwork.app.module.blog.BlogModule
 import eu.peernetwork.app.module.core.CoreModule
 import eu.peernetwork.app.module.core.UiModule
+import eu.peernetwork.app.module.media.MediaModule
 import eu.peernetwork.app.module.social.SocialModule
 import eu.peernetwork.app.module.user.UserModule
 import eu.peernetwork.app.module.wallet.WalletModule
@@ -20,6 +21,7 @@ interface Peer {
         dependencies = [Peer::class],
         modules = [
             CoreModule::class,
+            MediaModule::class,
             UiModule::class,
             UserModule::class,
             WalletModule::class,

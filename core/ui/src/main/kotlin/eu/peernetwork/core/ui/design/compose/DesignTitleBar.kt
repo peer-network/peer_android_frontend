@@ -3,6 +3,8 @@ package eu.peernetwork.core.ui.design.compose
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
@@ -77,7 +79,11 @@ fun DesignTitle(
             .clip(RoundedCornerShape(4.dp))
             .then(modifier)
             .padding(horizontal = 8.dp),
-    ) { updatedContent() }
+    ) {
+        CompositionLocalProvider(LocalTextStyle provides MaterialTheme.typography.bodyMedium) {
+            updatedContent()
+        }
+    }
 }
 
 @Composable

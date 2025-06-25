@@ -22,7 +22,6 @@ import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.media.core.model.UiAttachment
-import eu.peernetwork.media.ui.thumbnail.ThumbnailScreen
 import eu.peernetwork.media.ui.usecase.PermissionUsecase
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.debounce
@@ -58,21 +57,17 @@ fun AttachmentScreen(
         }
     )
     val handleOnAttach by rememberUpdatedState(onAttach)
-    ThumbnailScreen(
-        type = attachment.value.media,
-        provider = component,
-        viewModelStoreOwner = viewModelStoreOwner
-    ) { thumbnail, onLoad ->
-        Crossfade(attachment.value) { target ->
-            if (target.files.isEmpty()) {
-                AttachmentPlaceholder {
-                    if (permissionsState.allPermissionsGranted) {
-                        handleOnAttach()
-                    } else {
-                        timestamp = System.currentTimeMillis()
-                    }
+    val thumbnail = viewModel.thumbnail.collectAsStateWithLifecycle().value
+    Crossfade(attachment.value) { target ->
+        if (target.files.isEmpty()) {
+            AttachmentPlaceholder {
+                if (permissionsState.allPermissionsGranted) {
+                    handleOnAttach()
+                } else {
+                    timestamp = System.currentTimeMillis()
                 }
-            } else {
+            }
+        } else {
                 AttachmentPreview(
                     {
                         if (permissionsState.allPermissionsGranted) {
@@ -81,11 +76,13 @@ fun AttachmentScreen(
                             timestamp = System.currentTimeMillis()
                         }
                     },
-                    thumbnail,
-                    onLoad,
+                    { thumbnail[it] },
+                    { viewModel.thumbnail(
+                        attachment.value.files[it].thumbnail,
+                        attachment.value.media
+                    ) },
                     attachment
                 )
-            }
         }
     }
     LaunchedEffect(permissionsState.allPermissionsGranted) {
@@ -96,7 +93,7 @@ fun AttachmentScreen(
                     if (counter > 1 && !permissionsState.allPermissionsGranted) {
                         usecase()
                     } else if (!permissionsState.allPermissionsGranted) {
-                        viewModel.bump()
+                        viewModel.updatePermissionStatus()
                         permissionsState.launchMultiplePermissionRequest()
                     } else {
                         handleOnAttach()

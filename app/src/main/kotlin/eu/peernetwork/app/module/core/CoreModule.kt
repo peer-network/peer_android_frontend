@@ -8,6 +8,7 @@ import dagger.Provides
 import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.app.interactor.SettingsInteractor
 import eu.peernetwork.app.interactor.UrlInteractorDelegate
+import eu.peernetwork.app.module.media.MediaModule
 import eu.peernetwork.core.common.interactor.UrlInteractor
 import eu.peernetwork.core.common.provider.Dispatcher
 import kotlinx.coroutines.CoroutineDispatcher
@@ -18,7 +19,6 @@ import javax.inject.Singleton
     NetworkModule::class,
     PersistenceModule::class,
     UsecaseModule::class,
-    MediaModule::class,
     ServiceModule::class
 ])
 object CoreModule {

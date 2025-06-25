@@ -11,7 +11,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -27,9 +27,9 @@ import eu.peernetwork.core.ui.theme.PeerTheme
 
 @Composable
 fun HomeFooter(
-    state: MutableState<Int>,
+    start: State<Int>,
     modifier: Modifier = Modifier,
-    onClick: (Int) -> Unit = {},
+    onClick: (Int, Int) -> Unit,
 ) {
     val handleClick by rememberUpdatedState(onClick)
     Box(modifier = Modifier
@@ -44,10 +44,7 @@ fun HomeFooter(
         ) {
             HomeRoute.ROUTES.forEachIndexed { index, navigation ->
                 IconButton(onClick = {
-                    if (state.value == index) {
-                        handleClick(index)
-                    }
-                    state.value = index
+                    handleClick(start.value, index)
                 }) {
                     Box {
                         Icon(
@@ -55,7 +52,7 @@ fun HomeFooter(
                             painter = painterResource(id = navigation.icon),
                             contentDescription = stringResource(id = navigation.label),
                             modifier = Modifier.size(32.dp).graphicsLayer {
-                                alpha = if (index == state.value) 0f else 1f
+                                alpha = if (index == start.value) 0f else 1f
                             }
                         )
                         Icon(
@@ -63,7 +60,7 @@ fun HomeFooter(
                             painter = painterResource(id = navigation.activeIcon),
                             contentDescription = stringResource(id = navigation.label),
                             modifier = Modifier.size(32.dp).graphicsLayer {
-                                alpha = if (index == state.value) 1f else 0f
+                                alpha = if (index == start.value) 1f else 0f
                             }
                         )
                     }
@@ -77,6 +74,6 @@ fun HomeFooter(
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun PreviewHomeBottomBar() {
     PeerTheme {
-        HomeFooter(state = remember { mutableIntStateOf(0) })
+        HomeFooter(start = remember { mutableIntStateOf(0) }) { prev, next -> }
     }
 }

@@ -1,0 +1,195 @@
+package eu.peernetwork.app.ui.feed
+
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableIntState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModelStoreOwner
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavHostController
+import eu.peernetwork.app.BuildConfig
+import eu.peernetwork.blog.domain.model.Filter.Criteria
+import eu.peernetwork.blog.domain.model.Relation
+import eu.peernetwork.blog.ui.timeline.photo.PhotoScreen
+import eu.peernetwork.blog.ui.timeline.video.VideoScreen
+import eu.peernetwork.core.ui.design.compose.DesignTab
+import eu.peernetwork.core.ui.extension.navigateIfNecessary
+import eu.peernetwork.core.ui.theme.PeerTheme
+import eu.peernetwork.media.core.model.UiMimeType
+import eu.peernetwork.social.ui.connection.ConnectionController
+import eu.peernetwork.social.ui.connection.ConnectionScreen
+import kotlinx.coroutines.launch
+
+@Composable
+fun FeedPreview(
+    id: String,
+    ordinal: Int,
+    state: MutableIntState,
+    component: Feed.Component,
+    viewModelStoreOwner: ViewModelStoreOwner,
+    controller: NavHostController,
+    connectionController: ConnectionController,
+    title: String? = null,
+    criteria: Criteria? = null,
+    onNavigate: (Int) -> Unit = {},
+    onFilter: (Int) -> Unit = {},
+    onAuthorClick: (String) -> Unit = {},
+    onMentionClick: (String) -> Unit = {},
+    onHashtagClick: (String) -> Unit = {},
+    onPhotoClick: (String, Int) -> Unit = { id, position -> },
+    onVideoClick: (String, Int) -> Unit = { id, position -> },
+) {
+    val photoState = rememberLazyListState()
+    val videoState = rememberLazyListState()
+    val coroutine = rememberCoroutineScope()
+    val connection by connectionController.observe().collectAsStateWithLifecycle()
+    var relation by rememberSaveable {
+        mutableStateOf<Relation>(Relation.entries.getOrNull(ordinal)
+            ?: Relation.NONE)
+    }
+    var position by remember { mutableIntStateOf(state.intValue) }
+    val handleOnNavigate by rememberUpdatedState(onNavigate)
+    val handleOnFilter by rememberUpdatedState(onFilter)
+    FeedPreview(
+        state = state,
+        modifier = Modifier.fillMaxSize(),
+        onNavigate = {
+            position = it
+            handleOnNavigate(it) },
+        photo = {
+            PhotoScreen(
+                id,
+                BuildConfig.PAGING_LIMIT,
+                relation,
+                criteria,
+                onMentionClick,
+                onHashtagClick,
+                onPhotoClick,
+                component,
+                viewModelStoreOwner,
+                onAuthorClick,
+                photoState
+            ) {
+                ConnectionScreen(
+                    isFollowing = connection.getOrDefault(it.first, it.third),
+                    isFollowed = it.second,
+                    onClick = { follow -> connectionController.invoke(it.first, !follow) },
+                )
+            }
+        },
+        video = {
+            VideoScreen(
+                id,
+                BuildConfig.PAGING_LIMIT,
+                relation,
+                criteria,
+                { controller.navigateToUsernameSearch(it) },
+                { controller.navigateToTagSearch(it) },
+                component,
+                viewModelStoreOwner,
+                onVideoClick,
+                { controller.navigateIfNecessary("profile/$it") },
+                videoState,
+            ) {
+                ConnectionScreen(
+                    isFollowing = connection.getOrDefault(it.first, it.third),
+                    isFollowed = it.second,
+                    onClick = { follow -> connectionController.invoke(it.first, !follow) }
+                )
+            }
+        },
+    )
+    FeedMenu(
+        id,
+        title,
+        relation,
+        {
+            handleOnFilter(it.ordinal)
+            relation = it }
+    ) {
+        coroutine.launch {
+            if (position == 0) {
+                photoState.animateScrollToItem(0)
+            } else {
+                videoState.animateScrollToItem(0)
+            }
+        }
+    }
+}
+
+@Composable
+fun FeedPreview(
+    state: MutableIntState,
+    modifier: Modifier = Modifier,
+    onNavigate: (Int) -> Unit = {},
+    photo: @Composable () -> Unit,
+    video: @Composable () -> Unit,
+) {
+    val pageState = rememberPagerState(
+        pageCount = { UiMimeType.TYPES.size },
+        initialPage = state.intValue
+    )
+    val handleNavigation by rememberUpdatedState(onNavigate)
+    Column {
+        DesignTab(pageState) { index ->
+            UiMimeType.get(index)?.let {
+                Icon(
+                    painter = painterResource(id = it.id),
+                    contentDescription = it.label?.let { stringResource(it) },
+                    tint = MaterialTheme.colorScheme.tertiary,
+                    modifier = Modifier
+                        .padding(vertical = 8.dp)
+                        .size(28.dp)
+                )
+            }
+        }
+        HorizontalPager(
+            state = pageState,
+            modifier = modifier,
+            verticalAlignment = Alignment.Top,
+        ) { page ->
+            when (page) {
+                0 -> photo()
+                1 -> video()
+            }
+        }
+    }
+    LaunchedEffect(pageState.currentPage) { handleNavigation(pageState.currentPage) }
+}
+
+@Composable
+@Preview
+fun PreviewFeedPreview() {
+    val state = rememberSaveable { mutableIntStateOf(0) }
+    PeerTheme {
+        FeedPreview(
+            state = state,
+            modifier = Modifier.fillMaxSize(),
+            photo = { Text("Photo") },
+            video = { Text("Video") },
+        )
+    }
+}

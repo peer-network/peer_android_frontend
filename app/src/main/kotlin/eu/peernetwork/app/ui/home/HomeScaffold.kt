@@ -35,7 +35,7 @@ fun PreviewHomeScaffold() {
     PeerTheme {
         HomeScaffold(
             header = {  },
-            footer = { HomeFooter(remember { mutableIntStateOf(0) }) }
+            footer = { HomeFooter(remember { mutableIntStateOf(0) }) { prev, next -> } }
         ) { state ->
             Text(
                 text = "",

@@ -1,37 +1,56 @@
 package eu.peernetwork.app.ui.home
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
+import eu.peernetwork.app.BuildConfig
+import eu.peernetwork.app.ui.composer.ComposerScreen
+import eu.peernetwork.app.ui.feed.FeedScreen
+import eu.peernetwork.app.ui.profile.ProfileScreen
+import eu.peernetwork.app.ui.search.SearchScreen
+import eu.peernetwork.app.ui.wallet.WalletScreen
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.design.compose.DesignNavigation
-import eu.peernetwork.core.ui.extension.attachIfNecessary
+import eu.peernetwork.core.ui.model.ViewModelState
 
 @Composable
 fun HomeNavigation(
-    state: MutableState<Int>,
+    id: String,
+    startDestination: String,
     navController: NavHostController,
-    onNavigate: (Int) -> Unit,
-    content: @Composable (HomeRoute) -> Unit
+    component: Home.Component,
+    viewModelStore: ViewModelState
 ) {
-    val updatedContent by rememberUpdatedState(content)
-    val startDestination = remember { HomeRoute.get(state.value).path }
     DesignNavigation(
         navController = navController,
         startDestination = startDestination
     ) {
         HomeRoute.ROUTES.forEach { route ->
-            composable(route.path) { updatedContent(route) }
+            composable(route.path) {
+                when(route) {
+                    is HomeRoute.Home -> FeedScreen(
+                        id,
+                        BuildConfig.PAGING_LIMIT,
+                        component,
+                        viewModelStore
+                    )
+                    is HomeRoute.Profile -> ProfileScreen(
+                        id,
+                        component,
+                        viewModelStore,
+                    )
+                    is HomeRoute.Add -> ComposerScreen(component, viewModelStore)
+                    is HomeRoute.Wallet -> WalletScreen(BuildConfig.PAGING_LIMIT, component, viewModelStore)
+                    is HomeRoute.Search -> SearchScreen(
+                        id,
+                        BuildConfig.PAGING_LIMIT,
+                        component,
+                        viewModelStore,
+                    )
+                    else -> {}
+                }
+            }
         }
-    }
-    LaunchedEffect(state.value) {
-        onNavigate(state.value)
-        navController.attachIfNecessary(HomeRoute.get(state.value).path)
     }
 }
 
@@ -44,7 +63,7 @@ sealed class HomeRoute(
     data object Home: HomeRoute(
         R.drawable.ic_home_outline,
         R.drawable.ic_home,
-        R.string.feed_label,
+        eu.peernetwork.user.ui.R.string.feed_label,
     )
     data object Search: HomeRoute(
         R.drawable.ic_search_outline,

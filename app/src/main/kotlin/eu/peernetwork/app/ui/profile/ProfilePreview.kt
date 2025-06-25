@@ -5,43 +5,57 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.design.component.DesignRefreshableScaffold
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
 import eu.peernetwork.core.ui.design.compose.DesignScaffold
+import eu.peernetwork.core.ui.design.compose.DesignTitle
+import eu.peernetwork.core.ui.design.compose.DesignTitleBarHost
 import eu.peernetwork.social.ui.connection.ConnectionScreen
 import eu.peernetwork.social.ui.connection.ConnectionStatus
 import eu.peernetwork.user.ui.user.UserScreen
+import kotlinx.coroutines.launch
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 fun ProfilePreview(
     id: String,
+    title: String?,
     limit: Int,
     onSettings: () -> Unit = {},
     onMentionClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
-    imageOnClick: (String) -> Unit = {},
+    onAuthorClicked: (String) -> Unit = {},
     photoState: LazyListState = rememberLazyListState(),
     videoState: LazyListState = rememberLazyListState(),
     component: Profile.Component,
     viewModelStoreOwner: ViewModelStoreOwner,
+    onPhotoClick: (String, Int) -> Unit = { id, position -> },
+    onVideoClick: (String, Int) -> Unit = { id, position -> },
 ) {
-    val handleImageOnClick by rememberUpdatedState(imageOnClick)
+    val handleAuthorClicked by rememberUpdatedState(onAuthorClicked)
     val lastUpdated = rememberSaveable { mutableLongStateOf(System.currentTimeMillis()) }
     var connection = remember { mutableStateOf<ConnectionStatus?>(null) }
     val showSheet = remember { mutableStateOf(false) }
+    val coroutine = rememberCoroutineScope()
+    var position by remember { mutableIntStateOf(0) }
     ConnectionScreen(
         provider = component,
         viewModelStoreOwner = viewModelStoreOwner
@@ -83,9 +97,12 @@ fun ProfilePreview(
                 limit,
                 component,
                 viewModelStoreOwner,
+                { position = it },
                 onMentionClick,
                 onHashtagClick,
-                imageOnClick,
+                onAuthorClicked,
+                onPhotoClick,
+                onVideoClick,
                 photoState,
                 videoState
             )
@@ -97,7 +114,22 @@ fun ProfilePreview(
             connection,
             component,
             viewModelStoreOwner
-        ) { handleImageOnClick(it.id) }
+        ) { handleAuthorClicked(it.id) }
+    }
+    DesignTitleBarHost("ProfileScreen$id", {
+        coroutine.launch {
+            if (position == 0) {
+                photoState.animateScrollToItem(0)
+            } else {
+                videoState.animateScrollToItem(0)
+            }
+        }
+    }) {
+        titleBar {
+            DesignTitle {
+                Text(title ?: stringResource(R.string.profile_label))
+            }
+        }
     }
 }
 

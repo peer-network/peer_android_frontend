@@ -1,7 +1,6 @@
 package eu.peernetwork.blog.ui.engagement
 
 import android.widget.Toast
-import androidx.compose.animation.core.AnimationConstants.DefaultDurationMillis
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -13,6 +12,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModelStoreOwner
@@ -23,22 +23,13 @@ import eu.peernetwork.blog.ui.compose.PostIcon
 import eu.peernetwork.blog.ui.mapper.mapToEngagement
 import eu.peernetwork.blog.ui.model.UiAction
 import eu.peernetwork.blog.ui.model.UiContent
-import eu.peernetwork.blog.ui.model.UiEngagement
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.extension.toInt
 import eu.peernetwork.core.ui.theme.LightAccentColor
 import eu.peernetwork.core.ui.theme.PeerAppRed
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-
-data class EngagementSpec(
-    val onLoad: (UiContent) -> UiEngagement,
-    val onLike: (UiEngagement) -> Unit,
-    val onDisLike: (UiEngagement) -> Unit,
-    val onComment: (UiContent) -> Unit,
-)
 
 @Composable
 fun EngagementScreen(
@@ -46,10 +37,10 @@ fun EngagementScreen(
     refresh: State<Boolean>,
     onMentionClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
-    imageOnClick: (String) -> Unit = {},
+    onAuthorClick: (String) -> Unit = {},
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
-    content: @Composable (EngagementSpec) -> Unit
+    content: @Composable (Engagements) -> Unit
 ) {
     val context = LocalContext.current
     val component = remember {
@@ -67,7 +58,6 @@ fun EngagementScreen(
             (state as? EngagementViewModel.State.Error?)?.error
         }
     }
-    val tag = remember { System.currentTimeMillis().toString() }
     var post = remember { mutableStateOf<UiContent?>(null) }
     val scope = rememberCoroutineScope()
     val errorMessage = stringResource(R.string.unknown_error_message)
@@ -75,8 +65,9 @@ fun EngagementScreen(
     val updatedContent by rememberUpdatedState(content)
     val handleMentionClick by rememberUpdatedState(onMentionClick)
     val handleHashtagClick by rememberUpdatedState(onHashtagClick)
-    val handleImageClick by rememberUpdatedState(imageOnClick)
-    val spec = remember(state, reactionState.values) { EngagementSpec(
+    val handleAuthorClick by rememberUpdatedState(onAuthorClick)
+    val type = remember { mutableStateOf<EngagementType?>(null) }
+    val event = remember(state, reactionState.values) { Engagements(
         onLoad = {
             val isLiked = reactionState[it.id]?.isLiked
             val isDisliked = reactionState[it.id]?.isDisliked
@@ -89,14 +80,12 @@ fun EngagementScreen(
                 comment = it.comment + commented
             )
         },
-        onLike = { viewModel.like(it.id) },
-        onDisLike = { viewModel.dislike(it.id) },
+        onLike = { type.value = EngagementType.Like(it.id) },
+        onDisLike = { type.value = EngagementType.DisLike(it.id) },
         onComment = { post.value = it }
     ) }
-    updatedContent(spec)
-    LaunchedEffect(Unit) {
-        viewModel.initialize()
-    }
+    updatedContent(event)
+    LaunchedEffect(Unit) { viewModel.initialize() }
     LaunchedEffect(refresh.value) {
         if (refresh.value) {
             viewModel.reset()
@@ -111,41 +100,47 @@ fun EngagementScreen(
         }
     }
     CommentScreen(
-        tag,
         post,
         postLimit,
         component,
         viewModelStoreOwner,
         onMentionClick = {
             scope.launch {
-                post.value = null
-                delay(DefaultDurationMillis.toLong())
                 handleMentionClick(it)
             } },
         onHashtagClick = {
             scope.launch {
-                post.value = null
-                delay(DefaultDurationMillis.toLong())
                 handleHashtagClick(it)
             } },
-        imageOnClick = {
+        onAuthorClick = {
             scope.launch {
-                post.value = null
-                delay(DefaultDurationMillis.toLong())
-                handleImageClick(it)
+                handleAuthorClick(it)
             } }
+    )
+    component.engagementConfirmation()(
+        Modifier,
+        EngagementConfirmation.Spec(
+            type,
+            viewModelStoreOwner,
+        ) {
+            when(it) {
+                is EngagementType.Like -> viewModel.like(it.id)
+                is EngagementType.DisLike -> viewModel.dislike(it.id)
+                else -> {}
+            }
+        }
     )
 }
 
 @Composable
 fun EngagementScreen(
     model: UiContent,
-    spec: EngagementSpec,
+    event: Engagements,
 ) {
-    val engagement by remember(model) { derivedStateOf { spec.onLoad(model) } }
-    val handleOnLike by rememberUpdatedState(spec.onLike)
-    val handleOnDisLike by rememberUpdatedState(spec.onDisLike)
-    val handleOnComment by rememberUpdatedState(spec.onComment)
+    val engagement by remember(model) { derivedStateOf { event.onLoad(model) } }
+    val handleOnLike by rememberUpdatedState(event.onLike)
+    val handleOnDisLike by rememberUpdatedState(event.onDisLike)
+    val handleOnComment by rememberUpdatedState(event.onComment)
     Row {
         PostIcon(
             action = UiAction.Like,

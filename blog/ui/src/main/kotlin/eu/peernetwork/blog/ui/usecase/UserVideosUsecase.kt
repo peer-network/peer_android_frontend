@@ -1,11 +1,13 @@
 package eu.peernetwork.blog.ui.usecase
 
+import android.content.Context
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.PagingSource.LoadParams
 import androidx.paging.PagingSource.LoadResult
 import eu.peernetwork.blog.domain.model.Filter.Criteria
+import eu.peernetwork.blog.domain.model.Relation
 import eu.peernetwork.blog.domain.usecase.EngagementRefreshUsecase
 import eu.peernetwork.blog.domain.usecase.VideosUsecase
 import eu.peernetwork.blog.ui.mapper.mapToVideo
@@ -20,6 +22,7 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class UserVideosUsecase @Inject constructor(
+    private val context: Context,
     private val dispatcher: Dispatcher,
     private val usecase: VideosUsecase,
     private val engagementRefreshUsecase: EngagementRefreshUsecase,
@@ -46,6 +49,7 @@ class UserVideosUsecase @Inject constructor(
         )
         val response = usecase(
             VideosUsecase.Parameter(
+                relation = param.relation,
                 criteria = param.criteria,
                 page = currentPage
             )
@@ -57,7 +61,7 @@ class UserVideosUsecase @Inject constructor(
             LoadResult.Error(NoContentException())
         } else {
             LoadResult.Page(
-                data = response.items.map { it.mapToVideo { annotationUsecase(it) } },
+                data = response.items.map { it.mapToVideo(context) { annotationUsecase(it) } },
                 prevKey = if (currentOffset <= 0) null else currentOffset - 1,
                 nextKey = if (response.items.isEmpty()) null else currentOffset + response.items.size
             )
@@ -65,6 +69,7 @@ class UserVideosUsecase @Inject constructor(
     }
 
     data class Parameter(
+        val relation: Relation = Relation.NONE,
         val criteria: Criteria? = null,
         val page: Pageable
     )

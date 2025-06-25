@@ -2,6 +2,7 @@ package eu.peernetwork.media.ui.attachment
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import app.cash.turbine.test
+import eu.peernetwork.media.core.interactor.ThumbnailInteractor
 import eu.peernetwork.persistence.domain.observable.ObservableInteger
 import eu.peernetwork.persistence.domain.publishable.PublishableInteger
 import eu.peernetwork.persistence.domain.retrievable.RetrievableInteger
@@ -12,6 +13,7 @@ import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -34,12 +36,20 @@ internal class AttachmentViewModelTest {
 
     private val observableInteger = mockk<ObservableInteger>()
 
+    private val thumbnailInteractor = mockk<ThumbnailInteractor>()
+
     private lateinit var viewModel: AttachmentViewModel
 
     @Before
     fun setup() {
         Dispatchers.setMain(dispatcher)
-        viewModel = AttachmentViewModel(retrievableInteger, publishableInteger, observableInteger)
+        every { thumbnailInteractor.observe() } returns flowOf(emptyMap())
+        viewModel = AttachmentViewModel(
+            retrievableInteger,
+            publishableInteger,
+            observableInteger,
+            thumbnailInteractor
+        )
     }
 
     @After
@@ -62,7 +72,7 @@ internal class AttachmentViewModelTest {
     fun `test initialization count`() = runTest {
         every { retrievableInteger(any()) } returns 0
         coEvery { publishableInteger(any(), any()) } returns Unit
-        viewModel.bump()
+        viewModel.updatePermissionStatus()
         viewModel.state.test {
             assertEquals(AttachmentViewModel.State.Success(1), awaitItem())
         }

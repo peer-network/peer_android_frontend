@@ -95,26 +95,27 @@ fun DesignButton(
             modifier = Modifier.padding(contentPadding),
             contentAlignment = Alignment.Center
         ) {
-            if (isLoading) {
-                val infiniteTransition = rememberInfiniteTransition()
-                val alpha by infiniteTransition.animateFloat(
-                    initialValue = 1f,
-                    targetValue = 0.3f,
-                    animationSpec = infiniteRepeatable(
-                        animation = tween(durationMillis, easing = easing),
-                        repeatMode = RepeatMode.Reverse
-                    )
+            val infiniteTransition = rememberInfiniteTransition()
+            val alpha by infiniteTransition.animateFloat(
+                initialValue = 1f,
+                targetValue = 0.3f,
+                animationSpec = infiniteRepeatable(
+                    animation = tween(durationMillis, easing = easing),
+                    repeatMode = RepeatMode.Reverse
                 )
-                Text(
-                    text = stringResource(id = R.string.loading_text),
-                    modifier = Modifier.graphicsLayer { this.alpha = alpha },
-                    color = contentColor,
-                    style = MaterialTheme.typography.bodyMedium.copy(
-                        fontWeight = FontWeight.Bold,
-                        color = contentColor
-                    )
+            )
+            Text(
+                text = stringResource(id = R.string.loading_text),
+                modifier = Modifier.graphicsLayer {
+                    this.alpha = if (isLoading) alpha else 0f },
+                color = contentColor,
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    fontWeight = FontWeight.Bold,
+                    color = contentColor
                 )
-            } else {
+            )
+            Box(modifier = Modifier.graphicsLayer {
+                this.alpha = if (!isLoading) 1f else 0f }) {
                 CompositionLocalProvider(
                     LocalContentColor provides contentColor
                 ) { updatedContent() }

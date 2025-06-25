@@ -130,6 +130,7 @@ fun DesignOverlayHost(
     tag: String,
     visible: MutableState<Boolean>,
     handleBackPress: Boolean = true,
+    onDismiss: () -> Unit = {},
     onAnimationComplete: (Boolean) -> Unit = {},
     durationMillis: Int = DefaultDurationMillis,
     builder: DesignOverlayBuilder.(State<Boolean>) -> Unit,
@@ -155,6 +156,7 @@ fun DesignOverlayHost(
             }
         }
     }
+    val handleOnDismiss by rememberUpdatedState(onDismiss)
     val handleOnAnimationComplete by rememberUpdatedState(onAnimationComplete)
     LaunchedEffect(Unit) {
         lifecycleOwner.lifecycle.addObserver(observer)
@@ -175,6 +177,7 @@ fun DesignOverlayHost(
                     handleOnAnimationComplete(isVisible.value)
                 } else {
                     isVisible.value = false
+                    handleOnDismiss()
                     delay(durationMillis.toLong())
                     controller.dismiss(tag)
                     handleOnAnimationComplete(isVisible.value)
@@ -182,6 +185,19 @@ fun DesignOverlayHost(
             }
     }
     BackHandler(enabled = visible.value && handleBackPress) { visible.value = false }
+}
+
+@Composable
+fun DesignOverlayPage(
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit
+) {
+    val updatedContent by rememberUpdatedState(content)
+    DesignTitleBar {
+        Box(modifier = modifier) {
+            updatedContent()
+        }
+    }
 }
 
 @Composable

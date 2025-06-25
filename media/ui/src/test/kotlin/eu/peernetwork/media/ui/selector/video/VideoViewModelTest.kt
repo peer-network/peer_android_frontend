@@ -2,14 +2,17 @@ package eu.peernetwork.media.ui.selector.video
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import app.cash.turbine.test
+import eu.peernetwork.media.core.interactor.ThumbnailInteractor
 import eu.peernetwork.media.core.model.UiFile
 import eu.peernetwork.media.ui.usecase.VideoUsecase
 import io.mockk.coEvery
+import io.mockk.every
 import io.mockk.mockk
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -28,12 +31,15 @@ internal class VideoViewModelTest {
 
     private val usecase = mockk<VideoUsecase>()
 
+    private val thumbnailInteractor = mockk<ThumbnailInteractor>()
+
     private lateinit var viewModel: VideoViewModel
 
     @Before
     fun setup() {
         Dispatchers.setMain(dispatcher)
-        viewModel = VideoViewModel(usecase)
+        every { thumbnailInteractor.observe() } returns flowOf(emptyMap())
+        viewModel = VideoViewModel(usecase, thumbnailInteractor)
     }
 
     @After

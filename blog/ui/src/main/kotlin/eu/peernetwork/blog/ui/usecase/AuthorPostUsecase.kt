@@ -1,11 +1,13 @@
 package eu.peernetwork.blog.ui.usecase
 
+import android.content.Context
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.PagingSource.LoadParams
 import androidx.paging.PagingSource.LoadResult
 import eu.peernetwork.blog.domain.model.Filter.Criteria
+import eu.peernetwork.blog.domain.model.Relation
 import eu.peernetwork.blog.domain.usecase.PhotosUsecase
 import eu.peernetwork.blog.domain.usecase.EngagementRefreshUsecase
 import eu.peernetwork.blog.ui.mapper.mapToPhoto
@@ -20,6 +22,7 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class AuthorPostUsecase @Inject constructor(
+    private val context: Context,
     private val dispatcher: Dispatcher,
     private val usecase: PhotosUsecase,
     private val engagementRefreshUsecase: EngagementRefreshUsecase,
@@ -58,7 +61,7 @@ class AuthorPostUsecase @Inject constructor(
             LoadResult.Error(NoContentException())
         } else {
             LoadResult.Page(
-                data = response.items.map { it.mapToPhoto { annotationUsecase(it) } },
+                data = response.items.map { it.mapToPhoto(context) { annotationUsecase(it) } },
                 prevKey = if (currentOffset <= 0) null else currentOffset - 1,
                 nextKey = if (response.items.isEmpty()) null else currentOffset + response.items.size
             )
@@ -66,8 +69,9 @@ class AuthorPostUsecase @Inject constructor(
     }
 
     data class Parameter(
-        val author: String,
-        val criteria: Criteria? = null,
-        val page: Pageable
-    )
+                val author: String,
+                val relation: Relation = Relation.NONE,
+                val criteria: Criteria? = null,
+                val page: Pageable
+            )
 }
