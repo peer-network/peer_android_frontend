@@ -9,6 +9,7 @@ import eu.peernetwork.media.core.model.UiMimeType
 import eu.peernetwork.media.ui.usecase.BitmapMergeUsecase
 import eu.peernetwork.media.ui.usecase.ThumbnailUsecase
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -21,7 +22,9 @@ class ThumbnailInteractorDelegate @Inject constructor(
     private val dispatcher: Dispatcher
 ) : ThumbnailInteractor {
 
-    override fun observe(): Flow<Map<String, Bitmap?>> = observer.observe()
+    override fun observe(): Flow<Map<String, Bitmap?>> = observer
+        .observe()
+        .flowOn(dispatcher.main)
 
     override fun get(url: String): Bitmap? {
         memory.get(url)?.let { return it }

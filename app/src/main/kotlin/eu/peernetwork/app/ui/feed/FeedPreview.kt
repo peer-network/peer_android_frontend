@@ -46,6 +46,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun FeedPreview(
     id: String,
+    ordinal: Int,
     state: MutableIntState,
     component: Feed.Component,
     viewModelStoreOwner: ViewModelStoreOwner,
@@ -54,6 +55,7 @@ fun FeedPreview(
     title: String? = null,
     criteria: Criteria? = null,
     onNavigate: (Int) -> Unit = {},
+    onFilter: (Int) -> Unit = {},
     onAuthorClick: (String) -> Unit = {},
     onMentionClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
@@ -64,9 +66,13 @@ fun FeedPreview(
     val videoState = rememberLazyListState()
     val coroutine = rememberCoroutineScope()
     val connection by connectionController.observe().collectAsStateWithLifecycle()
-    var relation by rememberSaveable { mutableStateOf<Relation>(Relation.NONE) }
+    var relation by rememberSaveable {
+        mutableStateOf<Relation>(Relation.entries.getOrNull(ordinal)
+            ?: Relation.NONE)
+    }
     var position by remember { mutableIntStateOf(state.intValue) }
     val handleOnNavigate by rememberUpdatedState(onNavigate)
+    val handleOnFilter by rememberUpdatedState(onFilter)
     FeedPreview(
         state = state,
         modifier = Modifier.fillMaxSize(),
@@ -116,7 +122,14 @@ fun FeedPreview(
             }
         },
     )
-    FeedMenu(id, title, { relation = it }) {
+    FeedMenu(
+        id,
+        title,
+        relation,
+        {
+            handleOnFilter(it.ordinal)
+            relation = it }
+    ) {
         coroutine.launch {
             if (position == 0) {
                 photoState.animateScrollToItem(0)

@@ -20,22 +20,36 @@ class FeedViewModel @Inject constructor(
 ) : ViewModel() {
 
     val state: StateFlow<State> = observableInteger(TAG).map {
-        State.Initialize(retrievableInteger(TAG))
+        State.Initialize(
+            retrievableInteger(TAG),
+            retrievableInteger(FILTER)
+        )
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = State.Initialize(retrievableInteger(TAG))
+        initialValue = State.Initialize(
+            retrievableInteger(TAG),
+            retrievableInteger(FILTER)
+        )
     )
+
+    fun setFilter(filter: Int) {
+        viewModelScope.launch { publishableInteger(FILTER, filter) }
+    }
 
     fun lastVisited(page: Int) {
         viewModelScope.launch { publishableInteger(TAG, page) }
     }
 
     sealed class State(val page: Int) {
-        data class Initialize(val current: Int?): State(current ?: 0)
+        data class Initialize(
+            val current: Int?,
+            val filter: Int?
+        ): State(current ?: 0)
     }
 
     internal companion object {
-        val TAG: String = FeedViewModel::class.java.name
+        const val TAG: String = "eu.peernetwork.app.ui.feed.FeedViewModel::TAG"
+        const val FILTER: String = "eu.peernetwork.app.ui.feed.FeedViewModel::FILTER"
     }
 }
