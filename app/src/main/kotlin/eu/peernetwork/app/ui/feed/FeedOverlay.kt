@@ -12,6 +12,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
 import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
@@ -24,6 +25,8 @@ import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.design.compose.DesignOverlayPage
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.core.ui.model.ViewModelState
+import eu.peernetwork.social.ui.connection.ConnectionController
+import eu.peernetwork.social.ui.connection.ConnectionScreen
 
 sealed interface FeedOverlayState {
     data object Empty : FeedOverlayState
@@ -47,7 +50,7 @@ fun FeedOverlay(
     criteria: Criteria? = null,
     component: Feed.Component,
     viewModelStore: ViewModelState,
-    connection: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit = {},
+    connectionController: ConnectionController,
     content: @Composable () -> Unit
 ) {
     val key = remember { System.currentTimeMillis().toString() }
@@ -67,7 +70,8 @@ fun FeedOverlay(
         }
     ) {
         DesignOverlayPage(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
         ) {
             val controller = rememberNavController()
@@ -110,9 +114,23 @@ fun FeedOverlay(
                         ) { engagementEvent ->
 
                             ModerationScreen(
-                                provider            = videoComponent,
+                                provider = videoComponent,
                                 viewModelStoreOwner = viewModelStoreOwner
                             ) { moderationEvent ->
+                                val connections by connectionController.observe()
+                                    .collectAsStateWithLifecycle()
+                                val connectionLambda:
+                                        @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit =
+                                    { triple ->
+                                        ConnectionScreen(
+                                            isFollowing = connections
+                                                .getOrDefault(triple.first, triple.third),
+                                            isFollowed = triple.second,
+                                            onClick = { follow ->
+                                                connectionController.invoke(triple.first, !follow)
+                                            }
+                                        )
+                                    }
 
                                 VideoOverlay(
                                     id                   = userId,
@@ -124,14 +142,12 @@ fun FeedOverlay(
                                     onAuthorClick        = { controller.navigateIfNecessary("profile/$it") },
                                     onMentionClick       = { controller.navigateToUsernameSearch(it) },
                                     onHashtagClick       = { controller.navigateToTagSearch(it) },
-                                    connection           = connection,
+                                    connection           = connectionLambda,
                                     engagementEvent      = engagementEvent,
                                     moderationEvent      = moderationEvent
                                 )
                             }
                         }
-
-
                     }
                     else -> {}
                 }

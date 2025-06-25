@@ -15,6 +15,7 @@ import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.core.ui.model.ViewModelState
+import eu.peernetwork.social.ui.connection.ConnectionController
 import eu.peernetwork.social.ui.connection.ConnectionScreen
 
 @Composable
@@ -45,24 +46,27 @@ fun FeedScreen(
     }
     val overlay = remember { mutableStateOf<FeedOverlayState>(FeedOverlayState.Empty) }
     val controller = rememberNavController()
-    FeedOverlay(
-        overlay = overlay,
-        userId = id,
-        postLimit = postLimit,
-        component = component,
-        viewModelStore = viewModelStore,
-    ) {
-        FeedNavigation(
+
+    ConnectionScreen(
+        provider = component,
+        viewModelStoreOwner = viewModelStoreOwner
+    ) { connectionController: ConnectionController ->
+        FeedOverlay(
+            overlay = overlay,
             userId = id,
             postLimit = postLimit,
-            controller = controller,
+            criteria = criteria,
             component = component,
             viewModelStore = viewModelStore,
+            connectionController = connectionController
         ) {
-            ConnectionScreen(
-                provider = component,
-                viewModelStoreOwner = viewModelStoreOwner
-            ) { connectionController ->
+            FeedNavigation(
+                userId = id,
+                postLimit = postLimit,
+                controller = controller,
+                component = component,
+                viewModelStore = viewModelStore,
+            ) {
                 FeedPreview(
                     id = id,
                     ordinal = ordinal.value,

@@ -65,7 +65,7 @@ fun VideoOverlay(
     onAuthorClick: (String) -> Unit = {},
     onMentionClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
-    connection: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit = {},
+    connection: @Composable() (RowScope.(Triple<String, Boolean, Boolean>) -> Unit),
     engagementEvent: Engagements,
     moderationEvent: Moderations
 ) {
@@ -77,7 +77,6 @@ fun VideoOverlay(
         viewModelStoreOwner = viewModelStoreOwner,
         factory = component.viewModelFactory()
     )
-
 
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -166,20 +165,16 @@ fun VideoOverlay(
                                 modifier = Modifier.weight(1f)
                             )
                             Spacer(Modifier.width(8.dp))
-                            /*var isFollowing by remember { mutableStateOf(post.author.isfollowing) }
-                            FollowButton(
-                                isFollowing = isFollowing,
-                                onClick = { isFollowing = !isFollowing }   // flip local state only
-                            )*/
 
-                            updatedConnection(
-                                Triple(
-                                    post.author.id,
-                                    post.author.isfollowing,
-                                    post.author.isfollowed
+                            if (id != post.author.id) {
+                                updatedConnection(
+                                    Triple(
+                                        post.author.id,
+                                        post.author.isfollowing,
+                                        post.author.isfollowed
+                                    )
                                 )
-                            )
-
+                            }
                         }
 
                         Column(
