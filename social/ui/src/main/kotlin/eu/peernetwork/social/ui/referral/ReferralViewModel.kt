@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import eu.peernetwork.core.common.model.Pageable
-import eu.peernetwork.social.ui.mapper.mapFromDomain
 import eu.peernetwork.social.ui.model.UiReferral
 import eu.peernetwork.social.ui.usecase.ReferralPagingUsecase
 import kotlinx.coroutines.flow.Flow
@@ -36,6 +35,12 @@ class ReferralViewModel @Inject constructor(
                 .apply {
                     collectLatest { mutableState.tryEmit(State.Success(this)) }
                 }
+        }
+    }
+
+    fun reset() {
+        viewModelScope.launch {
+            mutableState.tryEmit(State.Empty)
         }
     }
 

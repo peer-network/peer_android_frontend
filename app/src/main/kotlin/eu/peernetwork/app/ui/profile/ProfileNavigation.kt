@@ -37,7 +37,7 @@ fun ProfileNavigation(
             id = backStackEntry.arguments?.getString("id") ?: ""
             updatedProfile(id, controller)
         }
-        composable("settings") { SettingsScreen(provider, viewModelStore.get(userId)) }
+        composable("settings") { SettingsScreen(userId, provider, viewModelStore) }
         composable(
             route = "search/{type}/{query}",
             arguments = listOf(

@@ -23,7 +23,7 @@ class ReferralApiDelegate @Inject constructor(
         response.assertOrThrow(data.status, data.ResponseCode)
         val referrals = data.affectedRows.iInvited.map {
             Referral(
-                id = userId,
+                id = it.id,
                 username = it.username.toString(),
                 slug = it.slug.toString(),
                 img = "$url/${it.img!!}".removeSuffix("/")
