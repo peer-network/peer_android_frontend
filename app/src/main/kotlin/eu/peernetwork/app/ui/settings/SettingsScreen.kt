@@ -60,7 +60,7 @@ fun SettingsScreen(
 ) {
     val updateHeader by rememberUpdatedState(header)
     val handleOnNavigate by rememberUpdatedState(onNavigate)
-    val referral = "referral" // Change later
+    val referral = stringResource(R.string.referral_name_label)
     val password = stringResource(R.string.password_label)
     val preference = stringResource(R.string.preference_label)
     val aboutUsLabel = stringResource(R.string.about_us_label)

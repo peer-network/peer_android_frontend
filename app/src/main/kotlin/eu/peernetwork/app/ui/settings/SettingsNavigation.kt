@@ -4,7 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.res.stringResource
-import androidx.lifecycle.ViewModelStoreOwner
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
@@ -32,7 +31,7 @@ fun SettingsNavigation(
 ) {
     val controller = rememberNavController()
     val updatedSettings by rememberUpdatedState(settings)
-    val referral = "referral" // Change later
+    val referral = stringResource(R.string.referral_name_label)
     val password = stringResource(R.string.password_label)
     val preference = stringResource(R.string.preference_label)
     val account = stringResource(R.string.account_label)

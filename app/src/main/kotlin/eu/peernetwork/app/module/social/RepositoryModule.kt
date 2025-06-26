@@ -4,10 +4,12 @@ import dagger.Binds
 import dagger.Module
 import eu.peernetwork.social.data.repository.BlockRepositoryDelegate
 import eu.peernetwork.social.data.repository.FollowRepositoryDelegate
+import eu.peernetwork.social.data.repository.InviteRepositoryDelegate
 import eu.peernetwork.social.data.repository.ReferralRepositoryDelegate
 import eu.peernetwork.social.data.repository.SearchRepositoryDelegate
 import eu.peernetwork.social.domain.repository.BlockRepository
 import eu.peernetwork.social.domain.repository.FollowRepository
+import eu.peernetwork.social.domain.repository.InviteRepository
 import eu.peernetwork.social.domain.repository.ReferralRepository
 import eu.peernetwork.social.domain.repository.SearchRepository
 
@@ -24,4 +26,7 @@ interface RepositoryModule {
 
     @Binds
     fun bindBlockRepository(delegate: BlockRepositoryDelegate): BlockRepository
+
+    @Binds
+    fun bindInviteRepository(delegate: InviteRepositoryDelegate): InviteRepository
 }

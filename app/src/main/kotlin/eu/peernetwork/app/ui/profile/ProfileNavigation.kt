@@ -58,7 +58,7 @@ fun ProfileNavigation(
                 onAuthorClicked = { controller.navigateIfNecessary("profile/$it") },
             )
         }
-        composable("settings") { SettingsScreen(userId, provider, viewModelStore) }
+        composable("settings") { SettingsScreen(userId, component, viewModelStore) }
         composable(
             route = "search/{type}/{query}",
             arguments = listOf(
