@@ -1,26 +1,19 @@
 package eu.peernetwork.app.ui.feed
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableIntState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -59,26 +52,43 @@ fun FeedPreview(
     onAuthorClick: (String) -> Unit = {},
     onMentionClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
-    onPhotoClick: (String, Int) -> Unit = { id, position -> },
-    onVideoClick: (String, Int) -> Unit = { id, position -> },
+    onPhotoClick: (String, Int) -> Unit = { _, _ -> },
+    onVideoClick: (String, Int) -> Unit = { _, _ -> },
 ) {
     val photoState = rememberLazyListState()
     val videoState = rememberLazyListState()
     val coroutine = rememberCoroutineScope()
     val connection by connectionController.observe().collectAsStateWithLifecycle()
     var relation by rememberSaveable {
-        mutableStateOf<Relation>(Relation.entries.getOrNull(ordinal)
-            ?: Relation.NONE)
+        mutableStateOf(Relation.entries.getOrNull(ordinal) ?: Relation.NONE)
     }
     var position by remember { mutableIntStateOf(state.intValue) }
     val handleOnNavigate by rememberUpdatedState(onNavigate)
     val handleOnFilter by rememberUpdatedState(onFilter)
+
+    // Create PagerState here to control tabs & handle back presses
+    val pageState = rememberPagerState(
+        pageCount = { UiMimeType.TYPES.size },
+        initialPage = state.intValue
+    )
+
+    // BackHandler: If user is on video tab (page 1), back press switches to photo tab (page 0)
+    BackHandler(enabled = pageState.currentPage == 1) {
+        coroutine.launch {
+            pageState.animateScrollToPage(0)
+        }
+        state.intValue = 0
+        handleOnNavigate(0)
+    }
+
     FeedPreview(
         state = state,
+        pageState = pageState,
         modifier = Modifier.fillMaxSize(),
         onNavigate = {
             position = it
-            handleOnNavigate(it) },
+            handleOnNavigate(it)
+        },
         photo = {
             PhotoScreen(
                 id,
@@ -122,13 +132,15 @@ fun FeedPreview(
             }
         },
     )
+
     FeedMenu(
         id,
         title,
         relation,
         {
             handleOnFilter(it.ordinal)
-            relation = it }
+            relation = it
+        }
     ) {
         coroutine.launch {
             if (position == 0) {
@@ -143,16 +155,14 @@ fun FeedPreview(
 @Composable
 fun FeedPreview(
     state: MutableIntState,
+    pageState: PagerState,
     modifier: Modifier = Modifier,
     onNavigate: (Int) -> Unit = {},
     photo: @Composable () -> Unit,
     video: @Composable () -> Unit,
 ) {
-    val pageState = rememberPagerState(
-        pageCount = { UiMimeType.TYPES.size },
-        initialPage = state.intValue
-    )
     val handleNavigation by rememberUpdatedState(onNavigate)
+
     Column {
         DesignTab(pageState) { index ->
             UiMimeType.get(index)?.let {
@@ -177,16 +187,22 @@ fun FeedPreview(
             }
         }
     }
-    LaunchedEffect(pageState.currentPage) { handleNavigation(pageState.currentPage) }
+
+    LaunchedEffect(pageState.currentPage) {
+        state.intValue = pageState.currentPage
+        handleNavigation(pageState.currentPage)
+    }
 }
 
 @Composable
 @Preview
 fun PreviewFeedPreview() {
     val state = rememberSaveable { mutableIntStateOf(0) }
+    val pageState = rememberPagerState(pageCount = { UiMimeType.TYPES.size }, initialPage = 0)
     PeerTheme {
         FeedPreview(
             state = state,
+            pageState = pageState,
             modifier = Modifier.fillMaxSize(),
             photo = { Text("Photo") },
             video = { Text("Video") },

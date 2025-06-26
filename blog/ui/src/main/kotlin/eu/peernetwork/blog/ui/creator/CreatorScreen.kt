@@ -44,7 +44,8 @@ fun CreatorScreen(
     focus: FocusRequester,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onSuccess: () -> Unit = {}
 ) {
     val context = LocalContext.current
     val component = remember {
@@ -91,7 +92,7 @@ fun CreatorScreen(
                 media = if (attachment.value.files.isEmpty()) {
                     UiMimeType.Text
                 } else { attachment.value.media },
-                attachments = attachment.value.files.map { it.uri }
+                attachments = attachment.value.files.map { file -> file.uri }
             ) },
         onReset = { attachment.value = UiAttachment.Text },
         isLoading = isLoading,
@@ -118,6 +119,7 @@ fun CreatorScreen(
     LaunchedEffect(shouldReset.value) {
         if (shouldReset.value) {
             viewModel.reset()
+            onSuccess()
         }
     }
     DisposableEffect(Unit) {
@@ -148,7 +150,8 @@ fun CreatorScreen(
     ) {
         DesignLabel(
             label = { error.value?.let {
-                Text(it,
+                Text(
+                    it,
                     modifier = Modifier.padding(horizontal = 16.dp)
                         .padding(vertical = 8.dp),
                     style = MaterialTheme.typography.bodySmall.copy(
@@ -158,7 +161,9 @@ fun CreatorScreen(
             }},
             visible = error.value != null,
             modifier = Modifier.padding(bottom = 4.dp)
-        ) { CreatorForm(title, focus, description, isLoading) }
+        ) {
+            CreatorForm(title, focus, description, isLoading)
+        }
         Spacer(modifier = Modifier.height(8.dp))
         CreatorFooter(
             title = title,
