@@ -132,10 +132,12 @@ fun ReferralHeader(
     LaunchedEffect(state) {
         when (state) {
             is ReferralViewModel.Status.Success -> {
+                if (copy.value) {
+                    clipboardManager.setText(AnnotatedString((
+                            state as ReferralViewModel.Status.Success).invite.link
+                    ))
+                }
                 copy.value = false
-                clipboardManager.setText(AnnotatedString((
-                        state as ReferralViewModel.Status.Success).invite.link
-                ))
             }
             is ReferralViewModel.Status.Error -> {
                 val error = (state as ReferralViewModel.Status.Error).error
