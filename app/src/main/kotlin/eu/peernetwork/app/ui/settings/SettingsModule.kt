@@ -4,10 +4,12 @@ import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
 import eu.peernetwork.app.ui.about.About
+import eu.peernetwork.app.ui.profile.Profile
 import eu.peernetwork.core.ui.annotation.UiBuilder
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.factory.UiBuilderFactory
+import eu.peernetwork.social.ui.referral.Referral
 import eu.peernetwork.user.ui.password.update.PasswordUpdate
 import eu.peernetwork.user.ui.settings.account.Account
 import eu.peernetwork.user.ui.settings.address.Address
@@ -48,5 +50,21 @@ object SettingsModule {
     @UiBuilder(About.Builder::class)
     fun provideAboutBuilder(component: Settings.Component): UiComponent.Builder {
         return About.Builder(component)
+    }
+
+    @Settings.Scope
+    @Provides
+    @IntoMap
+    @UiBuilder(Referral.Builder::class)
+    fun provideReferralBuilder(component: Settings.Component): UiComponent.Builder {
+        return Referral.Builder(component)
+    }
+
+    @Settings.Scope
+    @Provides
+    @IntoMap
+    @UiBuilder(Profile.Builder::class)
+    fun provideProfileBuilder(component: Settings.Component): UiComponent.Builder {
+        return Profile.Builder(component)
     }
 }

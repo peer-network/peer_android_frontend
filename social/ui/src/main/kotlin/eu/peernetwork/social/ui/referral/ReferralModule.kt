@@ -1,4 +1,4 @@
-package eu.peernetwork.social.ui.followers
+package eu.peernetwork.social.ui.referral
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -12,13 +12,13 @@ import eu.peernetwork.core.ui.factory.UiBuilderFactory
 import eu.peernetwork.core.ui.factory.UiViewModelFactory
 
 @Module
-object FollowersModule {
+object ReferralModule {
     @Provides
-    @Followers.Scope
+    @Referral.Scope
     fun provideBuilderFactory(factory: UiBuilderFactory): UiComponentProvider.Factory = factory
 
     @Provides
-    @Followers.Scope
+    @Referral.Scope
     fun provideViewModelFactory(
         providers: @JvmSuppressWildcards Map<Class<out ViewModel>, @JvmSuppressWildcards Provider<ViewModel>>
     ): ViewModelProvider.Factory {
@@ -27,7 +27,7 @@ object FollowersModule {
 
     @Provides
     @IntoMap
-    @Followers.Scope
-    @UiViewModel(FollowersViewModel::class)
-    fun viewModel(viewModel: FollowersViewModel): ViewModel = viewModel
+    @Referral.Scope
+    @UiViewModel(ReferralViewModel::class)
+    fun viewmodel(viewModel: ReferralViewModel): ViewModel = viewModel
 }

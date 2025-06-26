@@ -16,29 +16,30 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModelStoreOwner
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.compose.DesignTitle
 import eu.peernetwork.core.ui.design.compose.DesignTitleBarHost
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
+import eu.peernetwork.core.ui.model.ViewModelState
 import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.user.ui.R
 import eu.peernetwork.user.ui.settings.account.AccountPreview
 
 @Composable
 fun SettingsScreen(
+    userId: String,
     provider: UiComponentProvider,
-    viewModelStoreOwner: ViewModelStoreOwner,
+    viewModelStore: ViewModelState,
 ) {
     val context = LocalContext.current
     val component = remember {
         provider.builder(Settings.Builder::class.java).build(context)
     }
     val account = stringResource(R.string.account_label)
-    SettingsNavigation(component, viewModelStoreOwner) { controller ->
+    SettingsNavigation(userId, component, viewModelStore) { controller ->
         SettingsScreen({ controller.navigateIfNecessary(it) }) {
-            AccountPreview(component, viewModelStoreOwner) {
+            AccountPreview(component, viewModelStore.get(userId)) {
                 controller.navigateIfNecessary(account)
             }
         }
@@ -59,6 +60,7 @@ fun SettingsScreen(
 ) {
     val updateHeader by rememberUpdatedState(header)
     val handleOnNavigate by rememberUpdatedState(onNavigate)
+    val referral = stringResource(R.string.referral_name_label)
     val password = stringResource(R.string.password_label)
     val preference = stringResource(R.string.preference_label)
     val aboutUsLabel = stringResource(R.string.about_us_label)
@@ -67,6 +69,9 @@ fun SettingsScreen(
         .verticalScroll(rememberScrollState())) {
         Box(modifier = Modifier.padding(vertical = 16.dp, horizontal = 8.dp)) {
             updateHeader()
+        }
+        SettingsItem(label = referral) {
+            handleOnNavigate(referral)
         }
         SettingsItem(label = password) {
             handleOnNavigate(password)
