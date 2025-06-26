@@ -23,6 +23,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -154,141 +155,143 @@ fun VideoOverlay(
                     Box(Modifier.fillMaxSize(), Alignment.Center) { CircularProgressIndicator() }
                     return@VerticalPager
                 }
+                key(post.media) {
+                    Box(Modifier.fillMaxSize()) {
 
-                Box(Modifier.fillMaxSize()) {
+                        var curPos by remember { mutableLongStateOf(0L) }
+                        var durMs  by remember { mutableLongStateOf(1L) }
+                        var exo    by remember { mutableStateOf<ExoPlayer?>(null) }
+                        var videoRatio by remember { mutableFloatStateOf(post.aspectRatio) }
+                        var frameRendered by remember { mutableStateOf(false) }
 
-                    var curPos by remember { mutableLongStateOf(0L) }
-                    var durMs  by remember { mutableLongStateOf(1L) }
-                    var exo    by remember { mutableStateOf<ExoPlayer?>(null) }
-
-                    var videoRatio by remember { mutableFloatStateOf(post.aspectRatio) }
-                    var overlaysReady by remember { mutableStateOf(false) }
-
-                    Box(
-                        modifier = Modifier
-                            .matchParentSize()
-                            .blur(24.dp)
-                            .graphicsLayer { alpha = 0.65f }
-                    ) {
-                        DesignThumbnail(
-                            thumbnail    = post.media,
-                            bitmap       = onLoadBitmap(post.media),
-                            contentScale = ContentScale.Crop,
-                            onRefresh    = { onLoad(post.media, post.aspectRatio) }
-                        )
-                    }
-
-
-                    Box(
-                        modifier = Modifier
-                            .align(Alignment.Center)
-                            .let { mod ->
-                                if (overlaysReady)
-                                    mod.aspectRatio(videoRatio).fillMaxHeight()
-                                else
-                                    mod.fillMaxSize()
-                            }
-                    ) {
-                        fun updateRatio(vs: VideoSize) {
-                            if (vs.width == 0 || vs.height == 0) return
-
-                            val rawW = vs.width.toFloat()
-                            val rawH = vs.height.toFloat()
-
-                            val rotated =
-                                if (vs.unappliedRotationDegrees == 90 || vs.unappliedRotationDegrees == 270)
-                                    rawH / rawW
-                                else
-                                    rawW / rawH
-
-                            videoRatio = rotated.coerceAtLeast(0.01f)
-                        }
-                        comp.videoPlayer()(
-                            modifier = Modifier.matchParentSize(),
-                            spec = VideoPlayer.Spec(
-                                url           = post.media,
-                                ratio         = post.aspectRatio,
-                                resolution    = post.resolution,
-                                enabled       = enabled,
-                                onProgress    = { p, d -> curPos = p; durMs = d.coerceAtLeast(1L) },
-                                onSeek        = { curPos = it },
-                                onPlayerReady = { player ->
-                                    exo = player
-                                    updateRatio(player.videoSize)
-
-
-                                    player.addListener(object : Player.Listener {
-                                        override fun onVideoSizeChanged(newVideoSize: VideoSize) {
-                                            updateRatio(newVideoSize)
-                                        }
-
-                                        override fun onRenderedFirstFrame() {
-                                            overlaysReady = true
-                                        }
-                                    })
-                                }
+                        Box(
+                            modifier = Modifier
+                                .matchParentSize()
+                                .blur(24.dp)
+                                .graphicsLayer { alpha = 0.65f }
+                        ) {
+                            DesignThumbnail(
+                                thumbnail    = post.media,
+                                bitmap       = onLoadBitmap(post.media),
+                                contentScale = ContentScale.Crop,
+                                onRefresh    = { onLoad(post.media, post.aspectRatio) }
                             )
-                        )
+                        }
 
-                        if (overlaysReady) {
-                            val (vPad, hPad) = videoPadding(videoRatio)
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier
-                                    .align(Alignment.TopStart)
-                                    .fillMaxWidth()
-                                    .padding(
-                                        top   = 12.dp,
-                                        start = hPad + 16.dp,
-                                        end   = hPad + 16.dp
-                                    )
-                            ) {
-                                AuthorView(
-                                    author      = post.author,
-                                    description = post.time,
-                                    onClick     = { onAuthorClick(post.author.id) },
-                                    modifier    = Modifier.weight(1f)
+
+                        Box(
+                            modifier = Modifier
+                                .align(Alignment.Center)
+                                .let { mod ->
+                                    if (frameRendered && !videoRatio.isNaN())
+                                        mod.aspectRatio(videoRatio).fillMaxHeight()
+                                    else
+                                        mod.fillMaxSize()
+                                }
+                        ) {
+                            fun updateRatio(vs: VideoSize) {
+                                if (vs.width == 0 || vs.height == 0) return
+
+                                val rawW = vs.width.toFloat()
+                                val rawH = vs.height.toFloat()
+
+                                val rotated =
+                                    if (vs.unappliedRotationDegrees == 90 || vs.unappliedRotationDegrees == 270)
+                                        rawH / rawW
+                                    else
+                                        rawW / rawH
+
+                                videoRatio = rotated.coerceAtLeast(0.01f)
+                            }
+                            comp.videoPlayer()(
+                                modifier = Modifier.matchParentSize(),
+                                spec = VideoPlayer.Spec(
+                                    url           = post.media,
+                                    ratio         = post.aspectRatio,
+                                    resolution    = post.resolution,
+                                    enabled       = enabled,
+                                    onProgress    = { p, d -> curPos = p; durMs = d.coerceAtLeast(1L) },
+                                    onSeek        = { curPos = it },
+                                    onPlayerReady = { player ->
+                                        exo = player
+                                        frameRendered = false
+                                        updateRatio(player.videoSize)
+
+
+                                        player.addListener(object : Player.Listener {
+                                            override fun onVideoSizeChanged(newVideoSize: VideoSize) {
+                                                updateRatio(newVideoSize)
+                                            }
+
+                                            override fun onRenderedFirstFrame() {
+                                                frameRendered = true
+                                            }
+                                        })
+                                    }
                                 )
-                                Spacer(Modifier.width(8.dp))
-                                if (id != post.author.id) {
-                                    connection(
-                                        Triple(
-                                            post.author.id,
-                                            post.author.isfollowing,
-                                            post.author.isfollowed
+                            )
+
+                            if (frameRendered && !videoRatio.isNaN()) {
+                                val (vPad, hPad) = videoPadding(videoRatio)
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier
+                                        .align(Alignment.TopStart)
+                                        .fillMaxWidth()
+                                        .padding(
+                                            top   = 12.dp,
+                                            start = hPad + 16.dp,
+                                            end   = hPad + 16.dp
                                         )
+                                ) {
+                                    AuthorView(
+                                        author      = post.author,
+                                        description = post.time,
+                                        onClick     = { onAuthorClick(post.author.id) },
+                                        modifier    = Modifier.weight(1f)
                                     )
+                                    Spacer(Modifier.width(8.dp))
+                                    if (id != post.author.id) {
+                                        connection(
+                                            Triple(
+                                                post.author.id,
+                                                post.author.isfollowing,
+                                                post.author.isfollowed
+                                            )
+                                        )
+                                    }
+                                }
+
+                                exo?.let { player ->
+                                    VideoProgress(
+                                        player     = player,
+                                        durationMs = durMs,
+                                        onSeek     = { player.seekTo(it) },
+                                        modifier   = Modifier
+                                            .align(Alignment.BottomCenter)
+                                            .fillMaxWidth()
+
+                                    )
+                                }
+
+                                val uiContent = post.mapToContent()
+                                Column(
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                                    modifier = Modifier
+                                        .align(Alignment.CenterEnd)
+                                        .padding(end = 12.dp)
+                                        .width(56.dp)
+                                ) {
+                                    EngagementScreen(uiContent, engagementEvent, vertical = true)
+                                    ModerationScreen (uiContent, moderationEvent)
                                 }
                             }
 
-                            exo?.let { player ->
-                                VideoProgress(
-                                    player     = player,
-                                    durationMs = durMs,
-                                    onSeek     = { player.seekTo(it) },
-                                    modifier   = Modifier
-                                        .align(Alignment.BottomCenter)
-                                        .fillMaxWidth()
-
-                                )
-                            }
-
-                            val uiContent = post.mapToContent()
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.spacedBy(12.dp),
-                                modifier = Modifier
-                                    .align(Alignment.CenterEnd)
-                                    .padding(end = 12.dp)
-                                    .width(56.dp)
-                            ) {
-                                EngagementScreen(uiContent, engagementEvent, vertical = true)
-                                ModerationScreen (uiContent, moderationEvent)
-                            }
                         }
-
                     }
                 }
+
             }
         }
     }
