@@ -155,7 +155,7 @@ fun CreatorScreen(
             visible = error.value != null,
             modifier = Modifier.padding(bottom = 4.dp)
         ) { CreatorForm(title, focus, description, isLoading) }
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(8.dp))
         CreatorFooter(
             title = title,
             description = description,
