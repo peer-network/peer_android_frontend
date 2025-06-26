@@ -1,23 +1,11 @@
 package eu.peernetwork.blog.ui.compose
 
-
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsDraggedAsState
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.produceState
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -41,43 +29,54 @@ fun VideoProgress(
         }
     }
 
-    val fraction = remember(position, durationMs) {
-        (position / durationMs.coerceAtLeast(1).toFloat()).coerceIn(0f, 1f)
-    }
+    val fraction = (position / durationMs.coerceAtLeast(1).toFloat()).coerceIn(0f, 1f)
 
-    var sliderPos by remember { mutableStateOf(fraction) }
+    var sliderPos by remember { mutableStateOf(0f) }
+
     val interaction = remember { MutableInteractionSource() }
-    val isDragging  by interaction.collectIsDraggedAsState()
+    val isDragging by interaction.collectIsDraggedAsState()
 
-    LaunchedEffect(position, isDragging) {
-        if (!isDragging) sliderPos = fraction
+    LaunchedEffect(fraction, isDragging) {
+        if (!isDragging) {
+            sliderPos = fraction
+        }
     }
 
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
+    Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp)
-            .height(36.dp)
+            .padding(horizontal = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
-        Timestamp(position)
-        Spacer(Modifier.width(8.dp))
+
         CustomSlider(
             value = sliderPos,
             onValueChange = { sliderPos = it },
-            onValueChangeFinished = { onSeek((sliderPos * durationMs).roundToLong()) },
+            onValueChangeFinished = {
+                onSeek((sliderPos * durationMs).roundToLong())
+            },
             thumbRadius = 5.dp,
             trackHeight = 4.dp,
-            modifier = Modifier.weight(1f)
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(24.dp),
+            interactionSource = interaction
         )
-        Spacer(Modifier.width(8.dp))
-        Timestamp(durationMs)
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Timestamp(position)
+            Timestamp(durationMs)
+        }
     }
 }
 
 @Composable
 private fun Timestamp(ms: Long) {
-    val totalSec = (ms / 1_000).toInt()
+    val totalSec = (ms / 1000).toInt()
     val m = totalSec / 60
     val s = totalSec % 60
     Text(

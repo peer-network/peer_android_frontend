@@ -3,6 +3,7 @@ package eu.peernetwork.blog.ui.compose
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.*
@@ -28,26 +29,42 @@ fun CustomSlider(
     trackHeight: Dp = 4.dp,
     activeTrackColor: Color = Color.White,
     inactiveTrackColor: Color = Color.White.copy(alpha = .3f),
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() }
 ) {
     var isDragging by remember { mutableStateOf(false) }
 
     var sliderWidthPx by remember { mutableStateOf(0f) }
-
+    var dragOffset by remember { mutableStateOf(value) }
     Box(
         modifier
             .height(maxOf(thumbRadius * 2, trackHeight))
             .onSizeChanged { sliderWidthPx = it.width.toFloat() }
             .pointerInput(Unit) {
+                var dragInteraction: androidx.compose.foundation.interaction.DragInteraction.Start? = null
+
                 detectHorizontalDragGestures(
-                    onDragStart = { isDragging = true },
+                    onDragStart = { offset ->
+                        val interaction = androidx.compose.foundation.interaction.DragInteraction.Start()
+                        dragInteraction = interaction
+                        interactionSource.tryEmit(interaction)
+                        dragOffset = value
+                        isDragging = true
+                    },
                     onDragEnd = {
+                        dragInteraction?.let {
+                            interactionSource.tryEmit(
+                                androidx.compose.foundation.interaction.DragInteraction.Stop(it)
+                            )
+                        }
+                        dragInteraction = null
                         isDragging = false
                         onValueChangeFinished()
                     },
                     onHorizontalDrag = { change, dragAmount ->
                         change.consume()
-                        val newOffset = (value * sliderWidthPx) + dragAmount
-                        onValueChange((newOffset / sliderWidthPx).coerceIn(0f, 1f))
+                        val newOffset = (dragOffset * sliderWidthPx) + dragAmount
+                        dragOffset = (newOffset / sliderWidthPx).coerceIn(0f, 1f)
+                        onValueChange(dragOffset)
                     }
                 )
             }
@@ -64,7 +81,7 @@ fun CustomSlider(
             drawRoundRect(
                 color = activeTrackColor,
                 topLeft = Offset(0f, cy - trackPx / 2),
-                size = Size(value * size.width, trackPx),
+                size = Size((if (isDragging) dragOffset else value) * size.width, trackPx),
                 cornerRadius = CornerRadius(trackPx / 2, trackPx / 2)
             )
         }

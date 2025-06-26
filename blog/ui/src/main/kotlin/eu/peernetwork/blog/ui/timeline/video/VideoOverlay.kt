@@ -209,7 +209,10 @@ fun VideoOverlay(
                                     resolution    = post.resolution,
                                     enabled       = enabled,
                                     onProgress    = { p, d -> curPos = p; durMs = d.coerceAtLeast(1L) },
-                                    onSeek        = { curPos = it },
+                                    onSeek = {
+                                        curPos = it
+                                        exo?.seekTo(it)
+                                    },
                                     onPlayerReady = { player ->
                                         exo = player
                                         frameRendered = false
@@ -284,7 +287,6 @@ fun VideoOverlay(
                                     ModerationScreen (uiContent, moderationEvent)
                                 }
                             }
-
                         }
                     }
                 }
