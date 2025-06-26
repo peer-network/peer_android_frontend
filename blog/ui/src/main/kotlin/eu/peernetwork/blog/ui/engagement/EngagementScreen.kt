@@ -1,7 +1,6 @@
 package eu.peernetwork.blog.ui.engagement
 
 import android.widget.Toast
-import androidx.compose.animation.core.AnimationConstants.DefaultDurationMillis
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.MaterialTheme
@@ -34,7 +33,6 @@ import eu.peernetwork.core.ui.theme.PeerAppRed
 import androidx.compose.foundation.layout.Column
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
@@ -142,7 +140,7 @@ fun EngagementScreen(
 fun EngagementScreen(
     model: UiContent,
     event: Engagements,
-    vertical  : Boolean = false,           //  ← NEW, default keeps old behaviour
+    vertical  : Boolean = false,
     modifier  : Modifier  = Modifier
 ) {
     val engagement by remember(model) { derivedStateOf { event.onLoad(model) } }

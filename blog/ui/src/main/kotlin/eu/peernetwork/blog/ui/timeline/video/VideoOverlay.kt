@@ -1,35 +1,50 @@
 package eu.peernetwork.blog.ui.timeline.video
 
+import android.app.Activity
+import android.graphics.Bitmap
+import android.graphics.Color.TRANSPARENT
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.media3.common.Player
+import androidx.media3.common.VideoSize
+import androidx.media3.exoplayer.ExoPlayer
 import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -49,11 +64,12 @@ import eu.peernetwork.core.common.model.Pageable
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffold
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
+import eu.peernetwork.core.ui.design.compose.DesignThumbnail
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.extension.toInt
 import eu.peernetwork.media.core.renderer.VideoPlayer
 import kotlinx.coroutines.flow.Flow
-import androidx.media3.exoplayer.ExoPlayer
+
 @Composable
 fun VideoOverlay(
     id: String,
@@ -62,112 +78,171 @@ fun VideoOverlay(
     enabled: Boolean,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
-    onAuthorClick: (String) -> Unit = {},
+    onAuthorClick : (String) -> Unit = {},
     onMentionClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
-    connection: @Composable() (RowScope.(Triple<String, Boolean, Boolean>) -> Unit),
+    connection     : @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit,
     engagementEvent: Engagements,
-    moderationEvent: Moderations
+    moderationEvent: Moderations,
+    onLoadBitmap: (String) -> Bitmap?,
+    onLoad       : (String, Float) -> Unit         = { _, _ -> },
 ) {
 
-    val context = LocalContext.current
-    val component = remember { provider.builder(Video.Builder::class.java).build(context) }
-    val viewModel = viewModel(
-        modelClass = VideoViewModel::class.java,
-        viewModelStoreOwner = viewModelStoreOwner,
-        factory = component.viewModelFactory()
-    )
-
-    val state by viewModel.state.collectAsStateWithLifecycle()
-
-    val scaffoldState = remember(state) {
-        derivedStateOf {
-            when (state) {
-                VideoViewModel.State.Empty -> DesignStatefulScaffoldState.Empty
-                VideoViewModel.State.Loading -> DesignStatefulScaffoldState.Loading
-                is VideoViewModel.State.Success ->
-                    DesignStatefulScaffoldState.Success((state as VideoViewModel.State.Success).data)
-
-                is VideoViewModel.State.Error ->
-                    DesignStatefulScaffoldState.Error((state as VideoViewModel.State.Error).error)
+    val ctx = LocalContext.current
+    DisposableEffect(Unit) {
+        val w = (ctx as? Activity)?.window
+        val oldStatus = w?.statusBarColor
+        val oldNav    = w?.navigationBarColor
+        w?.let {
+            WindowCompat.setDecorFitsSystemWindows(it, false)
+            it.statusBarColor     = TRANSPARENT
+            it.navigationBarColor = TRANSPARENT
+        }
+        onDispose {
+            w?.let {
+                it.statusBarColor     = oldStatus ?: TRANSPARENT
+                it.navigationBarColor = oldNav    ?: TRANSPARENT
+                WindowCompat.setDecorFitsSystemWindows(it, true)
             }
         }
     }
-    val updatedConnection by rememberUpdatedState(connection)
 
-    val pullRefreshState = rememberPullRefreshState(
+
+    val comp = remember { provider.builder(Video.Builder::class.java).build(ctx) }
+    val vm = viewModel(
+        modelClass          = VideoViewModel::class.java,
+        viewModelStoreOwner = viewModelStoreOwner,
+        factory             = comp.viewModelFactory()
+    )
+    val vmState by vm.state.collectAsStateWithLifecycle()
+
+    val scaffoldState: State<DesignStatefulScaffoldState> = remember(vmState) {
+        derivedStateOf {
+            when (val s = vmState) {
+                VideoViewModel.State.Empty      -> DesignStatefulScaffoldState.Empty
+                VideoViewModel.State.Loading    -> DesignStatefulScaffoldState.Loading
+                is VideoViewModel.State.Success -> DesignStatefulScaffoldState.Success(s.data)
+                is VideoViewModel.State.Error   -> DesignStatefulScaffoldState.Error(s.error)
+            }
+        }
+    }
+
+    val pull = rememberPullRefreshState(
         refreshing = false,
-        onRefresh = { viewModel.load(Pageable(0, limit)) }
+        onRefresh  = { vm.load(Pageable(0, limit)) }
     )
 
-    DragRefreshLayout(state = pullRefreshState) {
+    DragRefreshLayout(state = pull) {
         DesignStatefulScaffold<Flow<PagingData<UiVideo>>>(
-            state = scaffoldState,
-            onRefresh = { viewModel.load(Pageable(0, limit)) }
+            state     = scaffoldState,
+            onRefresh = { vm.load(Pageable(0, limit)) }
         ) { flow ->
-            val items = flow.collectAsLazyPagingItems()
 
+            val items = flow.collectAsLazyPagingItems()
             if (items.loadState.refresh is LoadState.Loading) {
                 Box(Modifier.fillMaxSize(), Alignment.Center) { CircularProgressIndicator() }
-            } else {
-                val pagerState = rememberPagerState(
-                    initialPage = position,
-                    pageCount = { items.itemCount }
-                )
+                return@DesignStatefulScaffold
+            }
 
-                VerticalPager(state = pagerState) { page ->
-                    val post = items[page]
-                    if (post == null) {
-                        Box(
-                            Modifier.fillMaxSize(),
-                            Alignment.Center
-                        ) { CircularProgressIndicator() }
-                        return@VerticalPager
-                    }
+            val pagerState = rememberPagerState(
+                pageCount   = { maxOf(items.itemCount, 1) },
+                initialPage = position
+            )
+
+            VerticalPager(state = pagerState) { page ->
+                val post = items[page] ?: run {
+                    Box(Modifier.fillMaxSize(), Alignment.Center) { CircularProgressIndicator() }
+                    return@VerticalPager
+                }
+
+                Box(Modifier.fillMaxSize()) {
+
+                    var curPos by remember { mutableLongStateOf(0L) }
+                    var durMs  by remember { mutableLongStateOf(1L) }
+                    var exo    by remember { mutableStateOf<ExoPlayer?>(null) }
+
+                    var videoRatio by remember { mutableFloatStateOf(post.aspectRatio) }
+
+                    val (vPad, hPad) = videoPadding(videoRatio)
 
                     Box(
                         modifier = Modifier
-                            .fillMaxSize()
-                            .windowInsetsPadding(WindowInsets.safeDrawing)
+                            .matchParentSize()
+                            .blur(24.dp)
+                            .graphicsLayer { alpha = 0.65f }
                     ) {
-                        var position by remember { mutableLongStateOf(0L) }
-                        var duration by remember { mutableLongStateOf(1L) }
-                        var exoPlayer by remember { mutableStateOf<ExoPlayer?>(null) }
+                        DesignThumbnail(
+                            thumbnail    = post.media,
+                            bitmap       = onLoadBitmap(post.media),
+                            contentScale = ContentScale.Crop,
+                            onRefresh    = { onLoad(post.media, post.aspectRatio) }
+                        )
+                    }
 
-                        component.videoPlayer()(
-                            modifier = Modifier.fillMaxSize(),
+
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .aspectRatio(videoRatio)
+                            .fillMaxHeight()
+                    ) {
+
+                        comp.videoPlayer()(
+                            modifier = Modifier.matchParentSize(),
                             spec = VideoPlayer.Spec(
-                                url = post.media,
-                                ratio = post.aspectRatio,
-                                resolution = post.resolution,
-                                enabled = enabled,
-                                onProgress = { p, d ->
-                                    position = p
-                                    duration = d.coerceAtLeast(1L)
-                                },
-                                onSeek = { newPos -> position = newPos },
-                                onPlayerReady = { exoPlayer = it }
+                                url           = post.media,
+                                ratio         = post.aspectRatio,
+                                resolution    = post.resolution,
+                                enabled       = enabled,
+                                onProgress    = { p, d -> curPos = p; durMs = d.coerceAtLeast(1L) },
+                                onSeek        = { curPos = it },
+                                onPlayerReady = { player ->
+                                    exo = player
+
+                                    fun updateRatio(vs: VideoSize) {
+                                        if (vs.width == 0 || vs.height == 0) return
+
+                                        val rawW = vs.width.toFloat()
+                                        val rawH = vs.height.toFloat()
+
+                                        val rotated =
+                                            if (vs.unappliedRotationDegrees == 90 || vs.unappliedRotationDegrees == 270)
+                                                rawH / rawW
+                                            else
+                                                rawW / rawH
+
+                                        videoRatio = rotated.coerceAtLeast(0.01f)
+                                    }
+                                    updateRatio(player.videoSize)
+                                    player.addListener(object : Player.Listener {
+                                        override fun onVideoSizeChanged(newVideoSize: VideoSize) {
+                                            updateRatio(newVideoSize)
+                                        }
+                                    })
+                                }
                             )
                         )
-
-                        val uiContent = post.mapToContent()
 
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier
                                 .align(Alignment.TopStart)
-                                .padding(horizontal = 16.dp, vertical = 8.dp)
+                                .fillMaxWidth()
+                                .padding(
+                                    top   = 12.dp,
+                                    start = hPad + 16.dp,
+                                    end   = hPad + 16.dp
+                                )
                         ) {
                             AuthorView(
-                                author = post.author,
+                                author      = post.author,
                                 description = post.time,
-                                onClick = { onAuthorClick(post.author.id) },
-                                modifier = Modifier.weight(1f)
+                                onClick     = { onAuthorClick(post.author.id) },
+                                modifier    = Modifier.weight(1f)
                             )
                             Spacer(Modifier.width(8.dp))
-
                             if (id != post.author.id) {
-                                updatedConnection(
+                                connection(
                                     Triple(
                                         post.author.id,
                                         post.author.isfollowing,
@@ -177,6 +252,19 @@ fun VideoOverlay(
                             }
                         }
 
+                        exo?.let { player ->
+                            VideoProgress(
+                                player     = player,
+                                durationMs = durMs,
+                                onSeek     = { player.seekTo(it) },
+                                modifier   = Modifier
+                                    .align(Alignment.BottomCenter)
+                                    .fillMaxWidth()
+
+                            )
+                        }
+
+                        val uiContent = post.mapToContent()
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -185,28 +273,8 @@ fun VideoOverlay(
                                 .padding(end = 12.dp)
                                 .width(56.dp)
                         ) {
-
-                            EngagementScreen(
-                                model = uiContent,
-                                event = engagementEvent,
-                                vertical = true
-                            )
-
-                            ModerationScreen(
-                                uiContent,
-                                moderationEvent
-                            )
-                        }
-
-                        if (exoPlayer != null) {
-                            VideoProgress(
-                                player      = exoPlayer!!,
-                                durationMs  = duration,
-                                onSeek     = { pos -> exoPlayer!!.seekTo(pos) },
-                                modifier    = Modifier
-                                    .align(Alignment.BottomCenter)
-                                    .padding(bottom = 0.dp)
-                            )
+                            EngagementScreen(uiContent, engagementEvent, vertical = true)
+                            ModerationScreen (uiContent, moderationEvent)
                         }
                     }
                 }
@@ -215,17 +283,32 @@ fun VideoOverlay(
     }
 }
 
-private fun UiEngagement.patchWith(r: UiReaction?) = copy(
-    likes = likes + ((r?.isLiked == true && !isLiked).toInt()),
-    isLiked = r?.isLiked ?: isLiked,
-    dislikes = dislikes + ((r?.isDisliked == true && !isDisliked).toInt()),
-    isDisliked = r?.isDisliked ?: isDisliked,
-    comment = comment + (r?.commented ?: 0)
+private fun UiEngagement.patchWith(uiReaction: UiReaction?) = copy(
+    likes      = likes + ((uiReaction?.isLiked     == true && !isLiked    ).toInt()),
+    isLiked    = uiReaction?.isLiked     ?: isLiked,
+    dislikes   = dislikes + ((uiReaction?.isDisliked == true && !isDisliked).toInt()),
+    isDisliked = uiReaction?.isDisliked ?: isDisliked,
+    comment    = comment + (uiReaction?.commented   ?: 0)
 )
 
+@Composable
+private fun videoPadding(ratio: Float): Pair<Dp , Dp > {
+    val cfg     = LocalConfiguration.current
+    val density = LocalDensity.current
+    val wPx     = with(density) { cfg.screenWidthDp.dp.toPx() }
+    val hPx     = with(density) { cfg.screenHeightDp.dp.toPx() }
 
+    val containerRatio = wPx / hPx
 
+    return if (ratio >= containerRatio) {
+        val videoH = wPx / ratio
+        val vPadPx = (hPx - videoH) / 2f
+        ᴠPair(with(density) { vPadPx.toDp() }, 0.dp)
+    } else {
+        val videoW = hPx * ratio
+        val hPadPx = (wPx - videoW) / 2f
+        ᴠPair(0.dp, with(density) { hPadPx.toDp() })
+    }
+}
 
-
-
-
+private fun ᴠPair(v: Dp, h: Dp) = Pair(v, h)

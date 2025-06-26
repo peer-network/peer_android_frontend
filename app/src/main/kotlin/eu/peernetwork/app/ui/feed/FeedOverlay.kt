@@ -11,8 +11,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
@@ -20,11 +22,13 @@ import eu.peernetwork.blog.ui.moderation.ModerationScreen
 import eu.peernetwork.blog.ui.timeline.photo.PhotoOverlay
 import eu.peernetwork.blog.ui.timeline.video.Video
 import eu.peernetwork.blog.ui.timeline.video.VideoOverlay
+import eu.peernetwork.blog.ui.timeline.video.VideoViewModel
 import eu.peernetwork.core.ui.design.compose.DesignDialogSheet
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.design.compose.DesignOverlayPage
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.core.ui.model.ViewModelState
+import eu.peernetwork.media.core.model.UiMimeType
 import eu.peernetwork.social.ui.connection.ConnectionController
 import eu.peernetwork.social.ui.connection.ConnectionScreen
 
@@ -58,6 +62,7 @@ fun FeedOverlay(
     val viewModelStoreOwner = viewModelStore.get(criteria?.toString() ?: userId)
     val visible = remember(overlay.value) { mutableStateOf(overlay.value !is FeedOverlayState.Empty) }
     val context = LocalContext.current
+    val cfg     = LocalConfiguration.current
     updatedContent()
     DesignDialogSheet(
         key,
@@ -103,6 +108,15 @@ fun FeedOverlay(
                             component.builder(Video.Builder::class.java)
                                 .build(context)
                         }
+
+                        val videoVM = viewModel(
+                            modelClass          = VideoViewModel::class.java,
+                            viewModelStoreOwner = viewModelStoreOwner,
+                            factory             = videoComponent.viewModelFactory()
+                        )
+
+                        val thumbnail = videoVM.thumbnail.collectAsStateWithLifecycle().value
+
                         EngagementScreen(
                             postLimit           = postLimit,
                             refresh             = remember { mutableStateOf(true) },
@@ -144,7 +158,16 @@ fun FeedOverlay(
                                     onHashtagClick       = { controller.navigateToTagSearch(it) },
                                     connection           = connectionLambda,
                                     engagementEvent      = engagementEvent,
-                                    moderationEvent      = moderationEvent
+                                    moderationEvent      = moderationEvent,
+                                    onLoadBitmap = { thumbnail[it] },
+                                    onLoad       = { url, ratio ->
+                                        videoVM.thumbnail(
+                                            url,
+                                            UiMimeType.Video,
+                                            cfg.screenWidthDp,
+                                            ratio
+                                        )
+                                    }
                                 )
                             }
                         }
