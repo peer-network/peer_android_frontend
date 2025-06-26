@@ -37,7 +37,8 @@ import kotlinx.coroutines.FlowPreview
 @OptIn(FlowPreview::class)
 fun ComposerScreen(
     provider: UiComponentProvider,
-    viewModelStore: ViewModelState
+    viewModelStore: ViewModelState,
+    onPostSuccess: () -> Unit
 ) {
     val context = LocalContext.current
     val component = remember {
@@ -63,11 +64,12 @@ fun ComposerScreen(
             )
         }) {
             CreatorScreen(
-                draft,
-                attachment,
-                focus,
-                component,
-                viewModelStore.get(key)
+                draft = draft,
+                attachment = attachment,
+                focus = focus,
+                provider = component,
+                viewModelStoreOwner = viewModelStore.get(key),
+                onSuccess = onPostSuccess
             )
             DesignTitleBarHost("CreatorScreen") {
                 titleBar {

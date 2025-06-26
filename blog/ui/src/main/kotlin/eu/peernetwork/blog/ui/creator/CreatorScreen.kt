@@ -44,6 +44,7 @@ fun CreatorScreen(
     focus: FocusRequester,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
+    onSuccess: () -> Unit
 ) {
     val context = LocalContext.current
     val component = remember {
@@ -117,9 +118,11 @@ fun CreatorScreen(
     LaunchedEffect(shouldReset.value) {
         if (shouldReset.value) {
             viewModel.reset()
+            onSuccess()
         }
     }
 }
+
 
 @Composable
 fun CreatorScreen(

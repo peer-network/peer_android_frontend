@@ -27,7 +27,7 @@ fun HomeNavigation(
     ) {
         HomeRoute.ROUTES.forEach { route ->
             composable(route.path) {
-                when(route) {
+                when (route) {
                     is HomeRoute.Home -> FeedScreen(
                         id,
                         BuildConfig.PAGING_LIMIT,
@@ -39,8 +39,21 @@ fun HomeNavigation(
                         component,
                         viewModelStore,
                     )
-                    is HomeRoute.Add -> ComposerScreen(component, viewModelStore)
-                    is HomeRoute.Wallet -> WalletScreen(BuildConfig.PAGING_LIMIT, component, viewModelStore)
+                    is HomeRoute.Add -> ComposerScreen(
+                        component,
+                        viewModelStore,
+                        onPostSuccess = {
+                            navController.navigate(HomeRoute.Home.path) {
+                                popUpTo(HomeRoute.Add.path) { inclusive = true }
+                                launchSingleTop = true
+                            }
+                        }
+                    )
+                    is HomeRoute.Wallet -> WalletScreen(
+                        BuildConfig.PAGING_LIMIT,
+                        component,
+                        viewModelStore
+                    )
                     is HomeRoute.Search -> SearchScreen(
                         id,
                         BuildConfig.PAGING_LIMIT,
@@ -53,6 +66,7 @@ fun HomeNavigation(
         }
     }
 }
+
 
 sealed class HomeRoute(
     val icon: Int,
