@@ -66,13 +66,13 @@ fun FeedPreview(
     val handleOnNavigate by rememberUpdatedState(onNavigate)
     val handleOnFilter by rememberUpdatedState(onFilter)
 
-    // Create PagerState here to control tabs & handle back presses
+  
     val pageState = rememberPagerState(
         pageCount = { UiMimeType.TYPES.size },
         initialPage = state.intValue
     )
 
-    // BackHandler: If user is on video tab (page 1), back press switches to photo tab (page 0)
+  
     BackHandler(enabled = pageState.currentPage == 1) {
         coroutine.launch {
             pageState.animateScrollToPage(0)
