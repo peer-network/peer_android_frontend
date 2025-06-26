@@ -37,7 +37,6 @@ import eu.peernetwork.media.core.model.UiAttachment
 import eu.peernetwork.media.ui.attachment.AttachmentScreen
 import eu.peernetwork.media.ui.saveable.UiAttachmentSaver
 import eu.peernetwork.wallet.ui.model.UiToken
-import eu.peernetwork.wallet.ui.saveable.UiRecipientSaver
 
 @Composable
 fun ComposerScreen(
