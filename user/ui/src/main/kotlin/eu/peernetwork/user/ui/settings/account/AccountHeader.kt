@@ -79,7 +79,7 @@ fun AccountHeader(
             shape = RoundedCornerShape(8.dp),
             textStyle = MaterialTheme.typography.bodySmall,
             enabled = enabled,
-            contentPadding = PaddingValues(vertical = 4.dp, horizontal = 32.dp),
+            contentPadding = PaddingValues(vertical = 4.dp, horizontal = 24.dp),
             modifier = Modifier
                 .padding(start = 4.dp)
                 .height(28.dp),

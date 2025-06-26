@@ -3,4 +3,5 @@
     <string name="peer_label">Peers</string>
     <string name="follow_label">Follow</string>
     <string name="following_label">Following</string>
+    <string name="referrals_label">Referral</string>
 </resources>

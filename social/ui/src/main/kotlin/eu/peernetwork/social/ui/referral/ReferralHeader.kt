@@ -59,11 +59,11 @@ fun ReferralHeader(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp)
+            .padding(vertical = 16.dp, horizontal = 24.dp)
     ) {
         Text(
             text = "Referral Program",
-            style = MaterialTheme.typography.titleLarge.copy(
+            style = MaterialTheme.typography.headlineLarge.copy(
                 color = MaterialTheme.colorScheme.onBackground
             )
         )
@@ -71,17 +71,15 @@ fun ReferralHeader(
         Text(
             text = "Invite a friend and earn 1% of their earnings every time they transfer or cash out — forever. The more you refer, the more you earn!\n\nCopy your referral link or code and share it with the person. Make sure they enter it during registration.",
             style = MaterialTheme.typography.bodyMedium.copy(
-                color = MaterialTheme.colorScheme.onBackground
+                color = MaterialTheme.colorScheme.tertiary
             )
         )
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(24.dp))
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp),
+            modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.Center
         ) {
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 DesignOutlinedButton(
                     onClick = {
                         link.value?.let {
@@ -125,11 +123,11 @@ fun ReferralHeader(
                 }
             }
         }
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(24.dp))
         Text(
             text = "Referred people",
-            style = MaterialTheme.typography.titleLarge.copy(
-                color = MaterialTheme.colorScheme.onBackground
+            style = MaterialTheme.typography.headlineMedium.copy(
+                color = MaterialTheme.colorScheme.tertiary
             )
         )
     }
