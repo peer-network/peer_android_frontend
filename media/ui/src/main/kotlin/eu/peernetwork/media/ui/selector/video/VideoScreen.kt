@@ -35,6 +35,7 @@ import eu.peernetwork.media.core.model.UiAttachment
 import eu.peernetwork.media.core.model.UiFile
 import eu.peernetwork.media.core.model.UiMimeType
 import eu.peernetwork.core.ui.design.compose.DesignThumbnail
+import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 fun VideoScreen(
@@ -97,13 +98,13 @@ fun VideoScreen(
                             selected.value = null
                             attachment.value = UiAttachment.File(
                                 UiMimeType.Video,
-                                emptyList()
+                                persistentListOf()
                             )
                         } else {
                             selected.value = it[index]
                             attachment.value = UiAttachment.File(
                                 UiMimeType.Video,
-                                listOf(it[index])
+                                persistentListOf(it[index])
                             )
                         }
                     }) {

@@ -1,4 +1,4 @@
-package eu.peernetwork.wallet.ui.util
+package eu.peernetwork.wallet.ui.saveable
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf

@@ -51,6 +51,7 @@ fun DesignScaffold(
     val animatedOffset by animateIntAsState(
         targetValue = (normalizedOffset.floatValue * footerHeightPx).toInt()
     )
+
     val updatedHeader by rememberUpdatedState(header)
     val updatedOverlay by rememberUpdatedState(overlay)
     val updatedFooter by rememberUpdatedState(footer)

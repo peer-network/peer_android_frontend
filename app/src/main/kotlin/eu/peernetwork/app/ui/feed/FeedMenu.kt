@@ -27,6 +27,7 @@ import eu.peernetwork.app.model.UiRelation
 import eu.peernetwork.blog.domain.model.Relation
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.design.compose.DesignDropDown
+import eu.peernetwork.core.ui.design.compose.DesignTitle
 import eu.peernetwork.core.ui.design.compose.DesignTitleBarHost
 
 @Composable
@@ -48,48 +49,52 @@ fun FeedMenu(
         onHome) {
         titleBar {
             var expanded = remember { mutableStateOf(false) }
-            DesignDropDown(
-                expanded,
-                contentPadding = PaddingValues(vertical = 4.dp),
-                default = stringResource(relation.mapFromDomain().value),
-                modifier = Modifier
-                    .padding(vertical = 4.dp)
-                    .clip(RoundedCornerShape(6.dp))
-                    .background(MaterialTheme.colorScheme.surfaceVariant),
-            ) {
-                relations.entries.forEach {
-                    item(tag = it.key, {
-                        handleOnSelect(it.value)
-                        true
-                    }) { label, isActive ->
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.padding(start = 8.dp)
-                                .padding(vertical = 2.dp),
-                        ) {
-                            Text(
-                                label,
-                                style = if (isActive) {
-                                    MaterialTheme.typography.bodyMedium.copy(
-                                        MaterialTheme.colorScheme.onBackground
-                                    )
-                                } else {
-                                    MaterialTheme.typography.labelLarge.copy(
-                                        MaterialTheme.colorScheme.tertiary
-                                    )
-                                },
-                            )
-                            if (isActive) {
-                                Spacer(modifier = Modifier.width(2.dp))
-                                Icon(
-                                    painter = painterResource(R.drawable.ic_caret_down),
-                                    contentDescription = label,
-                                    modifier = Modifier.size(16.dp),
-                                    tint = MaterialTheme.colorScheme.onSurface
+            if (title != null) {
+                DesignTitle { Text(title) }
+            } else {
+                DesignDropDown(
+                    expanded,
+                    contentPadding = PaddingValues(vertical = 4.dp),
+                    default = stringResource(relation.mapFromDomain().value),
+                    modifier = Modifier
+                        .padding(vertical = 4.dp)
+                        .clip(RoundedCornerShape(6.dp))
+                        .background(MaterialTheme.colorScheme.surfaceVariant),
+                ) {
+                    relations.entries.forEach {
+                        item(tag = it.key, {
+                            handleOnSelect(it.value)
+                            true
+                        }) { label, isActive ->
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.padding(start = 8.dp)
+                                    .padding(vertical = 2.dp),
+                            ) {
+                                Text(
+                                    label,
+                                    style = if (isActive) {
+                                        MaterialTheme.typography.bodyMedium.copy(
+                                            MaterialTheme.colorScheme.onBackground
+                                        )
+                                    } else {
+                                        MaterialTheme.typography.labelLarge.copy(
+                                            MaterialTheme.colorScheme.tertiary
+                                        )
+                                    },
                                 )
-                                Spacer(modifier = Modifier.width(4.dp))
-                            } else {
-                                Spacer(modifier = Modifier.width(8.dp))
+                                if (isActive) {
+                                    Spacer(modifier = Modifier.width(2.dp))
+                                    Icon(
+                                        painter = painterResource(R.drawable.ic_caret_down),
+                                        contentDescription = label,
+                                        modifier = Modifier.size(16.dp),
+                                        tint = MaterialTheme.colorScheme.onSurface
+                                    )
+                                    Spacer(modifier = Modifier.width(4.dp))
+                                } else {
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                }
                             }
                         }
                     }

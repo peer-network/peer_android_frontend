@@ -6,14 +6,18 @@ import dagger.Provides
 import eu.peernetwork.app.service.BootstrapService
 import eu.peernetwork.app.service.ResourceServiceDelegate
 import eu.peernetwork.core.common.service.ResourceService
+import javax.inject.Singleton
 
 @Module
 object ServiceModule {
     @Provides
-    fun resourceLoader(delegate: ResourceServiceDelegate): BootstrapService = delegate
+    @Singleton
+    fun resourceService(delegate: ResourceServiceDelegate): ResourceService = delegate
 
     @Provides
-    fun resourceService(delegate: ResourceServiceDelegate): ResourceService = delegate
+    fun resourceLoader(delegate: ResourceService): BootstrapService {
+        return delegate as BootstrapService
+    }
 
     @Provides
     fun provideRemoteConfig(): FirebaseRemoteConfig = FirebaseRemoteConfig.getInstance()

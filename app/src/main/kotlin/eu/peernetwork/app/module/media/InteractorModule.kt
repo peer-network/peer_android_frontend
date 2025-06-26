@@ -20,7 +20,7 @@ object InteractorModule {
     @Singleton
     @MemoryCache
     fun bindMemoryCacheInteractor(): BitmapInteractor {
-        return MemoryCacheInteractor((Runtime.getRuntime().maxMemory() / 1024 / 8).toInt())
+        return MemoryCacheInteractor((Runtime.getRuntime().maxMemory() / 8).toInt())
     }
 
     @Provides

@@ -36,6 +36,7 @@ import eu.peernetwork.media.core.model.UiAttachment
 import eu.peernetwork.media.core.model.UiFile
 import eu.peernetwork.media.core.model.UiMimeType
 import eu.peernetwork.core.ui.design.compose.DesignThumbnail
+import kotlinx.collections.immutable.toPersistentList
 
 @Composable
 fun PhotoScreen(
@@ -94,12 +95,14 @@ fun PhotoScreen(
                         attachment.value = if (isSelected) {
                             UiAttachment.File(
                                 UiMimeType.Photo,
-                                attachment.value.files - it[index]
+                                attachment.value.files.filterNot { file ->
+                                    file.uri == it[index].uri
+                                }.toPersistentList()
                             )
                         } else {
                             UiAttachment.File(
                                 UiMimeType.Photo,
-                                attachment.value.files + it[index]
+                                (attachment.value.files + it[index]).toPersistentList()
                             )
                         }
                     }) {
@@ -115,8 +118,7 @@ fun PhotoScreen(
                             } else {
                                 0f
                             }
-                        }
-                        .drawBehind {
+                        }.drawBehind {
                             drawRoundRect(
                                 color = color,
                                 size = size,
