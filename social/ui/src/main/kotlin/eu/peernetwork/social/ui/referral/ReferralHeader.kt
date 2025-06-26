@@ -17,6 +17,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -48,6 +49,7 @@ fun ReferralHeader(
     )
     val clipboardManager = LocalClipboardManager.current
     val state by viewModel.invite.collectAsState()
+    val copy = remember { mutableStateOf(false) }
     val isLoading = remember { derivedStateOf {
         state is ReferralViewModel.Status.Loading
     } }
@@ -78,7 +80,9 @@ fun ReferralHeader(
         ) {
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 DesignOutlinedButton(
-                    onClick = { viewModel.invite() },
+                    onClick = {
+                        copy.value = true
+                        viewModel.invite() },
                     isLoading = isLoading.value,
                     enabled = !isLoading.value
                 ) {
@@ -128,9 +132,12 @@ fun ReferralHeader(
     LaunchedEffect(state) {
         when (state) {
             is ReferralViewModel.Status.Success -> {
-                clipboardManager.setText(AnnotatedString((
-                        state as ReferralViewModel.Status.Success).invite.link
-                ))
+                if (copy.value) {
+                    clipboardManager.setText(AnnotatedString((
+                            state as ReferralViewModel.Status.Success).invite.link
+                    ))
+                }
+                copy.value = false
             }
             is ReferralViewModel.Status.Error -> {
                 val error = (state as ReferralViewModel.Status.Error).error
