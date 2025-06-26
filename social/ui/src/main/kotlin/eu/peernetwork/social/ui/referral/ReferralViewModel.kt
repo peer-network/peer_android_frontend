@@ -64,8 +64,8 @@ class ReferralViewModel @Inject constructor(
     }
 
     sealed interface Status {
-        object Empty : Status
-        object Loading : Status
+        data object Empty : Status
+        data object Loading : Status
         data class Success(val invite: Invite) : Status
         data class Error(val error: Throwable) : Status
     }
