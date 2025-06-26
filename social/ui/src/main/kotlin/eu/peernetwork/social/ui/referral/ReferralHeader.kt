@@ -31,6 +31,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.compose.DesignOutlinedButton
 import eu.peernetwork.core.ui.extension.builder
+import eu.peernetwork.social.domain.model.Invite
 
 @Composable
 fun ReferralHeader(
@@ -49,7 +50,9 @@ fun ReferralHeader(
     )
     val clipboardManager = LocalClipboardManager.current
     val state by viewModel.invite.collectAsState()
-    val copy = remember { mutableStateOf(false) }
+    val link = remember { mutableStateOf<Invite?>(
+        (state as? ReferralViewModel.Status.Success)?.invite
+    ) }
     val isLoading = remember { derivedStateOf {
         state is ReferralViewModel.Status.Loading
     } }
@@ -81,8 +84,9 @@ fun ReferralHeader(
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 DesignOutlinedButton(
                     onClick = {
-                        copy.value = true
-                        viewModel.invite() },
+                        link.value?.let {
+                            clipboardManager.setText(AnnotatedString((it.link)))
+                        } ?: viewModel.invite()},
                     isLoading = isLoading.value,
                     enabled = !isLoading.value
                 ) {
@@ -132,12 +136,11 @@ fun ReferralHeader(
     LaunchedEffect(state) {
         when (state) {
             is ReferralViewModel.Status.Success -> {
-                if (copy.value) {
-                    clipboardManager.setText(AnnotatedString((
-                            state as ReferralViewModel.Status.Success).invite.link
-                    ))
+                val invite = (state as ReferralViewModel.Status.Success).invite
+                if (invite != link.value) {
+                    link.value = invite
+                    clipboardManager.setText(AnnotatedString((invite.link)))
                 }
-                copy.value = false
             }
             is ReferralViewModel.Status.Error -> {
                 val error = (state as ReferralViewModel.Status.Error).error
