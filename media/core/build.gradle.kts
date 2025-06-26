@@ -11,5 +11,5 @@ android {
 dependencies {
     implementation(project(":core:common"))
     implementation(project(":core:ui"))
-    implementation(libs.androidx.media3.exoplayer)
+    implementation(libs.media3)
 }

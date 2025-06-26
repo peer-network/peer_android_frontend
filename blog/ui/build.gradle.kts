@@ -16,11 +16,10 @@ dependencies {
 
     implementation(project(":blog:domain"))
     implementation(libs.dagger)
-    implementation(libs.androidx.media3.exoplayer)
     implementation(libs.androidx.material)
     ksp(libs.dagger.compiler)
-    implementation(libs.androidx.media3.exoplayer.v130)
-    implementation(libs.androidx.media3.ui.v130)
+    implementation(libs.media3)
+    implementation(libs.media3.ui)
     testImplementation(libs.junit)
     testImplementation(libs.kotlin.test)
     testImplementation(libs.androidx.test)
