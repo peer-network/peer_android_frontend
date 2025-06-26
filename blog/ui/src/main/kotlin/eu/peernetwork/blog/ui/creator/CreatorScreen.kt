@@ -137,34 +137,32 @@ fun CreatorScreen(
         mutableStateOf(TextFieldState())
     }
     val handleOnReset by rememberUpdatedState(onReset)
-    DesignLabel(
-        label = { error.value?.let {
-            Text(it,
-                modifier = Modifier.padding(horizontal = 24.dp)
-                    .padding(vertical = 8.dp),
-                style = MaterialTheme.typography.bodySmall.copy(
-                    color = MaterialTheme.colorScheme.error
-                )
-            )
-        }},
-        visible = error.value != null,
-        modifier = modifier.padding(bottom = 4.dp)
+    Column(
+        modifier = modifier
+            .padding(horizontal = 8.dp)
+            .padding(top = 8.dp)
     ) {
-        Column(
-            modifier = Modifier
-                .padding(horizontal = 8.dp)
-                .padding(top = 8.dp)
-        ) {
-            CreatorForm(title, focus, description, isLoading)
-            Spacer(modifier = Modifier.height(16.dp))
-            CreatorFooter(
-                title = title,
-                description = description,
-                isLoading = isLoading,
-                enabled = enabled,
-                onSubmit = onSubmit,
-            )
-        }
+        DesignLabel(
+            label = { error.value?.let {
+                Text(it,
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                        .padding(vertical = 8.dp),
+                    style = MaterialTheme.typography.bodySmall.copy(
+                        color = MaterialTheme.colorScheme.error
+                    )
+                )
+            }},
+            visible = error.value != null,
+            modifier = Modifier.padding(bottom = 4.dp)
+        ) { CreatorForm(title, focus, description, isLoading) }
+        Spacer(modifier = Modifier.height(12.dp))
+        CreatorFooter(
+            title = title,
+            description = description,
+            isLoading = isLoading,
+            enabled = enabled,
+            onSubmit = onSubmit,
+        )
     }
     LaunchedEffect(shouldReset.value) {
         if (shouldReset.value) {
