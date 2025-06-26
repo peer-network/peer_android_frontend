@@ -106,7 +106,6 @@ fun AccountScreen(
     ) {
         AccountScreen(
             account = it.first,
-            inviteLink = it.second,
             isLoading = isLoading,
             error = error,
             modifier = Modifier
@@ -146,7 +145,6 @@ fun AccountScreen(
 @Composable
 fun AccountScreen(
     account: UiAccount,
-    inviteLink: String,
     isLoading: State<Boolean>,
     modifier: Modifier = Modifier,
     error: State<String?>,
@@ -177,7 +175,6 @@ fun AccountScreen(
     Column(modifier = modifier) {
         AccountHeader(
             account = account,
-            inviteLink = inviteLink,
             modifier = Modifier.padding(top = 8.dp),
             isLoading = isLoading.value,
             enabled = !isLoading.value && fields.value != account.mapToModels(),
@@ -258,7 +255,6 @@ fun PreviewAccountScreen() {
         )
         AccountScreen(
             account = model,
-            inviteLink = "http://localhost/",
             isLoading = remember { mutableStateOf(false) },
             modifier = Modifier
                 .fillMaxWidth()

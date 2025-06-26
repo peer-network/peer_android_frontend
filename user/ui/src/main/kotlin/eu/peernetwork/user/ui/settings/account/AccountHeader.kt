@@ -57,16 +57,12 @@ import java.io.File
 @Composable
 fun AccountHeader(
     account: UiAccount,
-    inviteLink: String,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     isLoading: Boolean = false,
     onChange: (Uri?) -> Unit,
     onSubmit: () -> Unit,
 ) {
-    val context = LocalContext.current
-    val clipboardManager = LocalClipboardManager.current
-    val referralMessage = stringResource(R.string.referral_copy_message)
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
@@ -93,18 +89,6 @@ fun AccountHeader(
                     style = MaterialTheme.typography.bodySmall
                 )
             }
-        )
-        Spacer(modifier = Modifier.width(12.dp))
-        Icon(
-            painterResource(eu.peernetwork.core.ui.R.drawable.ic_copy),
-            contentDescription = stringResource(R.string.referral_label),
-            tint = MaterialTheme.colorScheme.surfaceTint,
-            modifier = Modifier.size(36.dp)
-                .padding(8.dp)
-                .clickable(role = Role.Button) {
-                    clipboardManager.setText(AnnotatedString(inviteLink))
-                    Toast.makeText(context, referralMessage, Toast.LENGTH_LONG).show()
-                }
         )
     }
 }
@@ -187,7 +171,6 @@ fun PreviewSettingsAvatar() {
         )
         AccountHeader(
             account = model,
-            inviteLink = "http://localhost",
             onSubmit = {},
             onChange = {}
         )
