@@ -9,10 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -70,13 +67,10 @@ fun ReferralScreen(
             }
         }
     }
-
     DesignPagingScaffold<UiReferral>(
         state = derivedState,
         modifier = Modifier.fillMaxSize(),
-        onRefresh = {
-            viewModel.referral(userId, Pageable(0, postLimit))
-        },
+        onRefresh = { viewModel.referral(userId, Pageable(0, postLimit)) },
         placeholder = {
             SearchItemSkeleton(modifier = Modifier.padding(horizontal = 16.dp))
         },
@@ -87,7 +81,12 @@ fun ReferralScreen(
                     .verticalScroll(rememberScrollState())
             ) {
                 Spacer(modifier = Modifier.height(8.dp))
-                DesignErrorLabel(refresh, error, component.resource(), PaddingValues(horizontal = 16.dp))
+                DesignErrorLabel(
+                    refresh,
+                    error,
+                    component.resource(),
+                    PaddingValues(horizontal = 16.dp)
+                )
             }
         }
     ) { state, lazyPagingItems ->
@@ -100,17 +99,16 @@ fun ReferralScreen(
                 }
             }
         }
-
         DesignRefreshableScaffold<LazyPagingItems<UiReferral>>(
             state = refreshState,
             onRefresh = { lazyPagingItems.refresh() }
         ) {
             LazyColumn(modifier = Modifier.fillMaxSize()) {
-                item {
-                    ReferralHeader(provider, viewModelStoreOwner)
-                }
-
-                items(count = lazyPagingItems.itemCount, key = { lazyPagingItems[it]?.id ?: it }) { index ->
+                item { ReferralHeader(userId, provider, viewModelStoreOwner) }
+                items(
+                    count = lazyPagingItems.itemCount,
+                    key = { lazyPagingItems[it]?.id ?: it }
+                ) { index ->
                     lazyPagingItems[index]?.let { referral ->
                         val member = UiMember(
                             id = referral.id,
@@ -126,9 +124,5 @@ fun ReferralScreen(
                 }
             }
         }
-    }
-
-    DisposableEffect(Unit) {
-        onDispose { viewModel.reset() }
     }
 }
