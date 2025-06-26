@@ -1,8 +1,9 @@
 package eu.peernetwork.blog.ui.creator
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -25,13 +26,11 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import eu.peernetwork.blog.ui.author.AuthorScreen
 import eu.peernetwork.blog.ui.engagement.EngagementConfirmation
 import eu.peernetwork.blog.ui.engagement.EngagementType
 import eu.peernetwork.blog.ui.model.UiDraft
 import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.compose.DesignCard
 import eu.peernetwork.core.ui.design.compose.DesignLabel
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.media.core.model.UiAttachment
@@ -44,6 +43,7 @@ fun CreatorScreen(
     focus: FocusRequester,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
+    modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
     val component = remember {
@@ -93,11 +93,11 @@ fun CreatorScreen(
                 attachments = attachment.value.files.map { it.uri }
             ) },
         onReset = { attachment.value = UiAttachment.Text },
-        header = { AuthorScreen(component, viewModelStoreOwner) },
         isLoading = isLoading,
         enabled = enabled,
         shouldReset = shouldReset,
-        error = error
+        error = error,
+        modifier = modifier
     )
     component.engagementConfirmation()(
         Modifier,
@@ -131,44 +131,38 @@ fun CreatorScreen(
     modifier: Modifier = Modifier,
     onReset: () -> Unit = { },
     onSubmit: (UiDraft.Field) -> Unit = { },
-    header: @Composable () -> Unit = {}
 ) {
     var title by rememberSaveable(stateSaver = TextFieldState.Saver) { mutableStateOf(TextFieldState()) }
     var description by rememberSaveable(stateSaver = TextFieldState.Saver) {
         mutableStateOf(TextFieldState())
     }
     val handleOnReset by rememberUpdatedState(onReset)
-    DesignLabel(
-        label = { error.value?.let {
-            Text(it,
-                modifier = Modifier.padding(horizontal = 24.dp)
-                    .padding(vertical = 8.dp),
-                style = MaterialTheme.typography.bodySmall.copy(
-                    color = MaterialTheme.colorScheme.error
-                )
-            )
-        }},
-        visible = error.value != null,
-        modifier = modifier.padding(bottom = 4.dp)
+    Column(
+        modifier = modifier
+            .padding(horizontal = 8.dp)
+            .padding(top = 8.dp)
     ) {
-        DesignCard(
-            shape = RoundedCornerShape(24.dp),
-            color = MaterialTheme.colorScheme.surfaceVariant,
-            modifier = Modifier
-                .padding(horizontal = 8.dp)
-                .padding(top = 8.dp)
-        ) {
-            Column {
-                CreatorForm(title, focus, description, isLoading, header)
-                CreatorFooter(
-                    title = title,
-                    description = description,
-                    isLoading = isLoading,
-                    enabled = enabled,
-                    onSubmit = onSubmit,
+        DesignLabel(
+            label = { error.value?.let {
+                Text(it,
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                        .padding(vertical = 8.dp),
+                    style = MaterialTheme.typography.bodySmall.copy(
+                        color = MaterialTheme.colorScheme.error
+                    )
                 )
-            }
-        }
+            }},
+            visible = error.value != null,
+            modifier = Modifier.padding(bottom = 4.dp)
+        ) { CreatorForm(title, focus, description, isLoading) }
+        Spacer(modifier = Modifier.height(8.dp))
+        CreatorFooter(
+            title = title,
+            description = description,
+            isLoading = isLoading,
+            enabled = enabled,
+            onSubmit = onSubmit,
+        )
     }
     LaunchedEffect(shouldReset.value) {
         if (shouldReset.value) {

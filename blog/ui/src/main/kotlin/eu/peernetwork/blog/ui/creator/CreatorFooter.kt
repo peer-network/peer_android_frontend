@@ -45,13 +45,16 @@ fun CreatorFooter(
                 ) },
             isLoading = isLoading.value,
             enabled = isFormValid.value && !isLoading.value,
-            shape = RoundedCornerShape(10.dp),
-            contentPadding = PaddingValues(vertical = 4.dp, horizontal = 16.dp),
-            modifier = Modifier.height(36.dp),
+            shape = RoundedCornerShape(12.dp),
+            contentPadding = PaddingValues(
+                vertical = 8.dp,
+                horizontal = 24.dp
+            ),
+            modifier = Modifier.height(38.dp),
         ) {
             Text(
                 stringResource(eu.peernetwork.blog.ui.R.string.post_label),
-                style = MaterialTheme.typography.bodyMedium.copy(
+                style = MaterialTheme.typography.bodyLarge.copy(
                     fontWeight = FontWeight.SemiBold
                 )
             )

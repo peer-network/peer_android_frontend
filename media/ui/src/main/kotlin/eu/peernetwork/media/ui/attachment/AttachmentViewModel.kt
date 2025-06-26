@@ -53,6 +53,16 @@ class AttachmentViewModel @Inject constructor(
         }
     }
 
+    fun setThumbnail(thumbnail: String, type: UiMimeType, bitmap: Bitmap) {
+        viewModelScope.launch {
+            try {
+                interactor.save(thumbnail, type, bitmap)
+            } catch (error: Throwable) {
+                error.printStackTrace()
+            }
+        }
+    }
+
     fun updatePermissionStatus() {
         viewModelScope.launch {
             val tag = this::class.java.name

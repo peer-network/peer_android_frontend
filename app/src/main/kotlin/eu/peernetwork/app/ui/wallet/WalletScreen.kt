@@ -34,7 +34,7 @@ import eu.peernetwork.wallet.ui.model.UiRecipient
 import eu.peernetwork.wallet.ui.overview.OverviewScreen
 import eu.peernetwork.wallet.ui.service.ServiceScreen
 import eu.peernetwork.wallet.ui.service.ServiceState
-import eu.peernetwork.wallet.ui.util.UiRecipientSaver
+import eu.peernetwork.wallet.ui.saveable.UiRecipientSaver
 
 @Composable
 fun WalletScreen(
