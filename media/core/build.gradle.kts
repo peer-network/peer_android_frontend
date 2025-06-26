@@ -1,7 +1,3 @@
-plugins {
-    id(libs.plugins.parcelise.get().pluginId)
-}
-
 android {
     buildFeatures {
         compose = true
