@@ -104,6 +104,13 @@ fun ReferralScreen(
             onRefresh = { lazyPagingItems.refresh() }
         ) {
             LazyColumn(modifier = Modifier.fillMaxSize()) {
+                item {
+                    ReferralHeader(
+                        provider = provider,
+                        viewModelStoreOwner = viewModelStoreOwner
+                    )
+                }
+
                 items(count = lazyPagingItems.itemCount, key = { lazyPagingItems[it]?.id ?: it }) { index ->
                     lazyPagingItems[index]?.let { referral ->
                         val member = UiMember(
