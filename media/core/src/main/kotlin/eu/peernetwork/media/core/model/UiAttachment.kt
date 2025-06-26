@@ -1,21 +1,23 @@
 package eu.peernetwork.media.core.model
 
-import androidx.compose.runtime.Stable
+import androidx.compose.runtime.Immutable
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
-@Stable
+@Immutable
 sealed class UiAttachment(
     val media: UiMimeType,
-    val files: List<UiFile>
+    val files: ImmutableList<UiFile>
 ) {
-    @Stable
+    @Immutable
     data class File(
         val type: UiMimeType,
-        val uris: List<UiFile>
+        val uris: ImmutableList<UiFile>
     ) : UiAttachment(type, uris)
 
-    @Stable
+    @Immutable
     data object Text : UiAttachment(
         media = UiMimeType.Text,
-        emptyList()
+        files = persistentListOf()
     )
 }

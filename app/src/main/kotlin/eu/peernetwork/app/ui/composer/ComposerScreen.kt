@@ -15,6 +15,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -34,7 +35,9 @@ import eu.peernetwork.core.ui.model.ViewModelState
 import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.media.core.model.UiAttachment
 import eu.peernetwork.media.ui.attachment.AttachmentScreen
+import eu.peernetwork.media.ui.saveable.UiAttachmentSaver
 import eu.peernetwork.wallet.ui.model.UiToken
+import eu.peernetwork.wallet.ui.saveable.UiRecipientSaver
 
 @Composable
 fun ComposerScreen(
@@ -47,7 +50,7 @@ fun ComposerScreen(
     }
     val controller = rememberNavController()
     val draft = remember { mutableStateOf<UiDraft?>(null) }
-    val attachment = remember { mutableStateOf<UiAttachment>(UiAttachment.Text) }
+    val attachment = rememberSaveable(saver = UiAttachmentSaver) { mutableStateOf<UiAttachment>(UiAttachment.Text) }
     val focus = remember { FocusRequester() }
     val intent = UiToken.Post
     val key = intent::class.java.name

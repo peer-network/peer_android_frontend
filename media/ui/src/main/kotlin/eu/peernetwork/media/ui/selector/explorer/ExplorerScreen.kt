@@ -53,6 +53,7 @@ import eu.peernetwork.media.ui.R
 import eu.peernetwork.media.ui.selector.directory.DirectoryScreen
 import eu.peernetwork.media.ui.selector.photo.PhotoScreen
 import eu.peernetwork.media.ui.selector.video.VideoScreen
+import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
@@ -75,7 +76,7 @@ fun ExplorerScreen(
         onClick = { showDirectory.value = true },
         onSelect = {
             directory.value = null
-            attachment.value = UiAttachment.File(it, emptyList()) },
+            attachment.value = UiAttachment.File(it, persistentListOf()) },
     ) { type ->
         val tag = directory.value ?: type.id.toString()
         when(type) {

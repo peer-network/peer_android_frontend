@@ -41,6 +41,8 @@ import eu.peernetwork.media.ui.R
 import eu.peernetwork.media.ui.editor.picture.PhotoAspectRatio
 import eu.peernetwork.media.ui.editor.picture.PhotoScreen
 import eu.peernetwork.media.ui.usecase.PermissionUsecase
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.debounce
 
@@ -111,7 +113,9 @@ fun AttachmentScreen(
             val removed = attachment.value.files[it]
             attachment.value = UiAttachment.File(
                 attachment.value.media,
-                attachment.value.files - removed
+                attachment.value.files.filterNot {
+                    it.uri == removed.uri
+                }.toPersistentList()
             )
             if (imageToCrop.value == removed.uri) {
                 imageToCrop.value = null
@@ -128,7 +132,7 @@ fun AttachmentScreen(
             val croppedUiFile = UiFile(uri = uri, thumbnail = thumbnailKey)
             attachment.value = UiAttachment.File(
                 UiMimeType.Photo,
-                listOf(croppedUiFile)
+                persistentListOf(croppedUiFile)
             )
             val bitmap = BitmapFactory.decodeStream(context.contentResolver.openInputStream(uri))
             viewModel.setThumbnail(thumbnailKey, UiMimeType.Photo, bitmap)
@@ -215,7 +219,7 @@ fun PreviewAttachmentScreen() {
         val thumbnail = uri.toString()
         val attachment = UiAttachment.File(
             UiMimeType.Photo,
-            listOf(UiFile(uri = uri, thumbnail = thumbnail))
+            persistentListOf(UiFile(uri = uri, thumbnail = thumbnail))
         )
         val state = remember { mutableStateOf<UiAttachment>(attachment) }
         AttachmentScreen(
