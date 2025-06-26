@@ -1,4 +1,4 @@
-package eu.peernetwork.media.ui.selector.photo
+package eu.peernetwork.media.ui.editor.picture
 
 import android.graphics.Bitmap
 import android.net.Uri
@@ -7,31 +7,25 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import com.yalantis.ucrop.UCrop
 import eu.peernetwork.media.core.model.UiFile
 import eu.peernetwork.media.ui.activity.CropActivity
-import eu.peernetwork.media.ui.attachment.CropRatio
 import java.io.File
 import java.util.UUID
 
 @Composable
-fun PhotoEditor(
+fun PhotoScreen(
+    state: MutableState<Long>,
     imageUri: Uri?,
-    selectedRatio: CropRatio,
-    launch: Boolean,
-    onLaunched: () -> Unit,
+    selectedRatio: PhotoAspectRatio,
     onCropDone: (UiFile) -> Unit
 ) {
-    if (imageUri == null) return
-
     val context = LocalContext.current
-    var isLaunched by remember(imageUri) { mutableStateOf(false) }
-
+    var lastState = remember { mutableLongStateOf(state.value) }
     val cropLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
@@ -43,14 +37,9 @@ fun PhotoEditor(
                 Log.e("Crop", "UCrop returned missing file: $it")
             }
         }
-        isLaunched = false
     }
-
-    LaunchedEffect(imageUri, selectedRatio, launch) {
-        if (launch && !isLaunched) {
-            isLaunched = true
-            onLaunched()
-
+    LaunchedEffect(state.value) {
+        if (lastState.longValue != state.value && imageUri != null) {
             val destination = Uri.fromFile(File(context.cacheDir, "cropped_${UUID.randomUUID()}.jpg"))
             val intent = UCrop.of(imageUri, destination)
                 .withAspectRatio(selectedRatio.x, selectedRatio.y)
@@ -61,11 +50,13 @@ fun PhotoEditor(
                     setHideBottomControls(false)
                 })
                 .getIntent(context).setClass(context, CropActivity::class.java)
-
+            lastState.longValue = state.value
             cropLauncher.launch(intent)
         }
     }
 }
 
-
-
+enum class PhotoAspectRatio(val x: Float, val y: Float) {
+    Square(1f, 1f),
+    Portrait(4f, 5f)
+}

@@ -3,7 +3,9 @@ package eu.peernetwork.app.ui.composer
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -19,6 +21,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
 import eu.peernetwork.blog.ui.creator.CreatorScreen
 import eu.peernetwork.blog.ui.model.UiDraft
@@ -30,7 +33,6 @@ import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.core.ui.model.ViewModelState
 import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.media.core.model.UiAttachment
-import eu.peernetwork.media.ui.attachment.AttachmentPlaceholder
 import eu.peernetwork.media.ui.attachment.AttachmentScreen
 import eu.peernetwork.wallet.ui.model.UiToken
 
@@ -49,7 +51,7 @@ fun ComposerScreen(
     val focus = remember { FocusRequester() }
     val intent = UiToken.Post
     val key = intent::class.java.name
-    Box(modifier = Modifier.padding()) {
+    Box {
         ComposerNavigation(
             attachment = attachment,
             controller = controller,
@@ -61,7 +63,8 @@ fun ComposerScreen(
                         attachment,
                         onAttach = { controller.navigateIfNecessary("explorer") },
                         component,
-                        viewModelStore.get(key)
+                        viewModelStore.get(key),
+                        Modifier.padding(top = 4.dp),
                     )
                 },
                 content = {
@@ -71,6 +74,8 @@ fun ComposerScreen(
                         focus,
                         component,
                         viewModelStore.get(key),
+                        Modifier.padding(top = 8.dp)
+                            .padding(horizontal = 16.dp)
                     )
                     DesignTitleBarHost("CreatorScreen") {
                         titleBar {
@@ -102,6 +107,7 @@ fun ComposerScreen(
     ) {
         updatedFooter()
         updatedContent()
+        Spacer(modifier = Modifier.imePadding())
     }
 }
 
@@ -109,11 +115,33 @@ fun ComposerScreen(
 @Composable
 fun PreviewComposerScreen() {
     PeerTheme {
+        val focus = remember { FocusRequester() }
         ComposerScreen(
             footer = {
-                AttachmentPlaceholder { }
+                val state = remember { mutableStateOf<UiAttachment>(UiAttachment.Text) }
+                AttachmentScreen(
+                    attachment = state,
+                    onLoad = { null },
+                    onRefresh = {},
+                    onAttach = {},
+                    onPreview = {},
+                    onSelect = {},
+                    onSquareClick = {},
+                    onPortraitClick = {},
+                    onDetach = {}
+                )
             },
-            content = {}
+            content = {
+                CreatorScreen(
+                    focus = focus,
+                    isLoading = remember { mutableStateOf(false) },
+                    enabled = remember { mutableStateOf(false) },
+                    error = remember { mutableStateOf(null) },
+                    shouldReset = remember { mutableStateOf(false) },
+                    modifier = Modifier.padding(top = 8.dp)
+                        .padding(horizontal = 16.dp)
+                ) {}
+            }
         )
     }
 }

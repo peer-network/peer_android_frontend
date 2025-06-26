@@ -10,11 +10,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
@@ -33,14 +30,12 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 
 @Composable
 @SuppressLint("UnusedBoxWithConstraintsScope")
 fun DesignScaffold(
     modifier: Modifier = Modifier,
-    snackbarHostState: SnackbarHostState? = null,
     alwaysReturn: Boolean = false,
     header: @Composable (State<Float>) -> Unit = {},
     footer: @Composable (State<Float>) -> Unit = {},
@@ -83,14 +78,6 @@ fun DesignScaffold(
     }
     BoxWithConstraints(modifier = modifier.fillMaxSize()
         .nestedScroll(nestedScrollConnection)) {
-        if (snackbarHostState != null) {
-            SnackbarHost(
-                hostState = snackbarHostState,
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(bottom = 56.dp)
-            )
-        }
         val height = maxHeight
         Column(
             modifier = Modifier.fillMaxSize()

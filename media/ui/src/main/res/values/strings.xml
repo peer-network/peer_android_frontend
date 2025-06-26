@@ -12,4 +12,8 @@
     <string name="un_mute_label">Un-mute</string>
     <string name="remove_label">Delete media</string>
 
+    <string name="square">1:1</string>
+    <string name="square_label">Square</string>
+    <string name="portrait">4:5</string>
+    <string name="portrait_label">Portrait</string>
 </resources>

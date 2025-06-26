@@ -4,7 +4,6 @@ import android.content.res.Configuration
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -61,9 +60,6 @@ fun HomeScreen(provider: UiComponentProvider) {
             }
         }
     } }
-
-    val snackbarHostState = remember { SnackbarHostState() }
-
     DesignStatefulScaffold<Pair<String, Int>>(
         state = derivedState,
         onRefresh = { viewModel() },
@@ -81,16 +77,14 @@ fun HomeScreen(provider: UiComponentProvider) {
                 viewModel.lastVisited(it)
                 navigationState.intValue = it
                 controller.attachIfNecessary(HomeRoute.get(it).path)
-            },
-            snackbarHostState = snackbarHostState
+            }
         ) { state ->
             HomeNavigation(
                 id = data.first,
                 startDestination = startDestination,
                 navController = controller,
                 component = component,
-                viewModelStore = viewModelStore,
-                snackbarHostState = snackbarHostState
+                viewModelStore = viewModelStore
             )
         }
         BackHandler(enabled = currentStack.value != HomeRoute.Home.path) {
@@ -107,14 +101,12 @@ fun HomeScreen(
     start: State<Int>,
     options: @Composable () -> Unit,
     onClick: (Int) -> Unit,
-    snackbarHostState: SnackbarHostState,
     content: @Composable (State<Float>) -> Unit
 ) {
     val updatedContent by rememberUpdatedState(content)
     val handleOnClick by rememberUpdatedState(onClick)
     DesignTitleBar {
         HomeScaffold(
-            snackbarHostState = snackbarHostState,
             header = { HomeHeader(options = options, modifier = Modifier.padding(top = 8.dp)) },
             footer = {
                 HomeFooter(
@@ -135,11 +127,9 @@ fun HomeScreen(
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun PreviewHomeScreen() {
     PeerTheme {
-        val snackbarHostState = remember { SnackbarHostState() }
         HomeScreen(
             start = remember { mutableIntStateOf(0) },
             options = {},
-            snackbarHostState =snackbarHostState,
             onClick = {},
         ) { state ->
             Text(

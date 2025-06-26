@@ -9,13 +9,20 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
 
 @Composable
+@OptIn(FlowPreview::class)
 fun ListPreview(
     listState: LazyListState,
     content: @Composable (Int) -> Unit
 ) {
     var position by remember { mutableIntStateOf(-1) }
+    var currentPosition by remember { mutableIntStateOf(-1) }
     val updatedContent by rememberUpdatedState(content)
     val layoutInfo by remember { derivedStateOf { listState.layoutInfo } }
     LaunchedEffect(layoutInfo) {
@@ -43,5 +50,11 @@ fun ListPreview(
             position = newPosition
         }
     }
-    updatedContent(position)
+    LaunchedEffect(layoutInfo) {
+        snapshotFlow { layoutInfo }
+            .distinctUntilChanged()
+            .debounce(500)
+            .collectLatest { currentPosition = position }
+    }
+    updatedContent(currentPosition)
 }

@@ -1,6 +1,5 @@
 package eu.peernetwork.app.ui.home
 
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
@@ -20,8 +19,7 @@ fun HomeNavigation(
     startDestination: String,
     navController: NavHostController,
     component: Home.Component,
-    viewModelStore: ViewModelState,
-    snackbarHostState: SnackbarHostState
+    viewModelStore: ViewModelState
 ) {
     DesignNavigation(
         navController = navController,
@@ -41,7 +39,7 @@ fun HomeNavigation(
                         component,
                         viewModelStore,
                     )
-                    is HomeRoute.Add -> ComposerScreen(component, viewModelStore, snackbarHostState)
+                    is HomeRoute.Add -> ComposerScreen(component, viewModelStore)
                     is HomeRoute.Wallet -> WalletScreen(BuildConfig.PAGING_LIMIT, component, viewModelStore)
                     is HomeRoute.Search -> SearchScreen(
                         id,

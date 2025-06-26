@@ -1,14 +1,14 @@
 package eu.peernetwork.media.ui.attachment
 
 import android.Manifest
+import android.content.ContentResolver
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.Crossfade
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
@@ -16,23 +16,30 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import eu.peernetwork.core.ui.component.UiComponentProvider
+import eu.peernetwork.core.ui.design.compose.DesignLabel
 import eu.peernetwork.core.ui.extension.builder
+import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.media.core.model.UiAttachment
 import eu.peernetwork.media.core.model.UiFile
 import eu.peernetwork.media.core.model.UiMimeType
-import eu.peernetwork.media.ui.selector.photo.PhotoEditor
+import eu.peernetwork.media.ui.R
+import eu.peernetwork.media.ui.editor.picture.PhotoAspectRatio
+import eu.peernetwork.media.ui.editor.picture.PhotoScreen
 import eu.peernetwork.media.ui.usecase.PermissionUsecase
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.debounce
@@ -44,6 +51,7 @@ fun AttachmentScreen(
     onAttach: () -> Unit,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
+    modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
     val component = remember {
@@ -69,75 +77,63 @@ fun AttachmentScreen(
     )
     val handleOnAttach by rememberUpdatedState(onAttach)
     val thumbnail = viewModel.thumbnail.collectAsStateWithLifecycle().value
-
     val imageToCrop = remember { mutableStateOf<Uri?>(null) }
-    val selectedRatio = remember { mutableStateOf(CropRatio.Square) }
-    val shouldLaunchCrop = remember { mutableStateOf(false) }
-
-    Column {
-        Crossfade(attachment.value) { target ->
-            if (target.files.isEmpty()) {
-                AttachmentPlaceholder {
-                    if (permissionsState.allPermissionsGranted) {
-                        handleOnAttach()
-                    } else {
-                        timestamp = System.currentTimeMillis()
-                    }
-                }
+    val ratio = remember { mutableStateOf<PhotoAspectRatio>(PhotoAspectRatio.Square) }
+    val launcher = remember { mutableLongStateOf(System.currentTimeMillis()) }
+    AttachmentScreen(
+        modifier = modifier,
+        attachment = attachment,
+        onLoad = { thumbnail[it] },
+        onRefresh = {
+            viewModel.thumbnail(
+                attachment.value.files[it].thumbnail,
+                attachment.value.media
+            )
+        },
+        onAttach = {
+            if (permissionsState.allPermissionsGranted) {
+                handleOnAttach()
             } else {
-                AttachmentPreview(
-                    onAttach = {
-                        if (permissionsState.allPermissionsGranted) {
-                            handleOnAttach()
-                        } else {
-                            timestamp = System.currentTimeMillis()
-                        }
-                    },
-                    onLoad = { thumbnail[it] },
-                    onRefresh = {
-                        viewModel.thumbnail(
-                            attachment.value.files[it].thumbnail,
-                            attachment.value.media
-                        )
-                    },
-                    onRemove = { index ->
-                        val removed = attachment.value.files[index]
-                        attachment.value = UiAttachment.File(
-                            attachment.value.media,
-                            attachment.value.files - removed
-                        )
-
-                        if (imageToCrop.value == removed.uri) {
-                            imageToCrop.value = null
-                        }
-                    },
-                    attachment = attachment
-                )
+                timestamp = System.currentTimeMillis()
+            }
+        },
+        onSelect = { imageToCrop.value = attachment.value.files[it].uri },
+        onPreview = {
+            imageToCrop.value = attachment.value.files[it].uri
+            launcher.longValue = System.currentTimeMillis() },
+        onSquareClick = {
+            ratio.value = PhotoAspectRatio.Square
+            launcher.longValue = System.currentTimeMillis() },
+        onPortraitClick = {
+            ratio.value = PhotoAspectRatio.Portrait
+            launcher.longValue = System.currentTimeMillis() },
+        onDetach = {
+            val removed = attachment.value.files[it]
+            attachment.value = UiAttachment.File(
+                attachment.value.media,
+                attachment.value.files - removed
+            )
+            if (imageToCrop.value == removed.uri) {
+                imageToCrop.value = null
             }
         }
-
-        if (imageToCrop.value == null && attachment.value.files.isNotEmpty()) {
-            imageToCrop.value = attachment.value.files.first().uri
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        AnimatedVisibility(visible = imageToCrop.value != null) {
-            CropRatioSelection(
-                onSquareClick = {
-                    selectedRatio.value = CropRatio.Square
-                    shouldLaunchCrop.value = true
-                },
-                onPortraitClick = {
-                    selectedRatio.value = CropRatio.Portrait
-                    shouldLaunchCrop.value = true
-                }
+    )
+    PhotoScreen(
+        state = launcher,
+        imageUri = imageToCrop.value,
+        selectedRatio = ratio.value,
+        onCropDone = { croppedFile ->
+            val uri = croppedFile.uri
+            val thumbnailKey = uri.toString()
+            val croppedUiFile = UiFile(uri = uri, thumbnail = thumbnailKey)
+            attachment.value = UiAttachment.File(
+                UiMimeType.Photo,
+                listOf(croppedUiFile)
             )
+            val bitmap = BitmapFactory.decodeStream(context.contentResolver.openInputStream(uri))
+            viewModel.setThumbnail(thumbnailKey, UiMimeType.Photo, bitmap)
         }
-
-        Spacer(modifier = Modifier.height(16.dp))
-    }
-
+    )
     LaunchedEffect(permissionsState.allPermissionsGranted) {
         snapshotFlow { timestamp }
             .debounce(500L)
@@ -154,38 +150,84 @@ fun AttachmentScreen(
                 }
             }
     }
+    LaunchedEffect(Unit) { viewModel.initialize() }
+}
 
-    LaunchedEffect(Unit) {
-        viewModel.initialize()
+@Composable
+fun AttachmentScreen(
+    modifier: Modifier = Modifier,
+    attachment: MutableState<UiAttachment>,
+    onLoad: (String) -> Bitmap?,
+    onRefresh: (Int) -> Unit,
+    onAttach: () -> Unit,
+    onSelect: (Int) -> Unit,
+    onPreview: (Int) -> Unit,
+    onSquareClick: () -> Unit,
+    onPortraitClick: () -> Unit,
+    onDetach: (Int) -> Unit,
+) {
+    val imageToCrop = remember(attachment.value) {
+        mutableStateOf<Uri?>(attachment.value.files.firstOrNull()?.uri)
     }
-
-    PhotoEditor(
-        imageUri = imageToCrop.value,
-        selectedRatio = selectedRatio.value,
-        launch = shouldLaunchCrop.value,
-        onLaunched = { shouldLaunchCrop.value = false },
-        onCropDone = { croppedFile ->
-            val uri = croppedFile.uri
-            val thumbnailKey = uri.toString()
-            val croppedUiFile = UiFile(uri = uri, thumbnail = thumbnailKey)
-
-            attachment.value = UiAttachment.File(
-                UiMimeType.Photo,
-                listOf(croppedUiFile)
-            )
-
-            val bitmap = BitmapFactory.decodeStream(context.contentResolver.openInputStream(uri))
-            viewModel.setThumbnail(thumbnailKey, UiMimeType.Photo, bitmap)
-
-            imageToCrop.value = null
+    val isVisible by remember { derivedStateOf {
+        imageToCrop.value != null && attachment.value.files.isNotEmpty()
+    } }
+    DesignLabel(
+        modifier = modifier,
+        visible = isVisible,
+        label = {
+            if (attachment.value.media == UiMimeType.Photo) {
+                AttachmentOption(
+                    onSquareClick = onSquareClick,
+                    onPortraitClick = onPortraitClick,
+                    modifier = Modifier.fillMaxWidth()
+                        .padding(
+                            top = 4.dp,
+                            bottom = 8.dp
+                        )
+                )
+            }
         }
-    )
+    ) {
+        Box(modifier = Modifier.padding(bottom = 4.dp)) {
+            AttachmentPreview(
+                onAttach = onAttach,
+                onLoad = onLoad,
+                onRefresh = onRefresh,
+                onRemove = onDetach,
+                attachment = attachment,
+                onSelect = onSelect,
+                onPreview = onPreview
+            )
+        }
+    }
 }
 
-enum class CropRatio(val x: Float, val y: Float) {
-    Square(1f, 1f),
-    Portrait(4f, 5f)
+@Preview
+@Composable
+fun PreviewAttachmentScreen() {
+    PeerTheme {
+        val context = LocalContext.current
+        val uri = (ContentResolver.SCHEME_ANDROID_RESOURCE +
+                "://" + context.resources.getResourcePackageName(R.drawable.ic_play) +
+                '/' + context.resources.getResourceTypeName(R.drawable.ic_play) +
+                '/' + context.resources.getResourceEntryName(R.drawable.ic_play)).toUri()
+        val thumbnail = uri.toString()
+        val attachment = UiAttachment.File(
+            UiMimeType.Photo,
+            listOf(UiFile(uri = uri, thumbnail = thumbnail))
+        )
+        val state = remember { mutableStateOf<UiAttachment>(attachment) }
+        AttachmentScreen(
+            attachment = state,
+            onLoad = { null },
+            onRefresh = {},
+            onAttach = {},
+            onSelect = {},
+            onPreview = {},
+            onSquareClick = {},
+            onPortraitClick = {},
+            onDetach = {}
+        )
+    }
 }
-
-
-

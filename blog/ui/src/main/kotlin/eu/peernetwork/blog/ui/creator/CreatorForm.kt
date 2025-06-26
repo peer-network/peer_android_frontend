@@ -3,16 +3,12 @@ package eu.peernetwork.blog.ui.creator
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldState
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
@@ -53,14 +49,6 @@ fun CreatorForm(
                     keyboardType = KeyboardType.Text,
                     imeAction = ImeAction.Next
                 ),
-                colors = TextFieldDefaults.colors(
-                    unfocusedContainerColor = MaterialTheme.colorScheme.surface,
-                    focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
-                    focusedTextColor = MaterialTheme.colorScheme.onBackground,
-                    unfocusedTextColor = MaterialTheme.colorScheme.tertiary,
-                    focusedPlaceholderColor = MaterialTheme.colorScheme.surfaceDim,
-                    unfocusedPlaceholderColor = MaterialTheme.colorScheme.surfaceTint,
-                ),
             ) { Text(stringResource(R.string.post_title)) }
         }
         DesignRichTextField(
@@ -69,7 +57,7 @@ fun CreatorForm(
                 top = 16.dp,
                 start = 16.dp,
                 end = 16.dp,
-                bottom = 48.dp,
+                bottom = 36.dp,
             ),
             enabled = !isLoading.value,
             keyboardOptions = KeyboardOptions(
@@ -80,19 +68,21 @@ fun CreatorForm(
             verticalAlignment = Alignment.Top,
             maxLines = 3,
             maxLength = 500,
-            modifier = Modifier.fillMaxWidth()
-                .padding(vertical = 12.dp),
-            leading = { },
-            colors = TextFieldDefaults.colors(
-                unfocusedContainerColor = MaterialTheme.colorScheme.surface,
-                focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
-                focusedTextColor = MaterialTheme.colorScheme.onBackground,
-                unfocusedTextColor = MaterialTheme.colorScheme.tertiary,
-                focusedPlaceholderColor = MaterialTheme.colorScheme.surfaceDim,
-                unfocusedPlaceholderColor = MaterialTheme.colorScheme.surfaceTint,
-            ),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 12.dp),
+            leading = {
+                Text(
+                    text = stringResource(R.string.description_label),
+                    style = MaterialTheme.typography.bodyMedium.copy(
+                        color = MaterialTheme.colorScheme.tertiary
+                    ),
+                    modifier = Modifier
+                        .padding(end = 8.dp)
+                        .padding(bottom = 48.dp)
+                )
+            }
         ) { Text(text = stringResource(R.string.post_description)) }
-        Spacer(modifier = Modifier.height(4.dp))
     }
 }
 
