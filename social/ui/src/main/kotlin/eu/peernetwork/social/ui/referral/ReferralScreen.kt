@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
@@ -105,10 +107,7 @@ fun ReferralScreen(
         ) {
             LazyColumn(modifier = Modifier.fillMaxSize()) {
                 item {
-                    ReferralHeader(
-                        provider = provider,
-                        viewModelStoreOwner = viewModelStoreOwner
-                    )
+                    ReferralHeader(provider, viewModelStoreOwner)
                 }
 
                 items(count = lazyPagingItems.itemCount, key = { lazyPagingItems[it]?.id ?: it }) { index ->
