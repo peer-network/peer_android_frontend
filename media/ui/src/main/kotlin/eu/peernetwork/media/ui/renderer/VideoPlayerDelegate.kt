@@ -74,9 +74,7 @@ class VideoPlayerDelegate @Inject constructor(
                             Player.EVENT_TIMELINE_CHANGED)) {
                         totalDuration = player.duration.coerceAtLeast(1L)
                         progress.floatValue = player.currentPosition.toFloat() / totalDuration
-
                         spec.onProgress(player.currentPosition, totalDuration)
-
                     }
                 }
             }

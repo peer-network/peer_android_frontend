@@ -108,14 +108,13 @@ fun VideoOverlay(
         }
     }
 
-
-    val comp = remember { provider.builder(Video.Builder::class.java).build(ctx) }
-    val vm = viewModel(
+    val component = remember { provider.builder(Video.Builder::class.java).build(ctx) }
+    val viewModel = viewModel(
         modelClass          = VideoViewModel::class.java,
         viewModelStoreOwner = viewModelStoreOwner,
-        factory             = comp.viewModelFactory()
+        factory             = component.viewModelFactory()
     )
-    val vmState by vm.state.collectAsStateWithLifecycle()
+    val vmState by viewModel.state.collectAsStateWithLifecycle()
 
     val scaffoldState: State<DesignStatefulScaffoldState> = remember(vmState) {
         derivedStateOf {
@@ -130,13 +129,13 @@ fun VideoOverlay(
 
     val pull = rememberPullRefreshState(
         refreshing = false,
-        onRefresh  = { vm.load(Pageable(0, limit)) }
+        onRefresh  = { viewModel.load(Pageable(0, limit)) }
     )
 
     DragRefreshLayout(state = pull) {
         DesignStatefulScaffold<Flow<PagingData<UiVideo>>>(
             state     = scaffoldState,
-            onRefresh = { vm.load(Pageable(0, limit)) }
+            onRefresh = { viewModel.load(Pageable(0, limit)) }
         ) { flow ->
 
             val items = flow.collectAsLazyPagingItems()
@@ -178,7 +177,6 @@ fun VideoOverlay(
                             )
                         }
 
-
                         Box(
                             modifier = Modifier
                                 .align(Alignment.Center)
@@ -203,7 +201,7 @@ fun VideoOverlay(
 
                                 videoRatio = rotated.coerceAtLeast(0.01f)
                             }
-                            comp.videoPlayer()(
+                            component.videoPlayer()(
                                 modifier = Modifier.matchParentSize(),
                                 spec = VideoPlayer.Spec(
                                     url           = post.media,
@@ -216,7 +214,6 @@ fun VideoOverlay(
                                         exo = player
                                         frameRendered = false
                                         updateRatio(player.videoSize)
-
 
                                         player.addListener(object : Player.Listener {
                                             override fun onVideoSizeChanged(newVideoSize: VideoSize) {
@@ -291,19 +288,10 @@ fun VideoOverlay(
                         }
                     }
                 }
-
             }
         }
     }
 }
-
-private fun UiEngagement.patchWith(uiReaction: UiReaction?) = copy(
-    likes      = likes + ((uiReaction?.isLiked     == true && !isLiked    ).toInt()),
-    isLiked    = uiReaction?.isLiked     ?: isLiked,
-    dislikes   = dislikes + ((uiReaction?.isDisliked == true && !isDisliked).toInt()),
-    isDisliked = uiReaction?.isDisliked ?: isDisliked,
-    comment    = comment + (uiReaction?.commented   ?: 0)
-)
 
 @Composable
 private fun videoPadding(ratio: Float): Pair<Dp , Dp > {

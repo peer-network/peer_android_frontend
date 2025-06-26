@@ -149,32 +149,32 @@ fun EngagementScreen(
     val handleOnComment by rememberUpdatedState(event.onComment)
     val container: @Composable (@Composable () -> Unit) -> Unit =
         if (vertical) {
-            { content -> Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement  = Arrangement.spacedBy(12.dp),
-                modifier             = modifier
-            ) { content() } }
+            { content ->
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    modifier = modifier
+                ) { content() }
+            }
         } else {
             { content -> Row(modifier = modifier) { content() } }
         }
 
     container {
-
         PostIcon(
             action = UiAction.Like,
-            value  = engagement.likes.toString(),
-            color  = if (engagement.isLiked) PeerAppRed else MaterialTheme.colorScheme.tertiary
+            value = engagement.likes.toString(),
+            color = if (engagement.isLiked) PeerAppRed else MaterialTheme.colorScheme.tertiary
         ) { handleOnLike(engagement) }
 
         PostIcon(
             action = UiAction.Dislike,
-            value  = engagement.dislikes.toString(),
-            color  = if (engagement.isDisliked) LightAccentColor else MaterialTheme.colorScheme.tertiary
+            value = engagement.dislikes.toString(),
+            color = if (engagement.isDisliked) LightAccentColor else MaterialTheme.colorScheme.tertiary
         ) { handleOnDisLike(engagement) }
 
-        PostIcon(
-            action = UiAction.Comment,
-            value  = engagement.comment.toString()
-        ) { handleOnComment(model) }
+        PostIcon(action = UiAction.Comment, value = engagement.comment.toString()) {
+            handleOnComment(model)
+        }
     }
 }
