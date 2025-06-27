@@ -173,7 +173,12 @@ fun EngagementScreen(
         PostIcon(
             action = UiAction.Like,
             value = engagement.likes.toString(),
-            color = if (vertical) Color.White else if (engagement.isLiked) PeerAppRed else MaterialTheme.colorScheme.tertiary,
+            color = when {
+                vertical && engagement.isLiked -> PeerAppRed
+                vertical -> Color.White
+                engagement.isLiked -> PeerAppRed
+                else -> MaterialTheme.colorScheme.tertiary
+            },
             isHorizontal = !vertical,
             modifier = if (vertical) shadowModifier else Modifier
         ) { handleOnLike(engagement) }
@@ -181,7 +186,12 @@ fun EngagementScreen(
         PostIcon(
             action = UiAction.Dislike,
             value = engagement.dislikes.toString(),
-            color = if (vertical) Color.White else if (engagement.isLiked) PeerAppRed else MaterialTheme.colorScheme.tertiary,
+            color = when {
+                vertical && engagement.isDisliked -> PeerAppRed
+                vertical -> Color.White
+                engagement.isDisliked -> PeerAppRed
+                else -> MaterialTheme.colorScheme.tertiary
+            },
             isHorizontal = !vertical,
             modifier = if (vertical) shadowModifier else Modifier
         ) { handleOnDisLike(engagement) }
