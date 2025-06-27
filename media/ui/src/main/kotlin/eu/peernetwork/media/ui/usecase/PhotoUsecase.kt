@@ -46,7 +46,10 @@ class PhotoUsecase @Inject constructor(
             val dataColumn = it.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
             while (it.moveToNext()) {
                 val imageUri = ContentUris.withAppendedId(uri, it.getLong(idColumn))
-                files.add(UiFile(imageUri, cursor.getString(dataColumn)))
+                val galleryPx = 300
+                val path = cursor.getString(dataColumn)
+                val thumbKey = "$path?gallery=${galleryPx}"
+                files.add(UiFile(imageUri, thumbKey))
             }
         }
         files

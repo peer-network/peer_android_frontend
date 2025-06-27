@@ -52,8 +52,8 @@ class VideoViewModel @Inject constructor(
                     limit + 1
                 }
                 if (start <= end) {
-                    it.subList(start, end).asFlow().map {
-                        interactor.load(it.thumbnail, type, Pair(250f, 250f))
+                    it.subList(start, end).asFlow().map { video ->
+                        interactor.load(video.thumbnail, type, Pair(250f, 250f))
                     }.collect {
                         interactor.invalidate()
                     }
@@ -61,6 +61,12 @@ class VideoViewModel @Inject constructor(
             }
         }
     }
+
+    fun preloadPreview(key: String, px: Int, type: UiMimeType) =
+        viewModelScope.launch {
+            interactor.load(key, type, Pair(px.toFloat(), px.toFloat()))
+            interactor.invalidate()
+        }
 
     sealed interface State {
         data object Empty : State

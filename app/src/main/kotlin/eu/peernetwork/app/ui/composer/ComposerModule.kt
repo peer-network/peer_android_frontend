@@ -11,6 +11,7 @@ import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.factory.UiBuilderFactory
 import eu.peernetwork.media.ui.attachment.Attachment
+import eu.peernetwork.media.ui.editor.video.Video
 import eu.peernetwork.media.ui.selector.explorer.Explorer
 import eu.peernetwork.wallet.ui.confirmation.Confirmation
 import javax.inject.Provider
@@ -60,5 +61,13 @@ object ComposerModule {
     @Provides
     fun provideEngagementRenderer(component: Composer.Component): EngagementConfirmation {
         return EngagementRenderer(component)
+    }
+
+    @Composer.Scope
+    @Provides
+    @IntoMap
+    @UiBuilder(Video.Builder::class)
+    fun provideVideoBuilder(component: Composer.Component): UiComponent.Builder {
+        return Video.Builder(component)
     }
 }

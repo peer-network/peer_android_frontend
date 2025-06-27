@@ -36,7 +36,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.compose.DesignBottomSheet
 import eu.peernetwork.core.ui.design.compose.DesignDropDown
@@ -56,7 +55,7 @@ import eu.peernetwork.media.ui.selector.video.VideoScreen
 import kotlinx.collections.immutable.persistentListOf
 
 @Composable
-@OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class)
 fun ExplorerScreen(
     attachment: MutableState<UiAttachment>,
     onFinish: () -> Unit,

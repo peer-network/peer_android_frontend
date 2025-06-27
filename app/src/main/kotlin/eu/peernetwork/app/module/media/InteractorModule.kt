@@ -5,10 +5,12 @@ import dagger.Module
 import dagger.Provides
 import eu.peernetwork.media.core.annotation.DiskCache
 import eu.peernetwork.media.core.annotation.MemoryCache
+import eu.peernetwork.media.core.interactor.ExtractThumbnailsInteractor
 import eu.peernetwork.media.core.interactor.ThumbnailInteractor
 import eu.peernetwork.media.core.interactor.VideoInteractor
 import eu.peernetwork.media.ui.interactor.BitmapInteractor
 import eu.peernetwork.media.ui.interactor.DiskCacheInteractor
+import eu.peernetwork.media.ui.interactor.ExtractThumbnailsInteractorDelegate
 import eu.peernetwork.media.ui.interactor.MemoryCacheInteractor
 import eu.peernetwork.media.ui.interactor.ThumbnailInteractorDelegate
 import eu.peernetwork.media.ui.interactor.VideoInteractorDelegate
@@ -35,9 +37,16 @@ object InteractorModule {
     }
 
     @Provides
-    fun bindThumbnailInteractor(delegate: ThumbnailInteractorDelegate): ThumbnailInteractor = delegate
+    fun bindThumbnailInteractor(delegate: ThumbnailInteractorDelegate): ThumbnailInteractor =
+        delegate
 
     @Provides
     @Singleton
     fun bindVideoInteractor(delegate: VideoInteractorDelegate): VideoInteractor = delegate
+
+    @Provides
+    @Singleton
+    fun extractThumbnailsInteractor(
+        delegate: ExtractThumbnailsInteractorDelegate
+    ): ExtractThumbnailsInteractor = delegate
 }

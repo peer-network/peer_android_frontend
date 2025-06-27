@@ -1,10 +1,12 @@
 package eu.peernetwork.media.ui.attachment
 
 import android.graphics.Bitmap
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import eu.peernetwork.media.core.interactor.ThumbnailInteractor
 import eu.peernetwork.media.core.model.UiMimeType
+import eu.peernetwork.media.core.usecase.CroppedPreviewUseCase
 import eu.peernetwork.persistence.domain.observable.ObservableInteger
 import eu.peernetwork.persistence.domain.publishable.PublishableInteger
 import eu.peernetwork.persistence.domain.retrievable.RetrievableInteger
@@ -21,7 +23,8 @@ class AttachmentViewModel @Inject constructor(
     private val retrievableInteger: RetrievableInteger,
     private val publishableInteger: PublishableInteger,
     private val observableInteger: ObservableInteger,
-    private val interactor: ThumbnailInteractor
+    private val interactor: ThumbnailInteractor,
+    private val croppedPreview: CroppedPreviewUseCase
 ) : ViewModel() {
     private val mutableState = MutableStateFlow<State>(State.Empty)
 
@@ -53,12 +56,13 @@ class AttachmentViewModel @Inject constructor(
         }
     }
 
-    fun setThumbnail(thumbnail: String, bitmap: Bitmap) {
+    fun cropPreview(uri: Uri, key: String, px: Int, mime: UiMimeType) {
         viewModelScope.launch {
             try {
-                interactor.save(thumbnail, bitmap)
-            } catch (error: Throwable) {
-                error.printStackTrace()
+                croppedPreview(uri, key, px, mime)
+                interactor.invalidate()
+            } catch (t: Throwable) {
+                t.printStackTrace()
             }
         }
     }

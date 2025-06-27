@@ -28,12 +28,14 @@ import androidx.core.net.toUri
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.compose.DesignLabel
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.theme.PeerTheme
+import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.media.core.model.UiAttachment
 import eu.peernetwork.media.core.model.UiFile
 import eu.peernetwork.media.core.model.UiMimeType
@@ -54,6 +56,7 @@ fun AttachmentScreen(
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
     modifier: Modifier = Modifier,
+    onEditVideoClick: (Uri) -> Unit
 ) {
     val context = LocalContext.current
     val component = remember {
@@ -67,9 +70,11 @@ fun AttachmentScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
     var timestamp by remember { mutableStateOf<Long?>(null) }
     val usecase = remember { PermissionUsecase(context) }
-    val counter by remember { derivedStateOf {
-        (state as? AttachmentViewModel.State.Success?)?.counter ?: 0
-    } }
+    val counter by remember {
+        derivedStateOf {
+            (state as? AttachmentViewModel.State.Success?)?.counter ?: 0
+        }
+    }
     val permissionsState = rememberMultiplePermissionsState(
         permissions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             listOf(Manifest.permission.READ_MEDIA_IMAGES, Manifest.permission.READ_MEDIA_VIDEO)
@@ -80,7 +85,7 @@ fun AttachmentScreen(
     val handleOnAttach by rememberUpdatedState(onAttach)
     val thumbnail = viewModel.thumbnail.collectAsStateWithLifecycle().value
     val imageToCrop = remember { mutableStateOf<Uri?>(null) }
-    val ratio = remember { mutableStateOf<PhotoAspectRatio>(PhotoAspectRatio.Square) }
+    val ratio = remember { mutableStateOf(PhotoAspectRatio.Square) }
     val launcher = remember { mutableLongStateOf(System.currentTimeMillis()) }
     AttachmentScreen(
         modifier = modifier,
@@ -100,15 +105,27 @@ fun AttachmentScreen(
             }
         },
         onSelect = { imageToCrop.value = attachment.value.files[it].uri },
-        onPreview = {
-            imageToCrop.value = attachment.value.files[it].uri
-            launcher.longValue = System.currentTimeMillis() },
+        onPreview = { index ->
+            val file = attachment.value.files[index]
+            when (attachment.value.media) {
+                UiMimeType.Photo -> {
+                    imageToCrop.value = file.uri
+                    launcher.longValue = System.currentTimeMillis()
+                }
+                UiMimeType.Video -> {
+                    onEditVideoClick(file.uri)
+                }
+                else -> Unit
+            }
+        },
         onSquareClick = {
             ratio.value = PhotoAspectRatio.Square
-            launcher.longValue = System.currentTimeMillis() },
+            launcher.longValue = System.currentTimeMillis()
+        },
         onPortraitClick = {
             ratio.value = PhotoAspectRatio.Portrait
-            launcher.longValue = System.currentTimeMillis() },
+            launcher.longValue = System.currentTimeMillis()
+        },
         onDetach = {
             val removed = attachment.value.files[it]
             attachment.value = UiAttachment.File(
@@ -120,6 +137,9 @@ fun AttachmentScreen(
             if (imageToCrop.value == removed.uri) {
                 imageToCrop.value = null
             }
+        },
+        onEditVideoClick = { file ->
+            onEditVideoClick(file.uri)
         }
     )
     PhotoScreen(
@@ -128,14 +148,17 @@ fun AttachmentScreen(
         selectedRatio = ratio.value,
         onCropDone = { croppedFile ->
             val uri = croppedFile.uri
-            val thumbnailKey = uri.toString()
-            val croppedUiFile = UiFile(uri = uri, thumbnail = thumbnailKey)
+            val previewPx = 530
+            val previewKey = "$uri?previewCropped=$previewPx"
+
+            viewModel.cropPreview(uri, previewKey, previewPx, UiMimeType.Photo)
+
+            val croppedUiFile = UiFile(uri = uri, thumbnail = previewKey)
+
             attachment.value = UiAttachment.File(
                 UiMimeType.Photo,
                 persistentListOf(croppedUiFile)
             )
-            val bitmap = BitmapFactory.decodeStream(context.contentResolver.openInputStream(uri))
-            viewModel.setThumbnail(thumbnailKey, bitmap)
         }
     )
     LaunchedEffect(permissionsState.allPermissionsGranted) {
@@ -169,13 +192,19 @@ fun AttachmentScreen(
     onSquareClick: () -> Unit,
     onPortraitClick: () -> Unit,
     onDetach: (Int) -> Unit,
+    onEditVideoClick: (UiFile) -> Unit,
 ) {
-    val imageToCrop = remember(attachment.value) {
-        mutableStateOf<Uri?>(attachment.value.files.firstOrNull()?.uri)
+
+    val selectedFile = remember(attachment.value) {
+        attachment.value.files.firstOrNull()
     }
-    val isVisible by remember { derivedStateOf {
-        imageToCrop.value != null && attachment.value.files.isNotEmpty()
-    } }
+
+    val imageToCrop: Uri? = selectedFile?.uri
+
+    val isVisible by remember(imageToCrop) {
+        derivedStateOf { imageToCrop != null }
+    }
+
     DesignLabel(
         modifier = modifier,
         visible = isVisible,
@@ -184,7 +213,20 @@ fun AttachmentScreen(
                 AttachmentOption(
                     onSquareClick = onSquareClick,
                     onPortraitClick = onPortraitClick,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            top = 4.dp,
+                            bottom = 8.dp
+                        )
+                )
+            } else if (attachment.value.media == UiMimeType.Video) {
+                EditVideo(
+                    onEditVideoClick = {
+                        selectedFile?.let { onEditVideoClick(it) }
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
                         .padding(
                             top = 4.dp,
                             bottom = 8.dp
@@ -201,7 +243,7 @@ fun AttachmentScreen(
                 onRemove = onDetach,
                 attachment = attachment,
                 onSelect = onSelect,
-                onPreview = onPreview
+                onPreview = onPreview,
             )
         }
     }
@@ -231,7 +273,8 @@ fun PreviewAttachmentScreen() {
             onPreview = {},
             onSquareClick = {},
             onPortraitClick = {},
-            onDetach = {}
+            onDetach = {},
+            onEditVideoClick = {}
         )
     }
 }

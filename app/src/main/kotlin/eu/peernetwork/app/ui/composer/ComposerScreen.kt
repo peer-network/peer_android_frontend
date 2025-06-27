@@ -1,6 +1,7 @@
 package eu.peernetwork.app.ui.composer
 
 import android.annotation.SuppressLint
+import android.net.Uri
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -23,6 +24,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import eu.peernetwork.blog.ui.creator.CreatorScreen
 import eu.peernetwork.blog.ui.model.UiDraft
@@ -68,6 +70,7 @@ fun ComposerScreen(
                         component,
                         viewModelStore.get(key),
                         Modifier.padding(top = 4.dp),
+                        onEditVideoClick = controller::navigateToVideoEditor
                     )
                 },
                 content = {
@@ -133,7 +136,8 @@ fun PreviewComposerScreen() {
                     onSelect = {},
                     onSquareClick = {},
                     onPortraitClick = {},
-                    onDetach = {}
+                    onDetach = {},
+                    onEditVideoClick = {},
                 )
             },
             content = {
@@ -150,4 +154,9 @@ fun PreviewComposerScreen() {
             }
         )
     }
+}
+
+fun NavHostController.navigateToVideoEditor(uri: Uri) {
+    val encodedPath = Uri.encode(uri.toString())
+    navigateIfNecessary("videoEditor/$encodedPath")
 }

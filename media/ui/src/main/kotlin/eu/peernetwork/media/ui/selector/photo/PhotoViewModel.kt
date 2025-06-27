@@ -45,22 +45,28 @@ class PhotoViewModel @Inject constructor(
 
     fun sync(type: UiMimeType, start: Int, limit: Int) {
         viewModelScope.launch {
-            (state.value as? State.Success?)?.photos?.let {
-                val end = if (it.size < limit + 1) {
-                    it.size
-                } else {
-                    limit + 1
-                }
-                if (start <= end) {
-                    it.subList(start, end).asFlow().map {
-                        interactor.load(it.thumbnail, type, Pair(250f, 250f))
-                    }.collect {
-                        interactor.invalidate()
-                    }
+            (state.value as? State.Success)?.photos?.let { list ->
+                val end = if (list.size < limit + 1) list.size else limit + 1
+
+                if(start <= end) {
+                    list.subList(start, end)
+                        .asFlow()
+                        .map { photo ->
+                            interactor.load(photo.thumbnail, type, Pair(300f, 300f))
+                        }
+                        .collect {
+                            interactor.invalidate()
+                        }
                 }
             }
         }
     }
+
+    fun preloadPreview(key: String, px: Int, type: UiMimeType) =
+        viewModelScope.launch {
+            interactor.load(key, type, Pair(px.toFloat(), px.toFloat()))
+            interactor.invalidate()
+        }
 
     sealed interface State {
         data object Empty : State

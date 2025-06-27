@@ -50,8 +50,9 @@ class ThumbnailInteractorDelegate @Inject constructor(
     ): Bitmap? = withContext(dispatcher.io) {
         if (type == UiMimeType.Video) {
             val retriever = MediaMetadataRetriever()
+            val sourcePath  = url.substringBefore('?')
             try {
-                retriever.setDataSource(url)
+                retriever.setDataSource(sourcePath)
                 retriever.getFrameAtTime(100_000, MediaMetadataRetriever.OPTION_CLOSEST_SYNC)
             } catch (error: Throwable) {
                 error.printStackTrace()
@@ -64,8 +65,9 @@ class ThumbnailInteractorDelegate @Inject constructor(
                 }
             }
         } else {
-            BitmapFactory.decodeFile(url)
-        }?.let{
+            val sourcePath = url.substringBefore('?')
+            BitmapFactory.decodeFile(sourcePath)
+        }?.let {
             val scale = min(dimen.first / it.width, dimen.second / it.height)
             val scaledWidth = (it.width * scale).toInt()
             val scaledHeight = (it.height * scale).toInt()
@@ -86,12 +88,14 @@ class ThumbnailInteractorDelegate @Inject constructor(
         background: Bitmap,
         foreground: Bitmap
     ): Bitmap = withContext(dispatcher.io) {
-        val bitmap = bitmapMergeUsecase(BitmapMergeUsecase.Parameter(
-            width,
-            aspectRatio,
-            background,
-            foreground
-        ))
+        val bitmap = bitmapMergeUsecase(
+            BitmapMergeUsecase.Parameter(
+                width,
+                aspectRatio,
+                background,
+                foreground
+            )
+        )
         save(url, bitmap)
     }
 
@@ -108,6 +112,7 @@ class ThumbnailInteractorDelegate @Inject constructor(
                 bitmap = this
             }
         }
+
         bitmap
     }
 

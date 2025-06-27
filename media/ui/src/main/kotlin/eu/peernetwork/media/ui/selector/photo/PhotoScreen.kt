@@ -65,6 +65,7 @@ fun PhotoScreen(
                 is PhotoViewModel.State.Success -> DesignStatefulScaffoldState.Success(
                     (state as PhotoViewModel.State.Success).photos
                 )
+
                 is PhotoViewModel.State.Error -> DesignStatefulScaffoldState.Error(
                     (state as PhotoViewModel.State.Error).error
                 )
@@ -76,9 +77,11 @@ fun PhotoScreen(
     val selected = remember(attachment.value) { attachment.value.files.associateBy { it.uri } }
     val thumbnail = viewModel.thumbnail.collectAsStateWithLifecycle()
     val listState = rememberLazyGridState()
-    val canLoad = remember { derivedStateOf {
-        listState.layoutInfo.totalItemsCount > 0 && !listState.isScrollInProgress
-    } }
+    val canLoad = remember {
+        derivedStateOf {
+            listState.layoutInfo.totalItemsCount > 0 && !listState.isScrollInProgress
+        }
+    }
     DesignStatefulScaffold<List<UiFile>>(
         state = derivedState,
         onRefresh = { viewModel.initialize(directory.value) },
@@ -94,43 +97,57 @@ fun PhotoScreen(
         ) {
             items(it.size) { index ->
                 val isSelected = selected.containsKey(it[index].uri)
-                Box(modifier = Modifier
-                    .aspectRatio(1f)
-                    .background(MaterialTheme.colorScheme.surfaceVariant)
-                    .clickable(role = Role.Button) {
-                        attachment.value = if (isSelected) {
-                            UiAttachment.File(
-                                UiMimeType.Photo,
-                                attachment.value.files.filterNot { file ->
-                                    file.uri == it[index].uri
-                                }.toPersistentList()
-                            )
-                        } else {
-                            UiAttachment.File(
-                                UiMimeType.Photo,
-                                (attachment.value.files + it[index]).toPersistentList()
-                            )
-                        }
-                    }) {
+                Box(
+                    modifier = Modifier
+                        .aspectRatio(1f)
+                        .background(MaterialTheme.colorScheme.surfaceVariant)
+                        .clickable(role = Role.Button) {
+                            attachment.value = if (isSelected) {
+                                UiAttachment.File(
+                                    UiMimeType.Photo,
+                                    attachment.value.files.filterNot { file ->
+                                        file.uri == it[index].uri
+                                    }.toPersistentList()
+                                )
+                            } else {
+                                val previewPx = 530
+                                val basePath = it[index].thumbnail.substringBefore('?')
+                                val previewKey = "$basePath?preview=${previewPx}"
+
+                                val previewFile = UiFile(
+                                    uri = it[index].uri,
+                                    thumbnail = previewKey
+                                )
+
+                                viewModel.preloadPreview(previewKey, previewPx, UiMimeType.Photo)
+
+                                UiAttachment.File(
+                                    UiMimeType.Photo,
+                                    (attachment.value.files + previewFile).toPersistentList()
+                                )
+                            }
+                        }) {
                     DesignThumbnail(
                         it[index].thumbnail,
                         thumbnail.value[it[index].thumbnail]
-                    ) {  }
-                    Box(modifier = Modifier
-                        .fillMaxSize()
-                        .graphicsLayer {
-                            alpha = if (isSelected) {
-                                1f
-                            } else {
-                                0f
+                    ) { }
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .graphicsLayer {
+                                alpha = if (isSelected) {
+                                    1f
+                                } else {
+                                    0f
+                                }
                             }
-                        }.drawBehind {
-                            drawRoundRect(
-                                color = color,
-                                size = size,
-                                style = Stroke(width = 4.dp.toPx())
-                            )
-                        }
+                            .drawBehind {
+                                drawRoundRect(
+                                    color = color,
+                                    size = size,
+                                    style = Stroke(width = 4.dp.toPx())
+                                )
+                            }
                     )
                 }
             }

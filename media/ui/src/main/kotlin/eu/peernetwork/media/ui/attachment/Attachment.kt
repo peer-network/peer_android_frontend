@@ -4,11 +4,10 @@ import android.content.Context
 import androidx.lifecycle.ViewModelProvider
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.provider.UiProvider
-import eu.peernetwork.media.core.interactor.ThumbnailInteractor
+import eu.peernetwork.media.core.provider.MediaProvider
 import eu.peernetwork.persistence.domain.provider.PreferenceProvider
 
-interface Attachment : PreferenceProvider, UiProvider {
-    fun thumbnailInteractor(): ThumbnailInteractor
+interface Attachment : PreferenceProvider, UiProvider, MediaProvider {
 
     @javax.inject.Scope
     @Retention(AnnotationRetention.RUNTIME)

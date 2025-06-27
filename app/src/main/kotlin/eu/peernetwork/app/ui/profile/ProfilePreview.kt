@@ -34,7 +34,6 @@ import eu.peernetwork.user.ui.user.UserScreen
 import kotlinx.coroutines.launch
 
 @Composable
-@OptIn(ExperimentalMaterial3Api::class)
 fun ProfilePreview(
     id: String,
     title: String?,
@@ -136,7 +135,6 @@ fun ProfilePreview(
 }
 
 @Composable
-@OptIn(ExperimentalMaterial3Api::class)
 fun ProfilePreview(
     modifier: Modifier = Modifier,
     onRefresh: () -> Unit = {},

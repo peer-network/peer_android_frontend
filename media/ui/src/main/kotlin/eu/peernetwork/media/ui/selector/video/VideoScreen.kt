@@ -65,6 +65,7 @@ fun VideoScreen(
                 is VideoViewModel.State.Success -> DesignStatefulScaffoldState.Success(
                     (state as VideoViewModel.State.Success).videos
                 )
+
                 is VideoViewModel.State.Error -> DesignStatefulScaffoldState.Error(
                     (state as VideoViewModel.State.Error).error
                 )
@@ -72,25 +73,32 @@ fun VideoScreen(
         }
     }
     val current = rememberSaveable(directory.value) { mutableStateOf(directory.value) }
-    val selected = remember(attachment.value) { mutableStateOf<UiFile?>(
-        if (attachment.value.media is UiMimeType.Video) {
-            attachment.value.files.firstOrNull()
-        } else {
-            null
-        }
-    ) }
+    val selected = remember(attachment.value) {
+        mutableStateOf<UiFile?>(
+            if (attachment.value.media is UiMimeType.Video) {
+                attachment.value.files.firstOrNull()
+            } else {
+                null
+            }
+        )
+    }
+
+    val selectedFile = selected.value
+
     val color = MaterialTheme.colorScheme.primary
     val thumbnail = viewModel.thumbnail.collectAsStateWithLifecycle()
     val listState = rememberLazyGridState()
-    val canLoad = remember { derivedStateOf {
-        listState.layoutInfo.totalItemsCount > 0 && !listState.isScrollInProgress
-    } }
+    val canLoad = remember {
+        derivedStateOf {
+            listState.layoutInfo.totalItemsCount > 0 && !listState.isScrollInProgress
+        }
+    }
     DesignStatefulScaffold<List<UiFile>>(
         state = derivedState,
         onRefresh = { viewModel.initialize(directory.value) },
         contentAlignment = Alignment.TopCenter,
         modifier = Modifier.fillMaxSize()
-    ) {
+    ) { videos ->
         LazyVerticalGrid(
             state = listState,
             columns = GridCells.Fixed(4),
@@ -98,42 +106,66 @@ fun VideoScreen(
             verticalArrangement = Arrangement.spacedBy(4.dp),
             horizontalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            items(it.size) { index ->
-                Box(modifier = Modifier.aspectRatio(1f)
-                    .background(MaterialTheme.colorScheme.surfaceVariant)
-                    .clickable(role = Role.Button) {
-                        if (selected.value != null) {
-                            selected.value = null
-                            attachment.value = UiAttachment.File(
-                                UiMimeType.Video,
-                                persistentListOf()
-                            )
-                        } else {
-                            selected.value = it[index]
-                            attachment.value = UiAttachment.File(
-                                UiMimeType.Video,
-                                persistentListOf(it[index])
-                            )
-                        }
-                    }) {
-                    DesignThumbnail(
-                        it[index].thumbnail,
-                        thumbnail.value[it[index].thumbnail]
-                    ) {  }
-                    Box(modifier = Modifier.fillMaxSize()
-                        .graphicsLayer {
-                            alpha = if (selected.value == it[index]) {
-                                1f
+            items(videos.size) { index ->
+                val file = videos[index]
+                val isSelected = (selectedFile?.uri == file.uri)
+
+                Box(
+                    modifier = Modifier
+                        .aspectRatio(1f)
+                        .background(MaterialTheme.colorScheme.surfaceVariant)
+                        .clickable(role = Role.Button) {
+                            if (isSelected) {
+                                selected.value = null
+                                attachment.value = UiAttachment.File(
+                                    UiMimeType.Video,
+                                    persistentListOf()
+                                )
                             } else {
-                                0f
+                                val previewPx = 530
+                                val basePath   = file.thumbnail.substringBefore('?')
+                                val previewKey = "$basePath?previewLarge=$previewPx"
+
+                                val previewFile = UiFile(
+                                    uri = file.uri,
+                                    thumbnail = previewKey
+                                )
+
+                                viewModel.preloadPreview(
+                                    previewKey,
+                                    previewPx,
+                                    UiMimeType.Video
+                                )
+
+                                attachment.value = UiAttachment.File(
+                                    UiMimeType.Video,
+                                    persistentListOf(previewFile)
+                                )
+
+                                selected.value = previewFile
                             }
-                        }.drawBehind {
-                            drawRoundRect(
-                                color = color,
-                                size = size,
-                                style = Stroke(width = 4.dp.toPx())
-                            )
-                        }
+                        }) {
+                    DesignThumbnail(
+                        file.thumbnail,
+                        thumbnail.value[file.thumbnail]
+                    ) { }
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .graphicsLayer {
+                                alpha = if (isSelected) {
+                                    1f
+                                } else {
+                                    0f
+                                }
+                            }
+                            .drawBehind {
+                                drawRoundRect(
+                                    color = color,
+                                    size = size,
+                                    style = Stroke(width = 4.dp.toPx())
+                                )
+                            }
                     )
                 }
             }

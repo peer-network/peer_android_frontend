@@ -98,6 +98,7 @@ fun AttachmentPreview(
     val updatedContent by rememberUpdatedState(content)
     val handleOnRemove by rememberUpdatedState(onRemove)
     val handleOnPreview by rememberUpdatedState(onPreview)
+
     HorizontalPager(
         state = state,
         modifier = Modifier.fillMaxWidth(),
@@ -139,8 +140,8 @@ fun AttachmentPreview(
                     ) {
                         Text(
                             stringResource(R.string.media_label),
-                            style = MaterialTheme.typography.bodySmall.copy(
-                                color = MaterialTheme.colorScheme.surfaceDim
+                            style = MaterialTheme.typography.bodyLarge.copy(
+                                color = MaterialTheme.colorScheme.tertiary
                             )
                         )
                     }
@@ -184,11 +185,11 @@ fun PreviewAttachmentPreview() {
     PeerTheme {
         Column {
             AttachmentPreview(
-                rememberPagerState(initialPage = 0) { 1 },
-                remember { mutableStateOf(false) },
-                {},
-                {},
-                {}
+                state = rememberPagerState(initialPage = 0) { 1 },
+                enabled = remember { mutableStateOf(false) },
+                onAttach = {},
+                onRemove = {},
+                onPreview = {},
             ) {
                 Box(
                     modifier = Modifier
@@ -198,11 +199,11 @@ fun PreviewAttachmentPreview() {
             }
             Spacer(modifier = Modifier.height(24.dp))
             AttachmentPreview(
-                rememberPagerState(initialPage = 0) { 2 },
-                remember { mutableStateOf(true) },
-                {},
-                {},
-                {}
+                state = rememberPagerState(initialPage = 0) { 2 },
+                enabled = remember { mutableStateOf(false) },
+                onAttach = {},
+                onRemove = {},
+                onPreview = {},
             ) {
                 Box(
                     modifier = Modifier

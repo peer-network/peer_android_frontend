@@ -16,4 +16,6 @@
     <string name="square_label">Square</string>
     <string name="portrait">4:5</string>
     <string name="portrait_label">Portrait</string>
+
+    <string name="trim_label">Trim</string>
 </resources>
