@@ -24,12 +24,14 @@ fun PostIcon(
     value: String,
     isHorizontal: Boolean = true,
     color: Color = MaterialTheme.colorScheme.tertiary,
+    modifier: Modifier = Modifier,
     onClick: (UiAction) -> Unit,
 ) {
     val clickHandler = remember(action) { { onClick(action) } }
     DesignTextButton(
         onClick = clickHandler,
-        contentPadding = PaddingValues(4.dp)
+        contentPadding = PaddingValues(4.dp),
+        modifier = modifier
     ) {
         if (isHorizontal) {
             Row(verticalAlignment = Alignment.CenterVertically) {

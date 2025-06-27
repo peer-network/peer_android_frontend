@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.pm.ActivityInfo
 import android.graphics.Bitmap
 import android.graphics.Color.TRANSPARENT
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -236,21 +235,19 @@ fun VideoOverlay(
                                 )
                             )
                         }
-
                         Column(
                             modifier = Modifier
                                 .align(Alignment.BottomStart)
                                 .padding(
                                     start = 16.dp,
                                     end = 16.dp,
-                                    bottom = WindowInsets.navigationBars.asPaddingValues()
-                                        .calculateBottomPadding() + 8.dp
+                                    bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding() + 8.dp
                                 )
                                 .fillMaxWidth()
                         ) {
                             Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier.fillMaxWidth()
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
                                 AuthorView(
                                     author = post.author,
@@ -259,38 +256,36 @@ fun VideoOverlay(
                                     modifier = Modifier.weight(1f)
                                 )
 
-
-                                    if (id != post.author.id) {
-                                        connection(
-                                            Triple(
-                                                post.author.id,
-                                                post.author.isfollowing,
-                                                post.author.isfollowed
-                                            )
+                                if (id != post.author.id) {
+                                    connection(
+                                        Triple(
+                                            post.author.id,
+                                            post.author.isfollowing,
+                                            post.author.isfollowed
                                         )
-                                    }
-
-                                    Column(
-                                        horizontalAlignment = Alignment.CenterHorizontally,
-                                        modifier = Modifier.width(56.dp)
-                                    ) {
-                                        val uiContent = post.mapToContent()
-                                        EngagementScreen(
-                                            uiContent,
-                                            engagementEvent,
-                                            vertical = true
-                                        )
-                                        ModerationScreen(uiContent, moderationEvent)
-                                    }
+                                    )
                                 }
+
+                                Column(
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    modifier = Modifier.width(56.dp)
+                                ) {
+                                    val uiContent = post.mapToContent()
+                                    EngagementScreen(
+                                        uiContent,
+                                        engagementEvent,
+                                        vertical = true
+                                    )
+                                    ModerationScreen(uiContent, moderationEvent)
+                                }
+                            }
 
                             exo?.let { player ->
                                 VideoProgress(
                                     player = player,
                                     durationMs = durMs,
                                     onSeek = { player.seekTo(it) },
-                                    modifier = Modifier
-                                        .fillMaxWidth()
+                                    modifier = Modifier.fillMaxWidth()
                                 )
                             }
                         }

@@ -28,10 +28,12 @@ import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.extension.toInt
-import eu.peernetwork.core.ui.theme.LightAccentColor
 import eu.peernetwork.core.ui.theme.PeerAppRed
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 
@@ -161,21 +163,30 @@ fun EngagementScreen(
         }
 
     container {
+        val shadowModifier = Modifier.graphicsLayer {
+            shadowElevation = 2.dp.toPx()
+            shape = RoundedCornerShape(50)
+            clip = false
+            alpha = 0.95f
+        }
+
         PostIcon(
             action = UiAction.Like,
             value = engagement.likes.toString(),
-            color = if (engagement.isLiked) PeerAppRed else MaterialTheme.colorScheme.tertiary,
-            isHorizontal = !vertical
+            color = if (vertical) Color.White else if (engagement.isLiked) PeerAppRed else MaterialTheme.colorScheme.tertiary,
+            isHorizontal = !vertical,
+            modifier = if (vertical) shadowModifier else Modifier
         ) { handleOnLike(engagement) }
 
         PostIcon(
             action = UiAction.Dislike,
             value = engagement.dislikes.toString(),
-            color = if (engagement.isDisliked) LightAccentColor else MaterialTheme.colorScheme.tertiary,
-            isHorizontal = !vertical
+            color = if (vertical) Color.White else if (engagement.isLiked) PeerAppRed else MaterialTheme.colorScheme.tertiary,
+            isHorizontal = !vertical,
+            modifier = if (vertical) shadowModifier else Modifier
         ) { handleOnDisLike(engagement) }
 
-        PostIcon(action = UiAction.Comment, value = engagement.comment.toString(), isHorizontal = !vertical) {
+        PostIcon(action = UiAction.Comment, value = engagement.comment.toString(),color = if (vertical) Color.White else MaterialTheme.colorScheme.tertiary, isHorizontal = !vertical, modifier = if (vertical) shadowModifier else Modifier) {
             handleOnComment(model)
         }
     }
