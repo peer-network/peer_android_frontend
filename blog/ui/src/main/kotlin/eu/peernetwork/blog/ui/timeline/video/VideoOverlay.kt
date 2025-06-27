@@ -1,6 +1,7 @@
 package eu.peernetwork.blog.ui.timeline.video
 
 import android.app.Activity
+import android.content.pm.ActivityInfo
 import android.graphics.Bitmap
 import android.graphics.Color.TRANSPARENT
 import androidx.compose.foundation.layout.Arrangement
@@ -9,10 +10,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.VerticalPager
@@ -34,10 +38,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModelStoreOwner
@@ -56,11 +57,6 @@ import eu.peernetwork.blog.ui.compose.VideoProgress
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
 import eu.peernetwork.blog.ui.engagement.Engagements
 import eu.peernetwork.blog.ui.mapper.mapToContent
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
-import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.navigationBars
-import androidx.compose.foundation.layout.padding
 import eu.peernetwork.blog.ui.model.UiVideo
 import eu.peernetwork.blog.ui.moderation.ModerationScreen
 import eu.peernetwork.blog.ui.moderation.Moderations
@@ -93,6 +89,10 @@ fun VideoOverlay(
 
     val ctx = LocalContext.current
     DisposableEffect(Unit) {
+        val activity = ctx as? Activity
+        val oldOrientation = activity?.requestedOrientation
+        activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+
         val w = (ctx as? Activity)?.window
         val oldStatus = w?.statusBarColor
         val oldNav    = w?.navigationBarColor
@@ -253,22 +253,22 @@ fun VideoOverlay(
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier
-                                .align(Alignment.BottomStart) // aligned just above the progress bar
+                                .align(Alignment.BottomStart)
                                 .padding(
                                     bottom = WindowInsets.navigationBars
                                         .asPaddingValues()
-                                        .calculateBottomPadding() + 48.dp, // place 48dp above nav bar/progress bar
+                                        .calculateBottomPadding() + 48.dp,
                                     start = 16.dp,
                                     end = 16.dp
                                 )
                         ) {
-                            AuthorView(
-                                author      = post.author,
-                                description = post.time,
-                                onClick     = { onAuthorClick(post.author.id) },
-                                modifier    = Modifier.weight(1f)
-                            )
-                            Spacer(Modifier.width(8.dp))
+                                AuthorView(
+                                    author      = post.author,
+                                    description = post.time,
+                                    onClick     = { onAuthorClick(post.author.id) },
+                                    modifier    = Modifier.weight(1f)
+                                )
+
                             if (id != post.author.id) {
                                 connection(
                                     Triple(

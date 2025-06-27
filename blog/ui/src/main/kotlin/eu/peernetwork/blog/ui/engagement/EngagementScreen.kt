@@ -164,16 +164,18 @@ fun EngagementScreen(
         PostIcon(
             action = UiAction.Like,
             value = engagement.likes.toString(),
-            color = if (engagement.isLiked) PeerAppRed else MaterialTheme.colorScheme.tertiary
+            color = if (engagement.isLiked) PeerAppRed else MaterialTheme.colorScheme.tertiary,
+            isHorizontal = !vertical
         ) { handleOnLike(engagement) }
 
         PostIcon(
             action = UiAction.Dislike,
             value = engagement.dislikes.toString(),
-            color = if (engagement.isDisliked) LightAccentColor else MaterialTheme.colorScheme.tertiary
+            color = if (engagement.isDisliked) LightAccentColor else MaterialTheme.colorScheme.tertiary,
+            isHorizontal = !vertical
         ) { handleOnDisLike(engagement) }
 
-        PostIcon(action = UiAction.Comment, value = engagement.comment.toString()) {
+        PostIcon(action = UiAction.Comment, value = engagement.comment.toString(), isHorizontal = !vertical) {
             handleOnComment(model)
         }
     }
