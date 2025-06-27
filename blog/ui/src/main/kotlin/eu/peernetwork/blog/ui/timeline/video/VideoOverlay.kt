@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.aspectRatio
@@ -77,14 +76,14 @@ fun VideoOverlay(
     enabled: Boolean,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
-    onAuthorClick : (String) -> Unit = {},
+    onAuthorClick: (String) -> Unit = {},
     onMentionClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
-    connection     : @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit,
+    connection: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit,
     engagementEvent: Engagements,
     moderationEvent: Moderations,
     onLoadBitmap: (String) -> Bitmap?,
-    onLoad       : (String, Float) -> Unit         = { _, _ -> },
+    onLoad: (String, Float) -> Unit = { _, _ -> },
 ) {
 
     val ctx = LocalContext.current
@@ -95,16 +94,16 @@ fun VideoOverlay(
 
         val w = (ctx as? Activity)?.window
         val oldStatus = w?.statusBarColor
-        val oldNav    = w?.navigationBarColor
+        val oldNav = w?.navigationBarColor
         w?.let {
             WindowCompat.setDecorFitsSystemWindows(it, false)
-            it.statusBarColor     = TRANSPARENT
+            it.statusBarColor = TRANSPARENT
             it.navigationBarColor = TRANSPARENT
         }
         onDispose {
             w?.let {
-                it.statusBarColor     = oldStatus ?: TRANSPARENT
-                it.navigationBarColor = oldNav    ?: TRANSPARENT
+                it.statusBarColor = oldStatus ?: TRANSPARENT
+                it.navigationBarColor = oldNav ?: TRANSPARENT
                 WindowCompat.setDecorFitsSystemWindows(it, true)
             }
         }
@@ -112,31 +111,31 @@ fun VideoOverlay(
 
     val component = remember { provider.builder(Video.Builder::class.java).build(ctx) }
     val viewModel = viewModel(
-        modelClass          = VideoViewModel::class.java,
+        modelClass = VideoViewModel::class.java,
         viewModelStoreOwner = viewModelStoreOwner,
-        factory             = component.viewModelFactory()
+        factory = component.viewModelFactory()
     )
     val vmState by viewModel.state.collectAsStateWithLifecycle()
 
     val scaffoldState: State<DesignStatefulScaffoldState> = remember(vmState) {
         derivedStateOf {
             when (val s = vmState) {
-                VideoViewModel.State.Empty      -> DesignStatefulScaffoldState.Empty
-                VideoViewModel.State.Loading    -> DesignStatefulScaffoldState.Loading
+                VideoViewModel.State.Empty -> DesignStatefulScaffoldState.Empty
+                VideoViewModel.State.Loading -> DesignStatefulScaffoldState.Loading
                 is VideoViewModel.State.Success -> DesignStatefulScaffoldState.Success(s.data)
-                is VideoViewModel.State.Error   -> DesignStatefulScaffoldState.Error(s.error)
+                is VideoViewModel.State.Error -> DesignStatefulScaffoldState.Error(s.error)
             }
         }
     }
 
     val pull = rememberPullRefreshState(
         refreshing = false,
-        onRefresh  = { viewModel.load(Pageable(0, limit)) }
+        onRefresh = { viewModel.load(Pageable(0, limit)) }
     )
 
     DragRefreshLayout(state = pull) {
         DesignStatefulScaffold<Flow<PagingData<UiVideo>>>(
-            state     = scaffoldState,
+            state = scaffoldState,
             onRefresh = { viewModel.load(Pageable(0, limit)) }
         ) { flow ->
 
@@ -147,7 +146,7 @@ fun VideoOverlay(
             }
 
             val pagerState = rememberPagerState(
-                pageCount   = { maxOf(items.itemCount, 1) },
+                pageCount = { maxOf(items.itemCount, 1) },
                 initialPage = position
             )
 
@@ -160,8 +159,8 @@ fun VideoOverlay(
                     Box(Modifier.fillMaxSize()) {
 
                         var curPos by remember { mutableLongStateOf(0L) }
-                        var durMs  by remember { mutableLongStateOf(1L) }
-                        var exo    by remember { mutableStateOf<ExoPlayer?>(null) }
+                        var durMs by remember { mutableLongStateOf(1L) }
+                        var exo by remember { mutableStateOf<ExoPlayer?>(null) }
                         var videoRatio by remember { mutableFloatStateOf(post.aspectRatio) }
                         var frameRendered by remember { mutableStateOf(false) }
 
@@ -172,10 +171,10 @@ fun VideoOverlay(
                                 .graphicsLayer { alpha = 0.65f }
                         ) {
                             DesignThumbnail(
-                                thumbnail    = post.media,
-                                bitmap       = onLoadBitmap(post.media),
+                                thumbnail = post.media,
+                                bitmap = onLoadBitmap(post.media),
                                 contentScale = ContentScale.Crop,
-                                onRefresh    = { onLoad(post.media, post.aspectRatio) }
+                                onRefresh = { onLoad(post.media, post.aspectRatio) }
                             )
                         }
 
@@ -184,7 +183,9 @@ fun VideoOverlay(
                                 .align(Alignment.Center)
                                 .let { mod ->
                                     if (frameRendered && !videoRatio.isNaN())
-                                        mod.aspectRatio(videoRatio).fillMaxHeight()
+                                        mod
+                                            .aspectRatio(videoRatio)
+                                            .fillMaxHeight()
                                     else
                                         mod.fillMaxSize()
                                 }
@@ -206,11 +207,13 @@ fun VideoOverlay(
                             component.videoPlayer()(
                                 modifier = Modifier.matchParentSize(),
                                 spec = VideoPlayer.Spec(
-                                    url           = post.media,
-                                    ratio         = post.aspectRatio,
-                                    resolution    = post.resolution,
-                                    enabled       = enabled,
-                                    onProgress    = { p, d -> curPos = p; durMs = d.coerceAtLeast(1L) },
+                                    url = post.media,
+                                    ratio = post.aspectRatio,
+                                    resolution = post.resolution,
+                                    enabled = enabled,
+                                    onProgress = { p, d ->
+                                        curPos = p; durMs = d.coerceAtLeast(1L)
+                                    },
                                     onSeek = {
                                         curPos = it
                                         exo?.seekTo(it)
@@ -234,67 +237,70 @@ fun VideoOverlay(
                             )
                         }
 
-                        exo?.let { player ->
-                            VideoProgress(
-                                player     = player,
-                                durationMs = durMs,
-                                onSeek     = { player.seekTo(it) },
-                                modifier   = Modifier
-                                    .align(Alignment.BottomCenter)
-                                    .padding(
-                                        bottom = WindowInsets.navigationBars
-                                            .asPaddingValues()
-                                            .calculateBottomPadding()
-                                    )
-                                    .fillMaxWidth()
-                            )
-                        }
-
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
+                        Column(
                             modifier = Modifier
                                 .align(Alignment.BottomStart)
                                 .padding(
-                                    bottom = WindowInsets.navigationBars
-                                        .asPaddingValues()
-                                        .calculateBottomPadding() + 48.dp,
                                     start = 16.dp,
-                                    end = 16.dp
+                                    end = 16.dp,
+                                    bottom = WindowInsets.navigationBars.asPaddingValues()
+                                        .calculateBottomPadding() + 16.dp
                                 )
+                                .fillMaxWidth()
                         ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
                                 AuthorView(
-                                    author      = post.author,
+                                    author = post.author,
                                     description = post.time,
-                                    onClick     = { onAuthorClick(post.author.id) },
-                                    modifier    = Modifier.weight(1f)
+                                    onClick = { onAuthorClick(post.author.id) },
+                                    modifier = Modifier.weight(1f)
                                 )
 
-                            if (id != post.author.id) {
-                                connection(
-                                    Triple(
-                                        post.author.id,
-                                        post.author.isfollowing,
-                                        post.author.isfollowed
-                                    )
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    if (id != post.author.id) {
+                                        connection(
+                                            Triple(
+                                                post.author.id,
+                                                post.author.isfollowing,
+                                                post.author.isfollowed
+                                            )
+                                        )
+                                    }
+
+                                    Column(
+                                        horizontalAlignment = Alignment.CenterHorizontally,
+                                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                                        modifier = Modifier.width(56.dp)
+                                    ) {
+                                        val uiContent = post.mapToContent()
+                                        EngagementScreen(
+                                            uiContent,
+                                            engagementEvent,
+                                            vertical = true
+                                        )
+                                        ModerationScreen(uiContent, moderationEvent)
+                                    }
+
+                                }
+
+                            }
+
+                            exo?.let { player ->
+                                VideoProgress(
+                                    player = player,
+                                    durationMs = durMs,
+                                    onSeek = { player.seekTo(it) },
+                                    modifier = Modifier
+                                        .fillMaxWidth()
                                 )
                             }
                         }
-
-                        val uiContent = post.mapToContent()
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.spacedBy(12.dp),
-                            modifier = Modifier
-                                .align(Alignment.CenterEnd)
-                                .padding(end = 12.dp)
-                                .width(56.dp)
-                        ) {
-                            EngagementScreen(uiContent, engagementEvent, vertical = true)
-                            ModerationScreen (uiContent, moderationEvent)
-                        }
-                    }
                     }
                 }
             }
         }
     }
+}
