@@ -45,8 +45,7 @@ fun VideoProgress(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(4.dp)
+            .padding(horizontal = 16.dp)
     ) {
 
         CustomSlider(
@@ -58,8 +57,7 @@ fun VideoProgress(
             thumbRadius = 5.dp,
             trackHeight = 4.dp,
             modifier = Modifier
-                .fillMaxWidth()
-                .height(24.dp),
+                .fillMaxWidth(),
             interactionSource = interaction
         )
 

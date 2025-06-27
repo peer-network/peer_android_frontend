@@ -244,7 +244,7 @@ fun VideoOverlay(
                                     start = 16.dp,
                                     end = 16.dp,
                                     bottom = WindowInsets.navigationBars.asPaddingValues()
-                                        .calculateBottomPadding() + 16.dp
+                                        .calculateBottomPadding() + 8.dp
                                 )
                                 .fillMaxWidth()
                         ) {
@@ -259,7 +259,7 @@ fun VideoOverlay(
                                     modifier = Modifier.weight(1f)
                                 )
 
-                                Row(verticalAlignment = Alignment.CenterVertically) {
+
                                     if (id != post.author.id) {
                                         connection(
                                             Triple(
@@ -272,7 +272,6 @@ fun VideoOverlay(
 
                                     Column(
                                         horizontalAlignment = Alignment.CenterHorizontally,
-                                        verticalArrangement = Arrangement.spacedBy(8.dp),
                                         modifier = Modifier.width(56.dp)
                                     ) {
                                         val uiContent = post.mapToContent()
@@ -283,10 +282,7 @@ fun VideoOverlay(
                                         )
                                         ModerationScreen(uiContent, moderationEvent)
                                     }
-
                                 }
-
-                            }
 
                             exo?.let { player ->
                                 VideoProgress(
