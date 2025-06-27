@@ -56,8 +56,11 @@ import eu.peernetwork.blog.ui.compose.VideoProgress
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
 import eu.peernetwork.blog.ui.engagement.Engagements
 import eu.peernetwork.blog.ui.mapper.mapToContent
-import eu.peernetwork.blog.ui.model.UiEngagement
-import eu.peernetwork.blog.ui.model.UiReaction
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.padding
 import eu.peernetwork.blog.ui.model.UiVideo
 import eu.peernetwork.blog.ui.moderation.ModerationScreen
 import eu.peernetwork.blog.ui.moderation.Moderations
@@ -67,7 +70,6 @@ import eu.peernetwork.core.ui.design.component.DesignStatefulScaffold
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
 import eu.peernetwork.core.ui.design.compose.DesignThumbnail
 import eu.peernetwork.core.ui.extension.builder
-import eu.peernetwork.core.ui.extension.toInt
 import eu.peernetwork.media.core.renderer.VideoPlayer
 import kotlinx.coroutines.flow.Flow
 
@@ -230,89 +232,65 @@ fun VideoOverlay(
                                     }
                                 )
                             )
+                        }
 
-                            if (frameRendered && !videoRatio.isNaN()) {
-                                val (vPad, hPad) = videoPadding(videoRatio)
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    modifier = Modifier
-                                        .align(Alignment.TopStart)
-                                        .fillMaxWidth()
-                                        .padding(
-                                            top   = 12.dp,
-                                            start = hPad + 16.dp,
-                                            end   = hPad + 16.dp
-                                        )
-                                ) {
-                                    AuthorView(
-                                        author      = post.author,
-                                        description = post.time,
-                                        onClick     = { onAuthorClick(post.author.id) },
-                                        modifier    = Modifier.weight(1f)
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier
+                                .align(Alignment.TopStart)
+                                .fillMaxWidth()
+                                .padding(WindowInsets.statusBars.asPaddingValues())
+                                .padding(top = 12.dp, start = 16.dp, end = 16.dp)
+                        ) {
+                            AuthorView(
+                                author      = post.author,
+                                description = post.time,
+                                onClick     = { onAuthorClick(post.author.id) },
+                                modifier    = Modifier.weight(1f)
+                            )
+                            Spacer(Modifier.width(8.dp))
+                            if (id != post.author.id) {
+                                connection(
+                                    Triple(
+                                        post.author.id,
+                                        post.author.isfollowing,
+                                        post.author.isfollowed
                                     )
-                                    Spacer(Modifier.width(8.dp))
-                                    if (id != post.author.id) {
-                                        connection(
-                                            Triple(
-                                                post.author.id,
-                                                post.author.isfollowing,
-                                                post.author.isfollowed
-                                            )
-                                        )
-                                    }
-                                }
-
-                                exo?.let { player ->
-                                    VideoProgress(
-                                        player     = player,
-                                        durationMs = durMs,
-                                        onSeek     = { player.seekTo(it) },
-                                        modifier   = Modifier
-                                            .align(Alignment.BottomCenter)
-                                            .fillMaxWidth()
-
-                                    )
-                                }
-
-                                val uiContent = post.mapToContent()
-                                Column(
-                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                    verticalArrangement = Arrangement.spacedBy(12.dp),
-                                    modifier = Modifier
-                                        .align(Alignment.CenterEnd)
-                                        .padding(end = 12.dp)
-                                        .width(56.dp)
-                                ) {
-                                    EngagementScreen(uiContent, engagementEvent, vertical = true)
-                                    ModerationScreen (uiContent, moderationEvent)
-                                }
+                                )
                             }
                         }
+
+                        exo?.let { player ->
+                            VideoProgress(
+                                player     = player,
+                                durationMs = durMs,
+                                onSeek     = { player.seekTo(it) },
+                                modifier   = Modifier
+                                    .align(Alignment.BottomCenter)
+                                    .padding(
+                                        bottom = WindowInsets.navigationBars
+                                            .asPaddingValues()
+                                            .calculateBottomPadding()
+                                    )
+                                    .fillMaxWidth()
+                            )
+                        }
+
+                        val uiContent = post.mapToContent()
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(12.dp),
+                            modifier = Modifier
+                                .align(Alignment.CenterEnd)
+                                .padding(end = 12.dp)
+                                .width(56.dp)
+                        ) {
+                            EngagementScreen(uiContent, engagementEvent, vertical = true)
+                            ModerationScreen (uiContent, moderationEvent)
+                        }
+                    }
                     }
                 }
             }
         }
     }
-}
-
-@Composable
-private fun videoPadding(ratio: Float): Pair<Dp , Dp > {
-    val cfg     = LocalConfiguration.current
-    val density = LocalDensity.current
-    val wPx     = with(density) { cfg.screenWidthDp.dp.toPx() }
-    val hPx     = with(density) { cfg.screenHeightDp.dp.toPx() }
-
-    val containerRatio = wPx / hPx
-
-    return if (ratio >= containerRatio) {
-        val videoH = wPx / ratio
-        val vPadPx = (hPx - videoH) / 2f
-        ᴠPair(with(density) { vPadPx.toDp() }, 0.dp)
-    } else {
-        val videoW = hPx * ratio
-        val hPadPx = (wPx - videoW) / 2f
-        ᴠPair(0.dp, with(density) { hPadPx.toDp() })
-    }
-}
-
-private fun ᴠPair(v: Dp, h: Dp) = Pair(v, h)
