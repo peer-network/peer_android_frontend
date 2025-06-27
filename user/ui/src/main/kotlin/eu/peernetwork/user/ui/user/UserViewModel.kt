@@ -2,7 +2,7 @@ package eu.peernetwork.user.ui.user
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import eu.peernetwork.user.domain.usecase.AuthUserUsecase
+import eu.peernetwork.user.domain.usecase.AuthRefreshUsecase
 import eu.peernetwork.user.domain.usecase.ProfileUsecase
 import eu.peernetwork.user.ui.mapper.mapFromDomain
 import eu.peernetwork.user.ui.model.UiAccount
@@ -20,7 +20,7 @@ import javax.inject.Inject
 class UserViewModel @Inject constructor(
     private val usecase: ProfileUsecase,
     private val userUsecase: UserUsecase,
-    private val authUserUsecase: AuthUserUsecase,
+    private val authUserUsecase: AuthRefreshUsecase,
     private val observerUsecase: ObserveAuthUserUsecase
 ) : ViewModel() {
     private val mutableState = MutableStateFlow<State>(State.Empty)
@@ -33,7 +33,7 @@ class UserViewModel @Inject constructor(
                 (mutableState.value as? State.Success?)?.let { state ->
                     val isConfigurable = it?.id == state.account.id
                     if (isConfigurable) {
-                        mutableState.tryEmit(State.Success(it!!, true))
+                        mutableState.tryEmit(State.Success(state.account, true))
                     }
                 }
             }
@@ -44,8 +44,13 @@ class UserViewModel @Inject constructor(
         mutableState.tryEmit(State.Loading)
         viewModelScope.launch {
             try {
+                val user = observerUsecase().firstOrNull()
+                val principal = if (user?.id != id) {
+                    authUserUsecase().mapFromDomain().id
+                } else {
+                    user.id
+                }
                 val account = userUsecase(usecase(id))
-                val principal = observerUsecase().firstOrNull()?.id ?: authUserUsecase().mapFromDomain().id
                 mutableState.tryEmit(State.Success(account, principal == account.id))
             } catch (error: Throwable) {
                 mutableState.tryEmit(State.Error(error))

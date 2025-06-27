@@ -44,7 +44,7 @@ class VideoViewModel @Inject constructor(
     fun thumbnail(thumbnail: String, type: UiMimeType) {
         viewModelScope.launch {
             try {
-                interactor.load(thumbnail, type)
+                interactor.load(thumbnail, type, null, Pair(250f, 250f))
             } catch (error: Throwable) {
                 error.printStackTrace()
             }

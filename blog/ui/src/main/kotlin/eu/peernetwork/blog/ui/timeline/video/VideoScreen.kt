@@ -5,6 +5,7 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModelStoreOwner
@@ -70,7 +71,7 @@ fun VideoScreen(
         }
     }
     val thumbnail = viewModel.thumbnail.collectAsStateWithLifecycle().value
-    var lastRelation = remember { mutableStateOf(relation) }
+    var lastRelation = rememberSaveable { mutableStateOf(relation) }
     DesignPagingScaffold<UiVideo>(
         state = derivedState,
         onRefresh = { viewModel.load(Pageable(0, postLimit), relation, criteria) },
@@ -133,11 +134,11 @@ fun VideoScreen(
                 }
             }
         }
-        LaunchedEffect(relation, criteria) {
-            if (relation != lastRelation.value) {
-                lastRelation.value = relation
-                viewModel.load(Pageable(0, postLimit), relation, criteria)
-            }
+    }
+    LaunchedEffect(relation, criteria) {
+        if (relation != lastRelation.value) {
+            viewModel.load(Pageable(0, postLimit), relation, criteria)
+            lastRelation.value = relation
         }
     }
 }
