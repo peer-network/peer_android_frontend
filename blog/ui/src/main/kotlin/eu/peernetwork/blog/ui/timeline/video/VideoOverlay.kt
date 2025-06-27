@@ -234,13 +234,33 @@ fun VideoOverlay(
                             )
                         }
 
+                        exo?.let { player ->
+                            VideoProgress(
+                                player     = player,
+                                durationMs = durMs,
+                                onSeek     = { player.seekTo(it) },
+                                modifier   = Modifier
+                                    .align(Alignment.BottomCenter)
+                                    .padding(
+                                        bottom = WindowInsets.navigationBars
+                                            .asPaddingValues()
+                                            .calculateBottomPadding()
+                                    )
+                                    .fillMaxWidth()
+                            )
+                        }
+
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier
-                                .align(Alignment.TopStart)
-                                .fillMaxWidth()
-                                .padding(WindowInsets.statusBars.asPaddingValues())
-                                .padding(top = 12.dp, start = 16.dp, end = 16.dp)
+                                .align(Alignment.BottomStart) // aligned just above the progress bar
+                                .padding(
+                                    bottom = WindowInsets.navigationBars
+                                        .asPaddingValues()
+                                        .calculateBottomPadding() + 48.dp, // place 48dp above nav bar/progress bar
+                                    start = 16.dp,
+                                    end = 16.dp
+                                )
                         ) {
                             AuthorView(
                                 author      = post.author,
@@ -258,22 +278,6 @@ fun VideoOverlay(
                                     )
                                 )
                             }
-                        }
-
-                        exo?.let { player ->
-                            VideoProgress(
-                                player     = player,
-                                durationMs = durMs,
-                                onSeek     = { player.seekTo(it) },
-                                modifier   = Modifier
-                                    .align(Alignment.BottomCenter)
-                                    .padding(
-                                        bottom = WindowInsets.navigationBars
-                                            .asPaddingValues()
-                                            .calculateBottomPadding()
-                                    )
-                                    .fillMaxWidth()
-                            )
                         }
 
                         val uiContent = post.mapToContent()
