@@ -4,16 +4,19 @@ import android.app.Activity
 import android.content.pm.ActivityInfo
 import android.graphics.Bitmap
 import android.graphics.Color.TRANSPARENT
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -245,6 +248,41 @@ fun VideoOverlay(
                                 )
                                 .fillMaxWidth()
                         ) {
+                            val uiContent = post.mapToContent()
+
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.Bottom
+                            ) {
+                                exo?.let { player ->
+                                    VideoProgress(
+                                        player = player,
+                                        durationMs = durMs,
+                                        onSeek = { player.seekTo(it) },
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .align(Alignment.Bottom)
+                                    )
+                                } ?: Spacer(modifier = Modifier.weight(1f))
+
+                                Column(
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    verticalArrangement = Arrangement.Bottom,
+                                    modifier = Modifier
+                                        .width(56.dp)
+                                        .padding(start = 8.dp)
+                                ) {
+                                    EngagementScreen(
+                                        uiContent,
+                                        engagementEvent,
+                                        vertical = true
+                                    )
+                                    ModerationScreen(uiContent, moderationEvent)
+                                }
+                            }
+
+                            Spacer(modifier = Modifier.height(8.dp))
+
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 verticalAlignment = Alignment.CenterVertically
@@ -265,28 +303,6 @@ fun VideoOverlay(
                                         )
                                     )
                                 }
-
-                                Column(
-                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                    modifier = Modifier.width(56.dp)
-                                ) {
-                                    val uiContent = post.mapToContent()
-                                    EngagementScreen(
-                                        uiContent,
-                                        engagementEvent,
-                                        vertical = true
-                                    )
-                                    ModerationScreen(uiContent, moderationEvent)
-                                }
-                            }
-
-                            exo?.let { player ->
-                                VideoProgress(
-                                    player = player,
-                                    durationMs = durMs,
-                                    onSeek = { player.seekTo(it) },
-                                    modifier = Modifier.fillMaxWidth()
-                                )
                             }
                         }
                     }
