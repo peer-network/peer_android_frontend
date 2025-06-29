@@ -163,12 +163,6 @@ fun EngagementScreen(
         }
 
     container {
-        val shadowModifier = Modifier.graphicsLayer {
-            shadowElevation = 2.dp.toPx()
-            shape = RoundedCornerShape(50)
-            clip = false
-            alpha = 0.95f
-        }
 
         PostIcon(
             action = UiAction.Like,
@@ -179,8 +173,7 @@ fun EngagementScreen(
                 engagement.isLiked -> PeerAppRed
                 else -> MaterialTheme.colorScheme.tertiary
             },
-            isHorizontal = !vertical,
-            modifier = if (vertical) shadowModifier else Modifier
+            isHorizontal = !vertical
         ) { handleOnLike(engagement) }
 
         PostIcon(
@@ -192,11 +185,10 @@ fun EngagementScreen(
                 engagement.isDisliked -> PeerAppRed
                 else -> MaterialTheme.colorScheme.tertiary
             },
-            isHorizontal = !vertical,
-            modifier = if (vertical) shadowModifier else Modifier
+            isHorizontal = !vertical
         ) { handleOnDisLike(engagement) }
 
-        PostIcon(action = UiAction.Comment, value = engagement.comment.toString(),color = if (vertical) Color.White else MaterialTheme.colorScheme.tertiary, isHorizontal = !vertical, modifier = if (vertical) shadowModifier else Modifier) {
+        PostIcon(action = UiAction.Comment, value = engagement.comment.toString(),color = if (vertical) Color.White else MaterialTheme.colorScheme.tertiary, isHorizontal = !vertical) {
             handleOnComment(model)
         }
     }
