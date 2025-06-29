@@ -10,6 +10,8 @@ import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.model.ViewModelState
+import eu.peernetwork.social.ui.connection.ConnectionController
+import eu.peernetwork.social.ui.connection.ConnectionScreen
 import java.net.URLEncoder
 
 @Composable
@@ -25,20 +27,34 @@ fun ProfileScreen(
     }
     val overlay = remember { mutableStateOf<ProfileOverlayState>(ProfileOverlayState.Empty) }
     val controller = rememberNavController()
-    ProfileOverlay(overlay, userId, title, BuildConfig.PAGING_LIMIT, component, viewModelStore) {
-        ProfileNavigation(
-            userId = userId,
-            title = title,
-            limit = BuildConfig.PAGING_LIMIT,
-            controller = controller,
-            component = component,
-            viewModelStore = viewModelStore,
-            onPhotoClick = { id, index -> },
-            onVideoClick = { id, index ->
-                component.videoInteractor().save()
-                overlay.value = ProfileOverlayState.Video(id, index)
-            }
-        )
+
+    ConnectionScreen(
+        provider = component,
+        viewModelStoreOwner = viewModelStore.get(userId)
+    ) { connectionController: ConnectionController ->
+        ProfileOverlay(
+            overlay,
+            userId,
+            title,
+            BuildConfig.PAGING_LIMIT,
+            component,
+            viewModelStore,
+            connectionController
+        ) {
+            ProfileNavigation(
+                userId = userId,
+                title = title,
+                limit = BuildConfig.PAGING_LIMIT,
+                controller = controller,
+                component = component,
+                viewModelStore = viewModelStore,
+                onPhotoClick = { id, index -> },
+                onVideoClick = { id, index ->
+                    component.videoInteractor().save()
+                    overlay.value = ProfileOverlayState.Video(id, index)
+                }
+            )
+        }
     }
 }
 
