@@ -18,7 +18,6 @@ dependencies {
     implementation(libs.dagger)
     ksp(libs.dagger.compiler)
     implementation(libs.media3)
-    implementation(libs.media3.ui)
     testImplementation(libs.junit)
     testImplementation(libs.kotlin.test)
     testImplementation(libs.androidx.test)
