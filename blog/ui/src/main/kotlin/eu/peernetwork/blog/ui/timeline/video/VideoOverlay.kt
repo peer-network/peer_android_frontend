@@ -73,7 +73,7 @@ fun VideoOverlay(
     position: Int,
     enabled: Boolean,
     provider: UiComponentProvider,
-    viewModelStoreOwner: ViewModelStoreOwner,
+    viewModel: VideoViewModel,
     onAuthorClick: (String) -> Unit = {},
     onMentionClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
@@ -88,11 +88,6 @@ fun VideoOverlay(
     LockPortraitWithTransparentSystemUI()
 
     val component = remember { provider.builder(Video.Builder::class.java).build(context) }
-    val viewModel = viewModel(
-        modelClass = VideoViewModel::class.java,
-        viewModelStoreOwner = viewModelStoreOwner,
-        factory = component.viewModelFactory()
-    )
     val vmState by viewModel.state.collectAsStateWithLifecycle()
 
     val scaffoldState: State<DesignStatefulScaffoldState> = remember(vmState) {

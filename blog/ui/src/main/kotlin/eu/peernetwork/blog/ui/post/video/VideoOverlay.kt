@@ -72,7 +72,7 @@ fun VideoOverlay(
     position: Int,
     enabled: Boolean,
     provider: UiComponentProvider,
-    viewModelStoreOwner: ViewModelStoreOwner,
+    viewModel: VideoViewModel,
     onAuthorClick: (String) -> Unit = {},
     onMentionClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
@@ -87,11 +87,11 @@ fun VideoOverlay(
     val component = remember {
         provider.builder(Video.Builder::class.java).build(context)
     }
-    val viewModel = viewModel(
-        modelClass = VideoViewModel::class.java,
-        viewModelStoreOwner = viewModelStoreOwner,
-        factory = component.viewModelFactory()
-    )
+//    val viewModel = viewModel(
+//        modelClass = VideoViewModel::class.java,
+//        viewModelStoreOwner = viewModelStoreOwner,
+//        factory = component.viewModelFactory()
+//    )
     val state by viewModel.state.collectAsStateWithLifecycle()
     val derivedState = remember {
         derivedStateOf {

@@ -152,7 +152,7 @@ fun FeedOverlay(
                                     position             = state.position,
                                     enabled              = visible.value,
                                     provider             = component,
-                                    viewModelStoreOwner  = viewModelStoreOwner,
+                                    viewModel            = videoVM,
                                     onAuthorClick        = { controller.navigateIfNecessary("profile/$it") },
                                     onMentionClick       = { controller.navigateToUsernameSearch(it) },
                                     onHashtagClick       = { controller.navigateToTagSearch(it) },
