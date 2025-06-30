@@ -41,7 +41,6 @@ fun VideoScreen(
     listState: LazyListState = rememberLazyListState(),
 ) {
     val context = LocalContext.current
-    val configuration = LocalConfiguration.current
     val component = remember {
         provider.builder(Video.Builder::class.java).build(context)
     }
@@ -103,7 +102,7 @@ fun VideoScreen(
                         viewModel.thumbnail(
                             url,
                             UiMimeType.Video,
-                            configuration.screenWidthDp,
+                            300,
                             ratio) },
                     onMentionClick,
                     onHashtagClick,

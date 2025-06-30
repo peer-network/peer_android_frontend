@@ -46,7 +46,6 @@ fun VideoScreen(
     connection: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit = {}
 ) {
     val context = LocalContext.current
-    val configuration = LocalConfiguration.current
     val component = remember {
         provider.builder(Video.Builder::class.java).build(context)
     }
@@ -71,7 +70,6 @@ fun VideoScreen(
         }
     }
     val thumbnail = viewModel.thumbnail.collectAsStateWithLifecycle().value
-    var lastRelation = rememberSaveable { mutableStateOf(relation) }
     DesignPagingScaffold<UiVideo>(
         state = derivedState,
         onRefresh = { viewModel.load(Pageable(0, postLimit), relation, criteria) },
@@ -124,7 +122,7 @@ fun VideoScreen(
                             viewModel.thumbnail(
                                 url,
                                 UiMimeType.Video,
-                                configuration.screenWidthDp,
+                                300,
                                 ratio) },
                         onAuthorClick = onAuthorClick,
                         onHashtagClick = onHashtagClick,
@@ -136,9 +134,8 @@ fun VideoScreen(
         }
     }
     LaunchedEffect(relation, criteria) {
-        if (relation != lastRelation.value) {
+        if (relation != viewModel.lastRelation) {
             viewModel.load(Pageable(0, postLimit), relation, criteria)
-            lastRelation.value = relation
         }
     }
 }

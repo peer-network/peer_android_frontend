@@ -52,13 +52,9 @@ fun LauncherScreen(
     }
 }
 
-fun NavHostController.attach(destination: String) {
-    if (currentDestination?.route != destination) {
-        navigate(destination) {
-            launchSingleTop = true
-            popUpTo(graph.startDestinationId) {
-                inclusive = true
-            }
-        }
+private fun NavHostController.attach(destination: String) {
+    navigate(destination) {
+        launchSingleTop = true
+        popUpTo(graph.id)
     }
 }
