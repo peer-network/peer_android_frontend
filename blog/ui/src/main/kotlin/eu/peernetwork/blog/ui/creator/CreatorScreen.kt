@@ -1,5 +1,6 @@
 package eu.peernetwork.blog.ui.creator
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -22,11 +23,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import eu.peernetwork.blog.ui.R
 import eu.peernetwork.blog.ui.engagement.EngagementConfirmation
 import eu.peernetwork.blog.ui.engagement.EngagementType
 import eu.peernetwork.blog.ui.model.UiDraft
@@ -44,7 +47,8 @@ fun CreatorScreen(
     focus: FocusRequester,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onSuccess: () -> Unit = {}
 ) {
     val context = LocalContext.current
     val component = remember {
@@ -82,6 +86,8 @@ fun CreatorScreen(
     val type = remember(draft.value) {
         mutableStateOf<EngagementType?>(draft.value?.let { EngagementType.Post(it) })
     }
+    val handleOnSuccess by rememberUpdatedState(onSuccess)
+    val successMessage = stringResource(R.string.post_success_message)
     CreatorScreen(
         focus = focus,
         onSubmit = {
@@ -91,7 +97,7 @@ fun CreatorScreen(
                 media = if (attachment.value.files.isEmpty()) {
                     UiMimeType.Text
                 } else { attachment.value.media },
-                attachments = attachment.value.files.map { it.uri }
+                attachments = attachment.value.files.map { file -> file.uri }
             ) },
         onReset = { attachment.value = UiAttachment.Text },
         isLoading = isLoading,
@@ -118,6 +124,8 @@ fun CreatorScreen(
     LaunchedEffect(shouldReset.value) {
         if (shouldReset.value) {
             viewModel.reset()
+            Toast.makeText(context, successMessage, Toast.LENGTH_SHORT).show()
+            handleOnSuccess()
         }
     }
     DisposableEffect(Unit) {
@@ -148,7 +156,8 @@ fun CreatorScreen(
     ) {
         DesignLabel(
             label = { error.value?.let {
-                Text(it,
+                Text(
+                    it,
                     modifier = Modifier.padding(horizontal = 16.dp)
                         .padding(vertical = 8.dp),
                     style = MaterialTheme.typography.bodySmall.copy(
@@ -158,7 +167,9 @@ fun CreatorScreen(
             }},
             visible = error.value != null,
             modifier = Modifier.padding(bottom = 4.dp)
-        ) { CreatorForm(title, focus, description, isLoading) }
+        ) {
+            CreatorForm(title, focus, description, isLoading)
+        }
         Spacer(modifier = Modifier.height(8.dp))
         CreatorFooter(
             title = title,

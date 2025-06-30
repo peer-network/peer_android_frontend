@@ -30,6 +30,7 @@ import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffold
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
 import eu.peernetwork.core.ui.design.compose.DesignTitleBar
+import eu.peernetwork.core.ui.extension.attach
 import eu.peernetwork.core.ui.extension.attachIfNecessary
 import eu.peernetwork.core.ui.model.ViewModelState
 import eu.peernetwork.wallet.ui.reward.RewardScreen
@@ -85,7 +86,11 @@ fun HomeScreen(provider: UiComponentProvider) {
                 navController = controller,
                 component = component,
                 viewModelStore = viewModelStore
-            )
+            ) {
+                viewModel.lastVisited(0)
+                navigationState.intValue = 0
+                controller.attach(HomeRoute.Home.path)
+            }
         }
         BackHandler(enabled = currentStack.value != HomeRoute.Home.path) {
             viewModel.lastVisited(0)

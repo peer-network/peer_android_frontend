@@ -41,7 +41,8 @@ import eu.peernetwork.wallet.ui.model.UiToken
 @Composable
 fun ComposerScreen(
     provider: UiComponentProvider,
-    viewModelStore: ViewModelState
+    viewModelStore: ViewModelState,
+    onPostSuccess: () -> Unit
 ) {
     val context = LocalContext.current
     val component = remember {
@@ -71,13 +72,15 @@ fun ComposerScreen(
                 },
                 content = {
                     CreatorScreen(
-                        draft,
-                        attachment,
-                        focus,
-                        component,
-                        viewModelStore.get(key),
-                        Modifier.padding(top = 8.dp)
-                            .padding(horizontal = 16.dp)
+                        draft = draft,
+                        attachment = attachment,
+                        focus = focus,
+                        provider = component,
+                        viewModelStoreOwner = viewModelStore.get(key),
+                        modifier = Modifier
+                            .padding(top = 8.dp)
+                            .padding(horizontal = 16.dp),
+                        onSuccess = onPostSuccess
                     )
                     DesignTitleBarHost("CreatorScreen") {
                         titleBar {
@@ -140,7 +143,8 @@ fun PreviewComposerScreen() {
                     enabled = remember { mutableStateOf(false) },
                     error = remember { mutableStateOf(null) },
                     shouldReset = remember { mutableStateOf(false) },
-                    modifier = Modifier.padding(top = 8.dp)
+                    modifier = Modifier
+                        .padding(top = 8.dp)
                         .padding(horizontal = 16.dp)
                 ) {}
             }
