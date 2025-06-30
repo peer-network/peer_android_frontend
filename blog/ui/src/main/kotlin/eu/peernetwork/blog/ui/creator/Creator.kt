@@ -2,11 +2,9 @@ package eu.peernetwork.blog.ui.creator
 
 import android.content.Context
 import androidx.lifecycle.ViewModelProvider
-import eu.peernetwork.blog.ui.author.Author
 import eu.peernetwork.blog.ui.engagement.EngagementConfirmation
 import eu.peernetwork.blog.ui.provider.BlogProvider
 import eu.peernetwork.core.ui.component.UiComponent
-import eu.peernetwork.core.ui.component.UiComponentProvider
 
 interface Creator : BlogProvider {
     fun engagementConfirmation(): EngagementConfirmation
@@ -20,7 +18,7 @@ interface Creator : BlogProvider {
         dependencies = [ Creator::class ],
         modules = [ CreatorModule::class ]
     )
-    interface Component : Creator, Author, UiComponentProvider {
+    interface Component : Creator {
         fun viewModelFactory(): ViewModelProvider.Factory
     }
 

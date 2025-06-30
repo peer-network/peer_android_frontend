@@ -41,11 +41,14 @@ class VideoViewModel @Inject constructor(
             initialValue = emptyMap()
         )
 
+    var lastRelation: Relation? = null
+
     fun load(
         page: Pageable,
         relation: Relation = Relation.NONE,
         criteria: Criteria? = null
     ) {
+        lastRelation = relation
         viewModelScope.launch {
             usecase(
                 UserVideosUsecase.Parameter(

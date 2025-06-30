@@ -4,6 +4,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.paging.PagingData
 import app.cash.turbine.test
 import eu.peernetwork.core.common.model.Pageable
+import eu.peernetwork.social.domain.usecase.InviteUsecase
 import eu.peernetwork.social.ui.mock.ReferralMock
 import eu.peernetwork.social.ui.usecase.ReferralPagingUsecase
 import io.mockk.coEvery
@@ -28,13 +29,14 @@ internal class ReferralViewModelTest {
     @get:Rule
     val instantExecutorRule = InstantTaskExecutorRule()
     private val dispatcher = UnconfinedTestDispatcher()
+    private val inviteUsecase = mockk<InviteUsecase>()
     private val usecase = mockk<ReferralPagingUsecase>()
     private lateinit var viewModel: ReferralViewModel
 
     @Before
     fun setup() {
         Dispatchers.setMain(dispatcher)
-        viewModel = ReferralViewModel(usecase)
+        viewModel = ReferralViewModel(usecase, inviteUsecase)
     }
 
     @After

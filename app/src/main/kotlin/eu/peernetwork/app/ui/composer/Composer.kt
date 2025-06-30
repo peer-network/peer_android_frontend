@@ -2,7 +2,6 @@ package eu.peernetwork.app.ui.composer
 
 import android.content.Context
 import eu.peernetwork.app.provider.ApplicationProvider
-import eu.peernetwork.blog.ui.author.Author
 import eu.peernetwork.blog.ui.creator.Creator
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
@@ -21,7 +20,6 @@ interface Composer : ApplicationProvider {
         modules = [ ComposerModule::class ]
     )
     interface Component : Composer,
-        Author,
         Creator,
         Explorer,
         Attachment,

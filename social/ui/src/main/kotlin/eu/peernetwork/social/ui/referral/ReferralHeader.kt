@@ -9,11 +9,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -21,21 +23,26 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.compose.DesignOutlinedButton
 import eu.peernetwork.core.ui.extension.builder
+import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.social.domain.model.Invite
+import eu.peernetwork.social.ui.R
 
 @Composable
 fun ReferralHeader(
-    userId: String,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
 ) {
@@ -50,105 +57,112 @@ fun ReferralHeader(
     )
     val clipboardManager = LocalClipboardManager.current
     val state by viewModel.invite.collectAsState()
-    val link = remember { mutableStateOf<Invite?>(
+    val invitation = remember { mutableStateOf<Invite?>(
         (state as? ReferralViewModel.Status.Success)?.invite
     ) }
     val isLoading = remember { derivedStateOf {
         state is ReferralViewModel.Status.Loading
     } }
+    val error = remember { derivedStateOf {
+        (state as? ReferralViewModel.Status.Error?)?.error
+    } }
+    val isSuccessful = remember { derivedStateOf {
+        (state as? ReferralViewModel.Status.Success?)?.invite
+    } }
+    ReferralHeader(
+        isLoading = isLoading,
+        onClick = {
+            invitation.value?.let {
+                clipboardManager.setText(AnnotatedString((it.link)))
+            } ?: viewModel.invite()
+        }
+    )
+    LaunchedEffect(isSuccessful.value) {
+        isSuccessful.value?.let {
+            if (it != invitation.value) {
+                invitation.value = it
+                clipboardManager.setText(AnnotatedString((it.link)))
+            }
+        }
+    }
+    LaunchedEffect(error.value) {
+        error.value?.message?.let {
+            Toast.makeText(
+                context,
+                component.resource().string(it),
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
+}
+
+@Composable
+fun ReferralHeader(
+    isLoading: State<Boolean>,
+    onClick: () -> Unit
+) {
+    val border = MaterialTheme.colorScheme.tertiaryContainer
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 16.dp, horizontal = 24.dp)
+            .drawBehind {
+                val strokeWidth = 1.dp.toPx()
+                drawLine(
+                    color = border,
+                    start = Offset(0f, size.height),
+                    end = Offset(size.width, size.height),
+                    strokeWidth = strokeWidth
+                )
+            }.padding(vertical = 8.dp, horizontal = 24.dp)
     ) {
         Text(
-            text = "Referral Program",
+            text = stringResource(R.string.referrals_header),
             style = MaterialTheme.typography.headlineLarge.copy(
                 color = MaterialTheme.colorScheme.onBackground
             )
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "Invite a friend and earn 1% of their earnings every time they transfer or cash out — forever. The more you refer, the more you earn!\n\nCopy your referral link or code and share it with the person. Make sure they enter it during registration.",
-            style = MaterialTheme.typography.bodyMedium.copy(
+            text = stringResource(R.string.referrals_description),
+            style = MaterialTheme.typography.labelLarge.copy(
                 color = MaterialTheme.colorScheme.tertiary
             )
         )
         Spacer(modifier = Modifier.height(24.dp))
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center
+        DesignOutlinedButton(
+            onClick = onClick,
+            isLoading = isLoading.value,
+            enabled = !isLoading.value,
+            minHeight = 42.dp
         ) {
-            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                DesignOutlinedButton(
-                    onClick = {
-                        link.value?.let {
-                            clipboardManager.setText(AnnotatedString((it.link)))
-                        } ?: viewModel.invite()},
-                    isLoading = isLoading.value,
-                    enabled = !isLoading.value
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        Text("Copy Link")
-                        Icon(
-                            painter = painterResource(eu.peernetwork.core.ui.R.drawable.ic_copy),
-                            contentDescription = "Copy link",
-                            tint = MaterialTheme.colorScheme.surfaceTint,
-                            modifier = Modifier
-                                .size(20.dp)
-                                .padding(start = 4.dp)
-                        )
-                    }
-                }
-                DesignOutlinedButton(onClick = {
-                    clipboardManager.setText(AnnotatedString(userId))
-                }) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        Text("Copy Code")
-                        Icon(
-                            painter = painterResource(eu.peernetwork.core.ui.R.drawable.ic_copy),
-                            contentDescription = "Copy code",
-                            tint = MaterialTheme.colorScheme.surfaceTint,
-                            modifier = Modifier
-                                .size(20.dp)
-                                .padding(start = 4.dp)
-                        )
-                    }
-                }
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier.padding(horizontal = 2.dp)
+            ) {
+                Text(
+                    stringResource(R.string.referrals_link),
+                    style = MaterialTheme.typography.bodySmall.copy(
+                        color = MaterialTheme.colorScheme.tertiary
+                    )
+                )
+                Spacer(modifier = Modifier.width(6.dp))
+                Icon(
+                    painter = painterResource(eu.peernetwork.core.ui.R.drawable.ic_copy),
+                    contentDescription = stringResource(R.string.referrals_link),
+                    tint = MaterialTheme.colorScheme.surfaceTint,
+                    modifier = Modifier.size(16.dp)
+                )
             }
         }
-        Spacer(modifier = Modifier.height(24.dp))
-        Text(
-            text = "Referred people",
-            style = MaterialTheme.typography.headlineMedium.copy(
-                color = MaterialTheme.colorScheme.tertiary
-            )
-        )
+        Spacer(modifier = Modifier.height(16.dp))
     }
-    LaunchedEffect(state) {
-        when (state) {
-            is ReferralViewModel.Status.Success -> {
-                val invite = (state as ReferralViewModel.Status.Success).invite
-                if (invite != link.value) {
-                    link.value = invite
-                    clipboardManager.setText(AnnotatedString((invite.link)))
-                }
-            }
-            is ReferralViewModel.Status.Error -> {
-                val error = (state as ReferralViewModel.Status.Error).error
-                Toast.makeText(
-                    context,
-                    error.message?.let { component.resource().string(it) },
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-            else -> {}
-        }
+}
+
+@Preview
+@Composable
+fun PreviewReferralHeader() {
+    PeerTheme {
+        ReferralHeader(remember { mutableStateOf(false) }) {}
     }
 }
