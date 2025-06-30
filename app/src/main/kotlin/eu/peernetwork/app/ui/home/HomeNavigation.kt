@@ -19,7 +19,8 @@ fun HomeNavigation(
     startDestination: String,
     navController: NavHostController,
     component: Home.Component,
-    viewModelStore: ViewModelState
+    viewModelStore: ViewModelState,
+    onHome: () -> Unit
 ) {
     DesignNavigation(
         navController = navController,
@@ -42,12 +43,7 @@ fun HomeNavigation(
                     is HomeRoute.Add -> ComposerScreen(
                         component,
                         viewModelStore,
-                        onPostSuccess = {
-                            navController.navigate(HomeRoute.Home.path) {
-                                popUpTo(HomeRoute.Add.path) { inclusive = true }
-                                launchSingleTop = true
-                            }
-                        }
+                        onPostSuccess = onHome
                     )
                     is HomeRoute.Wallet -> WalletScreen(
                         BuildConfig.PAGING_LIMIT,

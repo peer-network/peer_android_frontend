@@ -3,6 +3,7 @@
     <string name="post_title">Mood update 😎</string>
     <string name="post_description">Write a post…</string>
     <string name="post_reply">Write a comment…</string>
+    <string name="post_success_message">Post successfully sent!</string>
     <string name="send_label">Send</string>
 
     <string name="now_label">Just now</string>

@@ -65,22 +65,10 @@ fun FeedPreview(
     var position by remember { mutableIntStateOf(state.intValue) }
     val handleOnNavigate by rememberUpdatedState(onNavigate)
     val handleOnFilter by rememberUpdatedState(onFilter)
-
-  
     val pageState = rememberPagerState(
         pageCount = { UiMimeType.TYPES.size },
         initialPage = state.intValue
     )
-
-  
-    BackHandler(enabled = pageState.currentPage == 1) {
-        coroutine.launch {
-            pageState.animateScrollToPage(0)
-        }
-        state.intValue = 0
-        handleOnNavigate(0)
-    }
-
     FeedPreview(
         state = state,
         pageState = pageState,
@@ -132,7 +120,6 @@ fun FeedPreview(
             }
         },
     )
-
     FeedMenu(
         id,
         title,
@@ -150,6 +137,13 @@ fun FeedPreview(
             }
         }
     }
+    BackHandler(enabled = pageState.currentPage == 1) {
+        coroutine.launch {
+            pageState.animateScrollToPage(0)
+        }
+        state.intValue = 0
+        handleOnNavigate(0)
+    }
 }
 
 @Composable
@@ -162,7 +156,6 @@ fun FeedPreview(
     video: @Composable () -> Unit,
 ) {
     val handleNavigation by rememberUpdatedState(onNavigate)
-
     Column {
         DesignTab(pageState) { index ->
             UiMimeType.get(index)?.let {
@@ -187,7 +180,6 @@ fun FeedPreview(
             }
         }
     }
-
     LaunchedEffect(pageState.currentPage) {
         state.intValue = pageState.currentPage
         handleNavigation(pageState.currentPage)

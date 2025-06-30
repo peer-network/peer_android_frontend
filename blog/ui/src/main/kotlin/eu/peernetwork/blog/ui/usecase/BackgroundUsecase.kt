@@ -17,21 +17,22 @@ class BackgroundUsecase @Inject constructor(
         if (bitmap != null) {
             interactor.invalidate()
             bitmap
-        }
-        interactor.get(
-            param.url, param.type, 200, Pair(50f, 50f)
-        )?.let { background ->
+        } else {
             interactor.get(
-                param.url, param.type, null, Pair(500f, 500f)
-            )?.let { foreground ->
-                interactor.merge(
-                    param.url,
-                    param.type,
-                    param.width,
-                    param.aspectRatio,
-                    background,
-                    foreground
-                )
+                param.url, param.type, 200, Pair(50f, 50f)
+            )?.let { background ->
+                interactor.get(
+                    param.url, param.type, null, Pair(350f, 350f)
+                )?.let { foreground ->
+                    interactor.merge(
+                        param.url,
+                        param.type,
+                        param.width,
+                        param.aspectRatio,
+                        background,
+                        foreground
+                    )
+                }
             }
         }
     }

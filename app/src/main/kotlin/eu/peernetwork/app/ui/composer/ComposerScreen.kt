@@ -54,7 +54,6 @@ fun ComposerScreen(
     val focus = remember { FocusRequester() }
     val intent = UiToken.Post
     val key = intent::class.java.name
-
     Box {
         ComposerNavigation(
             attachment = attachment,
