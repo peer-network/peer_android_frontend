@@ -26,11 +26,14 @@ class PhotoViewModel @Inject constructor(
 
     val state: StateFlow<State> = mutableState.asStateFlow()
 
+    var lastRelation: Relation? = null
+
     fun load(
         page: Pageable,
         relation: Relation = Relation.NONE,
         criteria: Criteria? = null
     ) {
+        lastRelation = relation
         viewModelScope.launch {
             usecase(
                 UserPostsUsecase.Parameter(

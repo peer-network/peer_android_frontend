@@ -1,0 +1,8 @@
+query GetReferralInfo {
+    getReferralInfo {
+        status
+        ResponseCode
+        referralUuid
+        referralLink
+    }
+}

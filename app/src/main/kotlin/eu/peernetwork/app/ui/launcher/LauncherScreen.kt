@@ -7,13 +7,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModelStoreOwner
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import eu.peernetwork.app.ui.home.HomeScreen
 import eu.peernetwork.app.ui.setup.SetupScreen
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.compose.DesignNavigation
-import eu.peernetwork.core.ui.extension.attachIfNecessary
 import eu.peernetwork.core.ui.extension.builder
 
 @Composable
@@ -45,9 +45,16 @@ fun LauncherScreen(
     }
     LaunchedEffect(token) {
         if (token.value != null) {
-            controller.attachIfNecessary("home")
+            controller.attach("home")
         } else {
-            controller.attachIfNecessary("setup")
+            controller.attach("setup")
         }
+    }
+}
+
+private fun NavHostController.attach(destination: String) {
+    navigate(destination) {
+        launchSingleTop = true
+        popUpTo(graph.id)
     }
 }
