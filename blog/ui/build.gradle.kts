@@ -16,7 +16,6 @@ dependencies {
 
     implementation(project(":blog:domain"))
     implementation(libs.dagger)
-    implementation(libs.androidx.material)
     ksp(libs.dagger.compiler)
     implementation(libs.media3)
     implementation(libs.media3.ui)
