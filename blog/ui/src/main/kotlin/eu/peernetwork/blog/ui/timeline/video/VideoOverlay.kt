@@ -1,9 +1,6 @@
 package eu.peernetwork.blog.ui.timeline.video
 
-import android.app.Activity
-import android.content.pm.ActivityInfo
 import android.graphics.Bitmap
-import android.graphics.Color.TRANSPARENT
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,7 +21,6 @@ import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -41,7 +37,6 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -54,6 +49,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import dev.materii.pullrefresh.DragRefreshLayout
 import dev.materii.pullrefresh.rememberPullRefreshState
 import eu.peernetwork.blog.ui.compose.AuthorView
+import eu.peernetwork.blog.ui.compose.LockPortraitWithTransparentSystemUI
 import eu.peernetwork.blog.ui.compose.VideoProgress
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
 import eu.peernetwork.blog.ui.engagement.Engagements
@@ -88,30 +84,10 @@ fun VideoOverlay(
     onLoad: (String, Float) -> Unit = { _, _ -> },
 ) {
 
-    val ctx = LocalContext.current
-    DisposableEffect(Unit) {
-        val activity = ctx as? Activity
-        val oldOrientation = activity?.requestedOrientation
-        activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+    val context = LocalContext.current
+    LockPortraitWithTransparentSystemUI()
 
-        val w = (ctx as? Activity)?.window
-        val oldStatus = w?.statusBarColor
-        val oldNav = w?.navigationBarColor
-        w?.let {
-            WindowCompat.setDecorFitsSystemWindows(it, false)
-            it.statusBarColor = TRANSPARENT
-            it.navigationBarColor = TRANSPARENT
-        }
-        onDispose {
-            w?.let {
-                it.statusBarColor = oldStatus ?: TRANSPARENT
-                it.navigationBarColor = oldNav ?: TRANSPARENT
-                WindowCompat.setDecorFitsSystemWindows(it, true)
-            }
-        }
-    }
-
-    val component = remember { provider.builder(Video.Builder::class.java).build(ctx) }
+    val component = remember { provider.builder(Video.Builder::class.java).build(context) }
     val viewModel = viewModel(
         modelClass = VideoViewModel::class.java,
         viewModelStoreOwner = viewModelStoreOwner,

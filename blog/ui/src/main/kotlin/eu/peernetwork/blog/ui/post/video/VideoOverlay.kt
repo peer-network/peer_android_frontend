@@ -48,6 +48,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import dev.materii.pullrefresh.DragRefreshLayout
 import dev.materii.pullrefresh.rememberPullRefreshState
 import eu.peernetwork.blog.ui.compose.AuthorView
+import eu.peernetwork.blog.ui.compose.LockPortraitWithTransparentSystemUI
 import eu.peernetwork.blog.ui.compose.VideoProgress
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
 import eu.peernetwork.blog.ui.engagement.Engagements
@@ -82,6 +83,7 @@ fun VideoOverlay(
     onLoad: (String, Float) -> Unit = { _, _ -> }
 ) {
     val context = LocalContext.current
+    LockPortraitWithTransparentSystemUI()
     val component = remember {
         provider.builder(Video.Builder::class.java).build(context)
     }
