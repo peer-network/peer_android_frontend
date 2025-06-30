@@ -26,7 +26,7 @@ class MemoryCacheInteractor(maxSize: Int) : BitmapInteractor, BitmapAdapter {
     @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
     override fun observe(): Flow<Map<String, Bitmap?>> = observer
         .mapLatest { cache.snapshot() }
-        .debounce(350)
+        .debounce(150)
 
     override fun put(key: String, bitmap: Bitmap) {
         cache.put(key, bitmap)
