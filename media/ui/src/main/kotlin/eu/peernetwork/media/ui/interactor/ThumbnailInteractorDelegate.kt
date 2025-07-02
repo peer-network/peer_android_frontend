@@ -76,13 +76,11 @@ class ThumbnailInteractorDelegate @Inject constructor(
     override suspend fun save(url: String, bitmap: Bitmap): Bitmap = withContext(dispatcher.io) {
         disk.put(url, bitmap)
         memory.put(url, bitmap)
-        observer.notifyDatasetChanged()
         bitmap
     }
 
     override suspend fun merge(
         url: String,
-        type: UiMimeType,
         width: Int,
         aspectRatio: Float,
         background: Bitmap,
@@ -110,7 +108,6 @@ class ThumbnailInteractorDelegate @Inject constructor(
                 bitmap = this
             }
         }
-        observer.notifyDatasetChanged()
         bitmap
     }
 
