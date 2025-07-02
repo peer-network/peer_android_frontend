@@ -1,5 +1,6 @@
 package eu.peernetwork.media.ui.selector.video
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -7,6 +8,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -78,7 +80,11 @@ fun VideoScreen(
         }
     ) }
     val color = MaterialTheme.colorScheme.primary
-    val thumbnail = viewModel.thumbnail.collectAsStateWithLifecycle().value
+    val thumbnail = viewModel.thumbnail.collectAsStateWithLifecycle()
+    val listState = rememberLazyGridState()
+    val canLoad = remember { derivedStateOf {
+        listState.layoutInfo.totalItemsCount > 0 && !listState.isScrollInProgress
+    } }
     DesignStatefulScaffold<List<UiFile>>(
         state = derivedState,
         onRefresh = { viewModel.initialize(directory.value) },
@@ -86,6 +92,7 @@ fun VideoScreen(
         modifier = Modifier.fillMaxSize()
     ) {
         LazyVerticalGrid(
+            state = listState,
             columns = GridCells.Fixed(4),
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(4.dp),
@@ -93,6 +100,7 @@ fun VideoScreen(
         ) {
             items(it.size) { index ->
                 Box(modifier = Modifier.aspectRatio(1f)
+                    .background(MaterialTheme.colorScheme.surfaceVariant)
                     .clickable(role = Role.Button) {
                         if (selected.value != null) {
                             selected.value = null
@@ -110,8 +118,8 @@ fun VideoScreen(
                     }) {
                     DesignThumbnail(
                         it[index].thumbnail,
-                        thumbnail[it[index].thumbnail]
-                    ) { viewModel.thumbnail(it, type) }
+                        thumbnail.value[it[index].thumbnail]
+                    ) {  }
                     Box(modifier = Modifier.fillMaxSize()
                         .graphicsLayer {
                             alpha = if (selected.value == it[index]) {
@@ -128,6 +136,15 @@ fun VideoScreen(
                         }
                     )
                 }
+            }
+        }
+        LaunchedEffect(canLoad.value, directory.value) {
+            if (canLoad.value) {
+                viewModel.sync(
+                    type,
+                    listState.firstVisibleItemIndex,
+                    listState.layoutInfo.visibleItemsInfo.lastOrNull()?.let { it.index + 1 } ?: 0
+                )
             }
         }
     }

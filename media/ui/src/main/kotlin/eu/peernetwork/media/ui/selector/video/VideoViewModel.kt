@@ -10,6 +10,7 @@ import eu.peernetwork.media.ui.usecase.VideoUsecase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -41,12 +42,17 @@ class VideoViewModel @Inject constructor(
         }
     }
 
-    fun thumbnail(thumbnail: String, type: UiMimeType) {
+    fun sync(type: UiMimeType, position: Int, limit: Int) {
         viewModelScope.launch {
-            try {
-                interactor.load(thumbnail, type, null, Pair(250f, 250f))
-            } catch (error: Throwable) {
-                error.printStackTrace()
+            (state.value as? State.Success?)?.videos?.let {
+                val end = if (it.size < limit) {
+                    it.size
+                } else {
+                    limit
+                }
+                it.subList(position, end).asFlow().collect {
+                    interactor.load(it.thumbnail, type, Pair(250f, 250f))
+                }
             }
         }
     }

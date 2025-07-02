@@ -57,7 +57,7 @@ fun FeedMenu(
                     contentPadding = PaddingValues(vertical = 4.dp),
                     default = stringResource(relation.mapFromDomain().value),
                     modifier = Modifier
-                        .padding(vertical = 4.dp)
+                        .padding(vertical = 6.dp)
                         .clip(RoundedCornerShape(6.dp))
                         .background(MaterialTheme.colorScheme.surfaceVariant),
                 ) {
@@ -78,7 +78,7 @@ fun FeedMenu(
                                             MaterialTheme.colorScheme.onBackground
                                         )
                                     } else {
-                                        MaterialTheme.typography.labelLarge.copy(
+                                        MaterialTheme.typography.bodyMedium.copy(
                                             MaterialTheme.colorScheme.tertiary
                                         )
                                     },

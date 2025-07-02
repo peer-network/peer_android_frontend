@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
@@ -34,8 +35,7 @@ class VideoViewModel @Inject constructor(
 
     val state: StateFlow<State> = mutableState.asStateFlow()
 
-    val thumbnail: StateFlow<Map<String, Bitmap?>> = interactor.observe()
-        .stateIn(
+    val thumbnail: StateFlow<Map<String, Bitmap?>> = interactor.observe().stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = emptyMap()
@@ -66,12 +66,23 @@ class VideoViewModel @Inject constructor(
         }
     }
 
-    fun thumbnail(url: String, type: UiMimeType, width: Int, ratio: Float) {
+    fun sync(
+        items: List<UiVideo>,
+        type: UiMimeType,
+        width: Int,
+        position: Int,
+        limit: Int
+    ) {
         viewModelScope.launch {
-            try {
-                backgroundUsecase(BackgroundUsecase.Parameter(url, type, width, ratio))
-            } catch (error: Throwable) {
-                error.printStackTrace()
+            val end = if (items.size < limit) {
+                items.size
+            } else {
+                limit
+            }
+            items.subList(position, end).asFlow().collect {
+                backgroundUsecase(
+                    BackgroundUsecase.Parameter(it.media, type, width, it.aspectRatio)
+                )
             }
         }
     }

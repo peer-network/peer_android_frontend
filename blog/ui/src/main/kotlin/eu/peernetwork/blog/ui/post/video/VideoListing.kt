@@ -42,12 +42,11 @@ fun VideoListing(
     engagement: Engagements,
     moderation: Moderations,
     onLoadBitmap: (String) -> Bitmap?,
-    onLoad: (String, Float) -> Unit = { url, ratio -> },
     onMentionClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
     onPostClick: (String, Int) -> Unit,
 ) {
-    val handleLoad by rememberUpdatedState(onLoad)
+    val handleOnLoadBitmap by rememberUpdatedState(onLoadBitmap)
     ListPreview(listState) { position ->
         LazyColumn(state = listState) {
             items(
@@ -68,11 +67,7 @@ fun VideoListing(
                             modifier = Modifier.fillMaxWidth()
                                 .aspectRatio(post.aspectRatio)
                                 .background(MaterialTheme.colorScheme.background)
-                        ) {
-                            DesignThumbnail(post.media, onLoadBitmap(post.media)) {
-                                handleLoad(post.media, post.aspectRatio)
-                            }
-                        }
+                        ) { DesignThumbnail(handleOnLoadBitmap(post.media)) }
                         component.videoThumbnail()(
                             Modifier,
                             VideoThumbnail.Spec(

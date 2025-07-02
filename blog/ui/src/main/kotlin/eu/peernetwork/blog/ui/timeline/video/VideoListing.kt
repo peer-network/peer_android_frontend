@@ -53,6 +53,7 @@ fun VideoListing(
     connection: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit = {}
 ) {
     val handleLoad by rememberUpdatedState(onLoad)
+    val handleOnLoadBitmap by rememberUpdatedState(onLoadBitmap)
     ListPreview(listState) { position ->
         LazyColumn(
             state = listState,
@@ -81,9 +82,7 @@ fun VideoListing(
                                 .aspectRatio(post.aspectRatio)
                                 .background(MaterialTheme.colorScheme.background)
                         ) {
-                            DesignThumbnail(post.media, onLoadBitmap(post.media)) {
-                                handleLoad(post.media, post.aspectRatio)
-                            }
+                            DesignThumbnail(handleOnLoadBitmap(post.media))
                             component.videoThumbnail()(
                                 Modifier,
                                 VideoThumbnail.Spec(

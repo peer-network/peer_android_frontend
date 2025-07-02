@@ -7,18 +7,16 @@ import kotlinx.coroutines.flow.Flow
 interface ThumbnailInteractor {
     fun observe(): Flow<Map<String, Bitmap?>>
 
-    fun get(url: String): Bitmap?
+    suspend fun get(url: String): Bitmap?
 
     suspend fun get(
         url: String,
         type: UiMimeType,
-        blur: Int?,
         dimen: Pair<Float, Float>,
     ): Bitmap?
 
     suspend fun save(
         url: String,
-        type: UiMimeType,
         bitmap: Bitmap
     ): Bitmap
 
@@ -34,9 +32,10 @@ interface ThumbnailInteractor {
     suspend fun load(
         url: String,
         type: UiMimeType,
-        blur: Int? = null,
         dimen: Pair<Float, Float> = Pair(350f, 350f),
     ): Bitmap?
+
+    suspend fun blur(bitmap: Bitmap, blur: Int): Bitmap
 
     fun invalidate()
 }

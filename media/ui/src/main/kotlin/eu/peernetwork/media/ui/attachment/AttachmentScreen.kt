@@ -135,7 +135,7 @@ fun AttachmentScreen(
                 persistentListOf(croppedUiFile)
             )
             val bitmap = BitmapFactory.decodeStream(context.contentResolver.openInputStream(uri))
-            viewModel.setThumbnail(thumbnailKey, UiMimeType.Photo, bitmap)
+            viewModel.setThumbnail(thumbnailKey, bitmap)
         }
     )
     LaunchedEffect(permissionsState.allPermissionsGranted) {

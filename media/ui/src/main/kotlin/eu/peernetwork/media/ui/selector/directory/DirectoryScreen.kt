@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -72,7 +73,11 @@ fun DirectoryScreen(
             }
         }
     }
-    val thumbnail = viewModel.thumbnail.collectAsStateWithLifecycle().value
+    val thumbnail = viewModel.thumbnail.collectAsStateWithLifecycle()
+    val listState = rememberLazyGridState()
+    val canLoad = remember { derivedStateOf {
+        listState.layoutInfo.totalItemsCount > 0 && !listState.isScrollInProgress
+    } }
     DesignStatefulScaffold<Set<UiDirectory>>(
         state = derivedState,
         onRefresh = { viewModel.initialize(type) },
@@ -80,6 +85,7 @@ fun DirectoryScreen(
         modifier = Modifier.fillMaxSize()
     ) {
         LazyVerticalGrid(
+            state = listState,
             columns = GridCells.Fixed(3),
             verticalArrangement = Arrangement.spacedBy(12.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -100,8 +106,8 @@ fun DirectoryScreen(
                     ) {
                         DesignThumbnail(
                             item.thumbnail,
-                            thumbnail[item.thumbnail],
-                        ) { viewModel.thumbnail(it, type) }
+                            thumbnail.value[item.thumbnail],
+                        ) { }
                         Image(
                             painter = painterResource(R.drawable.overlay_gradient),
                             contentDescription = null,
@@ -121,6 +127,15 @@ fun DirectoryScreen(
             item(span = { GridItemSpan(maxLineSpan) }) {
                 Box(modifier = Modifier.height(56.dp))
             }
+        }
+    }
+    LaunchedEffect(canLoad.value) {
+        if (canLoad.value) {
+            viewModel.sync(
+                type,
+                listState.firstVisibleItemIndex,
+                listState.layoutInfo.visibleItemsInfo.lastOrNull()?.let { it.index + 1 } ?: 0
+            )
         }
     }
     LaunchedEffect(type) {
