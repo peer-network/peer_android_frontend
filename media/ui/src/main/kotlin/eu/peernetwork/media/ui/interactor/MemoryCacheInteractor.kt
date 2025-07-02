@@ -7,7 +7,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.mapLatest
 
 class MemoryCacheInteractor(maxSize: Int) : BitmapInteractor, BitmapAdapter {
@@ -21,13 +20,14 @@ class MemoryCacheInteractor(maxSize: Int) : BitmapInteractor, BitmapAdapter {
 
     init { observer.tryEmit(System.currentTimeMillis()) }
 
+    @Synchronized
     override fun get(key: String): Bitmap? = cache.get(key)
 
     @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
     override fun observe(): Flow<Map<String, Bitmap?>> = observer
         .mapLatest { cache.snapshot() }
-        .debounce(150)
 
+    @Synchronized
     override fun put(key: String, bitmap: Bitmap) {
         cache.put(key, bitmap)
     }

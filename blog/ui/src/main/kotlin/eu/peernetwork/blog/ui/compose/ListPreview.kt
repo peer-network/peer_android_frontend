@@ -42,7 +42,7 @@ fun ListPreview(
             (mostVisible.let { item ->
                 val visibleHeight = (minOf(item.offset + item.size,
                     listState.layoutInfo.viewportEndOffset) - maxOf(item.offset, 0))
-                visibleHeight.toFloat() / item.size > 0.6f
+                visibleHeight.toFloat() / item.size > 0.65f
             }) -> mostVisible.index
             else -> listState.firstVisibleItemIndex
         }
@@ -54,7 +54,11 @@ fun ListPreview(
         snapshotFlow { layoutInfo }
             .distinctUntilChanged()
             .debounce(800)
-            .collectLatest { currentPosition = position }
+            .collectLatest {
+                if (!listState.isScrollInProgress) {
+                    currentPosition = position
+                }
+            }
     }
     updatedContent(currentPosition)
 }

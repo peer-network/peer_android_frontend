@@ -5,7 +5,6 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModelStoreOwner
@@ -46,6 +45,7 @@ fun VideoScreen(
     connection: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit = {}
 ) {
     val context = LocalContext.current
+    val configuration = LocalConfiguration.current
     val component = remember {
         provider.builder(Video.Builder::class.java).build(context)
     }
@@ -69,7 +69,10 @@ fun VideoScreen(
             }
         }
     }
-    val thumbnail = viewModel.thumbnail.collectAsStateWithLifecycle().value
+    val thumbnail = viewModel.thumbnail.collectAsStateWithLifecycle()
+    val canLoad = remember { derivedStateOf {
+        listState.layoutInfo.totalItemsCount > 0 && !listState.isScrollInProgress
+    } }
     DesignPagingScaffold<UiVideo>(
         state = derivedState,
         onRefresh = { viewModel.load(Pageable(0, postLimit), relation, criteria) },
@@ -117,19 +120,25 @@ fun VideoScreen(
                         engagement = engagement,
                         moderation = moderation,
                         onPostClick = onPostClick,
-                        onLoadBitmap = { thumbnail[it] },
-                        onLoad = { url, ratio ->
-                            viewModel.thumbnail(
-                                url,
-                                UiMimeType.Video,
-                                300,
-                                ratio) },
+                        onLoadBitmap = { thumbnail.value[it] },
+                        onLoad = { url, ratio ->  },
                         onAuthorClick = onAuthorClick,
                         onHashtagClick = onHashtagClick,
                         onMentionClick = onMentionClick,
                         connection = connection
                     )
                 }
+            }
+        }
+        LaunchedEffect(canLoad.value) {
+            if (canLoad.value) {
+                viewModel.sync(
+                    lazyPagingItems.itemSnapshotList.items,
+                    UiMimeType.Video,
+                    configuration.screenWidthDp,
+                    listState.firstVisibleItemIndex,
+                    listState.layoutInfo.visibleItemsInfo.lastOrNull()?.let { it.index + 1 } ?: 0
+                )
             }
         }
     }

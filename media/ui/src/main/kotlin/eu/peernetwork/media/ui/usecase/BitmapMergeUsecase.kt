@@ -32,12 +32,9 @@ class BitmapMergeUsecase @Inject constructor() : ParameterizedSuspendableUseCase
         }
         paint.colorFilter = ColorMatrixColorFilter(matrix)
         canvas.drawBitmap(overlay, 0f, 0f, paint)
-
         val left = ((param.width - scaleWidth) / 2).toFloat()
         val top = ((targetHeight - scaleHeight) / 2).toFloat()
-
         canvas.drawBitmap(scaledForeground, left, top, null)
-
         return result
     }
 

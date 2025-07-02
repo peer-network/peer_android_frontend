@@ -41,6 +41,7 @@ fun VideoScreen(
     listState: LazyListState = rememberLazyListState(),
 ) {
     val context = LocalContext.current
+    val configuration = LocalConfiguration.current
     val component = remember {
         provider.builder(Video.Builder::class.java).build(context)
     }
@@ -64,8 +65,11 @@ fun VideoScreen(
             }
         }
     } }
-    val thumbnail = viewModel.thumbnail.collectAsStateWithLifecycle().value
+    val thumbnail = viewModel.thumbnail.collectAsStateWithLifecycle()
     val updatedAt = remember { mutableLongStateOf(lastUpdated.value) }
+    val canLoad = remember { derivedStateOf {
+        listState.layoutInfo.totalItemsCount > 0 && !listState.isScrollInProgress
+    } }
     DesignPagingScaffold<UiVideo>(
         state = derivedState,
         placeholder = { PostPageSkeleton() },
@@ -97,16 +101,21 @@ fun VideoScreen(
                     listState = listState,
                     engagement = engagement,
                     moderation = moderation,
-                    onLoadBitmap = { thumbnail[it] },
-                    onLoad = { url, ratio ->
-                        viewModel.thumbnail(
-                            url,
-                            UiMimeType.Video,
-                            300,
-                            ratio) },
+                    onLoadBitmap = { thumbnail.value[it] },
                     onMentionClick,
                     onHashtagClick,
                     onPostClick,
+                )
+            }
+        }
+        LaunchedEffect(canLoad.value) {
+            if (canLoad.value) {
+                viewModel.sync(
+                    lazyPagingItems.itemSnapshotList.items,
+                    UiMimeType.Video,
+                    configuration.screenWidthDp,
+                    listState.firstVisibleItemIndex,
+                    listState.layoutInfo.visibleItemsInfo.lastOrNull()?.let { it.index + 1 } ?: 0
                 )
             }
         }

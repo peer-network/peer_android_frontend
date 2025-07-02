@@ -53,10 +53,10 @@ class AttachmentViewModel @Inject constructor(
         }
     }
 
-    fun setThumbnail(thumbnail: String, type: UiMimeType, bitmap: Bitmap) {
+    fun setThumbnail(thumbnail: String, bitmap: Bitmap) {
         viewModelScope.launch {
             try {
-                interactor.save(thumbnail, type, bitmap)
+                interactor.save(thumbnail, bitmap)
             } catch (error: Throwable) {
                 error.printStackTrace()
             }

@@ -22,6 +22,19 @@ fun DesignThumbnail(
     onRefresh: (String) -> Unit,
 ) {
     val handleOnRefresh by rememberUpdatedState(onRefresh)
+    DesignThumbnail(bitmap, contentScale)
+    LaunchedEffect(thumbnail) {
+        if (bitmap == null) {
+            handleOnRefresh(thumbnail)
+        }
+    }
+}
+
+@Composable
+fun DesignThumbnail(
+    bitmap: Bitmap?,
+    contentScale: ContentScale = ContentScale.Crop,
+) {
     val image = remember(bitmap) { bitmap?.asImageBitmap() }
     Box(modifier = Modifier.fillMaxSize()) {
         Crossfade(image) { target ->
@@ -33,11 +46,6 @@ fun DesignThumbnail(
                     contentScale = contentScale
                 )
             }
-        }
-    }
-    LaunchedEffect(thumbnail) {
-        if (bitmap == null) {
-            handleOnRefresh(thumbnail)
         }
     }
 }
