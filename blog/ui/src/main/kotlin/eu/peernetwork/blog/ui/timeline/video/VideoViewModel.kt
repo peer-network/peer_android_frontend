@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -28,7 +29,7 @@ import javax.inject.Inject
 
 class VideoViewModel @Inject constructor(
     private val usecase: UserVideosUsecase,
-    interactor: ThumbnailInteractor,
+    private val interactor: ThumbnailInteractor,
     private val backgroundUsecase: BackgroundUsecase,
 ) : ViewModel() {
     private val mutableState = MutableStateFlow<State>(State.Empty)
@@ -79,11 +80,11 @@ class VideoViewModel @Inject constructor(
             } else {
                 limit
             }
-            items.subList(position, end).asFlow().collect {
+            items.subList(position, end).asFlow().map {
                 backgroundUsecase(
                     BackgroundUsecase.Parameter(it.media, type, width, it.aspectRatio)
                 )
-            }
+            }.collect { interactor.invalidate() }
         }
     }
 

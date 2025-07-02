@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -56,9 +57,9 @@ class DirectoryViewModel @Inject constructor(
                 } else {
                     limit
                 }
-                it.toList().subList(position, end).asFlow().collect {
-                    interactor.load(it.thumbnail, type, Pair(250f, 250f))
-                }
+                it.toList().subList(position, end).asFlow()
+                    .map { interactor.load(it.thumbnail, type, Pair(250f, 250f)) }
+                    .collect { interactor.invalidate() }
             }
         }
     }

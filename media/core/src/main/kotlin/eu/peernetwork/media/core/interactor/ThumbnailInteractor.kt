@@ -22,7 +22,6 @@ interface ThumbnailInteractor {
 
     suspend fun merge(
         url: String,
-        type: UiMimeType,
         width: Int,
         aspectRatio: Float,
         background: Bitmap,

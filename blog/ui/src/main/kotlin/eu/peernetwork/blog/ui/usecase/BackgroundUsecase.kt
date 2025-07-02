@@ -12,14 +12,12 @@ class BackgroundUsecase @Inject constructor(
     override suspend fun invoke(param: Parameter): Bitmap? {
         var bitmap = interactor.get(param.url)
         return if (bitmap != null) {
-            interactor.invalidate()
             bitmap
         } else {
             val dimen = param.width.toFloat()
             interactor.get(param.url, param.type, Pair(dimen, dimen))?.let { foreground ->
                 interactor.merge(
                     param.url,
-                    param.type,
                     param.width,
                     param.aspectRatio,
                     interactor.blur(foreground, 100),
