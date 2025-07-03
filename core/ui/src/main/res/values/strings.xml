@@ -22,4 +22,7 @@
     <string name="refresh_message">Pull down to refresh</string>
     <string name="empty_message">No result found!</string>
     <string name="unknown_error_message">Oops! Unknown network error occurred.</string>
+
+    <string name="show_more_text">... More</string>
+    <string name="show_less_text">Less</string>
 </resources>
