@@ -60,19 +60,21 @@ class VideoViewModel @Inject constructor(
         items: List<UiVideo>,
         type: UiMimeType,
         width: Int,
-        position: Int,
-        limit: Int
+        start: Int,
+        end: Int
     ) {
         viewModelScope.launch {
-            val end = if (items.size < limit) {
+            val limit = if (items.size < end + 1) {
                 items.size
             } else {
-                limit
+                end + 1
             }
-            items.subList(position, end).asFlow().collect {
-                backgroundUsecase(
-                    BackgroundUsecase.Parameter(it.media, type, width, it.aspectRatio)
-                )
+            if (start <= limit) {
+                items.subList(start, limit).asFlow().collect {
+                    backgroundUsecase(
+                        BackgroundUsecase.Parameter(it.media, type, width, it.aspectRatio)
+                    )
+                }
             }
         }
     }

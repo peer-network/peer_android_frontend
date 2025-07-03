@@ -143,7 +143,7 @@ fun VideoScreen(
                 viewModel.sync(
                     type,
                     listState.firstVisibleItemIndex,
-                    listState.layoutInfo.visibleItemsInfo.lastOrNull()?.let { it.index + 1 } ?: 0
+                    listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
                 )
             }
         }

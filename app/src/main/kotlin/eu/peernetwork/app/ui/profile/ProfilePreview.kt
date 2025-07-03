@@ -38,6 +38,7 @@ import kotlinx.coroutines.launch
 fun ProfilePreview(
     id: String,
     title: String?,
+    enable: Boolean,
     limit: Int,
     onSettings: () -> Unit = {},
     onMentionClick: (String) -> Unit = {},
@@ -93,6 +94,7 @@ fun ProfilePreview(
         ) {
             ProfileBlog(
                 id,
+                enable,
                 lastUpdated,
                 limit,
                 component,

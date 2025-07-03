@@ -33,8 +33,6 @@ class VideoInteractorDelegate @Inject constructor(
 
     private var currentSurface: Surface? = null
 
-    private var state: State? = null
-
     private val aspectRatios = ConcurrentHashMap<String, Float>()
 
     private val mutableAspectRatios = MutableStateFlow<Map<String, Float>>(emptyMap())
@@ -66,20 +64,8 @@ class VideoInteractorDelegate @Inject constructor(
             repeatMode = Player.REPEAT_MODE_ALL
         }
 
-    override fun save() {
-        currentSurface?.let { surface ->
-            currentUrl?.let { url ->
-                state = State(url, surface)
-            }
-        }
-    }
-
     override fun mute(): Flow<Boolean> {
         return observableBoolean(VOLUME).map { it == true }
-    }
-
-    override fun expandedMode(): Boolean {
-        return state != null
     }
 
     override suspend fun mute(enable: Boolean) {
@@ -98,12 +84,6 @@ class VideoInteractorDelegate @Inject constructor(
         currentSurface = surface
         player.playWhenReady = true
         player.addListener(listener)
-    }
-
-    override fun restore() {
-        state?.let {
-            state = null
-        }
     }
 
     override fun detach(texture: SurfaceTexture) {

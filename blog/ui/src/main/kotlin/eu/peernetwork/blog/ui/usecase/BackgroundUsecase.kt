@@ -20,7 +20,7 @@ class BackgroundUsecase @Inject constructor(
                     param.url,
                     param.width,
                     param.aspectRatio,
-                    interactor.blur(foreground, 100),
+                    interactor.blur(foreground, 10),
                     foreground
                 )
             }

@@ -39,12 +39,12 @@ import eu.peernetwork.media.core.renderer.VideoThumbnail
 @Composable
 fun VideoListing(
     id: String,
+    enable: Boolean,
     component: Video.Component,
     lazyPagingItems: LazyPagingItems<UiVideo>,
     listState: LazyListState,
     engagement: Engagements,
     moderation: Moderations,
-    onLoad: (String, Float) -> Unit = { url, ratio -> },
     onLoadBitmap: (String) -> Bitmap?,
     onMentionClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
@@ -52,7 +52,6 @@ fun VideoListing(
     onAuthorClick: (String) -> Unit = {},
     connection: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit = {}
 ) {
-    val handleLoad by rememberUpdatedState(onLoad)
     val handleOnLoadBitmap by rememberUpdatedState(onLoadBitmap)
     ListPreview(listState) { position ->
         LazyColumn(
@@ -88,7 +87,7 @@ fun VideoListing(
                                 VideoThumbnail.Spec(
                                     post.media,
                                     post.aspectRatio,
-                                    index == position,
+                                    index == position && enable,
                                     post.resolution
                                 )
                             )

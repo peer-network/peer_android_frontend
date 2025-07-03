@@ -29,13 +29,13 @@ fun ProfileScreen(
         ProfileNavigation(
             userId = userId,
             title = title,
+            enable = overlay.value == ProfileOverlayState.Empty,
             limit = BuildConfig.PAGING_LIMIT,
             controller = controller,
             component = component,
             viewModelStore = viewModelStore,
             onPhotoClick = { id, index -> },
             onVideoClick = { id, index ->
-                component.videoInteractor().save()
                 overlay.value = ProfileOverlayState.Video(id, index)
             }
         )

@@ -51,7 +51,6 @@ fun ProfileOverlay(
         visible,
         onAnimationComplete = {
             if (!it) {
-                component.videoInteractor().restore()
                 overlay.value = ProfileOverlayState.Empty
             }
         }
@@ -65,6 +64,7 @@ fun ProfileOverlay(
             ProfileNavigation(
                 userId = userId,
                 title = title,
+                enable = visible.value,
                 limit = limit,
                 startDestination = "overlay",
                 controller = controller,

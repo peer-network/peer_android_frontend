@@ -9,7 +9,5 @@ interface MediaPlayer {
 
     fun mute(): Flow<Boolean>
 
-    fun expandedMode(): Boolean
-
     fun player(): ExoPlayer
 }

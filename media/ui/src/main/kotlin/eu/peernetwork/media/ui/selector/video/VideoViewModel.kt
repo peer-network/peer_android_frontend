@@ -43,18 +43,20 @@ class VideoViewModel @Inject constructor(
         }
     }
 
-    fun sync(type: UiMimeType, position: Int, limit: Int) {
+    fun sync(type: UiMimeType, start: Int, limit: Int) {
         viewModelScope.launch {
             (state.value as? State.Success?)?.videos?.let {
-                val end = if (it.size < limit) {
+                val end = if (it.size < limit + 1) {
                     it.size
                 } else {
-                    limit
+                    limit + 1
                 }
-                it.subList(position, end).asFlow().map {
-                    interactor.load(it.thumbnail, type, Pair(250f, 250f))
-                }.collect {
-                    interactor.invalidate()
+                if (start <= end) {
+                    it.subList(start, end).asFlow().map {
+                        interactor.load(it.thumbnail, type, Pair(250f, 250f))
+                    }.collect {
+                        interactor.invalidate()
+                    }
                 }
             }
         }

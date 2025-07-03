@@ -51,11 +51,7 @@ class VideoThumbnailDelegate @Inject constructor(
                     texture: SurfaceTexture,
                     p1: Int,
                     p2: Int
-                ) {
-                    if (!media.expandedMode()) {
-                        interactor.attach(texture, spec.url)
-                    }
-                }
+                ) { interactor.attach(texture, spec.url) }
 
                 override fun onSurfaceTextureSizeChanged(
                     p0: SurfaceTexture,
@@ -75,7 +71,7 @@ class VideoThumbnailDelegate @Inject constructor(
             LifecycleEventObserver { _, event ->
                 if (event == Lifecycle.Event.ON_START) {
                     surfaceView.attachCallback(callback)
-                } else if (event == Lifecycle.Event.ON_STOP && !spec.isPlaying) {
+                } else if (event == Lifecycle.Event.ON_STOP) {
                     surfaceView.clearCallback()
                 }
             }
@@ -121,9 +117,7 @@ class VideoThumbnailDelegate @Inject constructor(
                 VolumeControl(mute) { scope.launch { interactor.mute(it) } }
             }
         }
-        LaunchedEffect(spec.isPlaying) {
-            lifecycleOwner.lifecycle.addObserver(observer)
-        }
+        LaunchedEffect(Unit) { lifecycleOwner.lifecycle.addObserver(observer) }
         LaunchedEffect(mute.value) {
             media.player().volume = if (mute.value) {
                 1f

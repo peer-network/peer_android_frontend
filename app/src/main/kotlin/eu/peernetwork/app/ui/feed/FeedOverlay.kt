@@ -53,7 +53,6 @@ fun FeedOverlay(
         visible,
         onAnimationComplete = {
             if (!it) {
-                component.videoInteractor().restore()
                 overlay.value = FeedOverlayState.Empty
             }
         }
