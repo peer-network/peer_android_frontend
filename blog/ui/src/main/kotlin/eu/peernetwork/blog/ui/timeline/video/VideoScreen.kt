@@ -36,6 +36,7 @@ fun VideoScreen(
     postLimit: Int,
     relation: Relation,
     criteria: Criteria? = null,
+    onBlock: @Composable (String) -> Unit,
     onMentionClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
     provider: UiComponentProvider,

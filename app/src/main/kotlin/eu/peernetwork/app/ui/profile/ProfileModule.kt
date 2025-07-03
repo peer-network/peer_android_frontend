@@ -13,6 +13,7 @@ import eu.peernetwork.core.ui.annotation.UiBuilder
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.factory.UiBuilderFactory
+import eu.peernetwork.social.ui.blockButton.BlockButton
 import eu.peernetwork.social.ui.connection.Connection
 import eu.peernetwork.social.ui.followers.Followers
 import eu.peernetwork.social.ui.followings.Followings
@@ -104,6 +105,14 @@ object ProfileModule {
     @UiBuilder(Confirmation.Builder::class)
     fun provideConfirmationBuilder(component: Profile.Component): UiComponent.Builder {
         return Confirmation.Builder(component)
+    }
+
+    @Profile.Scope
+    @Provides
+    @IntoMap
+    @UiBuilder(BlockButton.Builder::class)
+    fun provideBlockButtonBuilder(component: Profile.Component): UiComponent.Builder {
+        return BlockButton.Builder(component)
     }
 
     @Profile.Scope

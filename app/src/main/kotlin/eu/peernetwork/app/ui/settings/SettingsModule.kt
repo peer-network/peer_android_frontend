@@ -9,6 +9,7 @@ import eu.peernetwork.core.ui.annotation.UiBuilder
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.factory.UiBuilderFactory
+import eu.peernetwork.social.ui.block.Block
 import eu.peernetwork.social.ui.referral.Referral
 import eu.peernetwork.user.ui.password.update.PasswordUpdate
 import eu.peernetwork.user.ui.settings.account.Account
@@ -58,6 +59,14 @@ object SettingsModule {
     @UiBuilder(Referral.Builder::class)
     fun provideReferralBuilder(component: Settings.Component): UiComponent.Builder {
         return Referral.Builder(component)
+    }
+
+    @Settings.Scope
+    @Provides
+    @IntoMap
+    @UiBuilder(Block.Builder::class)
+    fun provideBlockBuilder(component: Settings.Component): UiComponent.Builder {
+        return Block.Builder(component)
     }
 
     @Settings.Scope

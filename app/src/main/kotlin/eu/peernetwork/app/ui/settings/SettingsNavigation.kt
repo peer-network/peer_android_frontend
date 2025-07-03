@@ -16,6 +16,7 @@ import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.compose.DesignRouter
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.core.ui.model.ViewModelState
+import eu.peernetwork.social.ui.block.BlockScreen
 import eu.peernetwork.social.ui.referral.ReferralScreen
 import eu.peernetwork.user.ui.R
 import eu.peernetwork.user.ui.password.update.PasswordUpdateScreen
@@ -32,6 +33,7 @@ fun SettingsNavigation(
     val controller = rememberNavController()
     val updatedSettings by rememberUpdatedState(settings)
     val referral = stringResource(R.string.referral_name_label)
+    val block = "Block List"
     val password = stringResource(R.string.password_label)
     val preference = stringResource(R.string.preference_label)
     val account = stringResource(R.string.account_label)
@@ -56,6 +58,16 @@ fun SettingsNavigation(
         }
         composable(referral) {
             ReferralScreen(
+                userId = userId,
+                postLimit = BuildConfig.PAGING_LIMIT,
+                provider = provider,
+                viewModelStoreOwner = viewModelStore.get(userId)
+            ) {
+                controller.navigateIfNecessary("profile/${it.id}")
+            }
+        }
+        composable(block) {
+            BlockScreen(
                 userId = userId,
                 postLimit = BuildConfig.PAGING_LIMIT,
                 provider = provider,

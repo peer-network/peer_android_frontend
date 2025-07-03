@@ -67,10 +67,12 @@ fun ModerationScreen(
 @Composable
 fun ModerationScreen(
     model: UiContent,
-    event: Moderations
+    event: Moderations,
+    onBlock: (@Composable (String) -> Unit)? = null,
 ) {
     var expanded by remember { mutableStateOf(false) }
     val handleOnReport by rememberUpdatedState(event.onReport)
+    val handleOnBlock by rememberUpdatedState(onBlock)
     Box {
         DesignTextButton(
             onClick = { expanded = true },
@@ -93,6 +95,12 @@ fun ModerationScreen(
                 onClick = {
                     expanded = false
                     handleOnReport(model.id)
+                }
+            )
+            DropdownMenuItem(
+                text = { handleOnBlock?.invoke(model.author.id) },
+                onClick = {
+                    expanded = false
                 }
             )
         }

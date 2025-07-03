@@ -32,6 +32,7 @@ import eu.peernetwork.core.ui.design.compose.DesignTab
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.media.core.model.UiMimeType
+import eu.peernetwork.social.ui.blockButton.DesignBlockButton
 import eu.peernetwork.social.ui.connection.ConnectionController
 import eu.peernetwork.social.ui.connection.ConnectionScreen
 import kotlinx.coroutines.launch
@@ -83,6 +84,13 @@ fun FeedPreview(
                 BuildConfig.PAGING_LIMIT,
                 relation,
                 criteria,
+                onBlock = {
+                    DesignBlockButton(
+                        id = id,
+                        provider = component,
+                        viewModelStoreOwner = viewModelStoreOwner
+                    )
+                },
                 onMentionClick,
                 onHashtagClick,
                 onPhotoClick,
@@ -104,6 +112,13 @@ fun FeedPreview(
                 BuildConfig.PAGING_LIMIT,
                 relation,
                 criteria,
+                onBlock = {
+                    DesignBlockButton(
+                        id = id,
+                        provider = component,
+                        viewModelStoreOwner = viewModelStoreOwner
+                    )
+                },
                 { controller.navigateToUsernameSearch(it) },
                 { controller.navigateToTagSearch(it) },
                 component,

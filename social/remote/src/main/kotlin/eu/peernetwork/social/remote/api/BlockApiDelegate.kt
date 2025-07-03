@@ -28,7 +28,7 @@ class BlockApiDelegate @Inject constructor(
         response.assertOrThrow(data.status, data.ResponseCode)
         val blocked = data.affectedRows?.iBlocked?.map {
             Block(
-                userId = userId,
+                userId = it.userid!!,
                 username = it.username!!,
                 slug = it.slug!!,
                 image = "$url/${it.img!!}".removeSuffix("/")

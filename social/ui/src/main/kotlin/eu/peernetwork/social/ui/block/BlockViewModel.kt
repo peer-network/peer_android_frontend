@@ -20,7 +20,7 @@ import javax.inject.Inject
 class BlockViewModel @Inject constructor(
     private val usecase: BlockListPagingUsecase
 ): ViewModel() {
-    private val mutableState = MutableStateFlow<State>(State.Loading)
+    private val mutableState = MutableStateFlow<State>(State.Empty)
     val state: StateFlow<State> = mutableState.asStateFlow()
 
     fun blockList(userId: String, pageable: Pageable) {
@@ -32,9 +32,7 @@ class BlockViewModel @Inject constructor(
                 .onStart { mutableState.tryEmit(State.Loading) }
                 .cachedIn(viewModelScope)
                 .apply {
-                    collectLatest {
-                        mutableState.tryEmit(State.Success(this))
-                    }
+                    collectLatest { mutableState.tryEmit(State.Success(this)) }
                 }
         }
     }

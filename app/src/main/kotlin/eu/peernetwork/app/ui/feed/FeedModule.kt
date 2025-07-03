@@ -17,6 +17,7 @@ import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.factory.UiBuilderFactory
 import eu.peernetwork.core.ui.factory.UiViewModelFactory
+import eu.peernetwork.social.ui.blockButton.BlockButton
 import eu.peernetwork.social.ui.connection.Connection
 import eu.peernetwork.wallet.ui.confirmation.Confirmation
 import javax.inject.Provider
@@ -88,6 +89,14 @@ object FeedModule {
     @UiBuilder(Confirmation.Builder::class)
     fun provideConfirmationBuilder(component: Feed.Component): UiComponent.Builder {
         return Confirmation.Builder(component)
+    }
+
+    @Feed.Scope
+    @Provides
+    @IntoMap
+    @UiBuilder(BlockButton.Builder::class)
+    fun provideBlockButtonBuilder(component: Feed.Component): UiComponent.Builder {
+        return BlockButton.Builder(component)
     }
 
     @Feed.Scope

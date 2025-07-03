@@ -8,6 +8,7 @@ import eu.peernetwork.blog.ui.post.photo.Photo
 import eu.peernetwork.blog.ui.post.video.Video
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
+import eu.peernetwork.social.ui.blockButton.BlockButton
 import eu.peernetwork.social.ui.connection.Connection
 import eu.peernetwork.social.ui.followers.Followers
 import eu.peernetwork.social.ui.followings.Followings
@@ -36,7 +37,8 @@ interface Profile : ApplicationProvider {
         Followings,
         Peers,
         Connection,
-        Confirmation
+        Confirmation,
+        BlockButton
 
     class Builder(private val dependency: Profile) : UiComponent.DefaultBuilder<Profile, Component>() {
         override fun build(context: Context): Component {

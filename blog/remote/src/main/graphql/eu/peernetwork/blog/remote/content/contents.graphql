@@ -10,6 +10,7 @@ query Getallposts(
 ) {
     listPosts(
         filterBy: $filter,
+        IgnorList: YES,
         sortBy: $sort,
         tag: $tag,
         title: $title,

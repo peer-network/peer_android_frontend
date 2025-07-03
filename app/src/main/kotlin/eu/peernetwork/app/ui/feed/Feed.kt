@@ -9,6 +9,7 @@ import eu.peernetwork.blog.ui.timeline.photo.Photo
 import eu.peernetwork.blog.ui.timeline.video.Video
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
+import eu.peernetwork.social.ui.blockButton.BlockButton
 import eu.peernetwork.social.ui.connection.Connection
 import eu.peernetwork.wallet.ui.confirmation.Confirmation
 
@@ -29,7 +30,8 @@ interface Feed : ApplicationProvider {
         Search,
         Profile,
         Connection,
-        Confirmation {
+        Confirmation,
+        BlockButton {
         fun viewModelFactory(): ViewModelProvider.Factory
     }
 

@@ -61,6 +61,7 @@ fun SettingsScreen(
     val updateHeader by rememberUpdatedState(header)
     val handleOnNavigate by rememberUpdatedState(onNavigate)
     val referral = stringResource(R.string.referral_name_label)
+    val block = stringResource(eu.peernetwork.social.ui.R.string.blocklist_label)
     val password = stringResource(R.string.password_label)
     val preference = stringResource(R.string.preference_label)
     val aboutUsLabel = stringResource(R.string.about_us_label)
@@ -72,6 +73,9 @@ fun SettingsScreen(
         }
         SettingsItem(label = referral) {
             handleOnNavigate(referral)
+        }
+        SettingsItem(label = block) {
+            handleOnNavigate(block)
         }
         SettingsItem(label = password) {
             handleOnNavigate(password)

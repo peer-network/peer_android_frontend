@@ -36,6 +36,7 @@ fun PhotoListing(
     listState: LazyListState,
     engagement: Engagements,
     moderation: Moderations,
+    onBlock: (@Composable (String) -> Unit)? = null,
     onMentionClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
     onPostClick: (String, Int) -> Unit,
@@ -57,6 +58,7 @@ fun PhotoListing(
                     index = index,
                     engagements = engagement,
                     moderations = moderation,
+                    onBlock = onBlock,
                     onAuthorClick = onAuthorClick,
                     onPostClick = onPostClick,
                     onHashtagClick = onHashtagClick,
@@ -103,6 +105,7 @@ fun LazyItemScope.PhotoListing(
     index: Int,
     engagements: Engagements,
     moderations: Moderations,
+    onBlock: (@Composable (String) -> Unit)? = null,
     onAuthorClick: (String) -> Unit = {},
     onPostClick: (String, Int) -> Unit,
     onMentionClick: (String) -> Unit = {},
@@ -129,7 +132,8 @@ fun LazyItemScope.PhotoListing(
         moderation = {
             ModerationScreen(
                 uiContent,
-                moderations
+                moderations,
+                onBlock = onBlock
             )
         },
         content = content,
