@@ -30,6 +30,7 @@ import eu.peernetwork.media.core.model.UiMimeType
 @Composable
 fun VideoScreen(
     author: String,
+    enable: Boolean,
     postLimit: Int,
     lastUpdated: State<Long>,
     provider: UiComponentProvider,
@@ -96,6 +97,7 @@ fun VideoScreen(
             ) { moderation ->
                 VideoListing(
                     author = author,
+                    enable = enable,
                     component = component,
                     lazyPagingItems = lazyPagingItems,
                     listState = listState,
@@ -115,7 +117,7 @@ fun VideoScreen(
                     UiMimeType.Video,
                     configuration.screenWidthDp,
                     listState.firstVisibleItemIndex,
-                    listState.layoutInfo.visibleItemsInfo.lastOrNull()?.let { it.index + 1 } ?: 0
+                    listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
                 )
             }
         }

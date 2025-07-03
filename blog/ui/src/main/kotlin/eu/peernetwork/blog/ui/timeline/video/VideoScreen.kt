@@ -32,6 +32,7 @@ import eu.peernetwork.media.core.model.UiMimeType
 @Composable
 fun VideoScreen(
     id: String,
+    enable: Boolean,
     postLimit: Int,
     relation: Relation,
     criteria: Criteria? = null,
@@ -114,6 +115,7 @@ fun VideoScreen(
                 ) { moderation ->
                     VideoListing(
                         id = id,
+                        enable = enable,
                         component = component,
                         listState = listState,
                         lazyPagingItems = lazyPagingItems,
@@ -121,7 +123,6 @@ fun VideoScreen(
                         moderation = moderation,
                         onPostClick = onPostClick,
                         onLoadBitmap = { thumbnail.value[it] },
-                        onLoad = { url, ratio ->  },
                         onAuthorClick = onAuthorClick,
                         onHashtagClick = onHashtagClick,
                         onMentionClick = onMentionClick,
@@ -137,7 +138,7 @@ fun VideoScreen(
                     UiMimeType.Video,
                     configuration.screenWidthDp,
                     listState.firstVisibleItemIndex,
-                    listState.layoutInfo.visibleItemsInfo.lastOrNull()?.let { it.index + 1 } ?: 0
+                    listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
                 )
             }
         }

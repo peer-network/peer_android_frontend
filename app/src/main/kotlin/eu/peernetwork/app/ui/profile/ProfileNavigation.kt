@@ -20,6 +20,7 @@ import eu.peernetwork.core.ui.model.ViewModelState
 fun ProfileNavigation(
     userId: String,
     title: String?,
+    enable: Boolean,
     limit: Int,
     startDestination: String? = null,
     controller: NavHostController,
@@ -44,6 +45,7 @@ fun ProfileNavigation(
             val videoState = rememberLazyListState()
             ProfilePreview(
                 id = id,
+                enable = enable,
                 title = title,
                 limit = limit,
                 onSettings = { controller.navigateIfNecessary("settings") },

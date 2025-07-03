@@ -36,6 +36,7 @@ import eu.peernetwork.media.core.renderer.VideoThumbnail
 @Composable
 fun VideoListing(
     author: String,
+    enable: Boolean,
     component: Video.Component,
     lazyPagingItems: LazyPagingItems<UiVideo>,
     listState: LazyListState,
@@ -73,7 +74,7 @@ fun VideoListing(
                             VideoThumbnail.Spec(
                                 post.media,
                                 post.aspectRatio,
-                                index == position,
+                                index == position && enable,
                                 post.resolution
                             )
                         )

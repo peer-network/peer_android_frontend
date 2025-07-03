@@ -39,6 +39,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun FeedPreview(
     id: String,
+    enable: Boolean,
     ordinal: Int,
     state: MutableIntState,
     component: Feed.Component,
@@ -101,6 +102,7 @@ fun FeedPreview(
         video = {
             VideoScreen(
                 id,
+                enable,
                 BuildConfig.PAGING_LIMIT,
                 relation,
                 criteria,

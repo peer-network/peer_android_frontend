@@ -65,6 +65,7 @@ fun FeedScreen(
             ) { connectionController ->
                 FeedPreview(
                     id = id,
+                    enable = overlay.value == FeedOverlayState.Empty,
                     ordinal = ordinal.value,
                     state = pageState,
                     component = component,
@@ -80,7 +81,6 @@ fun FeedScreen(
                     onFilter = { viewModel.setFilter(it) },
                     onPhotoClick = { id, index -> },
                     onVideoClick = { id, index ->
-                        component.videoInteractor().save()
                         overlay.value = FeedOverlayState.Video(id, index) }
                 )
             }
