@@ -97,12 +97,12 @@ fun ModerationScreen(
                     handleOnReport(model.id)
                 }
             )
-            DropdownMenuItem(
-                text = { handleOnBlock?.invoke(model.author.id) },
-                onClick = {
-                    expanded = false
-                }
-            )
+//            DropdownMenuItem(
+//                text = { handleOnBlock?.invoke(model.author.id) },
+//                onClick = {
+//                    expanded = false
+//                }
+//            )
         }
     }
 }

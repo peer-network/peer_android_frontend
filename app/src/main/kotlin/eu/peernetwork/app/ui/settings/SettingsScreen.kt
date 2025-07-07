@@ -74,9 +74,9 @@ fun SettingsScreen(
         SettingsItem(label = referral) {
             handleOnNavigate(referral)
         }
-        SettingsItem(label = block) {
-            handleOnNavigate(block)
-        }
+//        SettingsItem(label = block) {
+//            handleOnNavigate(block)
+//        }  can be added after implementing block button
         SettingsItem(label = password) {
             handleOnNavigate(password)
         }
