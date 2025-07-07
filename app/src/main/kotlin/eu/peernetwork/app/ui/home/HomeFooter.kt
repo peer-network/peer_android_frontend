@@ -44,7 +44,7 @@ fun HomeFooter(
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            HomeRoute.ROUTES.forEachIndexed { index, navigation ->
+            HomeRoute.TABS.forEachIndexed { index, navigation ->
                 IconButton(onClick = {
                     handleClick(start.value, index)
                 }) {

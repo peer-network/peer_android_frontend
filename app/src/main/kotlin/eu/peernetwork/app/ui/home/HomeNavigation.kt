@@ -33,7 +33,7 @@ fun HomeNavigation(
         navController = navController,
         startDestination = startDestination
     ) {
-        HomeRoute.ROUTES.forEach { route ->
+        HomeRoute.TABS.forEach { route ->
             composable(route.path) {
                 when (route) {
                     is HomeRoute.Home -> FeedScreen(
@@ -69,10 +69,12 @@ fun HomeNavigation(
                         component,
                         viewModelStore,
                     )
-                    is HomeRoute.Chat -> MessagingScreen(id, component, viewModelStore.get(id))
                     else -> {}
                 }
             }
+        }
+        composable(HomeRoute.Chat.path) {
+            MessagingScreen(id, component, viewModelStore.get(id))
         }
     }
 }
@@ -109,18 +111,13 @@ sealed class HomeRoute(
         R.drawable.ic_profile,
         R.string.profile_label
     )
-    data object Comment: HomeRoute(
-        R.drawable.ic_chat_outline,
-        R.drawable.ic_chat,
-        R.string.chat_label
-    )
-    data object Chat : HomeRoute(
+    data object Chat: HomeRoute(
         R.drawable.ic_chat_outline,
         R.drawable.ic_chat,
         R.string.chat_label
     )
     companion object {
-        val ROUTES = arrayOf(Home, Search, Add, Wallet, Profile, Chat)
-        fun get(index: Int): HomeRoute = ROUTES[index]
+        val TABS = arrayOf(Home, Search, Add, Wallet, Profile)
+        fun get(index: Int): HomeRoute = TABS[index]
     }
 }
