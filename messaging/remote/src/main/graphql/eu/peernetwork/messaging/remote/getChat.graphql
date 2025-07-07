@@ -1,0 +1,28 @@
+query GetChat($chatid: ID!, $offset: Int, $limit: Int) {
+    getChat(chatid: $chatid, messageOffset: $offset, messageLimit: $limit) {
+        status
+        counter
+        affectedRows {
+            id
+            image
+            name
+            createdat
+            updatedat
+            chatmessages {
+                id
+                senderid
+                chatid
+                content
+                createdat
+            }
+            chatparticipants {
+                userid
+                img
+                username
+                slug
+                hasaccess
+            }
+        }
+        ResponseCode
+    }
+}

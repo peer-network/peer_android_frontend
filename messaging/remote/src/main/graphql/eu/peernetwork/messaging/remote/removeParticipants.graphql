@@ -1,0 +1,9 @@
+mutation RemoveChatParticipants($recipients: [String!]!, $chatid: ID!) {
+    removeChatParticipants(input: { recipients: $recipients, chatid: $chatid }) {
+        status
+        ResponseCode
+        affectedRows {
+            chatid
+        }
+    }
+}

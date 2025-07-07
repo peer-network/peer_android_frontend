@@ -52,7 +52,7 @@ fun DesignTitleBarRegistry.HomeHeader(
             Box(modifier = Modifier.weight(1f)) { titleBar().value?.content?.invoke() }
             Box(modifier = Modifier.padding(start = 16.dp))
             options()
-            IconButton(onClick = { onClick(HomeRoute.Comment) }) {
+            IconButton(onClick = { onClick(HomeRoute.Chat) }) {
                 Icon(
                     painter = painterResource(id = HomeRoute.Comment.icon),
                     contentDescription = stringResource(id = HomeRoute.Comment.icon),

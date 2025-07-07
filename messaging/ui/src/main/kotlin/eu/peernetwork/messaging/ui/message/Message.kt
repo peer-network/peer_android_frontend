@@ -1,27 +1,27 @@
-package eu.peernetwork.messaging.ui.chat
+package eu.peernetwork.messaging.ui.message
 
 import android.content.Context
 import androidx.lifecycle.ViewModelProvider
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.messaging.domain.provider.MessagingProvider
 
-interface Chat: MessagingProvider {
+interface Message : MessagingProvider {
     @javax.inject.Scope
     @Retention(AnnotationRetention.RUNTIME)
     annotation class Scope
 
     @Scope
     @dagger.Component(
-        dependencies = [ Chat::class ],
-        modules = [ ChatModule::class ]
+        dependencies = [ Message::class ],
+        modules = [ MessageModule::class ]
     )
-    interface Component : Chat {
+    interface Component : Message {
         fun viewModelFactory(): ViewModelProvider.Factory
     }
 
-    class Builder(private val dependency: Chat) : UiComponent.DefaultBuilder<Chat, Component>() {
+    class Builder(private val dependency: Message) : UiComponent.DefaultBuilder<Message, Component>() {
         override fun build(context: Context): Component {
-            return DaggerChat_Component.builder().chat(dependency).build()
+            return DaggerMessage_Component.builder().message(dependency).build()
         }
     }
 }

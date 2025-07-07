@@ -32,6 +32,7 @@ import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
 import eu.peernetwork.core.ui.design.compose.DesignTitleBar
 import eu.peernetwork.core.ui.extension.attach
 import eu.peernetwork.core.ui.extension.attachIfNecessary
+import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.core.ui.model.ViewModelState
 import eu.peernetwork.wallet.ui.reward.RewardScreen
 
@@ -78,6 +79,9 @@ fun HomeScreen(provider: UiComponentProvider) {
                 viewModel.lastVisited(it)
                 navigationState.intValue = it
                 controller.attachIfNecessary(HomeRoute.get(it).path)
+            },
+            onChat = {
+                controller.navigateIfNecessary(HomeRoute.Chat.path)
             }
         ) { state ->
             HomeNavigation(
@@ -106,13 +110,17 @@ fun HomeScreen(
     start: State<Int>,
     options: @Composable () -> Unit,
     onClick: (Int) -> Unit,
+    onChat: () -> Unit,
     content: @Composable (State<Float>) -> Unit
 ) {
     val updatedContent by rememberUpdatedState(content)
     val handleOnClick by rememberUpdatedState(onClick)
+    val handleOnChat by rememberUpdatedState(onChat)
     DesignTitleBar {
         HomeScaffold(
-            header = { HomeHeader(options = options, modifier = Modifier.padding(top = 8.dp)) },
+            header = { HomeHeader(options = options, modifier = Modifier.padding(top = 8.dp), onClick = {
+                handleOnChat()
+            }) },
             footer = {
                 HomeFooter(
                     start,
@@ -136,6 +144,7 @@ fun PreviewHomeScreen() {
             start = remember { mutableIntStateOf(0) },
             options = {},
             onClick = {},
+            onChat = {},
         ) { state ->
             Text(
                 text = "",

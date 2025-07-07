@@ -1,0 +1,9 @@
+mutation AddChatParticipants($chatid: ID!, $recipients: [String!]!) {
+    addChatParticipants(input: { chatid: $chatid, recipients: $recipients }) {
+        status
+        ResponseCode
+        affectedRows {
+            chatid
+        }
+    }
+}

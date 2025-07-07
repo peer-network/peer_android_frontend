@@ -1,0 +1,14 @@
+query GetChatMessages($chatId: ID!, $offset: Int, $limit: Int) {
+    listChatMessages(chatid: $chatId, offset: $offset, limit: $limit) {
+        status
+        counter
+        ResponseCode
+        affectedRows {
+            messid
+            chatid
+            userid
+            content
+            createdat
+        }
+    }
+}
