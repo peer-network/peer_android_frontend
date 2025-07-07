@@ -10,6 +10,7 @@ import androidx.navigation.compose.composable
 import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.app.ui.composer.ComposerScreen
 import eu.peernetwork.app.ui.feed.FeedScreen
+import eu.peernetwork.app.ui.messaging.MessagingScreen
 import eu.peernetwork.app.ui.profile.ProfileScreen
 import eu.peernetwork.app.ui.search.SearchScreen
 import eu.peernetwork.app.ui.wallet.WalletScreen
@@ -68,6 +69,7 @@ fun HomeNavigation(
                         component,
                         viewModelStore,
                     )
+                    is HomeRoute.Chat -> MessagingScreen(id, component, viewModelStore.get(id))
                     else -> {}
                 }
             }
@@ -112,8 +114,13 @@ sealed class HomeRoute(
         R.drawable.ic_chat,
         R.string.chat_label
     )
+    data object Chat : HomeRoute(
+        R.drawable.ic_chat_outline,
+        R.drawable.ic_chat,
+        R.string.chat_label
+    )
     companion object {
-        val ROUTES = arrayOf(Home, Search, Add, Wallet, Profile)
+        val ROUTES = arrayOf(Home, Search, Add, Wallet, Profile, Chat)
         fun get(index: Int): HomeRoute = ROUTES[index]
     }
 }

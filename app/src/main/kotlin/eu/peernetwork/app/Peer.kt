@@ -6,6 +6,7 @@ import eu.peernetwork.app.module.blog.BlogModule
 import eu.peernetwork.app.module.core.CoreModule
 import eu.peernetwork.app.module.core.UiModule
 import eu.peernetwork.app.module.media.MediaModule
+import eu.peernetwork.app.module.messaging.MessagingModule
 import eu.peernetwork.app.module.social.SocialModule
 import eu.peernetwork.app.module.user.UserModule
 import eu.peernetwork.app.module.wallet.WalletModule
@@ -26,7 +27,8 @@ interface Peer {
             UserModule::class,
             WalletModule::class,
             BlogModule::class,
-            SocialModule::class
+            SocialModule::class,
+            MessagingModule::class
         ]
     )
     interface Component : Peer, AndroidInjector<PeerApplication>, UiComponentProvider, Main

@@ -1,4 +1,4 @@
-package eu.peernetwork.messaging.ui.chat
+package eu.peernetwork.messaging.ui.message
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -13,16 +13,16 @@ import eu.peernetwork.core.ui.factory.UiViewModelFactory
 import javax.inject.Provider
 
 @Module
-object ChatModule {
+object MessageModule {
     @Provides
-    @Chat.Scope
+    @Message.Scope
     fun provideBuilderFactory(factory: Map<Class<out UiComponent.Builder>,
             @JvmSuppressWildcards Provider<UiComponent.Builder>>): UiComponentProvider.Factory {
         return UiBuilderFactory(factory)
     }
 
     @Provides
-    @Chat.Scope
+    @Message.Scope
     fun provideViewModelFactory(
         providers: @JvmSuppressWildcards Map<Class<out ViewModel>, @JvmSuppressWildcards Provider<ViewModel>>
     ): ViewModelProvider.Factory {
@@ -31,7 +31,7 @@ object ChatModule {
 
     @Provides
     @IntoMap
-    @Chat.Scope
-    @UiViewModel(ChatViewModel::class)
-    fun viewModel(viewModel: ChatViewModel): ViewModel = viewModel
+    @Message.Scope
+    @UiViewModel(MessageViewModel::class)
+    fun viewModel(viewModel: MessageViewModel): ViewModel = viewModel
 }

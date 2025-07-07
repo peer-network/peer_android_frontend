@@ -7,11 +7,12 @@ import eu.peernetwork.app.interactor.SettingsInteractor
 import eu.peernetwork.app.service.BootstrapService
 import eu.peernetwork.app.service.NetworkService
 import eu.peernetwork.core.remote.api.RequestClient
+import eu.peernetwork.messaging.domain.provider.MessagingProvider
 import eu.peernetwork.persistence.domain.provider.PreferenceProvider
 import eu.peernetwork.user.ui.provider.UserProvider
 import eu.peernetwork.wallet.ui.provider.WalletProvider
 
-interface ApplicationProvider : UserProvider, PreferenceProvider, ContentProvider, WalletProvider, CoreProvider {
+interface ApplicationProvider : UserProvider, PreferenceProvider, ContentProvider, WalletProvider, CoreProvider, MessagingProvider {
     fun context(): Context
 
     fun firebaseRemoteConfig(): FirebaseRemoteConfig

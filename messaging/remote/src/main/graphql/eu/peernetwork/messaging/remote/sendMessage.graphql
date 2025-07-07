@@ -1,0 +1,14 @@
+mutation SendChatMessage($chatid: ID!, $content: String!) {
+    sendChatMessage(chatid: $chatid, content: $content) {
+        status
+        counter
+        ResponseCode
+        affectedRows {
+            messid
+            chatid
+            userid
+            content
+            createdat
+        }
+    }
+}

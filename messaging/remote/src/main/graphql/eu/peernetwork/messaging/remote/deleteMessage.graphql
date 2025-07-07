@@ -1,0 +1,6 @@
+mutation DeleteChatMessage($chatid: ID!, $messid: Int!) {
+    deleteChatMessage(chatid: $chatid, messid: $messid) {
+        status
+        ResponseCode
+    }
+}

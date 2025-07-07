@@ -1,0 +1,9 @@
+mutation CreateChat($recipients: [String!]!, $name: String!, $image: String) {
+    createChat(input: { recipients: $recipients, name: $name, image: $image }) {
+        status
+        ResponseCode
+        affectedRows {
+            chatid
+        }
+    }
+}

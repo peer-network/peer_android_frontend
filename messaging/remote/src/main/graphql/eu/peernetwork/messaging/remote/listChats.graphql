@@ -1,0 +1,31 @@
+query ListChats($offset: Int, $limit: Int) {
+    listChats(
+        offset: $offset
+        limit: $limit
+    ) {
+        status
+        counter
+        ResponseCode
+        affectedRows {
+            id
+            image
+            name
+            createdat
+            updatedat
+            chatmessages {
+                id
+                senderid
+                chatid
+                content
+                createdat
+            }
+            chatparticipants {
+                userid
+                img
+                username
+                slug
+                hasaccess
+            }
+        }
+    }
+}
