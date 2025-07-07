@@ -54,8 +54,8 @@ fun DesignTitleBarRegistry.HomeHeader(
             options()
             IconButton(onClick = { onClick(HomeRoute.Chat) }) {
                 Icon(
-                    painter = painterResource(id = HomeRoute.Comment.icon),
-                    contentDescription = stringResource(id = HomeRoute.Comment.icon),
+                    painter = painterResource(id = HomeRoute.Chat.icon),
+                    contentDescription = stringResource(id = HomeRoute.Chat.icon),
                     modifier = Modifier.size(32.dp)
                 )
             }
