@@ -18,6 +18,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import eu.peernetwork.blog.ui.explore.ExploreScreen
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.compose.DesignTitle
@@ -70,8 +71,11 @@ fun SearchScreen(
                     controller.navigateIfNecessary("search?query=${it.title}")
                 }, component, viewModelStore.get("$session"))
             } else {
-                Box(modifier = Modifier.fillMaxSize()
-                    .verticalScroll(rememberScrollState()))
+                ExploreScreen(
+                    postLimit = postLimit,
+                    provider = component,
+                    viewModelStoreOwner = viewModelStore.get(id)
+                )
             }
         }
         DesignTitleBarHost("SearchScreen") {

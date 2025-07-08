@@ -5,6 +5,7 @@ import dagger.Provides
 import dagger.multibindings.IntoMap
 import eu.peernetwork.app.ui.feed.Feed
 import eu.peernetwork.app.ui.profile.Profile
+import eu.peernetwork.blog.ui.explore.Explore
 import eu.peernetwork.core.ui.annotation.UiBuilder
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
@@ -57,5 +58,13 @@ object SearchModule {
     @UiBuilder(Feed.Builder::class)
     fun provideFeedBuilder(component: Search.Component): UiComponent.Builder {
         return Feed.Builder(component)
+    }
+
+    @Search.Scope
+    @Provides
+    @IntoMap
+    @UiBuilder(Explore.Builder::class)
+    fun provideExploreBuilder(component: Search.Component): UiComponent.Builder {
+        return Explore.Builder(component)
     }
 }
