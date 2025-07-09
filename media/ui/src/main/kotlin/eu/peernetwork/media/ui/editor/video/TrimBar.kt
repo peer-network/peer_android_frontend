@@ -13,10 +13,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -30,7 +32,7 @@ fun TrimBar(
     max: Float,
     onRangeChanged: (ClosedFloatingPointRange<Float>) -> Unit,
     modifier: Modifier = Modifier,
-    edgePadding: Dp = 16.dp
+    edgePadding: Dp = 28.dp
 ) {
     Box(
         modifier
@@ -43,7 +45,8 @@ fun TrimBar(
         LazyRow(
             Modifier
                 .fillMaxSize(),
-            horizontalArrangement = Arrangement.spacedBy(4.dp)
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+            userScrollEnabled = false,
         ) {
             itemsIndexed(thumbs) { idx, bmp ->
                 val frameTime = max * idx / (thumbs.lastIndex).coerceAtLeast(1)
@@ -61,18 +64,22 @@ fun TrimBar(
             }
         }
 
+        val clampColor = MaterialTheme.colorScheme.primary
+
         Canvas(Modifier.matchParentSize()) {
             val startPx = size.width * (range.start / max)
-            val endPx = size.width * (range.endInclusive / max)
+            val endPx   = size.width * (range.endInclusive / max)
+            val border  = 10.dp.toPx()
 
-            drawRect(
-                color = Color.Black.copy(alpha = 0.55f),
-                size = Size(startPx, size.height)
-            )
-            drawRect(
-                color = Color.Black.copy(alpha = 0.55f),
-                topLeft = Offset(endPx, 0f),
-                size = Size(size.width - endPx, size.height)
+            drawRect(Color.Black.copy(alpha = 0.75f), Offset.Zero, Size(startPx, size.height))
+            drawRect(Color.Black.copy(alpha = 0.75f), Offset(endPx, 0f), Size(size.width - endPx, size.height))
+
+            drawRoundRect(
+                color = clampColor,
+                topLeft = Offset(startPx, 0f),
+                size    = Size(endPx - startPx, size.height),
+                cornerRadius = CornerRadius(16.dp.toPx()),
+                style   = Stroke(width = border)
             )
         }
 
@@ -83,8 +90,6 @@ fun TrimBar(
             colors = SliderDefaults.colors(
                 inactiveTrackColor = Color.Transparent,
                 activeTrackColor = Color.Transparent,
-                inactiveTickColor = Color.Transparent,
-                activeTickColor = Color.Transparent,
                 thumbColor = MaterialTheme.colorScheme.primary
             ),
             modifier = Modifier

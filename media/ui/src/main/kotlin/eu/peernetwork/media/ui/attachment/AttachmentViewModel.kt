@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import eu.peernetwork.media.core.interactor.ThumbnailInteractor
 import eu.peernetwork.media.core.model.UiMimeType
-import eu.peernetwork.media.core.usecase.CroppedPreviewUseCase
+import eu.peernetwork.media.ui.usecase.CroppedPreviewUsecase
 import eu.peernetwork.persistence.domain.observable.ObservableInteger
 import eu.peernetwork.persistence.domain.publishable.PublishableInteger
 import eu.peernetwork.persistence.domain.retrievable.RetrievableInteger
@@ -24,7 +24,7 @@ class AttachmentViewModel @Inject constructor(
     private val publishableInteger: PublishableInteger,
     private val observableInteger: ObservableInteger,
     private val interactor: ThumbnailInteractor,
-    private val croppedPreview: CroppedPreviewUseCase
+    private val croppedPreview: CroppedPreviewUsecase
 ) : ViewModel() {
     private val mutableState = MutableStateFlow<State>(State.Empty)
 

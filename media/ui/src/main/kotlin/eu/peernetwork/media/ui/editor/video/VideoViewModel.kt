@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import eu.peernetwork.core.common.provider.Dispatcher
 import eu.peernetwork.media.core.interactor.ExtractThumbnailsInteractor
-import eu.peernetwork.media.core.usecase.VideoTrimUsecase
+import eu.peernetwork.media.ui.usecase.VideoTrimUsecase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
