@@ -15,7 +15,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.input.key.type
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
@@ -34,6 +43,10 @@ fun CreatorForm(
     description: TextFieldState,
     isLoading: State<Boolean>,
 ) {
+    val descriptionFocusRequester = remember { FocusRequester() }
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager: FocusManager = LocalFocusManager.current
+
     Column {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -42,8 +55,17 @@ fun CreatorForm(
             DesignTextField(
                 state = title,
                 enabled = !isLoading.value,
-                modifier = Modifier.weight(1f),
-                focusRequester = focus,
+                modifier = Modifier
+                    .weight(1f)
+                    .focusRequester(focus)
+                    .onKeyEvent { keyEvent ->
+                        if (keyEvent.type == KeyEventType.KeyUp && keyEvent.key == Key.Enter) {
+                            descriptionFocusRequester.requestFocus()
+                            true
+                        } else {
+                            false
+                        }
+                    },
                 keyboardOptions = KeyboardOptions(
                     capitalization = KeyboardCapitalization.Sentences,
                     keyboardType = KeyboardType.Text,
@@ -63,14 +85,25 @@ fun CreatorForm(
             keyboardOptions = KeyboardOptions(
                 capitalization = KeyboardCapitalization.Sentences,
                 keyboardType = KeyboardType.Text,
-                imeAction = ImeAction.Next
+                imeAction = ImeAction.Done
             ),
             verticalAlignment = Alignment.Top,
             maxLines = 3,
             maxLength = 500,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 12.dp),
+                .padding(top = 12.dp)
+                .focusRequester(descriptionFocusRequester)
+                .onKeyEvent { keyEvent ->
+                    if (keyEvent.type == KeyEventType.KeyUp && keyEvent.key == Key.Enter) {
+                        keyboardController?.hide()
+                        focusManager.clearFocus()
+                        true
+                    } else {
+                        false
+                    }
+                },
+
             leading = {
                 Text(
                     text = stringResource(R.string.description_label),
@@ -97,7 +130,7 @@ fun PreviewCreatorForm() {
             title = title,
             focus = focus,
             description = description,
-            isLoading = remember { mutableStateOf(false) }
+            isLoading = remember {mutableStateOf(false) }
         )
     }
 }

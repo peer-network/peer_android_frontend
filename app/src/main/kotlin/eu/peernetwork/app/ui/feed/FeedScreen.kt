@@ -1,14 +1,12 @@
 package eu.peernetwork.app.ui.feed
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.core.ui.component.UiComponentProvider
@@ -24,6 +22,7 @@ fun FeedScreen(
     provider: UiComponentProvider,
     viewModelStore: ViewModelState,
     title: String? = null,
+    controller: NavHostController = rememberNavController(),
     criteria: Criteria? = null
 ) {
     val context = LocalContext.current
@@ -31,6 +30,16 @@ fun FeedScreen(
         provider.builder(Feed.Builder::class.java).build(context)
     }
     val viewModelStoreOwner = viewModelStore.get(criteria?.toString() ?: id)
+    val navBackStackEntry by controller.currentBackStackEntryAsState()
+    val scrollToTop = remember { mutableStateOf(false) }
+    val listState = rememberLazyListState()
+    LaunchedEffect(navBackStackEntry) {
+        scrollToTop.value = true }
+    LaunchedEffect(scrollToTop.value) {
+        if (scrollToTop.value) {
+            listState.scrollToItem(0)
+            scrollToTop.value = false }
+    }
     val viewModel = viewModel(
         modelClass = FeedViewModel::class.java,
         viewModelStoreOwner = viewModelStoreOwner,
@@ -44,7 +53,7 @@ fun FeedScreen(
         }
     }
     val overlay = remember { mutableStateOf<FeedOverlayState>(FeedOverlayState.Empty) }
-    val controller = rememberNavController()
+
     FeedOverlay(
         overlay = overlay,
         userId = id,
@@ -81,7 +90,8 @@ fun FeedScreen(
                     onFilter = { viewModel.setFilter(it) },
                     onPhotoClick = { id, index -> },
                     onVideoClick = { id, index ->
-                        overlay.value = FeedOverlayState.Video(id, index) }
+                        overlay.value = FeedOverlayState.Video(id, index)
+                    }, listState = listState
                 )
             }
         }

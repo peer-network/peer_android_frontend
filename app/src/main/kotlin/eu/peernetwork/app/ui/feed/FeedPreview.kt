@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
@@ -48,6 +49,7 @@ fun FeedPreview(
     connectionController: ConnectionController,
     title: String? = null,
     criteria: Criteria? = null,
+    listState: LazyListState,
     onNavigate: (Int) -> Unit = {},
     onFilter: (Int) -> Unit = {},
     onAuthorClick: (String) -> Unit = {},
@@ -56,8 +58,8 @@ fun FeedPreview(
     onPhotoClick: (String, Int) -> Unit = { _, _ -> },
     onVideoClick: (String, Int) -> Unit = { _, _ -> },
 ) {
-    val photoState = rememberLazyListState()
-    val videoState = rememberLazyListState()
+    val photoState = listState
+    val videoState = listState
     val coroutine = rememberCoroutineScope()
     val connection by connectionController.observe().collectAsStateWithLifecycle()
     var relation by rememberSaveable {
