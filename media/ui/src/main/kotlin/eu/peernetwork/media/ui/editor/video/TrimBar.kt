@@ -4,6 +4,8 @@ import android.graphics.Bitmap
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -27,6 +29,13 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.createBitmap
 import androidx.compose.ui.graphics.Path
+import androidx.compose.foundation.gestures.drag
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.input.pointer.positionChange
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.IntOffset
 
 @Composable
 fun TrimBar(
@@ -40,6 +49,9 @@ fun TrimBar(
     val ghostWidth = 24.dp
     val ghostColor = Color.Black.copy(alpha = 0.75f)
     val cornerRadius = 16.dp
+
+    val thumbTouchPadding = 24.dp
+    val minRange = 5_000f
 
     Box(
         modifier
@@ -140,7 +152,20 @@ fun TrimBar(
         RangeSlider(
             value = range,
             valueRange = 0f..max,
-            onValueChange = onRangeChanged,
+            onValueChange = { newRange ->
+                val clampedRange = if (newRange.endInclusive - newRange.start < minRange) {
+                    val mid = (newRange.start + newRange.endInclusive) / 2
+                    val halfMin = minRange / 2
+
+                    val newStart = (mid - halfMin).coerceIn(0f, max - minRange)
+                    val newEnd = newStart + minRange
+                    newStart..newEnd
+                } else {
+                    newRange
+                }
+
+                onRangeChanged(clampedRange)
+            },
             colors = SliderDefaults.colors(
                 inactiveTrackColor = Color.Transparent,
                 activeTrackColor = Color.Transparent,
@@ -150,8 +175,72 @@ fun TrimBar(
                 .fillMaxWidth()
                 .matchParentSize()
         )
+
+        DraggableTrimOverlay(
+            range = range,
+            max = max,
+            thumbPadding = thumbTouchPadding,
+            onRangeChanged = onRangeChanged
+        )
+
     }
 }
+
+@Composable
+private fun DraggableTrimOverlay(
+    range: ClosedFloatingPointRange<Float>,
+    max: Float,
+    thumbPadding: Dp,
+    onRangeChanged: (ClosedFloatingPointRange<Float>) -> Unit
+) {
+    val currentRange by rememberUpdatedState(range)
+
+    BoxWithConstraints(Modifier.fillMaxSize()) {
+        val sliderWidthPx = constraints.maxWidth.toFloat()
+        val pxPerUnit = sliderWidthPx / max
+
+        val startPx = range.start * pxPerUnit
+        val endPx = range.endInclusive * pxPerUnit
+        val thumbPaddingPx = with(LocalDensity.current) { thumbPadding.toPx() }
+
+        val dragZoneStartPx = startPx + thumbPaddingPx
+        val dragZoneEndPx = endPx - thumbPaddingPx
+        val dragZoneWidth = (dragZoneEndPx - dragZoneStartPx).coerceAtLeast(1f)
+
+        Box(
+            modifier = Modifier
+                .offset { IntOffset(dragZoneStartPx.toInt(), 0) }
+                .width(with(LocalDensity.current) { dragZoneWidth.toDp() })
+                .fillMaxHeight()
+                .pointerInput(Unit) {
+                    awaitEachGesture {
+                        val down = awaitFirstDown(requireUnconsumed = false)
+                        down.consume()
+
+                        val initialStart = currentRange.start
+                        val initialEnd = currentRange.endInclusive
+                        val rangeDuration = initialEnd - initialStart
+
+                        var dragAmountX = 0f
+
+                        drag(down.id) { change ->
+                            val deltaX = change.positionChange().x
+                            dragAmountX += deltaX
+                            change.consume()
+
+                            val deltaValue = dragAmountX / pxPerUnit
+                            val newStart = (initialStart + deltaValue)
+                                .coerceIn(0f, max - rangeDuration)
+                            val newEnd = newStart + rangeDuration
+
+                            onRangeChanged(newStart..newEnd)
+                        }
+                    }
+                }
+        )
+    }
+}
+
 
 @Preview(showBackground = true, uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES)
 @Composable
