@@ -3,27 +3,30 @@ package eu.peernetwork.media.ui.editor.video
 import android.graphics.Bitmap
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RangeSlider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.createBitmap
+import androidx.compose.ui.graphics.Path
 
 @Composable
 fun TrimBar(
@@ -34,53 +37,104 @@ fun TrimBar(
     modifier: Modifier = Modifier,
     edgePadding: Dp = 28.dp
 ) {
+    val ghostWidth = 24.dp
+    val ghostColor = Color.Black.copy(alpha = 0.75f)
+    val cornerRadius = 16.dp
+
     Box(
         modifier
             .padding(horizontal = edgePadding, vertical = 12.dp)
             .height(60.dp)
             .fillMaxWidth()
-            .clipToBounds()
     ) {
-
-        LazyRow(
+        Row(
             Modifier
                 .fillMaxSize(),
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
-            userScrollEnabled = false,
         ) {
-            itemsIndexed(thumbs) { idx, bmp ->
-                val frameTime = max * idx / (thumbs.lastIndex).coerceAtLeast(1)
-                val inside = frameTime in range.start..range.endInclusive
-                val scale = if (inside) 1.20f else 1f
+            Box(
+                modifier = Modifier
+                    .width(ghostWidth)
+                    .fillMaxHeight()
+                    .clip(RoundedCornerShape(topStart = cornerRadius, bottomStart = cornerRadius))
+                    .background(ghostColor)
+            )
 
-                Image(
-                    bitmap = bmp.asImageBitmap(),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .graphicsLayer { scaleX = scale; scaleY = scale }
-                        .aspectRatio(9f / 16f)
-                        .fillMaxHeight()
-                )
+            LazyRow(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight(),
+                userScrollEnabled = false
+            ) {
+                items(thumbs) { bmp ->
+                    Image(
+                        bitmap = bmp.asImageBitmap(),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .aspectRatio(9f / 16f)
+                            .fillMaxHeight()
+                    )
+                }
             }
+
+            Box(
+                modifier = Modifier
+                    .width(ghostWidth)
+                    .fillMaxHeight()
+                    .clip(RoundedCornerShape(topEnd = cornerRadius, bottomEnd = cornerRadius))
+                    .background(ghostColor)
+            )
         }
 
         val clampColor = MaterialTheme.colorScheme.primary
 
         Canvas(Modifier.matchParentSize()) {
-            val startPx = size.width * (range.start / max)
-            val endPx   = size.width * (range.endInclusive / max)
-            val border  = 10.dp.toPx()
 
-            drawRect(Color.Black.copy(alpha = 0.75f), Offset.Zero, Size(startPx, size.height))
-            drawRect(Color.Black.copy(alpha = 0.75f), Offset(endPx, 0f), Size(size.width - endPx, size.height))
+            val startPx = size.width * (range.start / max)
+            val endPx = size.width * (range.endInclusive / max)
+            val jawW = 24.dp.toPx()
+            val radius = 16.dp.toPx()
+            val outlineW = 4.dp.toPx()
+            val height = size.height
 
             drawRoundRect(
                 color = clampColor,
                 topLeft = Offset(startPx, 0f),
-                size    = Size(endPx - startPx, size.height),
-                cornerRadius = CornerRadius(16.dp.toPx()),
-                style   = Stroke(width = border)
+                size = Size(endPx - startPx, height),
+                cornerRadius = CornerRadius(radius),
+                style = Stroke(width = outlineW)
             )
+
+            val leftPath = Path().apply {
+                addRoundRect(
+                    RoundRect(
+                        left = startPx,
+                        top = 0f,
+                        right = startPx + jawW,
+                        bottom = height,
+                        topLeftCornerRadius = CornerRadius(radius, radius),
+                        topRightCornerRadius = CornerRadius(0f, 0f),
+                        bottomRightCornerRadius = CornerRadius(0f, 0f),
+                        bottomLeftCornerRadius = CornerRadius(radius, radius)
+                    )
+                )
+            }
+            drawPath(leftPath, clampColor)
+
+            val rightPath = Path().apply {
+                addRoundRect(
+                    RoundRect(
+                        left = endPx - jawW,
+                        top = 0f,
+                        right = endPx,
+                        bottom = height,
+                        topLeftCornerRadius = CornerRadius(0f, 0f),
+                        topRightCornerRadius = CornerRadius(radius, radius),
+                        bottomRightCornerRadius = CornerRadius(radius, radius),
+                        bottomLeftCornerRadius = CornerRadius(0f, 0f)
+                    )
+                )
+            }
+            drawPath(rightPath, clampColor)
         }
 
         RangeSlider(
@@ -110,10 +164,10 @@ fun PreviewTrimBar() {
         }
     }
     TrimBar(
-       thumbs = frames,
-       range = 1_000f..8_000f,
-       max = 10_000f,
-       onRangeChanged = {},
-       modifier = Modifier.fillMaxWidth()
+        thumbs = frames,
+        range = 1_000f..8_000f,
+        max = 10_000f,
+        onRangeChanged = {},
+        modifier = Modifier.fillMaxWidth()
     )
 }
