@@ -45,8 +45,7 @@ class ThumbnailInteractorDelegate @Inject constructor(
 
     override suspend fun get(
         url: String,
-        type: UiMimeType,
-        dimen: Pair<Float, Float>
+        type: UiMimeType
     ): Bitmap? = withContext(dispatcher.io) {
         if (type == UiMimeType.Video) {
             val retriever = MediaMetadataRetriever()
@@ -65,12 +64,15 @@ class ThumbnailInteractorDelegate @Inject constructor(
             }
         } else {
             BitmapFactory.decodeFile(url)
-        }?.let{
-            val scale = min(dimen.first / it.width, dimen.second / it.height)
-            val scaledWidth = (it.width * scale).toInt()
-            val scaledHeight = (it.height * scale).toInt()
-            it.scale(scaledWidth, scaledHeight)
         }
+    }
+
+    override suspend fun get(
+        url: String,
+        type: UiMimeType,
+        dimen: Pair<Float, Float>
+    ): Bitmap? = withContext(dispatcher.io) {
+        get(url, type)?.let{ scale(it, dimen) }
     }
 
     override suspend fun save(url: String, bitmap: Bitmap): Bitmap = withContext(dispatcher.io) {
@@ -79,18 +81,29 @@ class ThumbnailInteractorDelegate @Inject constructor(
         bitmap
     }
 
+    override suspend fun scale(bitmap: Bitmap, dimen: Pair<Float, Float>): Bitmap = withContext(dispatcher.io) {
+        val scale = min(dimen.first / bitmap.width, dimen.second / bitmap.height)
+        val scaledWidth = (bitmap.width * scale).toInt()
+        val scaledHeight = (bitmap.height * scale).toInt()
+        bitmap.scale(scaledWidth, scaledHeight)
+    }
+
     override suspend fun merge(
         url: String,
-        width: Int,
         aspectRatio: Float,
         background: Bitmap,
-        foreground: Bitmap
+        foreground: Bitmap,
+        width: Int,
+        height: Int,
+        fit: Boolean
     ): Bitmap = withContext(dispatcher.io) {
         val bitmap = bitmapMergeUsecase(BitmapMergeUsecase.Parameter(
-            width,
             aspectRatio,
             background,
-            foreground
+            foreground,
+            width,
+            height,
+            fit
         ))
         save(url, bitmap)
     }

@@ -34,8 +34,8 @@ fun  DesignDialog(
     background: (@Composable () -> Unit)? = null,
     builder: @Composable (State<Boolean>) -> Unit,
 ) {
-    val updatedBackground by rememberUpdatedState(background)
     val updatedBuilder by rememberUpdatedState(builder)
+    val updatedBackground by rememberUpdatedState(background)
     DesignOverlayHost(
         tag = tag,
         visible = visible,

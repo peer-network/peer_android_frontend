@@ -37,6 +37,7 @@ fun HomeNavigation(
                     )
                     is HomeRoute.Profile -> ProfileScreen(
                         id,
+                        id,
                         component,
                         viewModelStore,
                     )
@@ -46,6 +47,7 @@ fun HomeNavigation(
                         onPostSuccess = onHome
                     )
                     is HomeRoute.Wallet -> WalletScreen(
+                        id,
                         BuildConfig.PAGING_LIMIT,
                         component,
                         viewModelStore

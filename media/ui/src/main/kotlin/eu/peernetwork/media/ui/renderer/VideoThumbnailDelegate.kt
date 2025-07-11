@@ -1,6 +1,5 @@
 package eu.peernetwork.media.ui.renderer
 
-import android.graphics.SurfaceTexture
 import android.view.TextureView
 import android.view.View
 import androidx.compose.foundation.layout.Box
@@ -14,9 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import eu.peernetwork.media.core.renderer.VideoThumbnail
 import kotlinx.coroutines.FlowPreview
@@ -25,7 +21,6 @@ import androidx.core.view.isVisible
 import eu.peernetwork.media.core.interactor.VideoInteractor
 import eu.peernetwork.media.ui.compose.VolumeControl
 import eu.peernetwork.media.ui.core.MediaPlayer
-import eu.peernetwork.media.ui.view.TextureViewWrapper
 import kotlinx.coroutines.launch
 
 class VideoThumbnailDelegate @Inject constructor(
@@ -40,42 +35,10 @@ class VideoThumbnailDelegate @Inject constructor(
         spec: VideoThumbnail.Spec
     ) {
         val context = LocalContext.current
-        val lifecycleOwner = LocalLifecycleOwner.current
         val scope = rememberCoroutineScope()
-        val surfaceView = remember { TextureViewWrapper(TextureView(context)) }
+        val surfaceView = remember { TextureView(context) }
         val dimension = media.observer.collectAsStateWithLifecycle()
         var mute = media.mute().collectAsStateWithLifecycle(media.player().isDeviceMuted)
-        val callback = remember {
-            object : TextureView.SurfaceTextureListener {
-                override fun onSurfaceTextureAvailable(
-                    texture: SurfaceTexture,
-                    p1: Int,
-                    p2: Int
-                ) { interactor.attach(texture, spec.url) }
-
-                override fun onSurfaceTextureSizeChanged(
-                    p0: SurfaceTexture,
-                    p1: Int,
-                    p2: Int
-                ) {}
-
-                override fun onSurfaceTextureDestroyed(texture: SurfaceTexture): Boolean {
-                    interactor.detach(texture)
-                    return true
-                }
-
-                override fun onSurfaceTextureUpdated(p0: SurfaceTexture) {}
-            }
-        }
-        val observer = remember {
-            LifecycleEventObserver { _, event ->
-                if (event == Lifecycle.Event.ON_START) {
-                    surfaceView.attachCallback(callback)
-                } else if (event == Lifecycle.Event.ON_STOP) {
-                    surfaceView.clearCallback()
-                }
-            }
-        }
         Box(
             contentAlignment = Alignment.Center,
             modifier = modifier
@@ -83,7 +46,7 @@ class VideoThumbnailDelegate @Inject constructor(
                 .aspectRatio(spec.ratio)
         ) {
             AndroidView(
-                factory = { surfaceView.view },
+                factory = { surfaceView },
                 update = {
                     it.visibility = if (spec.isPlaying) {
                         View.VISIBLE
@@ -117,7 +80,17 @@ class VideoThumbnailDelegate @Inject constructor(
                 VolumeControl(mute) { scope.launch { interactor.mute(it) } }
             }
         }
-        LaunchedEffect(Unit) { lifecycleOwner.lifecycle.addObserver(observer) }
+        LaunchedEffect(spec.isPlaying) {
+            if (spec.isPlaying) {
+                surfaceView.surfaceTexture?.let {
+                    interactor.attach(it, spec.url)
+                }
+            } else {
+                surfaceView.surfaceTexture?.let {
+                    interactor.detach(it)
+                }
+            }
+        }
         LaunchedEffect(mute.value) {
             media.player().volume = if (mute.value) {
                 1f

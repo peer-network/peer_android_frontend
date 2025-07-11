@@ -70,7 +70,9 @@ fun HomeScreen(provider: UiComponentProvider) {
         val navigationState = rememberSaveable { mutableIntStateOf(data.second) }
         val startDestination = remember { HomeRoute.get(navigationState.intValue).path }
         val navBackStackEntry by controller.currentBackStackEntryAsState()
-        val currentStack = remember(navBackStackEntry?.id) { mutableStateOf(controller.currentDestination?.route) }
+        val currentStack = remember(navBackStackEntry?.id) {
+            mutableStateOf(controller.currentDestination?.route)
+        }
         HomeScreen(
             start = navigationState,
             options = { RewardScreen(component, viewModelStore.get(data.first)) },

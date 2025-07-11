@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.ScrollableDefaults
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -147,6 +148,7 @@ fun VideoListing(
             EngagementScreen(
                 event = engagements,
                 model = uiContent,
+                padding = PaddingValues(end = 4.dp),
             )
         },
         moderation = {

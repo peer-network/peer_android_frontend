@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
@@ -33,9 +34,11 @@ fun VolumeControl(
 ) {
     val handleOnMute by rememberUpdatedState(onMute)
     Box(
-        modifier = Modifier.size(16.dp)
-            .clip(RoundedCornerShape(8.dp))
-            .background(MaterialTheme.colorScheme.tertiary)
+        modifier = Modifier.padding(2.dp)
+            .size(18.dp)
+            .clip(RoundedCornerShape(12.dp))
+            .background(MaterialTheme.colorScheme.background)
+            .padding(4.dp)
             .clickable(role = Role.Button, enabled = true) {
                 handleOnMute(!mute.value)
             }
@@ -43,7 +46,7 @@ fun VolumeControl(
         Icon(
             painter = painterResource(R.drawable.ic_mute),
             contentDescription = stringResource(R.string.un_mute_label),
-            tint = MaterialTheme.colorScheme.background,
+            tint = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier.fillMaxSize()
                 .graphicsLayer {
                     this.alpha = if (mute.value) 0f else 1f
@@ -52,7 +55,7 @@ fun VolumeControl(
         Icon(
             painter = painterResource(R.drawable.ic_unmute),
             contentDescription = stringResource(R.string.mute_label),
-            tint = MaterialTheme.colorScheme.background,
+            tint = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier.fillMaxSize()
                 .graphicsLayer {
                     this.alpha = if (mute.value) 1f else 0f

@@ -139,10 +139,8 @@ fun FeedPreview(
             }
         }
     }
-    BackHandler(enabled = pageState.currentPage == 1) {
-        coroutine.launch {
-            pageState.animateScrollToPage(0)
-        }
+    BackHandler(enabled = pageState.currentPage == 1 && enable) {
+        coroutine.launch { pageState.animateScrollToPage(0) }
         state.intValue = 0
         handleOnNavigate(0)
     }

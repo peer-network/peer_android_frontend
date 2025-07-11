@@ -45,24 +45,26 @@ fun FeedScreen(
     }
     val overlay = remember { mutableStateOf<FeedOverlayState>(FeedOverlayState.Empty) }
     val controller = rememberNavController()
-    FeedOverlay(
-        overlay = overlay,
-        userId = id,
-        postLimit = postLimit,
-        component = component,
-        viewModelStore = viewModelStore,
-    ) {
-        FeedNavigation(
+    ConnectionScreen(
+        provider = component,
+        viewModelStoreOwner = viewModelStoreOwner
+    ) { connectionController ->
+        FeedOverlay(
+            overlay = overlay,
             userId = id,
+            criteria = criteria,
             postLimit = postLimit,
-            controller = controller,
             component = component,
             viewModelStore = viewModelStore,
+            connectionController = connectionController,
         ) {
-            ConnectionScreen(
-                provider = component,
-                viewModelStoreOwner = viewModelStoreOwner
-            ) { connectionController ->
+            FeedNavigation(
+                userId = id,
+                postLimit = postLimit,
+                controller = controller,
+                component = component,
+                viewModelStore = viewModelStore,
+            ) {
                 FeedPreview(
                     id = id,
                     enable = overlay.value == FeedOverlayState.Empty,
@@ -79,7 +81,9 @@ fun FeedScreen(
                     title = title,
                     onNavigate = { viewModel.lastVisited(it) },
                     onFilter = { viewModel.setFilter(it) },
-                    onPhotoClick = { id, index -> },
+                    onPhotoClick = { id, index ->
+                        overlay.value = FeedOverlayState.Photo(id, index)
+                    },
                     onVideoClick = { id, index ->
                         overlay.value = FeedOverlayState.Video(id, index) }
                 )

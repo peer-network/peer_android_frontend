@@ -25,7 +25,6 @@ import eu.peernetwork.core.ui.design.component.DesignError
 import eu.peernetwork.core.ui.design.component.DesignPagingScaffold
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
 import eu.peernetwork.core.ui.extension.builder
-import eu.peernetwork.media.core.model.UiMimeType
 
 @Composable
 fun VideoScreen(
@@ -114,10 +113,10 @@ fun VideoScreen(
             if (canLoad.value) {
                 viewModel.sync(
                     lazyPagingItems.itemSnapshotList.items,
-                    UiMimeType.Video,
                     configuration.screenWidthDp,
                     listState.firstVisibleItemIndex,
-                    listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
+                    listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index
+                        ?: listState.firstVisibleItemIndex
                 )
             }
         }

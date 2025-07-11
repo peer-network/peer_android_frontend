@@ -2,6 +2,7 @@ package eu.peernetwork.blog.ui.compose
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -15,6 +16,7 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.blog.ui.model.UiAuthor
 import eu.peernetwork.core.ui.design.compose.DesignAsyncImage
@@ -27,10 +29,27 @@ import eu.peernetwork.core.ui.theme.PeerTheme
 @Composable
 fun AuthorView(
     author: UiAuthor,
-    description: String,
+    description: String = "",
     modifier: Modifier = Modifier,
+    size: Dp = 36.dp,
+    padding: PaddingValues = PaddingValues(start = 8.dp),
     color: Color = MaterialTheme.colorScheme.onBackground,
     descriptionColor: Color = MaterialTheme.colorScheme.tertiary,
+    style: DesignTitleStyle = DesignTitleStyle(
+        span = SpanStyle(
+            fontStyle = FontStyle.Italic,
+            fontWeight = FontWeight.Normal,
+            fontSize = MaterialTheme.typography.labelSmall.fontSize,
+            color = descriptionColor
+        ),
+        style = MaterialTheme.typography.bodySmall.copy(
+            fontWeight = FontWeight.Bold,
+            color = color
+        ),
+        descriptionStyle = MaterialTheme.typography.labelSmall.copy(
+            color = descriptionColor
+        )
+    ),
     onClick: () -> Unit = {}
 ) {
     val handleClick by rememberUpdatedState(onClick)
@@ -40,7 +59,7 @@ fun AuthorView(
                 DesignAsyncImage(
                     label = author.username,
                     imageUrl = author.imageUrl,
-                    size = 36.dp,
+                    size = size,
                     style = MaterialTheme.typography.bodyMedium.copy(
                         color = color,
                     ),
@@ -57,22 +76,8 @@ fun AuthorView(
             description = description,
             verticalArrangement = Arrangement.Center,
             spacer = {},
-            modifier = Modifier.padding(start = 8.dp),
-            style = DesignTitleStyle(
-                span = SpanStyle(
-                    fontStyle = FontStyle.Italic,
-                    fontWeight = FontWeight.Normal,
-                    fontSize = MaterialTheme.typography.labelSmall.fontSize,
-                    color = descriptionColor
-                ),
-                style = MaterialTheme.typography.bodySmall.copy(
-                    fontWeight = FontWeight.Bold,
-                    color = color
-                ),
-                descriptionStyle = MaterialTheme.typography.labelSmall.copy(
-                    color = descriptionColor
-                )
-            ),
+            modifier = Modifier.padding(padding),
+            style = style,
         )
     }
 }

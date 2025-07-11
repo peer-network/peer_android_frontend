@@ -138,7 +138,8 @@ fun VideoScreen(
                     UiMimeType.Video,
                     configuration.screenWidthDp,
                     listState.firstVisibleItemIndex,
-                    listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
+                    listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index
+                        ?: listState.firstVisibleItemIndex
                 )
             }
         }

@@ -1,10 +1,8 @@
 package eu.peernetwork.blog.ui.post.photo
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.VerticalPager
-import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
@@ -12,6 +10,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -21,7 +20,12 @@ import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
 import dev.materii.pullrefresh.DragRefreshLayout
 import dev.materii.pullrefresh.rememberPullRefreshState
+import eu.peernetwork.blog.ui.compose.PhotoIndicator
+import eu.peernetwork.blog.ui.compose.PhotoPage
+import eu.peernetwork.blog.ui.compose.PhotoPager
+import eu.peernetwork.blog.ui.engagement.EngagementScreen
 import eu.peernetwork.blog.ui.model.UiPost
+import eu.peernetwork.blog.ui.moderation.ModerationScreen
 import eu.peernetwork.core.common.model.Pageable
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffold
@@ -40,6 +44,7 @@ fun PhotoOverlay(
     onAuthorClick: (String) -> Unit = {},
     onMentionClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
+    connection: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit = {}
 ) {
     val context = LocalContext.current
     val component = remember {
@@ -80,35 +85,76 @@ fun PhotoOverlay(
                     CircularProgressIndicator()
                 }
             } else {
-                val pagerState = rememberPagerState(
-                    initialPage = position
-                ) { lazyPagingItems.itemCount }
-                VerticalPager(pagerState) { page ->
-                    val post = lazyPagingItems[page]
-                    if (post != null) {
-                        if (post.media.size > 1) {
-                            Box(contentAlignment = Alignment.BottomEnd) {
-                                val pagerState =
-                                    rememberPagerState(initialPage = 0) { post.media.size }
-                                HorizontalPager(state = pagerState) {
-                                    val media = post.media[it]
+                val refreshed = remember { derivedStateOf {
+                    lazyPagingItems.loadState.refresh is LoadState.NotLoading
+                } }
+                EngagementScreen(
+                    limit,
+                    refreshed,
+                    onMentionClick,
+                    onHashtagClick,
+                    onAuthorClick,
+                    component,
+                    viewModelStoreOwner
+                ) { engagement ->
+                    ModerationScreen(
+                        component,
+                        viewModelStoreOwner
+                    ) { moderation ->
+                        PhotoPage(
+                            id = author,
+                            position = position,
+                            engagement = engagement,
+                            moderation = moderation,
+                            lazyPagingItems = lazyPagingItems,
+                            onAuthorClick = onAuthorClick,
+                            onMentionClick = onMentionClick,
+                            onHashtagClick = onHashtagClick,
+                            connection = connection,
+                            indicator = { state, items -> PhotoIndicator(state, items) },
+                            content = { post, pagerState, active ->
+                                if (post.media.size > 1) {
+                                    PhotoPager(
+                                        pagerState,
+                                        0f,
+                                        post.media
+                                    ) { path ->
+                                        component.imageView()(
+                                            Modifier,
+                                            ImageView.Spec(
+                                                path,
+                                                null,
+                                                ContentScale.Crop,
+                                                500f,
+                                            )
+                                        )
+                                        component.imageView()(
+                                            Modifier,
+                                            ImageView.Spec(path, post.aspectRatio)
+                                        )
+                                    }
+                                } else {
+                                    val media = post.media.first()
                                     component.imageView()(
                                         Modifier,
-                                        ImageView.Spec(media.path, post.aspectRatio)
+                                        ImageView.Spec(
+                                            media.path,
+                                            null,
+                                            ContentScale.Crop,
+                                            500f,
+                                        )
+                                    )
+                                    component.imageView()(
+                                        Modifier,
+                                        ImageView.Spec(
+                                            media.path,
+                                            post.aspectRatio,
+                                            ContentScale.FillWidth
+                                        )
                                     )
                                 }
                             }
-                        } else {
-                            val media = post.media.first()
-                            component.imageView()(
-                                Modifier,
-                                ImageView.Spec(media.path, post.aspectRatio)
-                            )
-                        }
-                    } else {
-                        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                            CircularProgressIndicator()
-                        }
+                        )
                     }
                 }
             }

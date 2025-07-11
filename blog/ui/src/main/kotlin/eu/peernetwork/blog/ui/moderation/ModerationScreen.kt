@@ -12,9 +12,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -67,7 +69,9 @@ fun ModerationScreen(
 @Composable
 fun ModerationScreen(
     model: UiContent,
-    event: Moderations
+    event: Moderations,
+    size: Dp = 24.dp,
+    color: Color = MaterialTheme.colorScheme.tertiary,
 ) {
     var expanded by remember { mutableStateOf(false) }
     val handleOnReport by rememberUpdatedState(event.onReport)
@@ -79,8 +83,8 @@ fun ModerationScreen(
             Icon(
                 painter = painterResource(id = R.drawable.ic_menu),
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.tertiary,
-                modifier = Modifier.size(28.dp)
+                tint = color,
+                modifier = Modifier.size(size)
             )
         }
         DropdownMenu(

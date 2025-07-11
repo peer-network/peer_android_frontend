@@ -41,6 +41,7 @@ fun SearchNavigation(
         ) { backStackEntry ->
             id = backStackEntry.arguments?.getString("id") ?: ""
             ProfileScreen(
+                principal = userId,
                 userId = id,
                 provider = component,
                 viewModelStore = viewModelStore,
