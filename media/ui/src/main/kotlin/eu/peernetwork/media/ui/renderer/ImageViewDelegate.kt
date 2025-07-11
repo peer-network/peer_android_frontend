@@ -38,7 +38,8 @@ class ImageViewDelegate @Inject constructor(
             contentDescription = null,
             contentScale = spec.contentScale,
             modifier = Modifier
-                .then(spec.ratio?.let { Modifier.aspectRatio(it) }
+                .then(spec.ratio?.let { Modifier.fillMaxWidth()
+                    .aspectRatio(it) }
                     ?: Modifier.fillMaxSize())
                 .then(modifier),
         )

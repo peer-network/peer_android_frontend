@@ -146,11 +146,7 @@ fun PhotoOverlay(
                                     )
                                     component.imageView()(
                                         Modifier,
-                                        ImageView.Spec(
-                                            media.path,
-                                            post.aspectRatio,
-                                            ContentScale.FillWidth
-                                        )
+                                        ImageView.Spec(media.path, null)
                                     )
                                 }
                             }

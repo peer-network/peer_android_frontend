@@ -35,6 +35,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import eu.peernetwork.blog.ui.R
 import eu.peernetwork.blog.ui.model.UiAuthor
 import eu.peernetwork.blog.ui.model.UiAction
@@ -100,20 +101,22 @@ fun TextScaffold(
                             onClick = { handleAuthorClick(author.id) },
                             onMentionClick = onMentionClick,
                             onHashtagClick = onHashtagClick,
-                            style = MaterialTheme.typography.bodyMedium.copy(
-                                color = MaterialTheme.colorScheme.tertiary
+                            style = MaterialTheme.typography.labelLarge.copy(
+                                color = MaterialTheme.colorScheme.tertiary,
+                                lineHeight = 18.sp
                             ),
                             modifier = Modifier.padding(top = 4.dp)
-                                .defaultMinSize(minHeight = 48.dp)
+                                .defaultMinSize(minHeight = 56.dp)
                         )
                         Text(
                             text = "~ ${author.username}",
                             style = MaterialTheme.typography.bodySmall.copy(
                                 color = MaterialTheme.colorScheme.tertiary
                             ),
-                            modifier = Modifier.align(Alignment.End)
-                                .padding(top = 16.dp)
-                                .padding(4.dp)
+                            modifier = Modifier.padding(
+                                top = 16.dp,
+                                bottom = 4.dp
+                            )
                         )
                     }
                 }
