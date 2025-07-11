@@ -57,7 +57,7 @@ fun FeedMenu(
                     contentPadding = PaddingValues(vertical = 4.dp),
                     default = stringResource(relation.mapFromDomain().value),
                     modifier = Modifier
-                        .padding(vertical = 6.dp)
+                        .padding(vertical = 4.dp)
                         .clip(RoundedCornerShape(6.dp))
                         .background(MaterialTheme.colorScheme.surfaceVariant),
                 ) {
