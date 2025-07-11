@@ -83,7 +83,8 @@ fun TextScaffold(
                         modifier = Modifier.size(36.dp),
                         tint = MaterialTheme.colorScheme.tertiary
                     )
-                    Column(modifier = Modifier.padding(start = 12.dp)) {
+                    Column(modifier = Modifier.fillMaxWidth()
+                        .padding(start = 12.dp)) {
                         DesignRichText(
                             text = title,
                             onClick = { handleAuthorClick(author.id) },
@@ -103,19 +104,19 @@ fun TextScaffold(
                                 color = MaterialTheme.colorScheme.tertiary
                             ),
                             modifier = Modifier.padding(top = 4.dp)
-                                .defaultMinSize(minHeight = 96.dp)
+                                .defaultMinSize(minHeight = 48.dp)
+                        )
+                        Text(
+                            text = "~ ${author.username}",
+                            style = MaterialTheme.typography.bodySmall.copy(
+                                color = MaterialTheme.colorScheme.tertiary
+                            ),
+                            modifier = Modifier.align(Alignment.End)
+                                .padding(top = 16.dp)
+                                .padding(4.dp)
                         )
                     }
                 }
-                Text(
-                    text = "~ ${author.username}",
-                    style = MaterialTheme.typography.bodySmall.copy(
-                        color = MaterialTheme.colorScheme.tertiary
-                    ),
-                    modifier = Modifier.align(Alignment.BottomEnd)
-                        .padding(top = 72.dp)
-                        .padding(4.dp)
-                )
             }
         }
         Image(
