@@ -62,7 +62,11 @@ fun VideoScaffold(
     val updatedEngagements by rememberUpdatedState(engagements)
     val updatedModeration by rememberUpdatedState(moderation)
     val updatedProgress by rememberUpdatedState(progress)
-    Box(contentAlignment = Alignment.BottomCenter, modifier = modifier) {
+    Box(
+        contentAlignment = Alignment.BottomCenter,
+        modifier = Modifier.background(MaterialTheme.colorScheme.background)
+            .then(modifier)
+    ) {
         updatedBackground()
         updatedContent()
         Column(modifier = Modifier.fillMaxSize()) {
@@ -107,8 +111,8 @@ fun VideoScaffold(
                                 fontSize = MaterialTheme.typography.labelMedium.fontSize,
                                 color = MaterialTheme.colorScheme.onBackground
                             ),
-                            style = MaterialTheme.typography.bodyMedium.copy(
-                                fontWeight = FontWeight.Bold,
+                            style = MaterialTheme.typography.labelLarge.copy(
+                                fontWeight = FontWeight.SemiBold,
                                 color = MaterialTheme.colorScheme.onBackground
                             ),
                             descriptionStyle = MaterialTheme.typography.labelMedium.copy(

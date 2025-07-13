@@ -2,7 +2,6 @@ package eu.peernetwork.social.ui.search.member
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -12,6 +11,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.compose.DesignDialogSheet
+import eu.peernetwork.core.ui.design.compose.DesignOverlay
 import eu.peernetwork.core.ui.design.compose.DesignTextField
 import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.social.ui.model.UiMember
@@ -34,6 +34,7 @@ import eu.peernetwork.social.ui.model.UiMember
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 fun MemberDialog(
+    tag: String,
     postLimit: Int,
     showSheet: MutableState<Boolean>,
     provider: UiComponentProvider,
@@ -42,14 +43,10 @@ fun MemberDialog(
 ) {
     val state = remember { TextFieldState() }
     val focus = remember { FocusRequester() }
-    DesignDialogSheet(
-        tag = "MemberDialog",
-        visible = showSheet,
-        onAnimationComplete = {
-            if (it) {
-                focus.requestFocus()
-            }
-        }
+    DesignOverlay(
+        tag,
+        showSheet,
+        onDismissRequest = { showSheet.value = false }
     ) {
         MemberDialog(state, showSheet, focus) {
             MemberScreen(
@@ -59,6 +56,9 @@ fun MemberDialog(
                 provider,
                 viewModelStoreOwner
             )
+        }
+        LaunchedEffect(Unit) {
+            focus.requestFocus()
         }
     }
 }

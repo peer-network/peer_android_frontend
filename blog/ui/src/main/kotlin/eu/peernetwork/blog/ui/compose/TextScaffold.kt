@@ -106,7 +106,7 @@ fun TextScaffold(
                                 lineHeight = 18.sp
                             ),
                             modifier = Modifier.padding(top = 4.dp)
-                                .defaultMinSize(minHeight = 56.dp)
+                                .defaultMinSize(minHeight = 92.dp)
                         )
                         Text(
                             text = "~ ${author.username}",
@@ -152,8 +152,8 @@ fun TextScaffold(
                             fontSize = MaterialTheme.typography.labelMedium.fontSize,
                             color = MaterialTheme.colorScheme.onBackground
                         ),
-                        style = MaterialTheme.typography.bodyMedium.copy(
-                            fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.labelLarge.copy(
+                            fontWeight = FontWeight.SemiBold,
                             color = MaterialTheme.colorScheme.onBackground
                         ),
                         descriptionStyle = MaterialTheme.typography.labelMedium.copy(

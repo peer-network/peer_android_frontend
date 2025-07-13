@@ -17,7 +17,7 @@ import eu.peernetwork.app.ui.feed.navigateToUsernameSearch
 import eu.peernetwork.blog.ui.post.photo.PhotoOverlay
 import eu.peernetwork.blog.ui.post.video.VideoOverlay
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.compose.DesignDialogSheet
+import eu.peernetwork.core.ui.design.compose.DesignOverlay
 import eu.peernetwork.core.ui.design.compose.DesignOverlayPage
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.core.ui.model.ViewModelState
@@ -52,24 +52,18 @@ fun ProfileOverlay(
 ) {
     val updatedContent by rememberUpdatedState(content)
     val connection by connectionController.observe().collectAsStateWithLifecycle()
-    val key = remember { System.currentTimeMillis().toString() }
     val visible = remember(overlay.value) { mutableStateOf(overlay.value !is ProfileOverlayState.Empty) }
     updatedContent()
-    DesignDialogSheet(
-        key,
-        visible,
-        onAnimationComplete = {
-            if (!it) {
-                overlay.value = ProfileOverlayState.Empty
-            }
-        }
-    ) {
+    DesignOverlay(
+        startDestination = "overlay",
+        state = visible,
+        onDismissRequest = { overlay.value = ProfileOverlayState.Empty }
+    ) { controller ->
         DesignOverlayPage(
             modifier = Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
         ) {
-            val controller = rememberNavController()
             val overlayState = remember { mutableStateOf<ProfileOverlayState?>(overlay.value) }
             ProfileNavigation(
                 principal = principal,

@@ -29,15 +29,18 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.runtime.toMutableStateList
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.navigation.NavHostController
 import eu.peernetwork.core.ui.theme.PeerTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
@@ -62,6 +65,55 @@ private interface DesignOverlayRegistry {
     fun detach(tag: String)
 }
 
+@Composable
+fun DesignOverlay(
+    startDestination: String,
+    state: State<Boolean>,
+    modifier: Modifier = Modifier,
+    behind: Boolean = false,
+    propagateMinConstraints: Boolean = false,
+    contentAlignment: Alignment = Alignment.BottomCenter,
+    onDismissRequest: () -> Unit,
+    content: @Composable (NavHostController) -> Unit,
+) {
+    val updatedContent by rememberUpdatedState(content)
+    DesignDialog(
+        tag = startDestination,
+        state = state,
+        behind = behind,
+        onDismissRequest = onDismissRequest
+    ) { controller, animation, cancelable ->
+        Box(
+            modifier = modifier,
+            contentAlignment = contentAlignment,
+            propagateMinConstraints = propagateMinConstraints
+        ) {
+            val visibility = remember { mutableStateOf(false) }
+            val offset = with(LocalDensity.current) { 56.dp.toPx() }
+            Box(modifier = Modifier.graphicsLayer {
+                alpha = animation.value
+                translationY = (1 - animation.value) * offset
+            }.background(MaterialTheme.colorScheme.background)) { updatedContent(controller) }
+            LaunchedEffect(state.value) {
+                visibility.value = state.value
+            }
+        }
+    }
+}
+
+@Deprecated("""
+    switch to
+    fun DesignOverlay(
+        tag: String,
+        state: State<Boolean>,
+        modifier: Modifier = Modifier,
+        behind: Boolean = false,
+        propagateMinConstraints: Boolean = false,
+        contentAlignment: Alignment = Alignment.BottomCenter,
+        onDismissRequest: () -> Unit,
+        content: @Composable (NavHostController) -> Unit,
+    ) 
+""")
 @Composable
 fun DesignOverlay(modifier: Modifier = Modifier, content: @Composable () -> Unit) {
     val routes = remember { linkedSetOf<String?>(null).toMutableStateList() }
