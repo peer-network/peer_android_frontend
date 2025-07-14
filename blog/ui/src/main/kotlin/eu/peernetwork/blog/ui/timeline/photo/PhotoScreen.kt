@@ -8,7 +8,6 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -28,6 +27,7 @@ import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.design.component.DesignError
 import eu.peernetwork.core.ui.design.component.DesignPagingScaffold
 import eu.peernetwork.core.ui.design.component.DesignRefreshableScaffold
+import kotlinx.coroutines.launch
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
@@ -42,6 +42,7 @@ fun PhotoScreen(
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
     onAuthorClick: (String) -> Unit = {},
+    requireUpdate: MutableState<Boolean>,
     listState: LazyListState = rememberLazyListState(),
     connection: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit = {}
 ) {
@@ -49,6 +50,7 @@ fun PhotoScreen(
     val component = remember {
         provider.builder(Photo.Builder::class.java).build(context)
     }
+    val coroutine = rememberCoroutineScope()
     val viewModel = viewModel(
         modelClass = PhotoViewModel::class.java,
         viewModelStoreOwner = viewModelStoreOwner,
@@ -125,6 +127,15 @@ fun PhotoScreen(
                         connection = connection
                     )
                 }
+            }
+        }
+        LaunchedEffect(requireUpdate.value) {
+            if (requireUpdate.value) {
+                lazyPagingItems.refresh()
+                coroutine.launch {
+                    listState.animateScrollToItem(0)
+                }
+                requireUpdate.value = false
             }
         }
     }

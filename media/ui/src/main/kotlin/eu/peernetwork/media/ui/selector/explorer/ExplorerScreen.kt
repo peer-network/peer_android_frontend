@@ -167,7 +167,7 @@ fun ExplorerScreen(
             .padding(vertical = 12.dp, horizontal = 24.dp)) {
             DesignDropDown(
                 expanded,
-                contentPadding = PaddingValues(vertical = 4.dp),
+                contentPadding = PaddingValues(vertical = 8.dp),
                 default = title.value,
                 modifier = Modifier
                     .padding(vertical = 6.dp)
@@ -179,7 +179,6 @@ fun ExplorerScreen(
                     video to eu.peernetwork.core.ui.R.drawable.ic_video,
                     files to eu.peernetwork.core.ui.R.drawable.ic_wallet
                 )
-
                 items.entries.forEach { (label, iconRes) ->
                     item(tag = label, {
                         when (label) {

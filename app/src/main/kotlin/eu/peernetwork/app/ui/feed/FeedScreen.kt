@@ -1,6 +1,7 @@
 package eu.peernetwork.app.ui.feed
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -24,7 +25,8 @@ fun FeedScreen(
     provider: UiComponentProvider,
     viewModelStore: ViewModelState,
     title: String? = null,
-    criteria: Criteria? = null
+    criteria: Criteria? = null,
+    requireUpdate: MutableState<Boolean>,
 ) {
     val context = LocalContext.current
     val component = remember {
@@ -70,6 +72,7 @@ fun FeedScreen(
                     enable = overlay.value == FeedOverlayState.Empty,
                     ordinal = ordinal.value,
                     state = pageState,
+                    requireUpdate = requireUpdate,
                     component = component,
                     viewModelStoreOwner = viewModelStoreOwner,
                     controller = controller,

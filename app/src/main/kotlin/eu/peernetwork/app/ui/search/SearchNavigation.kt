@@ -28,6 +28,7 @@ fun SearchNavigation(
     val controller = rememberNavController()
     val updatedContent by rememberUpdatedState(search)
     var id by remember { mutableStateOf<String>("") }
+    val requireUpdate = remember { mutableStateOf(false) }
     DesignRouter(
         navController = controller,
         startDestination = "search",
@@ -60,7 +61,8 @@ fun SearchNavigation(
                 component,
                 viewModelStore = viewModelStore,
                 title = tag,
-                criteria = tag?.let { Filter.Criteria.Content(tag = it) }
+                criteria = tag?.let { Filter.Criteria.Content(tag = it) },
+                requireUpdate = requireUpdate
             )
         }
         composable(
@@ -78,7 +80,8 @@ fun SearchNavigation(
                 component,
                 viewModelStore = viewModelStore,
                 title = query,
-                criteria = query?.let { Filter.Criteria.Content(title = it) }
+                criteria = query?.let { Filter.Criteria.Content(title = it) },
+                requireUpdate = requireUpdate
             )
         }
     }

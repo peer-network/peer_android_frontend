@@ -42,6 +42,7 @@ fun FeedPreview(
     enable: Boolean,
     ordinal: Int,
     state: MutableIntState,
+    requireUpdate: MutableState<Boolean>,
     component: Feed.Component,
     viewModelStoreOwner: ViewModelStoreOwner,
     controller: NavHostController,
@@ -90,7 +91,8 @@ fun FeedPreview(
                 component,
                 viewModelStoreOwner,
                 onAuthorClick,
-                photoState
+                requireUpdate,
+                photoState,
             ) {
                 ConnectionScreen(
                     isFollowing = connection.getOrDefault(it.first, it.third),
@@ -112,6 +114,7 @@ fun FeedPreview(
                 viewModelStoreOwner,
                 onVideoClick,
                 { controller.navigateIfNecessary("profile/$it") },
+                requireUpdate,
                 videoState,
             ) {
                 ConnectionScreen(

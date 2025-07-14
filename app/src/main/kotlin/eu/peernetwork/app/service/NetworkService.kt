@@ -2,6 +2,7 @@ package eu.peernetwork.app.service
 
 import com.apollographql.apollo3.ApolloClient
 import eu.peernetwork.app.interceptor.LoggingInterceptor
+import eu.peernetwork.app.interceptor.NetworkErrorInterceptor
 import eu.peernetwork.app.interceptor.ResourceInterceptor
 import eu.peernetwork.core.common.interactor.UrlInteractor
 import eu.peernetwork.core.remote.api.RequestClient
@@ -11,6 +12,7 @@ import javax.inject.Inject
 interface NetworkService : RequestClient {
     class Delegate @Inject constructor(
         private val provider: UrlInteractor,
+        private val network: NetworkErrorInterceptor,
         private val logger: LoggingInterceptor,
         private val jwtInterceptor: JwtInterceptor,
         private val resourceInterceptor: ResourceInterceptor
@@ -31,6 +33,7 @@ interface NetworkService : RequestClient {
                     .addInterceptor(resourceInterceptor)
                     .addInterceptor(logger)
                     .addInterceptor(jwtInterceptor)
+                    .addInterceptor(network)
                     .build()
             }
             return client

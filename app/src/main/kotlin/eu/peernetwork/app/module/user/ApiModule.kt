@@ -4,6 +4,7 @@ import com.apollographql.apollo3.ApolloClient
 import dagger.Module
 import dagger.Provides
 import eu.peernetwork.app.interceptor.LoggingInterceptor
+import eu.peernetwork.app.interceptor.NetworkErrorInterceptor
 import eu.peernetwork.core.common.interactor.UrlInteractor
 import eu.peernetwork.user.data.api.AccountApi
 import eu.peernetwork.user.data.api.AuthenticationApi
@@ -35,11 +36,13 @@ internal object ApiModule {
     fun providesTokenApi(
         provider: UrlInteractor,
         logger: LoggingInterceptor,
+        network: NetworkErrorInterceptor,
         usecase: JwtExpiryUsecase
     ): TokenApi = TokenApiDelegate(
         ApolloClient.Builder()
             .serverUrl("${provider.get()}/graphql")
-            .addInterceptor(logger).build(),
+            .addInterceptor(logger)
+            .addInterceptor(network).build(),
         usecase
     )
 }

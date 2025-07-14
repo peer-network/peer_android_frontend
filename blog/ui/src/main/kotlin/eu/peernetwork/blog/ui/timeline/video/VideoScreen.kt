@@ -27,6 +27,7 @@ import eu.peernetwork.core.ui.design.component.DesignPagingScaffold
 import eu.peernetwork.core.ui.design.component.DesignRefreshableScaffold
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
 import eu.peernetwork.media.core.model.UiMimeType
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -42,11 +43,13 @@ fun VideoScreen(
     viewModelStoreOwner: ViewModelStoreOwner,
     onPostClick: (String, Int) -> Unit,
     onAuthorClick: (String) -> Unit = {},
+    requireUpdate: MutableState<Boolean>,
     listState: LazyListState = rememberLazyListState(),
     connection: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit = {}
 ) {
     val context = LocalContext.current
     val configuration = LocalConfiguration.current
+    val coroutine = rememberCoroutineScope()
     val component = remember {
         provider.builder(Video.Builder::class.java).build(context)
     }
@@ -129,6 +132,15 @@ fun VideoScreen(
                         connection = connection
                     )
                 }
+            }
+        }
+        LaunchedEffect(requireUpdate.value) {
+            if (requireUpdate.value) {
+                lazyPagingItems.refresh()
+                coroutine.launch {
+                    listState.animateScrollToItem(0)
+                }
+                requireUpdate.value = false
             }
         }
         LaunchedEffect(canLoad.value) {
