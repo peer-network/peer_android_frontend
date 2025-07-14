@@ -140,10 +140,11 @@ fun  DesignDialog(
             }
         }.apply {
             window?.apply {
+                setWindowAnimations(0)
+                setBackgroundDrawable(null)
                 if (behind) {
                     clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
                 }
-                setBackgroundDrawable(null)
             }
             setContentView(
                 ComposeView(context).apply {
@@ -160,7 +161,7 @@ fun  DesignDialog(
                                         mutableStateOf(controller.currentDestination?.route)
                                     }
                                     val isStackEmpty = remember(navBackStackEntry?.id) {
-                                        mutableStateOf(controller.visibleEntries.value.isEmpty())
+                                        mutableStateOf(controller.visibleEntries.value.size <= 1)
                                     }
                                     updatedContent(controller, animation, cancelable)
                                     LaunchedEffect(currentStack.value) {

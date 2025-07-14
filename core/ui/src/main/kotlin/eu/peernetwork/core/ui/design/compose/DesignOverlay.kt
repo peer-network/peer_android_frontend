@@ -70,7 +70,6 @@ fun DesignOverlay(
     startDestination: String,
     state: State<Boolean>,
     modifier: Modifier = Modifier,
-    behind: Boolean = false,
     propagateMinConstraints: Boolean = false,
     contentAlignment: Alignment = Alignment.BottomCenter,
     onDismissRequest: () -> Unit,
@@ -80,7 +79,7 @@ fun DesignOverlay(
     DesignDialog(
         tag = startDestination,
         state = state,
-        behind = behind,
+        behind = false,
         onDismissRequest = onDismissRequest
     ) { controller, animation, cancelable ->
         Box(
@@ -90,10 +89,12 @@ fun DesignOverlay(
         ) {
             val visibility = remember { mutableStateOf(false) }
             val offset = with(LocalDensity.current) { 56.dp.toPx() }
-            Box(modifier = Modifier.graphicsLayer {
-                alpha = animation.value
-                translationY = (1 - animation.value) * offset
-            }.background(MaterialTheme.colorScheme.background)) { updatedContent(controller) }
+            Box(modifier = Modifier.background(MaterialTheme.colorScheme.background)
+                .graphicsLayer {
+                    alpha = animation.value
+                    translationY = (1 - animation.value) * offset
+                }
+            ) { updatedContent(controller) }
             LaunchedEffect(state.value) {
                 visibility.value = state.value
             }
