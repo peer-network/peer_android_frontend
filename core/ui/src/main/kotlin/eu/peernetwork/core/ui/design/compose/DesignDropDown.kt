@@ -118,7 +118,7 @@ fun DesignDropDown(
                                         state.value = false
                                     }
                                 }
-                            ).padding(vertical = 0.7.dp)
+                            ).padding(contentPadding)
                         ) { item.value.content(item.value.tag, false) }
                     }
                 }

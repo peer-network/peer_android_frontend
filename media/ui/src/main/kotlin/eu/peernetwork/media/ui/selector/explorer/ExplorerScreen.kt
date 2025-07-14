@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -167,7 +168,7 @@ fun ExplorerScreen(
             .padding(vertical = 12.dp, horizontal = 24.dp)) {
             DesignDropDown(
                 expanded,
-                contentPadding = PaddingValues(vertical = 8.dp),
+                contentPadding = PaddingValues(vertical = 4.dp),
                 default = title.value,
                 modifier = Modifier
                     .padding(vertical = 6.dp)
@@ -200,15 +201,16 @@ fun ExplorerScreen(
                         Spacer(modifier = Modifier.height(2.dp))
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.padding(start = 8.dp).padding(vertical = 4.dp)
+                            modifier = Modifier.padding(start = 8.dp)
+                                .padding(vertical = 6.dp)
                         ) {
-                            androidx.compose.material3.Icon(
+                            Icon(
                                 painter = painterResource(id = iconRes),
                                 contentDescription = label,
                                 modifier = Modifier.size(20.dp),
                                 tint = if (isActive) MaterialTheme.colorScheme.onBackground else MaterialTheme.colorScheme.tertiary
                             )
-                            Spacer(modifier = Modifier.width(8.dp))
+                            Spacer(modifier = Modifier.width(2.dp))
                             Text(
                                 label,
                                 style = if (isActive) {
@@ -223,15 +225,15 @@ fun ExplorerScreen(
                             )
                             if (isActive) {
                                 Spacer(modifier = Modifier.width(2.dp))
-                                androidx.compose.material3.Icon(
+                                Icon(
                                     painter = painterResource(id = eu.peernetwork.core.ui.R.drawable.ic_caret_down),
                                     contentDescription = "Selected",
                                     modifier = Modifier.size(16.dp),
                                     tint = MaterialTheme.colorScheme.onSurface
                                 )
-                                Spacer(modifier = Modifier.width(4.dp))
+                                Spacer(modifier = Modifier.width(6.dp))
                             } else {
-                                Spacer(modifier = Modifier.width(8.dp))
+                                Spacer(modifier = Modifier.width(16.dp))
                             }
                         }
                     }
