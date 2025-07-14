@@ -85,7 +85,6 @@ fun WalletScreen(
                 slug = it.slug,
                 imageUrl = it.imageUrl
             )
-            showSheet.value = false
             true
         }
     }

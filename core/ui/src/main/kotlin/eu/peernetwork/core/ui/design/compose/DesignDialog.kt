@@ -1,14 +1,16 @@
 package eu.peernetwork.core.ui.design.compose
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
+import android.animation.ObjectAnimator
 import android.app.Dialog
 import android.view.WindowManager
+import android.view.animation.PathInterpolator
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.AnimationConstants.DefaultDurationMillis
-import androidx.compose.animation.core.CubicBezierEasing
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -21,11 +23,11 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
@@ -93,6 +95,7 @@ fun  DesignDialog(
     tag: String,
     state: State<Boolean>,
     behind: Boolean = false,
+    duration: Long = 350,
     onDismissRequest: () -> Unit,
     content: @Composable (NavHostController, State<Float>, MutableState<Boolean>) -> Unit,
 ) {
@@ -106,43 +109,51 @@ fun  DesignDialog(
     val handleDismissRequest by rememberUpdatedState(onDismissRequest)
     val cancelable = remember { mutableStateOf(false) }
     val session = remember { mutableLongStateOf(System.currentTimeMillis()) }
-    val active = remember { mutableStateOf(false) }
-    val animation = animateFloatAsState(
-        targetValue = if (active.value) 1f else 0f,
-        animationSpec = tween(
-            durationMillis = 250,
-            easing = CubicBezierEasing(0.2f, 0.0f, 0.0f, 1.0f)
-        ),
-        label = tag
-    )
+    val animation = remember { mutableFloatStateOf(0f) }
+    val interpolator = remember { PathInterpolator(0.2f, 0f, 0f, 1f) }
     val dialog = remember(session.longValue) {
         object : Dialog(context, R.style.Theme_Peer_Overlay) {
             override fun onBackPressed() {
                 if (dispatcher?.hasEnabledCallbacks() != true || cancelable.value) {
-                    if (!active.value) {
-                        dismiss()
-                    } else {
-                        active.value = false
-                    }
+                    dismiss()
                 } else {
                     dispatcher.onBackPressed()
                 }
             }
 
             override fun show() {
-                active.value = true
                 super.show()
+                window?.decorView?.let {
+                    ObjectAnimator.ofFloat(it, "alpha", 0f, 1f).apply {
+                        this.duration = duration
+                        this.interpolator = interpolator
+                        addUpdateListener { animation.floatValue = it.animatedValue as Float }
+                    }.start()
+                }
             }
 
             override fun dismiss() {
                 handleDismissRequest()
-                super.dismiss()
+                window?.decorView?.let {
+                    ObjectAnimator.ofFloat(it, "alpha", 1f, 0f).apply {
+                        this.duration = duration
+                        this.interpolator = interpolator
+                        addUpdateListener { animation.floatValue = it.animatedValue as Float }
+                        addListener(object : AnimatorListenerAdapter() {
+                            override fun onAnimationEnd(animation: Animator) {
+                                handleDismissal()
+                            }
+                        })
+                    }.start()
+                }
             }
+
+            fun handleDismissal() { super.dismiss() }
         }.apply {
             window?.apply {
                 setWindowAnimations(0)
                 setBackgroundDrawable(null)
-                if (behind) {
+                if (!behind) {
                     clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
                 }
             }
@@ -183,16 +194,8 @@ fun  DesignDialog(
     LaunchedEffect(state.value) {
         if (state.value) {
             dialog.show()
-        } else if (dialog.isShowing) {
+        } else {
             dialog.dismiss()
         }
-    }
-    LaunchedEffect(animation) {
-        snapshotFlow { animation.value }
-            .collect { value ->
-                if (value == 0f) {
-                    dialog.dismiss()
-                }
-            }
     }
 }

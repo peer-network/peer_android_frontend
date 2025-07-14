@@ -43,6 +43,7 @@ fun MemberDialog(
 ) {
     val state = remember { TextFieldState() }
     val focus = remember { FocusRequester() }
+    val handleClick by rememberUpdatedState(onClick)
     DesignOverlay(
         tag,
         showSheet,
@@ -52,7 +53,13 @@ fun MemberDialog(
             MemberScreen(
                 state,
                 postLimit,
-                onClick,
+                {
+                    val shouldDismiss = handleClick(it)
+                    if (shouldDismiss) {
+                        showSheet.value = false
+                    }
+                    shouldDismiss
+                },
                 provider,
                 viewModelStoreOwner
             )
@@ -110,7 +117,8 @@ fun PreviewMemberDialog() {
         val state = remember { TextFieldState() }
         val enable = remember { mutableStateOf(true) }
         MemberDialog(state, enable) {
-            Box(modifier = Modifier.fillMaxSize()
+            Box(modifier = Modifier
+                .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background))
         }
     }
