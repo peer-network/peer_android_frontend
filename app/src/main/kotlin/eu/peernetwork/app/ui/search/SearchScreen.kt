@@ -74,7 +74,8 @@ fun SearchScreen(
                 ExploreScreen(
                     postLimit = postLimit,
                     provider = component,
-                    viewModelStoreOwner = viewModelStore.get(id)
+                    viewModelStoreOwner = viewModelStore.get("$session"),
+                    modifier = Modifier.padding(top = 32.dp)
                 )
             }
         }

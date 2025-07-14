@@ -8,10 +8,8 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -45,6 +43,7 @@ fun ExploreScreen(
     postLimit: Int,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
+    modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
     val component = remember {
@@ -57,11 +56,6 @@ fun ExploreScreen(
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
     val errorMessage = stringResource(R.string.unknown_error_message)
-
-    LaunchedEffect(Unit) {
-        viewModel.get(page = Pageable(0, postLimit))
-    }
-
     val derivedState = remember {
         derivedStateOf {
             when (state) {
@@ -85,7 +79,8 @@ fun ExploreScreen(
         placeholder = { PostPageSkeleton() },
         errorContent = { error, refresh ->
             DesignError(refresh, error, component.resource())
-        }
+        },
+        modifier = modifier
     ) { state, lazyPagingItems ->
         val refreshState = remember {
             derivedStateOf {
