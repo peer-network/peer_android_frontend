@@ -168,7 +168,6 @@ fun ExplorerScreen(
             .padding(vertical = 12.dp, horizontal = 24.dp)) {
             DesignDropDown(
                 expanded,
-                contentPadding = PaddingValues(vertical = 4.dp),
                 default = title.value,
                 modifier = Modifier
                     .padding(vertical = 6.dp)
@@ -196,12 +195,12 @@ fun ExplorerScreen(
                                 expanded.value = false
                             }
                         }
-                        true
+                        expanded.value
                     }) { _, isActive ->
                         Spacer(modifier = Modifier.height(2.dp))
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.padding(start = 8.dp)
+                            modifier = Modifier.padding(start = 6.dp)
                                 .padding(vertical = 6.dp)
                         ) {
                             Icon(
@@ -233,7 +232,7 @@ fun ExplorerScreen(
                                 )
                                 Spacer(modifier = Modifier.width(6.dp))
                             } else {
-                                Spacer(modifier = Modifier.width(16.dp))
+                                Spacer(modifier = Modifier.width(12.dp))
                             }
                         }
                     }

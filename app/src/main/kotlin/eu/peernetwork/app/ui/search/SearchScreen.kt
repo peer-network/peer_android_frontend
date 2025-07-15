@@ -4,14 +4,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.input.TextFieldState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -61,21 +61,23 @@ fun SearchScreen(
                 MemberScreen(query, postLimit, {
                     controller.navigateIfNecessary("profile/${it.id}")
                     false
-                }, component, viewModelStore.get("$session"))
+                }, component, viewModelStore.get("$session"),
+                    Modifier.padding(top = 36.dp))
             } else if (mode == SearchMode.TAG) {
                 TagScreen(query, postLimit, {
                     controller.navigateIfNecessary("feed/$it")
-                }, component, viewModelStore.get("$session"))
+                }, component, viewModelStore.get("$session"),
+                    Modifier.padding(top = 36.dp))
             } else if (mode == SearchMode.TITLE) {
                 TitleScreen(query, postLimit, {
                     controller.navigateIfNecessary("search?query=${it.title}")
-                }, component, viewModelStore.get("$session"))
+                }, component, viewModelStore.get("$session"),
+                    Modifier.padding(top = 36.dp))
             } else {
                 ExploreScreen(
                     postLimit = postLimit,
                     provider = component,
                     viewModelStoreOwner = viewModelStore.get("$session"),
-                    modifier = Modifier.padding(top = 32.dp)
                 )
             }
         }
@@ -107,10 +109,9 @@ fun SearchScreen(
             }
         )
     }
+    val updatedContent by rememberUpdatedState(content)
     Box(modifier = modifier.fillMaxSize()) {
-        Box(modifier = Modifier.padding(top = 36.dp)) {
-            content(mode.value, query.value)
-        }
+        updatedContent(mode.value, query.value)
         SearchHeader(
             query.value,
             mode,

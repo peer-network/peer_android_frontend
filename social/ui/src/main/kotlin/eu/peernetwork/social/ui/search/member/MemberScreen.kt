@@ -11,6 +11,7 @@ import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.clearText
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -43,6 +44,7 @@ fun MemberScreen(
     onClick: (UiMember) -> Boolean,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
+    modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
     val component = remember {
@@ -85,7 +87,8 @@ fun MemberScreen(
             }
         },
         modifier = Modifier.fillMaxSize()
-            .padding(horizontal = 24.dp),
+            .padding(horizontal = 24.dp)
+            .then(modifier),
         placeholder = { SearchItemSkeleton(modifier = Modifier.padding(top = 16.dp)) },
         errorContent = { error, refresh ->
             Column(modifier = Modifier.fillMaxSize()
@@ -127,9 +130,11 @@ fun MemberScreen(
                 }
             }
     }
-    LaunchedEffect(Unit) {
-        if (lastSearch.value != query.text.toString()) {
-            viewModel.reset()
+    DisposableEffect(Unit) {
+        onDispose {
+            if (lastSearch.value != query.text.toString()) {
+                viewModel.reset()
+            }
         }
     }
 }

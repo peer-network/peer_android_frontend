@@ -4,8 +4,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -35,8 +39,8 @@ import eu.peernetwork.core.ui.design.component.DesignError
 import eu.peernetwork.core.ui.design.component.DesignPagingScaffold
 import eu.peernetwork.core.ui.design.component.DesignRefreshableScaffold
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
+import eu.peernetwork.core.ui.design.compose.DesignScaffold
 import eu.peernetwork.core.ui.extension.builder
-
 
 @Composable
 fun ExploreScreen(
@@ -73,47 +77,69 @@ fun ExploreScreen(
             }
         }
     }
-    DesignPagingScaffold<UiPost>(
-        state = derivedState,
-        onRefresh = { viewModel.get(Pageable(0, postLimit)) },
-        placeholder = { PostPageSkeleton() },
-        errorContent = { error, refresh ->
-            DesignError(refresh, error, component.resource())
-        },
-        modifier = modifier
-    ) { state, lazyPagingItems ->
-        val refreshState = remember {
-            derivedStateOf {
-                if (lazyPagingItems.loadState.refresh is LoadState.Loading) {
-                    DesignStatefulScaffoldState.Loading
-                } else if (lazyPagingItems.loadState.refresh is LoadState.Error) {
-                    DesignStatefulScaffoldState.Error(
-                        (lazyPagingItems.loadState.refresh as LoadState.Error).error
-                    )
-                } else {
-                    state.value
+    DesignScaffold(
+        alwaysReturn = true,
+        header = { Spacer(modifier = Modifier.height(64.dp)) },
+        footer = {  },
+        modifier = Modifier
+            .statusBarsPadding()
+            .navigationBarsPadding()
+    ) { state ->
+        DesignPagingScaffold<UiPost>(
+            state = derivedState,
+            onRefresh = { viewModel.get(Pageable(0, postLimit)) },
+            placeholder = { PostPageSkeleton() },
+            errorContent = { error, refresh ->
+                DesignError(refresh, error, component.resource())
+            },
+            modifier = modifier
+        ) { state, lazyPagingItems ->
+            val refreshState = remember {
+                derivedStateOf {
+                    if (lazyPagingItems.loadState.refresh is LoadState.Loading) {
+                        DesignStatefulScaffoldState.Loading
+                    } else if (lazyPagingItems.loadState.refresh is LoadState.Error) {
+                        DesignStatefulScaffoldState.Error(
+                            (lazyPagingItems.loadState.refresh as LoadState.Error).error
+                        )
+                    } else {
+                        state.value
+                    }
                 }
             }
-        }
-        DesignRefreshableScaffold<LazyPagingItems<UiPost>>(
-            state = refreshState,
-            onRefresh = { lazyPagingItems.refresh() }
-        ) {
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(3),
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(4.dp),
-                verticalArrangement = Arrangement.spacedBy(4.dp),
-                horizontalArrangement = Arrangement.spacedBy(4.dp)
+            DesignRefreshableScaffold<LazyPagingItems<UiPost>>(
+                state = refreshState,
+                onRefresh = { lazyPagingItems.refresh() }
             ) {
-                items(lazyPagingItems.itemCount) { index ->
-                    val post = lazyPagingItems[index]
-                    if (post?.type == UiPost.Type.IMAGE) {
-                        ExplorePhotoItem(post = post, onClick = {})
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(3),
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(4.dp),
+                    verticalArrangement = Arrangement.spacedBy(4.dp),
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    items(lazyPagingItems.itemCount) { index ->
+                        val post = lazyPagingItems[index]
+                        if (post?.type == UiPost.Type.IMAGE) {
+                            ExplorePhotoItem(post = post, onClick = {})
+                        }
                     }
                 }
             }
         }
+    }
+}
+
+@Composable
+fun ExploreScreen(content: @Composable () -> Unit) {
+    DesignScaffold(
+        alwaysReturn = true,
+        header = { Spacer(modifier = Modifier.height(64.dp)) },
+        footer = {  },
+        modifier = Modifier
+            .statusBarsPadding()
+            .navigationBarsPadding()
+    ) { state ->
     }
 }
 
