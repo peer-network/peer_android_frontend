@@ -33,47 +33,78 @@ fun LazyItemScope.PostItem(
             0.dp
         }
     ))
-    if (post.type != UiPost.Type.TEXT) {
-        MediaView(
-            author = post.author,
-            description = post.time,
-            modifier = Modifier
-                .padding(bottom = 16.dp),
-            caption = {
-                TextView(
-                    post.author.username,
+    when (post.type) {
+        UiPost.Type.AUDIO -> {
+            val audioUrl = post.media.firstOrNull()?.path.orEmpty()
+            AudioView(
+                author = post.author,
+                description = post.time,
+                audioUrl = audioUrl,
+                modifier = Modifier
+                    .padding(bottom = 12.dp)
+                    .padding(horizontal = 8.dp),
+                onClick = onClick,
+                onAuthorClick = onAuthorClick,
+                engagements = engagements,
+                moderation = moderation,
+                actions = actions
+            ) {
+                PostText(
                     post.title,
                     post.description,
-                    onAuthorClick = onAuthorClick,
+                    Modifier.padding(top = 12.dp, bottom = 4.dp),
                     onMentionClick = onMentionClick,
                     onHashtagClick = onHashtagClick
                 )
-            },
-            engagements = engagements,
-            moderation = moderation,
-            onClick = onClick,
-            onAuthorClick = onAuthorClick,
-            actions = actions
-        ) { updatedContent(post) }
-    } else {
-        TextPreview(
-            author = post.author,
-            description = post.time,
-            modifier = Modifier.padding(bottom = 12.dp)
-                .padding(horizontal = 8.dp),
-            engagements = engagements,
-            moderation = moderation,
-            onClick = onClick,
-            onAuthorClick = onAuthorClick,
-            actions = actions
-        ) {
-            PostText(
-                post.title,
-                post.description,
-                Modifier.padding(top = 12.dp, bottom = 4.dp),
-                onMentionClick = onMentionClick,
-                onHashtagClick = onHashtagClick
-            )
+            }
+        }
+
+        UiPost.Type.TEXT -> {
+            TextPreview(
+                author = post.author,
+                description = post.time,
+                modifier = Modifier
+                    .padding(bottom = 12.dp)
+                    .padding(horizontal = 8.dp),
+                engagements = engagements,
+                moderation = moderation,
+                onClick = onClick,
+                onAuthorClick = onAuthorClick,
+                actions = actions
+            ) {
+                PostText(
+                    post.title,
+                    post.description,
+                    Modifier.padding(top = 12.dp, bottom = 4.dp),
+                    onMentionClick = onMentionClick,
+                    onHashtagClick = onHashtagClick
+                )
+            }
+        }
+
+        UiPost.Type.IMAGE -> {
+            MediaView(
+                author = post.author,
+                description = post.time,
+                modifier = Modifier.padding(bottom = 16.dp),
+                caption = {
+                    TextView(
+                        post.author.username,
+                        post.title,
+                        post.description,
+                        onAuthorClick = onAuthorClick,
+                        onMentionClick = onMentionClick,
+                        onHashtagClick = onHashtagClick
+                    )
+                },
+                engagements = engagements,
+                moderation = moderation,
+                onClick = onClick,
+                onAuthorClick = onAuthorClick,
+                actions = actions
+            ) {
+                updatedContent(post)
+            }
         }
     }
 }

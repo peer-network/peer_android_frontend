@@ -37,7 +37,7 @@ import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.media.core.model.UiAttachment
 import eu.peernetwork.media.core.model.UiFile
 import eu.peernetwork.media.core.model.UiMimeType
-import eu.peernetwork.media.ui.R
+import eu.peernetwork.media.core.R
 import eu.peernetwork.media.ui.editor.picture.PhotoAspectRatio
 import eu.peernetwork.media.ui.editor.picture.PhotoScreen
 import eu.peernetwork.media.ui.usecase.PermissionUsecase
