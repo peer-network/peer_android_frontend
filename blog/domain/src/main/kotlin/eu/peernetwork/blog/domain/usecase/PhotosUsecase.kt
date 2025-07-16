@@ -15,7 +15,7 @@ class PhotosUsecase @Inject constructor(
     private val usecase: CategoryUsecase
 ) : ParameterizedSuspendableUseCase<Parameter, Page<Content>> {
     override suspend fun invoke(param: Parameter): Page<Content> {
-        val baseTypes = setOf(Content.Type.TEXT, Content.Type.IMAGE)
+        val baseTypes = setOf(Content.Type.TEXT, Content.Type.IMAGE, Content.Type.AUDIO)
         return repository.getAll(
             filter = Filter(
                 author = param.author,

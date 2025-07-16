@@ -25,6 +25,7 @@ data class UiPost(
 ) {
     enum class Type {
         IMAGE,
+        AUDIO,
         TEXT
     }
 }
