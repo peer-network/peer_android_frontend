@@ -49,7 +49,7 @@ fun FeedOverlay(
     DesignOverlay(
         startDestination = "overlay",
         state = visible,
-        onDismissRequest = { overlay.value = FeedOverlayState.Empty }
+        onDismiss = { overlay.value = FeedOverlayState.Empty }
     ) { controller ->
         val overlayState = remember { mutableStateOf<FeedOverlayState?>(overlay.value) }
         FeedNavigation(

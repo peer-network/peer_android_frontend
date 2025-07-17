@@ -7,11 +7,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
@@ -41,10 +41,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.compose.DesignBottomSheet
+import eu.peernetwork.core.ui.design.compose.DesignCollapsibleBottomSheet
 import eu.peernetwork.core.ui.design.compose.DesignDropDown
 import eu.peernetwork.core.ui.design.compose.DesignOutlinedButton
-import eu.peernetwork.core.ui.design.compose.DesignOverlayBackground
 import eu.peernetwork.core.ui.design.compose.DesignTitle
 import eu.peernetwork.core.ui.design.compose.DesignTitleBarHost
 import eu.peernetwork.core.ui.extension.builder
@@ -97,25 +96,17 @@ fun ExplorerScreen(
                 viewModelStore.get(tag)
             )
         }
-        DesignBottomSheet(
-            tag = "ExplorerScreen/DesignBottomSheet",
-            showSheet = showDirectory,
-            background = {
-                DesignOverlayBackground(
-                    showDirectory,
-                    modifier = Modifier.fillMaxSize()
-                        .background(MaterialTheme.colorScheme.background.copy(alpha = .8f))
+        DesignCollapsibleBottomSheet(state = showDirectory) {
+            Box(modifier = Modifier.statusBarsPadding()) {
+                DirectoryScreen(
+                    type = type,
+                    onSelect = {
+                        directory.value = it
+                        showDirectory.value = false },
+                    provider = component,
+                    viewModelStoreOwner = viewModelStore.get(tag),
                 )
-            },
-        ) {
-            DirectoryScreen(
-                type = type,
-                onSelect = {
-                    directory.value = it
-                    showDirectory.value = false },
-                provider = component,
-                viewModelStoreOwner = viewModelStore.get(tag),
-            )
+            }
         }
         DesignTitleBarHost("ExplorerScreen") {
             titleBar {

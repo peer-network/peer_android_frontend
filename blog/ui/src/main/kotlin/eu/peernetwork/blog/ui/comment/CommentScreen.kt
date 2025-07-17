@@ -1,8 +1,8 @@
 package eu.peernetwork.blog.ui.comment
 
 import android.widget.Toast
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.clearText
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -17,6 +17,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -37,7 +38,6 @@ fun CommentScreen(
     postLimit: Int,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
-    modifier: Modifier = Modifier,
     onMentionClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
     onAuthorClick: (String) -> Unit = {},
@@ -89,9 +89,7 @@ fun CommentScreen(
     val handleOnMentionClick by rememberUpdatedState(onMentionClick)
     val handleOnHashtagClick by rememberUpdatedState(onHashtagClick)
     val handleOnAuthorClick by rememberUpdatedState(onAuthorClick)
-    val tag = remember { System.currentTimeMillis().toString() }
     CommentScreen(
-        tag = tag,
         state = state,
         replyTo = replyTo,
         isLoading = isLoading,
@@ -103,9 +101,8 @@ fun CommentScreen(
             state.value = null
             handleOnHashtagClick(hashtag)
         },
-        modifier = modifier.fillMaxSize(),
         onSubmit = { id, comment -> viewModel.comment(id, comment) }
-    ) { visible, field ->
+    ) { size, field ->
         DesignPagingScaffold<UiComment>(
             state = derivedState,
             onRefresh = { state.value?.let { viewModel.load(it.id, Pageable(0, postLimit)) } },
@@ -114,6 +111,8 @@ fun CommentScreen(
             CommentListing(
                 likesState,
                 items,
+                size = size.value,
+                modifier = Modifier.statusBarsPadding(),
                 onLike = { viewModel.like(it) },
                 { replyTo.value = it },
                 onMentionClick = { username ->
@@ -142,11 +141,9 @@ fun CommentScreen(
                 viewModel.clear()
             }
         }
-        LaunchedEffect(visible.value, state.value) {
-            if (state.value != null && visible.value) {
+        LaunchedEffect(state.value) {
+            if (state.value != null) {
                 state.value?.let { viewModel.load(it.id, Pageable(0, postLimit)) }
-            } else if (!visible.value) {
-                viewModel.reset()
             }
         }
     }
@@ -154,24 +151,20 @@ fun CommentScreen(
 
 @Composable
 fun CommentScreen(
-    tag: String,
     state: MutableState<UiContent?>,
     replyTo: MutableState<String?>,
     isLoading: State<Boolean>,
-    modifier: Modifier = Modifier,
     onMentionClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
     onSubmit: (String, String) -> Unit = { id, comment -> },
-    content: @Composable (State<Boolean>, TextFieldState) -> Unit = { visible, field -> }
+    content: @Composable (State<IntSize>, TextFieldState) -> Unit = { visible, field -> }
 ) {
     val comment = remember { TextFieldState() }
     val updatedContent by rememberUpdatedState(content)
     CommentScaffold(
-        tag = tag,
         state = state,
-        modifier = modifier,
         sheet = {
-            val content = remember(it) { mutableStateOf(state.value) }
+            val content = remember { mutableStateOf(state.value) }
             content.value?.let {
                 CommentForm(
                     model = it,

@@ -10,11 +10,9 @@ import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.anchoredDraggable
 import androidx.compose.foundation.gestures.animateTo
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material3.MaterialTheme
@@ -69,7 +67,7 @@ fun DesignBottomSheetScaffold(
     DesignDialog(
         state = visible,
         behind = behind,
-        onDismissRequest = onDismiss,
+        onDismiss = onDismiss,
         canDismiss = dialogState.value == DesignBottomSheetScaffoldState.HIDE,
         onBackPressed = { dialogState.value = DesignBottomSheetScaffoldState.HIDE }
     ) { controller, anim, cancelable ->

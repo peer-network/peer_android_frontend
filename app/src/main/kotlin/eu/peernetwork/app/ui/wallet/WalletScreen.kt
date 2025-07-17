@@ -78,7 +78,7 @@ fun WalletScreen(
                 }
             }
         }
-        MemberDialog("wallet", postLimit, showSheet, component, viewModelStoreOwner) {
+        MemberDialog(postLimit, showSheet, component, viewModelStoreOwner) {
             recipient.value = UiRecipient(
                 id = it.id,
                 username = it.username,

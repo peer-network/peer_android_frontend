@@ -1,7 +1,7 @@
 package eu.peernetwork.app.ui.profile
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -42,7 +42,7 @@ fun ProfileSheet(
         peekHeight = 400.dp,
         state = state,
         content = {
-            Box(modifier = Modifier.padding(top = 8.dp)) {
+            Box(modifier = Modifier.statusBarsPadding()) {
                 val connection = remember { mutableStateOf<ConnectionStatus?>(status.value) }
                 connection.value?.let {
                     when (it) {

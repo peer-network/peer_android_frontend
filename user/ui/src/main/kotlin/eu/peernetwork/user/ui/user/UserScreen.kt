@@ -18,6 +18,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -35,9 +36,11 @@ import eu.peernetwork.user.ui.model.UiOverview
 import eu.peernetwork.core.ui.design.compose.DesignAsyncImage
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffold
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
-import eu.peernetwork.core.ui.design.compose.DesignImageZoom
+import eu.peernetwork.core.ui.design.compose.DesignZoom
 import eu.peernetwork.core.ui.design.compose.DesignLead
+import eu.peernetwork.core.ui.design.compose.DesignOverlay
 import eu.peernetwork.core.ui.extension.toInt
+import eu.peernetwork.media.core.renderer.ImageView
 import eu.peernetwork.user.ui.R
 import eu.peernetwork.user.ui.compose.Overview
 import eu.peernetwork.user.ui.compose.ProfileScaffold
@@ -99,6 +102,24 @@ fun UserScreen(
                 null
             },
             onClick = onClick,
+            avatar = {
+                DesignZoom({
+                    component.imageView()(
+                        Modifier,
+                        ImageView.Spec(
+                            it.first.imageUrl,
+                            null,
+                            ContentScale.Crop,
+                            500f,
+                        )
+                    )
+                }) {
+                    component.imageView()(
+                        Modifier,
+                        ImageView.Spec(it.first.imageUrl, null)
+                    )
+                }
+            }
         )
     }
     LaunchedEffect(lastUpdated.value) {
@@ -115,6 +136,7 @@ fun UserScreen(
     account: UiAccount,
     modifier: Modifier = Modifier,
     showPeers: Boolean,
+    avatar: @Composable () -> Unit = {},
     connection: @Composable (Pair<Boolean, Boolean>) -> Unit,
     onSettings: (() -> Unit)? = null,
     onClick: (Int) -> Unit,
@@ -122,8 +144,10 @@ fun UserScreen(
     val clickHandler by rememberUpdatedState(onClick)
     val settingsHandler by rememberUpdatedState(onSettings)
     val selectedImage = remember { mutableStateOf<String?>(null) }
+    val updatedAvatar by rememberUpdatedState(avatar)
     val updatedConnection by rememberUpdatedState(connection)
     val emptyDescription = stringResource(R.string.empty_description_message)
+    val visible = remember(selectedImage.value) { mutableStateOf(selectedImage.value != null) }
     ProfileScaffold(
         modifier = modifier,
         avatar = {
@@ -144,7 +168,8 @@ fun UserScreen(
                 }
             } else {
                 Box(
-                    modifier = Modifier.padding(vertical = 8.dp)
+                    modifier = Modifier
+                        .padding(vertical = 8.dp)
                         .padding(bottom = 4.dp)
                 ) { updatedConnection(account.isfollowing to account.isfollowed) }
             }
@@ -163,7 +188,12 @@ fun UserScreen(
             account.bio ?: emptyDescription
         )
     }
-    DesignImageZoom(selectedImage)
+    DesignOverlay(
+        visible,
+        onDismiss = {
+            selectedImage.value = null
+        }
+    ) { updatedAvatar() }
 }
 
 @Composable

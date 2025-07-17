@@ -1,7 +1,9 @@
 package eu.peernetwork.core.ui.design.compose
 
+import androidx.compose.animation.core.AnimationSpec
+import androidx.compose.animation.core.CubicBezierEasing
 import androidx.compose.animation.core.exponentialDecay
-import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.AnchoredDraggableState
@@ -66,6 +68,11 @@ fun DesignCollapsibleBottomSheet(
     confirmValueChange: (DesignCollapsibleBottomSheetState) -> Boolean = { true },
     onStateChanged: (DesignCollapsibleBottomSheetState) -> Unit = {},
     onDismiss: () -> Unit = {},
+    duration: Int = 350,
+    snapAnimationSpec: AnimationSpec<Float> = tween<Float>(
+        durationMillis = duration,
+        easing = CubicBezierEasing(0.2f, 0f, 0f, 1f)
+    ),
     content: @Composable () -> Unit
 ) {
     val updatedContent by rememberUpdatedState(content)
@@ -75,12 +82,13 @@ fun DesignCollapsibleBottomSheet(
     DesignDialog(
         state = visible,
         behind = behind,
-        onDismissRequest = onDismiss,
+        onDismiss = onDismiss,
+        duration = duration.toLong(),
         canDismiss = dialogState.value == DesignCollapsibleBottomSheetState.HIDE,
         onBackPressed = { dialogState.value = DesignCollapsibleBottomSheetState.HIDE }
     ) { controller, anim, cancelable ->
         val isDismissed = remember(anim.value, visible.value) {
-            derivedStateOf { !visible.value && anim.value == 0f }
+            derivedStateOf { !visible.value && anim.value == 1f }
         }
         DesignCollapsibleBottomSheet(
             state = dialogState.value,
@@ -89,6 +97,7 @@ fun DesignCollapsibleBottomSheet(
             orientation = orientation,
             confirmValueChange = confirmValueChange,
             onStateChanged = onStateChanged,
+            snapAnimationSpec = snapAnimationSpec,
             onDismiss = {
                 visible.value = false
                 dialogState.value = DesignCollapsibleBottomSheetState.HIDE
@@ -127,6 +136,10 @@ fun DesignCollapsibleBottomSheet(
     confirmValueChange: (DesignCollapsibleBottomSheetState) -> Boolean = { true },
     onStateChanged: (DesignCollapsibleBottomSheetState) -> Unit = {},
     onDismiss: () -> Unit = {},
+    snapAnimationSpec: AnimationSpec<Float> = tween<Float>(
+        durationMillis = 350,
+        easing = CubicBezierEasing(0.2f, 0f, 0f, 1f)
+    ),
     peekHeight: Dp,
     content: @Composable () -> Unit
 ) {
@@ -141,7 +154,7 @@ fun DesignCollapsibleBottomSheet(
             initialValue = state,
             positionalThreshold = { with(density) { 56.dp.toPx() } },
             velocityThreshold = { with(density) { 125.dp.toPx() } },
-            snapAnimationSpec = spring<Float>(),
+            snapAnimationSpec = snapAnimationSpec,
             decayAnimationSpec = exponentialDecay<Float>(),
             confirmValueChange = confirmValueChange,
         )
@@ -232,9 +245,10 @@ fun DesignCollapsibleBottomSheet(
             handleStateChanged(draggableState.currentValue)
         }
     }
-    DisposableEffect(draggableState.currentValue) {
+    DisposableEffect(draggableState.isAnimationRunning) {
         onDispose {
-            if (draggableState.currentValue == DesignCollapsibleBottomSheetState.HIDE) {
+            if (!draggableState.isAnimationRunning &&
+                draggableState.settledValue == DesignCollapsibleBottomSheetState.HIDE) {
                 handleDismiss()
             }
         }

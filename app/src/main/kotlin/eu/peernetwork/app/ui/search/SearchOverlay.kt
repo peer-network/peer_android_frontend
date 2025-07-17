@@ -41,7 +41,7 @@ fun SearchOverlay(
     DesignOverlay(
         startDestination = "overlay",
         state = visible,
-        onDismissRequest = { overlay.value = SearchOverlayState.Empty }
+        onDismiss = { overlay.value = SearchOverlayState.Empty }
     ) { controller ->
         val overlayState = remember { mutableStateOf<SearchOverlayState?>(overlay.value) }
         SearchNavigation(

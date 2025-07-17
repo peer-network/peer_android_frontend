@@ -34,7 +34,6 @@ import eu.peernetwork.social.ui.model.UiMember
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 fun MemberDialog(
-    tag: String,
     postLimit: Int,
     showSheet: MutableState<Boolean>,
     provider: UiComponentProvider,
@@ -45,9 +44,8 @@ fun MemberDialog(
     val focus = remember { FocusRequester() }
     val handleClick by rememberUpdatedState(onClick)
     DesignOverlay(
-        tag,
         showSheet,
-        onDismissRequest = { showSheet.value = false }
+        onDismiss = { showSheet.value = false }
     ) {
         MemberDialog(state, showSheet, focus) {
             MemberScreen(

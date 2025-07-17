@@ -10,6 +10,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.LazyPagingItems
 import eu.peernetwork.blog.ui.compose.PostSummary
@@ -20,6 +21,8 @@ import eu.peernetwork.blog.ui.model.UiComment
 fun CommentListing(
     likes: State<Map<String, UiComment>>,
     lazyPagingItems: LazyPagingItems<UiComment>,
+    size: IntSize,
+    modifier: Modifier = Modifier,
     onLike: (UiComment) -> Unit = {},
     titleOnClick: (String) -> Unit = {},
     onMentionClick: (String) -> Unit = {},
@@ -28,7 +31,7 @@ fun CommentListing(
 ) {
     val handleOnLike by rememberUpdatedState(onLike)
     val handleTitleOnClick by rememberUpdatedState(titleOnClick)
-    LazyColumn(modifier = Modifier.fillMaxSize()) {
+    LazyColumn(modifier = Modifier.fillMaxSize().then(modifier)) {
         items(lazyPagingItems.itemCount) { index ->
             lazyPagingItems[index]?.let { comment ->
                 PostSummary(
@@ -50,6 +53,6 @@ fun CommentListing(
         }
         item { Box(modifier = Modifier
             .navigationBarsPadding()
-            .padding(bottom = 200.dp)) }
+            .padding(bottom = size.height.dp)) }
     }
 }

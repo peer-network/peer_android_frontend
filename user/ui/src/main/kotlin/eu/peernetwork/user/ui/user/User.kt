@@ -3,9 +3,10 @@ package eu.peernetwork.user.ui.user
 import android.content.Context
 import androidx.lifecycle.ViewModelProvider
 import eu.peernetwork.core.ui.component.UiComponent
+import eu.peernetwork.media.core.provider.MediaProvider
 import eu.peernetwork.user.ui.provider.UserProvider
 
-interface User : UserProvider {
+interface User : UserProvider, MediaProvider {
     @javax.inject.Scope
     @Retention(AnnotationRetention.RUNTIME)
     annotation class Scope

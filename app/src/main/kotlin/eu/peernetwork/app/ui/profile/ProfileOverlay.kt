@@ -11,7 +11,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.compose.rememberNavController
 import eu.peernetwork.app.ui.feed.navigateToTagSearch
 import eu.peernetwork.app.ui.feed.navigateToUsernameSearch
 import eu.peernetwork.blog.ui.post.photo.PhotoOverlay
@@ -57,7 +56,7 @@ fun ProfileOverlay(
     DesignOverlay(
         startDestination = "overlay",
         state = visible,
-        onDismissRequest = { overlay.value = ProfileOverlayState.Empty }
+        onDismiss = { overlay.value = ProfileOverlayState.Empty }
     ) { controller ->
         DesignOverlayPage(
             modifier = Modifier
