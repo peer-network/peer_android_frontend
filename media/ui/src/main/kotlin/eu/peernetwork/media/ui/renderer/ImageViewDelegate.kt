@@ -31,7 +31,7 @@ class ImageViewDelegate @Inject constructor(
                     if (spec.blur != 0f) {
                         transformations(transformer)
                     } else {
-                        size(with(LocalDensity.current) { 640.dp.roundToPx() })
+                        size(with(LocalDensity.current) { spec.width.dp.roundToPx() })
                     }
                 }
                 .build(),

@@ -18,7 +18,7 @@ import androidx.paging.compose.LazyPagingItems
 import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.blog.domain.model.Relation
 import eu.peernetwork.blog.ui.model.UiPost
-import eu.peernetwork.blog.ui.compose.PostPageSkeleton
+import eu.peernetwork.blog.ui.compose.PostPlaceholder
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
 import eu.peernetwork.core.common.model.Pageable
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
@@ -77,7 +77,7 @@ fun PhotoScreen(
     DesignPagingScaffold<UiPost>(
         state = derivedState,
         onRefresh = { viewModel.load(Pageable(0, postLimit), relation, criteria) },
-        placeholder = { PostPageSkeleton() },
+        placeholder = { PostPlaceholder() },
         errorContent = { error, refresh ->
             DesignError(refresh, error, component.resource())
         }

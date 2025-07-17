@@ -2,8 +2,10 @@ package eu.peernetwork.core.ui.design.compose
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
-import android.animation.ObjectAnimator
+import android.animation.ValueAnimator
 import android.app.Dialog
+import android.graphics.Color
+import android.view.View
 import android.view.WindowManager
 import android.view.animation.PathInterpolator
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
@@ -92,9 +94,11 @@ fun  DesignDialog(
 
 @Composable
 fun  DesignDialog(
-    tag: String,
     state: State<Boolean>,
+    startDestination: String? = null,
     behind: Boolean = false,
+    canDismiss: Boolean = true,
+    onBackPressed: () -> Unit = {},
     duration: Long = 350,
     onDismissRequest: () -> Unit,
     content: @Composable (NavHostController, State<Float>, MutableState<Boolean>) -> Unit,
@@ -106,6 +110,7 @@ fun  DesignDialog(
     val dispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
     val isDarkMode = !MaterialTheme.colorScheme.isLightTheme()
     val updatedContent by rememberUpdatedState(content)
+    val handleBackPressed by rememberUpdatedState(onBackPressed)
     val handleDismissRequest by rememberUpdatedState(onDismissRequest)
     val cancelable = remember { mutableStateOf(false) }
     val session = remember { mutableLongStateOf(System.currentTimeMillis()) }
@@ -114,6 +119,10 @@ fun  DesignDialog(
     val dialog = remember(session.longValue) {
         object : Dialog(context, R.style.Theme_Peer_Overlay) {
             override fun onBackPressed() {
+                handleBackPressed()
+                if (!canDismiss) {
+                    return
+                }
                 if (dispatcher?.hasEnabledCallbacks() != true || cancelable.value) {
                     dismiss()
                 } else {
@@ -124,7 +133,7 @@ fun  DesignDialog(
             override fun show() {
                 super.show()
                 window?.decorView?.let {
-                    ObjectAnimator.ofFloat(it, "alpha", 0f, 1f).apply {
+                    ValueAnimator.ofFloat(0f, 1f).apply {
                         this.duration = duration
                         this.interpolator = interpolator
                         addUpdateListener { animation.floatValue = it.animatedValue as Float }
@@ -135,7 +144,7 @@ fun  DesignDialog(
             override fun dismiss() {
                 handleDismissRequest()
                 window?.decorView?.let {
-                    ObjectAnimator.ofFloat(it, "alpha", 1f, 0f).apply {
+                    ValueAnimator.ofFloat(1f, 0f).apply {
                         this.duration = duration
                         this.interpolator = interpolator
                         addUpdateListener { animation.floatValue = it.animatedValue as Float }
@@ -153,6 +162,12 @@ fun  DesignDialog(
             window?.apply {
                 setWindowAnimations(0)
                 setBackgroundDrawable(null)
+                addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+                clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)
+                navigationBarColor = Color.TRANSPARENT
+                decorView.systemUiVisibility =
+                    View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or
+                            View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                 if (!behind) {
                     clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
                 }
@@ -176,7 +191,7 @@ fun  DesignDialog(
                                     }
                                     updatedContent(controller, animation, cancelable)
                                     LaunchedEffect(currentStack.value) {
-                                        cancelable.value = currentStack.value == tag || isStackEmpty.value
+                                        cancelable.value = currentStack.value == startDestination || isStackEmpty.value
                                     }
                                     DisposableEffect(session.longValue) {
                                         onDispose {

@@ -24,7 +24,7 @@ import eu.peernetwork.core.ui.theme.PeerTheme
 @Composable
 fun PostPlaceholder(
     modifier: Modifier = Modifier,
-    contentPaddingValues: PaddingValues = PaddingValues(16.dp)
+    contentPaddingValues: PaddingValues
 ) {
     PostScaffold(
         modifier = modifier.padding(contentPaddingValues),
@@ -52,18 +52,15 @@ fun PostPlaceholder(
 }
 
 @Composable
-fun PostPageSkeleton(
-    modifier: Modifier = Modifier,
-    contentPaddingValues: PaddingValues = PaddingValues(16.dp)
-) {
+fun PostPlaceholder(modifier: Modifier = Modifier) {
     Box(modifier = Modifier.fillMaxSize()
         .verticalScroll(rememberScrollState())
-    ) { PostPlaceholder(modifier, contentPaddingValues) }
+    ) { PostPlaceholder(modifier, PaddingValues(16.dp)) }
 }
 
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
-fun PreviewPostSkeleton() {
+fun PreviewPostPlaceholder() {
     PeerTheme {
         PostPlaceholder(modifier = Modifier.padding(8.dp))
     }

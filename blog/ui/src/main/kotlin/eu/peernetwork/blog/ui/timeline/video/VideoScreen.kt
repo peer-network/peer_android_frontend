@@ -18,7 +18,7 @@ import androidx.paging.compose.LazyPagingItems
 import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.blog.domain.model.Relation
 import eu.peernetwork.blog.ui.model.UiVideo
-import eu.peernetwork.blog.ui.compose.PostPageSkeleton
+import eu.peernetwork.blog.ui.compose.PostPlaceholder
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.moderation.ModerationScreen
@@ -80,7 +80,7 @@ fun VideoScreen(
     DesignPagingScaffold<UiVideo>(
         state = derivedState,
         onRefresh = { viewModel.load(Pageable(0, postLimit), relation, criteria) },
-        placeholder = { PostPageSkeleton() },
+        placeholder = { PostPlaceholder() },
         errorContent = { error, refresh ->
             DesignError(refresh, error, component.resource())
         }

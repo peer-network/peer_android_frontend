@@ -23,17 +23,19 @@ fun SearchNavigation(
     userId: String,
     component: Search.Component,
     viewModelStore: ViewModelState,
-    search: @Composable (NavHostController) -> Unit
+    controller: NavHostController,
+    startDestination: String = "search",
+    content: @Composable (NavHostController) -> Unit
 ) {
-    val controller = rememberNavController()
-    val updatedContent by rememberUpdatedState(search)
+    val updatedContent by rememberUpdatedState(content)
     var id by remember { mutableStateOf<String>("") }
     val requireUpdate = remember { mutableStateOf(false) }
     DesignRouter(
         navController = controller,
-        startDestination = "search",
+        startDestination = startDestination,
     ) {
         composable("search") { updatedContent(controller) }
+        composable("overlay") { updatedContent(controller) }
         composable(
             "profile/{id}",
             arguments = listOf(navArgument("id") {

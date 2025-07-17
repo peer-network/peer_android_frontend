@@ -77,8 +77,8 @@ fun DesignOverlay(
 ) {
     val updatedContent by rememberUpdatedState(content)
     DesignDialog(
-        tag = startDestination,
         state = state,
+        startDestination = startDestination,
         behind = false,
         onDismissRequest = onDismissRequest
     ) { controller, animation, cancelable ->
@@ -89,11 +89,10 @@ fun DesignOverlay(
         ) {
             val visibility = remember { mutableStateOf(false) }
             val offset = with(LocalDensity.current) { 56.dp.toPx() }
-            Box(modifier = Modifier.background(MaterialTheme.colorScheme.background)
-                .graphicsLayer {
+            Box(modifier = Modifier.graphicsLayer {
                     alpha = animation.value
                     translationY = (1 - animation.value) * offset
-                }
+                }.background(MaterialTheme.colorScheme.background)
             ) { updatedContent(controller) }
             LaunchedEffect(state.value) {
                 visibility.value = state.value

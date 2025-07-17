@@ -1,25 +1,18 @@
 package eu.peernetwork.blog.ui.explore
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.lazy.grid.LazyGridState
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -28,9 +21,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
-import eu.peernetwork.blog.ui.compose.PostPageSkeleton
+import eu.peernetwork.blog.ui.compose.PhotoPlaceholder
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.core.common.model.Pageable
 import eu.peernetwork.core.ui.R
@@ -47,7 +38,9 @@ fun ExploreScreen(
     postLimit: Int,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    listState: LazyGridState = rememberLazyGridState(),
+    onClick: (UiPost, Int) -> Unit
 ) {
     val context = LocalContext.current
     val component = remember {
@@ -77,61 +70,40 @@ fun ExploreScreen(
             }
         }
     }
-    DesignScaffold(
-        alwaysReturn = true,
-        header = { Spacer(modifier = Modifier.height(64.dp)) },
-        footer = {  },
-        modifier = Modifier
-            .statusBarsPadding()
-            .navigationBarsPadding()
-    ) { state ->
-        DesignPagingScaffold<UiPost>(
-            state = derivedState,
-            onRefresh = { viewModel.get(Pageable(0, postLimit)) },
-            placeholder = { PostPageSkeleton() },
-            errorContent = { error, refresh ->
-                DesignError(refresh, error, component.resource())
-            },
-            modifier = modifier
-        ) { state, lazyPagingItems ->
-            val refreshState = remember {
-                derivedStateOf {
-                    if (lazyPagingItems.loadState.refresh is LoadState.Loading) {
-                        DesignStatefulScaffoldState.Loading
-                    } else if (lazyPagingItems.loadState.refresh is LoadState.Error) {
-                        DesignStatefulScaffoldState.Error(
-                            (lazyPagingItems.loadState.refresh as LoadState.Error).error
-                        )
-                    } else {
-                        state.value
-                    }
+    DesignPagingScaffold<UiPost>(
+        state = derivedState,
+        onRefresh = { viewModel.get(Pageable(0, postLimit)) },
+        placeholder = { PhotoPlaceholder(modifier = Modifier.padding(top = 56.dp)) },
+        errorContent = { error, refresh ->
+            DesignError(refresh, error, component.resource())
+        },
+        modifier = modifier
+    ) { state, lazyPagingItems ->
+        val refreshState = remember {
+            derivedStateOf {
+                if (lazyPagingItems.loadState.refresh is LoadState.Loading) {
+                    DesignStatefulScaffoldState.Loading
+                } else if (lazyPagingItems.loadState.refresh is LoadState.Error) {
+                    DesignStatefulScaffoldState.Error(
+                        (lazyPagingItems.loadState.refresh as LoadState.Error).error
+                    )
+                } else {
+                    state.value
                 }
             }
+        }
+        ExploreScreen {
             DesignRefreshableScaffold<LazyPagingItems<UiPost>>(
                 state = refreshState,
                 onRefresh = { lazyPagingItems.refresh() }
-            ) {
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(3),
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(4.dp),
-                    verticalArrangement = Arrangement.spacedBy(4.dp),
-                    horizontalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
-                    items(lazyPagingItems.itemCount) { index ->
-                        val post = lazyPagingItems[index]
-                        if (post?.type == UiPost.Type.IMAGE) {
-                            ExplorePhotoItem(post = post, onClick = {})
-                        }
-                    }
-                }
-            }
+            ) { ExploreListing(component, lazyPagingItems, listState, onClick) }
         }
     }
 }
 
 @Composable
 fun ExploreScreen(content: @Composable () -> Unit) {
+    val updatedContent by rememberUpdatedState(content)
     DesignScaffold(
         alwaysReturn = true,
         header = { Spacer(modifier = Modifier.height(64.dp)) },
@@ -139,27 +111,5 @@ fun ExploreScreen(content: @Composable () -> Unit) {
         modifier = Modifier
             .statusBarsPadding()
             .navigationBarsPadding()
-    ) { state ->
-    }
-}
-
-@Composable
-fun ExplorePhotoItem(post: UiPost, onClick: () -> Unit) {
-    Box(
-        modifier = Modifier
-            .aspectRatio(1f)
-            .clip(RoundedCornerShape(4.dp))
-            .clickable { onClick() }
-    ) {
-        AsyncImage(
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(post.media.first().path)
-                .crossfade(true)
-                .size(300)
-                .build(),
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier.fillMaxSize()
-        )
-    }
+    ) { state -> updatedContent() }
 }

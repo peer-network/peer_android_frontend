@@ -7,9 +7,11 @@ import eu.peernetwork.app.ui.profile.Profile
 import eu.peernetwork.blog.ui.explore.Explore
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
+import eu.peernetwork.social.ui.connection.Connection
 import eu.peernetwork.social.ui.search.member.Member
 import eu.peernetwork.social.ui.search.tag.Tag
 import eu.peernetwork.social.ui.search.title.Title
+import eu.peernetwork.wallet.ui.confirmation.Confirmation
 
 interface Search : ApplicationProvider {
     @javax.inject.Scope
@@ -21,7 +23,16 @@ interface Search : ApplicationProvider {
         dependencies = [ Search::class ],
         modules = [ SearchModule::class ]
     )
-    interface Component : UiComponentProvider, Search, Title, Member, Tag, Profile, Feed, Explore
+    interface Component : UiComponentProvider,
+        Search,
+        Title,
+        Member,
+        Tag,
+        Profile,
+        Feed,
+        Explore,
+        Connection,
+        Confirmation
 
     class Builder(private val dependency: Search) : UiComponent.DefaultBuilder<Search, Component>() {
         override fun build(context: Context): Component {

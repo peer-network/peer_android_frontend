@@ -170,7 +170,7 @@ fun ExplorerScreen(
                 expanded,
                 default = title.value,
                 modifier = Modifier
-                    .padding(vertical = 6.dp)
+                    .padding(vertical = 4.dp)
                     .clip(RoundedCornerShape(6.dp))
                     .background(MaterialTheme.colorScheme.surfaceVariant),
             ) {

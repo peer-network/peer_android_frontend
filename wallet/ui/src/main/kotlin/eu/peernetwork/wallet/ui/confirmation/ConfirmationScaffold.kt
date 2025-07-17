@@ -34,7 +34,10 @@ fun ConfirmationScaffold(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 16.dp, horizontal = 24.dp)
+            .padding(
+                vertical = 16.dp,
+                horizontal = 24.dp
+            )
     ) {
         CompositionLocalProvider(LocalTextStyle provides MaterialTheme.typography.bodyLarge.copy(
             color = MaterialTheme.colorScheme.onPrimary
@@ -48,7 +51,6 @@ fun ConfirmationScaffold(
         ) { updatedContent() }
         Spacer(modifier = Modifier.height(14.dp))
         updatedFooter()
-        Spacer(modifier = Modifier.height(42.dp))
     }
 }
 
