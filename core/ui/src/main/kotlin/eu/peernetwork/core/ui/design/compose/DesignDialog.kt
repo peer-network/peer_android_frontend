@@ -40,7 +40,7 @@ import eu.peernetwork.core.ui.theme.PeerTheme
 fun  DesignDialog(
     state: State<Boolean>,
     startDestination: String? = null,
-    behind: Boolean = false,
+    dim: Boolean = false,
     canDismiss: Boolean = true,
     onBackPressed: () -> Unit = {},
     duration: Long = 350,
@@ -112,7 +112,7 @@ fun  DesignDialog(
                 decorView.systemUiVisibility =
                     View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or
                             View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                if (!behind) {
+                if (!dim) {
                     clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
                 }
             }

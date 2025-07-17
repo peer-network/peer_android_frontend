@@ -20,7 +20,7 @@ import eu.peernetwork.core.ui.theme.PeerTheme
 @Composable
 fun PhotoPlaceholder(
     modifier: Modifier = Modifier,
-    contentPaddingValues: PaddingValues,
+    contentPaddingValues: PaddingValues = PaddingValues(0.dp),
     cell: Int = 3,
     size: Int = cell,
 ) {
@@ -39,16 +39,9 @@ fun PhotoPlaceholder(
 }
 
 @Composable
-fun PhotoPlaceholder(modifier: Modifier = Modifier) {
-    Box(modifier = Modifier.fillMaxSize()) {
-        PhotoPlaceholder(modifier, PaddingValues(16.dp))
-    }
-}
-
-@Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun PreviewPhotoPlaceholder() {
     PeerTheme {
-        PhotoPlaceholder(modifier = Modifier.fillMaxSize().padding(4.dp))
+        PhotoPlaceholder(Modifier.fillMaxSize().padding(4.dp))
     }
 }

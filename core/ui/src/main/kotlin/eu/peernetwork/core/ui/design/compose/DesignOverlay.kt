@@ -31,7 +31,7 @@ fun DesignOverlay(
     DesignDialog(
         state = state,
         startDestination = startDestination,
-        behind = false,
+        dim = false,
         onDismiss = onDismiss
     ) { controller, animation, cancelable ->
         Box(

@@ -9,6 +9,7 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.common.VideoSize
 import androidx.media3.common.util.UnstableApi
+import androidx.media3.exoplayer.DefaultLoadControl
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
 import eu.peernetwork.media.core.interactor.VideoInteractor
@@ -59,7 +60,13 @@ class VideoInteractorDelegate @Inject constructor(
                 .setForceLowestBitrate(true)
                 .setMaxVideoBitrate(1_500_000)
                 .build()
-        }).build().apply {
+        }).setLoadControl(DefaultLoadControl.Builder()
+            .setBufferDurationsMs(
+                1500,
+                5000,
+                500,
+                1000
+            ).build()).build().apply {
             videoScalingMode = C.VIDEO_SCALING_MODE_SCALE_TO_FIT
             repeatMode = Player.REPEAT_MODE_ALL
         }

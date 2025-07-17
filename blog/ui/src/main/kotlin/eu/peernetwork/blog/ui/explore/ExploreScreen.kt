@@ -73,7 +73,7 @@ fun ExploreScreen(
     DesignPagingScaffold<UiPost>(
         state = derivedState,
         onRefresh = { viewModel.get(Pageable(0, postLimit)) },
-        placeholder = { PhotoPlaceholder(modifier = Modifier.padding(top = 56.dp)) },
+        placeholder = { PhotoPlaceholder(modifier = Modifier.padding(top = 72.dp)) },
         errorContent = { error, refresh ->
             DesignError(refresh, error, component.resource())
         },

@@ -1,7 +1,9 @@
 package eu.peernetwork.core.ui.design.compose
 
+import androidx.compose.animation.core.AnimationSpec
+import androidx.compose.animation.core.CubicBezierEasing
 import androidx.compose.animation.core.exponentialDecay
-import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.AnchoredDraggableState
@@ -32,22 +34,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.layout.Measurable
-import androidx.compose.ui.layout.MeasureResult
-import androidx.compose.ui.layout.MeasureScope
-import androidx.compose.ui.node.LayoutModifierNode
-import androidx.compose.ui.node.ModifierNodeElement
-import androidx.compose.ui.platform.InspectorInfo
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.debugInspectorInfo
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Constraints
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.core.ui.theme.PeerTheme
-import kotlin.math.roundToInt
-
-enum class DesignBottomSheetScaffoldState { EXPAND, HIDE }
 
 @Composable
 fun DesignBottomSheetScaffold(
@@ -55,21 +45,28 @@ fun DesignBottomSheetScaffold(
     behind: Boolean = true,
     color: Color = MaterialTheme.colorScheme.tertiaryContainer,
     orientation: Orientation = Orientation.Vertical,
-    confirmValueChange: (DesignBottomSheetScaffoldState) -> Boolean = { true },
-    onStateChanged: (DesignBottomSheetScaffoldState) -> Unit = {},
+    confirmValueChange: (DesignBottomSheetState) -> Boolean = { true },
+    onStateChanged: (DesignBottomSheetState) -> Unit = {},
     onDismiss: () -> Unit = {},
+    snapAnimationSpec: AnimationSpec<Float> = tween<Float>(
+        durationMillis = 350,
+        easing = CubicBezierEasing(0.2f, 0f, 0f, 1f)
+    ),
     content: @Composable () -> Unit
 ) {
     val visible = remember { mutableStateOf(false) }
     val updatedContent by rememberUpdatedState(content)
     val handleOnDismiss by rememberUpdatedState(onDismiss)
-    val dialogState = remember { mutableStateOf(DesignBottomSheetScaffoldState.HIDE) }
+    val dialogState = remember { mutableStateOf(DesignBottomSheetState.HIDE) }
     DesignDialog(
         state = visible,
-        behind = behind,
-        onDismiss = onDismiss,
-        canDismiss = dialogState.value == DesignBottomSheetScaffoldState.HIDE,
-        onBackPressed = { dialogState.value = DesignBottomSheetScaffoldState.HIDE }
+        dim = behind,
+        onDismiss = {
+            visible.value = false
+            handleOnDismiss()
+        },
+        canDismiss = dialogState.value == DesignBottomSheetState.HIDE,
+        onBackPressed = { dialogState.value = DesignBottomSheetState.HIDE }
     ) { controller, anim, cancelable ->
         val isDismissed = remember(anim.value, visible.value) {
             derivedStateOf { !visible.value && anim.value == 0f }
@@ -82,9 +79,10 @@ fun DesignBottomSheetScaffold(
             onStateChanged = onStateChanged,
             onDismiss = {
                 visible.value = false
-                dialogState.value = DesignBottomSheetScaffoldState.HIDE
+                dialogState.value = DesignBottomSheetState.HIDE
                 handleOnDismiss()
-            }
+            },
+            snapAnimationSpec = snapAnimationSpec,
         ) { updatedContent() }
         LaunchedEffect(isDismissed.value) {
             if (isDismissed.value) {
@@ -93,7 +91,7 @@ fun DesignBottomSheetScaffold(
         }
         LaunchedEffect(state.value) {
             if (state.value) {
-                dialogState.value = DesignBottomSheetScaffoldState.EXPAND
+                dialogState.value = DesignBottomSheetState.EXPAND
             }
         }
     }
@@ -101,7 +99,7 @@ fun DesignBottomSheetScaffold(
         if (state.value) {
             visible.value = true
         } else {
-            dialogState.value = DesignBottomSheetScaffoldState.HIDE
+            dialogState.value = DesignBottomSheetState.HIDE
         }
     }
 }
@@ -109,16 +107,20 @@ fun DesignBottomSheetScaffold(
 @Composable
 @OptIn(ExperimentalFoundationApi::class)
 fun DesignBottomSheetScaffold(
-    state: DesignBottomSheetScaffoldState,
+    state: DesignBottomSheetState,
     color: Color = MaterialTheme.colorScheme.tertiaryContainer,
     shape: Shape = ShapeDefaults.ExtraLarge.copy(
         bottomStart = CornerSize(0.0.dp),
         bottomEnd = CornerSize(0.0.dp)
     ),
     orientation: Orientation = Orientation.Vertical,
-    confirmValueChange: (DesignBottomSheetScaffoldState) -> Boolean = { true },
-    onStateChanged: (DesignBottomSheetScaffoldState) -> Unit = {},
+    confirmValueChange: (DesignBottomSheetState) -> Boolean = { true },
+    onStateChanged: (DesignBottomSheetState) -> Unit = {},
     onDismiss: () -> Unit = {},
+    snapAnimationSpec: AnimationSpec<Float> = tween<Float>(
+        durationMillis = 350,
+        easing = CubicBezierEasing(0.2f, 0f, 0f, 1f)
+    ),
     content: @Composable () -> Unit
 ) {
     val density = LocalDensity.current
@@ -131,7 +133,7 @@ fun DesignBottomSheetScaffold(
             initialValue = state,
             positionalThreshold = { with(density) { 56.dp.toPx() } },
             velocityThreshold = { with(density) { 125.dp.toPx() } },
-            snapAnimationSpec = spring<Float>(),
+            snapAnimationSpec = snapAnimationSpec,
             decayAnimationSpec = exponentialDecay<Float>(),
             confirmValueChange = confirmValueChange,
         )
@@ -146,8 +148,9 @@ fun DesignBottomSheetScaffold(
                 .draggableAnchors(draggableState, orientation) { sheetSize, constraints ->
                     val layoutHeight = constraints.maxHeight.toFloat()
                     DraggableAnchors {
-                        DesignBottomSheetScaffoldState.EXPAND at 0f
-                        DesignBottomSheetScaffoldState.HIDE at layoutHeight
+                        DesignBottomSheetState.EXPAND at 0f
+                        DesignBottomSheetState.COLLAPSE at layoutHeight
+                        DesignBottomSheetState.HIDE at layoutHeight
                     } to state
                 }.anchoredDraggable(
                     state = draggableState,
@@ -170,96 +173,12 @@ fun DesignBottomSheetScaffold(
             handleStateChanged(draggableState.currentValue)
         }
     }
-    DisposableEffect(draggableState.currentValue) {
+    DisposableEffect(draggableState.isAnimationRunning) {
         onDispose {
-            if (draggableState.currentValue == DesignBottomSheetScaffoldState.HIDE) {
+            if (!draggableState.isAnimationRunning &&
+                draggableState.currentValue != DesignBottomSheetState.EXPAND) {
                 handleDismiss()
             }
-        }
-    }
-}
-
-@OptIn(ExperimentalFoundationApi::class)
-private fun <T> Modifier.draggableAnchors(
-    state: AnchoredDraggableState<T>,
-    orientation: Orientation,
-    anchors: (size: IntSize, constraints: Constraints) -> Pair<DraggableAnchors<T>, T>,
-) = this then DraggableAnchorsElement(state, anchors, orientation)
-
-@OptIn(ExperimentalFoundationApi::class)
-private class DraggableAnchorsElement<T>(
-    private val state: AnchoredDraggableState<T>,
-    private val anchors: (size: IntSize, constraints: Constraints) -> Pair<DraggableAnchors<T>, T>,
-    private val orientation: Orientation
-) : ModifierNodeElement<DraggableAnchorsNode<T>>() {
-
-    override fun create() = DraggableAnchorsNode(state, anchors, orientation)
-
-    override fun update(node: DraggableAnchorsNode<T>) {
-        node.state = state
-        node.anchors = anchors
-        node.orientation = orientation
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-
-        if (other !is DraggableAnchorsElement<*>) return false
-
-        if (state != other.state) return false
-        if (anchors !== other.anchors) return false
-        if (orientation != other.orientation) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = state.hashCode()
-        result = 31 * result + anchors.hashCode()
-        result = 31 * result + orientation.hashCode()
-        return result
-    }
-
-    override fun InspectorInfo.inspectableProperties() {
-        debugInspectorInfo {
-            properties["state"] = state
-            properties["anchors"] = anchors
-            properties["orientation"] = orientation
-        }
-    }
-}
-
-@OptIn(ExperimentalFoundationApi::class)
-private class DraggableAnchorsNode<T>(
-    var state: AnchoredDraggableState<T>,
-    var anchors: (size: IntSize, constraints: Constraints) -> Pair<DraggableAnchors<T>, T>,
-    var orientation: Orientation
-) : Modifier.Node(), LayoutModifierNode {
-    private var didLookahead: Boolean = false
-
-    override fun onDetach() {
-        didLookahead = false
-    }
-
-    override fun MeasureScope.measure(
-        measurable: Measurable,
-        constraints: Constraints
-    ): MeasureResult {
-        val placeable = measurable.measure(constraints)
-        if (!isLookingAhead || !didLookahead) {
-            val size = IntSize(placeable.width, placeable.height)
-            anchors(size, constraints).run { state.updateAnchors(first, second) }
-        }
-        didLookahead = isLookingAhead || didLookahead
-        return layout(placeable.width, placeable.height) {
-            val offset = if (isLookingAhead) {
-                state.anchors.positionOf(state.targetValue)
-            } else {
-                state.requireOffset()
-            }
-            val xOffset = if (orientation == Orientation.Horizontal) offset else 0f
-            val yOffset = if (orientation == Orientation.Vertical) offset else 0f
-            placeable.place(xOffset.roundToInt(), yOffset.roundToInt())
         }
     }
 }
@@ -269,18 +188,18 @@ private class DraggableAnchorsNode<T>(
 fun PreviewDesignBottomSheetScaffold() {
     PeerTheme {
         val state = remember {
-            mutableStateOf<DesignBottomSheetScaffoldState>(DesignBottomSheetScaffoldState.HIDE)
+            mutableStateOf<DesignBottomSheetState>(DesignBottomSheetState.HIDE)
         }
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier.fillMaxSize()
         ) {
             DesignButton({
-                state.value = DesignBottomSheetScaffoldState.EXPAND
+                state.value = DesignBottomSheetState.EXPAND
             }) { Text("Expand") }
             DesignBottomSheetScaffold(
                 state = state.value,
-                onDismiss = { state.value = DesignBottomSheetScaffoldState.HIDE }
+                onDismiss = { state.value = DesignBottomSheetState.HIDE }
             ) {
                 Box(modifier = Modifier
                     .fillMaxWidth()

@@ -1,8 +1,10 @@
 package eu.peernetwork.core.ui.design.compose
 
 import android.annotation.SuppressLint
+import androidx.compose.animation.core.AnimationSpec
+import androidx.compose.animation.core.CubicBezierEasing
 import androidx.compose.animation.core.exponentialDecay
-import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.AnchoredDraggableState
@@ -60,29 +62,38 @@ import eu.peernetwork.core.ui.theme.PeerTheme
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
+enum class DesignBottomSheetState { EXPAND, COLLAPSE, HIDE }
+
 @Composable
 fun DesignBottomSheet(
     state: State<Boolean>,
-    behind: Boolean = true,
+    dim: Boolean = true,
     color: Color = MaterialTheme.colorScheme.tertiaryContainer,
     peekHeight: Dp = 400.dp,
     orientation: Orientation = Orientation.Vertical,
-    confirmValueChange: (DesignCollapsibleBottomSheetState) -> Boolean = { true },
-    onStateChanged: (DesignCollapsibleBottomSheetState) -> Unit = {},
+    confirmValueChange: (DesignBottomSheetState) -> Boolean = { true },
+    onStateChanged: (DesignBottomSheetState) -> Unit = {},
     onDismiss: () -> Unit = {},
+    snapAnimationSpec: AnimationSpec<Float> = tween<Float>(
+        durationMillis = 350,
+        easing = CubicBezierEasing(0.2f, 0f, 0f, 1f)
+    ),
     footer: @Composable () -> Unit = {},
     content: @Composable (State<IntSize>) -> Unit
 ) {
     val visible = remember { mutableStateOf(false) }
     val updatedContent by rememberUpdatedState(content)
     val handleOnDismiss by rememberUpdatedState(onDismiss)
-    val dialogState = remember { mutableStateOf(DesignCollapsibleBottomSheetState.HIDE) }
+    val dialogState = remember { mutableStateOf(DesignBottomSheetState.HIDE) }
     DesignDialog(
         state = visible,
-        behind = behind,
-        onDismiss = onDismiss,
-        canDismiss = dialogState.value == DesignCollapsibleBottomSheetState.HIDE,
-        onBackPressed = { dialogState.value = DesignCollapsibleBottomSheetState.HIDE }
+        dim = dim,
+        onDismiss = {
+            visible.value = false
+            handleOnDismiss()
+        },
+        canDismiss = dialogState.value == DesignBottomSheetState.HIDE,
+        onBackPressed = { dialogState.value = DesignBottomSheetState.HIDE }
     ) { controller, anim, cancelable ->
         val isDismissed = remember(anim.value, visible.value) {
             derivedStateOf { !visible.value && anim.value == 0f }
@@ -96,9 +107,10 @@ fun DesignBottomSheet(
             onStateChanged = onStateChanged,
             onDismiss = {
                 visible.value = false
-                dialogState.value = DesignCollapsibleBottomSheetState.HIDE
+                dialogState.value = DesignBottomSheetState.HIDE
                 handleOnDismiss()
             },
+            snapAnimationSpec = snapAnimationSpec,
             footer = footer
         ) { updatedContent(it) }
         LaunchedEffect(isDismissed.value) {
@@ -108,7 +120,7 @@ fun DesignBottomSheet(
         }
         LaunchedEffect(state.value) {
             if (state.value) {
-                dialogState.value = DesignCollapsibleBottomSheetState.COLLAPSE
+                dialogState.value = DesignBottomSheetState.COLLAPSE
             }
         }
     }
@@ -116,7 +128,7 @@ fun DesignBottomSheet(
         if (state.value) {
             visible.value = true
         } else {
-            dialogState.value = DesignCollapsibleBottomSheetState.HIDE
+            dialogState.value = DesignBottomSheetState.HIDE
         }
     }
 }
@@ -125,17 +137,21 @@ fun DesignBottomSheet(
 @OptIn(ExperimentalFoundationApi::class)
 @SuppressLint("UnusedBoxWithConstraintsScope")
 fun DesignBottomSheet(
-    state: DesignCollapsibleBottomSheetState,
+    state: DesignBottomSheetState,
     color: Color = MaterialTheme.colorScheme.tertiaryContainer,
     shape: Shape = ShapeDefaults.ExtraLarge.copy(
         bottomStart = CornerSize(0.0.dp),
         bottomEnd = CornerSize(0.0.dp)
     ),
     orientation: Orientation = Orientation.Vertical,
-    confirmValueChange: (DesignCollapsibleBottomSheetState) -> Boolean = { true },
-    onStateChanged: (DesignCollapsibleBottomSheetState) -> Unit = {},
+    confirmValueChange: (DesignBottomSheetState) -> Boolean = { true },
+    onStateChanged: (DesignBottomSheetState) -> Unit = {},
     onDismiss: () -> Unit = {},
     peekHeight: Dp,
+    snapAnimationSpec: AnimationSpec<Float> = tween<Float>(
+        durationMillis = 350,
+        easing = CubicBezierEasing(0.2f, 0f, 0f, 1f)
+    ),
     footer: @Composable () -> Unit = {},
     content: @Composable (State<IntSize>) -> Unit
 ) {
@@ -152,63 +168,15 @@ fun DesignBottomSheet(
             initialValue = state,
             positionalThreshold = { positionalThreshold },
             velocityThreshold = { with(density) { 125.dp.toPx() } },
-            snapAnimationSpec = spring<Float>(),
+            snapAnimationSpec = snapAnimationSpec,
             decayAnimationSpec = exponentialDecay<Float>(),
             confirmValueChange = confirmValueChange,
         )
     }
     val scope = rememberCoroutineScope()
     val nestedScroll = remember(draggableState) {
-        object : NestedScrollConnection {
-            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
-                val delta = available.toFloat()
-                return if (delta < 0 && source == NestedScrollSource.UserInput) {
-                    draggableState.dispatchRawDelta(delta).toOffset()
-                } else {
-                    Offset.Zero
-                }
-            }
-
-            override fun onPostScroll(
-                consumed: Offset,
-                available: Offset,
-                source: NestedScrollSource
-            ): Offset {
-                return if (source == NestedScrollSource.UserInput) {
-                    draggableState.dispatchRawDelta(available.toFloat()).toOffset()
-                } else {
-                    Offset.Zero
-                }
-            }
-
-            override suspend fun onPreFling(available: Velocity): Velocity {
-                val toFling = available.toFloat()
-                val currentOffset = draggableState.requireOffset()
-                val minAnchor = draggableState.anchors.minAnchor()
-                return if (toFling < 0 && currentOffset > minAnchor) {
-                    scope.launch { draggableState.settle(toFling) }
-                    available
-                } else {
-                    Velocity.Zero
-                }
-            }
-
-            override suspend fun onPostFling(consumed: Velocity, available: Velocity): Velocity {
-                scope.launch { draggableState.settle(available.toFloat()) }
-                return available
-            }
-
-            private fun Float.toOffset(): Offset =
-                Offset(
-                    x = if (orientation == Orientation.Horizontal) this else 0f,
-                    y = if (orientation == Orientation.Vertical) this else 0f
-                )
-
-            @JvmName("velocityToFloat")
-            private fun Velocity.toFloat() = if (orientation == Orientation.Horizontal) x else y
-
-            @JvmName("offsetToFloat")
-            private fun Offset.toFloat(): Float = if (orientation == Orientation.Horizontal) x else y
+        bottomSheetNestedScrollConnection(draggableState, orientation) {
+            scope.launch { draggableState.settle(it) }
         }
     }
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
@@ -220,9 +188,9 @@ fun DesignBottomSheet(
                 .draggableAnchors(draggableState, orientation) { sheetSize, constraints ->
                     val layoutHeight = constraints.maxHeight.toFloat()
                     DraggableAnchors {
-                        DesignCollapsibleBottomSheetState.EXPAND at 0f
-                        DesignCollapsibleBottomSheetState.COLLAPSE at layoutHeight - peekHeightPx
-                        DesignCollapsibleBottomSheetState.HIDE at layoutHeight
+                        DesignBottomSheetState.EXPAND at 0f
+                        DesignBottomSheetState.COLLAPSE at layoutHeight - peekHeightPx
+                        DesignBottomSheetState.HIDE at layoutHeight
                     } to state
                 }.anchoredDraggable(
                     state = draggableState,
@@ -256,24 +224,82 @@ fun DesignBottomSheet(
             handleStateChanged(draggableState.currentValue)
         }
     }
-    DisposableEffect(draggableState.currentValue) {
+    DisposableEffect(draggableState.isAnimationRunning) {
         onDispose {
-            if (draggableState.currentValue == DesignCollapsibleBottomSheetState.HIDE) {
+            if (!draggableState.isAnimationRunning &&
+                draggableState.currentValue == DesignBottomSheetState.HIDE) {
                 handleDismiss()
             }
         }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+internal fun bottomSheetNestedScrollConnection(
+    state: AnchoredDraggableState<DesignBottomSheetState>,
+    orientation: Orientation,
+    onFling: (velocity: Float) -> Unit
+) : NestedScrollConnection = object : NestedScrollConnection {
+    override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+        val delta = available.toFloat()
+        return if (delta < 0 && source == NestedScrollSource.UserInput) {
+            state.dispatchRawDelta(delta).toOffset()
+        } else {
+            Offset.Zero
+        }
+    }
+
+    override fun onPostScroll(
+        consumed: Offset,
+        available: Offset,
+        source: NestedScrollSource
+    ): Offset {
+        return if (source == NestedScrollSource.UserInput) {
+            state.dispatchRawDelta(available.toFloat()).toOffset()
+        } else {
+            Offset.Zero
+        }
+    }
+
+    override suspend fun onPreFling(available: Velocity): Velocity {
+        val toFling = available.toFloat()
+        val currentOffset = state.requireOffset()
+        val minAnchor = state.anchors.minAnchor()
+        return if (toFling < 0 && currentOffset > minAnchor) {
+            onFling(toFling)
+            available
+        } else {
+            Velocity.Zero
+        }
+    }
+
+    override suspend fun onPostFling(consumed: Velocity, available: Velocity): Velocity {
+        onFling(available.toFloat())
+        return available
+    }
+
+    private fun Float.toOffset(): Offset =
+        Offset(
+            x = if (orientation == Orientation.Horizontal) this else 0f,
+            y = if (orientation == Orientation.Vertical) this else 0f
+        )
+
+    @JvmName("velocityToFloat")
+    private fun Velocity.toFloat() = if (orientation == Orientation.Horizontal) x else y
+
+    @JvmName("offsetToFloat")
+    private fun Offset.toFloat(): Float = if (orientation == Orientation.Horizontal) x else y
+}
+
 @OptIn(ExperimentalFoundationApi::class)
-private fun <T> Modifier.draggableAnchors(
+internal fun <T> Modifier.draggableAnchors(
     state: AnchoredDraggableState<T>,
     orientation: Orientation,
     anchors: (size: IntSize, constraints: Constraints) -> Pair<DraggableAnchors<T>, T>,
 ) = this then BottomSheetDraggableAnchorsElement(state, anchors, orientation)
 
 @OptIn(ExperimentalFoundationApi::class)
-private class BottomSheetDraggableAnchorsElement<T>(
+internal class BottomSheetDraggableAnchorsElement<T>(
     private val state: AnchoredDraggableState<T>,
     private val anchors: (size: IntSize, constraints: Constraints) -> Pair<DraggableAnchors<T>, T>,
     private val orientation: Orientation
@@ -316,7 +342,7 @@ private class BottomSheetDraggableAnchorsElement<T>(
 }
 
 @OptIn(ExperimentalFoundationApi::class)
-private class BottomSheetDraggableAnchorsNode<T>(
+internal class BottomSheetDraggableAnchorsNode<T>(
     var state: AnchoredDraggableState<T>,
     var anchors: (size: IntSize, constraints: Constraints) -> Pair<DraggableAnchors<T>, T>,
     var orientation: Orientation
@@ -356,7 +382,7 @@ private class BottomSheetDraggableAnchorsNode<T>(
 fun PreviewDesignBottomSheet() {
     PeerTheme {
         val state = remember {
-            mutableStateOf<DesignCollapsibleBottomSheetState>(DesignCollapsibleBottomSheetState.HIDE)
+            mutableStateOf<DesignBottomSheetState>(DesignBottomSheetState.HIDE)
         }
         Box(
             contentAlignment = Alignment.Center,
@@ -365,7 +391,7 @@ fun PreviewDesignBottomSheet() {
             DesignBottomSheet(
                 state = state.value,
                 peekHeight = 400.dp,
-                onDismiss = { state.value = DesignCollapsibleBottomSheetState.HIDE },
+                onDismiss = { state.value = DesignBottomSheetState.HIDE },
                 footer = {
                     Box(modifier = Modifier.fillMaxWidth()
                         .height(150.dp)
@@ -377,7 +403,7 @@ fun PreviewDesignBottomSheet() {
                     .background(MaterialTheme.colorScheme.tertiaryContainer))
             }
             DesignButton({
-                state.value = DesignCollapsibleBottomSheetState.COLLAPSE
+                state.value = DesignBottomSheetState.COLLAPSE
             }) { Text("Expand") }
         }
     }
