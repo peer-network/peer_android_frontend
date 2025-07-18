@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.LocalContentColor
@@ -34,10 +35,9 @@ fun ConfirmationScaffold(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(
-                vertical = 16.dp,
-                horizontal = 24.dp
-            )
+            .statusBarsPadding()
+            .padding(horizontal = 24.dp)
+            .padding(bottom = 16.dp)
     ) {
         CompositionLocalProvider(LocalTextStyle provides MaterialTheme.typography.bodyLarge.copy(
             color = MaterialTheme.colorScheme.onPrimary

@@ -52,7 +52,7 @@ fun DesignCollapsibleBottomSheet(
     confirmValueChange: (DesignBottomSheetState) -> Boolean = { true },
     onStateChanged: (DesignBottomSheetState) -> Unit = {},
     onDismiss: () -> Unit = {},
-    duration: Int = 350,
+    duration: Int = 250,
     snapAnimationSpec: AnimationSpec<Float> = tween<Float>(
         durationMillis = duration,
         easing = CubicBezierEasing(0.2f, 0f, 0f, 1f)

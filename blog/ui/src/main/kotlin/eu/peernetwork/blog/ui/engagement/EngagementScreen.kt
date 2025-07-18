@@ -15,7 +15,6 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -37,7 +36,6 @@ import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.extension.toInt
 import eu.peernetwork.core.ui.theme.LightAccentColor
 import eu.peernetwork.core.ui.theme.PeerAppRed
-import kotlinx.coroutines.launch
 
 @Composable
 fun EngagementScreen(
@@ -67,7 +65,6 @@ fun EngagementScreen(
         }
     }
     var post = remember { mutableStateOf<UiContent?>(null) }
-    val scope = rememberCoroutineScope()
     val errorMessage = stringResource(R.string.unknown_error_message)
     val hasError = remember { derivedStateOf { error.value != null } }
     val updatedContent by rememberUpdatedState(content)
@@ -112,9 +109,9 @@ fun EngagementScreen(
         postLimit,
         component,
         viewModelStoreOwner,
-        onMentionClick = { scope.launch { handleMentionClick(it) } },
-        onHashtagClick = { scope.launch { handleHashtagClick(it) } },
-        onAuthorClick = { scope.launch { handleAuthorClick(it) } }
+        onMentionClick = { handleMentionClick(it) },
+        onHashtagClick = { handleHashtagClick(it) },
+        onAuthorClick = { handleAuthorClick(it) }
     )
     component.engagementConfirmation()(
         Modifier,

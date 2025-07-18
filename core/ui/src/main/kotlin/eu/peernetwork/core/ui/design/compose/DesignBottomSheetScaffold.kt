@@ -49,7 +49,7 @@ fun DesignBottomSheetScaffold(
     onStateChanged: (DesignBottomSheetState) -> Unit = {},
     onDismiss: () -> Unit = {},
     snapAnimationSpec: AnimationSpec<Float> = tween<Float>(
-        durationMillis = 350,
+        durationMillis = 250,
         easing = CubicBezierEasing(0.2f, 0f, 0f, 1f)
     ),
     content: @Composable () -> Unit
@@ -155,8 +155,7 @@ fun DesignBottomSheetScaffold(
                 }.anchoredDraggable(
                     state = draggableState,
                     orientation = orientation
-                )
-                .fillMaxWidth()
+                ).fillMaxWidth()
                 .wrapContentHeight()
                 .clip(shape)
                 .background(color)

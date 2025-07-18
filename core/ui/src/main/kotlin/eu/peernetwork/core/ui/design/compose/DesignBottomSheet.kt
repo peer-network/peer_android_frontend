@@ -75,7 +75,7 @@ fun DesignBottomSheet(
     onStateChanged: (DesignBottomSheetState) -> Unit = {},
     onDismiss: () -> Unit = {},
     snapAnimationSpec: AnimationSpec<Float> = tween<Float>(
-        durationMillis = 350,
+        durationMillis = 250,
         easing = CubicBezierEasing(0.2f, 0f, 0f, 1f)
     ),
     footer: @Composable () -> Unit = {},

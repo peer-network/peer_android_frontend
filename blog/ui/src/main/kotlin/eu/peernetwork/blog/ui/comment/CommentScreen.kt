@@ -89,17 +89,21 @@ fun CommentScreen(
     val handleOnMentionClick by rememberUpdatedState(onMentionClick)
     val handleOnHashtagClick by rememberUpdatedState(onHashtagClick)
     val handleOnAuthorClick by rememberUpdatedState(onAuthorClick)
+    val action = remember { mutableStateOf<(() -> Unit)?>(null) }
     CommentScreen(
         state = state,
         replyTo = replyTo,
         isLoading = isLoading,
+        onDismiss = {
+            action.value?.invoke()
+            action.value = null },
         onMentionClick = { username ->
+            action.value = { handleOnMentionClick(username) }
             state.value = null
-            handleOnMentionClick(username)
         },
         onHashtagClick = { hashtag ->
+            action.value = { handleOnHashtagClick(hashtag) }
             state.value = null
-            handleOnHashtagClick(hashtag)
         },
         onSubmit = { id, comment -> viewModel.comment(id, comment) }
     ) { size, field ->
@@ -116,16 +120,16 @@ fun CommentScreen(
                 onLike = { viewModel.like(it) },
                 { replyTo.value = it },
                 onMentionClick = { username ->
+                    action.value = { handleOnMentionClick(username) }
                     state.value = null
-                    handleOnMentionClick(username)
                 },
                 onHashtagClick = { hashtag ->
+                    action.value = { handleOnHashtagClick(hashtag) }
                     state.value = null
-                    handleOnHashtagClick(hashtag)
                 },
                 onAuthorClick = {
+                    action.value = { handleOnAuthorClick(it) }
                     state.value = null
-                    handleOnAuthorClick(it)
                 },
             )
             LaunchedEffect(isLoading.value) {
@@ -137,13 +141,19 @@ fun CommentScreen(
         }
         LaunchedEffect(error.value) {
             if (error.value != null) {
-                Toast.makeText(context, error.value?.let { component.resource().string(it) }, Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    context,
+                    error.value?.let { component.resource().string(it) },
+                    Toast.LENGTH_SHORT
+                ).show()
                 viewModel.clear()
             }
         }
         LaunchedEffect(state.value) {
             if (state.value != null) {
                 state.value?.let { viewModel.load(it.id, Pageable(0, postLimit)) }
+            } else {
+                viewModel.reset()
             }
         }
     }
@@ -154,6 +164,7 @@ fun CommentScreen(
     state: MutableState<UiContent?>,
     replyTo: MutableState<String?>,
     isLoading: State<Boolean>,
+    onDismiss: () -> Unit = {},
     onMentionClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
     onSubmit: (String, String) -> Unit = { id, comment -> },
@@ -163,6 +174,7 @@ fun CommentScreen(
     val updatedContent by rememberUpdatedState(content)
     CommentScaffold(
         state = state,
+        onDismiss = onDismiss,
         sheet = {
             val content = remember { mutableStateOf(state.value) }
             content.value?.let {

@@ -43,7 +43,7 @@ fun  DesignDialog(
     dim: Boolean = false,
     canDismiss: Boolean = true,
     onBackPressed: () -> Unit = {},
-    duration: Long = 350,
+    duration: Long = 250,
     onDismiss: () -> Unit,
     content: @Composable (NavHostController, State<Float>, MutableState<Boolean>) -> Unit,
 ) {

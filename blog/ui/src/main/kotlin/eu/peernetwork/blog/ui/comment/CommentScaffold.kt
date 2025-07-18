@@ -22,15 +22,20 @@ import eu.peernetwork.core.ui.design.compose.DesignBottomSheet
 @Composable
 fun CommentScaffold(
     state: MutableState<UiContent?>,
+    onDismiss: () -> Unit,
     sheet: @Composable () -> Unit,
     content: @Composable (State<IntSize>) -> Unit
 ) {
     val showSheet = remember(state.value) { mutableStateOf(state.value != null) }
     val updatedSheet by rememberUpdatedState(sheet)
     val updatedContent by rememberUpdatedState(content)
+    val handleDismiss by rememberUpdatedState(onDismiss)
     DesignBottomSheet(
         state = showSheet,
-        onDismiss = { state.value = null },
+        onDismiss = {
+            state.value = null
+            handleDismiss()
+        },
         color = MaterialTheme.colorScheme.tertiaryContainer,
         footer = {
             Box(modifier = Modifier
