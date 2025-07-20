@@ -37,6 +37,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.graphicsLayer
@@ -46,7 +47,6 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.Measurable
 import androidx.compose.ui.layout.MeasureResult
 import androidx.compose.ui.layout.MeasureScope
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.node.LayoutModifierNode
 import androidx.compose.ui.node.ModifierNodeElement
 import androidx.compose.ui.platform.InspectorInfo
@@ -79,7 +79,7 @@ fun DesignBottomSheet(
         easing = CubicBezierEasing(0.2f, 0f, 0f, 1f)
     ),
     footer: @Composable () -> Unit = {},
-    content: @Composable (State<IntSize>) -> Unit
+    content: @Composable (State<Size>) -> Unit
 ) {
     val visible = remember { mutableStateOf(false) }
     val updatedContent by rememberUpdatedState(content)
@@ -153,7 +153,7 @@ fun DesignBottomSheet(
         easing = CubicBezierEasing(0.2f, 0f, 0f, 1f)
     ),
     footer: @Composable () -> Unit = {},
-    content: @Composable (State<IntSize>) -> Unit
+    content: @Composable (State<Size>) -> Unit
 ) {
     val density = LocalDensity.current
     val updatedFooter by rememberUpdatedState(footer)
@@ -181,7 +181,7 @@ fun DesignBottomSheet(
     }
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
         val height = with(density) { maxHeight.toPx() }
-        val footerHeight = remember { mutableStateOf(IntSize.Zero) }
+        val footerHeight = remember { mutableStateOf(Size.Zero) }
         Box(
             contentAlignment = Alignment.BottomCenter,
             modifier = Modifier.nestedScroll(nestedScroll)
@@ -203,13 +203,10 @@ fun DesignBottomSheet(
         ) { updatedContent(footerHeight) }
         Box(modifier = Modifier.fillMaxWidth()
             .wrapContentHeight()
-            .onGloballyPositioned { footerHeight.value = it.size }
             .graphicsLayer {
-                val position = (height - footerHeight.value.height)
+                val position = (height - size.height)
                 val delta = (draggableState.offset - (peekHeightPx + (positionalThreshold * .9f)))
-                val clamped = (position + delta).coerceIn(position, height)
-                val progress = ((clamped - position) / (height - position)).coerceIn(0f, 1f)
-                alpha = 1 - progress
+                footerHeight.value = size
                 translationY = (position + delta).coerceIn(position, height)
             }) { updatedFooter() }
     }

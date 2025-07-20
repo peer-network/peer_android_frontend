@@ -6,19 +6,19 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.TextObfuscationMode
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -42,16 +42,25 @@ fun PasswordSheet(
     onSubmit: (String) -> Unit = {}
 ) {
     val password = remember { TextFieldState() }
+    val handleSubmit by rememberUpdatedState(onSubmit)
+    val action = remember { mutableStateOf<(() -> Unit)?>(null) }
     DesignBottomSheetScaffold(
         state = state,
         color = MaterialTheme.colorScheme.surfaceContainerLow,
-        onDismiss = { state.value = false }
+        onDismiss = {
+            action.value?.invoke()
+            action.value = null
+            state.value = false
+        }
     ) {
         PasswordSheet(
             state = state,
             password = password,
             label = label,
-            onSubmit = onSubmit
+            onSubmit = {
+                action.value = { handleSubmit(it) }
+                state.value = false
+            }
         )
     }
 }

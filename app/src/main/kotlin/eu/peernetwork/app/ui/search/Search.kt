@@ -4,6 +4,7 @@ import android.content.Context
 import eu.peernetwork.app.provider.ApplicationProvider
 import eu.peernetwork.app.ui.feed.Feed
 import eu.peernetwork.app.ui.profile.Profile
+import eu.peernetwork.app.ui.window.Window
 import eu.peernetwork.blog.ui.explore.Explore
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
@@ -32,7 +33,8 @@ interface Search : ApplicationProvider {
         Feed,
         Explore,
         Connection,
-        Confirmation
+        Confirmation,
+        Window
 
     class Builder(private val dependency: Search) : UiComponent.DefaultBuilder<Search, Component>() {
         override fun build(context: Context): Component {

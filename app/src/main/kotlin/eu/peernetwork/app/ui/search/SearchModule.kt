@@ -6,6 +6,7 @@ import dagger.multibindings.IntoMap
 import eu.peernetwork.app.ui.feed.Feed
 import eu.peernetwork.app.ui.profile.Profile
 import eu.peernetwork.app.ui.renderer.EngagementRenderer
+import eu.peernetwork.app.ui.window.Window
 import eu.peernetwork.blog.ui.engagement.EngagementConfirmation
 import eu.peernetwork.blog.ui.explore.Explore
 import eu.peernetwork.core.ui.annotation.UiBuilder
@@ -92,5 +93,13 @@ object SearchModule {
     @Provides
     fun provideEngagementRenderer(component: Search.Component): EngagementConfirmation {
         return EngagementRenderer(component)
+    }
+
+    @Search.Scope
+    @Provides
+    @IntoMap
+    @UiBuilder(Window.Builder::class)
+    fun provideWindowBuilder(component: Search.Component): UiComponent.Builder {
+        return Window.Builder(component)
     }
 }

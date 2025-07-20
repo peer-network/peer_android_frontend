@@ -153,7 +153,6 @@ fun AccountScreen(
     onDeactivate: (String) -> Unit = {},
     onSubmit: (List<UiSettings>, String?) -> Unit,
 ) {
-    val context = LocalContext.current
     val image = remember { mutableStateOf<Uri?>(null) }
     val username = remember { TextFieldState(account.username) }
     val bio = remember { TextFieldState(account.bio ?: "") }
@@ -171,7 +170,6 @@ fun AccountScreen(
     val submitHandler by rememberUpdatedState(onSubmit)
     val deactivateHandler by rememberUpdatedState(onDeactivate)
     val passwordValidatorHandler by rememberUpdatedState(requiresPassword)
-    val deactivationMessage = stringResource(R.string.profile_deactivation_message)
     Column(modifier = modifier) {
         AccountHeader(
             account = account,
@@ -221,7 +219,6 @@ fun AccountScreen(
         PasswordSheet(showDeactivation, label = stringResource(R.string.deactivate_text)) {
             showDeactivation.value = false
             deactivateHandler(it)
-            Toast.makeText(context, deactivationMessage, Toast.LENGTH_SHORT).show()
         }
         LogoutSheet(showLogout) {
             showLogout.value = false

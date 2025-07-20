@@ -1,12 +1,8 @@
 package eu.peernetwork.app.ui.profile
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
@@ -15,7 +11,9 @@ import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.app.ui.search.SearchScreen
 import eu.peernetwork.app.ui.search.SearchState
 import eu.peernetwork.app.ui.settings.SettingsScreen
+import eu.peernetwork.app.ui.window.WindowScreen
 import eu.peernetwork.core.ui.component.UiComponentProvider
+import eu.peernetwork.core.ui.design.compose.DesignPageWindowMode
 import eu.peernetwork.core.ui.design.compose.DesignRouter
 import eu.peernetwork.core.ui.model.ViewModelState
 
@@ -31,24 +29,36 @@ fun ProfileNavigation(
     content: @Composable () -> Unit = {},
 ) {
     val updatedContent by rememberUpdatedState(content)
-    val modifier = if (startDestination == "overlay") {
-        Modifier.statusBarsPadding()
-            .navigationBarsPadding()
+    val mode = if (startDestination == "overlay") {
+        DesignPageWindowMode.DOCKED
     } else {
-        Modifier
+        DesignPageWindowMode.HIDDEN
     }
     DesignRouter(
         navController = controller,
         startDestination = startDestination
     ) {
-        composable("overlay") { updatedContent() }
         composable("content") { updatedContent() }
+        composable("overlay") {
+            WindowScreen(
+                id = userId,
+                provider = component,
+                viewModelStore = viewModelStore,
+                mode = DesignPageWindowMode.FLOATING,
+                content = content
+            )
+        }
         composable(
             "profile/{id}",
             arguments = listOf(navArgument("id") { this.type = NavType.StringType })
         ) { backStackEntry ->
             val id = backStackEntry.arguments?.getString("id") ?: ""
-            Box(modifier) {
+            WindowScreen(
+                id = userId,
+                provider = component,
+                viewModelStore = viewModelStore,
+                mode = mode,
+            ) {
                 ProfileScreen(
                     principal = principal,
                     userId = id,
@@ -58,7 +68,12 @@ fun ProfileNavigation(
             }
         }
         composable("settings") {
-            Box(modifier) { SettingsScreen(userId, component, viewModelStore) }
+            WindowScreen(
+                id = userId,
+                provider = component,
+                viewModelStore = viewModelStore,
+                mode = mode,
+            ) { SettingsScreen(userId, component, viewModelStore) }
         }
         composable(
             route = "search/{type}/{query}",
@@ -74,7 +89,12 @@ fun ProfileNavigation(
                 "tag" -> SearchState.Active.Tag(query)
                 else -> SearchState.Default
             }
-            Box(modifier) {
+            WindowScreen(
+                id = userId,
+                provider = component,
+                viewModelStore = viewModelStore,
+                mode = mode,
+            ) {
                 SearchScreen(
                     id = userId,
                     postLimit = BuildConfig.PAGING_LIMIT,

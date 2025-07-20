@@ -57,6 +57,7 @@ fun  DesignDialog(
     val handleBackPressed by rememberUpdatedState(onBackPressed)
     val handleDismissRequest by rememberUpdatedState(onDismiss)
     val cancelable = remember { mutableStateOf(false) }
+    val lastState = remember { mutableStateOf(state.value) }
     val session = remember { mutableLongStateOf(System.currentTimeMillis()) }
     val animation = remember { mutableFloatStateOf(0f) }
     val interpolator = remember { PathInterpolator(0.2f, 0f, 0f, 1f) }
@@ -151,8 +152,10 @@ fun  DesignDialog(
     LaunchedEffect(state.value) {
         if (state.value) {
             dialog.show()
-        } else {
+            lastState.value = true
+        } else if (lastState.value) {
             dialog.dismiss()
+            lastState.value = false
         }
     }
 }

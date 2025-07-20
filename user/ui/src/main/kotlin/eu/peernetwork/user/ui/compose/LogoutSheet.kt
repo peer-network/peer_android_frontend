@@ -13,8 +13,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -31,14 +33,23 @@ fun LogoutSheet(
     state: MutableState<Boolean>,
     onLogout: () -> Unit = {}
 ) {
+    val handleLogout by rememberUpdatedState(onLogout)
+    val action = remember { mutableStateOf<(() -> Unit)?>(null) }
     DesignBottomSheetScaffold(
         state = state,
         color = MaterialTheme.colorScheme.surfaceContainerLow,
-        onDismiss = { state.value = false }
+        onDismiss = {
+            action.value?.invoke()
+            action.value = null
+            state.value = false
+        }
     ) {
         LogoutSheet(
             state = state,
-            onLogout = onLogout,
+            onLogout = {
+                action.value = handleLogout
+                state.value = false
+            },
             modifier = Modifier
         )
     }
@@ -62,7 +73,8 @@ fun LogoutSheet(
             style = MaterialTheme.typography.bodyMedium.copy(
                 color = MaterialTheme.colorScheme.tertiary
             ),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
                 .padding(horizontal = 16.dp)
         )
         Spacer(modifier = Modifier.height(16.dp))

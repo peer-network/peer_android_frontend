@@ -2,6 +2,7 @@
     <string name="loading_text">Loading…</string>
 
     <string name="search_label">Search</string>
+    <string name="explore_label">Explore</string>
     <string name="add_label">New post</string>
     <string name="wallet_label">Wallet</string>
     <string name="profile_label">Profile</string>

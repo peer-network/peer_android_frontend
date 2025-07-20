@@ -4,6 +4,9 @@ import android.content.res.Configuration
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -17,6 +20,8 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -25,11 +30,12 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import eu.peernetwork.core.ui.component.UiComponentProvider
+import eu.peernetwork.core.ui.design.compose.DesignPage
+import eu.peernetwork.core.ui.design.compose.DesignPageHeader
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffold
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
-import eu.peernetwork.core.ui.design.compose.DesignTitleBar
 import eu.peernetwork.core.ui.extension.attach
 import eu.peernetwork.core.ui.extension.attachIfNecessary
 import eu.peernetwork.core.ui.model.ViewModelState
@@ -112,22 +118,33 @@ fun HomeScreen(
 ) {
     val updatedContent by rememberUpdatedState(content)
     val handleOnClick by rememberUpdatedState(onClick)
-    DesignTitleBar {
-        HomeScaffold(
-            header = { HomeHeader(options = options, modifier = Modifier.padding(top = 8.dp)) },
-            footer = {
-                HomeFooter(
-                    start,
-                    onClick = { prev, next ->
-                        if (prev == next) {
-                            titleBar().value?.listener?.invoke()
-                        } else {
-                            handleOnClick(next)
-                        }
+    DesignPage(
+        header = {
+            DesignPageHeader(
+                options = options,
+                action = {
+                    IconButton(onClick = { }) {
+                        Icon(
+                            painter = painterResource(id = HomeRoute.Comment.icon),
+                            contentDescription = stringResource(id = HomeRoute.Comment.icon),
+                            modifier = Modifier.size(32.dp)
+                        )
                     }
-                ) }
-        ) { state -> updatedContent(state) }
-    }
+                },
+                modifier = Modifier.padding(top = 8.dp)
+            ) },
+        footer = {
+            HomeFooter(
+                start,
+                onClick = { prev, next ->
+                    if (prev == next) {
+                        titleBar().value?.listener?.invoke()
+                    } else {
+                        handleOnClick(next)
+                    }
+                }
+            ) }
+    ) { state -> updatedContent(state) }
 }
 
 @Composable

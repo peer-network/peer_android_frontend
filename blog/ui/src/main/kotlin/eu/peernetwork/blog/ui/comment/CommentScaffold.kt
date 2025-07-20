@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -14,7 +15,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.geometry.Size
 import eu.peernetwork.blog.ui.model.UiContent
 import eu.peernetwork.core.ui.design.compose.DesignBottomSheet
 
@@ -24,7 +25,7 @@ fun CommentScaffold(
     state: MutableState<UiContent?>,
     onDismiss: () -> Unit,
     sheet: @Composable () -> Unit,
-    content: @Composable (State<IntSize>) -> Unit
+    content: @Composable (State<Size>) -> Unit
 ) {
     val showSheet = remember(state.value) { mutableStateOf(state.value != null) }
     val updatedSheet by rememberUpdatedState(sheet)
@@ -45,6 +46,10 @@ fun CommentScaffold(
                 updatedSheet()
             }
         },
-        content = { updatedContent(it) }
+        content = {
+            Box(modifier = Modifier.statusBarsPadding()) {
+                updatedContent(it)
+            }
+        }
     )
 }

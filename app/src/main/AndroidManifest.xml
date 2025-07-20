@@ -13,7 +13,6 @@
         android:supportsRtl="true"
         android:name=".PeerApplication"
         android:theme="@style/Theme.Peer.Splash"
-        android:windowSoftInputMode="adjustResize"
         tools:targetApi="31">
         <activity
             android:name=".ui.main.MainActivity"

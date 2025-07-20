@@ -8,6 +8,7 @@ import dagger.multibindings.IntoMap
 import eu.peernetwork.app.ui.profile.Profile
 import eu.peernetwork.app.ui.renderer.EngagementRenderer
 import eu.peernetwork.app.ui.search.Search
+import eu.peernetwork.app.ui.window.Window
 import eu.peernetwork.blog.ui.engagement.EngagementConfirmation
 import eu.peernetwork.blog.ui.timeline.photo.Photo
 import eu.peernetwork.blog.ui.timeline.video.Video
@@ -94,5 +95,13 @@ object FeedModule {
     @Provides
     fun provideEngagementRenderer(component: Feed.Component): EngagementConfirmation {
         return EngagementRenderer(component)
+    }
+
+    @Feed.Scope
+    @Provides
+    @IntoMap
+    @UiBuilder(Window.Builder::class)
+    fun provideWindowBuilder(component: Feed.Component): UiComponent.Builder {
+        return Window.Builder(component)
     }
 }

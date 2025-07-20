@@ -2,7 +2,6 @@ package eu.peernetwork.blog.ui.comment
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.clearText
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -16,8 +15,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -116,7 +115,6 @@ fun CommentScreen(
                 likesState,
                 items,
                 size = size.value,
-                modifier = Modifier.statusBarsPadding(),
                 onLike = { viewModel.like(it) },
                 { replyTo.value = it },
                 onMentionClick = { username ->
@@ -168,7 +166,7 @@ fun CommentScreen(
     onMentionClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
     onSubmit: (String, String) -> Unit = { id, comment -> },
-    content: @Composable (State<IntSize>, TextFieldState) -> Unit = { visible, field -> }
+    content: @Composable (State<Size>, TextFieldState) -> Unit = { visible, field -> }
 ) {
     val comment = remember { TextFieldState() }
     val updatedContent by rememberUpdatedState(content)

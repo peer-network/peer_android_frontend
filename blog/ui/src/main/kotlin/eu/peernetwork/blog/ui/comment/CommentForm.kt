@@ -80,6 +80,7 @@ fun CommentForm(
                     imeAction = ImeAction.Unspecified
                 ),
                 maxLength = 500,
+                maxLines = 6,
                 colors = TextFieldDefaults.colors(
                     unfocusedContainerColor = Color.Transparent,
                     focusedContainerColor = Color.Transparent,

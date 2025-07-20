@@ -4,6 +4,7 @@ import android.content.Context
 import eu.peernetwork.app.provider.ApplicationProvider
 import eu.peernetwork.app.ui.search.Search
 import eu.peernetwork.app.ui.settings.Settings
+import eu.peernetwork.app.ui.window.Window
 import eu.peernetwork.blog.ui.post.photo.Photo
 import eu.peernetwork.blog.ui.post.video.Video
 import eu.peernetwork.core.ui.component.UiComponent
@@ -36,7 +37,8 @@ interface Profile : ApplicationProvider {
         Followings,
         Peers,
         Connection,
-        Confirmation
+        Confirmation,
+        Window
 
     class Builder(private val dependency: Profile) : UiComponent.DefaultBuilder<Profile, Component>() {
         override fun build(context: Context): Component {

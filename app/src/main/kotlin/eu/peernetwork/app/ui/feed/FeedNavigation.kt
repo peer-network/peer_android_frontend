@@ -1,12 +1,8 @@
 package eu.peernetwork.app.ui.feed
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
@@ -14,6 +10,8 @@ import androidx.navigation.navArgument
 import eu.peernetwork.app.ui.profile.ProfileScreen
 import eu.peernetwork.app.ui.search.SearchScreen
 import eu.peernetwork.app.ui.search.SearchState
+import eu.peernetwork.app.ui.window.WindowScreen
+import eu.peernetwork.core.ui.design.compose.DesignPageWindowMode
 import eu.peernetwork.core.ui.design.compose.DesignRouter
 import eu.peernetwork.core.ui.model.ViewModelState
 import java.net.URLEncoder
@@ -29,25 +27,37 @@ fun FeedNavigation(
     content: @Composable () -> Unit = {}
 ) {
     val updatedContent by rememberUpdatedState(content)
-    val modifier = if (startDestination == "overlay") {
-        Modifier.statusBarsPadding()
-            .navigationBarsPadding()
+    val mode = if (startDestination == "overlay") {
+        DesignPageWindowMode.DOCKED
     } else {
-        Modifier
+        DesignPageWindowMode.HIDDEN
     }
     DesignRouter(
         navController = controller,
         startDestination = startDestination,
     ) {
         composable("content") { updatedContent() }
-        composable("overlay") { updatedContent() }
+        composable("overlay") {
+            WindowScreen(
+                id = userId,
+                provider = component,
+                viewModelStore = viewModelStore,
+                mode = DesignPageWindowMode.FLOATING,
+                content = content
+            )
+        }
         composable(
             "profile/{id}",
             arguments = listOf(navArgument("id") {
                 type = NavType.StringType
             })
         ) { backStackEntry ->
-            Box(modifier) {
+            WindowScreen(
+                id = userId,
+                provider = component,
+                viewModelStore = viewModelStore,
+                mode = mode,
+            ) {
                 ProfileScreen(
                     principal = userId,
                     userId = backStackEntry.arguments?.getString("id") ?: "",
@@ -70,7 +80,12 @@ fun FeedNavigation(
                 "tag" -> SearchState.Active.Tag(query)
                 else -> SearchState.Default
             }
-            Box(modifier) {
+            WindowScreen(
+                id = userId,
+                provider = component,
+                viewModelStore = viewModelStore,
+                mode = mode,
+            ) {
                 SearchScreen(
                     id = userId,
                     postLimit = postLimit,
