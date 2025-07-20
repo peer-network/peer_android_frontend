@@ -23,6 +23,7 @@ fun TextContent(
     onAuthorClick: (String) -> Unit = {},
     onMentionClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
+    header: @Composable () -> Unit = {},
     connection: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit = {},
 ) {
     val updatedConnection by rememberUpdatedState(connection)
@@ -53,6 +54,7 @@ fun TextContent(
                 color = MaterialTheme.colorScheme.onBackground,
             )
         },
+        header = header,
         actions = {
             updatedConnection(
                 Triple(

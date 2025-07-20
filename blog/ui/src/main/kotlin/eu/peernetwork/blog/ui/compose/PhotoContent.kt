@@ -35,6 +35,7 @@ fun PhotoContent(
     onHashtagClick: (String) -> Unit = {},
     indicator: @Composable () -> Unit = {},
     connection: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit = {},
+    header: @Composable () -> Unit = {},
     background: @Composable () -> Unit = {},
     content: @Composable (UiPost) -> Unit = {}
 ) {
@@ -90,6 +91,7 @@ fun PhotoContent(
                 color = MaterialTheme.colorScheme.onBackground,
             )
         },
+        header = header,
         background = background,
         actions = {
             updatedConnection(

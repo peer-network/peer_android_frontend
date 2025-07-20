@@ -48,6 +48,7 @@ fun PhotoOverlay(
     onAuthorClick: (String) -> Unit = {},
     onMentionClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
+    header: @Composable () -> Unit = {},
     connection: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit = {}
 ) {
     val context = LocalContext.current
@@ -112,6 +113,7 @@ fun PhotoOverlay(
                             onAuthorClick = onAuthorClick,
                             onMentionClick = onMentionClick,
                             onHashtagClick = onHashtagClick,
+                            header = header,
                             connection = connection,
                             indicator = { state, items -> PhotoIndicator(state, items) },
                             content = { post, pagerState, active ->

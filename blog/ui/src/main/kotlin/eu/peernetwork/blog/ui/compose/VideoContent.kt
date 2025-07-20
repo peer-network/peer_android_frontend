@@ -38,6 +38,7 @@ fun VideoContent(
     onHashtagClick: (String) -> Unit = {},
     progress: @Composable () -> Unit = {},
     connection: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit = {},
+    header: @Composable () -> Unit = {},
     background: @Composable () -> Unit = {},
     content: @Composable (UiVideo) -> Unit = {}
 ) {
@@ -94,6 +95,7 @@ fun VideoContent(
                 color = MaterialTheme.colorScheme.onBackground,
             )
         },
+        header = header,
         background = background,
         actions = {
             updatedConnection(

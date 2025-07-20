@@ -52,6 +52,7 @@ fun VideoOverlay(
     onAuthorClick: (String) -> Unit = {},
     onMentionClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
+    header: @Composable () -> Unit = {},
     connection: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit = {}
 ) {
     val context = LocalContext.current
@@ -139,6 +140,7 @@ fun VideoOverlay(
                                     length = length
                                 )
                             },
+                            header = header,
                             connection = connection,
                             background = { DesignThumbnail(thumbnail.value[it]) },
                             content = { post, shouldPlay, progress ->

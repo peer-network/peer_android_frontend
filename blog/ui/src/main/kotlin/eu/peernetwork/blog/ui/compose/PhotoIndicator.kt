@@ -19,7 +19,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.blog.ui.model.UiMedia
-import eu.peernetwork.core.ui.theme.LightAccentColor
 import eu.peernetwork.core.ui.theme.PeerTheme
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toPersistentList
@@ -43,7 +42,7 @@ fun PhotoIndicator(
                 .wrapContentWidth()
                 .then(modifier)
                 .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.surfaceVariant)
+                .background(MaterialTheme.colorScheme.onBackground)
                 .padding(2.dp)
         ) {
             repeat(total) {
@@ -62,9 +61,9 @@ fun PhotoIndicator(
                         .clip(CircleShape)
                         .background(
                             if (isSelected) {
-                                LightAccentColor
+                                MaterialTheme.colorScheme.background
                             } else {
-                                MaterialTheme.colorScheme.surfaceTint
+                                MaterialTheme.colorScheme.tertiary
                             }
                         )
                 )

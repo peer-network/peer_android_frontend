@@ -44,6 +44,7 @@ fun ExploreOverlay(
     onAuthorClick: (String) -> Unit = {},
     onMentionClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
+    header: @Composable () -> Unit = {},
     connection: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit = {}
 ) {
     val context = LocalContext.current
@@ -111,6 +112,7 @@ fun ExploreOverlay(
                             onMentionClick = onMentionClick,
                             onHashtagClick = onHashtagClick,
                             connection = connection,
+                            header = header,
                             indicator = { state, items -> PhotoIndicator(state, items) },
                             content = { post, pagerState, active ->
                                 if (post.media.size > 1) {

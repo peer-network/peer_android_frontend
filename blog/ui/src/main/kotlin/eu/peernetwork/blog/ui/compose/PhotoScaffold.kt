@@ -52,6 +52,7 @@ fun PhotoScaffold(
     engagements: @Composable RowScope.() -> Unit = {},
     moderation: @Composable RowScope.() -> Unit = {},
     caption: @Composable () -> Unit = {},
+    header: @Composable () -> Unit = {},
     background: @Composable () -> Unit = {},
     content: @Composable () -> Unit,
 ) {
@@ -59,6 +60,7 @@ fun PhotoScaffold(
     val updatedAction by rememberUpdatedState(actions)
     val updatedContent by rememberUpdatedState(content)
     val updatedCaption by rememberUpdatedState(caption)
+    val updatedHeader by rememberUpdatedState(header)
     val updatedBackground by rememberUpdatedState(background)
     val updatedEngagements by rememberUpdatedState(engagements)
     val updatedModeration by rememberUpdatedState(moderation)
@@ -86,18 +88,23 @@ fun PhotoScaffold(
         }
         Column(
             horizontalAlignment = Alignment.End,
-            modifier = Modifier.padding(horizontal = 24.dp)
-                .navigationBarsPadding()
+            modifier = Modifier.navigationBarsPadding()
         ) {
-            Spacer(modifier = Modifier.height(16.dp))
-            Row { updatedEngagements() }
+            updatedHeader()
+            Spacer(modifier = Modifier.weight(1f)
+                .padding(bottom = 16.dp))
+            Row(modifier = Modifier.padding(horizontal = 24.dp)) { updatedEngagements() }
             Spacer(modifier = Modifier.height(8.dp))
             Box(modifier = Modifier.fillMaxWidth()
+                .padding(horizontal = 24.dp)
                 .padding(start = 48.dp)
                 .padding(horizontal = 12.dp)) {
                 updatedIndicator()
             }
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            Row(
+                modifier = Modifier.padding(horizontal = 24.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 AuthorView(
                     author,
                     description,
@@ -128,6 +135,7 @@ fun PhotoScaffold(
             Spacer(modifier.height(4.dp))
             Box(modifier = Modifier
                 .fillMaxWidth()
+                .padding(horizontal = 24.dp)
                 .padding(start = 48.dp)
                 .padding(horizontal = 12.dp)) {
                 updatedCaption()

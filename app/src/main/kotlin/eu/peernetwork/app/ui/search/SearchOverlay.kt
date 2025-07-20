@@ -1,21 +1,17 @@
 package eu.peernetwork.app.ui.search
 
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import eu.peernetwork.app.ui.feed.navigateToTagSearch
 import eu.peernetwork.app.ui.feed.navigateToUsernameSearch
+import eu.peernetwork.app.ui.window.WindowTitle
 import eu.peernetwork.blog.ui.explore.ExploreOverlay
-import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.design.compose.DesignOverlay
-import eu.peernetwork.core.ui.design.compose.DesignTitle
-import eu.peernetwork.core.ui.design.compose.DesignTitleBarHost
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.core.ui.model.ViewModelState
 import eu.peernetwork.social.ui.connection.ConnectionController
@@ -54,7 +50,8 @@ fun SearchOverlay(
             startDestination = "overlay",
             component = component,
             viewModelStore = viewModelStore,
-            controller = controller
+            controller = controller,
+            onCancel = { visible.value = false }
         ) {
             val state = (overlayState.value as SearchOverlayState.Photo)
             ExploreOverlay(
@@ -66,19 +63,20 @@ fun SearchOverlay(
                 onMentionClick = { controller.navigateToUsernameSearch(it) },
                 onHashtagClick = { controller.navigateToTagSearch(it) },
                 onAuthorClick = { controller.navigateIfNecessary("profile/$it") },
+                header = {
+                    WindowTitle(
+                        id = id,
+                        provider = component,
+                        viewModelStore = viewModelStore,
+                        onCancel = { visible.value = false },
+                    )
+                }
             ) {
                 ConnectionScreen(
                     isFollowing = connection.getOrDefault(it.first, it.third),
                     isFollowed = it.second,
                     onClick = { follow -> connectionController.invoke(it.first, !follow) }
                 )
-            }
-            DesignTitleBarHost("SearchOverlay$id") {
-                titleBar {
-                    DesignTitle {
-                        Text(stringResource(R.string.explore_label))
-                    }
-                }
             }
         }
     }

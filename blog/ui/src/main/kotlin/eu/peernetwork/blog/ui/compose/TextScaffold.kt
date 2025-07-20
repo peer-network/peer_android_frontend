@@ -55,10 +55,12 @@ fun TextScaffold(
     onAuthorClick: (String) -> Unit = {},
     onMentionClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
+    header: @Composable () -> Unit = {},
     actions: @Composable RowScope.() -> Unit = {},
     engagements: @Composable RowScope.() -> Unit = {},
     moderation: @Composable RowScope.() -> Unit = {}
 ) {
+    val updatedHeader by rememberUpdatedState(header)
     val updatedAction by rememberUpdatedState(actions)
     val updatedEngagements by rememberUpdatedState(engagements)
     val updatedModeration by rememberUpdatedState(moderation)
@@ -130,14 +132,17 @@ fun TextScaffold(
         )
         Column(
             horizontalAlignment = Alignment.End,
-            modifier = Modifier
-                .padding(horizontal = 24.dp)
-                .navigationBarsPadding()
+            modifier = Modifier.navigationBarsPadding()
         ) {
-            Spacer(modifier = Modifier.height(16.dp))
-            Row { updatedEngagements() }
+            updatedHeader()
+            Spacer(modifier = Modifier.weight(1f)
+                .padding(bottom = 16.dp))
+            Row(modifier = Modifier.padding(horizontal = 24.dp)) { updatedEngagements() }
             Spacer(modifier = Modifier.height(8.dp))
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            Row(
+                modifier = Modifier.padding(horizontal = 24.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 AuthorView(
                     author,
                     caption,

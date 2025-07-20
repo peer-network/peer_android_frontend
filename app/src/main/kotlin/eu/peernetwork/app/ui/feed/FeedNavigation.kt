@@ -24,6 +24,7 @@ fun FeedNavigation(
     controller: NavHostController,
     component: Feed.Component,
     viewModelStore: ViewModelState,
+    onCancel: () -> Unit = {},
     content: @Composable () -> Unit = {}
 ) {
     val updatedContent by rememberUpdatedState(content)
@@ -37,15 +38,7 @@ fun FeedNavigation(
         startDestination = startDestination,
     ) {
         composable("content") { updatedContent() }
-        composable("overlay") {
-            WindowScreen(
-                id = userId,
-                provider = component,
-                viewModelStore = viewModelStore,
-                mode = DesignPageWindowMode.FLOATING,
-                content = content
-            )
-        }
+        composable("overlay") { updatedContent() }
         composable(
             "profile/{id}",
             arguments = listOf(navArgument("id") {
@@ -57,6 +50,7 @@ fun FeedNavigation(
                 provider = component,
                 viewModelStore = viewModelStore,
                 mode = mode,
+                onCancel = onCancel,
             ) {
                 ProfileScreen(
                     principal = userId,
@@ -85,6 +79,7 @@ fun FeedNavigation(
                 provider = component,
                 viewModelStore = viewModelStore,
                 mode = mode,
+                onCancel = onCancel,
             ) {
                 SearchScreen(
                     id = userId,

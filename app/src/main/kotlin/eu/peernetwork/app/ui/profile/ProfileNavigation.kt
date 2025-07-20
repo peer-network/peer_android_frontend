@@ -26,6 +26,7 @@ fun ProfileNavigation(
     provider: UiComponentProvider,
     component: Profile.Component,
     viewModelStore: ViewModelState,
+    onCancel: () -> Unit = {},
     content: @Composable () -> Unit = {},
 ) {
     val updatedContent by rememberUpdatedState(content)
@@ -39,15 +40,7 @@ fun ProfileNavigation(
         startDestination = startDestination
     ) {
         composable("content") { updatedContent() }
-        composable("overlay") {
-            WindowScreen(
-                id = userId,
-                provider = component,
-                viewModelStore = viewModelStore,
-                mode = DesignPageWindowMode.FLOATING,
-                content = content
-            )
-        }
+        composable("overlay") { updatedContent() }
         composable(
             "profile/{id}",
             arguments = listOf(navArgument("id") { this.type = NavType.StringType })
@@ -58,6 +51,7 @@ fun ProfileNavigation(
                 provider = component,
                 viewModelStore = viewModelStore,
                 mode = mode,
+                onCancel = onCancel,
             ) {
                 ProfileScreen(
                     principal = principal,
@@ -73,6 +67,7 @@ fun ProfileNavigation(
                 provider = component,
                 viewModelStore = viewModelStore,
                 mode = mode,
+                onCancel = onCancel,
             ) { SettingsScreen(userId, component, viewModelStore) }
         }
         composable(
@@ -94,6 +89,7 @@ fun ProfileNavigation(
                 provider = component,
                 viewModelStore = viewModelStore,
                 mode = mode,
+                onCancel = onCancel,
             ) {
                 SearchScreen(
                     id = userId,

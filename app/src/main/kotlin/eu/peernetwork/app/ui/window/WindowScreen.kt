@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -17,8 +18,11 @@ import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.compose.DesignPage
 import eu.peernetwork.core.ui.design.compose.DesignPageHeader
 import eu.peernetwork.core.ui.design.compose.DesignPageWindowMode
+import eu.peernetwork.core.ui.design.compose.DesignTitleBar
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.model.ViewModelState
+import eu.peernetwork.core.ui.theme.LightScheme
+import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.wallet.ui.reward.RewardScreen
 
 @Composable
@@ -27,7 +31,8 @@ fun WindowScreen(
     provider: UiComponentProvider,
     viewModelStore: ViewModelState,
     mode: DesignPageWindowMode = DesignPageWindowMode.HIDDEN,
-    content: @Composable () -> Unit
+    onCancel: () -> Unit = {},
+    content: @Composable () -> Unit,
 ) {
     val context = LocalContext.current
     val component = remember {
@@ -38,20 +43,51 @@ fun WindowScreen(
         mode,
         header = {
             DesignPageHeader(
-                options = {
-                    RewardScreen(component, viewModelStore.get(id))
-                },
+                options = { RewardScreen(component, viewModelStore.get(id)) },
                 action = {
-                    IconButton(onClick = { }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_chat),
-                            contentDescription = null,
-                            modifier = Modifier.size(32.dp)
-                        )
+                    if (mode != DesignPageWindowMode.HIDDEN) {
+                        IconButton(onClick = onCancel) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_cancel),
+                                contentDescription = null,
+                                modifier = Modifier.size(24.dp)
+                            )
+                        }
                     }
                 },
                 modifier = Modifier.padding(top = 8.dp)
             )
         }
     ) { updatedContent() }
+}
+
+@Composable
+fun WindowTitle(
+    id: String,
+    provider: UiComponentProvider,
+    viewModelStore: ViewModelState,
+    onCancel: () -> Unit = {}
+) {
+    val context = LocalContext.current
+    val component = remember {
+        provider.builder(Window.Builder::class.java).build(context)
+    }
+    PeerTheme(colorScheme = LightScheme) {
+        DesignTitleBar {
+            DesignPageHeader(
+                options = { RewardScreen(component, viewModelStore.get(id)) },
+                action = {
+                    IconButton(onClick = onCancel) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_cancel),
+                            contentDescription = null,
+                            modifier = Modifier.size(24.dp),
+                            tint = MaterialTheme.colorScheme.background
+                        )
+                    }
+                },
+                modifier = Modifier.padding(top = 8.dp)
+            )
+        }
+    }
 }

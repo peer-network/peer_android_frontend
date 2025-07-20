@@ -26,6 +26,7 @@ fun SearchNavigation(
     viewModelStore: ViewModelState,
     controller: NavHostController,
     startDestination: String = "search",
+    onCancel: () -> Unit = {},
     content: @Composable (NavHostController) -> Unit
 ) {
     val updatedContent by rememberUpdatedState(content)
@@ -41,15 +42,7 @@ fun SearchNavigation(
         startDestination = startDestination,
     ) {
         composable("search") { updatedContent(controller) }
-        composable("overlay") {
-            WindowScreen(
-                id = userId,
-                provider = component,
-                viewModelStore = viewModelStore,
-                mode = DesignPageWindowMode.FLOATING,
-                content = { updatedContent(controller) }
-            )
-        }
+        composable("overlay") { updatedContent(controller) }
         composable(
             "profile/{id}",
             arguments = listOf(navArgument("id") {
@@ -62,6 +55,7 @@ fun SearchNavigation(
                 provider = component,
                 viewModelStore = viewModelStore,
                 mode = mode,
+                onCancel = onCancel,
             ) {
                 ProfileScreen(
                     principal = userId,
@@ -83,6 +77,7 @@ fun SearchNavigation(
                 provider = component,
                 viewModelStore = viewModelStore,
                 mode = mode,
+                onCancel = onCancel,
             ) {
                 FeedScreen(
                     userId,
@@ -109,6 +104,7 @@ fun SearchNavigation(
                 provider = component,
                 viewModelStore = viewModelStore,
                 mode = mode,
+                onCancel = onCancel,
             ) {
                 FeedScreen(
                     userId,

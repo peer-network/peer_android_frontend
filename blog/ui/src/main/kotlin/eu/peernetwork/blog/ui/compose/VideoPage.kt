@@ -37,6 +37,7 @@ fun VideoPage(
     onHashtagClick: (String) -> Unit = {},
     progress: @Composable (MutableFloatState) -> Unit = {},
     connection: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit = {},
+    header: @Composable () -> Unit = {},
     background: @Composable (String) -> Unit = {},
     content: @Composable (UiVideo, Boolean, MutableFloatState) -> Unit = { post, shouldPlay, progress -> },
 ) {
@@ -67,6 +68,7 @@ fun VideoPage(
                     onPostClick = onPostClick,
                     onMentionClick = onMentionClick,
                     onHashtagClick = onHashtagClick,
+                    header = header,
                     connection = connection,
                     progress = { updatedProgress(progress) },
                     background = { updatedBackground("${post.media}${UiMimeType.Video.query()}") }

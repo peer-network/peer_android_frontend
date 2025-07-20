@@ -3,7 +3,6 @@ package eu.peernetwork.app.ui.profile
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -11,18 +10,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import eu.peernetwork.app.ui.feed.navigateToTagSearch
 import eu.peernetwork.app.ui.feed.navigateToUsernameSearch
+import eu.peernetwork.app.ui.window.WindowTitle
 import eu.peernetwork.blog.ui.post.photo.PhotoOverlay
 import eu.peernetwork.blog.ui.post.video.VideoOverlay
-import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.compose.DesignOverlay
 import eu.peernetwork.core.ui.design.compose.DesignOverlayPage
-import eu.peernetwork.core.ui.design.compose.DesignTitle
-import eu.peernetwork.core.ui.design.compose.DesignTitleBarHost
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.core.ui.model.ViewModelState
 import eu.peernetwork.social.ui.connection.ConnectionController
@@ -77,6 +73,7 @@ fun ProfileOverlay(
                 provider = provider,
                 component = component,
                 viewModelStore = viewModelStore,
+                onCancel = { visible.value = false }
             ) {
                 when (overlayState.value) {
                     is ProfileOverlayState.Photo -> {
@@ -90,6 +87,14 @@ fun ProfileOverlay(
                             onMentionClick = { controller.navigateToUsernameSearch(it) },
                             onHashtagClick = { controller.navigateToTagSearch(it) },
                             onAuthorClick = { controller.navigateIfNecessary("profile/$it") },
+                            header = {
+                                WindowTitle(
+                                    id = userId,
+                                    provider = component,
+                                    viewModelStore = viewModelStore,
+                                    onCancel = { visible.value = false },
+                                )
+                            }
                         ) {
                             if (userId != principal) {
                                 ConnectionScreen(
@@ -114,6 +119,14 @@ fun ProfileOverlay(
                             onMentionClick = { controller.navigateToUsernameSearch(it) },
                             onHashtagClick = { controller.navigateToTagSearch(it) },
                             onAuthorClick = { controller.navigateIfNecessary("profile/$it") },
+                            header = {
+                                WindowTitle(
+                                    id = userId,
+                                    provider = component,
+                                    viewModelStore = viewModelStore,
+                                    onCancel = { visible.value = false },
+                                )
+                            }
                         ) {
                             if (userId != principal) {
                                 ConnectionScreen(
@@ -125,13 +138,6 @@ fun ProfileOverlay(
                         }
                     }
                     else -> {}
-                }
-                DesignTitleBarHost("ProfileOverlay$userId") {
-                    titleBar {
-                        DesignTitle {
-                            Text(stringResource(R.string.profile_label))
-                        }
-                    }
                 }
             }
         }

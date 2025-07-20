@@ -37,7 +37,7 @@ fun VolumeControl(
         modifier = Modifier.padding(2.dp)
             .size(18.dp)
             .clip(RoundedCornerShape(12.dp))
-            .background(MaterialTheme.colorScheme.background)
+            .background(MaterialTheme.colorScheme.onBackground)
             .padding(4.dp)
             .clickable(role = Role.Button, enabled = true) {
                 handleOnMute(!mute.value)
@@ -46,7 +46,7 @@ fun VolumeControl(
         Icon(
             painter = painterResource(R.drawable.ic_mute),
             contentDescription = stringResource(R.string.un_mute_label),
-            tint = MaterialTheme.colorScheme.onBackground,
+            tint = MaterialTheme.colorScheme.background,
             modifier = Modifier.fillMaxSize()
                 .graphicsLayer {
                     this.alpha = if (mute.value) 0f else 1f
@@ -55,7 +55,7 @@ fun VolumeControl(
         Icon(
             painter = painterResource(R.drawable.ic_unmute),
             contentDescription = stringResource(R.string.mute_label),
-            tint = MaterialTheme.colorScheme.onBackground,
+            tint = MaterialTheme.colorScheme.background,
             modifier = Modifier.fillMaxSize()
                 .graphicsLayer {
                     this.alpha = if (mute.value) 1f else 0f

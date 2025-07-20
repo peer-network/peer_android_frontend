@@ -30,6 +30,7 @@ fun PhotoPage(
     onAuthorClick: (String) -> Unit = {},
     onMentionClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
+    header: @Composable () -> Unit = {},
     indicator: @Composable (PagerState, ImmutableList<UiMedia>) -> Unit = { state, items -> },
     connection: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit = {},
     content: @Composable (UiPost, PagerState, Boolean) -> Unit = { post, state, active -> },
@@ -65,6 +66,7 @@ fun PhotoPage(
                                     )
                                 )
                             } },
+                        header = header
                     )
                 } else {
                     val state = rememberPagerState(initialPage = 0) { post.media.size }
@@ -73,6 +75,7 @@ fun PhotoPage(
                         post = post,
                         engagements = engagement,
                         moderations = moderation,
+                        header = header,
                         indicator = { updatedIndicator(state, post.media.toPersistentList()) },
                         onAuthorClick = onAuthorClick,
                         onMentionClick = onMentionClick,

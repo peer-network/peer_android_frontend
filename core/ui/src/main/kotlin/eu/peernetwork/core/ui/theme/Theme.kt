@@ -3,6 +3,7 @@ package eu.peernetwork.core.ui.theme
 import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
@@ -33,6 +34,17 @@ fun PeerTheme(
         windowsInsetsController.isAppearanceLightStatusBars = !isDarkMode
         windowsInsetsController.isAppearanceLightNavigationBars = !isDarkMode
     }
+    PeerTheme(
+        colorScheme = colorScheme,
+        content = content
+    )
+}
+
+@Composable
+fun PeerTheme(
+    colorScheme: ColorScheme,
+    content: @Composable () -> Unit
+) {
     MaterialTheme(
         colorScheme = colorScheme,
         typography = Typography,
