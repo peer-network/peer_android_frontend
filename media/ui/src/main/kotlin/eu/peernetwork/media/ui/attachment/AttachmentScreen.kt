@@ -3,7 +3,6 @@ package eu.peernetwork.media.ui.attachment
 import android.Manifest
 import android.content.ContentResolver
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
 import androidx.compose.foundation.layout.Box
@@ -126,16 +125,11 @@ fun AttachmentScreen(
         state = launcher,
         imageUri = imageToCrop.value,
         selectedRatio = ratio.value,
-        onCropDone = { croppedFile ->
-            val uri = croppedFile.uri
-            val thumbnailKey = uri.toString()
-            val croppedUiFile = UiFile(uri = uri, thumbnail = thumbnailKey)
+        onCropDone = {
             attachment.value = UiAttachment.File(
                 UiMimeType.Photo,
-                persistentListOf(croppedUiFile)
+                persistentListOf(it)
             )
-            val bitmap = BitmapFactory.decodeStream(context.contentResolver.openInputStream(uri))
-            viewModel.setThumbnail(thumbnailKey, bitmap)
         }
     )
     LaunchedEffect(permissionsState.allPermissionsGranted) {
