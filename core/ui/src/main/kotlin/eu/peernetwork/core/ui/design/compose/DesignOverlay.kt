@@ -31,7 +31,7 @@ fun DesignOverlay(
     DesignDialog(
         state = state,
         startDestination = startDestination,
-        dim = false,
+        dim = true,
         onDismiss = onDismiss
     ) { controller, animation, cancelable ->
         Box(
@@ -40,7 +40,7 @@ fun DesignOverlay(
             propagateMinConstraints = propagateMinConstraints
         ) {
             val visibility = remember { mutableStateOf(false) }
-            val offset = with(LocalDensity.current) { 56.dp.toPx() }
+            val offset = with(LocalDensity.current) { 64.dp.toPx() }
             Box(modifier = Modifier.graphicsLayer {
                     alpha = animation.value
                     translationY = (1 - animation.value) * offset

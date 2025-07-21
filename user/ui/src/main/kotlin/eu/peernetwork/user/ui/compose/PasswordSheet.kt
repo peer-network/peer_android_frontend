@@ -13,7 +13,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -44,9 +43,11 @@ fun PasswordSheet(
     val password = remember { TextFieldState() }
     val handleSubmit by rememberUpdatedState(onSubmit)
     val action = remember { mutableStateOf<(() -> Unit)?>(null) }
+    val focus = remember { FocusRequester() }
     DesignBottomSheetScaffold(
         state = state,
         color = MaterialTheme.colorScheme.surfaceContainerLow,
+        onShow = { focus.requestFocus() },
         onDismiss = {
             action.value?.invoke()
             action.value = null
@@ -57,6 +58,7 @@ fun PasswordSheet(
             state = state,
             password = password,
             label = label,
+            focus = focus,
             onSubmit = {
                 action.value = { handleSubmit(it) }
                 state.value = false
@@ -71,9 +73,9 @@ fun PasswordSheet(
     state: MutableState<Boolean>,
     password: TextFieldState,
     label: String,
+    focus: FocusRequester,
     onSubmit: (String) -> Unit = {}
 ) {
-    val focus = remember { FocusRequester() }
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -104,9 +106,6 @@ fun PasswordSheet(
             )
         }
         Spacer(modifier = Modifier.navigationBarsPadding())
-        LaunchedEffect(Unit) {
-            focus.requestFocus()
-        }
     }
 }
 
@@ -117,10 +116,12 @@ fun PreviewPasswordSheet() {
     PeerTheme {
         val state = remember { mutableStateOf(true) }
         val password = remember { TextFieldState() }
+        val focus = remember { FocusRequester() }
         PasswordSheet(
             state = state,
             password = password,
             label = stringResource(R.string.confirmation_label),
+            focus = focus
         )
     }
 }

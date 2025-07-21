@@ -54,12 +54,13 @@ fun FeedMenu(
             } else {
                 DesignDropDown(
                     expanded,
+                    color = MaterialTheme.colorScheme.tertiaryContainer,
                     contentPadding = PaddingValues(vertical = 4.dp),
                     default = stringResource(relation.mapFromDomain().value),
                     modifier = Modifier
                         .padding(vertical = 4.dp)
                         .clip(RoundedCornerShape(6.dp))
-                        .background(MaterialTheme.colorScheme.surfaceVariant),
+                        .background(MaterialTheme.colorScheme.tertiaryContainer),
                 ) {
                     relations.entries.forEach {
                         item(tag = it.key, {

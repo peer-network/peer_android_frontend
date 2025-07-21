@@ -47,6 +47,7 @@ fun DesignBottomSheetScaffold(
     orientation: Orientation = Orientation.Vertical,
     confirmValueChange: (DesignBottomSheetState) -> Boolean = { true },
     onStateChanged: (DesignBottomSheetState) -> Unit = {},
+    onShow: () -> Unit = {},
     onDismiss: () -> Unit = {},
     snapAnimationSpec: AnimationSpec<Float> = tween<Float>(
         durationMillis = 250,
@@ -61,6 +62,7 @@ fun DesignBottomSheetScaffold(
     DesignDialog(
         state = visible,
         dim = behind,
+        onShow = onShow,
         onDismiss = {
             visible.value = false
             handleOnDismiss()
@@ -146,11 +148,11 @@ fun DesignBottomSheetScaffold(
             contentAlignment = Alignment.BottomCenter,
             modifier = Modifier
                 .draggableAnchors(draggableState, orientation) { sheetSize, constraints ->
-                    val layoutHeight = constraints.maxHeight.toFloat()
+                    val sheetHeight = sheetSize.height.toFloat()
                     DraggableAnchors {
                         DesignBottomSheetState.EXPAND at 0f
-                        DesignBottomSheetState.COLLAPSE at layoutHeight
-                        DesignBottomSheetState.HIDE at layoutHeight
+                        DesignBottomSheetState.COLLAPSE at sheetHeight
+                        DesignBottomSheetState.HIDE at sheetHeight
                     } to state
                 }.anchoredDraggable(
                     state = draggableState,

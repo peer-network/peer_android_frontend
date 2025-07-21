@@ -9,6 +9,7 @@ import android.view.View
 import android.view.WindowManager
 import android.view.animation.PathInterpolator
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
+import androidx.compose.foundation.layout.Box
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -21,6 +22,8 @@ import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSavedStateRegistryOwner
@@ -43,6 +46,7 @@ fun  DesignDialog(
     dim: Boolean = false,
     canDismiss: Boolean = true,
     onBackPressed: () -> Unit = {},
+    onShow: () -> Unit = {},
     duration: Long = 250,
     onDismiss: () -> Unit,
     content: @Composable (NavHostController, State<Float>, MutableState<Boolean>) -> Unit,
@@ -55,6 +59,7 @@ fun  DesignDialog(
     val isDarkMode = !MaterialTheme.colorScheme.isLightTheme()
     val updatedContent by rememberUpdatedState(content)
     val handleBackPressed by rememberUpdatedState(onBackPressed)
+    val handleShow by rememberUpdatedState(onShow)
     val handleDismissRequest by rememberUpdatedState(onDismiss)
     val cancelable = remember { mutableStateOf(false) }
     val lastState = remember { mutableStateOf(state.value) }
@@ -82,6 +87,11 @@ fun  DesignDialog(
                         this.duration = duration
                         this.interpolator = interpolator
                         addUpdateListener { animation.floatValue = it.animatedValue as Float }
+                        addListener(object : AnimatorListenerAdapter() {
+                            override fun onAnimationEnd(animation: Animator) {
+                                handleShow()
+                            }
+                        })
                     }.start()
                 }
             }
@@ -124,23 +134,23 @@ fun  DesignDialog(
                     setViewTreeSavedStateRegistryOwner(savedStateRegistryOwner)
                     setContent {
                         PeerTheme(isDarkMode = isDarkMode) {
-                            DesignTitleBar {
-                                val controller = rememberNavController()
-                                val navBackStackEntry by controller.currentBackStackEntryAsState()
-                                val currentStack = remember(navBackStackEntry?.id) {
-                                    mutableStateOf(controller.currentDestination?.route)
-                                }
-                                val isStackEmpty = remember(navBackStackEntry?.id) {
-                                    mutableStateOf(controller.visibleEntries.value.size <= 1)
-                                }
+                            val controller = rememberNavController()
+                            val navBackStackEntry by controller.currentBackStackEntryAsState()
+                            val currentStack = remember(navBackStackEntry?.id) {
+                                mutableStateOf(controller.currentDestination?.route)
+                            }
+                            val isStackEmpty = remember(navBackStackEntry?.id) {
+                                mutableStateOf(controller.visibleEntries.value.size <= 1)
+                            }
+                            Box(modifier = Modifier.pointerInput(Unit) {}) {
                                 updatedContent(controller, animation, cancelable)
-                                LaunchedEffect(currentStack.value) {
-                                    cancelable.value = currentStack.value == startDestination || isStackEmpty.value
-                                }
-                                DisposableEffect(session.longValue) {
-                                    onDispose {
-                                        session.longValue = System.currentTimeMillis()
-                                    }
+                            }
+                            LaunchedEffect(currentStack.value) {
+                                cancelable.value = currentStack.value == startDestination || isStackEmpty.value
+                            }
+                            DisposableEffect(session.longValue) {
+                                onDispose {
+                                    session.longValue = System.currentTimeMillis()
                                 }
                             }
                         }

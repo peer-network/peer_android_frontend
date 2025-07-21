@@ -96,7 +96,11 @@ fun ExplorerScreen(
                 viewModelStore.get(tag)
             )
         }
-        DesignCollapsibleBottomSheet(state = showDirectory) {
+        DesignCollapsibleBottomSheet(
+            state = showDirectory,
+            peekHeight = 400.dp,
+            onDismiss = { showDirectory.value = false }
+        ) {
             Box(modifier = Modifier.statusBarsPadding()) {
                 DirectoryScreen(
                     type = type,
