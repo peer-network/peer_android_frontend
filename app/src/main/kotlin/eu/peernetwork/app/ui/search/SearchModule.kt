@@ -5,13 +5,19 @@ import dagger.Provides
 import dagger.multibindings.IntoMap
 import eu.peernetwork.app.ui.feed.Feed
 import eu.peernetwork.app.ui.profile.Profile
+import eu.peernetwork.app.ui.renderer.EngagementRenderer
+import eu.peernetwork.app.ui.window.Window
+import eu.peernetwork.blog.ui.engagement.EngagementConfirmation
+import eu.peernetwork.blog.ui.explore.Explore
 import eu.peernetwork.core.ui.annotation.UiBuilder
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.factory.UiBuilderFactory
+import eu.peernetwork.social.ui.connection.Connection
 import eu.peernetwork.social.ui.search.member.Member
 import eu.peernetwork.social.ui.search.tag.Tag
 import eu.peernetwork.social.ui.search.title.Title
+import eu.peernetwork.wallet.ui.confirmation.Confirmation
 
 @Module
 object SearchModule {
@@ -57,5 +63,43 @@ object SearchModule {
     @UiBuilder(Feed.Builder::class)
     fun provideFeedBuilder(component: Search.Component): UiComponent.Builder {
         return Feed.Builder(component)
+    }
+
+    @Search.Scope
+    @Provides
+    @IntoMap
+    @UiBuilder(Explore.Builder::class)
+    fun provideExploreBuilder(component: Search.Component): UiComponent.Builder {
+        return Explore.Builder(component)
+    }
+
+    @Search.Scope
+    @Provides
+    @IntoMap
+    @UiBuilder(Connection.Builder::class)
+    fun provideConnectionBuilder(component: Search.Component): UiComponent.Builder {
+        return Connection.Builder(component)
+    }
+
+    @Search.Scope
+    @Provides
+    @IntoMap
+    @UiBuilder(Confirmation.Builder::class)
+    fun provideConfirmationBuilder(component: Search.Component): UiComponent.Builder {
+        return Confirmation.Builder(component)
+    }
+
+    @Search.Scope
+    @Provides
+    fun provideEngagementRenderer(component: Search.Component): EngagementConfirmation {
+        return EngagementRenderer(component)
+    }
+
+    @Search.Scope
+    @Provides
+    @IntoMap
+    @UiBuilder(Window.Builder::class)
+    fun provideWindowBuilder(component: Search.Component): UiComponent.Builder {
+        return Window.Builder(component)
     }
 }

@@ -18,7 +18,7 @@ import androidx.paging.compose.LazyPagingItems
 import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.blog.domain.model.Relation
 import eu.peernetwork.blog.ui.model.UiVideo
-import eu.peernetwork.blog.ui.compose.PostPageSkeleton
+import eu.peernetwork.blog.ui.compose.PostPlaceholder
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.moderation.ModerationScreen
@@ -27,6 +27,7 @@ import eu.peernetwork.core.ui.design.component.DesignPagingScaffold
 import eu.peernetwork.core.ui.design.component.DesignRefreshableScaffold
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
 import eu.peernetwork.media.core.model.UiMimeType
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -42,11 +43,13 @@ fun VideoScreen(
     viewModelStoreOwner: ViewModelStoreOwner,
     onPostClick: (String, Int) -> Unit,
     onAuthorClick: (String) -> Unit = {},
+    requireUpdate: MutableState<Boolean>,
     listState: LazyListState = rememberLazyListState(),
     connection: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit = {}
 ) {
     val context = LocalContext.current
     val configuration = LocalConfiguration.current
+    val coroutine = rememberCoroutineScope()
     val component = remember {
         provider.builder(Video.Builder::class.java).build(context)
     }
@@ -77,7 +80,7 @@ fun VideoScreen(
     DesignPagingScaffold<UiVideo>(
         state = derivedState,
         onRefresh = { viewModel.load(Pageable(0, postLimit), relation, criteria) },
-        placeholder = { PostPageSkeleton() },
+        placeholder = { PostPlaceholder() },
         errorContent = { error, refresh ->
             DesignError(refresh, error, component.resource())
         }
@@ -131,6 +134,15 @@ fun VideoScreen(
                 }
             }
         }
+        LaunchedEffect(requireUpdate.value) {
+            if (requireUpdate.value) {
+                lazyPagingItems.refresh()
+                coroutine.launch {
+                    listState.animateScrollToItem(0)
+                }
+                requireUpdate.value = false
+            }
+        }
         LaunchedEffect(canLoad.value) {
             if (canLoad.value) {
                 viewModel.sync(
@@ -138,7 +150,8 @@ fun VideoScreen(
                     UiMimeType.Video,
                     configuration.screenWidthDp,
                     listState.firstVisibleItemIndex,
-                    listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
+                    listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index
+                        ?: listState.firstVisibleItemIndex
                 )
             }
         }

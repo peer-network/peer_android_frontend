@@ -26,7 +26,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.compose.DesignLabeledIcon
 import eu.peernetwork.core.ui.extension.builder
-import eu.peernetwork.core.ui.theme.LightAccentColor
 import eu.peernetwork.wallet.ui.model.UiReward
 
 @Composable
@@ -47,7 +46,7 @@ fun RewardScreen(
     val points = remember { derivedStateOf { (state as? RewardViewModel.State.Success?)?.rewards } }
     Crossfade(targetState = points.value) { target ->
         if (target != null) {
-            PointScreen(target)
+            RewardScreen(target)
         }
     }
     LaunchedEffect(Unit) {
@@ -56,7 +55,7 @@ fun RewardScreen(
 }
 
 @Composable
-fun PointScreen(points: List<UiReward> = listOf()) {
+fun RewardScreen(points: List<UiReward> = listOf()) {
     var showPopup = remember { mutableStateOf(false) }
     var selectedPoint = remember { mutableStateOf<UiReward?>(null) }
     Column {
@@ -79,7 +78,7 @@ fun PointScreen(points: List<UiReward> = listOf()) {
                                 showPopup.value = true
                                 selectedPoint.value = point
                             },
-                            tint = LightAccentColor,
+                            tint = MaterialTheme.colorScheme.primary.copy(alpha = .8f),
                             modifier = Modifier.graphicsLayer {
                                 alpha = if (enabled.value) {
                                     1f

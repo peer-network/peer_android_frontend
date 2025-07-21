@@ -49,6 +49,7 @@ fun SettingsNavigation(
         ) { backStackEntry ->
             val id = backStackEntry.arguments?.getString("id") ?: ""
             ProfileScreen(
+                principal = userId,
                 userId = id,
                 provider = provider,
                 viewModelStore = viewModelStore,

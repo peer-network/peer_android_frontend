@@ -1,6 +1,7 @@
 package eu.peernetwork.app.ui.feed
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -24,7 +25,8 @@ fun FeedScreen(
     provider: UiComponentProvider,
     viewModelStore: ViewModelState,
     title: String? = null,
-    criteria: Criteria? = null
+    criteria: Criteria? = null,
+    requireUpdate: MutableState<Boolean>,
 ) {
     val context = LocalContext.current
     val component = remember {
@@ -45,29 +47,32 @@ fun FeedScreen(
     }
     val overlay = remember { mutableStateOf<FeedOverlayState>(FeedOverlayState.Empty) }
     val controller = rememberNavController()
-    FeedOverlay(
-        overlay = overlay,
-        userId = id,
-        postLimit = postLimit,
-        component = component,
-        viewModelStore = viewModelStore,
-    ) {
-        FeedNavigation(
+    ConnectionScreen(
+        provider = component,
+        viewModelStoreOwner = viewModelStoreOwner
+    ) { connectionController ->
+        FeedOverlay(
+            overlay = overlay,
             userId = id,
+            criteria = criteria,
             postLimit = postLimit,
-            controller = controller,
             component = component,
             viewModelStore = viewModelStore,
+            connectionController = connectionController,
         ) {
-            ConnectionScreen(
-                provider = component,
-                viewModelStoreOwner = viewModelStoreOwner
-            ) { connectionController ->
+            FeedNavigation(
+                userId = id,
+                postLimit = postLimit,
+                controller = controller,
+                component = component,
+                viewModelStore = viewModelStore,
+            ) {
                 FeedPreview(
                     id = id,
                     enable = overlay.value == FeedOverlayState.Empty,
                     ordinal = ordinal.value,
                     state = pageState,
+                    requireUpdate = requireUpdate,
                     component = component,
                     viewModelStoreOwner = viewModelStoreOwner,
                     controller = controller,
@@ -79,7 +84,9 @@ fun FeedScreen(
                     title = title,
                     onNavigate = { viewModel.lastVisited(it) },
                     onFilter = { viewModel.setFilter(it) },
-                    onPhotoClick = { id, index -> },
+                    onPhotoClick = { id, index ->
+                        overlay.value = FeedOverlayState.Photo(id, index)
+                    },
                     onVideoClick = { id, index ->
                         overlay.value = FeedOverlayState.Video(id, index) }
                 )

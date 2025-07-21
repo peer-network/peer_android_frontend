@@ -7,14 +7,16 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,21 +34,20 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.compose.DesignBottomSheet
+import eu.peernetwork.core.ui.design.compose.DesignCollapsibleBottomSheet
 import eu.peernetwork.core.ui.design.compose.DesignDropDown
 import eu.peernetwork.core.ui.design.compose.DesignOutlinedButton
-import eu.peernetwork.core.ui.design.compose.DesignOverlayBackground
 import eu.peernetwork.core.ui.design.compose.DesignTitle
 import eu.peernetwork.core.ui.design.compose.DesignTitleBarHost
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.model.ViewModelState
-import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.media.core.model.UiAttachment
 import eu.peernetwork.media.core.model.UiMimeType
 import eu.peernetwork.media.ui.R
@@ -95,25 +96,21 @@ fun ExplorerScreen(
                 viewModelStore.get(tag)
             )
         }
-        DesignBottomSheet(
-            tag = "ExplorerScreen/DesignBottomSheet",
-            showSheet = showDirectory,
-            background = {
-                DesignOverlayBackground(
-                    showDirectory,
-                    modifier = Modifier.fillMaxSize()
-                        .background(MaterialTheme.colorScheme.background.copy(alpha = .8f))
-                )
-            },
+        DesignCollapsibleBottomSheet(
+            state = showDirectory,
+            peekHeight = 400.dp,
+            onDismiss = { showDirectory.value = false }
         ) {
-            DirectoryScreen(
-                type = type,
-                onSelect = {
-                    directory.value = it
-                    showDirectory.value = false },
-                provider = component,
-                viewModelStoreOwner = viewModelStore.get(tag),
-            )
+            Box(modifier = Modifier.statusBarsPadding()) {
+                DirectoryScreen(
+                    type = type,
+                    onSelect = {
+                        directory.value = it
+                        showDirectory.value = false },
+                    provider = component,
+                    viewModelStoreOwner = viewModelStore.get(tag),
+                )
+            }
         }
         DesignTitleBarHost("ExplorerScreen") {
             titleBar {
@@ -138,7 +135,7 @@ fun ExplorerScreen(
     val updatedContent by rememberUpdatedState(content)
     Column {
         val border = MaterialTheme.colorScheme.surfaceVariant
-        var expanded = remember { mutableStateOf(false) }
+        val expanded = remember { mutableStateOf(false) }
         val photo = stringResource(R.string.photo_label)
         val video = stringResource(R.string.video_label)
         val files = stringResource(R.string.file_label)
@@ -167,48 +164,73 @@ fun ExplorerScreen(
             DesignDropDown(
                 expanded,
                 default = title.value,
-                modifier = Modifier.padding(top = 4.dp)
-                    .clip(RoundedCornerShape(16))
-                    .background(color = border)
+                modifier = Modifier
+                    .padding(vertical = 4.dp)
+                    .clip(RoundedCornerShape(6.dp))
+                    .background(MaterialTheme.colorScheme.surfaceVariant),
             ) {
-                item(tag = photo, {
-                    title.value = photo
-                    onSelect(UiMimeType.Photo)
-                    true
-                }) { label, isActive ->
-                    Text(
-                        label,
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                        style = MaterialTheme.typography.bodySmall.copy(
-                            color = MaterialTheme.colorScheme.onBackground
-                        )
-                    )
-                }
-                item(tag = video, {
-                    title.value = video
-                    onSelect(UiMimeType.Video)
-                    true
-                }) { label, isActive ->
-                    Text(
-                        label,
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                        style = MaterialTheme.typography.bodySmall.copy(
-                            color = MaterialTheme.colorScheme.onBackground
-                        )
-                    )
-                }
-                item(tag = files, {
-                    handleOnClick()
-                    expanded.value = false
-                    false
-                }) { label, isActive ->
-                    Text(
-                        label,
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                        style = MaterialTheme.typography.bodySmall.copy(
-                            color = MaterialTheme.colorScheme.onBackground
-                        )
-                    )
+                val items = mapOf(
+                    photo to eu.peernetwork.core.ui.R.drawable.ic_photo,
+                    video to eu.peernetwork.core.ui.R.drawable.ic_video,
+                    files to eu.peernetwork.core.ui.R.drawable.ic_wallet
+                )
+                items.entries.forEach { (label, iconRes) ->
+                    item(tag = label, {
+                        when (label) {
+                            photo -> {
+                                title.value = photo
+                                onSelect(UiMimeType.Photo)
+                            }
+                            video -> {
+                                title.value = video
+                                onSelect(UiMimeType.Video)
+                            }
+                            files -> {
+                                handleOnClick()
+                                expanded.value = false
+                            }
+                        }
+                        expanded.value
+                    }) { _, isActive ->
+                        Spacer(modifier = Modifier.height(2.dp))
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.padding(start = 6.dp)
+                                .padding(vertical = 6.dp)
+                        ) {
+                            Icon(
+                                painter = painterResource(id = iconRes),
+                                contentDescription = label,
+                                modifier = Modifier.size(20.dp),
+                                tint = if (isActive) MaterialTheme.colorScheme.onBackground else MaterialTheme.colorScheme.tertiary
+                            )
+                            Spacer(modifier = Modifier.width(2.dp))
+                            Text(
+                                label,
+                                style = if (isActive) {
+                                    MaterialTheme.typography.bodyMedium.copy(
+                                        MaterialTheme.colorScheme.onBackground
+                                    )
+                                } else {
+                                    MaterialTheme.typography.bodyMedium.copy(
+                                        MaterialTheme.colorScheme.tertiary
+                                    )
+                                },
+                            )
+                            if (isActive) {
+                                Spacer(modifier = Modifier.width(2.dp))
+                                Icon(
+                                    painter = painterResource(id = eu.peernetwork.core.ui.R.drawable.ic_caret_down),
+                                    contentDescription = "Selected",
+                                    modifier = Modifier.size(16.dp),
+                                    tint = MaterialTheme.colorScheme.onSurface
+                                )
+                                Spacer(modifier = Modifier.width(6.dp))
+                            } else {
+                                Spacer(modifier = Modifier.width(12.dp))
+                            }
+                        }
+                    }
                 }
             }
             Spacer(modifier = Modifier.weight(1f))
@@ -257,14 +279,13 @@ fun ExplorerScreen(
 @Preview
 @Composable
 fun PreviewExplorerScreen() {
-    PeerTheme {
-        val photo = stringResource(R.string.photo_label)
-        ExplorerScreen(
-            remember { mutableStateOf(photo) },
-            remember { mutableStateOf(UiAttachment.Text) },
-            {},
-            {},
-            {}
-        ) { Box(modifier = Modifier.fillMaxSize()) }
-    }
+    val photo = stringResource(R.string.photo_label)
+    ExplorerScreen(
+        title = remember { mutableStateOf(photo) },
+        attachment = remember { mutableStateOf(UiAttachment.Text) },
+        onClick = {},
+        onFinish = {},
+        onSelect = {},
+        content = {}
+    )
 }

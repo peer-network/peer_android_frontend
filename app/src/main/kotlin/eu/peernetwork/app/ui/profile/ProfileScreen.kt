@@ -1,5 +1,6 @@
 package eu.peernetwork.app.ui.profile
 
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -9,11 +10,14 @@ import androidx.navigation.compose.rememberNavController
 import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.extension.builder
+import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.core.ui.model.ViewModelState
+import eu.peernetwork.social.ui.connection.ConnectionScreen
 import java.net.URLEncoder
 
 @Composable
 fun ProfileScreen(
+    principal: String,
     userId: String,
     provider: UiComponentProvider,
     viewModelStore: ViewModelState,
@@ -25,20 +29,51 @@ fun ProfileScreen(
     }
     val overlay = remember { mutableStateOf<ProfileOverlayState>(ProfileOverlayState.Empty) }
     val controller = rememberNavController()
-    ProfileOverlay(overlay, userId, title, BuildConfig.PAGING_LIMIT, component, viewModelStore) {
-        ProfileNavigation(
-            userId = userId,
-            title = title,
-            enable = overlay.value == ProfileOverlayState.Empty,
-            limit = BuildConfig.PAGING_LIMIT,
-            controller = controller,
-            component = component,
-            viewModelStore = viewModelStore,
-            onPhotoClick = { id, index -> },
-            onVideoClick = { id, index ->
-                overlay.value = ProfileOverlayState.Video(id, index)
+    ConnectionScreen(
+        provider = component,
+        viewModelStoreOwner = viewModelStore.get(userId)
+    ) { connection ->
+        ProfileOverlay(
+            overlay,
+            principal,
+            userId,
+            BuildConfig.PAGING_LIMIT,
+            connection,
+            provider,
+            component,
+            viewModelStore
+        ) {
+            ProfileNavigation(
+                principal = principal,
+                userId = userId,
+                controller = controller,
+                provider = provider,
+                component = component,
+                viewModelStore = viewModelStore,
+            ) {
+                val photoState = rememberLazyListState()
+                val videoState = rememberLazyListState()
+                ProfilePreview(
+                    id = userId,
+                    enable = overlay.value == ProfileOverlayState.Empty,
+                    title = title,
+                    limit = BuildConfig.PAGING_LIMIT,
+                    onSettings = { controller.navigateIfNecessary("settings") },
+                    component = component,
+                    viewModelStoreOwner = viewModelStore.get(userId),
+                    photoState = photoState,
+                    videoState = videoState,
+                    onPhotoClick = { id, index ->
+                        overlay.value = ProfileOverlayState.Photo(id, index)
+                    },
+                    onVideoClick = { id, index ->
+                        overlay.value = ProfileOverlayState.Video(id, index) },
+                    onHashtagClick = { controller.navigateToTagSearch(it) },
+                    onMentionClick = { controller.navigateToUsernameSearch(it) },
+                    onAuthorClicked = { controller.navigateIfNecessary("profile/$it") },
+                )
             }
-        )
+        }
     }
 }
 

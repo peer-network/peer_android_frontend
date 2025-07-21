@@ -9,6 +9,8 @@ interface ThumbnailInteractor {
 
     suspend fun get(url: String): Bitmap?
 
+    suspend fun get(url: String, type: UiMimeType): Bitmap?
+
     suspend fun get(
         url: String,
         type: UiMimeType,
@@ -20,12 +22,16 @@ interface ThumbnailInteractor {
         bitmap: Bitmap
     ): Bitmap
 
+    suspend fun scale(bitmap: Bitmap, dimen: Pair<Float, Float>): Bitmap
+
     suspend fun merge(
         url: String,
-        width: Int,
         aspectRatio: Float,
         background: Bitmap,
         foreground: Bitmap,
+        width: Int,
+        height: Int = (width / aspectRatio).toInt(),
+        fit: Boolean = false
     ): Bitmap
 
     suspend fun load(

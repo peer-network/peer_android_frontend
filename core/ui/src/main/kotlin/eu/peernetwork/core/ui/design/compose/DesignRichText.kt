@@ -13,10 +13,47 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+
+@Composable
+fun DesignRichText(
+    text: AnnotatedString,
+    modifier: Modifier = Modifier,
+    maxLines: Int = Int.MAX_VALUE,
+    style: TextStyle = MaterialTheme.typography.bodyMedium.copy(
+        fontWeight = FontWeight.Bold,
+        color = MaterialTheme.colorScheme.onBackground
+    ),
+    onClick: (() -> Unit)? = null,
+    onMentionClick: (String) -> Unit = {},
+    onHashtagClick: (String) -> Unit = {}
+) {
+    val uriHandler = LocalUriHandler.current
+    val handleOnClick by rememberUpdatedState(onClick)
+    val handleMentionClick by rememberUpdatedState(onMentionClick)
+    val handleHashtagClick by rememberUpdatedState(onHashtagClick)
+    ClickableText(
+        text = text,
+        style = style,
+        overflow = TextOverflow.Ellipsis,
+        maxLines = maxLines,
+        onClick = { offset ->
+            val annotations = text.getStringAnnotations(start = offset, end = offset)
+            annotations.firstOrNull()?.let { annotation ->
+                when (annotation.tag) {
+                    "URL" -> uriHandler.openUri(annotation.item.lowercase())
+                    "MENTION" -> handleMentionClick(annotation.item)
+                    "HASHTAG" -> handleHashtagClick(annotation.item)
+                }
+            } ?: handleOnClick?.invoke()
+        },
+        modifier = modifier
+    )
+}
 
 @Composable
 fun DesignRichText(

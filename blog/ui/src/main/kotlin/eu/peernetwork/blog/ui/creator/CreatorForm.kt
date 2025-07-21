@@ -63,10 +63,9 @@ fun CreatorForm(
             keyboardOptions = KeyboardOptions(
                 capitalization = KeyboardCapitalization.Sentences,
                 keyboardType = KeyboardType.Text,
-                imeAction = ImeAction.Next
+                imeAction = ImeAction.Unspecified
             ),
             verticalAlignment = Alignment.Top,
-            maxLines = 3,
             maxLength = 500,
             modifier = Modifier
                 .fillMaxWidth()

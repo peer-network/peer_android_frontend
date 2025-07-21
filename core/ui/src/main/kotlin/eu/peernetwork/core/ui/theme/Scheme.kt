@@ -3,7 +3,7 @@ package eu.peernetwork.core.ui.theme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 
-internal val DarkScheme = darkColorScheme(
+val DarkScheme = darkColorScheme(
     primary = PrimaryColor,
     tertiary = LightGray,
     secondary = AccentColor,
@@ -25,7 +25,7 @@ internal val DarkScheme = darkColorScheme(
 
 )
 
-internal val LightScheme = lightColorScheme(
+val LightScheme = lightColorScheme(
     primary = PrimaryColor,
     tertiary = Gray5,
     secondary = AccentColor,

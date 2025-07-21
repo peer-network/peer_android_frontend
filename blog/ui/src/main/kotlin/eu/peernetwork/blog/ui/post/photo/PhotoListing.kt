@@ -7,17 +7,20 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
+import eu.peernetwork.blog.ui.compose.PhotoIndicator
 import eu.peernetwork.blog.ui.compose.PostItem
-import eu.peernetwork.blog.ui.compose.PostPager
+import eu.peernetwork.blog.ui.compose.PhotoPager
 import eu.peernetwork.blog.ui.engagement.Engagements
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
 import eu.peernetwork.blog.ui.mapper.mapToContent
@@ -54,7 +57,22 @@ fun PhotoListing(
                     moderations = moderation
                 ) {
                     if (photo.media.size > 1) {
-                        PostPager(photo.media) { path ->
+                        val pagerState = rememberPagerState(initialPage = 0) { photo.media.size }
+                        PhotoPager(
+                            pagerState,
+                            photo.aspectRatio,
+                            photo.media,
+                            { PhotoIndicator(pagerState, photo.media) }
+                        ) { path ->
+                            component.imageView()(
+                                Modifier,
+                                ImageView.Spec(
+                                    path,
+                                    null,
+                                    ContentScale.Crop,
+                                    500f,
+                                )
+                            )
                             component.imageView()(
                                 Modifier,
                                 ImageView.Spec(path, photo.aspectRatio)
@@ -62,6 +80,15 @@ fun PhotoListing(
                         }
                     } else {
                         val media = photo.media.first()
+                        component.imageView()(
+                            Modifier,
+                            ImageView.Spec(
+                                media.path,
+                                photo.aspectRatio,
+                                ContentScale.Crop,
+                                500f,
+                            )
+                        )
                         component.imageView()(
                             Modifier,
                             ImageView.Spec(media.path, photo.aspectRatio)

@@ -10,6 +10,8 @@ import androidx.navigation.navArgument
 import eu.peernetwork.app.ui.profile.ProfileScreen
 import eu.peernetwork.app.ui.search.SearchScreen
 import eu.peernetwork.app.ui.search.SearchState
+import eu.peernetwork.app.ui.window.WindowScreen
+import eu.peernetwork.core.ui.design.compose.DesignPageWindowMode
 import eu.peernetwork.core.ui.design.compose.DesignRouter
 import eu.peernetwork.core.ui.model.ViewModelState
 import java.net.URLEncoder
@@ -22,26 +24,41 @@ fun FeedNavigation(
     controller: NavHostController,
     component: Feed.Component,
     viewModelStore: ViewModelState,
-    content: @Composable (NavHostController) -> Unit = {}
+    onCancel: () -> Unit = {},
+    content: @Composable () -> Unit = {}
 ) {
     val updatedContent by rememberUpdatedState(content)
+    val mode = if (startDestination == "overlay") {
+        DesignPageWindowMode.DOCKED
+    } else {
+        DesignPageWindowMode.HIDDEN
+    }
     DesignRouter(
         navController = controller,
         startDestination = startDestination,
     ) {
-        composable("content") { updatedContent(controller) }
-        composable("overlay") { updatedContent(controller) }
+        composable("content") { updatedContent() }
+        composable("overlay") { updatedContent() }
         composable(
             "profile/{id}",
             arguments = listOf(navArgument("id") {
                 type = NavType.StringType
             })
         ) { backStackEntry ->
-            ProfileScreen(
-                userId = backStackEntry.arguments?.getString("id") ?: "",
+            WindowScreen(
+                id = userId,
                 provider = component,
                 viewModelStore = viewModelStore,
-            )
+                mode = mode,
+                onCancel = onCancel,
+            ) {
+                ProfileScreen(
+                    principal = userId,
+                    userId = backStackEntry.arguments?.getString("id") ?: "",
+                    provider = component,
+                    viewModelStore = viewModelStore,
+                )
+            }
         }
         composable(
             "search/{type}/{query}",
@@ -57,13 +74,21 @@ fun FeedNavigation(
                 "tag" -> SearchState.Active.Tag(query)
                 else -> SearchState.Default
             }
-            SearchScreen(
+            WindowScreen(
                 id = userId,
-                postLimit = postLimit,
                 provider = component,
                 viewModelStore = viewModelStore,
-                searchState = searchState,
-            )
+                mode = mode,
+                onCancel = onCancel,
+            ) {
+                SearchScreen(
+                    id = userId,
+                    postLimit = postLimit,
+                    provider = component,
+                    viewModelStore = viewModelStore,
+                    searchState = searchState,
+                )
+            }
         }
     }
 }

@@ -5,9 +5,10 @@ import androidx.compose.ui.text.AnnotatedString
 import eu.peernetwork.blog.domain.model.Content
 import eu.peernetwork.blog.ui.model.UiContent
 import eu.peernetwork.blog.ui.model.UiPost
+import kotlinx.collections.immutable.toPersistentList
 
 fun Content.mapToPhoto(context: Context, annotate: (String) -> AnnotatedString): UiPost {
-    val media = media.map { it.mapFromDomain() }
+    val media = media.map { it.mapFromDomain() }.toPersistentList()
     return UiPost(
         id = id,
         title = annotate(title),

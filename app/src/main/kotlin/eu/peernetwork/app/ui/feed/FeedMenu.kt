@@ -54,12 +54,13 @@ fun FeedMenu(
             } else {
                 DesignDropDown(
                     expanded,
+                    color = MaterialTheme.colorScheme.tertiaryContainer,
                     contentPadding = PaddingValues(vertical = 4.dp),
                     default = stringResource(relation.mapFromDomain().value),
                     modifier = Modifier
-                        .padding(vertical = 6.dp)
+                        .padding(vertical = 4.dp)
                         .clip(RoundedCornerShape(6.dp))
-                        .background(MaterialTheme.colorScheme.surfaceVariant),
+                        .background(MaterialTheme.colorScheme.tertiaryContainer),
                 ) {
                     relations.entries.forEach {
                         item(tag = it.key, {
@@ -68,8 +69,7 @@ fun FeedMenu(
                         }) { label, isActive ->
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier.padding(start = 8.dp)
-                                    .padding(vertical = 2.dp),
+                                modifier = Modifier.padding(start = 8.dp),
                             ) {
                                 Text(
                                     label,

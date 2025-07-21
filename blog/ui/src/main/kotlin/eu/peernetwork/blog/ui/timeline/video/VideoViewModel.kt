@@ -13,6 +13,7 @@ import eu.peernetwork.core.common.model.Pageable
 import eu.peernetwork.media.core.interactor.ThumbnailInteractor
 import eu.peernetwork.media.core.model.UiMimeType
 import eu.peernetwork.blog.domain.model.Relation
+import eu.peernetwork.blog.ui.mapper.query
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -83,10 +84,38 @@ class VideoViewModel @Inject constructor(
             if (start <= limit) {
                 items.subList(start, limit).asFlow().map {
                     backgroundUsecase(
-                        BackgroundUsecase.Parameter(it.media, type, width, it.aspectRatio)
+                        BackgroundUsecase.Parameter(
+                            it.media,
+                            type,
+                            width,
+                            width,
+                            it.aspectRatio
+                        )
                     )
                 }.collect { interactor.invalidate() }
             }
+        }
+    }
+
+    fun sync(
+        items: List<UiVideo>,
+        width: Int,
+        height: Int,
+        position: Int
+    ) {
+        viewModelScope.launch {
+            val item = items[position]
+            backgroundUsecase(
+                BackgroundUsecase.Parameter(
+                    "${item.media}${UiMimeType.Video.query()}",
+                    UiMimeType.Video,
+                    width,
+                    height,
+                    item.aspectRatio,
+                    true
+                )
+            )
+            interactor.invalidate()
         }
     }
 

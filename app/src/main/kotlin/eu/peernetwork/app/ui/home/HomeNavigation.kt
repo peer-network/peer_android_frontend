@@ -1,6 +1,10 @@
 package eu.peernetwork.app.ui.home
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import eu.peernetwork.app.BuildConfig
@@ -22,6 +26,8 @@ fun HomeNavigation(
     viewModelStore: ViewModelState,
     onHome: () -> Unit
 ) {
+    val requireUpdate = remember { mutableStateOf(false) }
+    val handleOnHomeClick by rememberUpdatedState(onHome)
     DesignNavigation(
         navController = navController,
         startDestination = startDestination
@@ -33,9 +39,11 @@ fun HomeNavigation(
                         id,
                         BuildConfig.PAGING_LIMIT,
                         component,
-                        viewModelStore
+                        viewModelStore,
+                        requireUpdate = requireUpdate
                     )
                     is HomeRoute.Profile -> ProfileScreen(
+                        id,
                         id,
                         component,
                         viewModelStore,
@@ -43,9 +51,13 @@ fun HomeNavigation(
                     is HomeRoute.Add -> ComposerScreen(
                         component,
                         viewModelStore,
-                        onPostSuccess = onHome
+                        onPostSuccess = {
+                            requireUpdate.value = true
+                            handleOnHomeClick()
+                        }
                     )
                     is HomeRoute.Wallet -> WalletScreen(
+                        id,
                         BuildConfig.PAGING_LIMIT,
                         component,
                         viewModelStore

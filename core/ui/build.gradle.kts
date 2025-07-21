@@ -15,6 +15,7 @@ dependencies {
     api(libs.core.ktx)
     api(libs.appcompat)
     api(libs.material)
+    api(libs.fragment)
     api(libs.viewmodel)
     api(libs.androidx.splash)
     api(libs.androidx.lifecyle)

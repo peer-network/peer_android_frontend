@@ -92,7 +92,7 @@ fun DesignLabeledIcon(
     onClick: () -> Unit = {},
     contentPaddingValues: PaddingValues = PaddingValues(horizontal = 6.dp),
     tint: Color = LocalContentColor.current,
-    textStyle: TextStyle = MaterialTheme.typography.bodySmall.copy(color = tint),
+    textStyle: TextStyle = MaterialTheme.typography.labelMedium.copy(color = tint),
     position: DesignLabelAlignment = DesignLabelAlignment.START
 ) {
     when (position) {
@@ -107,7 +107,7 @@ fun DesignLabeledIcon(
                     painter = painter,
                     tint = tint,
                     contentDescription = contentDescription,
-                    modifier = Modifier.size(20.dp)
+                    modifier = Modifier.size(18.dp)
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(text, style = textStyle)
@@ -124,7 +124,7 @@ fun DesignLabeledIcon(
                     painter = painter,
                     tint = tint,
                     contentDescription = contentDescription,
-                    modifier = Modifier.size(20.dp)
+                    modifier = Modifier.size(18.dp)
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(text, style = textStyle)

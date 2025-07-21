@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import eu.peernetwork.blog.ui.mapper.query
 import eu.peernetwork.blog.ui.model.UiVideo
 import eu.peernetwork.blog.ui.usecase.AuthorVideoUsecase
 import eu.peernetwork.blog.ui.usecase.BackgroundUsecase
@@ -19,6 +20,7 @@ import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -26,7 +28,7 @@ import javax.inject.Inject
 
 class VideoViewModel @Inject constructor(
     private val usecase: AuthorVideoUsecase,
-    interactor: ThumbnailInteractor,
+    private val interactor: ThumbnailInteractor,
     private val backgroundUsecase: BackgroundUsecase,
 ) : ViewModel() {
     private val mutableState = MutableStateFlow<State>(State.Empty)
@@ -58,7 +60,6 @@ class VideoViewModel @Inject constructor(
 
     fun sync(
         items: List<UiVideo>,
-        type: UiMimeType,
         width: Int,
         start: Int,
         end: Int
@@ -70,12 +71,41 @@ class VideoViewModel @Inject constructor(
                 end + 1
             }
             if (start <= limit) {
-                items.subList(start, limit).asFlow().collect {
-                    backgroundUsecase(
-                        BackgroundUsecase.Parameter(it.media, type, width, it.aspectRatio)
-                    )
-                }
+                items.subList(start, limit).asFlow()
+                    .map {
+                        backgroundUsecase(
+                            BackgroundUsecase.Parameter(
+                                it.media,
+                                UiMimeType.Video,
+                                width,
+                                width,
+                                it.aspectRatio
+                            )
+                        )
+                    }.collect { interactor.invalidate() }
             }
+        }
+    }
+
+    fun load(
+        items: List<UiVideo>,
+        width: Int,
+        height: Int,
+        position: Int
+    ) {
+        viewModelScope.launch {
+            val item = items[position]
+            backgroundUsecase(
+                BackgroundUsecase.Parameter(
+                    "${item.media}${UiMimeType.Video.query()}",
+                    UiMimeType.Video,
+                    width,
+                    height,
+                    item.aspectRatio,
+                    true
+                )
+            )
+            interactor.invalidate()
         }
     }
 

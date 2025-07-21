@@ -1,6 +1,5 @@
 package eu.peernetwork.app.ui.profile
 
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
@@ -12,55 +11,65 @@ import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.app.ui.search.SearchScreen
 import eu.peernetwork.app.ui.search.SearchState
 import eu.peernetwork.app.ui.settings.SettingsScreen
+import eu.peernetwork.app.ui.window.WindowScreen
+import eu.peernetwork.core.ui.component.UiComponentProvider
+import eu.peernetwork.core.ui.design.compose.DesignPageWindowMode
 import eu.peernetwork.core.ui.design.compose.DesignRouter
-import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.core.ui.model.ViewModelState
 
 @Composable
 fun ProfileNavigation(
+    principal: String,
     userId: String,
-    title: String?,
-    enable: Boolean,
-    limit: Int,
-    startDestination: String? = null,
+    startDestination: String = "content",
     controller: NavHostController,
+    provider: UiComponentProvider,
     component: Profile.Component,
     viewModelStore: ViewModelState,
-    onPhotoClick: (String, Int) -> Unit = { id, position -> },
-    onVideoClick: (String, Int) -> Unit = { id, position -> },
-    content: @Composable (NavHostController) -> Unit = {}
+    onCancel: () -> Unit = {},
+    content: @Composable () -> Unit = {},
 ) {
     val updatedContent by rememberUpdatedState(content)
+    val mode = if (startDestination == "overlay") {
+        DesignPageWindowMode.DOCKED
+    } else {
+        DesignPageWindowMode.HIDDEN
+    }
     DesignRouter(
         navController = controller,
-        startDestination = startDestination ?: "profile/$userId"
+        startDestination = startDestination
     ) {
-        composable("overlay") { updatedContent(controller) }
+        composable("content") { updatedContent() }
+        composable("overlay") { updatedContent() }
         composable(
             "profile/{id}",
             arguments = listOf(navArgument("id") { this.type = NavType.StringType })
         ) { backStackEntry ->
             val id = backStackEntry.arguments?.getString("id") ?: ""
-            val photoState = rememberLazyListState()
-            val videoState = rememberLazyListState()
-            ProfilePreview(
-                id = id,
-                enable = enable,
-                title = title,
-                limit = limit,
-                onSettings = { controller.navigateIfNecessary("settings") },
-                component = component,
-                viewModelStoreOwner = viewModelStore.get(id),
-                photoState = photoState,
-                videoState = videoState,
-                onPhotoClick = onPhotoClick,
-                onVideoClick = onVideoClick,
-                onHashtagClick = { controller.navigateToTagSearch(it) },
-                onMentionClick = { controller.navigateToUsernameSearch(it) },
-                onAuthorClicked = { controller.navigateIfNecessary("profile/$it") },
-            )
+            WindowScreen(
+                id = userId,
+                provider = component,
+                viewModelStore = viewModelStore,
+                mode = mode,
+                onCancel = onCancel,
+            ) {
+                ProfileScreen(
+                    principal = principal,
+                    userId = id,
+                    provider = provider,
+                    viewModelStore = viewModelStore,
+                )
+            }
         }
-        composable("settings") { SettingsScreen(userId, component, viewModelStore) }
+        composable("settings") {
+            WindowScreen(
+                id = userId,
+                provider = component,
+                viewModelStore = viewModelStore,
+                mode = mode,
+                onCancel = onCancel,
+            ) { SettingsScreen(userId, component, viewModelStore) }
+        }
         composable(
             route = "search/{type}/{query}",
             arguments = listOf(
@@ -75,13 +84,21 @@ fun ProfileNavigation(
                 "tag" -> SearchState.Active.Tag(query)
                 else -> SearchState.Default
             }
-            SearchScreen(
+            WindowScreen(
                 id = userId,
-                postLimit = BuildConfig.PAGING_LIMIT,
                 provider = component,
                 viewModelStore = viewModelStore,
-                searchState = searchState,
-            )
+                mode = mode,
+                onCancel = onCancel,
+            ) {
+                SearchScreen(
+                    id = userId,
+                    postLimit = BuildConfig.PAGING_LIMIT,
+                    provider = component,
+                    viewModelStore = viewModelStore,
+                    searchState = searchState,
+                )
+            }
         }
     }
 }

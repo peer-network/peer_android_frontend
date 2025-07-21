@@ -9,7 +9,6 @@ import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModelProvider
 import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.core.ui.component.UiComponent
-import eu.peernetwork.core.ui.design.compose.DesignOverlay
 import eu.peernetwork.core.ui.extension.findBuilder
 import eu.peernetwork.core.ui.theme.PeerTheme
 import javax.inject.Inject
@@ -39,12 +38,10 @@ class MainActivity : ComponentActivity(), UiComponent.Provider<Main.Component> {
                     true
                 }
             ) {
-                DesignOverlay {
-                    MainScreen(
-                        component = injector,
-                        viewModelStoreOwner = this
-                    )
-                }
+                MainScreen(
+                    component = injector,
+                    viewModelStoreOwner = this
+                )
             }
         }
     }

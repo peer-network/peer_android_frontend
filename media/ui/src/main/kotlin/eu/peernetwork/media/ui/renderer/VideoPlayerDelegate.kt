@@ -1,17 +1,25 @@
 package eu.peernetwork.media.ui.renderer
 
 import android.content.Context
-import android.graphics.SurfaceTexture
 import android.view.TextureView
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.MutableFloatState
+import androidx.compose.runtime.MutableLongState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -20,17 +28,21 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.withFrameMillis
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import eu.peernetwork.media.core.interactor.VideoInteractor
 import eu.peernetwork.media.core.renderer.VideoPlayer
 import eu.peernetwork.media.ui.compose.VideoControl
+import eu.peernetwork.media.ui.compose.VolumeControl
 import eu.peernetwork.media.ui.core.MediaPlayer
-import eu.peernetwork.media.ui.view.TextureViewWrapper
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -48,86 +60,43 @@ class VideoPlayerDelegate @Inject constructor(
         modifier: Modifier,
         spec: VideoPlayer.Spec
     ) {
-        val player = remember { media.player() }
         val lifecycleOwner = LocalLifecycleOwner.current
-        var session by remember { mutableLongStateOf(System.currentTimeMillis()) }
+        val player = remember { media.player() }
         var isReady by remember { mutableStateOf(false) }
-        val isPlaying = remember(session) { mutableStateOf(player.isPlaying) }
-        val isLoading = remember {
-            derivedStateOf {
-                !player.isPlaying && !isReady
-            }
-        }
+        val isPlaying = remember { mutableStateOf(false) }
+        val hasSession = remember { mutableStateOf(false) }
+        val errorState = remember { mutableStateOf<Throwable?>(null) }
+        val session = remember { mutableLongStateOf(System.currentTimeMillis()) }
+        val isLoading = remember { mutableStateOf(false) }
         var mute = media.mute().collectAsStateWithLifecycle(player.isDeviceMuted)
         val dimension = media.observer.collectAsStateWithLifecycle()
-        var progress = remember { mutableFloatStateOf(0f) }
-        val isProcessing = remember { mutableStateOf(player.isLoading) }
-        var totalDuration by remember { mutableLongStateOf(0L) }
         val listener = remember {
             object : Player.Listener {
-                override fun onIsLoadingChanged(isLoading: Boolean) {
-                    isProcessing.value = isLoading && player.isPlaying
+                override fun onIsPlayingChanged(playing: Boolean) {
+                    isPlaying.value = playing
+                    if (playing && isLoading.value) {
+                        isLoading.value = false
+                    }
                 }
+
                 override fun onEvents(player: Player, events: Player.Events) {
                     if (events.containsAny(Player.EVENT_POSITION_DISCONTINUITY,
                             Player.EVENT_TIMELINE_CHANGED)) {
-                        totalDuration = player.duration.coerceAtLeast(1L)
-                        progress.floatValue = player.currentPosition.toFloat() / totalDuration
+                        spec.length.longValue = player.duration.coerceAtLeast(1L)
+                        spec.progress.floatValue = player.currentPosition.toFloat() / spec.length.longValue
                     }
                 }
-            }
-        }
-        val scope = rememberCoroutineScope()
-        val observer = remember {
-            LifecycleEventObserver { _, event ->
-                if (event == Lifecycle.Event.ON_START) {
-                    player.play()
-                    player.addListener(listener)
-                } else if (event == Lifecycle.Event.ON_STOP && player.isPlaying) {
-                    player.pause()
-                    player.removeListener(listener)
+
+                override fun onPlayerError(error: PlaybackException) {
+                    errorState.value = error
+                    hasSession.value = false
                 }
             }
         }
-        val texture = remember {
-            TextureViewWrapper(TextureView(context)).apply {
-                attachCallback(
-                    object : TextureView.SurfaceTextureListener {
-                        override fun onSurfaceTextureAvailable(
-                            texture: SurfaceTexture,
-                            p1: Int,
-                            p2: Int
-                        ) { interactor.attach(texture, spec.url) }
-
-                        override fun onSurfaceTextureSizeChanged(
-                            p0: SurfaceTexture,
-                            p1: Int,
-                            p2: Int
-                        ) {}
-
-                        override fun onSurfaceTextureDestroyed(texture: SurfaceTexture): Boolean {
-                            interactor.detach(texture)
-                            return true
-                        }
-
-                        override fun onSurfaceTextureUpdated(p0: SurfaceTexture) {}
-                    }
-                )
-            }
-        }
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = modifier.clickable {
-                if (!player.isPlaying) {
-                    player.play()
-                } else {
-                    player.pause()
-                }
-                session = System.currentTimeMillis()
-            }
-        ) {
+        val texture = remember { TextureView(context) }
+        Box(contentAlignment = Alignment.Center) {
             AndroidView(
-                factory = { texture.view },
+                factory = { texture },
                 update = {
                     it.alpha = 0f
                     val dimen = dimension.value[spec.url] ?: spec.ratio
@@ -136,45 +105,53 @@ class VideoPlayerDelegate @Inject constructor(
                         this.height = (width / dimen).toInt()
                     }
                     it.alpha = dimension.value[spec.url]?.let { 1f } ?: 0f
-                    isReady = dimension.value[spec.url]?.let { true } == player.isPlaying
-                    session = System.currentTimeMillis()
+                    isReady = dimension.value[spec.url] != null
                 },
                 modifier = modifier.wrapContentSize()
+                    .clickable {
+                        if (!isPlaying.value && !hasSession.value) {
+                            session.longValue = System.currentTimeMillis()
+                            hasSession.value = true
+                        } else if (!isPlaying.value) {
+                            player.play()
+                        } else {
+                            player.pause()
+                        }
+                    }
             )
             VideoControl(
                 isLoading = isLoading,
                 isPlaying = isPlaying,
-                isProcessing = isProcessing,
-                mute = mute,
-                progress = progress,
-                onMute = { scope.launch { interactor.mute(it) } },
-                onUpdate = {
-                    progress.floatValue = it
-                    player.seekTo((totalDuration * it).toLong())
-                }
+                error = errorState
             ) {
-                if (!player.isPlaying) {
+                if (!isPlaying.value && !hasSession.value) {
+                    session.longValue = System.currentTimeMillis()
+                    hasSession.value = true
+                } else if (!isPlaying.value) {
                     player.play()
                 } else {
                     player.pause()
                 }
-                session = System.currentTimeMillis()
             }
         }
-        LaunchedEffect(Unit) {
-            lifecycleOwner.lifecycle.addObserver(observer)
-        }
-        DisposableEffect(Unit) {
-            onDispose {
+        LaunchedEffect(spec.enabled, session.longValue) {
+            if (spec.enabled) {
+                isLoading.value = true
+                errorState.value = null
+                texture.surfaceTexture?.let {
+                    interactor.attach(it, spec.url)
+                    player.addListener(listener)
+                }
+            } else {
+                isPlaying.value = false
                 player.removeListener(listener)
-                lifecycleOwner.lifecycle.removeObserver(observer)
             }
         }
-        LaunchedEffect(player) {
-            while (spec.enabled) {
+        LaunchedEffect(isPlaying.value, spec.enabled) {
+            while (isPlaying.value && spec.enabled) {
                 withFrameMillis {
-                    totalDuration = player.duration.coerceAtLeast(1L)
-                    progress.floatValue = player.currentPosition.toFloat() / totalDuration
+                    spec.length.longValue = player.duration.coerceAtLeast(1L)
+                    spec.progress.floatValue = player.currentPosition.toFloat() / spec.length.longValue
                 }
                 delay(16)
             }
@@ -185,6 +162,68 @@ class VideoPlayerDelegate @Inject constructor(
             } else {
                 0f
             }
+        }
+        DisposableEffect(lifecycleOwner) {
+            val observer = LifecycleEventObserver { _, event ->
+                when (event) {
+                    Lifecycle.Event.ON_RESUME -> {
+                        player.play()
+                    }
+                    Lifecycle.Event.ON_STOP -> {
+                        player.pause()
+                    }
+                    else -> Unit
+                }
+            }
+            lifecycleOwner.lifecycle.addObserver(observer)
+            onDispose {
+                lifecycleOwner.lifecycle.removeObserver(observer)
+            }
+        }
+    }
+
+    @Composable
+    override fun Controller(
+        modifier: Modifier,
+        progress: MutableFloatState,
+        length: MutableLongState
+    ) {
+        val scope = rememberCoroutineScope()
+        val player = remember { media.player() }
+        var mute = media.mute().collectAsStateWithLifecycle(player.isDeviceMuted)
+        Row(
+            modifier = modifier,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(end = 12.dp)
+                    .height(height = 3.dp)
+                    .pointerInput(Unit) {
+                        detectHorizontalDragGestures(
+                            onDragStart = { },
+                            onDragEnd = { },
+                            onHorizontalDrag = { change, _ ->
+                                val position = (change.position.x / size.width).coerceIn(0f, 1f)
+                                progress.floatValue = position
+                                player.seekTo((length.longValue * position).toLong())
+                            }
+                        )
+                    }
+                    .clip(RoundedCornerShape(2.dp))
+                    .background(MaterialTheme.colorScheme.onBackground.copy(alpha = .3f))
+
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(progress.floatValue)
+                        .fillMaxHeight()
+                        .clip(RoundedCornerShape(2.dp))
+                        .background(MaterialTheme.colorScheme.onBackground)
+                )
+            }
+            VolumeControl(mute) { scope.launch { interactor.mute(it) } }
         }
     }
 }

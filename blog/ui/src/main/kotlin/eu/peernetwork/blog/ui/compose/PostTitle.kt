@@ -11,9 +11,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 @Composable
-fun PostText(
+fun PostTitle(
     title: AnnotatedString,
     description: AnnotatedString,
     modifier: Modifier = Modifier,
@@ -42,8 +43,9 @@ fun PostText(
         )
         ClickableText(
             text = description,
-            style = MaterialTheme.typography.bodyMedium.copy(
+            style = MaterialTheme.typography.labelLarge.copy(
                 color = MaterialTheme.colorScheme.tertiary,
+                lineHeight = 18.sp
             ),
             modifier = Modifier.padding(top = 4.dp),
             onClick = { offset ->

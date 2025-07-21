@@ -6,7 +6,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.width
@@ -39,9 +38,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffold
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
-import eu.peernetwork.core.ui.design.compose.DesignBottomSheet
+import eu.peernetwork.core.ui.design.compose.DesignBottomSheetScaffold
 import eu.peernetwork.core.ui.design.compose.DesignOutlinedButton
-import eu.peernetwork.core.ui.design.compose.DesignOverlayBackground
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.wallet.ui.R
@@ -89,20 +87,11 @@ fun ConfirmationScreen(
     } }
     val handleOnConfirm by rememberUpdatedState(onConfirm)
     val handleOnDismiss by rememberUpdatedState(onDismiss)
-    DesignBottomSheet(
-        showSheet = showSheet,
-        tag = "ConfirmationScreen",
-        onDismissRequest = { handleOnDismiss() },
-        background = {
-            DesignOverlayBackground(
-                state = it,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.background.copy(alpha = .6f))
-            )
-        }
-    ) { visible ->
-        val uiToken = remember(visible.value) { mutableStateOf<UiToken?>(token) }
+    DesignBottomSheetScaffold(
+        state = showSheet,
+        onDismiss = { handleOnDismiss() },
+    ) {
+        val uiToken = remember { mutableStateOf<UiToken?>(token) }
         DesignStatefulScaffold<Pair<UiQuote, UiWallet>>(
             derivedState,
             onRefresh = { uiToken.value?.let { viewModel.initialize(it) } },

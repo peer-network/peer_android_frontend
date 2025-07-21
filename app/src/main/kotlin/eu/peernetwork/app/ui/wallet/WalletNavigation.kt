@@ -15,6 +15,7 @@ import eu.peernetwork.core.ui.model.ViewModelState
 
 @Composable
 fun WalletNavigation(
+    id: String,
     provider: UiComponentProvider,
     viewModelStore: ViewModelState,
     content: @Composable (NavHostController) -> Unit,
@@ -33,6 +34,7 @@ fun WalletNavigation(
             })
         ) { backStackEntry ->
             ProfileScreen(
+                principal = id,
                 userId = backStackEntry.arguments?.getString("id") ?: "",
                 provider = provider,
                 viewModelStore = viewModelStore,

@@ -2,10 +2,8 @@ package eu.peernetwork.wallet.ui.transfer
 
 import android.content.res.Configuration
 import androidx.compose.animation.Crossfade
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -30,8 +28,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
-import eu.peernetwork.core.ui.design.compose.DesignBottomSheet
-import eu.peernetwork.core.ui.design.compose.DesignOverlayBackground
+import eu.peernetwork.core.ui.design.compose.DesignBottomSheetScaffold
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.theme.PeerAppGreen
 import eu.peernetwork.core.ui.theme.PeerTheme
@@ -88,30 +85,18 @@ fun TransferSheet(
     val showSheet = remember(transfer.value) { mutableStateOf(transfer.value != null) }
     val handleOnFinish by rememberUpdatedState(onFinish)
     val handleOnRecipientClick by rememberUpdatedState(onRecipientClick)
-    DesignBottomSheet(
-        tag = "TransferSheet",
-        showSheet = showSheet,
-        onDismissRequest = {
+    DesignBottomSheetScaffold(
+        state = showSheet,
+        onDismiss = {
             if (isSuccessful.value) {
                 viewModel.reset()
                 handleOnFinish()
-            }
-            transfer.value = null
-        },
-        onAnimationComplete = {
-            if (!it && showRecipient.value) {
+            } else if (showRecipient.value) {
                 showRecipient.value = false
                 handleOnRecipientClick(recipient)
             }
+            transfer.value = null
         },
-        background = {
-            DesignOverlayBackground(
-                state = it,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.background.copy(alpha = .6f))
-            )
-        }
     ) {
         Crossfade(transfer.value) { target ->
             if (target != null) {

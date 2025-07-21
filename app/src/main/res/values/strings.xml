@@ -15,4 +15,6 @@
     <string name="version_update_title">Update Required</string>
     <string name="version_update_action">Update Now</string>
     <string name="version_update_message">This version of the app is outdated. Please update to continue.</string>
+
+    <string name="network_error_message">Error processing network request, please try again.</string>
 </resources>

@@ -1,11 +1,9 @@
 package eu.peernetwork.app.ui.profile
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -13,10 +11,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.compose.DesignBottomSheet
-import eu.peernetwork.core.ui.design.compose.DesignOverlayBackground
+import eu.peernetwork.core.ui.design.compose.DesignCollapsibleBottomSheet
 import eu.peernetwork.social.ui.connection.ConnectionStatus
 import eu.peernetwork.social.ui.followers.FollowersScreen
 import eu.peernetwork.social.ui.followings.FollowingsScreen
@@ -34,54 +32,52 @@ fun ProfileSheet(
     viewModelStoreOwner: ViewModelStoreOwner,
     onClick: (UiMember) -> Unit
 ) {
-    var selected by remember { mutableStateOf<UiMember?>(null) }
     val handleOnClick by rememberUpdatedState(onClick)
-    DesignBottomSheet(
-        onDismissRequest = { state.value = false },
-        onAnimationComplete = {
-            if (!it) {
-                selected?.let { handleOnClick(it) }
-            } else {
-                selected = null
-            }
-        },
-        tag = "MemberBottomSheet",
-        showSheet = state,
-        background = {
-            DesignOverlayBackground(
-                state = it,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.background.copy(alpha = .6f))
-            )
-        },
+    var selectedProfile by remember { mutableStateOf<UiMember?>(null) }
+    DesignCollapsibleBottomSheet(
+        onDismiss = {
+            selectedProfile?.let { handleOnClick(it) }
+            state.value = false
+            selectedProfile = null },
+        peekHeight = 400.dp,
+        state = state,
         content = {
-            val connection = remember(it.value) { mutableStateOf<ConnectionStatus?>(status.value) }
-            connection.value?.let {
-                when (it) {
-                    ConnectionStatus.FOLLOWER -> FollowersScreen(
-                        userId = id,
-                        provider = provider,
-                        viewModelStoreOwner = viewModelStoreOwner,
-                        postLimit = limit,
-                        onClick = { selected = it }
-                    )
-                    ConnectionStatus.FOLLOWING -> FollowingsScreen(
-                        userId = id,
-                        provider = provider,
-                        viewModelStoreOwner = viewModelStoreOwner,
-                        postLimit = limit,
-                        onClick = { selected = it }
-                    )
-                    ConnectionStatus.PEER -> PeersScreen(
-                        provider = provider,
-                        viewModelStoreOwner = viewModelStoreOwner,
-                        postLimit = limit,
-                        onClick = { selected = it }
-                    )
+            Box(modifier = Modifier.statusBarsPadding()) {
+                val connection = remember { mutableStateOf<ConnectionStatus?>(status.value) }
+                connection.value?.let {
+                    when (it) {
+                        ConnectionStatus.FOLLOWER -> FollowersScreen(
+                            userId = id,
+                            provider = provider,
+                            viewModelStoreOwner = viewModelStoreOwner,
+                            postLimit = limit,
+                            onClick = {
+                                selectedProfile = it
+                                state.value = false
+                            }
+                        )
+                        ConnectionStatus.FOLLOWING -> FollowingsScreen(
+                            userId = id,
+                            provider = provider,
+                            viewModelStoreOwner = viewModelStoreOwner,
+                            postLimit = limit,
+                            onClick = {
+                                selectedProfile = it
+                                state.value = false
+                            }
+                        )
+                        ConnectionStatus.PEER -> PeersScreen(
+                            provider = provider,
+                            viewModelStoreOwner = viewModelStoreOwner,
+                            postLimit = limit,
+                            onClick = {
+                                selectedProfile = it
+                                state.value = false
+                            }
+                        )
+                    }
                 }
             }
         }
     )
-    LaunchedEffect(selected) { selected?.let { state.value = false } }
 }

@@ -1,17 +1,21 @@
 package eu.peernetwork.blog.ui.post.video
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.pager.VerticalPager
-import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -20,11 +24,15 @@ import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
 import dev.materii.pullrefresh.DragRefreshLayout
 import dev.materii.pullrefresh.rememberPullRefreshState
+import eu.peernetwork.blog.ui.engagement.EngagementScreen
 import eu.peernetwork.blog.ui.model.UiVideo
+import eu.peernetwork.blog.ui.moderation.ModerationScreen
+import eu.peernetwork.blog.ui.compose.VideoPage
 import eu.peernetwork.core.common.model.Pageable
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffold
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
+import eu.peernetwork.core.ui.design.compose.DesignThumbnail
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.media.core.renderer.VideoPlayer
 import kotlinx.coroutines.flow.Flow
@@ -32,15 +40,20 @@ import kotlinx.coroutines.flow.Flow
 @Composable
 fun VideoOverlay(
     author: String,
+    enable: Boolean,
     limit: Int,
     position: Int,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
+    onPostClick: (String, Int) -> Unit,
     onAuthorClick: (String) -> Unit = {},
     onMentionClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
+    header: @Composable () -> Unit = {},
+    connection: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit = {}
 ) {
     val context = LocalContext.current
+    val configuration = LocalConfiguration.current
     val component = remember {
         provider.builder(Video.Builder::class.java).build(context)
     }
@@ -50,6 +63,7 @@ fun VideoOverlay(
         factory = component.viewModelFactory()
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val thumbnail = viewModel.thumbnail.collectAsStateWithLifecycle()
     val derivedState = remember { derivedStateOf {
         when(state) {
             VideoViewModel.State.Empty -> DesignStatefulScaffoldState.Empty
@@ -64,6 +78,7 @@ fun VideoOverlay(
             }
         }
     } }
+    val length = remember { mutableLongStateOf(0L) }
     val pullRefreshState = rememberPullRefreshState(refreshing = false, onRefresh = {
         viewModel.load(author, Pageable(0, limit))
     })
@@ -73,34 +88,70 @@ fun VideoOverlay(
         }) { flow ->
             val lazyPagingItems = flow.collectAsLazyPagingItems()
             if (lazyPagingItems.loadState.refresh is LoadState.Loading) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     CircularProgressIndicator()
                 }
             } else {
-                val pagerState = rememberPagerState(
-                    initialPage = position
-                ) { lazyPagingItems.itemCount }
-                VerticalPager(pagerState) { page ->
-                    Box(
-                        contentAlignment = Alignment.Center,
-                        modifier = Modifier.fillMaxSize()
-                    ) {
-                        val post = lazyPagingItems[page]
-                        if (post != null) {
-                            component.videoPlayer()(
-                                Modifier.fillMaxSize(),
-                                VideoPlayer.Spec(
-                                    post.media,
-                                    post.aspectRatio,
-                                    post.resolution
+                val refreshed = remember { derivedStateOf {
+                    lazyPagingItems.loadState.refresh is LoadState.NotLoading
+                } }
+                EngagementScreen(
+                    limit,
+                    refreshed,
+                    onMentionClick,
+                    onHashtagClick,
+                    onAuthorClick,
+                    component,
+                    viewModelStoreOwner
+                ) { engagement ->
+                    ModerationScreen(
+                        component,
+                        viewModelStoreOwner
+                    ) { moderation ->
+                        VideoPage(
+                            position = position,
+                            enabled = enable,
+                            engagement = engagement,
+                            moderation = moderation,
+                            lazyPagingItems = lazyPagingItems,
+                            onLoad = { position ->
+                                viewModel.load(
+                                    lazyPagingItems.itemSnapshotList.items,
+                                    configuration.screenWidthDp,
+                                    configuration.screenHeightDp,
+                                    position,
                                 )
-                            )
-                        } else {
-                            CircularProgressIndicator()
-                        }
+                            },
+                            onPostClick = onPostClick,
+                            onAuthorClick = onAuthorClick,
+                            onMentionClick = onMentionClick,
+                            onHashtagClick = onHashtagClick,
+                            progress = {
+                                component.videoPlayer().Controller(
+                                    modifier = Modifier.padding(horizontal = 24.dp)
+                                        .padding(end = 8.dp)
+                                        .navigationBarsPadding(),
+                                    progress = it,
+                                    length = length
+                                )
+                            },
+                            connection = connection,
+                            header = header,
+                            background = { DesignThumbnail(thumbnail.value[it]) },
+                            content = { post, shouldPlay, progress ->
+                                component.videoPlayer()(
+                                    Modifier,
+                                    VideoPlayer.Spec(
+                                        post.media,
+                                        post.aspectRatio,
+                                        post.resolution,
+                                        progress,
+                                        length,
+                                        shouldPlay,
+                                    )
+                                )
+                            }
+                        )
                     }
                 }
             }

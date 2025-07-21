@@ -10,12 +10,14 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -43,6 +45,7 @@ fun TitleScreen(
     onClick: (UiPost) -> Unit,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
+    modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
     val component = remember {
@@ -71,7 +74,7 @@ fun TitleScreen(
         }
     }
     val handleOnClick by rememberUpdatedState(onClick)
-    val lastSearch = remember { mutableStateOf(query.text.toString()) }
+    val lastSearch = rememberSaveable { mutableStateOf(query.text.toString()) }
     DesignPagingScaffold<UiPost>(
         state = derivedState,
         onRefresh = {
@@ -81,7 +84,8 @@ fun TitleScreen(
         },
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 24.dp),
+            .padding(horizontal = 24.dp)
+            .then(modifier),
         placeholder = { SearchItemSkeleton(modifier = Modifier.padding(top = 16.dp)) },
         errorContent = { error, refresh ->
             Column(modifier = Modifier.fillMaxSize()
@@ -117,9 +121,11 @@ fun TitleScreen(
                 }
             }
     }
-    LaunchedEffect(Unit) {
-        if (lastSearch.value != query.text.toString()) {
-            viewModel.reset()
+    DisposableEffect(Unit) {
+        onDispose {
+            if (lastSearch.value != query.text.toString()) {
+                viewModel.reset()
+            }
         }
     }
 }

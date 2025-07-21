@@ -1,7 +1,12 @@
 package eu.peernetwork.blog.ui.engagement
 
 import android.widget.Toast
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -10,11 +15,13 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -29,7 +36,6 @@ import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.extension.toInt
 import eu.peernetwork.core.ui.theme.LightAccentColor
 import eu.peernetwork.core.ui.theme.PeerAppRed
-import kotlinx.coroutines.launch
 
 @Composable
 fun EngagementScreen(
@@ -59,7 +65,6 @@ fun EngagementScreen(
         }
     }
     var post = remember { mutableStateOf<UiContent?>(null) }
-    val scope = rememberCoroutineScope()
     val errorMessage = stringResource(R.string.unknown_error_message)
     val hasError = remember { derivedStateOf { error.value != null } }
     val updatedContent by rememberUpdatedState(content)
@@ -104,18 +109,9 @@ fun EngagementScreen(
         postLimit,
         component,
         viewModelStoreOwner,
-        onMentionClick = {
-            scope.launch {
-                handleMentionClick(it)
-            } },
-        onHashtagClick = {
-            scope.launch {
-                handleHashtagClick(it)
-            } },
-        onAuthorClick = {
-            scope.launch {
-                handleAuthorClick(it)
-            } }
+        onMentionClick = { handleMentionClick(it) },
+        onHashtagClick = { handleHashtagClick(it) },
+        onAuthorClick = { handleAuthorClick(it) }
     )
     component.engagementConfirmation()(
         Modifier,
@@ -136,32 +132,105 @@ fun EngagementScreen(
 fun EngagementScreen(
     model: UiContent,
     event: Engagements,
+    size: Dp = 28.dp,
+    spacer: Dp = 0.dp,
+    color: Color = MaterialTheme.colorScheme.tertiary,
+    padding: PaddingValues = PaddingValues(2.dp),
+    orientation: Orientation = Orientation.Horizontal,
 ) {
     val engagement by remember(model) { derivedStateOf { event.onLoad(model) } }
     val handleOnLike by rememberUpdatedState(event.onLike)
     val handleOnDisLike by rememberUpdatedState(event.onDisLike)
     val handleOnComment by rememberUpdatedState(event.onComment)
-    Row {
-        PostIcon(
-            action = UiAction.Like,
-            value = engagement.likes.toString(),
-            color = if (engagement.isLiked) {
-                PeerAppRed
-            } else {
-                MaterialTheme.colorScheme.tertiary
-            },
-        ) { handleOnLike(engagement) }
-        PostIcon(
-            action = UiAction.Dislike,
-            value = engagement.dislikes.toString(),
-            color = if (engagement.isDisliked) {
-                LightAccentColor
-            } else {
-                MaterialTheme.colorScheme.tertiary
-            },
-        ) { handleOnDisLike(engagement) }
-        PostIcon(UiAction.Comment, engagement.comment.toString()) {
-            handleOnComment(model)
+    if (orientation == Orientation.Horizontal) {
+        Row {
+            PostIcon(
+                action = UiAction.Like,
+                value = engagement.likes.toString(),
+                color = if (engagement.isLiked) {
+                    PeerAppRed
+                } else {
+                    color
+                },
+                size = size,
+                padding = padding,
+                orientation = orientation
+            ) {
+                if (!engagement.isLiked) {
+                    handleOnLike(engagement)
+                }
+            }
+            Spacer(modifier = Modifier.size(spacer))
+            PostIcon(
+                action = UiAction.Dislike,
+                value = engagement.dislikes.toString(),
+                color = if (engagement.isDisliked) {
+                    LightAccentColor
+                } else {
+                    color
+                },
+                size = size,
+                padding = padding,
+                orientation = orientation
+            ) {
+                if (!engagement.isDisliked) {
+                    handleOnDisLike(engagement)
+                }
+            }
+            Spacer(modifier = Modifier.size(spacer))
+            PostIcon(
+                UiAction.Comment,
+                engagement.comment.toString(),
+                size = size,
+                padding = padding,
+                orientation = orientation
+            ) { handleOnComment(model) }
+        }
+    } else {
+        Column {
+            PostIcon(
+                action = UiAction.Like,
+                value = engagement.likes.toString(),
+                color = if (engagement.isLiked) {
+                    PeerAppRed
+                } else {
+                    color
+                },
+                size = size,
+                padding = padding,
+                orientation = orientation
+            ) {
+                if (!engagement.isLiked) {
+                    handleOnLike(engagement)
+                }
+            }
+            Spacer(modifier = Modifier.size(spacer))
+            PostIcon(
+                action = UiAction.Dislike,
+                value = engagement.dislikes.toString(),
+                color = if (engagement.isDisliked) {
+                    LightAccentColor
+                } else {
+                    color
+                },
+                size = size,
+                padding = padding,
+                orientation = orientation
+            ) {
+                if (!engagement.isDisliked) {
+                    handleOnDisLike(engagement)
+                }
+            }
+            Spacer(modifier = Modifier.size(spacer))
+            PostIcon(
+                UiAction.Comment,
+                engagement.comment.toString(),
+                color = color,
+                size = size,
+                padding = padding,
+                orientation = orientation
+            ) { handleOnComment(model) }
         }
     }
 }
+

@@ -4,20 +4,25 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.text.input.TextFieldState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.navigation.compose.rememberNavController
+import eu.peernetwork.blog.ui.explore.ExploreScreen
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.compose.DesignTitle
@@ -26,6 +31,7 @@ import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.core.ui.model.ViewModelState
 import eu.peernetwork.core.ui.theme.PeerTheme
+import eu.peernetwork.social.ui.connection.ConnectionScreen
 import eu.peernetwork.social.ui.search.member.MemberScreen
 import eu.peernetwork.social.ui.search.tag.TagScreen
 import eu.peernetwork.social.ui.search.title.TitleScreen
@@ -50,34 +56,61 @@ fun SearchScreen(
     val context = LocalContext.current
     val component = remember { provider.builder(Search.Builder::class.java).build(context) }
     val session = rememberSaveable { System.currentTimeMillis() }
-    SearchNavigation(
-        id,
-        component,
-        viewModelStore
-    ) { controller ->
-        SearchScreen(state = searchState) { mode, query ->
-            if (mode == SearchMode.USERNAME) {
-                MemberScreen(query, postLimit, {
-                    controller.navigateIfNecessary("profile/${it.id}")
-                    false
-                }, component, viewModelStore.get("$session"))
-            } else if (mode == SearchMode.TAG) {
-                TagScreen(query, postLimit, {
-                    controller.navigateIfNecessary("feed/$it")
-                }, component, viewModelStore.get("$session"))
-            } else if (mode == SearchMode.TITLE) {
-                TitleScreen(query, postLimit, {
-                    controller.navigateIfNecessary("search?query=${it.title}")
-                }, component, viewModelStore.get("$session"))
-            } else {
-                Box(modifier = Modifier.fillMaxSize()
-                    .verticalScroll(rememberScrollState()))
-            }
-        }
-        DesignTitleBarHost("SearchScreen") {
-            titleBar {
-                DesignTitle {
-                    Text(title ?: stringResource(R.string.search_label))
+    val overlay = remember { mutableStateOf<SearchOverlayState>(SearchOverlayState.Empty) }
+    val controller = rememberNavController()
+    ConnectionScreen(
+        provider = component,
+        viewModelStoreOwner = viewModelStore.get(id)
+    ) { connection ->
+        SearchOverlay(
+            id = id,
+            limit = postLimit,
+            overlay = overlay,
+            component = component,
+            viewModelStore = viewModelStore,
+            connectionController = connection
+        ) {
+            SearchNavigation(
+                id,
+                component,
+                viewModelStore,
+                controller
+            ) { controller ->
+                val listState = rememberLazyGridState()
+                SearchScreen(state = searchState) { mode, query ->
+                    if (mode == SearchMode.USERNAME) {
+                        MemberScreen(query, postLimit, {
+                            controller.navigateIfNecessary("profile/${it.id}")
+                            false
+                        }, component, viewModelStore.get("$session"),
+                            Modifier.padding(top = 36.dp))
+                    } else if (mode == SearchMode.TAG) {
+                        TagScreen(query, postLimit, {
+                            controller.navigateIfNecessary("feed/$it")
+                        }, component, viewModelStore.get("$session"),
+                            Modifier.padding(top = 36.dp))
+                    } else if (mode == SearchMode.TITLE) {
+                        TitleScreen(query, postLimit, {
+                            controller.navigateIfNecessary("search?query=${it.title}")
+                        }, component, viewModelStore.get("$session"),
+                            Modifier.padding(top = 36.dp))
+                    } else {
+                        ExploreScreen(
+                            postLimit = postLimit,
+                            provider = component,
+                            viewModelStoreOwner = viewModelStore.get(id),
+                            listState = listState
+                        ) { post, index ->
+                            overlay.value = SearchOverlayState.Photo(id, index)
+                        }
+                    }
+                }
+                DesignTitleBarHost("SearchScreen") {
+                    titleBar {
+                        DesignTitle {
+                            Text(title ?: stringResource(R.string.search_label))
+                        }
+                    }
                 }
             }
         }
@@ -102,10 +135,9 @@ fun SearchScreen(
             }
         )
     }
+    val updatedContent by rememberUpdatedState(content)
     Box(modifier = modifier.fillMaxSize()) {
-        Box(modifier = Modifier.padding(top = 36.dp)) {
-            content(mode.value, query.value)
-        }
+        updatedContent(mode.value, query.value)
         SearchHeader(
             query.value,
             mode,

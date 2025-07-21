@@ -15,6 +15,7 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import eu.peernetwork.core.ui.design.compose.DesignRichText
 import eu.peernetwork.core.ui.design.compose.DesignTitleStyle
 
@@ -46,8 +47,9 @@ fun TextView(
             description = description,
             style = DesignTitleStyle(
                 style = MaterialTheme.typography.bodyMedium.copy(color = color),
-                descriptionStyle = MaterialTheme.typography.bodySmall.copy(
-                    color = MaterialTheme.colorScheme.tertiary
+                descriptionStyle = MaterialTheme.typography.labelLarge.copy(
+                    color = MaterialTheme.colorScheme.tertiary,
+                    lineHeight = 18.sp
                 ),
                 span = SpanStyle(
                     fontStyle = FontStyle.Italic,

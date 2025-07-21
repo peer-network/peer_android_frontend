@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -24,33 +23,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.core.ui.theme.PeerTheme
-
-@Composable
-fun DesignBox(
-    modifier: Modifier = Modifier,
-    minWidth: Float = 0.0f,
-    minHeight: Float = 0.0f,
-    contentAlignment: Alignment = Alignment.TopStart,
-    propagateMinConstraints: Boolean = false,
-    content: @Composable () -> Unit,
-) {
-    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
-    val screenHeight = LocalConfiguration.current.screenHeightDp.dp
-    val updatedContent by rememberUpdatedState(content)
-    Box(
-        contentAlignment = contentAlignment,
-        propagateMinConstraints = propagateMinConstraints,
-        modifier = modifier.defaultMinSize(
-                minWidth = screenWidth * minWidth,
-                minHeight = screenHeight * minHeight
-            )
-    ) { updatedContent() }
-}
 
 @Composable
 fun DesignDetailLayout(

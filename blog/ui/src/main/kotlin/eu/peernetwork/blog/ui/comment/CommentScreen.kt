@@ -1,7 +1,6 @@
 package eu.peernetwork.blog.ui.comment
 
 import android.widget.Toast
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.clearText
@@ -16,6 +15,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
@@ -37,7 +37,6 @@ fun CommentScreen(
     postLimit: Int,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
-    modifier: Modifier = Modifier,
     onMentionClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
     onAuthorClick: (String) -> Unit = {},
@@ -89,23 +88,24 @@ fun CommentScreen(
     val handleOnMentionClick by rememberUpdatedState(onMentionClick)
     val handleOnHashtagClick by rememberUpdatedState(onHashtagClick)
     val handleOnAuthorClick by rememberUpdatedState(onAuthorClick)
-    val tag = remember { System.currentTimeMillis().toString() }
+    val action = remember { mutableStateOf<(() -> Unit)?>(null) }
     CommentScreen(
-        tag = tag,
         state = state,
         replyTo = replyTo,
         isLoading = isLoading,
+        onDismiss = {
+            action.value?.invoke()
+            action.value = null },
         onMentionClick = { username ->
+            action.value = { handleOnMentionClick(username) }
             state.value = null
-            handleOnMentionClick(username)
         },
         onHashtagClick = { hashtag ->
+            action.value = { handleOnHashtagClick(hashtag) }
             state.value = null
-            handleOnHashtagClick(hashtag)
         },
-        modifier = modifier.fillMaxSize(),
         onSubmit = { id, comment -> viewModel.comment(id, comment) }
-    ) { visible, field ->
+    ) { size, field ->
         DesignPagingScaffold<UiComment>(
             state = derivedState,
             onRefresh = { state.value?.let { viewModel.load(it.id, Pageable(0, postLimit)) } },
@@ -114,19 +114,20 @@ fun CommentScreen(
             CommentListing(
                 likesState,
                 items,
+                size = size.value,
                 onLike = { viewModel.like(it) },
                 { replyTo.value = it },
                 onMentionClick = { username ->
+                    action.value = { handleOnMentionClick(username) }
                     state.value = null
-                    handleOnMentionClick(username)
                 },
                 onHashtagClick = { hashtag ->
+                    action.value = { handleOnHashtagClick(hashtag) }
                     state.value = null
-                    handleOnHashtagClick(hashtag)
                 },
                 onAuthorClick = {
+                    action.value = { handleOnAuthorClick(it) }
                     state.value = null
-                    handleOnAuthorClick(it)
                 },
             )
             LaunchedEffect(isLoading.value) {
@@ -138,14 +139,18 @@ fun CommentScreen(
         }
         LaunchedEffect(error.value) {
             if (error.value != null) {
-                Toast.makeText(context, error.value?.let { component.resource().string(it) }, Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    context,
+                    error.value?.let { component.resource().string(it) },
+                    Toast.LENGTH_SHORT
+                ).show()
                 viewModel.clear()
             }
         }
-        LaunchedEffect(visible.value, state.value) {
-            if (state.value != null && visible.value) {
+        LaunchedEffect(state.value) {
+            if (state.value != null) {
                 state.value?.let { viewModel.load(it.id, Pageable(0, postLimit)) }
-            } else if (!visible.value) {
+            } else {
                 viewModel.reset()
             }
         }
@@ -154,24 +159,22 @@ fun CommentScreen(
 
 @Composable
 fun CommentScreen(
-    tag: String,
     state: MutableState<UiContent?>,
     replyTo: MutableState<String?>,
     isLoading: State<Boolean>,
-    modifier: Modifier = Modifier,
+    onDismiss: () -> Unit = {},
     onMentionClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
     onSubmit: (String, String) -> Unit = { id, comment -> },
-    content: @Composable (State<Boolean>, TextFieldState) -> Unit = { visible, field -> }
+    content: @Composable (State<Size>, TextFieldState) -> Unit = { visible, field -> }
 ) {
     val comment = remember { TextFieldState() }
     val updatedContent by rememberUpdatedState(content)
     CommentScaffold(
-        tag = tag,
         state = state,
-        modifier = modifier,
+        onDismiss = onDismiss,
         sheet = {
-            val content = remember(it) { mutableStateOf(state.value) }
+            val content = remember { mutableStateOf(state.value) }
             content.value?.let {
                 CommentForm(
                     model = it,

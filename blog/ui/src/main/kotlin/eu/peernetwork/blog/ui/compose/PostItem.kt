@@ -67,7 +67,7 @@ fun LazyItemScope.PostItem(
             onAuthorClick = onAuthorClick,
             actions = actions
         ) {
-            PostText(
+            PostTitle(
                 post.title,
                 post.description,
                 Modifier.padding(top = 12.dp, bottom = 4.dp),
