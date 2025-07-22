@@ -1,14 +1,12 @@
-package eu.peernetwork.media.ui.selector.directory
+package eu.peernetwork.media.ui.selector.audio
 
 import android.graphics.Bitmap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import eu.peernetwork.media.core.interactor.ThumbnailInteractor
+import eu.peernetwork.media.core.model.UiFile
 import eu.peernetwork.media.core.model.UiMimeType
-import eu.peernetwork.media.core.model.UiDirectory
-import eu.peernetwork.media.ui.usecase.AudioDirectoryUsecase
-import eu.peernetwork.media.ui.usecase.PhotoDirectoryUsecase
-import eu.peernetwork.media.ui.usecase.VideoDirectoryUsecase
+import eu.peernetwork.media.ui.usecase.AudioUsecase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -19,12 +17,10 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class DirectoryViewModel @Inject constructor(
-    private val usecase: PhotoDirectoryUsecase,
-    private val videoUsecase: VideoDirectoryUsecase,
-    private val audioUsecase: AudioDirectoryUsecase,
+class AudioViewModel @Inject constructor(
+    private val usecase: AudioUsecase,
     private val interactor: ThumbnailInteractor
-) : ViewModel() {
+): ViewModel() {
     private val mutableState = MutableStateFlow<State>(State.Empty)
 
     val state: StateFlow<State> = mutableState.asStateFlow()
@@ -36,34 +32,32 @@ class DirectoryViewModel @Inject constructor(
             initialValue = emptyMap()
         )
 
-    fun initialize(type: UiMimeType) {
+    fun initialize(directory: String?) {
         viewModelScope.launch {
-            mutableState.tryEmit(State.Loading)
             try {
-                if (type == UiMimeType.Video) {
-                    mutableState.tryEmit(State.Success(videoUsecase()))
-                } else if (type == UiMimeType.Photo){
-                    mutableState.tryEmit(State.Success(usecase()))
-                } else {
-                    mutableState.tryEmit(State.Success(audioUsecase()))
-                }
+                mutableState.tryEmit(State.Loading)
+                mutableState.tryEmit(State.Success(usecase(directory)))
             } catch (error: Throwable) {
                 mutableState.tryEmit(State.Error(error))
             }
         }
     }
 
-    fun sync(type: UiMimeType, position: Int, limit: Int) {
+    fun sync(type: UiMimeType, start: Int, limit: Int) {
         viewModelScope.launch {
-            (state.value as? State.Success?)?.directories?.let {
-                val end = if (it.size < limit) {
+            (state.value as? State.Success?)?.audios?.let {
+                val end = if (it.size < limit + 1) {
                     it.size
                 } else {
-                    limit
+                    limit + 1
                 }
-                it.toList().subList(position, end).asFlow()
-                    .map { interactor.load(it.thumbnail, type, Pair(250f, 250f)) }
-                    .collect { interactor.invalidate() }
+                if (start <= end) {
+                    it.subList(start, end).asFlow().map {
+                        interactor.load(it.thumbnail, type, Pair(250f, 250f))
+                    }.collect {
+                        interactor.invalidate()
+                    }
+                }
             }
         }
     }
@@ -71,7 +65,7 @@ class DirectoryViewModel @Inject constructor(
     sealed interface State {
         data object Empty : State
         data object Loading : State
-        data class Success(val directories: Set<UiDirectory>) : State
+        data class Success(val audios: List<UiFile>) : State
         data class Error(val error: Throwable) : State
     }
 }

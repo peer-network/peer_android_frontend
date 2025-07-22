@@ -49,6 +49,7 @@ import eu.peernetwork.media.core.model.UiMimeType
 import eu.peernetwork.media.ui.R
 import eu.peernetwork.media.ui.compose.NudgeButton
 import eu.peernetwork.media.ui.saveable.UiAttachmentSaver
+import eu.peernetwork.media.ui.selector.audio.AudioScreen
 import eu.peernetwork.media.ui.selector.directory.DirectoryScreen
 import eu.peernetwork.media.ui.selector.photo.PhotoScreen
 import eu.peernetwork.media.ui.selector.video.VideoScreen
@@ -84,12 +85,25 @@ fun ExplorerScreen(
                 component,
                 viewModelStore.get(tag)
             ) { selected.value = it }
-            else -> PhotoScreen(
+
+            UiMimeType.Photo -> PhotoScreen(
                 directory,
                 attachment,
                 component,
                 viewModelStore.get(tag)
             ) { selected.value = it }
+
+            UiMimeType.Music -> AudioScreen(
+                type = type,
+                directory = directory,
+                attachment = attachment,
+                provider = component,
+                viewModelStoreOwner = viewModelStore.get(tag)
+            )
+
+            else -> {
+                // Optional: Add fallback or error UI
+            }
         }
         DesignCollapsibleBottomSheet(
             state = showDirectory,
@@ -134,12 +148,15 @@ fun ExplorerScreen(
         val expanded = remember { mutableStateOf(false) }
         val photo = stringResource(R.string.photo_label)
         val video = stringResource(R.string.video_label)
+        val audio = stringResource(R.string.audio_label)
         val files = stringResource(R.string.file_label)
         val type = remember(title) { derivedStateOf {
             if (title.value == video) {
                 UiMimeType.Video
-            } else {
+            } else if (title.value == photo) {
                 UiMimeType.Photo
+            } else  {
+                UiMimeType.Music
             }
         } }
         Row(
@@ -168,8 +185,10 @@ fun ExplorerScreen(
                 val items = mapOf(
                     photo to eu.peernetwork.core.ui.R.drawable.ic_photo,
                     video to eu.peernetwork.core.ui.R.drawable.ic_video,
+                    audio to eu.peernetwork.core.ui.R.drawable.ic_music,
                     files to eu.peernetwork.core.ui.R.drawable.ic_wallet
                 )
+
                 items.entries.forEach { (label, iconRes) ->
                     item(tag = label, {
                         when (label) {
@@ -181,12 +200,16 @@ fun ExplorerScreen(
                                 title.value = video
                                 onTypeChange(UiMimeType.Video)
                             }
+                            audio -> {
+                                title.value = audio
+                                onTypeChange(UiMimeType.Music)
+                            }
                             files -> {
                                 handleOnClick()
                                 expanded.value = false
                             }
                         }
-                        expanded.value
+                        true
                     }) { _, isActive ->
                         Spacer(modifier = Modifier.height(2.dp))
                         Row(
@@ -199,20 +222,20 @@ fun ExplorerScreen(
                                 painter = painterResource(id = iconRes),
                                 contentDescription = label,
                                 modifier = Modifier.size(20.dp),
-                                tint = if (isActive) MaterialTheme.colorScheme.onBackground else MaterialTheme.colorScheme.tertiary
+                                tint = if (isActive)
+                                    MaterialTheme.colorScheme.onBackground
+                                else
+                                    MaterialTheme.colorScheme.tertiary
                             )
                             Spacer(modifier = Modifier.width(2.dp))
                             Text(
                                 label,
-                                style = if (isActive) {
-                                    MaterialTheme.typography.bodyMedium.copy(
+                                style = MaterialTheme.typography.bodyMedium.copy(
+                                    color = if (isActive)
                                         MaterialTheme.colorScheme.onBackground
-                                    )
-                                } else {
-                                    MaterialTheme.typography.bodyMedium.copy(
+                                    else
                                         MaterialTheme.colorScheme.tertiary
-                                    )
-                                },
+                                )
                             )
                             if (isActive) {
                                 Spacer(modifier = Modifier.width(2.dp))
