@@ -3,6 +3,7 @@
     <string name="recent_label">Recent</string>
     <string name="photo_label">Photo</string>
     <string name="video_label">Video</string>
+    <string name="audio_label">Audio</string>
     <string name="file_label">Files</string>
     <string name="done_label">Done</string>
     <string name="continue_label">Continue</string>
