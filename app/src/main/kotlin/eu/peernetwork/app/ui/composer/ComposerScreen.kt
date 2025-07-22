@@ -58,7 +58,8 @@ fun ComposerScreen(
         ComposerNavigation(
             attachment = attachment,
             controller = controller,
-            provider = component
+            provider = component,
+            viewModelStoreOwner = viewModelStore.get(key)
         ) {
             ComposerScreen(
                 footer = {

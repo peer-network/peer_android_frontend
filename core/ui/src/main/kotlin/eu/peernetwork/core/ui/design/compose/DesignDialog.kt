@@ -150,6 +150,7 @@ fun  DesignDialog(
                             }
                             DisposableEffect(session.longValue) {
                                 onDispose {
+                                    handleDismissal()
                                     session.longValue = System.currentTimeMillis()
                                 }
                             }

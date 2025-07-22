@@ -6,6 +6,7 @@ import eu.peernetwork.blog.ui.creator.Creator
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.media.ui.attachment.Attachment
+import eu.peernetwork.media.ui.editor.video.Video
 import eu.peernetwork.media.ui.selector.explorer.Explorer
 import eu.peernetwork.wallet.ui.confirmation.Confirmation
 
@@ -24,6 +25,7 @@ interface Composer : ApplicationProvider {
         Explorer,
         Attachment,
         Confirmation,
+        Video,
         UiComponentProvider
 
     class Builder(private val dependency: Composer) : UiComponent.DefaultBuilder<Composer, Component>() {
