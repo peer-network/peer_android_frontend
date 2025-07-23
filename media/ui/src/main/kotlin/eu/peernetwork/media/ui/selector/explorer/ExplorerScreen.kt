@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -36,7 +35,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.compose.DesignCollapsibleBottomSheet
 import eu.peernetwork.core.ui.design.compose.DesignDropDown
@@ -55,7 +53,6 @@ import eu.peernetwork.media.ui.selector.photo.PhotoScreen
 import eu.peernetwork.media.ui.selector.video.VideoScreen
 
 @Composable
-@OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
 fun ExplorerScreen(
     attachment: State<UiAttachment>,
     provider: UiComponentProvider,
@@ -99,10 +96,10 @@ fun ExplorerScreen(
                 attachment = attachment,
                 provider = component,
                 viewModelStoreOwner = viewModelStore.get(tag)
-            )
+            ) { selected.value = it }
 
             else -> {
-                // Optional: Add fallback or error UI
+
             }
         }
         DesignCollapsibleBottomSheet(
