@@ -85,7 +85,7 @@ fun DesignLead(
                     end = 4.dp
                 ),
                 textStyle = textStyle.descriptionStyle,
-                // Optionally, for localization:
+                
                 // showMoreText = stringResource(R.string.show_more_text),
                 // showLessText = stringResource(R.string.show_less_text)
             )
