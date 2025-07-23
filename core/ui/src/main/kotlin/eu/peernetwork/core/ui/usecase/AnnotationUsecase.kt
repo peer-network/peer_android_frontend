@@ -10,7 +10,7 @@ import javax.inject.Inject
 
 class AnnotationUsecase @Inject constructor() : ParameterizedImmediateUseCase<String, AnnotatedString> {
     override fun invoke(param: String): AnnotatedString {
-        val pattern = Regex("""(@\w+)|(#\w+)|((https?|ftp)://[^\s]+)""", RegexOption.IGNORE_CASE)
+        val pattern = Regex("""(@\w+)|(#\w+)|((https?|ftp)://[^\s]+)|(www\.[^\s]+)""", RegexOption.IGNORE_CASE)
         return buildAnnotatedString {
             val matches = pattern.findAll(param)
             var lastIndex = 0
@@ -18,12 +18,13 @@ class AnnotationUsecase @Inject constructor() : ParameterizedImmediateUseCase<St
                 val value = match.value
                 append(param.substring(lastIndex, match.range.first))
                 val annotationTag = when {
-                    value.startsWith("http", true) || value.startsWith("ftp", true) -> "URL"
+                    value.startsWith("http", true) || value.startsWith("ftp", true) || value.startsWith("www.", true) -> "URL"
                     value.startsWith("@") -> "MENTION"
                     value.startsWith("#") -> "HASHTAG"
                     else -> "PLAIN"
                 }
-                pushStringAnnotation(tag = annotationTag, annotation = value)
+                val annotationValue = if (value.startsWith("www.", true)) "https://$value" else value
+                pushStringAnnotation(tag = annotationTag, annotation = annotationValue)
                 if (annotationTag != "PLAIN") {
                     withStyle(style = SpanStyle(color = PrimaryColor)) {
                         append(value)
