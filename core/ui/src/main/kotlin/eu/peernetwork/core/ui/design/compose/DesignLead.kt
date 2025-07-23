@@ -1,6 +1,7 @@
 package eu.peernetwork.core.ui.design.compose
 
 import android.content.res.Configuration
+//import eu.peernetwork.core.ui.design.compose.ExpandableText
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -35,8 +36,8 @@ fun DesignLead(
     caption: String,
     description: String,
     modifier: Modifier = Modifier,
+    maxContentLines: Int = 3,
     maxLines: Int = Int.MAX_VALUE,
-    maxContentLines: Int = Int.MAX_VALUE,
     spacer: @Composable () -> Unit = {},
     style: DesignTitleStyle? = null,
     verticalArrangement: Arrangement.Vertical = Arrangement.Top,
@@ -76,17 +77,20 @@ fun DesignLead(
         )
         updateSpacer()
         if (description.isNotEmpty()) {
-            Text(
+            ExpandableText(
                 text = description,
-                maxLines = maxContentLines,
-                overflow = TextOverflow.Ellipsis,
-                style = textStyle.descriptionStyle,
+                minimizedMaxLines = maxContentLines,
                 modifier = Modifier.padding(
                     top = 2.dp,
                     end = 4.dp
-                )
+                ),
+                textStyle = textStyle.descriptionStyle,
+                // Optionally, for localization:
+                // showMoreText = stringResource(R.string.show_more_text),
+                // showLessText = stringResource(R.string.show_less_text)
             )
         }
+
     }
 }
 
