@@ -1,5 +1,6 @@
 package eu.peernetwork.media.ui.selector.audio
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -24,9 +25,11 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -41,6 +44,8 @@ import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.media.core.model.UiAttachment
 import eu.peernetwork.media.core.model.UiFile
 import eu.peernetwork.media.core.model.UiMimeType
+import eu.peernetwork.media.ui.R
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 
 @Composable
@@ -110,29 +115,19 @@ fun AudioScreen(
                         .background(MaterialTheme.colorScheme.surfaceVariant)
                         .clickable(role = Role.Button) {
                             selected.value = if (isSelected) {
-                                UiAttachment.File(
-                                    type,
-                                    attachment.value.files.filterNot { file ->
-                                        file.uri == audioFile.uri
-                                    }.toPersistentList()
-                                )
+                                UiAttachment.File(type, persistentListOf())
                             } else {
-                                UiAttachment.File(
-                                    type,
-                                    (attachment.value.files + audioFile).toPersistentList()
-                                )
+                                UiAttachment.File(type, persistentListOf(audioFile))
                             }
                         }
                 ) {
-                    Text(
-                        text = "Audio",
+                    Image(
+                        painter = painterResource(id = eu.peernetwork.core.ui.R.drawable.ic_music),
+                        contentDescription = "Audio Icon",
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(8.dp),
-                        style = MaterialTheme.typography.bodyMedium,
-                        textAlign = TextAlign.Center,
-                        fontWeight = FontWeight.SemiBold,
-                        color = MaterialTheme.colorScheme.onSurface
+                            .padding(16.dp),
+                        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary)
                     )
 
                     Box(

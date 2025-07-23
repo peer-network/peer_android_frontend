@@ -54,6 +54,7 @@ class CreatorViewModel @Inject constructor(
                     )
                 )
             })
+            UiMimeType.Music -> Draft.Type.Audio(attachment.files.mapNotNull { mediaEncoderUsecase(it.uri) })
             else -> Draft.Type.Text(listOf(textEncoderUsecase(description)))
         }
         return Draft(
