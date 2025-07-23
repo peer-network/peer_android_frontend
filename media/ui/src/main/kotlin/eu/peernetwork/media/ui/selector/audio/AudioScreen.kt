@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -21,6 +22,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -54,19 +56,18 @@ fun AudioScreen(
     directory: MutableState<String?>,
     attachment: State<UiAttachment>,
     provider: UiComponentProvider,
-    viewModelStoreOwner: ViewModelStoreOwner
+    viewModelStoreOwner: ViewModelStoreOwner,
+    onSelect: (UiAttachment) -> Unit
 ) {
     val context = LocalContext.current
     val component = remember {
         provider.builder(Audio.Builder::class.java).build(context)
     }
-
     val viewModel = viewModel(
         modelClass = AudioViewModel::class.java,
         viewModelStoreOwner = viewModelStoreOwner,
         factory = component.viewModelFactory()
     )
-
     val state by viewModel.state.collectAsStateWithLifecycle()
     val derivedState = remember {
         derivedStateOf {
@@ -82,7 +83,6 @@ fun AudioScreen(
             }
         }
     }
-
     val color = MaterialTheme.colorScheme.primary
     val current = rememberSaveable(directory.value) { mutableStateOf(directory.value) }
     val selected = remember { mutableStateOf<UiAttachment>(attachment.value) }
@@ -92,7 +92,7 @@ fun AudioScreen(
             listState.layoutInfo.totalItemsCount > 0 && !listState.isScrollInProgress
         }
     }
-
+    val handleSelect by rememberUpdatedState(onSelect)
     DesignStatefulScaffold<List<UiFile>>(
         state = derivedState,
         onRefresh = { viewModel.initialize(directory.value) },
@@ -108,7 +108,7 @@ fun AudioScreen(
         ) {
             items(it.size) { index ->
                 val audioFile = it[index]
-                val isSelected = selected.value.files.contains(it[index])
+                val isSelected = selected.value.files.contains(audioFile)
                 Box(
                     modifier = Modifier
                         .aspectRatio(1f)
@@ -119,29 +119,50 @@ fun AudioScreen(
                             } else {
                                 UiAttachment.File(type, persistentListOf(audioFile))
                             }
-                        }
+                            handleSelect(selected.value)
+                        },
+                    contentAlignment = Alignment.Center
                 ) {
-                    Image(
-                        painter = painterResource(id = eu.peernetwork.core.ui.R.drawable.ic_music),
-                        contentDescription = "Audio Icon",
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(16.dp),
-                        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary)
-                    )
+                    Box(modifier = Modifier.fillMaxSize()) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .graphicsLayer { alpha = if (isSelected) 1f else 0f }
+                                .drawBehind {
+                                    drawRoundRect(
+                                        color = color,
+                                        size = size,
+                                        style = Stroke(width = 4.dp.toPx())
+                                    )
+                                }
+                        )
 
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .graphicsLayer { alpha = if (isSelected) 1f else 0f }
-                            .drawBehind {
-                                drawRoundRect(
-                                    color = color,
-                                    size = size,
-                                    style = Stroke(width = 4.dp.toPx())
-                                )
-                            }
-                    )
+                        Column(
+                            modifier = Modifier
+                                .align(Alignment.Center)
+                                .padding(8.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Image(
+                                painter = painterResource(id = eu.peernetwork.core.ui.R.drawable.ic_music),
+                                contentDescription = "Audio Icon",
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .padding(8.dp)
+                                    .fillMaxSize(),
+                                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary)
+                            )
+
+                            Text(
+                                text = audioFile.name,
+                                style = MaterialTheme.typography.bodySmall,
+                                maxLines = 1,
+                                textAlign = TextAlign.Center,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                    }
                 }
             }
         }
