@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -16,6 +17,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -25,7 +27,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
 import eu.peernetwork.blog.ui.creator.CreatorScreen
-import eu.peernetwork.blog.ui.model.UiDraft
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.compose.DesignTitle
 import eu.peernetwork.core.ui.design.compose.DesignTitleBarHost
@@ -49,16 +50,18 @@ fun ComposerScreen(
         provider.builder(Composer.Builder::class.java).build(context)
     }
     val controller = rememberNavController()
-    val draft = remember { mutableStateOf<UiDraft?>(null) }
     val attachment = rememberSaveable(saver = UiAttachmentSaver) { mutableStateOf<UiAttachment>(UiAttachment.Text) }
     val focus = remember { FocusRequester() }
     val intent = UiToken.Post
     val key = intent::class.java.name
+    var title by rememberSaveable(stateSaver = TextFieldState.Saver) { mutableStateOf(TextFieldState()) }
+    var description by rememberSaveable(stateSaver = TextFieldState.Saver) { mutableStateOf(TextFieldState()) }
     Box {
         ComposerNavigation(
             attachment = attachment,
             controller = controller,
-            provider = component
+            provider = component,
+            viewModelStoreOwner = viewModelStore.get(key)
         ) {
             ComposerScreen(
                 footer = {
@@ -72,7 +75,8 @@ fun ComposerScreen(
                 },
                 content = {
                     CreatorScreen(
-                        draft = draft,
+                        title = title,
+                        description = description,
                         attachment = attachment,
                         focus = focus,
                         provider = component,
@@ -80,6 +84,10 @@ fun ComposerScreen(
                         modifier = Modifier
                             .padding(top = 8.dp)
                             .padding(horizontal = 16.dp),
+                        onClear = {
+                            title = TextFieldState()
+                            description = TextFieldState()
+                        },
                         onSuccess = onPostSuccess
                     )
                     DesignTitleBarHost("CreatorScreen") {
@@ -121,6 +129,8 @@ fun ComposerScreen(
 fun PreviewComposerScreen() {
     PeerTheme {
         val focus = remember { FocusRequester() }
+        val title = remember { TextFieldState() }
+        var description = remember { TextFieldState() }
         ComposerScreen(
             footer = {
                 val state = remember { mutableStateOf<UiAttachment>(UiAttachment.Text) }
@@ -138,11 +148,12 @@ fun PreviewComposerScreen() {
             },
             content = {
                 CreatorScreen(
+                    title = title,
+                    description = description,
                     focus = focus,
                     isLoading = remember { mutableStateOf(false) },
                     enabled = remember { mutableStateOf(false) },
                     error = remember { mutableStateOf(null) },
-                    shouldReset = remember { mutableStateOf(false) },
                     modifier = Modifier
                         .padding(top = 8.dp)
                         .padding(horizontal = 16.dp)

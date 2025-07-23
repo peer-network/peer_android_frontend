@@ -1,8 +1,9 @@
 <resources>
     <string name="post_label">Post</string>
-    <string name="post_title">Mood update 😎</string>
+    <string name="post_title">What’s on your mind?</string>
     <string name="post_description">Write a post…</string>
     <string name="post_reply">Write a comment…</string>
+    <string name="comment_label">Comment</string>
     <string name="post_success_message">Post successfully sent!</string>
     <string name="send_label">Send</string>
 

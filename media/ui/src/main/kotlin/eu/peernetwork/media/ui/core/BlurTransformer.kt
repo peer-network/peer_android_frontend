@@ -27,7 +27,7 @@ class BlurTransformer @Inject constructor(
         canvas.drawBitmap(scaled, 0f, 0f, null)
         val paint = Paint().apply {
             color = Color.BLACK
-            alpha = 15
+            alpha = 30
         }
         canvas.drawRect(0f, 0f, scaled.width.toFloat(), scaled.height.toFloat(), paint)
         return result

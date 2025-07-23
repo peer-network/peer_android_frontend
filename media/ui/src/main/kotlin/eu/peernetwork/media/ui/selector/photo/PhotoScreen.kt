@@ -13,10 +13,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,15 +39,16 @@ import eu.peernetwork.media.core.model.UiAttachment
 import eu.peernetwork.media.core.model.UiFile
 import eu.peernetwork.media.core.model.UiMimeType
 import eu.peernetwork.core.ui.design.compose.DesignThumbnail
+import eu.peernetwork.media.ui.compose.ThumbnailPlaceholder
 import kotlinx.collections.immutable.toPersistentList
 
 @Composable
 fun PhotoScreen(
-    type: UiMimeType,
     directory: MutableState<String?>,
-    attachment: MutableState<UiAttachment>,
+    attachment: State<UiAttachment>,
     provider: UiComponentProvider,
-    viewModelStoreOwner: ViewModelStoreOwner
+    viewModelStoreOwner: ViewModelStoreOwner,
+    onSelect: (UiAttachment) -> Unit
 ) {
     val context = LocalContext.current
     val component = remember {
@@ -73,17 +76,19 @@ fun PhotoScreen(
     }
     val color = MaterialTheme.colorScheme.primary
     val current = rememberSaveable(directory.value) { mutableStateOf(directory.value) }
-    val selected = remember(attachment.value) { attachment.value.files.associateBy { it.uri } }
+    val selected = remember { mutableStateOf<UiAttachment>(attachment.value) }
     val thumbnail = viewModel.thumbnail.collectAsStateWithLifecycle()
     val listState = rememberLazyGridState()
     val canLoad = remember { derivedStateOf {
         listState.layoutInfo.totalItemsCount > 0 && !listState.isScrollInProgress
     } }
+    val handleSelect by rememberUpdatedState(onSelect)
     DesignStatefulScaffold<List<UiFile>>(
         state = derivedState,
         onRefresh = { viewModel.initialize(directory.value) },
         contentAlignment = Alignment.TopCenter,
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
+        placeholder = { ThumbnailPlaceholder(modifier = Modifier.fillMaxSize()) }
     ) {
         LazyVerticalGrid(
             state = listState,
@@ -93,24 +98,25 @@ fun PhotoScreen(
             horizontalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             items(it.size) { index ->
-                val isSelected = selected.containsKey(it[index].uri)
+                val isSelected = selected.value.files.contains(it[index])
                 Box(modifier = Modifier
                     .aspectRatio(1f)
                     .background(MaterialTheme.colorScheme.surfaceVariant)
                     .clickable(role = Role.Button) {
-                        attachment.value = if (isSelected) {
+                        selected.value = if (isSelected) {
                             UiAttachment.File(
                                 UiMimeType.Photo,
-                                attachment.value.files.filterNot { file ->
+                                selected.value.files.filterNot { file ->
                                     file.uri == it[index].uri
                                 }.toPersistentList()
                             )
                         } else {
                             UiAttachment.File(
                                 UiMimeType.Photo,
-                                (attachment.value.files + it[index]).toPersistentList()
+                                (selected.value.files + it[index]).toPersistentList()
                             )
                         }
+                        handleSelect(selected.value)
                     }) {
                     DesignThumbnail(
                         it[index].thumbnail,
@@ -138,7 +144,7 @@ fun PhotoScreen(
         LaunchedEffect(canLoad.value, directory.value) {
             if (canLoad.value) {
                 viewModel.sync(
-                    type,
+                    UiMimeType.Photo,
                     listState.firstVisibleItemIndex,
                     listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
                 )

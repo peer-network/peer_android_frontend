@@ -117,6 +117,36 @@ fun SearchNavigation(
                 )
             }
         }
+        composable(
+            "search/{type}/{query}",
+            arguments = listOf(
+                navArgument("type") { type = NavType.StringType },
+                navArgument("query") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val type = backStackEntry.arguments?.getString("type") ?: ""
+            val query = backStackEntry.arguments?.getString("query") ?: ""
+            val searchState = when (type) {
+                "username" -> SearchState.Active.Username(query)
+                "tag" -> SearchState.Active.Tag(query)
+                else -> SearchState.Default
+            }
+            WindowScreen(
+                id = userId,
+                provider = component,
+                viewModelStore = viewModelStore,
+                mode = mode,
+                onCancel = onCancel,
+            ) {
+                SearchScreen(
+                    id = userId,
+                    postLimit = BuildConfig.PAGING_LIMIT,
+                    provider = component,
+                    viewModelStore = viewModelStore,
+                    searchState = searchState,
+                )
+            }
+        }
     }
 }
 

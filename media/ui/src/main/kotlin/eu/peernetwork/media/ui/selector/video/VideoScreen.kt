@@ -13,10 +13,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,15 +39,17 @@ import eu.peernetwork.media.core.model.UiAttachment
 import eu.peernetwork.media.core.model.UiFile
 import eu.peernetwork.media.core.model.UiMimeType
 import eu.peernetwork.core.ui.design.compose.DesignThumbnail
+import eu.peernetwork.media.ui.compose.ThumbnailPlaceholder
+import eu.peernetwork.media.ui.saveable.UiAttachmentSaver
 import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 fun VideoScreen(
-    type: UiMimeType,
     directory: MutableState<String?>,
-    attachment: MutableState<UiAttachment>,
+    attachment: State<UiAttachment>,
     provider: UiComponentProvider,
-    viewModelStoreOwner: ViewModelStoreOwner
+    viewModelStoreOwner: ViewModelStoreOwner,
+    onSelect: (UiAttachment) -> Unit
 ) {
     val context = LocalContext.current
     val component = remember {
@@ -72,24 +76,20 @@ fun VideoScreen(
         }
     }
     val current = rememberSaveable(directory.value) { mutableStateOf(directory.value) }
-    val selected = remember(attachment.value) { mutableStateOf<UiFile?>(
-        if (attachment.value.media is UiMimeType.Video) {
-            attachment.value.files.firstOrNull()
-        } else {
-            null
-        }
-    ) }
+    val selected = rememberSaveable(saver = UiAttachmentSaver) { mutableStateOf<UiAttachment>(attachment.value) }
     val color = MaterialTheme.colorScheme.primary
     val thumbnail = viewModel.thumbnail.collectAsStateWithLifecycle()
     val listState = rememberLazyGridState()
     val canLoad = remember { derivedStateOf {
         listState.layoutInfo.totalItemsCount > 0 && !listState.isScrollInProgress
     } }
+    val handleSelect by rememberUpdatedState(onSelect)
     DesignStatefulScaffold<List<UiFile>>(
         state = derivedState,
         onRefresh = { viewModel.initialize(directory.value) },
         contentAlignment = Alignment.TopCenter,
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
+        placeholder = { ThumbnailPlaceholder(modifier = Modifier.fillMaxSize()) }
     ) {
         LazyVerticalGrid(
             state = listState,
@@ -102,18 +102,25 @@ fun VideoScreen(
                 Box(modifier = Modifier.aspectRatio(1f)
                     .background(MaterialTheme.colorScheme.surfaceVariant)
                     .clickable(role = Role.Button) {
-                        if (selected.value != null) {
-                            selected.value = null
-                            attachment.value = UiAttachment.File(
-                                UiMimeType.Video,
-                                persistentListOf()
-                            )
-                        } else {
-                            selected.value = it[index]
-                            attachment.value = UiAttachment.File(
-                                UiMimeType.Video,
+                        if (selected.value.files.firstOrNull() != it[index]) {
+                            UiAttachment.File(
+                                type = UiMimeType.Video,
                                 persistentListOf(it[index])
-                            )
+                            ).apply {
+                                selected.value = this
+                                handleSelect(this)
+                            }
+                        } else if (selected.value == UiAttachment.Text) {
+                            UiAttachment.File(
+                                type = UiMimeType.Video,
+                                persistentListOf(it[index])
+                            ).apply {
+                                selected.value = this
+                                handleSelect(this)
+                            }
+                        } else {
+                            selected.value = UiAttachment.Text
+                            handleSelect(UiAttachment.Text)
                         }
                     }) {
                     DesignThumbnail(
@@ -122,7 +129,7 @@ fun VideoScreen(
                     ) {  }
                     Box(modifier = Modifier.fillMaxSize()
                         .graphicsLayer {
-                            alpha = if (selected.value == it[index]) {
+                            alpha = if (selected.value.files.firstOrNull() == it[index]) {
                                 1f
                             } else {
                                 0f
@@ -141,7 +148,7 @@ fun VideoScreen(
         LaunchedEffect(canLoad.value, directory.value) {
             if (canLoad.value) {
                 viewModel.sync(
-                    type,
+                    UiMimeType.Video,
                     listState.firstVisibleItemIndex,
                     listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
                 )

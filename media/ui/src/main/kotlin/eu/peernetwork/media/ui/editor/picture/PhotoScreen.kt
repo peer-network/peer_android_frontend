@@ -8,8 +8,10 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.platform.LocalContext
 import com.yalantis.ucrop.UCrop
 import eu.peernetwork.media.core.model.UiFile
@@ -26,13 +28,14 @@ fun PhotoScreen(
 ) {
     val context = LocalContext.current
     var lastState = remember { mutableLongStateOf(state.value) }
+    val handleCrop by rememberUpdatedState(onCropDone)
     val cropLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
         UCrop.getOutput(result.data ?: return@rememberLauncherForActivityResult)?.let {
             val file = File(it.path ?: return@let)
             if (file.exists()) {
-                onCropDone(UiFile(it, it.toString()))
+                handleCrop(UiFile(it))
             } else {
                 Log.e("Crop", "UCrop returned missing file: $it")
             }
@@ -48,8 +51,7 @@ fun PhotoScreen(
                     setCompressionQuality(90)
                     setFreeStyleCropEnabled(false)
                     setHideBottomControls(false)
-                })
-                .getIntent(context).setClass(context, CropActivity::class.java)
+                }).getIntent(context).setClass(context, CropActivity::class.java)
             lastState.longValue = state.value
             cropLauncher.launch(intent)
         }
