@@ -22,8 +22,17 @@ class AudioUsecase @Inject constructor(
             MediaStore.Audio.Media.BUCKET_ID
         )
         val uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
-        val mimeSelection = "${MediaStore.Audio.Media.MIME_TYPE} IN (?)"
-        val mimeArgs = arrayOf("audio/mpeg")
+        val mimeSelection = "${MediaStore.Audio.Media.MIME_TYPE} IN (?, ?, ?, ?, ?, ?, ?, ?)"
+        val mimeArgs = arrayOf(
+            "audio/aac",
+            "audio/basic",
+            "audio/flac",
+            "audio/mp4",
+            "audio/mpeg",
+            "audio/ogg",
+            "audio/x-aiff",
+            "audio/x-wav"
+        )
         val selection: String
         val selectionArgs: Array<String>
         if (param != null) {

@@ -158,11 +158,15 @@ fun AudioPlayer(audioUri: Uri) {
 
     var isPlaying by remember { mutableStateOf(false) }
     var progress by remember { mutableStateOf(0f) }
+    var currentTime by remember { mutableStateOf(0) }
+    var totalDuration by remember { mutableStateOf(0) }
+
     val mediaPlayer = remember { MediaPlayer() }
 
     DisposableEffect(audioUri) {
         mediaPlayer.setDataSource(context, audioUri)
         mediaPlayer.prepare()
+        totalDuration = mediaPlayer.duration
         onDispose {
             mediaPlayer.stop()
             mediaPlayer.release()
@@ -171,10 +175,18 @@ fun AudioPlayer(audioUri: Uri) {
 
     LaunchedEffect(isPlaying) {
         while (isPlaying && mediaPlayer.isPlaying) {
-            progress = mediaPlayer.currentPosition.toFloat() / mediaPlayer.duration.toFloat()
+            currentTime = mediaPlayer.currentPosition
+            progress = currentTime.toFloat() / totalDuration.toFloat()
             delay(100L)
         }
         if (!mediaPlayer.isPlaying) isPlaying = false
+    }
+
+    fun formatTime(milliseconds: Int): String {
+        val totalSeconds = milliseconds / 1000
+        val minutes = totalSeconds / 60
+        val seconds = totalSeconds % 60
+        return "%d:%02d".format(minutes, seconds)
     }
 
     Box(
@@ -221,14 +233,18 @@ fun AudioPlayer(audioUri: Uri) {
                             onDragStart = { offset ->
                                 val newProgress = (offset.x / size.width).coerceIn(0f, 1f)
                                 progress = newProgress
-                                mediaPlayer.seekTo((mediaPlayer.duration * newProgress).toInt())
+                                val newTime = (mediaPlayer.duration * newProgress).toInt()
+                                mediaPlayer.seekTo(newTime)
+                                currentTime = newTime
                             },
                             onDrag = { change, _ ->
                                 change.consume()
                                 val newX = change.position.x.coerceIn(0f, size.width.toFloat())
                                 val newProgress = (newX / size.width).coerceIn(0f, 1f)
                                 progress = newProgress
-                                mediaPlayer.seekTo((mediaPlayer.duration * newProgress).toInt())
+                                val newTime = (mediaPlayer.duration * newProgress).toInt()
+                                mediaPlayer.seekTo(newTime)
+                                currentTime = newTime
                             }
                         )
                     }
@@ -254,6 +270,15 @@ fun AudioPlayer(audioUri: Uri) {
                     center = Offset(progressX, lineHeight)
                 )
             }
+
+            Spacer(modifier = Modifier.width(8.dp))
+
+            Text(
+                text = "${formatTime(currentTime)} / ${formatTime(totalDuration)}",
+                style = MaterialTheme.typography.bodySmall,
+                color = Color.Gray,
+                modifier = Modifier.width(80.dp)
+            )
         }
     }
 }

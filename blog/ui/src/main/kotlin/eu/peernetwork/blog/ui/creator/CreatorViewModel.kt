@@ -41,6 +41,7 @@ class CreatorViewModel @Inject constructor(
         val type = when(media) {
             UiMimeType.Photo -> Draft.Type.Image(attachments.mapNotNull { mediaEncoderUsecase(it) })
             UiMimeType.Video -> Draft.Type.Video(attachments.mapNotNull { mediaEncoderUsecase(it) })
+            UiMimeType.Music -> Draft.Type.Audio(attachments.mapNotNull { mediaEncoderUsecase(it) })
             else -> Draft.Type.Text(listOf(textEncoderUsecase(description)))
         }
         return Draft(

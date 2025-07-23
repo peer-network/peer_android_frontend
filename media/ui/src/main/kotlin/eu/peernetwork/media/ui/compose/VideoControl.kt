@@ -84,7 +84,7 @@ fun VideoControl(
         ) {
             Icon(
                 painter = painterResource(R.drawable.ic_replay),
-                contentDescription = stringResource(R.string.video_label),
+                contentDescription = stringResource(eu.peernetwork.media.ui.R.string.video_label),
                 tint = MaterialTheme.colorScheme.onBackground
             )
         }
