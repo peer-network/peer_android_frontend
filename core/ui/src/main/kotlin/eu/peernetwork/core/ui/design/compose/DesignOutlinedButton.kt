@@ -86,7 +86,7 @@ fun DesignOutlinedButton(
             colors.disabledContainerColor
         }
     } }
-    val contentColor by remember { derivedStateOf {
+    val contentColor by remember(enabled) { derivedStateOf {
         if (enabled) {
             colors.contentColor
         } else {

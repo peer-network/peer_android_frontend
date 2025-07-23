@@ -11,9 +11,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.compose.DesignRouter
-import eu.peernetwork.core.ui.extension.navigateIfNecessary
+import eu.peernetwork.core.ui.extension.route
 import eu.peernetwork.media.core.model.UiAttachment
-import eu.peernetwork.media.core.model.UiMimeType
 import eu.peernetwork.media.ui.editor.video.VideoScreen
 import eu.peernetwork.media.ui.selector.explorer.ExplorerScreen
 
@@ -36,12 +35,8 @@ fun ComposerNavigation(
                 attachment = attachment,
                 provider = provider,
             ) {
-                if (it.media is UiMimeType.Video) {
-                    controller.navigateIfNecessary("video?path=${it.files.first().uri.path}")
-                } else {
-                    attachment.value = it
-                    controller.popBackStack()
-                }
+                attachment.value = it
+                controller.route("editor")
             }
         }
         composable(

@@ -5,8 +5,8 @@ plugins {
 
 android {
     defaultConfig {
-        versionCode = 22
-        versionName = "1.0.22"
+        versionCode = 24
+        versionName = "1.0.24"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true

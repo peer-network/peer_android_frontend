@@ -25,3 +25,10 @@ fun NavHostController.navigateIfNecessary(destination: String) {
         navigate(destination)
     }
 }
+
+fun NavHostController.route(destination: String) {
+    navigate(destination) {
+        launchSingleTop = true
+        popUpTo(graph.id)
+    }
+}

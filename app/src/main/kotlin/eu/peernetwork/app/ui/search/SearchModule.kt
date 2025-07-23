@@ -102,4 +102,12 @@ object SearchModule {
     fun provideWindowBuilder(component: Search.Component): UiComponent.Builder {
         return Window.Builder(component)
     }
+
+    @Search.Scope
+    @Provides
+    @IntoMap
+    @UiBuilder(Search.Builder::class)
+    fun provideSearchBuilder(component: Search.Component): UiComponent.Builder {
+        return Search.Builder(component)
+    }
 }

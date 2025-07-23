@@ -42,13 +42,15 @@ import eu.peernetwork.media.core.model.UiMimeType
 
 @Composable
 fun CreatorScreen(
-    draft: MutableState<UiDraft?>,
+    title: TextFieldState,
+    description: TextFieldState,
     attachment: MutableState<UiAttachment>,
     focus: FocusRequester,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
     modifier: Modifier = Modifier,
-    onSuccess: () -> Unit = {}
+    onClear: () -> Unit = {},
+    onSuccess: () -> Unit = {},
 ) {
     val context = LocalContext.current
     val component = remember {
@@ -83,12 +85,15 @@ fun CreatorScreen(
             attachment.value.files.isNotEmpty()
         }
     } }
+    val draft = remember { mutableStateOf<UiDraft?>(null) }
     val type = remember(draft.value) {
         mutableStateOf<EngagementType?>(draft.value?.let { EngagementType.Post(it) })
     }
     val handleOnSuccess by rememberUpdatedState(onSuccess)
     val successMessage = stringResource(R.string.post_success_message)
     CreatorScreen(
+        title = title,
+        description = description,
         focus = focus,
         onSubmit = {
             draft.value = UiDraft(
@@ -99,10 +104,8 @@ fun CreatorScreen(
                 } else { attachment.value.media },
                 attachments = attachment.value.files.map { file -> file.uri }
             ) },
-        onReset = { attachment.value = UiAttachment.Text },
         isLoading = isLoading,
         enabled = enabled,
-        shouldReset = shouldReset,
         error = error,
         modifier = modifier
     )
@@ -124,6 +127,7 @@ fun CreatorScreen(
     LaunchedEffect(shouldReset.value) {
         if (shouldReset.value) {
             viewModel.reset()
+            onClear()
             Toast.makeText(context, successMessage, Toast.LENGTH_SHORT).show()
             handleOnSuccess()
         }
@@ -135,20 +139,15 @@ fun CreatorScreen(
 
 @Composable
 fun CreatorScreen(
+    title: TextFieldState,
+    description: TextFieldState,
     isLoading: State<Boolean>,
     focus: FocusRequester,
     enabled: State<Boolean>,
-    shouldReset: State<Boolean>,
     error: State<String?>,
     modifier: Modifier = Modifier,
-    onReset: () -> Unit = { },
     onSubmit: (UiDraft.Field) -> Unit = { },
 ) {
-    var title by rememberSaveable(stateSaver = TextFieldState.Saver) { mutableStateOf(TextFieldState()) }
-    var description by rememberSaveable(stateSaver = TextFieldState.Saver) {
-        mutableStateOf(TextFieldState())
-    }
-    val handleOnReset by rememberUpdatedState(onReset)
     Column(
         modifier = modifier
             .padding(horizontal = 8.dp)
@@ -167,9 +166,7 @@ fun CreatorScreen(
             }},
             visible = error.value != null,
             modifier = Modifier.padding(bottom = 4.dp)
-        ) {
-            CreatorForm(title, focus, description, isLoading)
-        }
+        ) { CreatorForm(title, focus, description, isLoading) }
         Spacer(modifier = Modifier.height(8.dp))
         CreatorFooter(
             title = title,
@@ -179,13 +176,6 @@ fun CreatorScreen(
             onSubmit = onSubmit,
         )
     }
-    LaunchedEffect(shouldReset.value) {
-        if (shouldReset.value) {
-            title = TextFieldState()
-            description = TextFieldState()
-            handleOnReset()
-        }
-    }
 }
 
 @Preview
@@ -193,12 +183,17 @@ fun CreatorScreen(
 fun PreviewCreatorScreen() {
     PeerTheme {
         val focus = remember { FocusRequester() }
+        var title by rememberSaveable(stateSaver = TextFieldState.Saver) { mutableStateOf(TextFieldState()) }
+        var description by rememberSaveable(stateSaver = TextFieldState.Saver) {
+            mutableStateOf(TextFieldState())
+        }
         CreatorScreen(
+            title = title,
+            description = description,
             focus = focus,
             isLoading = remember { mutableStateOf(false) },
             enabled = remember { mutableStateOf(false) },
             error = remember { mutableStateOf(null) },
-            shouldReset = remember { mutableStateOf(false) },
         ) {}
     }
 }
