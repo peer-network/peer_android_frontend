@@ -3,6 +3,7 @@ package eu.peernetwork.media.ui.attachment
 import android.annotation.SuppressLint
 import android.content.res.Configuration
 import android.graphics.Bitmap
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -36,6 +37,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -46,6 +48,7 @@ import androidx.compose.ui.util.lerp
 import eu.peernetwork.core.ui.design.compose.DesignThumbnail
 import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.media.core.model.UiAttachment
+import eu.peernetwork.media.core.model.UiMimeType
 import eu.peernetwork.media.ui.R
 import kotlin.math.absoluteValue
 
@@ -73,10 +76,33 @@ fun AttachmentPreview(
         onRemove = onRemove,
         onPreview = onPreview,
     ) { index ->
-        DesignThumbnail(
-            attached.files[index].thumbnail,
-            handleOnLoad(attached.files[index].thumbnail),
-        ) { handleOnRefresh(index) }
+        val file = attached.files[index]
+        when (attached.media) {
+            UiMimeType.Photo, UiMimeType.Video -> {
+                DesignThumbnail(
+                    file.thumbnail,
+                    handleOnLoad(file.thumbnail)
+                ) { handleOnRefresh(index) }
+            }
+            UiMimeType.Music -> {
+                Box() {
+                    Image(
+                        painter = painterResource(id = eu.peernetwork.core.ui.R.drawable.ic_music),
+                        contentDescription = "Audio Icon",
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .fillMaxSize(),
+                        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary)
+                    )
+                }
+            }
+            else -> {
+                DesignThumbnail(
+                    file.thumbnail,
+                    handleOnLoad(file.thumbnail)
+                ) { handleOnRefresh(index) }
+            }
+        }
     }
     LaunchedEffect(pagerState.currentPage) {
         if (pagerState.currentPage != pagerState.pageCount - 1) {
