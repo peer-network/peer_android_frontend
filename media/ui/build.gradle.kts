@@ -22,6 +22,7 @@ dependencies {
     implementation(libs.ucrop)
     implementation(libs.lrucache)
     implementation(libs.blur)
+    implementation(libs.zoomable)
 
     implementation(libs.dagger)
     ksp(libs.dagger.compiler)
