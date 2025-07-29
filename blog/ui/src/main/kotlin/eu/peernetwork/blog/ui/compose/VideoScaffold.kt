@@ -57,7 +57,7 @@ fun VideoScaffold(
     val updatedModeration by rememberUpdatedState(moderation)
     val updatedProgress by rememberUpdatedState(progress)
     val cfg = LocalConfiguration.current
-    val yOffsetPx = (cfg.screenHeightDp * 0.40f).roundToInt()
+    val yOffsetPx = (cfg.screenHeightDp * 0.60f).roundToInt()
 
     Box(
         contentAlignment = Alignment.BottomCenter,

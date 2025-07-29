@@ -75,7 +75,7 @@ fun PhotoScaffold(
     val updatedEngagements by rememberUpdatedState(engagements)
     val updatedModeration by rememberUpdatedState(moderation)
     val cfg = LocalConfiguration.current
-    val yOffsetPx = (cfg.screenHeightDp * 0.40f).roundToInt()
+    val yOffsetPx = (cfg.screenHeightDp * 0.60f).roundToInt()
 
     Box(
         contentAlignment = Alignment.BottomCenter,
