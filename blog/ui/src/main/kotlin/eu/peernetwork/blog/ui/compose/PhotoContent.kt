@@ -8,7 +8,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.SpanStyle
@@ -39,21 +42,25 @@ fun PhotoContent(
     background: @Composable () -> Unit = {},
     content: @Composable (UiPost) -> Unit = {}
 ) {
+    var descriptionExpanded by remember { mutableStateOf(false) }
     val clickHandler by rememberUpdatedState(onAuthorClick)
     val updatedContent by rememberUpdatedState(content)
     val updatedConnection by rememberUpdatedState(connection)
     val uiContent = post.mapToContent()
+
     PhotoScaffold(
         author = post.author,
         onAuthorClick = { clickHandler(post.author.id) },
         description = post.time,
         indicator = indicator,
-        caption = {
+        caption = { expanded, onExpandedChange ->
             DesignRichText(
                 uiContent.title,
                 uiContent.description,
                 maxLines = 1,
                 maxContentLines = 2,
+                expanded = expanded,
+                onExpandedChange = onExpandedChange,
                 onMentionClick = onMentionClick,
                 onHashtagClick = onHashtagClick,
                 style = DesignTitleStyle(
@@ -73,6 +80,8 @@ fun PhotoContent(
                 ),
             )
         },
+        descriptionExpanded = descriptionExpanded,
+        onDescriptionExpandedChange = { descriptionExpanded = it },
         engagements = {
             EngagementScreen(
                 event = engagements,
@@ -101,11 +110,11 @@ fun PhotoContent(
                     post.author.isfollowed
                 )
             )
-        }
-    ) {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier.fillMaxSize()
-        ) { updatedContent(post) }
-    }
+        },
+        content = {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier.fillMaxSize()
+            ) { updatedContent(post) }
+        })
 }

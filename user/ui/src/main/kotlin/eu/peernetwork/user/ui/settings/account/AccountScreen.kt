@@ -15,7 +15,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
@@ -141,7 +141,6 @@ fun AccountScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AccountScreen(
     account: UiAccount,
@@ -155,7 +154,7 @@ fun AccountScreen(
 ) {
     val image = remember { mutableStateOf<Uri?>(null) }
     val username = remember { TextFieldState(account.username) }
-    val bio = remember { TextFieldState(account.bio ?: "") }
+    val bio = remember { TextFieldState(account.bio?.text ?: "") }
     var showPassword = remember { mutableStateOf(false) }
     var showLogout = remember { mutableStateOf(false) }
     var showDeactivation = remember { mutableStateOf(false) }
@@ -239,7 +238,7 @@ fun PreviewAccountScreen() {
             id = System.currentTimeMillis().toString(),
             username = "John Doe",
             slug = 0,
-            bio = "Description....",
+            bio = AnnotatedString("Description...."),
             imageUrl = "",
             overview = UiOverview(
                 posts = 0,

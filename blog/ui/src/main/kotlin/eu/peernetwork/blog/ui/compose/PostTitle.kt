@@ -12,6 +12,7 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import eu.peernetwork.core.ui.design.compose.DesignTextExpandable
 
 @Composable
 fun PostTitle(
@@ -24,6 +25,7 @@ fun PostTitle(
     val handleMention by rememberUpdatedState(onMentionClick)
     val handleHashTag by rememberUpdatedState(onHashtagClick)
     val uriHandler = LocalUriHandler.current
+
     Column(modifier = modifier) {
         ClickableText(
             text = title,
@@ -41,21 +43,28 @@ fun PostTitle(
                 }
             }
         )
-        ClickableText(
+        DesignTextExpandable(
             text = description,
+            maxLinesWhenCollapsed = 2,
             style = MaterialTheme.typography.labelLarge.copy(
                 color = MaterialTheme.colorScheme.tertiary,
                 lineHeight = 18.sp
             ),
             modifier = Modifier.padding(top = 4.dp),
-            onClick = { offset ->
-                val annotations = description.getStringAnnotations(start = offset, end = offset)
-                annotations.firstOrNull()?.let { annotation ->
-                    when (annotation.tag) {
-                        "URL" -> uriHandler.openUri(annotation.item.lowercase())
-                        "MENTION" -> handleMention(annotation.item)
-                        "HASHTAG" -> handleHashTag(annotation.item)
-                    }
+            content = { text, maxLines, modifier, style, onClick ->
+                ClickableText(
+                    text = text,
+                    maxLines = maxLines,
+                    modifier = modifier,
+                    style = style,
+                    onClick = onClick ?: {}
+                )
+            },
+            onAnnotationClick = { tag, item ->
+                when (tag) {
+                    "URL" -> uriHandler.openUri(item.lowercase())
+                    "MENTION" -> handleMention(item)
+                    "HASHTAG" -> handleHashTag(item)
                 }
             }
         )

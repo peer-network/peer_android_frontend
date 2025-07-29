@@ -158,7 +158,7 @@ fun PreviewSettingsAvatar() {
             id = System.currentTimeMillis().toString(),
             username = "John Doe",
             slug = 0,
-            bio = "Description....",
+            bio = AnnotatedString("Description...."),
             imageUrl = "",
             overview = UiOverview(
                 posts = 0,

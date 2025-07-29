@@ -23,6 +23,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
@@ -53,6 +54,8 @@ fun UserScreen(
     provider: UiComponentProvider,
     onFollow: @Composable (Pair<Boolean, Boolean>) -> Unit,
     onClick: (Int) -> Unit,
+    onMentionClick: (String) -> Unit = {},
+    onHashtagClick: (String) -> Unit = {},
     onSettings: () -> Unit,
     viewModelStoreOwner: ViewModelStoreOwner,
 ) {
@@ -119,7 +122,9 @@ fun UserScreen(
                         ImageView.Spec(it.first.imageUrl, null)
                     )
                 }
-            }
+            },
+            onMentionClick = onMentionClick,
+            onHashtagClick = onHashtagClick,
         )
     }
     LaunchedEffect(lastUpdated.value) {
@@ -140,6 +145,8 @@ fun UserScreen(
     connection: @Composable (Pair<Boolean, Boolean>) -> Unit,
     onSettings: (() -> Unit)? = null,
     onClick: (Int) -> Unit,
+    onMentionClick: (String) -> Unit = {},
+    onHashtagClick: (String) -> Unit = {},
 ) {
     val clickHandler by rememberUpdatedState(onClick)
     val settingsHandler by rememberUpdatedState(onSettings)
@@ -185,7 +192,9 @@ fun UserScreen(
         DesignLead(
             account.username,
             account.slug.toString(),
-            account.bio ?: emptyDescription
+            account.bio ?: AnnotatedString(emptyDescription),
+            onMentionClick = onMentionClick,
+            onHashtagClick = onHashtagClick
         )
     }
     DesignOverlay(
@@ -204,7 +213,7 @@ fun PreviewUserScreen() {
             id = System.currentTimeMillis().toString(),
             username = "John Doe",
             slug = 0,
-            bio = "Description....",
+            bio = AnnotatedString("Description...."),
             imageUrl = "",
             overview = UiOverview(
                 posts = 0,
@@ -215,6 +224,6 @@ fun PreviewUserScreen() {
             isfollowing = false,
             isfollowed = false
         )
-        UserScreen(connection = { }, account = model, showPeers = true) {}
+        UserScreen(connection = { }, account = model, showPeers = true, onClick = {}) {}
     }
 }

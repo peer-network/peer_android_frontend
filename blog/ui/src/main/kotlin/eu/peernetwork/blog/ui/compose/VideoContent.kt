@@ -7,9 +7,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
@@ -42,20 +40,24 @@ fun VideoContent(
     background: @Composable () -> Unit = {},
     content: @Composable (UiVideo) -> Unit = {}
 ) {
+    var descriptionExpanded by remember { mutableStateOf(false) }
     val clickHandler by rememberUpdatedState(onAuthorClick)
     val selectHandler by rememberUpdatedState { onPostClick(post.id, index) }
     val updatedContent by rememberUpdatedState(content)
     val updatedConnection by rememberUpdatedState(connection)
     val uiContent = post.mapToContent()
+
     VideoScaffold(
         author = post.author,
         onAuthorClick = { clickHandler(post.author.id) },
         description = post.time,
         progress = progress,
-        caption = {
+        caption = { expanded, onExpandedChange ->
             DesignRichText(
-                uiContent.title,
-                uiContent.description,
+                title = uiContent.title,
+                description = uiContent.description,
+                expanded = expanded,
+                onExpandedChange = onExpandedChange,
                 maxLines = 1,
                 maxContentLines = 2,
                 onMentionClick = onMentionClick,
@@ -77,6 +79,8 @@ fun VideoContent(
                 ),
             )
         },
+        descriptionExpanded = descriptionExpanded,
+        onDescriptionExpandedChange = { descriptionExpanded = it },
         engagements = {
             EngagementScreen(
                 event = engagements,
@@ -105,8 +109,9 @@ fun VideoContent(
                     post.author.isfollowed
                 )
             )
-        }
-    ) {
+        },
+        content =
+             {
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier.fillMaxSize()
@@ -118,5 +123,6 @@ fun VideoContent(
                 updatedContent(post)
             }
         }
-    }
+    } )
 }
+

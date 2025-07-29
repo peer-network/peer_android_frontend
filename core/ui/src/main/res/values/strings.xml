@@ -19,6 +19,8 @@
     <string name="photo_label">Photo</string>
     <string name="video_label">Video</string>
     <string name="music_label">Music</string>
+    <string name="view_more_label">More…</string>
+    <string name="view_less_label">Less</string>
 
     <string name="refresh_message">Pull down to refresh</string>
     <string name="empty_message">No result found!</string>

@@ -39,7 +39,6 @@ fun DesignRichText(
     ClickableText(
         text = text,
         style = style,
-        overflow = TextOverflow.Ellipsis,
         maxLines = maxLines,
         onClick = { offset ->
             val annotations = text.getStringAnnotations(start = offset, end = offset)
@@ -68,7 +67,9 @@ fun DesignRichText(
     horizontalAlignment: Alignment.Horizontal = Alignment.Start,
     titleOnClick: (() -> Unit)? = null,
     onMentionClick: (String) -> Unit = {},
-    onHashtagClick: (String) -> Unit = {}
+    onHashtagClick: (String) -> Unit = {},
+    expanded: Boolean = false,
+    onExpandedChange: (Boolean) -> Unit = {},
 ) {
     val textStyle = style ?: DesignTitleStyle(
         span = SpanStyle(
@@ -111,21 +112,28 @@ fun DesignRichText(
             }
         )
         spacer()
-        if (description.isNotEmpty()) {
-            ClickableText(
+        if (description.text.isNotEmpty()) {
+            DesignTextExpandable(
                 text = description,
-                maxLines = maxContentLines,
-                overflow = TextOverflow.Ellipsis,
+                maxLinesWhenCollapsed = maxContentLines,
                 style = textStyle.descriptionStyle,
-                modifier = Modifier.padding(top = 2.dp),
-                onClick = { offset ->
-                    val annotations = description.getStringAnnotations(start = offset, end = offset)
-                    annotations.firstOrNull()?.let { annotation ->
-                        when (annotation.tag) {
-                            "URL" -> uriHandler.openUri(annotation.item.lowercase())
-                            "MENTION" -> handleMentionClick(annotation.item)
-                            "HASHTAG" -> handleHashtagClick(annotation.item)
-                        }
+                expanded = expanded,
+                onExpandedChange = onExpandedChange,
+                modifier = modifier.padding(top = 2.dp),
+                content = { displayText, maxLines, modifier, style, onClick ->
+                    ClickableText(
+                        text = displayText,
+                        maxLines = maxLines,
+                        style = style,
+                        modifier = modifier,
+                        onClick = onClick ?: { _ -> }
+                    )
+                },
+                onAnnotationClick = { tag, item ->
+                    when (tag) {
+                        "URL" -> uriHandler.openUri(item.lowercase())
+                        "MENTION" -> handleMentionClick(item)
+                        "HASHTAG" -> handleHashtagClick(item)
                     }
                 }
             )

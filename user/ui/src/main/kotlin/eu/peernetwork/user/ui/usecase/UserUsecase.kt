@@ -2,6 +2,7 @@ package eu.peernetwork.user.ui.usecase
 
 import eu.peernetwork.core.common.provider.Dispatcher
 import eu.peernetwork.core.common.usecase.ParameterizedSuspendableUseCase
+import eu.peernetwork.core.ui.usecase.AnnotationUsecase
 import eu.peernetwork.user.domain.model.Account
 import eu.peernetwork.user.domain.usecase.DescriptionUsecase
 import eu.peernetwork.user.ui.mapper.mapFromDomain
@@ -12,12 +13,15 @@ import javax.inject.Inject
 class UserUsecase @Inject constructor(
     private val dispatcher: Dispatcher,
     private val descriptionUsecase: DescriptionUsecase,
+    private val annotationUsecase: AnnotationUsecase
 ) : ParameterizedSuspendableUseCase<Account, UiAccount?> {
+
     override suspend fun invoke(param: Account): UiAccount {
         return withContext(dispatcher.io) {
             val response = param.mapFromDomain()
-            val description = response.bio?.let { getDescription(it) }
-            response.copy(bio = description)
+            val cleaned = getDescription(param.bio)
+            val annotated = cleaned?.let { annotationUsecase(it) }
+            response.copy(bio = annotated)
         }
     }
 

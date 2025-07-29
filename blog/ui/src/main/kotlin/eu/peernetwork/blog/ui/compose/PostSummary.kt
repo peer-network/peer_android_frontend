@@ -8,7 +8,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -44,6 +47,8 @@ fun PostSummary(
     content: @Composable () -> Unit
 ) {
     val handleAuthorClick by rememberUpdatedState(onAuthorClick)
+    var expanded by remember { mutableStateOf(false) }
+
     DesignDetailLayout(
         horizontalAlignment = horizontalAlignment,
         verticalArrangement = verticalArrangement,
@@ -71,8 +76,9 @@ fun PostSummary(
                 description = model.description,
                 verticalArrangement = Arrangement.Center,
                 spacer = {},
-                maxLines = 1,
                 maxContentLines = 3,
+                expanded = expanded,
+                onExpandedChange = { expanded = it },
                 modifier = Modifier.weight(1f),
                 titleOnClick = titleOnClick,
                 style = DesignTitleStyle(

@@ -9,7 +9,7 @@ fun Account.mapFromDomain(): UiAccount {
         id = id,
         slug = slug,
         username = username,
-        bio = bio,
+        bio = null,
         imageUrl = imageUrl,
         overview = UiOverview(
             posts = overview.posts,

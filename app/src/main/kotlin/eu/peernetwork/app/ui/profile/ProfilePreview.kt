@@ -34,7 +34,6 @@ import eu.peernetwork.user.ui.user.UserScreen
 import kotlinx.coroutines.launch
 
 @Composable
-@OptIn(ExperimentalMaterial3Api::class)
 fun ProfilePreview(
     id: String,
     title: String?,
@@ -84,6 +83,8 @@ fun ProfilePreview(
                         }
                         showSheet.value = connection.value != null
                     },
+                    onHashtagClick = onHashtagClick,
+                    onMentionClick = onMentionClick,
                     onSettings = onSettings,
                     provider = component,
                     viewModelStoreOwner = viewModelStoreOwner,

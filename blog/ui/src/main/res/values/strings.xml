@@ -16,5 +16,4 @@
     <string name="action_message">Action successfully completed</string>
     <string name="point_description">You have %d Free %s</string>
     <string name="description_label">Description</string>
-    <string name="view_more_label">View more…</string>
 </resources>

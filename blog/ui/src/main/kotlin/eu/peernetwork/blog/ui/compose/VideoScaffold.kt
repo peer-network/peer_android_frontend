@@ -3,36 +3,25 @@ package eu.peernetwork.blog.ui.compose
 import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import eu.peernetwork.blog.ui.model.UiAuthor
 import eu.peernetwork.blog.ui.model.UiAction
 import eu.peernetwork.core.ui.R
@@ -40,6 +29,7 @@ import eu.peernetwork.core.ui.design.compose.DesignRichText
 import eu.peernetwork.core.ui.design.compose.DesignTextButton
 import eu.peernetwork.core.ui.design.compose.DesignTitleStyle
 import eu.peernetwork.core.ui.theme.PeerTheme
+import kotlin.math.roundToInt
 
 @Composable
 fun VideoScaffold(
@@ -50,11 +40,13 @@ fun VideoScaffold(
     actions: @Composable RowScope.() -> Unit = {},
     engagements: @Composable RowScope.() -> Unit = {},
     moderation: @Composable RowScope.() -> Unit = {},
-    caption: @Composable () -> Unit = {},
+    caption: @Composable (expanded: Boolean, onExpandedChange: (Boolean) -> Unit) -> Unit = { _, _ -> },
     progress: @Composable () -> Unit = {},
     header: @Composable () -> Unit = {},
     background: @Composable () -> Unit = {},
     content: @Composable () -> Unit,
+    descriptionExpanded: Boolean,
+    onDescriptionExpandedChange: (Boolean) -> Unit,
 ) {
     val updatedAction by rememberUpdatedState(actions)
     val updatedContent by rememberUpdatedState(content)
@@ -64,9 +56,13 @@ fun VideoScaffold(
     val updatedEngagements by rememberUpdatedState(engagements)
     val updatedModeration by rememberUpdatedState(moderation)
     val updatedProgress by rememberUpdatedState(progress)
+    val cfg = LocalConfiguration.current
+    val yOffsetPx = (cfg.screenHeightDp * 0.40f).roundToInt()
+
     Box(
         contentAlignment = Alignment.BottomCenter,
-        modifier = Modifier.background(MaterialTheme.colorScheme.background)
+        modifier = Modifier
+            .background(MaterialTheme.colorScheme.background)
             .then(modifier)
     ) {
         updatedBackground()
@@ -90,53 +86,82 @@ fun VideoScaffold(
                 contentScale = ContentScale.Crop
             )
         }
-        Column {
+        if (descriptionExpanded) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.scrim.copy(alpha = 0.50f))
+                    .clickable { onDescriptionExpandedChange(false) }
+                    .zIndex(1f)
+            )
+        }
+
+        Row(
+            Modifier
+                .align(Alignment.CenterEnd)
+                .offset { IntOffset(0, yOffsetPx) }
+                .padding(end = 24.dp)
+                .zIndex(2f)
+        ) {
+            updatedEngagements()
+        }
+
+        Column(
+            modifier = Modifier.zIndex(2f)
+        ) {
             updatedHeader()
-            Spacer(modifier = Modifier.weight(1f)
-                .padding(bottom = 16.dp))
-            Column(horizontalAlignment = Alignment.End) {
-                Row(modifier = Modifier.padding(horizontal = 24.dp)) { updatedEngagements() }
-                Spacer(modifier = Modifier.height(8.dp))
-                Row(
-                    modifier = Modifier.padding(horizontal = 24.dp),
-                    verticalAlignment = Alignment.CenterVertically
+            Spacer(modifier = Modifier.weight(1f).padding(bottom = 16.dp))
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp),
+                verticalAlignment = Alignment.Bottom
+            ) {
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(end = 36.dp)
                 ) {
-                    AuthorView(
-                        author,
-                        description,
-                        size = 48.dp,
-                        padding = PaddingValues(start = 12.dp),
-                        onClick = onAuthorClick,
-                        modifier = Modifier.weight(1f),
-                        style = DesignTitleStyle(
-                            span = SpanStyle(
-                                fontStyle = FontStyle.Italic,
-                                fontWeight = FontWeight.Normal,
-                                fontSize = MaterialTheme.typography.labelMedium.fontSize,
-                                color = MaterialTheme.colorScheme.onBackground
-                            ),
-                            style = MaterialTheme.typography.labelLarge.copy(
-                                fontWeight = FontWeight.SemiBold,
-                                color = MaterialTheme.colorScheme.onBackground
-                            ),
-                            descriptionStyle = MaterialTheme.typography.labelMedium.copy(
-                                color = MaterialTheme.colorScheme.onBackground
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        AuthorView(
+                            author,
+                            description,
+                            size = 48.dp,
+                            padding = PaddingValues(start = 12.dp),
+                            onClick = onAuthorClick,
+                            modifier = Modifier.weight(1f),
+                            style = DesignTitleStyle(
+                                span = SpanStyle(
+                                    fontStyle = FontStyle.Italic,
+                                    fontWeight = FontWeight.Normal,
+                                    fontSize = MaterialTheme.typography.labelMedium.fontSize,
+                                    color = MaterialTheme.colorScheme.onBackground
+                                ),
+                                style = MaterialTheme.typography.labelLarge.copy(
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = MaterialTheme.colorScheme.onBackground
+                                ),
+                                descriptionStyle = MaterialTheme.typography.labelMedium.copy(
+                                    color = MaterialTheme.colorScheme.onBackground
+                                )
                             )
                         )
-                    )
-                    updatedAction()
-                    Spacer(modifier.width(8.dp))
-                    updatedModeration()
+                        updatedAction()
+                        Spacer(Modifier.width(8.dp))
+                        updatedModeration()
+                    }
+                    Spacer(Modifier.height(4.dp))
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 48.dp, end = 12.dp)
+                    ) {
+                        updatedCaption(descriptionExpanded, onDescriptionExpandedChange)
+                    }
+                    Spacer(Modifier.height(16.dp))
                 }
-                Spacer(modifier.height(4.dp))
-                Box(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 24.dp)
-                    .padding(start = 48.dp)
-                    .padding(horizontal = 12.dp)) {
-                    updatedCaption()
-                }
-                Spacer(modifier = Modifier.height(12.dp))
             }
             Box(
                 modifier = Modifier
@@ -145,6 +170,7 @@ fun VideoScaffold(
                     .fillMaxWidth()
             ) { updatedProgress() }
         }
+
     }
 }
 
@@ -152,6 +178,7 @@ fun VideoScaffold(
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun PreviewMediaPage() {
     PeerTheme {
+        var descriptionExpanded by remember { mutableStateOf(false) }
         VideoScaffold(
             author = UiAuthor(
                 id = "",
@@ -169,25 +196,25 @@ fun PreviewMediaPage() {
                             onClick = {},
                             contentPadding = PaddingValues(2.dp)
                         ) {
-                            Column (horizontalAlignment = Alignment.CenterHorizontally,) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Icon(
                                     painter = painterResource(id = it.id),
                                     contentDescription = "",
                                     tint = MaterialTheme.colorScheme.tertiary,
                                     modifier = Modifier.size(32.dp)
                                 )
-                                Text("0", style = MaterialTheme.typography.bodySmall)
+                                androidx.compose.material3.Text("0", style = MaterialTheme.typography.bodySmall)
                             }
                         }
                     }
                 }
             },
-            caption = {
+            caption = { expanded, onExpandChange ->
                 DesignRichText(
                     buildAnnotatedString { append("John Doe") },
                     buildAnnotatedString { append("Description...") },
                     maxLines = 1,
-                    maxContentLines = 1,
+                    maxContentLines = 2,
                     style = DesignTitleStyle(
                         style = MaterialTheme.typography.bodyMedium.copy(
                             color = MaterialTheme.colorScheme.onBackground
@@ -203,21 +230,30 @@ fun PreviewMediaPage() {
                         ),
                     ),
                     onMentionClick = { },
-                    onHashtagClick = { }
+                    onHashtagClick = { },
+                    expanded = expanded,
+                    onExpandedChange = onExpandChange
                 )
             },
             background = {
-                Box(modifier = Modifier
-                    .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.surfaceVariant)
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.surfaceVariant)
                 )
-            }
-        ) {
-            Box(modifier = Modifier
-                .fillMaxWidth()
-                .height(200.dp)
-                .background(MaterialTheme.colorScheme.surfaceVariant)
-            )
-        }
+            },
+            content = {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp)
+                        .background(MaterialTheme.colorScheme.surfaceVariant)
+                )
+            },
+            descriptionExpanded = descriptionExpanded,
+            onDescriptionExpandedChange = { descriptionExpanded = it }
+        )
     }
 }
+
+

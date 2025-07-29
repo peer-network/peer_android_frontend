@@ -49,7 +49,6 @@ import eu.peernetwork.core.ui.design.compose.DesignRichTextField
 import eu.peernetwork.core.ui.extension.isValidInput
 import eu.peernetwork.core.ui.theme.PeerTheme
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CommentForm(
     model: UiContent,
