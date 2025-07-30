@@ -69,7 +69,8 @@ fun FeedMenu(
                         }) { label, isActive ->
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier.padding(start = 8.dp),
+                                modifier = Modifier.padding(start = 8.dp)
+                                    .padding(vertical = 1.dp),
                             ) {
                                 Text(
                                     label,

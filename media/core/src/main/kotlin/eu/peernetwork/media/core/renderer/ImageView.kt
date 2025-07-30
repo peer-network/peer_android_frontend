@@ -11,5 +11,6 @@ interface ImageView : Renderer.Stateful<ImageView.Spec> {
         val contentScale: ContentScale = ContentScale.Fit,
         val blur: Float = 0f,
         val width: Int = 640,
+        val zoomable: Boolean = false,
     )
 }
