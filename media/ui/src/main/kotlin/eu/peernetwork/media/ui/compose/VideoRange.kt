@@ -97,19 +97,25 @@ fun VideoRange(
         track = { start, end, range ->
             Box(modifier = Modifier.fillMaxWidth()
                 .height(64.dp)
-                .draggable(
-                    orientation = Orientation.Horizontal,
-                    state = rememberDraggableState { delta ->
-                        if (range.value.second == 1 && delta < 0) {
-                            start.value -= delta
-                            end.value -= delta
-                        } else if (!range.value.first && range.value.second == 0) {
-                            start.value -= delta
-                            end.value -= delta
-                        } else if (range.value.second == -1 && delta > 0) {
-                            start.value -= delta
-                            end.value -= delta
-                        }
+                .then(
+                    if (!range.value.first) {
+                        Modifier.draggable(
+                            orientation = Orientation.Horizontal,
+                            state = rememberDraggableState { delta ->
+                                if (range.value.second == 0) {
+                                    start.value -= delta
+                                    end.value -= delta
+                                } else if (range.value.second == 1 && delta < 0) {
+                                    start.value -= delta
+                                    end.value -= delta
+                                } else if (range.value.second == -1 && delta > 0) {
+                                    start.value -= delta
+                                    end.value -= delta
+                                }
+                            }
+                        )
+                    } else {
+                        Modifier
                     }
                 ).background(MaterialTheme.colorScheme.background.copy(alpha = .6f)))
         },
