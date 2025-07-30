@@ -129,7 +129,7 @@ fun DesignTextExpandableAllScenariosPreview() {
         "D) Very long single word (Has More)" to "SupercalifragilisticexpialidociousEvenMoreWordsWithoutBreaksSupercalifragilisticexpialidociousEvenMoreWordsWithoutBreaks",
         "E) Short emoji (No More)" to "🔥🔥🔥",
         "F) Long emoji (Has More)" to "🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥",
-        "G) Single letter line breaks (No More)" to "A\nB\nC",
+        "G) Single letter line breaks (Has More)" to "A\nB\nC",
         "H) Space before newline (Has More)" to "asdasdsasdasd sdsadasdsa sa\nasdsadsadsadsadsadsa \nsdasdasd",
     )
 
