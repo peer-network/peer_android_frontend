@@ -38,7 +38,8 @@ fun ComposerNavigation(
                 provider = provider,
             ) {
                 if (it.media is UiMimeType.Video) {
-                    controller.navigateIfNecessary("video?path=${it.files.first().uri.path}")
+                    val path = it.files.first().path
+                    controller.navigateIfNecessary("video?path=$path")
                 } else {
                     attachment.value = it
                     controller.route("editor")

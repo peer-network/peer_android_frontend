@@ -7,10 +7,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 
@@ -18,14 +20,35 @@ import androidx.compose.ui.layout.ContentScale
 fun DesignThumbnail(
     thumbnail: String,
     bitmap: Bitmap?,
+    modifier: Modifier = Modifier,
     contentScale: ContentScale = ContentScale.Crop,
-    onRefresh: (String) -> Unit,
+    onLoad: (String) -> Unit,
 ) {
-    val handleOnRefresh by rememberUpdatedState(onRefresh)
-    DesignThumbnail(bitmap, contentScale)
+    val handleOnLoad by rememberUpdatedState(onLoad)
+    val image = remember(bitmap) { bitmap?.asImageBitmap() }
+    DesignThumbnail(image, modifier, contentScale)
     LaunchedEffect(thumbnail) {
         if (bitmap == null) {
-            handleOnRefresh(thumbnail)
+            handleOnLoad(thumbnail)
+        }
+    }
+}
+
+@Composable
+fun DesignThumbnail(
+    visible: State<Boolean>,
+    thumbnail: String,
+    bitmap: Bitmap?,
+    modifier: Modifier = Modifier,
+    contentScale: ContentScale = ContentScale.Crop,
+    onLoad: (String) -> Unit,
+) {
+    val handleOnLoad by rememberUpdatedState(onLoad)
+    val image = remember(bitmap) { bitmap?.asImageBitmap() }
+    DesignThumbnail(image, modifier, contentScale)
+    LaunchedEffect(thumbnail, visible.value) {
+        if (bitmap == null && visible.value) {
+            handleOnLoad(thumbnail)
         }
     }
 }
@@ -36,8 +59,27 @@ fun DesignThumbnail(
     contentScale: ContentScale = ContentScale.Crop,
 ) {
     val image = remember(bitmap) { bitmap?.asImageBitmap() }
-    Box(modifier = Modifier.fillMaxSize()) {
-        Crossfade(image) { target ->
+    DesignThumbnail(image, modifier = Modifier.fillMaxSize(), contentScale)
+}
+
+@Composable
+fun DesignThumbnail(
+    bitmap: Bitmap?,
+    contentScale: ContentScale,
+    modifier: Modifier = Modifier,
+) {
+    val image = remember(bitmap) { bitmap?.asImageBitmap() }
+    DesignThumbnail(image, modifier, contentScale)
+}
+
+@Composable
+fun DesignThumbnail(
+    bitmap: ImageBitmap?,
+    modifier: Modifier = Modifier,
+    contentScale: ContentScale = ContentScale.Crop,
+) {
+    Box(modifier = modifier) {
+        Crossfade(bitmap) { target ->
             if (target != null) {
                 Image(
                     bitmap = target,

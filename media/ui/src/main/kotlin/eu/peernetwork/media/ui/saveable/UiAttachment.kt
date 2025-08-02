@@ -17,7 +17,7 @@ val UiAttachmentSaver: Saver<MutableState<UiAttachment>, *> = Saver(
                     listOf(
                         "FILE",
                         UiMimeType.TYPES.indexOf(attachment.type),
-                        attachment.uris.map { it.uri.toString() to it.thumbnail }
+                        attachment.uris.map { it.uri.toString() to it.path }
                     )
                 }
                 UiAttachment.Text -> listOf("TEXT")

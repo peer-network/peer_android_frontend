@@ -116,7 +116,7 @@ fun CommentForm(
                         ),
                         minHeight = 32.dp,
                         border = BorderStroke(1.dp, MaterialTheme.colorScheme.onBackground),
-                        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp)
+                        contentPadding = PaddingValues(horizontal = 14.dp, vertical = 4.dp)
                     ) { Text(stringResource(R.string.comment_label)) }
                 },
             ) { Text(stringResource(R.string.post_reply)) }

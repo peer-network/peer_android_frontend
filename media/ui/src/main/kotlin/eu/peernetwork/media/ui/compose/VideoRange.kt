@@ -1,126 +1,192 @@
 package eu.peernetwork.media.ui.compose
 
+import android.annotation.SuppressLint
 import android.content.res.Configuration
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.draggable
-import androidx.compose.foundation.gestures.rememberDraggableState
+import androidx.compose.foundation.gestures.scrollBy
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.core.ui.theme.PeerTheme
+import kotlinx.coroutines.launch
 
 @Composable
 fun VideoRange(
     start: MutableState<Long>,
     stop: MutableState<Long>,
     duration: Long,
-    unit: Long,
-    min: Long,
-    modifier: Modifier = Modifier,
-    content: @Composable (Int) -> Unit,
+    frameSize: Int,
+    state: LazyListState,
+    content: @Composable (Long) -> Unit,
 ) {
-    ClipTimeline(
-        initialStart = remember { start.value },
-        initialStop = remember { stop.value },
+    VideoRange(
+        start = start,
+        stop = stop,
         duration = duration,
-        unit = unit,
-        min = min,
-        modifier = modifier,
-        onTimeRangeChanged = { begin, end ->
-            start.value = begin
-            stop.value = end
-        },
-        label = { position, unit ->
-            ClipTimelineLabel(position, modifier = Modifier.height(128.dp))
-        },
-        mask = { start, end ->
-            Box(modifier = Modifier.fillMaxWidth()
-                .height(64.dp)
-                .background(Color.Black.copy(alpha = .75f))
-                .align(Alignment.Center))
-        },
-        leading = { offset, limitReached ->
-            Box(modifier = Modifier.width(16.dp)
-                .height(72.dp)
-                .clip(RoundedCornerShape(4.dp))
-                .draggable(
-                    orientation = Orientation.Horizontal,
-                    state = rememberDraggableState { delta ->
-                        if (!limitReached.value || delta > 0) {
-                            offset.value -= delta
-                        }
-                    }
-                ).background(MaterialTheme.colorScheme.onBackground)) {
-                Box(modifier = Modifier.padding(vertical = 6.dp)
-                    .size(3.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.background)
-                    .align(Alignment.TopCenter))
-            }
-        },
-        trailing = { offset, limitReached ->
-            Box(modifier = Modifier.width(16.dp)
-                .height(72.dp)
-                .clip(RoundedCornerShape(4.dp))
-                .draggable(
-                    orientation = Orientation.Horizontal,
-                    state = rememberDraggableState { delta ->
-                        if (!limitReached.value || delta < 0) {
-                            offset.value -= delta
-                        }
-                    }
-                ).background(MaterialTheme.colorScheme.onBackground)) {
-                Box(modifier = Modifier.padding(vertical = 6.dp)
-                    .size(3.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.background)
-                    .align(Alignment.BottomCenter))
-            }
-        },
-        track = { start, end, range ->
-            Box(modifier = Modifier.fillMaxWidth()
-                .height(64.dp)
-                .then(
-                    if (!range.value.first) {
-                        Modifier.draggable(
-                            orientation = Orientation.Horizontal,
-                            state = rememberDraggableState { delta ->
-                                if (range.value.second == 0) {
-                                    start.value -= delta
-                                    end.value -= delta
-                                } else if (range.value.second == 1 && delta < 0) {
-                                    start.value -= delta
-                                    end.value -= delta
-                                } else if (range.value.second == -1 && delta > 0) {
-                                    start.value -= delta
-                                    end.value -= delta
-                                }
-                            }
-                        )
-                    } else {
-                        Modifier
-                    }
-                ).background(MaterialTheme.colorScheme.background.copy(alpha = .6f)))
-        },
-        content = content
+        frameSize = frameSize,
+        state = state,
+        content = content,
+        modifier = Modifier
     )
+}
+
+@Composable
+@SuppressLint("UnusedBoxWithConstraintsScope")
+fun VideoRange(
+    start: MutableState<Long>,
+    stop: MutableState<Long>,
+    duration: Long,
+    frameSize: Int,
+    modifier: Modifier = Modifier,
+    state: LazyListState = rememberLazyListState(),
+    content: @Composable (Long) -> Unit,
+) {
+    val scope = rememberCoroutineScope()
+    val scrollState = rememberScrollState()
+    val nestedScrollConnection = remember {
+        object : NestedScrollConnection {
+            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+                return if (scrollState.value < scrollState.maxValue) {
+                    scope.launch { scrollState.scrollBy(-available.x) }
+                    available
+                } else {
+                    Offset.Zero
+                }
+            }
+        }
+    }
+    val updatedContent by rememberUpdatedState(content)
+    val initialStart = remember { mutableLongStateOf(start.value) }
+    val initialStop = remember { mutableLongStateOf(stop.value) }
+    BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
+        val width = maxWidth
+        Row(modifier = modifier.then(
+            Modifier.horizontalScroll(scrollState)
+                .nestedScroll(nestedScrollConnection)
+        )) {
+            Spacer(modifier = Modifier.width(24.dp))
+            Clips(
+                start = initialStart.longValue,
+                stop = initialStop.longValue,
+                state = state,
+                duration = duration,
+                frameSize = frameSize,
+                contentAlignment = Alignment.BottomStart,
+                onTimeRangeChanged = { startTime, stopTime ->
+                    start.value = startTime.toLong()
+                    stop.value = stopTime.toLong()
+                },
+                mask = {
+                    Box(modifier = Modifier.fillMaxWidth()
+                        .padding(bottom = 2.dp)
+                        .height(64.dp)
+                        .background(Color.Black.copy(alpha = .8f))
+                        .align(Alignment.Center))
+                },
+                leading = {
+                    Box(modifier = Modifier.width(20.dp)
+                        .height(68.dp)
+                        .clip(RoundedCornerShape(3.dp))
+                        .background(MaterialTheme.colorScheme.onBackground)) {
+                        Box(modifier = Modifier.padding(vertical = 6.dp)
+                            .size(3.dp)
+                            .clip(CircleShape)
+                            .background(MaterialTheme.colorScheme.background)
+                            .align(Alignment.TopCenter))
+                    }
+                },
+                trailing = {
+                    Box(modifier = Modifier.width(20.dp)
+                        .height(68.dp)
+                        .clip(RoundedCornerShape(3.dp))
+                        .background(MaterialTheme.colorScheme.onBackground)) {
+                        Box(modifier = Modifier.padding(vertical = 6.dp)
+                            .size(3.dp)
+                            .clip(CircleShape)
+                            .background(MaterialTheme.colorScheme.background)
+                            .align(Alignment.BottomCenter))
+                    }
+                },
+                modifier = modifier.width(width),
+                highlight = { _, _ -> }
+            ) {
+                Box(
+                    contentAlignment = Alignment.BottomStart,
+                    modifier = Modifier.padding(bottom = 2.dp)
+                ) {
+                    VideoRangeLabel(it, modifier = Modifier.height(104.dp))
+                    Box(modifier = Modifier.clipToBounds()) {
+                        updatedContent(it.toLong())
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun BoxScope.VideoRangeLabel(
+    position: Int,
+    modifier: Modifier = Modifier
+) {
+    val isMajor = ((position + 1) % 2).toInt() == 0
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.graphicsLayer {
+            translationX = -(size.width / 2)
+        }.then(modifier)
+    ) {
+        Box(
+            modifier = Modifier
+                .size(if (isMajor) 4.dp else 2.dp)
+                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.tertiary)
+        )
+        if (isMajor) {
+            Text(
+                text = "$position",
+                style = MaterialTheme.typography.labelSmall.copy(
+                    color = MaterialTheme.colorScheme.tertiary
+                ),
+                modifier = Modifier.padding(top = 4.dp)
+            )
+        }
+    }
 }
 
 @Composable
@@ -134,8 +200,6 @@ fun PreviewVideoRange() {
             stop,
             60,
             5,
-            2,
-            modifier = Modifier.fillMaxWidth(),
         ) {
             Box(modifier = Modifier.fillMaxWidth()
                 .height(64.dp)

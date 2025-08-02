@@ -74,8 +74,8 @@ fun AttachmentPreview(
         onPreview = onPreview,
     ) { index ->
         DesignThumbnail(
-            attached.files[index].thumbnail,
-            handleOnLoad(attached.files[index].thumbnail),
+            attached.files[index].path,
+            handleOnLoad(attached.files[index].path),
         ) { handleOnRefresh(index) }
     }
     LaunchedEffect(pagerState.currentPage) {

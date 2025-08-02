@@ -53,7 +53,7 @@ class VideoViewModel @Inject constructor(
                 }
                 if (start <= end) {
                     it.subList(start, end).asFlow().map {
-                        interactor.load(it.thumbnail, type, Pair(250f, 250f))
+                        interactor.load(it.path, type, Pair(250f, 250f))
                     }.collect {
                         interactor.invalidate()
                     }
