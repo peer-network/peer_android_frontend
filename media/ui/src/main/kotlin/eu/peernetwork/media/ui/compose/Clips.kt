@@ -89,17 +89,17 @@ fun Clips(
         val endLimit = remember(stopPointer, width) {
             derivedStateOf { stopPointer.value >= width && frameSize <= duration.toInt() }
         }
-        val length = remember(duration, frameSize) { (duration / frameSize) * frameSize }
-        val itemWidth = remember(width, frameSize) { (width / frameSize) * minFrameSize }
-        val actualStartTime = remember(startOffset.floatValue, length) {
+        val itemWidth = remember(width, frameSize) { (width / frameSize) }
+        val minFrameWidth = remember(itemWidth, minFrameSize) { itemWidth * minFrameSize }
+        val actualStartTime = remember(startOffset.floatValue, duration) {
             derivedStateOf {
-                (start - (startOffset.floatValue / (width * length)) * duration)
+                (start - (startOffset.floatValue / (itemWidth * duration)) * duration)
                     .coerceIn(0f, duration.toFloat())
             }
         }
-        val actualStopTime = remember(stopOffset.floatValue, length) {
+        val actualStopTime = remember(stopOffset.floatValue, duration) {
             derivedStateOf {
-                (stop - (stopOffset.floatValue / (width * length)) * duration)
+                (stop - (stopOffset.floatValue / (itemWidth * duration)) * duration)
                     .coerceIn(0f, duration.toFloat())
             }
         }
@@ -139,10 +139,11 @@ fun Clips(
                     orientation = Orientation.Horizontal,
                     state = rememberDraggableState { delta ->
                         startOffset.floatValue -= delta
-                        val currentDistance = stopPointer.value - startPointer.value
-                        if (currentDistance < itemWidth) {
+                        val offset = stopPointer.value - startPointer.value
+                        val currentDistance = actualStopTime.value - actualStartTime.value
+                        if (currentDistance < minFrameSize) {
                             startOffset.floatValue = startOffset.floatValue -
-                                    (currentDistance % itemWidth) + itemWidth
+                                    (offset % minFrameWidth) + minFrameWidth
                         }
                     }
                 ).zIndex(zIndex)
@@ -157,10 +158,11 @@ fun Clips(
                     orientation = Orientation.Horizontal,
                     state = rememberDraggableState { delta ->
                         stopOffset.floatValue -= delta
-                        val currentDistance = stopPointer.value - startPointer.value
-                        if (currentDistance < itemWidth) {
+                        val offset = stopPointer.value - startPointer.value
+                        val currentDistance = actualStopTime.value - actualStartTime.value
+                        if (currentDistance < minFrameSize) {
                             stopOffset.floatValue = stopOffset.floatValue +
-                                    (currentDistance % itemWidth) - itemWidth
+                                    (offset % minFrameWidth) - minFrameWidth
                         }
                     }
                 )
@@ -181,7 +183,7 @@ fun PreviewClips() {
         Clips(
             start = 1,
             stop = 4,
-            duration = 5,
+            duration = 15,
             frameSize = 5,
             minFrameSize = 2,
             mask = {
