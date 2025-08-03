@@ -36,7 +36,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -156,7 +155,11 @@ fun VideoRange(
                     contentAlignment = Alignment.BottomStart,
                     modifier = Modifier.padding(bottom = 2.dp)
                 ) {
-                    VideoRangeLabel(it, modifier = Modifier.height(96.dp))
+                    VideoRangeLabel(
+                        position = it,
+                        minFrameSize = minFrameSize,
+                        modifier = Modifier.height(96.dp)
+                    )
                     Box(modifier = Modifier.clipToBounds()) {
                         updatedContent(it.toLong())
                     }
@@ -169,28 +172,39 @@ fun VideoRange(
 @Composable
 private fun BoxScope.VideoRangeLabel(
     position: Int,
+    minFrameSize: Int,
     modifier: Modifier = Modifier
 ) {
-    val isMajor = ((position + 1) % 2).toInt() == 0
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier
-    ) {
+    val isMajor = ((position + 1) % minFrameSize).toInt() == 0
+    Row {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = modifier
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(if (isMajor) 4.dp else 2.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.tertiary)
+            )
+            if (isMajor) {
+                Text(
+                    text = "$position",
+                    style = MaterialTheme.typography.labelSmall.copy(
+                        color = MaterialTheme.colorScheme.tertiary
+                    ),
+                    modifier = Modifier.padding(top = 4.dp)
+                )
+            }
+        }
+        Spacer(modifier = Modifier.weight(1f))
         Box(
             modifier = Modifier
-                .size(if (isMajor) 4.dp else 2.dp)
+                .size(2.dp)
                 .clip(CircleShape)
                 .background(MaterialTheme.colorScheme.tertiary)
         )
-        if (isMajor) {
-            Text(
-                text = "$position",
-                style = MaterialTheme.typography.labelSmall.copy(
-                    color = MaterialTheme.colorScheme.tertiary
-                ),
-                modifier = Modifier.padding(top = 4.dp)
-            )
-        }
+        Spacer(modifier = Modifier.weight(1f))
     }
 }
 

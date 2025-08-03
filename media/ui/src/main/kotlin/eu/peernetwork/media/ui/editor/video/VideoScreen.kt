@@ -29,6 +29,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -92,8 +93,8 @@ fun VideoScreen(
         placeholder = { ThumbnailPlaceholder(modifier = Modifier.fillMaxSize()) }
     ) {
         val duration = it.duration.format()
-        val start = remember { mutableLongStateOf(0) }
-        val stop = remember { mutableLongStateOf(duration.coerceAtMost(5)) }
+        val start = rememberSaveable { mutableLongStateOf(0) }
+        val stop = rememberSaveable { mutableLongStateOf(duration) }
         VideoScreen(
             start = start,
             stop = stop,
