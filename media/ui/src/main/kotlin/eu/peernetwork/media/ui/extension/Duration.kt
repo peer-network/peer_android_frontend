@@ -16,13 +16,3 @@ fun Long.format(): Long {
         }
     }.roundToLong()
 }
-
-fun roundOffsetToNearestBucket(value: Float): Float {
-    if (value == 0f) return 0f
-
-    val absoluteValue = Math.abs(value)
-    val magnitude = Math.pow(10.0, Math.floor(Math.log10(absoluteValue.toDouble()))).toFloat()
-    val firstDigit = (absoluteValue / magnitude).toInt()  // Truncate (floor) instead of rounding
-
-    return firstDigit * magnitude * if (value < 0) -1 else 1
-}

@@ -174,9 +174,7 @@ private fun BoxScope.VideoRangeLabel(
     val isMajor = ((position + 1) % 2).toInt() == 0
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.graphicsLayer {
-            translationX = -(size.width / 2)
-        }.then(modifier)
+        modifier = modifier
     ) {
         Box(
             modifier = Modifier
