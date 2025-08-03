@@ -9,8 +9,6 @@ import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -33,9 +31,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -104,6 +100,7 @@ fun VideoScreen(
             scrollState = scrollState,
             duration = duration,
             frameSize = duration.coerceAtMost(5).toInt(),
+            minFrameSize = 2,
             thumbnail = {
                 val key = "$path?time=$it"
                 DesignThumbnail(
@@ -118,14 +115,14 @@ fun VideoScreen(
                 }
             }
         ) {
-            DesignThumbnail(
-                bitmap = thumbnail.value[path],
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxHeight()
-                    .aspectRatio(it.width / it.height.toFloat())
-                    .clip(RoundedCornerShape(16.dp))
-                    .align(Alignment.Center)
-            )
+//            DesignThumbnail(
+//                bitmap = thumbnail.value[path],
+//                contentScale = ContentScale.Crop,
+//                modifier = Modifier.fillMaxHeight()
+//                    .aspectRatio(it.width / it.height.toFloat())
+//                    .clip(RoundedCornerShape(16.dp))
+//                    .align(Alignment.Center)
+//            )
         }
     }
     DisposableEffect(Unit) {
@@ -140,6 +137,7 @@ fun VideoScreen(
     stop: MutableState<Long>,
     duration: Long,
     frameSize: Int,
+    minFrameSize: Int,
     scrollState: LazyListState,
     thumbnail: @Composable (Long) -> Unit,
     content: @Composable BoxScope.() -> Unit,
@@ -159,6 +157,7 @@ fun VideoScreen(
             duration = duration,
             state = scrollState,
             frameSize = frameSize,
+            minFrameSize = minFrameSize,
             content = thumbnail
         )
         DesignOutlinedButton(
@@ -172,7 +171,7 @@ fun VideoScreen(
             enabled = true,
             isLoading = false,
             shape = RoundedCornerShape(28),
-            textStyle = MaterialTheme.typography.bodyMedium.copy(
+            textStyle = MaterialTheme.typography.labelLarge.copy(
                 fontWeight = FontWeight.SemiBold
             ),
             colors = ButtonDefaults.outlinedButtonColors(
@@ -201,6 +200,7 @@ fun PreviewVideoScreen() {
             stop = stop,
             duration = 60,
             frameSize = 5,
+            minFrameSize = 2,
             scrollState = scrollState,
             thumbnail = {
                 Box(modifier = Modifier.fillMaxWidth()

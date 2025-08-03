@@ -51,6 +51,7 @@ fun VideoRange(
     stop: MutableState<Long>,
     duration: Long,
     frameSize: Int,
+    minFrameSize: Int,
     state: LazyListState,
     content: @Composable (Long) -> Unit,
 ) {
@@ -59,6 +60,7 @@ fun VideoRange(
         stop = stop,
         duration = duration,
         frameSize = frameSize,
+        minFrameSize = minFrameSize,
         state = state,
         content = content,
         modifier = Modifier
@@ -72,6 +74,7 @@ fun VideoRange(
     stop: MutableState<Long>,
     duration: Long,
     frameSize: Int,
+    minFrameSize: Int,
     modifier: Modifier = Modifier,
     state: LazyListState = rememberLazyListState(),
     content: @Composable (Long) -> Unit,
@@ -106,6 +109,7 @@ fun VideoRange(
                 state = state,
                 duration = duration,
                 frameSize = frameSize,
+                minFrameSize = minFrameSize,
                 contentAlignment = Alignment.BottomStart,
                 onTimeRangeChanged = { startTime, stopTime ->
                     start.value = startTime.toLong()
@@ -143,13 +147,16 @@ fun VideoRange(
                     }
                 },
                 modifier = modifier.width(width),
-                highlight = { _, _ -> }
+                highlight = { _, _ ->
+                    Box(modifier = Modifier.fillMaxWidth()
+                        .height(64.dp))
+                }
             ) {
                 Box(
                     contentAlignment = Alignment.BottomStart,
                     modifier = Modifier.padding(bottom = 2.dp)
                 ) {
-                    VideoRangeLabel(it, modifier = Modifier.height(104.dp))
+                    VideoRangeLabel(it, modifier = Modifier.height(96.dp))
                     Box(modifier = Modifier.clipToBounds()) {
                         updatedContent(it.toLong())
                     }
@@ -198,8 +205,9 @@ fun PreviewVideoRange() {
         VideoRange(
             start,
             stop,
-            60,
-            5,
+            duration = 60,
+            frameSize = 5,
+            minFrameSize = 2,
         ) {
             Box(modifier = Modifier.fillMaxWidth()
                 .height(64.dp)

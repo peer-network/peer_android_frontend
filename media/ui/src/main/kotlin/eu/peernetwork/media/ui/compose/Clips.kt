@@ -42,8 +42,8 @@ fun Clips(
     stop: Long,
     duration: Long,
     frameSize: Int,
+    minFrameSize: Int,
     modifier: Modifier = Modifier,
-    minFrameSize: Int = 2,
     spacer: Dp = 1.dp,
     state: LazyListState = rememberLazyListState(),
     contentAlignment: Alignment = Alignment.TopStart,
@@ -87,14 +87,7 @@ fun Clips(
             derivedStateOf { startPointer.value <= 0f }
         }
         val endLimit = remember(stopPointer, width) {
-            derivedStateOf { stopPointer.value >= width }
-        }
-        val isDraggable = remember {
-            derivedStateOf {
-                state.layoutInfo.viewportStartOffset == 0 &&
-                        !endLimit.value ||
-                        frameSize == duration.toInt()
-            }
+            derivedStateOf { stopPointer.value >= width && frameSize <= duration.toInt() }
         }
         val length = remember(duration, frameSize) { (duration / frameSize) * frameSize }
         val itemWidth = remember(width, frameSize) { (width / frameSize) * minFrameSize }
@@ -115,7 +108,7 @@ fun Clips(
             modifier = Modifier.graphicsLayer { translationX = startPointer.value }
                 .width(with(density) { selectedAreaWidth.toDp() })
                 .then(
-                    if (!(startLimit.value || endLimit.value) || isDraggable.value) {
+                    if (!startLimit.value || !endLimit.value) {
                         Modifier.draggable(
                             orientation = Orientation.Horizontal,
                             state = rememberDraggableState { delta ->
@@ -133,7 +126,7 @@ fun Clips(
                     } else {
                         Modifier
                     }
-                ).zIndex(9f)
+                )
         ) { updateHighlight(actualStartTime, actualStopTime) }
         Box(
             contentAlignment = contentAlignment,
@@ -190,6 +183,7 @@ fun PreviewClips() {
             stop = 4,
             duration = 5,
             frameSize = 5,
+            minFrameSize = 2,
             mask = {
                 Box(modifier = Modifier
                     .fillMaxWidth()
