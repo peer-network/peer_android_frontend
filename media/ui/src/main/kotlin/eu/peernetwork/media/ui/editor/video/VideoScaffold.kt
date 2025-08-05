@@ -51,7 +51,6 @@ fun VideoScaffold() {
     val size = 5
     VideoScaffold(
         footer = {
-            Spacer(modifier = Modifier.padding(12.dp))
             Row {
                 Spacer(modifier = Modifier.width(24.dp))
                 repeat(size) {
@@ -66,6 +65,7 @@ fun VideoScaffold() {
         }
     ) {
         Box(modifier = Modifier
+            .padding(bottom = 24.dp)
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.surfaceContainerLow))
     }

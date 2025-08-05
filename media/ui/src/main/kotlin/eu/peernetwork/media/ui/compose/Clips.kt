@@ -5,7 +5,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.gestures.rememberDraggableState
-import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,7 +21,6 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,7 +32,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import eu.peernetwork.core.ui.theme.PeerTheme
-import kotlinx.coroutines.launch
 
 @Composable
 fun Clips(
@@ -55,7 +52,6 @@ fun Clips(
     content: @Composable (Int) -> Unit,
 ) {
     val density = LocalDensity.current
-    val scope = rememberCoroutineScope()
     val updateLeading by rememberUpdatedState(leading)
     val updateTrailing by rememberUpdatedState(trailing)
     val updateHighlight by rememberUpdatedState(highlight)
@@ -86,7 +82,7 @@ fun Clips(
         val startLimit = remember(startPointer.value) {
             derivedStateOf { startPointer.value <= 0f }
         }
-        val endLimit = remember(stopPointer, width) {
+        val stopLimit = remember(stopPointer, width) {
             derivedStateOf { stopPointer.value >= width && frameSize <= duration.toInt() }
         }
         val itemWidth = remember(width, frameSize) { (width / frameSize) }
@@ -108,19 +104,12 @@ fun Clips(
             modifier = Modifier.graphicsLayer { translationX = startPointer.value }
                 .width(with(density) { selectedAreaWidth.toDp() })
                 .then(
-                    if (!startLimit.value || !endLimit.value) {
+                    if (!startLimit.value && !stopLimit.value) {
                         Modifier.draggable(
                             orientation = Orientation.Horizontal,
                             state = rememberDraggableState { delta ->
-                                if (!startLimit.value && delta < 0) {
-                                    startOffset.floatValue -= delta
-                                    stopOffset.floatValue -= delta
-                                } else if (!endLimit.value && delta > 0) {
-                                    startOffset.floatValue -= delta
-                                    stopOffset.floatValue -= delta
-                                } else {
-                                    scope.launch { state.scrollBy(-delta) }
-                                }
+                                startOffset.floatValue -= delta
+                                stopOffset.floatValue -= delta
                             }
                         )
                     } else {
