@@ -50,7 +50,7 @@ fun Timeline(
     ) {
         val width = maxWidth
         val length = remember(duration, frameSize) {
-            (duration / frameSize.toFloat()).roundToInt() * frameSize
+            ((duration / frameSize.toFloat()) * frameSize.toFloat()).roundToInt()
         }
         val itemWidth = remember(width, frameSize) {
             with(density) { (width.toPx() / frameSize.toFloat()).toDp() }
@@ -82,8 +82,8 @@ fun Timeline(
 fun PreviewTimeline() {
     PeerTheme {
         Timeline(
-            duration = 9,
-            frameSize = 3,
+            duration = 6,
+            frameSize = 5,
             modifier = Modifier.fillMaxWidth(),
             item = {
                 Text("$it",modifier = Modifier

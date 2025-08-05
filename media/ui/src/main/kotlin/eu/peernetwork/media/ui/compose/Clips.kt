@@ -79,12 +79,6 @@ fun Clips(
         val selectedAreaWidth by remember(startPointer.value, stopPointer.value) {
             derivedStateOf { (stopPointer.value - startPointer.value).coerceAtLeast(0f) }
         }
-        val startLimit = remember(startPointer.value) {
-            derivedStateOf { startPointer.value <= 0f }
-        }
-        val stopLimit = remember(stopPointer, width) {
-            derivedStateOf { stopPointer.value >= width && frameSize <= duration.toInt() }
-        }
         val itemWidth = remember(width, frameSize) { (width / frameSize) }
         val minFrameWidth = remember(itemWidth, minFrameSize) { itemWidth * minFrameSize }
         val actualStartTime = remember(startOffset.floatValue, duration) {
@@ -99,24 +93,33 @@ fun Clips(
                     .coerceIn(0f, duration.toFloat())
             }
         }
+        val isDraggable = remember(actualStartTime.value, actualStopTime.value, stopPointer.value) {
+            derivedStateOf {
+                stopPointer.value <= width &&
+                actualStopTime.value - actualStartTime.value < frameSize
+            }
+        }
         Box(
             contentAlignment = contentAlignment,
             modifier = Modifier.graphicsLayer { translationX = startPointer.value }
                 .width(with(density) { selectedAreaWidth.toDp() })
                 .then(
-                    if (!startLimit.value && !stopLimit.value) {
+                    if (isDraggable.value) {
                         Modifier.draggable(
                             orientation = Orientation.Horizontal,
                             state = rememberDraggableState { delta ->
-                                startOffset.floatValue -= delta
-                                stopOffset.floatValue -= delta
+                                if ((actualStartTime.value > 0 && delta < 0) ||
+                                    (actualStopTime.value.toFloat() < duration && delta > 0)) {
+                                    startOffset.floatValue -= delta
+                                    stopOffset.floatValue -= delta
+                                }
                             }
                         )
                     } else {
                         Modifier
                     }
                 )
-        ) { updateHighlight(actualStartTime, actualStopTime) }
+        ) { updateHighlight(actualStartTime, stopPointer) }
         Box(
             contentAlignment = contentAlignment,
             modifier = Modifier
@@ -172,7 +175,7 @@ fun PreviewClips() {
         Clips(
             start = 1,
             stop = 4,
-            duration = 15,
+            duration = 6,
             frameSize = 5,
             minFrameSize = 2,
             mask = {
