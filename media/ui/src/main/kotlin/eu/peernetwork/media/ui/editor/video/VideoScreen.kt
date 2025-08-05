@@ -58,6 +58,7 @@ import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.media.core.renderer.VideoPlayer
 import eu.peernetwork.media.ui.compose.ThumbnailPlaceholder
 import eu.peernetwork.media.ui.compose.VideoRange
+import eu.peernetwork.media.ui.compose.VolumeControl
 import eu.peernetwork.media.ui.core.MediaPlayer
 import eu.peernetwork.media.ui.extension.format
 import eu.peernetwork.media.ui.extension.offset
@@ -116,9 +117,11 @@ fun VideoScreen(
         val player = remember { (component.videoInteractor() as MediaPlayer).player() }
         val isReady = remember { mutableStateOf(false) }
         val preview = remember { mutableStateOf(false) }
+        val mute = remember { mutableStateOf(true) }
         VideoScreen(
             start = start,
             stop = stop,
+            mute = mute,
             scrollState = scrollState,
             duration = duration,
             frameSize = duration.coerceAtMost(5).toInt(),
@@ -170,6 +173,13 @@ fun VideoScreen(
                         enabled =  isReady.value
                     )
                 )
+                LaunchedEffect(mute.value) {
+                    player.volume = if (mute.value) {
+                        1f
+                    } else {
+                        0f
+                    }
+                }
             }
         }
         LaunchedEffect(Unit) {
@@ -211,6 +221,7 @@ fun VideoScreen(
 fun VideoScreen(
     start: MutableState<Long>,
     stop: MutableState<Long>,
+    mute: MutableState<Boolean>,
     duration: Long,
     frameSize: Int,
     minFrameSize: Int,
@@ -227,7 +238,16 @@ fun VideoScreen(
             .verticalScroll(rememberScrollState())
     ) {
         Spacer(modifier = Modifier.height(16.dp))
-        Box(modifier = Modifier.weight(1f)) { updatedContent() }
+        Box(modifier = Modifier.weight(1f)) {
+            updatedContent()
+            VolumeControl(
+                mute,
+                modifier = Modifier.padding(16.dp)
+                    .align(Alignment.BottomEnd)
+            ) {
+                mute.value = it
+            }
+        }
         Spacer(modifier = Modifier.height(32.dp))
         VideoRange(
             start = start,
@@ -242,7 +262,7 @@ fun VideoScreen(
             onClick = onProceed,
             modifier = Modifier
                 .padding(horizontal = 24.dp)
-                .padding(top = 16.dp)
+                .padding(top = 12.dp)
                 .background(
                     color = MaterialTheme.colorScheme.onBackground,
                     shape = RoundedCornerShape(28)
@@ -263,7 +283,7 @@ fun VideoScreen(
             minHeight = 36.dp,
             border = BorderStroke(1.dp, MaterialTheme.colorScheme.onBackground),
             contentPadding = PaddingValues(horizontal = 18.dp, vertical = 4.dp)
-        ) { Text(stringResource(R.string.proceed_label)) }
+        ) { Text(stringResource(R.string.continue_label)) }
         Spacer(modifier = Modifier.weight(.3f))
     }
 }
@@ -274,10 +294,12 @@ fun PreviewVideoScreen() {
     PeerTheme {
         val start = remember { mutableLongStateOf(2) }
         val stop = remember { mutableLongStateOf(4) }
+        val mute = remember { mutableStateOf(false) }
         val scrollState = rememberLazyListState()
         VideoScreen(
             start = start,
             stop = stop,
+            mute = mute,
             duration = 60,
             frameSize = 5,
             minFrameSize = 2,

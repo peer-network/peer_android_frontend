@@ -56,7 +56,7 @@ class VideoThumbnailDelegate @Inject constructor(
                     it.alpha = 0f
                     if (it.isVisible) {
                         val dimen = dimension.value[spec.url] ?: spec.ratio
-                        if (dimen > 1) {
+                        if (dimen >= 1) {
                             val width = it.measuredWidth
                             it.layoutParams = it.layoutParams.apply {
                                 this.width = width

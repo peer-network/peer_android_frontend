@@ -103,7 +103,7 @@ class VideoPlayerDelegate @Inject constructor(
                     val dimen = dimension.value[spec.url] ?: spec.ratio
                     val width = context.resources.displayMetrics.widthPixels
                     if (spec.resolution != null) {
-                        if (dimen > 1) {
+                        if (dimen >= 1) {
                             val width = spec.resolution!!.first
                             it.layoutParams = it.layoutParams.apply {
                                 this.width = width
