@@ -118,10 +118,7 @@ fun PhotoScreen(
                         }
                         handleSelect(selected.value)
                     }) {
-                    DesignThumbnail(
-                        it[index].thumbnail,
-                        thumbnail.value[it[index].thumbnail]
-                    ) {  }
+                    DesignThumbnail(thumbnail.value[it[index].path])
                     Box(modifier = Modifier
                         .fillMaxSize()
                         .graphicsLayer {

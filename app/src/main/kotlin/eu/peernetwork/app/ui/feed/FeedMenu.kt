@@ -23,7 +23,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.app.mapper.mapFromDomain
-import eu.peernetwork.app.model.UiRelation
+import eu.peernetwork.blog.ui.model.UiFilter
 import eu.peernetwork.blog.domain.model.Relation
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.design.compose.DesignDropDown
@@ -40,9 +40,9 @@ fun FeedMenu(
 ) {
     val handleOnSelect by rememberUpdatedState(onSelect)
     val relations = mapOf(
-        stringResource(UiRelation.ALL.value) to Relation.NONE,
-        stringResource(UiRelation.FOLLOWER.value) to Relation.FOLLOWER,
-        stringResource(UiRelation.FOLLOWED.value) to Relation.FOLLOWED,
+        stringResource(UiFilter.ALL.value) to Relation.NONE,
+        stringResource(UiFilter.FOLLOWER.value) to Relation.FOLLOWER,
+        stringResource(UiFilter.FOLLOWED.value) to Relation.FOLLOWED,
     )
     DesignTitleBarHost(
         "FeedScreen$id$title",
@@ -69,7 +69,8 @@ fun FeedMenu(
                         }) { label, isActive ->
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier.padding(start = 8.dp),
+                                modifier = Modifier.padding(start = 8.dp)
+                                    .padding(vertical = 1.dp),
                             ) {
                                 Text(
                                     label,

@@ -1,6 +1,6 @@
 package eu.peernetwork.media.core.usecase
 
 import android.net.Uri
-import eu.peernetwork.core.common.usecase.ParameterizedImmediateUseCase
+import eu.peernetwork.core.common.usecase.ParameterizedSuspendableUseCase
 
-interface MediaEncoderUsecase : ParameterizedImmediateUseCase<Uri, String?>
+interface MediaEncoderUsecase : ParameterizedSuspendableUseCase<Uri, String?>

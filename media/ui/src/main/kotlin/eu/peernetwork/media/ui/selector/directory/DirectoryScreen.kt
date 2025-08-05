@@ -104,10 +104,7 @@ fun DirectoryScreen(
                                 onSelect(item.path)
                             }
                     ) {
-                        DesignThumbnail(
-                            item.thumbnail,
-                            thumbnail.value[item.thumbnail],
-                        ) { }
+                        DesignThumbnail(thumbnail.value[item.thumbnail])
                         Image(
                             painter = painterResource(R.drawable.overlay_gradient),
                             contentDescription = null,

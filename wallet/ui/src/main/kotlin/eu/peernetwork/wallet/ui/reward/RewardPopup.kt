@@ -28,7 +28,7 @@ fun RewardPopup(
     if (state.value) {
         Popup(
             alignment = Alignment.TopStart,
-            offset = IntOffset(x = 0, y = 24.dp.value.let {
+            offset = IntOffset(x = 0, y = 22.dp.value.let {
                 it * context.resources.displayMetrics.density
             }.toInt()),
             onDismissRequest = { state.value = false }

@@ -1,8 +1,6 @@
 package eu.peernetwork.media.ui.interactor
 
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.media.MediaMetadataRetriever
 import androidx.core.graphics.scale
 import eu.peernetwork.core.common.provider.Dispatcher
 import eu.peernetwork.media.core.annotation.DiskCache
@@ -11,6 +9,7 @@ import eu.peernetwork.media.core.interactor.ThumbnailInteractor
 import eu.peernetwork.media.core.model.UiMimeType
 import eu.peernetwork.media.ui.usecase.BitmapMergeUsecase
 import eu.peernetwork.media.ui.usecase.BlurUsecase
+import eu.peernetwork.media.ui.usecase.MetadataRetrieverUsecase
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
@@ -20,6 +19,7 @@ import kotlin.math.min
 class ThumbnailInteractorDelegate @Inject constructor(
     private val blurUsecase: BlurUsecase,
     private val bitmapMergeUsecase: BitmapMergeUsecase,
+    private val metadataRetrieverUsecase: MetadataRetrieverUsecase,
     @DiskCache private val disk: BitmapInteractor,
     @MemoryCache private val memory: BitmapInteractor,
     private val observer: BitmapInteractor.BitmapAdapter,
@@ -47,23 +47,16 @@ class ThumbnailInteractorDelegate @Inject constructor(
         url: String,
         type: UiMimeType
     ): Bitmap? = withContext(dispatcher.io) {
-        if (type == UiMimeType.Video) {
-            val retriever = MediaMetadataRetriever()
-            try {
-                retriever.setDataSource(url)
-                retriever.getFrameAtTime(100_000, MediaMetadataRetriever.OPTION_CLOSEST_SYNC)
-            } catch (error: Throwable) {
-                error.printStackTrace()
-                null
-            } finally {
-                try {
-                    retriever.release()
-                } catch (error: Throwable) {
-                    error.printStackTrace()
-                }
-            }
-        } else {
-            BitmapFactory.decodeFile(url)
+        try {
+            metadataRetrieverUsecase(
+                MetadataRetrieverUsecase.Parameter(
+                    url = url,
+                    type = type
+                )
+            )?.bitmap
+        } catch (error: Throwable) {
+            error.printStackTrace()
+            null
         }
     }
 
