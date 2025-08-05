@@ -28,6 +28,7 @@ import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.social.ui.compose.Peer
 import eu.peernetwork.social.ui.compose.SearchItemSkeleton
+import eu.peernetwork.social.ui.connection.ConnectionScreen
 import eu.peernetwork.social.ui.model.UiMember
 
 @Composable
@@ -37,7 +38,8 @@ fun FollowersScreen(
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
     onClick: (UiMember) -> Unit
-) {
+) { ConnectionScreen(provider = provider, viewModelStoreOwner = viewModelStoreOwner) { controller ->
+
     val context = LocalContext.current
     val component = remember {
         provider.builder(Followers.Builder::class.java).build(context)
@@ -78,23 +80,24 @@ fun FollowersScreen(
                 DesignErrorLabel(refresh, error, component.resource(), PaddingValues(horizontal = 16.dp))
             }
         }
-    ) { state, lazyPagingItems ->
-        LazyColumn(modifier = Modifier.fillMaxSize()) {
-            items(
-                count = lazyPagingItems.itemCount,
-                key = { index -> index }
-            ) { index ->
-                lazyPagingItems[index]?.let { member ->
-                    Peer(
-                        member = member,
-                        onClick = onClick
-                    )
+        ) { state, lazyPagingItems ->
+            LazyColumn(modifier = Modifier.fillMaxSize()) {
+                items(
+                    count = lazyPagingItems.itemCount,
+                    key = { index -> index }
+                ) { index ->
+                    lazyPagingItems[index]?.let { member ->
+                        Peer(
+                            member = member,
+                            onClick = onClick
+                        )
+                    }
                 }
+                item(key = "FollowersListFooter") { Spacer(modifier = Modifier.height(56.dp)) }
             }
-            item(key = "FollowersListFooter") { Spacer(modifier = Modifier.height(56.dp)) }
         }
-    }
-    DisposableEffect(Unit) {
-        onDispose { viewModel.reset() }
+        DisposableEffect(Unit) {
+            onDispose { viewModel.reset() }
+        }
     }
 }
