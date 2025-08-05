@@ -149,7 +149,6 @@ fun VideoOverlay(
                                     VideoPlayer.Spec(
                                         post.media,
                                         post.aspectRatio,
-                                        post.resolution,
                                         progress,
                                         length,
                                         shouldPlay,

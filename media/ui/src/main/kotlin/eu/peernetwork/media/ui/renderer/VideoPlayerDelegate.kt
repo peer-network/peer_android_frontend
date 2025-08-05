@@ -53,8 +53,6 @@ class VideoPlayerDelegate @Inject constructor(
 ) : VideoPlayer {
     private val media = (interactor as MediaPlayer)
 
-    private val widthPixels: Int get() = context.resources.displayMetrics.widthPixels
-
     @Composable
     override fun invoke(
         modifier: Modifier,
@@ -67,7 +65,7 @@ class VideoPlayerDelegate @Inject constructor(
         val hasSession = remember { mutableStateOf(false) }
         val errorState = remember { mutableStateOf<Throwable?>(null) }
         val session = remember { mutableLongStateOf(System.currentTimeMillis()) }
-        val isLoading = remember { mutableStateOf(false) }
+        val isLoading = remember { mutableStateOf(!spec.enabled) }
         var mute = media.mute().collectAsStateWithLifecycle(player.isDeviceMuted)
         val dimension = media.observer.collectAsStateWithLifecycle()
         val listener = remember {
@@ -94,20 +92,40 @@ class VideoPlayerDelegate @Inject constructor(
             }
         }
         val texture = remember { TextureView(context) }
-        Box(contentAlignment = Alignment.Center) {
+        Box(
+            modifier = modifier,
+            contentAlignment = Alignment.Center
+        ) {
             AndroidView(
                 factory = { texture },
                 update = {
                     it.alpha = 0f
                     val dimen = dimension.value[spec.url] ?: spec.ratio
-                    it.layoutParams = it.layoutParams.apply {
-                        this.width = widthPixels
-                        this.height = (width / dimen).toInt()
+                    val width = context.resources.displayMetrics.widthPixels
+                    if (spec.resolution != null) {
+                        if (dimen > 1) {
+                            val width = spec.resolution!!.first
+                            it.layoutParams = it.layoutParams.apply {
+                                this.width = width
+                                this.height = (width / dimen).toInt()
+                            }
+                        } else {
+                            val height = spec.resolution!!.second
+                            it.layoutParams = it.layoutParams.apply {
+                                this.width = (height * dimen).toInt()
+                                this.height = height
+                            }
+                        }
+                    } else {
+                        it.layoutParams = it.layoutParams.apply {
+                            this.width = width
+                            this.height = (width / dimen).toInt()
+                        }
                     }
                     it.alpha = dimension.value[spec.url]?.let { 1f } ?: 0f
                     isReady = dimension.value[spec.url] != null
                 },
-                modifier = modifier.wrapContentSize()
+                modifier = Modifier.wrapContentSize()
                     .clickable {
                         if (!isPlaying.value && !hasSession.value) {
                             session.longValue = System.currentTimeMillis()
@@ -143,7 +161,9 @@ class VideoPlayerDelegate @Inject constructor(
                     player.addListener(listener)
                 }
             } else {
+                isLoading.value = false
                 isPlaying.value = false
+                player.pause()
                 player.removeListener(listener)
             }
         }

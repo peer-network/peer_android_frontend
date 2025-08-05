@@ -7,6 +7,7 @@ import eu.peernetwork.core.ui.exception.NoContentException
 import eu.peernetwork.media.core.interactor.ThumbnailInteractor
 import eu.peernetwork.media.core.model.UiMimeType
 import eu.peernetwork.media.ui.model.UiMetadata
+import eu.peernetwork.media.ui.usecase.CoverUsecase
 import eu.peernetwork.media.ui.usecase.MetadataRetrieverUsecase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -14,12 +15,16 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
 
 class VideoViewModel @Inject constructor(
-    private val usecase: MetadataRetrieverUsecase,
+    private val coverUsecase: CoverUsecase,
+    private val metadataRetrieverUsecase: MetadataRetrieverUsecase,
     private val interactor: ThumbnailInteractor,
 ) : ViewModel() {
+    private val requests = ConcurrentHashMap.newKeySet<String>()
+
     private val mutableState = MutableStateFlow<State>(State.Empty)
 
     val state: StateFlow<State> = mutableState.asStateFlow()
@@ -30,11 +35,17 @@ class VideoViewModel @Inject constructor(
         initialValue = emptyMap()
     )
 
+    var currentMedia: String? = null
+
     fun get(url: String) {
+        if (currentMedia == url && mutableState.value is State.Success) {
+            return
+        }
+        currentMedia = url
         viewModelScope.launch {
             try {
                 mutableState.tryEmit(State.Loading)
-                val data = usecase(
+                val data = metadataRetrieverUsecase(
                     MetadataRetrieverUsecase.Parameter(
                         url = url,
                         type = UiMimeType.Video
@@ -48,23 +59,35 @@ class VideoViewModel @Inject constructor(
     }
 
     fun sync(url: String, name: String, timestamp: Long) {
+        if (requests.contains(name)) {
+            return
+        }
+        requests.add(name)
         viewModelScope.launch {
-            usecase(
+            metadataRetrieverUsecase(
                 MetadataRetrieverUsecase.Parameter(
-                    url,
-                    UiMimeType.Video,
-                    timestamp
+                    url = url,
+                    type = UiMimeType.Video,
+                    frame = timestamp
                 )
             )?.bitmap?.let {
                 interactor.save(name, it)
                 interactor.invalidate()
             }
+            requests.remove(name)
         }
     }
 
-    fun reset() {
+    fun background(url: String, width: Int, height: Int) {
         viewModelScope.launch {
-            mutableState.tryEmit(State.Empty)
+            coverUsecase(
+                CoverUsecase.Parameter(
+                    url = url,
+                    type = UiMimeType.Video,
+                    width = width,
+                    height = height
+                )
+            )
         }
     }
 

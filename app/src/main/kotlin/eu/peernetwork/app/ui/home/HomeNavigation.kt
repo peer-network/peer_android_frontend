@@ -85,7 +85,7 @@ sealed class HomeRoute(
     data object Home: HomeRoute(
         R.drawable.ic_home_outline,
         R.drawable.ic_home,
-        eu.peernetwork.user.ui.R.string.feed_label,
+        eu.peernetwork.blog.ui.R.string.feed_label,
     )
     data object Search: HomeRoute(
         R.drawable.ic_search_outline,

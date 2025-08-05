@@ -83,7 +83,7 @@ fun VideoRange(
     val nestedScrollConnection = remember {
         object : NestedScrollConnection {
             override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
-                return if (scrollState.value < scrollState.maxValue) {
+                return if (scrollState.canScrollForward) {
                     scope.launch { scrollState.scrollBy(-available.x) }
                     available
                 } else {

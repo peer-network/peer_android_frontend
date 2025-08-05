@@ -5,8 +5,12 @@ import androidx.lifecycle.ViewModelProvider
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.provider.UiProvider
 import eu.peernetwork.media.core.interactor.ThumbnailInteractor
+import eu.peernetwork.media.core.interactor.VideoInteractor
+import eu.peernetwork.media.core.provider.RendererProvider
 
-interface Video : UiProvider {
+interface Video : UiProvider, RendererProvider {
+    fun videoInteractor(): VideoInteractor
+
     fun thumbnailInteractor(): ThumbnailInteractor
 
     @javax.inject.Scope

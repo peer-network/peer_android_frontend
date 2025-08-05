@@ -89,6 +89,7 @@ fun CreatorScreen(
     val type = remember(draft.value) {
         mutableStateOf<EngagementType?>(draft.value?.let { EngagementType.Post(it) })
     }
+    val handleOnClear by rememberUpdatedState(onClear)
     val handleOnSuccess by rememberUpdatedState(onSuccess)
     val successMessage = stringResource(R.string.post_success_message)
     CreatorScreen(
@@ -102,7 +103,7 @@ fun CreatorScreen(
                 media = if (attachment.value.files.isEmpty()) {
                     UiMimeType.Text
                 } else { attachment.value.media },
-                attachments = attachment.value.files.map { file -> file.uri }
+                attachment = attachment.value
             ) },
         isLoading = isLoading,
         enabled = enabled,
@@ -118,16 +119,17 @@ fun CreatorScreen(
             when(it) {
                 is EngagementType.Post -> {
                     viewModel.create(it.draft)
-                    draft.value = null
                 }
                 else -> {}
             }
+            draft.value = null
         }
     )
     LaunchedEffect(shouldReset.value) {
         if (shouldReset.value) {
             viewModel.reset()
-            onClear()
+            handleOnClear()
+            attachment.value = UiAttachment.Text
             Toast.makeText(context, successMessage, Toast.LENGTH_SHORT).show()
             handleOnSuccess()
         }

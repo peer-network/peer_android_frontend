@@ -1,5 +1,7 @@
 package eu.peernetwork.app.ui.composer
 
+import android.net.Uri
+import android.os.Bundle
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -14,9 +16,13 @@ import eu.peernetwork.core.ui.design.compose.DesignRouter
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.core.ui.extension.route
 import eu.peernetwork.media.core.model.UiAttachment
+import eu.peernetwork.media.core.model.UiFile
 import eu.peernetwork.media.core.model.UiMimeType
+import eu.peernetwork.media.core.model.UiOffset
 import eu.peernetwork.media.ui.editor.video.VideoScreen
 import eu.peernetwork.media.ui.selector.explorer.ExplorerScreen
+import kotlinx.collections.immutable.persistentListOf
+import java.io.File
 
 @Composable
 fun ComposerNavigation(
@@ -55,7 +61,21 @@ fun ComposerNavigation(
             })
         ) { backStackEntry ->
             val path = backStackEntry.arguments?.getString("path") ?: ""
-            VideoScreen(path, provider, viewModelStoreOwner)
+            VideoScreen(
+                path = path,
+                provider = provider,
+                viewModelStoreOwner = viewModelStoreOwner
+            ) { start, stop, duration ->
+                val props = Bundle()
+                if (stop - start != duration) {
+                    props.putParcelable(path, UiOffset.Value(start, stop))
+                }
+                attachment.value = UiAttachment.File(
+                    type = UiMimeType.Video,
+                    uris = persistentListOf(UiFile(Uri.fromFile(File(path)), path, props))
+                )
+                controller.route("editor")
+            }
         }
     }
 }
