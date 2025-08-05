@@ -157,3 +157,10 @@ fun ConnectionScreen(
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp)
     ) { Text(stringResource(state.res)) }
 }
+//fun computeConnectionStatus(map: Map<String, Boolean>, id: String): Pair<Boolean, Boolean> {
+//    val isFollowing = map[id] == true
+//    val isFollowed = map[id] == true
+//    return Pair(isFollowing, isFollowed)
+//}
+
+
