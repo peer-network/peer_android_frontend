@@ -24,7 +24,6 @@ import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -94,10 +93,10 @@ fun VideoScreen(
         placeholder = { VideoScaffold() }
     ) {
         val duration = it.duration.format()
-        val start = rememberSaveable { mutableLongStateOf(0) }
-        val stop = rememberSaveable { mutableLongStateOf(duration) }
-        val progress = rememberSaveable { mutableFloatStateOf(0f) }
-        val length = rememberSaveable { mutableLongStateOf(duration) }
+        val start = remember { mutableLongStateOf(0) }
+        val stop = remember { mutableLongStateOf(duration) }
+        val progress = remember { mutableFloatStateOf(0f) }
+        val length = remember { mutableLongStateOf(duration) }
         val player = remember { (component.videoInteractor() as MediaPlayer).player() }
         val isReady = remember { mutableStateOf(false) }
         val preview = remember { mutableStateOf(false) }
@@ -166,38 +165,41 @@ fun VideoScreen(
                     }
                 }
             }
-        }
-        LaunchedEffect(Unit) {
-            snapshotFlow { stop.longValue - start.longValue }
-                .debounce(300)
-                .collect {
-                    if (isReady.value) {
-                        preview.value = true
+            LaunchedEffect(Unit) {
+                snapshotFlow { stop.longValue - start.longValue }
+                    .debounce(300)
+                    .collect {
+                        if (isReady.value) {
+                            preview.value = true
+                        }
+                        isReady.value = true
                     }
-                    isReady.value = true
+            }
+            LaunchedEffect(preview.value) {
+                if (preview.value) {
+                    player.play()
+                } else {
+                    player.pause()
                 }
-        }
-        LaunchedEffect(preview.value) {
-            if (preview.value) {
-                player.play()
-            } else {
-                player.pause()
+            }
+            LaunchedEffect(progress.floatValue) {
+                val startOffset = it.duration.offset(start.longValue)
+                val endOffset = it.duration.offset(stop.longValue)
+                if (player.currentPosition >= endOffset) {
+                    player.seekTo(startOffset)
+                } else if (player.currentPosition < startOffset) {
+                    player.seekTo(startOffset)
+                    player.play()
+                }
+            }
+            LaunchedEffect(start.longValue, stop.longValue) {
+                preview.value = false
+                player.seekTo(it.duration.offset(start.longValue))
             }
         }
-        LaunchedEffect(progress.floatValue) {
-            val startOffset = it.duration.offset(start.longValue)
-            val endOffset = it.duration.offset(stop.longValue)
-            if (player.currentPosition >= endOffset) {
-                player.seekTo(startOffset)
-            } else if (player.currentPosition < startOffset) {
-                player.seekTo(startOffset)
-                player.play()
-            }
-        }
-        LaunchedEffect(start.longValue, stop.longValue) {
-            preview.value = false
-            player.seekTo(it.duration.offset(start.longValue))
-        }
+    }
+    LaunchedEffect(Unit) {
+        viewModel.get(path)
     }
 }
 
