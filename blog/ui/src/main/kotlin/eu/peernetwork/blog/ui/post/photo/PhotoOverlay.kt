@@ -132,7 +132,7 @@ fun PhotoOverlay(
                                         )
                                         component.imageView()(
                                             Modifier,
-                                            ImageView.Spec(path, post.aspectRatio)
+                                            ImageView.Spec(path, post.aspectRatio, zoomable = true)
                                         )
                                     }
                                 } else {
@@ -148,8 +148,7 @@ fun PhotoOverlay(
                                     )
                                     component.imageView()(
                                         Modifier,
-                                        ImageView.Spec(media.path, null)
-                                    )
+                                        ImageView.Spec(media.path, null,zoomable = true))
                                 }
                             }
                         )

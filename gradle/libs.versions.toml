@@ -38,6 +38,7 @@ media3 = "1.6.1"
 media3-transformer = "1.7.1"
 lrucache = "2.0.2"
 lottie = "6.6.6"
+zoomable = "1.5.0"
 
 [libraries]
 androidx-splash = { module = "androidx.core:core-splashscreen", version.ref = "androidx-splash" }
@@ -88,6 +89,7 @@ mockk-jvm = { module = "io.mockk:mockk-jvm", version.ref = "mockk-jvm" }
 permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "permissions" }
 blur = { module = "com.github.Commit451:NativeStackBlur", version.ref = "blur" }
 lottie = { module = "com.airbnb.android:lottie-compose", version.ref = "lottie" }
+zoomable = { module = "net.engawapg.lib:zoomable", version.ref = "zoomable" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
