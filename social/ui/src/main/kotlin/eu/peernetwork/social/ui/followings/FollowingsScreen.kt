@@ -28,6 +28,7 @@ import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.social.ui.compose.Peer
 import eu.peernetwork.social.ui.compose.SearchItemSkeleton
+import eu.peernetwork.social.ui.connection.ConnectionScreen
 import eu.peernetwork.social.ui.model.UiMember
 
 @Composable
@@ -37,7 +38,8 @@ fun FollowingsScreen(
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
     onClick: (UiMember) -> Unit
-) {
+) { ConnectionScreen(provider = provider, viewModelStoreOwner = viewModelStoreOwner) { controller ->
+
     val context = LocalContext.current
     val component = remember {
         provider.builder(Followings.Builder::class.java).build(context)
@@ -47,6 +49,7 @@ fun FollowingsScreen(
         factory = component.viewModelFactory()
     )
     val state by viewModel.state.collectAsState()
+    val connection by controller.observe().collectAsState()
     val derivedState = remember {
         derivedStateOf {
             when (state) {
@@ -84,16 +87,29 @@ fun FollowingsScreen(
                 key = { index -> index }
             ) { index ->
                 lazyPagingItems[index]?.let { member ->
-                    Peer(
-                        member = member,
-                        onClick = onClick
-                    )
+                        val isFollowed = connection[member.id] == true
+                        val triple = Triple(member.id, isFollowed, true)
+
+                        Peer(
+                            member = member,
+                            onClick = onClick,
+                            action = {
+                                ConnectionScreen(
+                                    isFollowing = connection.getOrDefault(triple.first, triple.third),
+                                    isFollowed = triple.second,
+                                    onClick = { follow -> controller.invoke(triple.first, !follow) }
+                                )
+                            }
+                        )
+                    }
                 }
-            }
             item(key = "FollowingsListFooter") { Spacer(modifier = Modifier.height(56.dp)) }
+            }
+        }
+
+        DisposableEffect(Unit) {
+            onDispose { viewModel.reset() }
         }
     }
-    DisposableEffect(Unit) {
-        onDispose { viewModel.reset() }
-    }
 }
+
