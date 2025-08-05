@@ -102,7 +102,7 @@ fun VideoScreen(
                 Box(modifier = Modifier.aspectRatio(1f)
                     .background(MaterialTheme.colorScheme.surfaceVariant)
                     .clickable(role = Role.Button) {
-                        if (selected.value.files.firstOrNull() != it[index]) {
+                        if (selected.value.files.firstOrNull()?.path == it[index].path) {
                             UiAttachment.File(
                                 type = UiMimeType.Video,
                                 persistentListOf(it[index])
@@ -126,7 +126,7 @@ fun VideoScreen(
                     DesignThumbnail(thumbnail.value[it[index].path])
                     Box(modifier = Modifier.fillMaxSize()
                         .graphicsLayer {
-                            alpha = if (selected.value.files.firstOrNull() == it[index]) {
+                            alpha = if (selected.value.files.firstOrNull()?.path == it[index].path) {
                                 1f
                             } else {
                                 0f

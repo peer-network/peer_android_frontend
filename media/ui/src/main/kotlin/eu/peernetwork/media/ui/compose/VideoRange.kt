@@ -118,7 +118,7 @@ fun VideoRange(
                     Box(modifier = Modifier.fillMaxWidth()
                         .padding(bottom = 2.dp)
                         .height(64.dp)
-                        .background(Color.Black.copy(alpha = .8f))
+                        .background(Color.Black.copy(alpha = .75f))
                         .align(Alignment.Center))
                 },
                 leading = {

@@ -2,14 +2,10 @@ package eu.peernetwork.media.ui.editor.video
 
 import android.annotation.SuppressLint
 import android.content.res.Configuration
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,12 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -37,27 +28,20 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import eu.peernetwork.media.ui.R
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffold
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
-import eu.peernetwork.core.ui.design.compose.DesignOutlinedButton
 import eu.peernetwork.core.ui.design.compose.DesignThumbnail
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.media.core.renderer.VideoPlayer
-import eu.peernetwork.media.ui.compose.ThumbnailPlaceholder
-import eu.peernetwork.media.ui.compose.VideoRange
 import eu.peernetwork.media.ui.compose.VolumeControl
 import eu.peernetwork.media.ui.core.MediaPlayer
 import eu.peernetwork.media.ui.extension.format
@@ -107,7 +91,7 @@ fun VideoScreen(
         onRefresh = { viewModel.get(path) },
         contentAlignment = Alignment.TopCenter,
         modifier = Modifier.fillMaxSize(),
-        placeholder = { ThumbnailPlaceholder(modifier = Modifier.fillMaxSize()) }
+        placeholder = { VideoScaffold() }
     ) {
         val duration = it.duration.format()
         val start = rememberSaveable { mutableLongStateOf(0) }
@@ -228,63 +212,29 @@ fun VideoScreen(
     scrollState: LazyListState,
     onProceed: () -> Unit,
     thumbnail: @Composable (Long) -> Unit,
-    content: @Composable BoxScope.() -> Unit,
+    content: @Composable BoxScope.() -> Unit
 ) {
     val updatedContent by rememberUpdatedState(content)
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-    ) {
-        Spacer(modifier = Modifier.height(16.dp))
-        Box(modifier = Modifier.weight(1f)) {
-            updatedContent()
-            VolumeControl(
-                mute,
-                modifier = Modifier.padding(16.dp)
-                    .align(Alignment.BottomEnd)
-            ) {
-                mute.value = it
-            }
+    VideoScaffold(
+        footer = {
+            VideoFooter(
+                start = start,
+                stop = stop,
+                duration = duration,
+                frameSize = frameSize,
+                minFrameSize = minFrameSize,
+                scrollState = scrollState,
+                onProceed = onProceed,
+                thumbnail = thumbnail
+            )
         }
-        Spacer(modifier = Modifier.height(32.dp))
-        VideoRange(
-            start = start,
-            stop = stop,
-            duration = duration,
-            state = scrollState,
-            frameSize = frameSize,
-            minFrameSize = minFrameSize,
-            content = thumbnail
-        )
-        DesignOutlinedButton(
-            onClick = onProceed,
-            modifier = Modifier
-                .padding(horizontal = 24.dp)
-                .padding(top = 12.dp)
-                .background(
-                    color = MaterialTheme.colorScheme.onBackground,
-                    shape = RoundedCornerShape(28)
-                )
-                .align(Alignment.End),
-            enabled = true,
-            isLoading = false,
-            shape = RoundedCornerShape(28),
-            textStyle = MaterialTheme.typography.labelLarge.copy(
-                fontWeight = FontWeight.SemiBold
-            ),
-            colors = ButtonDefaults.outlinedButtonColors(
-                containerColor = Color.Transparent,
-                contentColor = MaterialTheme.colorScheme.surfaceVariant,
-                disabledContainerColor = Color.Transparent,
-                disabledContentColor = MaterialTheme.colorScheme.surfaceDim,
-            ),
-            minHeight = 36.dp,
-            border = BorderStroke(1.dp, MaterialTheme.colorScheme.onBackground),
-            contentPadding = PaddingValues(horizontal = 18.dp, vertical = 4.dp)
-        ) { Text(stringResource(R.string.continue_label)) }
-        Spacer(modifier = Modifier.weight(.3f))
+    ) {
+        updatedContent()
+        VolumeControl(
+            mute,
+            modifier = Modifier.padding(16.dp)
+                .align(Alignment.BottomEnd)
+        ) { mute.value = it }
     }
 }
 
