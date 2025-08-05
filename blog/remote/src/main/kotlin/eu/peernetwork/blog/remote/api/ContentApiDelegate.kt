@@ -124,7 +124,7 @@ class ContentApiDelegate @Inject constructor(
         return when (type) {
             is Draft.Type.Text -> Optional.absent()
             is Draft.Type.Video -> Optional.absent()
-            is Draft.Type.Audio -> Optional.present(listOf((type as Draft.Type.Audio).cover))
+            is Draft.Type.Audio -> Optional.presentIfNotNull((type as Draft.Type.Audio).cover)
             is Draft.Type.Image -> Optional.absent()
         }
     }

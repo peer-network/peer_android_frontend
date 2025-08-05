@@ -53,12 +53,11 @@ class AudioUsecase @Inject constructor(
         )
         cursor?.use {
             val idColumn = it.getColumnIndexOrThrow(MediaStore.Audio.Media._ID)
-            val dataColumn = it.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA)
             val nameColumn = it.getColumnIndexOrThrow(MediaStore.Audio.Media.DISPLAY_NAME)
             while (it.moveToNext()) {
                 val audioUri = ContentUris.withAppendedId(uri, it.getLong(idColumn))
                 val name = it.getString(nameColumn)
-                files.add(UiFile(audioUri, thumbnail = cursor.getString(dataColumn), name = name))
+                files.add(UiFile(uri = audioUri, name = name))
             }
         }
         files

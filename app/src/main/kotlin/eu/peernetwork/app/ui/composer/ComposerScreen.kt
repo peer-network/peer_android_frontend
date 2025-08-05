@@ -68,13 +68,14 @@ fun ComposerScreen(
                     AttachmentScreen(
                         attachment,
                         onAttach = { controller.navigateIfNecessary("explorer") },
+                        Modifier.padding(top = 4.dp),
                         onPreview = {
                             val path = it.files.first().path
                             controller.navigateIfNecessary("video?path=$path")
                         },
+                        onEditThumbnail = { controller.navigateIfNecessary("explorer") },
                         component,
                         viewModelStore.get(key),
-                        Modifier.padding(top = 4.dp),
                     )
                 },
                 content = {
@@ -161,7 +162,7 @@ fun PreviewComposerScreen() {
                     modifier = Modifier
                         .padding(top = 8.dp)
                         .padding(horizontal = 16.dp)
-                ) {}
+                )
             }
         )
     }

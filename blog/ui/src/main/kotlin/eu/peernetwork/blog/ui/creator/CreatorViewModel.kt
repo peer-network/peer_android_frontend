@@ -41,7 +41,7 @@ class CreatorViewModel @Inject constructor(
     }
 
     private suspend fun UiDraft.mapToDomain(): Draft {
-        val type = when(media) {
+        val type = when(attachment.media) {
             UiMimeType.Photo -> Draft.Type.Image(attachment.files.mapNotNull {
                 mediaEncoderUsecase(it.uri)
             })
@@ -54,7 +54,12 @@ class CreatorViewModel @Inject constructor(
                     )
                 )
             })
-            UiMimeType.Music -> Draft.Type.Audio(attachment.files.mapNotNull { mediaEncoderUsecase(it.uri) })
+            UiMimeType.Music -> Draft.Type.Audio(
+                files = attachment.files.mapNotNull { mediaEncoderUsecase(it.uri) },
+                cover = cover?.let { uri ->
+                    mediaEncoderUsecase(uri)?.let { listOf(it) }
+                }
+            )
             else -> Draft.Type.Text(listOf(textEncoderUsecase(description)))
         }
         return Draft(

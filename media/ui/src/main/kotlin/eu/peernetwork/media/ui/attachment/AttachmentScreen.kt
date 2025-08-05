@@ -6,6 +6,7 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -50,10 +51,11 @@ import kotlinx.coroutines.flow.debounce
 fun AttachmentScreen(
     attachment: MutableState<UiAttachment>,
     onAttach: () -> Unit,
+    modifier: Modifier = Modifier,
     onPreview: (UiAttachment) -> Unit,
+    onEditThumbnail: ((Int) -> Unit)? = null,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
-    modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
     val component = remember {
@@ -79,6 +81,7 @@ fun AttachmentScreen(
     )
     val handleOnPreview by rememberUpdatedState(onPreview)
     val handleOnAttach by rememberUpdatedState(onAttach)
+    val handleOnEditThumbnail by rememberUpdatedState(onEditThumbnail)
     val thumbnail = viewModel.thumbnail.collectAsStateWithLifecycle().value
     val imageToCrop = remember { mutableStateOf<Uri?>(null) }
     val ratio = remember { mutableStateOf(PhotoAspectRatio.Square) }
@@ -100,6 +103,7 @@ fun AttachmentScreen(
                 timestamp = System.currentTimeMillis()
             }
         },
+        onEditThumbnail = handleOnEditThumbnail,
         onSelect = { imageToCrop.value = attachment.value.files[it].uri },
         onPreview = {
             if (attachment.value.media == UiMimeType.Photo) {
@@ -131,12 +135,37 @@ fun AttachmentScreen(
         state = launcher,
         imageUri = imageToCrop.value,
         selectedRatio = ratio.value,
-        onCropDone = {
-            attachment.value = UiAttachment.File(
-                UiMimeType.Photo,
-                persistentListOf(it)
-            )
+        onCropDone = { croppedFile ->
+            val currentAttachment = attachment.value
+            when (currentAttachment) {
+                is UiAttachment.File -> {
+                    if (currentAttachment.media == UiMimeType.Music) {
+                        val updatedFiles = currentAttachment.files.mapIndexed { index, file ->
+                            if (index == 0) {
+                                file.copy(path = croppedFile.path)
+                            } else file
+                        }.toPersistentList()
+                        attachment.value = UiAttachment.File(
+                            UiMimeType.Music,
+                            updatedFiles
+                        )
+                    } else {
+                        attachment.value = UiAttachment.File(
+                            UiMimeType.Photo,
+                            persistentListOf(croppedFile)
+                        )
+                    }
+                }
+
+                UiAttachment.Text -> {
+                    attachment.value = UiAttachment.File(
+                        UiMimeType.Photo,
+                        persistentListOf(croppedFile)
+                    )
+                }
+            }
         }
+
     )
     LaunchedEffect(permissionsState.allPermissionsGranted) {
         snapshotFlow { timestamp }
@@ -169,6 +198,7 @@ fun AttachmentScreen(
     onSquareClick: () -> Unit,
     onPortraitClick: () -> Unit,
     onDetach: (Int) -> Unit,
+    onEditThumbnail: ((Int) -> Unit)? = null,
 ) {
     val imageToCrop = remember(attachment.value) {
         mutableStateOf<Uri?>(attachment.value.files.firstOrNull()?.uri)
@@ -193,16 +223,33 @@ fun AttachmentScreen(
             }
         }
     ) {
-        Box(modifier = Modifier.padding(bottom = 4.dp)) {
-            AttachmentPreview(
-                onAttach = onAttach,
-                onLoad = onLoad,
-                onRefresh = onRefresh,
-                onRemove = onDetach,
-                attachment = attachment,
-                onSelect = onSelect,
-                onPreview = onPreview
-            )
+        Column {
+            if (attachment.value.media != UiMimeType.Music) {
+                Box(modifier = Modifier.padding(bottom = 4.dp)) {
+                    AttachmentPreview(
+                        onAttach = onAttach,
+                        onLoad = onLoad,
+                        onRefresh = onRefresh,
+                        onRemove = onDetach,
+                        attachment = attachment,
+                        onSelect = onSelect,
+                        onPreview = onPreview
+                    )
+                }
+            }
+
+            if (attachment.value.media == UiMimeType.Music) {
+                Box(modifier = Modifier.padding(bottom = 4.dp)) {
+                    AttachmentAudio(
+                        files = attachment.value.files,
+                        onRemove = onDetach,
+                        onAttach = onAttach,
+                        onEditThumbnail = onEditThumbnail,
+                        modifier = Modifier
+                            .padding(horizontal = 56.dp),
+                    )
+                }
+            }
         }
     }
 }
