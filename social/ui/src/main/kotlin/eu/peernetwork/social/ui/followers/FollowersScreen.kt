@@ -28,6 +28,7 @@ import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.social.ui.compose.Peer
 import eu.peernetwork.social.ui.compose.SearchItemSkeleton
+import eu.peernetwork.social.ui.connection.ConnectionScreen
 import eu.peernetwork.social.ui.model.UiMember
 
 @Composable
@@ -37,7 +38,8 @@ fun FollowersScreen(
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
     onClick: (UiMember) -> Unit
-) {
+) { ConnectionScreen(provider = provider, viewModelStoreOwner = viewModelStoreOwner) { controller ->
+
     val context = LocalContext.current
     val component = remember {
         provider.builder(Followers.Builder::class.java).build(context)
@@ -48,6 +50,7 @@ fun FollowersScreen(
         factory = component.viewModelFactory()
     )
     val state by viewModel.state.collectAsState()
+    val connection by controller.observe().collectAsState()
     val derivedState = remember {
         derivedStateOf {
             when (state) {
@@ -80,21 +83,37 @@ fun FollowersScreen(
         }
     ) { state, lazyPagingItems ->
         LazyColumn(modifier = Modifier.fillMaxSize()) {
-            items(
-                count = lazyPagingItems.itemCount,
-                key = { index -> index }
-            ) { index ->
+            items(lazyPagingItems.itemCount) { index ->
                 lazyPagingItems[index]?.let { member ->
+                    val triple = Triple(member.id, false, true)
+
                     Peer(
                         member = member,
-                        onClick = onClick
+                        onClick = onClick,
+                        action = {
+                            ConnectionScreen(
+                                isFollowing = connection.getOrDefault(
+                                    triple.first,
+                                    triple.third
+                                ),
+                                isFollowed = triple.second,
+                                onClick = { follow ->
+                                    controller.invoke(
+                                        triple.first,
+                                        !follow
+                                    )
+                                }
+                            )
+                        }
                     )
                 }
             }
-            item(key = "FollowersListFooter") { Spacer(modifier = Modifier.height(56.dp)) }
+            item { Spacer(modifier = Modifier.height(56.dp)) }
         }
     }
+
     DisposableEffect(Unit) {
         onDispose { viewModel.reset() }
     }
+}
 }

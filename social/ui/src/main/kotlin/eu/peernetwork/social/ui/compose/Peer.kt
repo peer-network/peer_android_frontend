@@ -1,6 +1,7 @@
 package eu.peernetwork.social.ui.compose
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -14,13 +15,15 @@ import androidx.compose.ui.unit.dp
 import eu.peernetwork.core.ui.design.compose.DesignAsyncImage
 import eu.peernetwork.core.ui.extension.annotate
 import eu.peernetwork.core.ui.theme.PeerTheme
+import eu.peernetwork.social.ui.connection.ConnectionScreen
 import eu.peernetwork.social.ui.model.UiMember
 import java.util.UUID
 
 @Composable
 fun Peer(
     member: UiMember,
-    onClick: (UiMember) -> Unit
+    onClick: (UiMember) -> Unit,
+    action: (@Composable () -> Unit)? = null
 ) {
     val slug = "#${member.slug}"
     val handleOnClick by rememberUpdatedState(onClick)
@@ -41,16 +44,20 @@ fun Peer(
             )
         }
     ) {
-        Text(
-            text = "@${member.username} $slug".annotate(
-                slug,
-                style = MaterialTheme.typography.bodySmall.toSpanStyle().copy(
-                    color = MaterialTheme.colorScheme.tertiary
-                )
-            ),
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onBackground
-        )
+        Row {
+            Text(
+                text = "@${member.username} $slug".annotate(
+                    slug,
+                    style = MaterialTheme.typography.bodySmall.toSpanStyle().copy(
+                        color = MaterialTheme.colorScheme.tertiary
+                    )
+                ),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onBackground,
+                modifier = Modifier.weight(1f)
+            )
+            action?.invoke()
+        }
     }
 }
 
@@ -64,6 +71,12 @@ fun PreviewFollowerItem() {
             username = "johnDoe",
             imageUrl = "http://localhost"
         )
-        Peer(model) {}
+        Peer(model, onClick = {}) {
+            ConnectionScreen(
+                isFollowing = true,
+                isFollowed = true,
+                onClick = {}
+            )
+        }
     }
 }
