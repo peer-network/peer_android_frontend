@@ -120,7 +120,7 @@ class ContentApiDelegate @Inject constructor(
         return when (type) {
             is Draft.Type.Text -> Optional.absent<List<String>>()
             is Draft.Type.Video -> Optional.absent<List<String>>()
-            is Draft.Type.Audio -> Optional.absent<List<String>>()
+            is Draft.Type.Audio -> Optional.presentIfNotNull((type as Draft.Type.Audio).cover)
             is Draft.Type.Image -> Optional.absent<List<String>>()
         }
     }

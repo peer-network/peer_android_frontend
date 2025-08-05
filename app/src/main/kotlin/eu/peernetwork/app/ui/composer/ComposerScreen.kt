@@ -68,6 +68,7 @@ fun ComposerScreen(
                     AttachmentScreen(
                         attachment,
                         onAttach = { controller.navigateIfNecessary("explorer") },
+                        onEditThumbnail = { controller.navigateIfNecessary("explorer") },
                         component,
                         viewModelStore.get(key),
                         Modifier.padding(top = 4.dp),

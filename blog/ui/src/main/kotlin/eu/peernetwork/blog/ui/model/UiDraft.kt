@@ -11,6 +11,7 @@ data class UiDraft(
     val description: String,
     val media: UiMimeType,
     val attachments: List<Uri>,
+    val cover: Uri? = null
 ) {
     @Immutable
     data class Field(
