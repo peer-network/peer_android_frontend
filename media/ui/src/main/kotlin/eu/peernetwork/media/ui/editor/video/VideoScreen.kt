@@ -145,6 +145,7 @@ fun VideoScreen(
                     visible = canLoad,
                     bitmap = thumbnail.value[key],
                     modifier = Modifier.fillMaxSize()
+                        .background(MaterialTheme.colorScheme.surfaceContainerLow)
                 ) { path -> viewModel.background(path, width, height) }
                 component.videoPlayer()(
                     Modifier.fillMaxHeight(),

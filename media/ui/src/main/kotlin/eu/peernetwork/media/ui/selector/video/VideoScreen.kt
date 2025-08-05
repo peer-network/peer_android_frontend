@@ -111,24 +111,17 @@ fun VideoScreen(
                     .background(MaterialTheme.colorScheme.surfaceVariant)
                     .clickable(role = Role.Button) {
                         if (selected.value.files.firstOrNull()?.path == it[index].path) {
-                            UiAttachment.File(
-                                type = UiMimeType.Video,
-                                persistentListOf(it[index])
-                            ).apply {
-                                selected.value = this
-                                handleSelect(this)
-                            }
-                        } else if (selected.value == UiAttachment.Text) {
-                            UiAttachment.File(
-                                type = UiMimeType.Video,
-                                persistentListOf(it[index])
-                            ).apply {
-                                selected.value = this
-                                handleSelect(this)
-                            }
-                        } else {
                             selected.value = UiAttachment.Text
                             handleSelect(UiAttachment.Text)
+                        } else if (selected.value == UiAttachment.Text ||
+                            selected.value.media is UiMimeType.Video) {
+                            UiAttachment.File(
+                                type = UiMimeType.Video,
+                                persistentListOf(it[index])
+                            ).apply {
+                                selected.value = this
+                                handleSelect(this)
+                            }
                         }
                     }) {
                     DesignThumbnail(thumbnail.value[it[index].path])
