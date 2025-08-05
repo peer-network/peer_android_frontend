@@ -50,6 +50,6 @@ class MetadataRetrieverUsecase @Inject constructor(
     data class Parameter(
         val url: String,
         val type: UiMimeType,
-        val frame: Long = 100_000
+        val frame: Long = 0
     )
 }

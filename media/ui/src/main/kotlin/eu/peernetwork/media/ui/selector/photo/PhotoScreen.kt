@@ -76,7 +76,15 @@ fun PhotoScreen(
     }
     val color = MaterialTheme.colorScheme.primary
     val current = rememberSaveable(directory.value) { mutableStateOf(directory.value) }
-    val selected = remember { mutableStateOf<UiAttachment>(attachment.value) }
+    val selected = remember { mutableStateOf<UiAttachment>(
+        (attachment.value as? UiAttachment.File?)?.let {
+            if (it.type != UiMimeType.Photo) {
+                UiAttachment.Text
+            } else {
+                it
+            }
+        } ?: UiAttachment.Text
+    ) }
     val thumbnail = viewModel.thumbnail.collectAsStateWithLifecycle()
     val listState = rememberLazyGridState()
     val canLoad = remember { derivedStateOf {

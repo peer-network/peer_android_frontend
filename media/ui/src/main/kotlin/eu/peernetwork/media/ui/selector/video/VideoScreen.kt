@@ -76,7 +76,15 @@ fun VideoScreen(
         }
     }
     val current = rememberSaveable(directory.value) { mutableStateOf(directory.value) }
-    val selected = rememberSaveable(saver = UiAttachmentSaver) { mutableStateOf<UiAttachment>(attachment.value) }
+    val selected = rememberSaveable(saver = UiAttachmentSaver) { mutableStateOf<UiAttachment>(
+        (attachment.value as? UiAttachment.File?)?.let {
+            if (it.type != UiMimeType.Video) {
+                UiAttachment.Text
+            } else {
+                it
+            }
+        } ?: UiAttachment.Text
+    ) }
     val color = MaterialTheme.colorScheme.primary
     val thumbnail = viewModel.thumbnail.collectAsStateWithLifecycle()
     val listState = rememberLazyGridState()
