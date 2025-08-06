@@ -13,7 +13,7 @@ import eu.peernetwork.blog.remote.content.GetallpostsQuery
 import eu.peernetwork.blog.remote.mapper.mapFromDomain
 import eu.peernetwork.blog.remote.mapper.mapToDomain
 import eu.peernetwork.blog.remote.mapper.mapToFilter
-import eu.peernetwork.blog.remote.mapper.mapToScope
+import eu.peernetwork.blog.remote.mapper.mapToMode
 import eu.peernetwork.blog.remote.mapper.mapToSortType
 import eu.peernetwork.blog.remote.model.MediaModel
 import eu.peernetwork.core.common.interactor.SessionInteractor
@@ -65,7 +65,7 @@ class ContentApiDelegate @Inject constructor(
             title = title,
             postId = post,
             userId = author,
-            contentFilterBy = Optional.present(sessionInteractor.mode().mapToScope()),
+            contentFilterBy = Optional.present(sessionInteractor.mode().mapToMode()),
             offset = Optional.present(page.offset),
             limit = Optional.present(page.limit)
         )

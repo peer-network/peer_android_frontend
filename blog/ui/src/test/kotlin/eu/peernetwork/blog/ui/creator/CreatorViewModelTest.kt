@@ -6,8 +6,10 @@ import eu.peernetwork.blog.ui.model.UiDraft
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.usecase.CreateUsecase
 import eu.peernetwork.core.common.usecase.TextEncoderUsecase
+import eu.peernetwork.media.core.model.UiAttachment
 import eu.peernetwork.media.core.model.UiMimeType
 import eu.peernetwork.media.core.usecase.MediaEncoderUsecase
+import eu.peernetwork.media.core.usecase.VideoEncoderUsecase
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -31,6 +33,8 @@ internal class CreatorViewModelTest {
 
     private val contentCreationUsecase = mockk<CreateUsecase>(relaxed = true)
 
+    private val videoEncoderUsecase = mockk<VideoEncoderUsecase>(relaxed = true)
+
     private val mediaEncoderUsecase = mockk<MediaEncoderUsecase>(relaxed = true)
 
     private val textEncoderUsecase = mockk<TextEncoderUsecase>(relaxed = true)
@@ -42,6 +46,7 @@ internal class CreatorViewModelTest {
         Dispatchers.setMain(dispatcher)
         viewModel = CreatorViewModel(
             contentCreationUsecase,
+            videoEncoderUsecase,
             mediaEncoderUsecase,
             textEncoderUsecase,
         )
@@ -55,7 +60,7 @@ internal class CreatorViewModelTest {
             title = text,
             description = description,
             media = UiMimeType.Text,
-            attachment = listOf(),
+            attachment = UiAttachment.Text,
         )
         val mockData = mockk<UiPost>(relaxed = true)
         every { textEncoderUsecase(any()) } returns text
