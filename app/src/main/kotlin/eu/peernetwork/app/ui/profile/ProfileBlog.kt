@@ -27,6 +27,7 @@ import eu.peernetwork.media.core.model.UiMimeType
 @Composable
 fun ProfileBlog(
     id: String,
+    mode: String?,
     enable: Boolean,
     lastUpdated: State<Long>,
     limit: Int,
@@ -44,29 +45,31 @@ fun ProfileBlog(
     ProfileBlog(onNavigate) { offset ->
         when (offset) {
             0 -> PhotoScreen(
-                id,
-                limit,
-                lastUpdated,
-                provider,
-                viewModelStoreOwner,
-                onMentionClick,
-                onHashtagClick,
-                onPhotoClick,
-                onAuthorClicked,
-                photoState
+                author = id,
+                mode = mode,
+                postLimit = limit,
+                lastUpdated = lastUpdated,
+                provider = provider,
+                viewModelStoreOwner = viewModelStoreOwner,
+                onMentionClick = onMentionClick,
+                onHashtagClick = onHashtagClick,
+                onPostClick = onPhotoClick,
+                onAuthorClick = onAuthorClicked,
+                listState = photoState
             )
             1 -> VideoScreen(
-                id,
-                enable,
-                limit,
-                lastUpdated,
-                provider,
-                viewModelStoreOwner,
-                onMentionClick,
-                onHashtagClick,
-                onAuthorClicked,
-                onVideoClick,
-                videoState
+                author = id,
+                mode = mode,
+                enable = enable,
+                postLimit = limit,
+                lastUpdated = lastUpdated,
+                provider = provider,
+                viewModelStoreOwner = viewModelStoreOwner,
+                onMentionClick = onMentionClick,
+                onHashtagClick = onHashtagClick,
+                onAuthorClick = onAuthorClicked,
+                onPostClick = onVideoClick,
+                listState = videoState
             )
         }
     }

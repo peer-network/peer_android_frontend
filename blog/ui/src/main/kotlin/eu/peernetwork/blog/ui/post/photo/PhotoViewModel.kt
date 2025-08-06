@@ -26,12 +26,14 @@ class PhotoViewModel @Inject constructor(
 
     fun load(
         author: String,
+        mode: String?,
         page: Pageable
     ) {
         viewModelScope.launch {
             usecase(
                 AuthorPostUsecase.Parameter(
                     author = author,
+                    mode = mode,
                     page = page
                 )
             ).catch { mutableState.tryEmit(State.Error(it)) }

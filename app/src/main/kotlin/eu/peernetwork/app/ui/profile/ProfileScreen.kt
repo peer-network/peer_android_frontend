@@ -19,6 +19,7 @@ import java.net.URLEncoder
 fun ProfileScreen(
     principal: String,
     userId: String,
+    mode: String?,
     provider: UiComponentProvider,
     viewModelStore: ViewModelState,
     title: String? = null,
@@ -34,18 +35,20 @@ fun ProfileScreen(
         viewModelStoreOwner = viewModelStore.get(userId)
     ) { connection ->
         ProfileOverlay(
-            overlay,
-            principal,
-            userId,
-            BuildConfig.PAGING_LIMIT,
-            connection,
-            provider,
-            component,
-            viewModelStore
+            overlay = overlay,
+            principal = principal,
+            userId = userId,
+            mode = mode,
+            limit = BuildConfig.PAGING_LIMIT,
+            connectionController = connection,
+            provider = provider,
+            component = component,
+            viewModelStore = viewModelStore
         ) {
             ProfileNavigation(
                 principal = principal,
                 userId = userId,
+                mode = mode,
                 controller = controller,
                 provider = provider,
                 component = component,
@@ -55,6 +58,7 @@ fun ProfileScreen(
                 val videoState = rememberLazyListState()
                 ProfilePreview(
                     id = userId,
+                    mode = mode,
                     enable = overlay.value == ProfileOverlayState.Empty,
                     title = title,
                     limit = BuildConfig.PAGING_LIMIT,

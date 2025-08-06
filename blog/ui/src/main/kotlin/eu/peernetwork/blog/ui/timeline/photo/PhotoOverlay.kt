@@ -21,7 +21,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import dev.materii.pullrefresh.DragRefreshLayout
 import dev.materii.pullrefresh.rememberPullRefreshState
 import eu.peernetwork.blog.domain.model.Filter.Criteria
-import eu.peernetwork.blog.domain.model.Relation
+import eu.peernetwork.blog.domain.model.Category
 import eu.peernetwork.blog.ui.compose.PhotoIndicator
 import eu.peernetwork.blog.ui.compose.PhotoPage
 import eu.peernetwork.blog.ui.compose.PhotoPager
@@ -41,8 +41,9 @@ fun PhotoOverlay(
     id: String,
     limit: Int,
     position: Int,
-    relation: Relation,
+    category: Category,
     criteria: Criteria? = null,
+    mode: String? = null,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
     onAuthorClick: (String) -> Unit = {},
@@ -76,11 +77,11 @@ fun PhotoOverlay(
         }
     }
     val pullRefreshState = rememberPullRefreshState(refreshing = false, onRefresh = {
-        viewModel.load(Pageable(0, limit), relation, criteria)
+        viewModel.load(Pageable(0, limit), mode, category, criteria)
     })
     DragRefreshLayout(state = pullRefreshState) {
         DesignStatefulScaffold<Flow<PagingData<UiPost>>>(state = derivedState, onRefresh = {
-            viewModel.load(Pageable(0, limit), relation, criteria)
+            viewModel.load(Pageable(0, limit), mode, category, criteria)
         }) { flow ->
             val lazyPagingItems = flow.collectAsLazyPagingItems()
             if (lazyPagingItems.loadState.refresh is LoadState.Loading) {

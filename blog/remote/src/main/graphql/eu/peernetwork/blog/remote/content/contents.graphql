@@ -5,6 +5,7 @@ query Getallposts(
     $title: String,
     $userId: ID,
     $postId: ID,
+    $contentFilterBy: ContentFilterType,
     $offset: Int,
     $limit: Int
 ) {
@@ -15,6 +16,7 @@ query Getallposts(
         title: $title,
         userid: $userId,
         postid: $postId,
+        contentFilterBy: $contentFilterBy,
         limit: $limit,
         offset: $offset
     ) {

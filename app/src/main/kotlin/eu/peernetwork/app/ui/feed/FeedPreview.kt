@@ -25,7 +25,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.blog.domain.model.Filter.Criteria
-import eu.peernetwork.blog.domain.model.Relation
+import eu.peernetwork.blog.domain.model.Category
 import eu.peernetwork.blog.ui.timeline.photo.PhotoScreen
 import eu.peernetwork.blog.ui.timeline.video.VideoScreen
 import eu.peernetwork.core.ui.design.compose.DesignTab
@@ -48,6 +48,7 @@ fun FeedPreview(
     controller: NavHostController,
     connectionController: ConnectionController,
     title: String? = null,
+    mode: String? = null,
     criteria: Criteria? = null,
     onNavigate: (Int) -> Unit = {},
     onFilter: (Int) -> Unit = {},
@@ -61,8 +62,8 @@ fun FeedPreview(
     val videoState = rememberLazyListState()
     val coroutine = rememberCoroutineScope()
     val connection by connectionController.observe().collectAsStateWithLifecycle()
-    var relation by rememberSaveable {
-        mutableStateOf(Relation.entries.getOrNull(ordinal) ?: Relation.NONE)
+    var category by remember {
+        mutableStateOf(Category.entries.getOrNull(ordinal) ?: Category.ALL)
     }
     var position by remember { mutableIntStateOf(state.intValue) }
     val handleOnNavigate by rememberUpdatedState(onNavigate)
@@ -81,18 +82,19 @@ fun FeedPreview(
         },
         photo = {
             PhotoScreen(
-                id,
-                BuildConfig.PAGING_LIMIT,
-                relation,
-                criteria,
-                onMentionClick,
-                onHashtagClick,
-                onPhotoClick,
-                component,
-                viewModelStoreOwner,
-                onAuthorClick,
-                requireUpdate,
-                photoState,
+                id = id,
+                postLimit = BuildConfig.PAGING_LIMIT,
+                category = category,
+                criteria = criteria,
+                mode = mode,
+                onMentionClick = onMentionClick,
+                onHashtagClick = onHashtagClick,
+                onPostClick = onPhotoClick,
+                provider = component,
+                viewModelStoreOwner = viewModelStoreOwner,
+                onAuthorClick = onAuthorClick,
+                requireUpdate = requireUpdate,
+                listState = photoState,
             ) {
                 ConnectionScreen(
                     isFollowing = connection.getOrDefault(it.first, it.third),
@@ -103,19 +105,20 @@ fun FeedPreview(
         },
         video = {
             VideoScreen(
-                id,
-                enable,
-                BuildConfig.PAGING_LIMIT,
-                relation,
-                criteria,
-                { controller.navigateToUsernameSearch(it) },
-                { controller.navigateToTagSearch(it) },
-                component,
-                viewModelStoreOwner,
-                onVideoClick,
-                { controller.navigateIfNecessary("profile/$it") },
-                requireUpdate,
-                videoState,
+                id = id,
+                enable = enable,
+                postLimit = BuildConfig.PAGING_LIMIT,
+                category = category,
+                criteria = criteria,
+                mode = mode,
+                onMentionClick = { controller.navigateToUsernameSearch(it) },
+                onHashtagClick = { controller.navigateToTagSearch(it) },
+                provider = component,
+                viewModelStoreOwner = viewModelStoreOwner,
+                onPostClick = onVideoClick,
+                onAuthorClick = { controller.navigateIfNecessary("profile/$it") },
+                requireUpdate = requireUpdate,
+                listState = videoState,
             ) {
                 ConnectionScreen(
                     isFollowing = connection.getOrDefault(it.first, it.third),
@@ -128,10 +131,10 @@ fun FeedPreview(
     FeedMenu(
         id,
         title,
-        relation,
+        category,
         {
             handleOnFilter(it.ordinal)
-            relation = it
+            category = it
         }
     ) {
         coroutine.launch {

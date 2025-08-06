@@ -21,6 +21,7 @@ import eu.peernetwork.core.ui.model.ViewModelState
 fun ProfileNavigation(
     principal: String,
     userId: String,
+    mode: String?,
     startDestination: String = "content",
     controller: NavHostController,
     provider: UiComponentProvider,
@@ -30,7 +31,7 @@ fun ProfileNavigation(
     content: @Composable () -> Unit = {},
 ) {
     val updatedContent by rememberUpdatedState(content)
-    val mode = if (startDestination == "overlay") {
+    val windowMode = if (startDestination == "overlay") {
         DesignPageWindowMode.DOCKED
     } else {
         DesignPageWindowMode.HIDDEN
@@ -50,12 +51,13 @@ fun ProfileNavigation(
                 id = userId,
                 provider = component,
                 viewModelStore = viewModelStore,
-                mode = mode,
+                mode = windowMode,
                 onCancel = onCancel,
             ) {
                 ProfileScreen(
                     principal = principal,
                     userId = id,
+                    mode = mode,
                     provider = provider,
                     viewModelStore = viewModelStore,
                 )
@@ -66,9 +68,9 @@ fun ProfileNavigation(
                 id = userId,
                 provider = component,
                 viewModelStore = viewModelStore,
-                mode = mode,
+                mode = windowMode,
                 onCancel = onCancel,
-            ) { SettingsScreen(userId, component, viewModelStore) }
+            ) { SettingsScreen(userId, mode, component, viewModelStore) }
         }
         composable(
             route = "search/{type}/{query}",
@@ -88,11 +90,12 @@ fun ProfileNavigation(
                 id = userId,
                 provider = component,
                 viewModelStore = viewModelStore,
-                mode = mode,
+                mode = windowMode,
                 onCancel = onCancel,
             ) {
                 SearchScreen(
                     id = userId,
+                    mode = mode,
                     postLimit = BuildConfig.PAGING_LIMIT,
                     provider = component,
                     viewModelStore = viewModelStore,

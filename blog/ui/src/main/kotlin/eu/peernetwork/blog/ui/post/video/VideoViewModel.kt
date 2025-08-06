@@ -42,11 +42,12 @@ class VideoViewModel @Inject constructor(
             initialValue = emptyMap()
         )
 
-    fun load(author: String, page: Pageable) {
+    fun load(author: String, mode: String?, page: Pageable) {
         viewModelScope.launch {
             usecase(
                 AuthorVideoUsecase.Parameter(
                     author = author,
+                    mode = mode,
                     page = page
                 )
             ).catch { mutableState.tryEmit(State.Error(it)) }

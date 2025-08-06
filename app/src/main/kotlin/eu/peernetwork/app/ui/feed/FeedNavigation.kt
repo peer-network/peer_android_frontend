@@ -19,6 +19,7 @@ import java.net.URLEncoder
 @Composable
 fun FeedNavigation(
     userId: String,
+    mode: String?,
     postLimit: Int,
     startDestination: String = "content",
     controller: NavHostController,
@@ -28,7 +29,7 @@ fun FeedNavigation(
     content: @Composable () -> Unit = {}
 ) {
     val updatedContent by rememberUpdatedState(content)
-    val mode = if (startDestination == "overlay") {
+    val windowMode = if (startDestination == "overlay") {
         DesignPageWindowMode.DOCKED
     } else {
         DesignPageWindowMode.HIDDEN
@@ -49,11 +50,12 @@ fun FeedNavigation(
                 id = userId,
                 provider = component,
                 viewModelStore = viewModelStore,
-                mode = mode,
+                mode = windowMode,
                 onCancel = onCancel,
             ) {
                 ProfileScreen(
                     principal = userId,
+                    mode = mode,
                     userId = backStackEntry.arguments?.getString("id") ?: "",
                     provider = component,
                     viewModelStore = viewModelStore,
@@ -78,11 +80,12 @@ fun FeedNavigation(
                 id = userId,
                 provider = component,
                 viewModelStore = viewModelStore,
-                mode = mode,
+                mode = windowMode,
                 onCancel = onCancel,
             ) {
                 SearchScreen(
                     id = userId,
+                    mode = mode,
                     postLimit = postLimit,
                     provider = component,
                     viewModelStore = viewModelStore,

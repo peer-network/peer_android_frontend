@@ -8,7 +8,7 @@ import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.usecase.UserPostsUsecase
 import eu.peernetwork.core.common.model.Pageable
-import eu.peernetwork.blog.domain.model.Relation
+import eu.peernetwork.blog.domain.model.Category
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -26,18 +26,20 @@ class PhotoViewModel @Inject constructor(
 
     val state: StateFlow<State> = mutableState.asStateFlow()
 
-    var lastRelation: Relation? = null
+    var lastCategory: Category? = null
 
     fun load(
         page: Pageable,
-        relation: Relation = Relation.NONE,
+        mode: String? = null,
+        category: Category = Category.ALL,
         criteria: Criteria? = null
     ) {
-        lastRelation = relation
+        lastCategory = category
         viewModelScope.launch {
             usecase(
                 UserPostsUsecase.Parameter(
-                    relation = relation,
+                    mode = mode,
+                    category = category,
                     criteria = criteria,
                     page = page
                 )

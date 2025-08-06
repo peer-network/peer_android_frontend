@@ -20,13 +20,14 @@ import eu.peernetwork.core.ui.model.ViewModelState
 @Composable
 fun HomeNavigation(
     id: String,
+    mode: String?,
     startDestination: String,
     navController: NavHostController,
     component: Home.Component,
     viewModelStore: ViewModelState,
     onHome: () -> Unit
 ) {
-    val requireUpdate = remember { mutableStateOf(false) }
+    val hasUpdate = remember { mutableStateOf(false) }
     val handleOnHomeClick by rememberUpdatedState(onHome)
     DesignNavigation(
         navController = navController,
@@ -36,37 +37,40 @@ fun HomeNavigation(
             composable(route.path) {
                 when (route) {
                     is HomeRoute.Home -> FeedScreen(
-                        id,
-                        BuildConfig.PAGING_LIMIT,
-                        component,
-                        viewModelStore,
-                        requireUpdate = requireUpdate
+                        id = id,
+                        postLimit = BuildConfig.PAGING_LIMIT,
+                        provider = component,
+                        viewModelStore = viewModelStore,
+                        hasUpdate = hasUpdate
                     )
                     is HomeRoute.Profile -> ProfileScreen(
-                        id,
-                        id,
-                        component,
-                        viewModelStore,
+                        principal = id,
+                        userId = id,
+                        mode = mode,
+                        provider = component,
+                        viewModelStore = viewModelStore,
                     )
                     is HomeRoute.Add -> ComposerScreen(
-                        component,
-                        viewModelStore,
+                        provider = component,
+                        viewModelStore = viewModelStore,
                         onPostSuccess = {
-                            requireUpdate.value = true
+                            hasUpdate.value = true
                             handleOnHomeClick()
                         }
                     )
                     is HomeRoute.Wallet -> WalletScreen(
-                        id,
-                        BuildConfig.PAGING_LIMIT,
-                        component,
-                        viewModelStore
+                        id = id,
+                        mode = mode,
+                        postLimit = BuildConfig.PAGING_LIMIT,
+                        provider = component,
+                        viewModelState = viewModelStore
                     )
                     is HomeRoute.Search -> SearchScreen(
-                        id,
-                        BuildConfig.PAGING_LIMIT,
-                        component,
-                        viewModelStore,
+                        id = id,
+                        mode = mode,
+                        postLimit = BuildConfig.PAGING_LIMIT,
+                        provider = component,
+                        viewModelStore = viewModelStore,
                     )
                     else -> {}
                 }

@@ -37,6 +37,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 fun ProfilePreview(
     id: String,
+    mode: String?,
     title: String?,
     enable: Boolean,
     limit: Int,
@@ -93,29 +94,30 @@ fun ProfilePreview(
             },
         ) {
             ProfileBlog(
-                id,
-                enable,
-                lastUpdated,
-                limit,
-                component,
-                viewModelStoreOwner,
-                { position = it },
-                onMentionClick,
-                onHashtagClick,
-                onAuthorClicked,
-                onPhotoClick,
-                onVideoClick,
-                photoState,
-                videoState
+                id = id,
+                mode = mode,
+                enable = enable,
+                lastUpdated = lastUpdated,
+                limit = limit,
+                provider = component,
+                viewModelStoreOwner = viewModelStoreOwner,
+                onNavigate = { position = it },
+                onMentionClick = onMentionClick,
+                onHashtagClick = onHashtagClick,
+                onAuthorClicked = onAuthorClicked,
+                onPhotoClick = onPhotoClick,
+                onVideoClick = onVideoClick,
+                photoState = photoState,
+                videoState = videoState
             )
         }
         ProfileSheet(
-            id,
-            showSheet,
-            limit,
-            connection,
-            component,
-            viewModelStoreOwner
+            id = id,
+            state = showSheet,
+            limit = limit,
+            status = connection,
+            provider = component,
+            viewModelStoreOwner = viewModelStoreOwner
         ) { handleAuthorClicked(it.id) }
     }
     DesignTitleBarHost("ProfileScreen$id", {

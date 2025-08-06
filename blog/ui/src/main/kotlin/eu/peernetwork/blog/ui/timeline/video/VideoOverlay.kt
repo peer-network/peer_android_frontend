@@ -25,7 +25,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import dev.materii.pullrefresh.DragRefreshLayout
 import dev.materii.pullrefresh.rememberPullRefreshState
 import eu.peernetwork.blog.domain.model.Filter.Criteria
-import eu.peernetwork.blog.domain.model.Relation
+import eu.peernetwork.blog.domain.model.Category
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
 import eu.peernetwork.blog.ui.model.UiVideo
 import eu.peernetwork.blog.ui.moderation.ModerationScreen
@@ -44,7 +44,8 @@ fun VideoOverlay(
     limit: Int,
     position: Int,
     enabled: Boolean,
-    relation: Relation = Relation.NONE,
+    mode: String? = null,
+    category: Category = Category.ALL,
     criteria: Criteria? = null,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
@@ -84,12 +85,12 @@ fun VideoOverlay(
     val length = remember { mutableLongStateOf(0L) }
     val pullRefreshState = rememberPullRefreshState(
         refreshing = false,
-        onRefresh = { viewModel.load(Pageable(0, limit), relation, criteria) }
+        onRefresh = { viewModel.load(Pageable(0, limit), mode, category, criteria) }
     )
     DragRefreshLayout(state = pullRefreshState) {
         DesignStatefulScaffold<Flow<PagingData<UiVideo>>>(
             state = derivedState,
-            onRefresh = { viewModel.load(Pageable(0, limit), relation, criteria) }
+            onRefresh = { viewModel.load(Pageable(0, limit), mode, category, criteria) }
         ) { flow ->
             val lazyPagingItems = flow.collectAsLazyPagingItems()
             if (lazyPagingItems.loadState.refresh is LoadState.Loading) {

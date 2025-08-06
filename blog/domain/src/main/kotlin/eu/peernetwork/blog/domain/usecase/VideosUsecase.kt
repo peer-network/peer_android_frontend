@@ -5,7 +5,7 @@ import eu.peernetwork.blog.domain.model.Filter
 import eu.peernetwork.blog.domain.repository.ContentRepository
 import eu.peernetwork.core.common.model.Page
 import eu.peernetwork.core.common.model.Pageable
-import eu.peernetwork.blog.domain.model.Relation
+import eu.peernetwork.blog.domain.model.Category
 import eu.peernetwork.core.common.usecase.ParameterizedSuspendableUseCase
 import javax.inject.Inject
 
@@ -19,7 +19,8 @@ class VideosUsecase @Inject constructor(
         return repository.getAll(
             filter = Filter(
                 author = param.author,
-                type = usecase(MergeRelationUsecase.Parameter(baseTypes, param.relation)),
+                mode = param.mode,
+                type = usecase(MergeRelationUsecase.Parameter(baseTypes, param.category)),
                 criteria = param.criteria
             ),
             param.page
@@ -28,7 +29,8 @@ class VideosUsecase @Inject constructor(
 
     data class Parameter(
         val author: String? = null,
-        val relation: Relation = Relation.NONE,
+        val mode: String? = null,
+        val category: Category = Category.ALL,
         val criteria: Filter.Criteria? = null,
         val page: Pageable
     )

@@ -12,7 +12,7 @@ import eu.peernetwork.blog.ui.usecase.UserVideosUsecase
 import eu.peernetwork.core.common.model.Pageable
 import eu.peernetwork.media.core.interactor.ThumbnailInteractor
 import eu.peernetwork.media.core.model.UiMimeType
-import eu.peernetwork.blog.domain.model.Relation
+import eu.peernetwork.blog.domain.model.Category
 import eu.peernetwork.blog.ui.mapper.query
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -43,18 +43,20 @@ class VideoViewModel @Inject constructor(
             initialValue = emptyMap()
         )
 
-    var lastRelation: Relation? = null
+    var lastCategory: Category? = null
 
     fun load(
         page: Pageable,
-        relation: Relation = Relation.NONE,
-        criteria: Criteria? = null
+        mode: String? = null,
+        category: Category = Category.ALL,
+        criteria: Criteria? = null,
     ) {
-        lastRelation = relation
+        lastCategory = category
         viewModelScope.launch {
             usecase(
                 UserVideosUsecase.Parameter(
-                    relation = relation,
+                    mode = mode,
+                    category = category,
                     criteria = criteria,
                     page = page
                 )

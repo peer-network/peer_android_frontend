@@ -163,7 +163,6 @@ class VideoPlayerDelegate @Inject constructor(
             } else {
                 isLoading.value = false
                 isPlaying.value = false
-                player.pause()
                 player.removeListener(listener)
             }
         }

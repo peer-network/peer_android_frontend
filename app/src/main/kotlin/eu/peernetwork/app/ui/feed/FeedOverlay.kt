@@ -9,7 +9,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import eu.peernetwork.app.ui.window.WindowTitle
 import eu.peernetwork.blog.domain.model.Filter.Criteria
-import eu.peernetwork.blog.domain.model.Relation
+import eu.peernetwork.blog.domain.model.Category
 import eu.peernetwork.blog.ui.timeline.photo.PhotoOverlay
 import eu.peernetwork.blog.ui.timeline.video.VideoOverlay
 import eu.peernetwork.core.ui.design.compose.DesignOverlay
@@ -37,6 +37,7 @@ fun FeedOverlay(
     overlay: MutableState<FeedOverlayState>,
     userId: String,
     postLimit: Int,
+    mode: String? = null,
     criteria: Criteria? = null,
     component: Feed.Component,
     viewModelStore: ViewModelState,
@@ -55,6 +56,7 @@ fun FeedOverlay(
         val overlayState = remember { mutableStateOf<FeedOverlayState?>(overlay.value) }
         FeedNavigation(
             userId = userId,
+            mode = mode,
             startDestination = "overlay",
             postLimit = postLimit,
             controller = controller,
@@ -66,13 +68,14 @@ fun FeedOverlay(
                 is FeedOverlayState.Photo -> {
                     val state = (overlayState.value as FeedOverlayState.Photo)
                     PhotoOverlay(
-                        userId,
-                        postLimit,
-                        state.position,
-                        Relation.NONE,
-                        criteria,
-                        component,
-                        viewModelStore.get(criteria?.toString() ?: userId),
+                        id = userId,
+                        limit = postLimit,
+                        position = state.position,
+                        category = Category.ALL,
+                        criteria = criteria,
+                        mode = mode,
+                        provider = component,
+                        viewModelStoreOwner = viewModelStore.get(criteria?.toString() ?: userId),
                         onMentionClick = { controller.navigateToUsernameSearch(it) },
                         onHashtagClick = { controller.navigateToTagSearch(it) },
                         onAuthorClick = { controller.navigateIfNecessary("profile/$it") },
@@ -95,13 +98,14 @@ fun FeedOverlay(
                 is FeedOverlayState.Video -> {
                     val state = (overlayState.value as FeedOverlayState.Video)
                     VideoOverlay(
-                        postLimit,
-                        state.position,
-                        visible.value,
-                        Relation.NONE,
-                        criteria,
-                        component,
-                        viewModelStore.get(criteria?.toString() ?: userId),
+                        limit = postLimit,
+                        position = state.position,
+                        enabled = visible.value,
+                        mode = mode,
+                        category = Category.ALL,
+                        criteria = criteria,
+                        provider = component,
+                        viewModelStoreOwner = viewModelStore.get(criteria?.toString() ?: userId),
                         onPostClick = { id, index ->
                             overlay.value = FeedOverlayState.Video(id, index) },
                         onMentionClick = { controller.navigateToUsernameSearch(it) },

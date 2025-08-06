@@ -22,6 +22,7 @@ import eu.peernetwork.core.ui.model.ViewModelState
 @Composable
 fun SearchNavigation(
     userId: String,
+    mode: String? = null,
     component: Search.Component,
     viewModelStore: ViewModelState,
     controller: NavHostController,
@@ -32,7 +33,7 @@ fun SearchNavigation(
     val updatedContent by rememberUpdatedState(content)
     var id by remember { mutableStateOf<String>("") }
     val requireUpdate = remember { mutableStateOf(false) }
-    val mode = if (startDestination == "overlay") {
+    val windowMode = if (startDestination == "overlay") {
         DesignPageWindowMode.DOCKED
     } else {
         DesignPageWindowMode.HIDDEN
@@ -54,12 +55,13 @@ fun SearchNavigation(
                 id = userId,
                 provider = component,
                 viewModelStore = viewModelStore,
-                mode = mode,
+                mode = windowMode,
                 onCancel = onCancel,
             ) {
                 ProfileScreen(
                     principal = userId,
                     userId = id,
+                    mode = mode,
                     provider = component,
                     viewModelStore = viewModelStore,
                 )
@@ -76,17 +78,18 @@ fun SearchNavigation(
                 id = userId,
                 provider = component,
                 viewModelStore = viewModelStore,
-                mode = mode,
+                mode = windowMode,
                 onCancel = onCancel,
             ) {
                 FeedScreen(
-                    userId,
-                    BuildConfig.PAGING_LIMIT,
-                    component,
+                    id = userId,
+                    mode = mode,
+                    postLimit = BuildConfig.PAGING_LIMIT,
+                    provider = component,
                     viewModelStore = viewModelStore,
                     title = tag,
                     criteria = tag?.let { Filter.Criteria.Content(tag = it) },
-                    requireUpdate = requireUpdate
+                    hasUpdate = requireUpdate
                 )
             }
         }
@@ -103,7 +106,7 @@ fun SearchNavigation(
                 id = userId,
                 provider = component,
                 viewModelStore = viewModelStore,
-                mode = mode,
+                mode = windowMode,
                 onCancel = onCancel,
             ) {
                 FeedScreen(
@@ -113,7 +116,7 @@ fun SearchNavigation(
                     viewModelStore = viewModelStore,
                     title = query,
                     criteria = query?.let { Filter.Criteria.Content(title = it) },
-                    requireUpdate = requireUpdate
+                    hasUpdate = requireUpdate
                 )
             }
         }
@@ -135,11 +138,12 @@ fun SearchNavigation(
                 id = userId,
                 provider = component,
                 viewModelStore = viewModelStore,
-                mode = mode,
+                mode = windowMode,
                 onCancel = onCancel,
             ) {
                 SearchScreen(
                     id = userId,
+                    mode = mode,
                     postLimit = BuildConfig.PAGING_LIMIT,
                     provider = component,
                     viewModelStore = viewModelStore,

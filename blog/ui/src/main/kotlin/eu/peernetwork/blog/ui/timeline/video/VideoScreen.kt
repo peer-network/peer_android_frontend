@@ -16,7 +16,7 @@ import eu.peernetwork.core.ui.extension.builder
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import eu.peernetwork.blog.domain.model.Filter.Criteria
-import eu.peernetwork.blog.domain.model.Relation
+import eu.peernetwork.blog.domain.model.Category
 import eu.peernetwork.blog.ui.model.UiVideo
 import eu.peernetwork.blog.ui.compose.PostPlaceholder
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
@@ -35,8 +35,9 @@ fun VideoScreen(
     id: String,
     enable: Boolean,
     postLimit: Int,
-    relation: Relation,
+    category: Category,
     criteria: Criteria? = null,
+    mode: String? = null,
     onMentionClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
     provider: UiComponentProvider,
@@ -79,7 +80,7 @@ fun VideoScreen(
     } }
     DesignPagingScaffold<UiVideo>(
         state = derivedState,
-        onRefresh = { viewModel.load(Pageable(0, postLimit), relation, criteria) },
+        onRefresh = { viewModel.load(Pageable(0, postLimit), mode, category, criteria) },
         placeholder = { PostPlaceholder() },
         errorContent = { error, refresh ->
             DesignError(refresh, error, component.resource())
@@ -156,9 +157,9 @@ fun VideoScreen(
             }
         }
     }
-    LaunchedEffect(relation, criteria) {
-        if (relation != viewModel.lastRelation) {
-            viewModel.load(Pageable(0, postLimit), relation, criteria)
+    LaunchedEffect(category, criteria) {
+        if (category != viewModel.lastCategory) {
+            viewModel.load(Pageable(0, postLimit), mode, category, criteria)
         }
     }
 }

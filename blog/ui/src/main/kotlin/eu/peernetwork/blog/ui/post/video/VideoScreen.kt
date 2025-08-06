@@ -29,6 +29,7 @@ import eu.peernetwork.core.ui.extension.builder
 @Composable
 fun VideoScreen(
     author: String,
+    mode: String?,
     enable: Boolean,
     postLimit: Int,
     lastUpdated: State<Long>,
@@ -73,7 +74,7 @@ fun VideoScreen(
     DesignPagingScaffold<UiVideo>(
         state = derivedState,
         placeholder = { PostPlaceholder() },
-        onRefresh = { viewModel.load(author, Pageable(0, postLimit)) },
+        onRefresh = { viewModel.load(author, mode, Pageable(0, postLimit)) },
         errorContent = { error, refresh ->
             DesignError(refresh, error, component.resource())
         }
@@ -82,13 +83,13 @@ fun VideoScreen(
             lazyPagingItems.loadState.refresh is LoadState.NotLoading
         } }
         EngagementScreen(
-            postLimit,
-            refreshed,
-            onMentionClick,
-            onHashtagClick,
-            onAuthorClick,
-            component,
-            viewModelStoreOwner
+            postLimit = postLimit,
+            refresh = refreshed,
+            onMentionClick = onMentionClick,
+            onHashtagClick = onHashtagClick,
+            onAuthorClick = onAuthorClick,
+            provider = component,
+            viewModelStoreOwner = viewModelStoreOwner
         ) { engagement ->
             ModerationScreen(
                 component,
@@ -103,9 +104,9 @@ fun VideoScreen(
                     engagement = engagement,
                     moderation = moderation,
                     onLoadBitmap = { thumbnail.value[it] },
-                    onMentionClick,
-                    onHashtagClick,
-                    onPostClick,
+                    onMentionClick = onMentionClick,
+                    onHashtagClick = onHashtagClick,
+                    onPostClick = onPostClick,
                 )
             }
         }

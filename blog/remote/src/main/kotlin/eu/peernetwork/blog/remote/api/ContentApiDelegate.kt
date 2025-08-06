@@ -11,6 +11,7 @@ import eu.peernetwork.blog.domain.model.Filter
 import eu.peernetwork.blog.remote.content.CreatePostMutation
 import eu.peernetwork.blog.remote.content.GetallpostsQuery
 import eu.peernetwork.blog.remote.mapper.mapFromDomain
+import eu.peernetwork.blog.remote.mapper.mapToContentFilterType
 import eu.peernetwork.blog.remote.mapper.mapToDomain
 import eu.peernetwork.blog.remote.mapper.mapToFilter
 import eu.peernetwork.blog.remote.mapper.mapToSortType
@@ -62,6 +63,7 @@ class ContentApiDelegate @Inject constructor(
             title = title,
             postId = post,
             userId = author,
+            contentFilterBy = Optional.present(filter.mapToContentFilterType()),
             offset = Optional.present(page.offset),
             limit = Optional.present(page.limit)
         )

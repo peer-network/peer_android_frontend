@@ -29,6 +29,7 @@ import eu.peernetwork.user.ui.settings.account.AccountPreview
 @Composable
 fun SettingsScreen(
     userId: String,
+    mode: String?,
     provider: UiComponentProvider,
     viewModelStore: ViewModelState,
 ) {
@@ -37,7 +38,7 @@ fun SettingsScreen(
         provider.builder(Settings.Builder::class.java).build(context)
     }
     val account = stringResource(R.string.account_label)
-    SettingsNavigation(userId, component, viewModelStore) { controller ->
+    SettingsNavigation(userId, mode, component, viewModelStore) { controller ->
         SettingsScreen({ controller.navigateIfNecessary(it) }) {
             AccountPreview(component, viewModelStore.get(userId)) {
                 controller.navigateIfNecessary(account)

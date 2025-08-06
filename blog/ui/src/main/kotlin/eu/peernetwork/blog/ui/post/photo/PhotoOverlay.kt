@@ -37,6 +37,7 @@ import kotlinx.coroutines.flow.Flow
 @Composable
 fun PhotoOverlay(
     author: String,
+    mode: String?,
     limit: Int,
     position: Int,
     provider: UiComponentProvider,
@@ -74,11 +75,11 @@ fun PhotoOverlay(
         }
     }
     val pullRefreshState = rememberPullRefreshState(refreshing = false, onRefresh = {
-        viewModel.load(author, Pageable(0, limit))
+        viewModel.load(author, mode, Pageable(0, limit))
     })
     DragRefreshLayout(state = pullRefreshState) {
         DesignStatefulScaffold<Flow<PagingData<UiPost>>>(state = derivedState, onRefresh = {
-            viewModel.load(author, Pageable(0, limit))
+            viewModel.load(author, mode, Pageable(0, limit))
         }) { flow ->
             val lazyPagingItems = flow.collectAsLazyPagingItems()
             if (lazyPagingItems.loadState.refresh is LoadState.Loading) {
@@ -90,13 +91,13 @@ fun PhotoOverlay(
                     lazyPagingItems.loadState.refresh is LoadState.NotLoading
                 } }
                 EngagementScreen(
-                    limit,
-                    refreshed,
-                    onMentionClick,
-                    onHashtagClick,
-                    onAuthorClick,
-                    component,
-                    viewModelStoreOwner
+                    postLimit = limit,
+                    refresh = refreshed,
+                    onMentionClick = onMentionClick,
+                    onHashtagClick = onHashtagClick,
+                    onAuthorClick = onAuthorClick,
+                    provider = component,
+                    viewModelStoreOwner = viewModelStoreOwner
                 ) { engagement ->
                     ModerationScreen(
                         component,

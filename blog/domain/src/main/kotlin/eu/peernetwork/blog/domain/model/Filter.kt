@@ -5,6 +5,7 @@ data class Filter(
     val postId: String? = null,
     val author: String? = null,
     val criteria: Criteria? = null,
+    val mode: String? = null
 ) {
     sealed interface Criteria {
         data class Content(

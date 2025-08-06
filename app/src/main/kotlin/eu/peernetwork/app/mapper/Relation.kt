@@ -1,12 +1,12 @@
 package eu.peernetwork.app.mapper
 
 import eu.peernetwork.blog.ui.model.UiFilter
-import eu.peernetwork.blog.domain.model.Relation
+import eu.peernetwork.blog.domain.model.Category
 
-fun Relation.mapFromDomain(): UiFilter {
+fun Category.mapFromDomain(): UiFilter {
     return when(this) {
-        Relation.FOLLOWED -> UiFilter.FOLLOWED
-        Relation.FOLLOWER -> UiFilter.FOLLOWER
+        Category.FOLLOWED -> UiFilter.FOLLOWED
+        Category.FOLLOWER -> UiFilter.FOLLOWER
         else -> UiFilter.ALL
     }
 }

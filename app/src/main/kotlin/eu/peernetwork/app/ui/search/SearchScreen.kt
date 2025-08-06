@@ -47,6 +47,7 @@ sealed interface SearchState {
 @Composable
 fun SearchScreen(
     id: String,
+    mode: String?,
     postLimit: Int,
     provider: UiComponentProvider,
     viewModelStore: ViewModelState,
@@ -71,10 +72,11 @@ fun SearchScreen(
             connectionController = connection
         ) {
             SearchNavigation(
-                id,
-                component,
-                viewModelStore,
-                controller
+                userId = id,
+                mode = mode,
+                component = component,
+                viewModelStore = viewModelStore,
+                controller = controller
             ) { controller ->
                 val listState = rememberLazyGridState()
                 SearchScreen(state = searchState) { mode, query ->
