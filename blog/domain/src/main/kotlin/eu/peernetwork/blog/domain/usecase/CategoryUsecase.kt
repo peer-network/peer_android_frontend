@@ -6,7 +6,7 @@ import eu.peernetwork.core.common.usecase.ParameterizedSuspendableUseCase
 import javax.inject.Inject
 import kotlin.collections.plus
 
-class MergeRelationUsecase @Inject constructor() : ParameterizedSuspendableUseCase<MergeRelationUsecase.Parameter, Set<Content.Type>> {
+class CategoryUsecase @Inject constructor() : ParameterizedSuspendableUseCase<CategoryUsecase.Parameter, Set<Content.Type>> {
     override suspend fun invoke(param: Parameter): Set<Content.Type> {
         return when (param.category) {
             Category.FOLLOWED  -> param.types + Content.Type.FOLLOWED

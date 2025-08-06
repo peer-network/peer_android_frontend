@@ -10,7 +10,6 @@ import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.blog.domain.model.Category
 import eu.peernetwork.blog.domain.usecase.EngagementRefreshUsecase
 import eu.peernetwork.blog.domain.usecase.VideosUsecase
-import eu.peernetwork.blog.ui.interactor.BlogInteractor
 import eu.peernetwork.blog.ui.mapper.mapToVideo
 import eu.peernetwork.blog.ui.model.UiVideo
 import eu.peernetwork.core.common.model.Pageable
@@ -28,7 +27,6 @@ class AuthorVideoUsecase @Inject constructor(
     private val usecase: VideosUsecase,
     private val engagementRefreshUsecase: EngagementRefreshUsecase,
     private val annotationUsecase: AnnotationUsecase,
-    private val blogInteractor: BlogInteractor,
 ) : PagingUsecase<AuthorVideoUsecase.Parameter, UiVideo>() {
     private lateinit var param: Parameter
 
@@ -52,7 +50,6 @@ class AuthorVideoUsecase @Inject constructor(
         val response = usecase(
             VideosUsecase.Parameter(
                 author = param.author,
-                mode = blogInteractor.mode(),
                 criteria = param.criteria,
                 page = currentPage
             )

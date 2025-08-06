@@ -7,7 +7,10 @@ import dagger.Module
 import dagger.Provides
 import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.app.interactor.RemoteInteractor
+import eu.peernetwork.app.interactor.SessionInteractorDelegate
+import eu.peernetwork.app.interactor.SettingsInteractor
 import eu.peernetwork.app.interactor.UrlInteractorDelegate
+import eu.peernetwork.core.common.interactor.SessionInteractor
 import eu.peernetwork.core.common.interactor.UrlInteractor
 import eu.peernetwork.core.common.provider.Dispatcher
 import kotlinx.coroutines.CoroutineDispatcher
@@ -42,4 +45,10 @@ object CoreModule {
             override val default: CoroutineDispatcher = Dispatchers.Default
         }
     }
+
+    @Provides
+    fun bindSessionInteractor(delegate: SessionInteractorDelegate): SessionInteractor = delegate
+
+    @Provides
+    fun bindSettingsInteractor(delegate: SessionInteractorDelegate): SettingsInteractor = delegate
 }

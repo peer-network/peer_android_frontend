@@ -3,7 +3,6 @@ package eu.peernetwork.blog.remote.mapper
 import eu.peernetwork.blog.domain.model.Sort
 import eu.peernetwork.blog.domain.model.Engagement
 import eu.peernetwork.blog.domain.model.Filter
-import type.ContentFilterType
 import type.PostSortType
 
 fun Filter.mapToSortType(): PostSortType? {
@@ -28,10 +27,4 @@ fun Engagement.mapFromDomain(): PostSortType {
         Engagement.Content.View -> PostSortType.VIEWS
         else -> PostSortType.UNKNOWN__
     }
-}
-
-fun Filter.mapToContentFilterType(): ContentFilterType {
-    return mode?.let {
-        ContentFilterType.safeValueOf(it)
-    } ?: ContentFilterType.MYGRANDMALIKES
 }

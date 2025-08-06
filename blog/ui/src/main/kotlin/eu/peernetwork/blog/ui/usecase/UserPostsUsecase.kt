@@ -10,7 +10,6 @@ import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.blog.domain.model.Category
 import eu.peernetwork.blog.domain.usecase.PhotosUsecase
 import eu.peernetwork.blog.domain.usecase.EngagementRefreshUsecase
-import eu.peernetwork.blog.ui.interactor.BlogInteractor
 import eu.peernetwork.blog.ui.mapper.mapToPhoto
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.core.common.model.Pageable
@@ -27,8 +26,7 @@ class UserPostsUsecase @Inject constructor(
     private val usecase: PhotosUsecase,
     private val dispatcher: Dispatcher,
     private val engagementRefreshUsecase: EngagementRefreshUsecase,
-    private val annotationUsecase: AnnotationUsecase,
-    private val blogInteractor: BlogInteractor
+    private val annotationUsecase: AnnotationUsecase
 ) : PagingUsecase<UserPostsUsecase.Parameter, UiPost>() {
     private lateinit var param: Parameter
 
@@ -51,7 +49,6 @@ class UserPostsUsecase @Inject constructor(
         )
         val response = usecase(
             PhotosUsecase.Parameter(
-                mode = blogInteractor.mode(),
                 category = param.category,
                 criteria = param.criteria,
                 page = currentPage

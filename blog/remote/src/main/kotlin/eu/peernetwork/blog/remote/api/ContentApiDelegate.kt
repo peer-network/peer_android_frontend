@@ -11,11 +11,12 @@ import eu.peernetwork.blog.domain.model.Filter
 import eu.peernetwork.blog.remote.content.CreatePostMutation
 import eu.peernetwork.blog.remote.content.GetallpostsQuery
 import eu.peernetwork.blog.remote.mapper.mapFromDomain
-import eu.peernetwork.blog.remote.mapper.mapToContentFilterType
 import eu.peernetwork.blog.remote.mapper.mapToDomain
 import eu.peernetwork.blog.remote.mapper.mapToFilter
+import eu.peernetwork.blog.remote.mapper.mapToScope
 import eu.peernetwork.blog.remote.mapper.mapToSortType
 import eu.peernetwork.blog.remote.model.MediaModel
+import eu.peernetwork.core.common.interactor.SessionInteractor
 import eu.peernetwork.core.common.model.Page
 import eu.peernetwork.core.common.model.Pageable
 import eu.peernetwork.core.remote.extension.assertOrThrow
@@ -30,6 +31,7 @@ class ContentApiDelegate @Inject constructor(
     private val gson: Gson,
     @Named("mediaUrl") private val url: String,
     private val client: RequestClient,
+    private val sessionInteractor: SessionInteractor
 ) : ContentApi {
     override suspend fun get(filter: Filter, page: Pageable): Page<Content> {
         val post = filter.postId?.let { Optional.present(it) } ?: Optional.absent()
@@ -63,7 +65,7 @@ class ContentApiDelegate @Inject constructor(
             title = title,
             postId = post,
             userId = author,
-            contentFilterBy = Optional.present(filter.mapToContentFilterType()),
+            contentFilterBy = Optional.present(sessionInteractor.mode().mapToScope()),
             offset = Optional.present(page.offset),
             limit = Optional.present(page.limit)
         )
