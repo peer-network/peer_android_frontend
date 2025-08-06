@@ -25,7 +25,6 @@ import eu.peernetwork.user.ui.settings.address.AddressScreen
 @Composable
 fun SettingsNavigation(
     userId: String,
-    mode: String?,
     provider: UiComponentProvider,
     viewModelStore: ViewModelState,
     settings: @Composable (NavHostController) -> Unit
@@ -52,7 +51,6 @@ fun SettingsNavigation(
             ProfileScreen(
                 principal = userId,
                 userId = id,
-                mode = mode,
                 provider = provider,
                 viewModelStore = viewModelStore,
             )

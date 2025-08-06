@@ -40,7 +40,6 @@ import kotlinx.coroutines.flow.Flow
 @Composable
 fun VideoOverlay(
     author: String,
-    mode: String?,
     enable: Boolean,
     limit: Int,
     position: Int,
@@ -81,11 +80,11 @@ fun VideoOverlay(
     } }
     val length = remember { mutableLongStateOf(0L) }
     val pullRefreshState = rememberPullRefreshState(refreshing = false, onRefresh = {
-        viewModel.load(author, mode, Pageable(0, limit))
+        viewModel.load(author, Pageable(0, limit))
     })
     DragRefreshLayout(state = pullRefreshState) {
         DesignStatefulScaffold<Flow<PagingData<UiVideo>>>(state = derivedState, onRefresh = {
-            viewModel.load(author, mode, Pageable(0, limit))
+            viewModel.load(author, Pageable(0, limit))
         }) { flow ->
             val lazyPagingItems = flow.collectAsLazyPagingItems()
             if (lazyPagingItems.loadState.refresh is LoadState.Loading) {

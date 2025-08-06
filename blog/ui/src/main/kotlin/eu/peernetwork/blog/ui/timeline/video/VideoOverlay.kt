@@ -44,7 +44,6 @@ fun VideoOverlay(
     limit: Int,
     position: Int,
     enabled: Boolean,
-    mode: String? = null,
     category: Category = Category.ALL,
     criteria: Criteria? = null,
     provider: UiComponentProvider,
@@ -85,12 +84,12 @@ fun VideoOverlay(
     val length = remember { mutableLongStateOf(0L) }
     val pullRefreshState = rememberPullRefreshState(
         refreshing = false,
-        onRefresh = { viewModel.load(Pageable(0, limit), mode, category, criteria) }
+        onRefresh = { viewModel.load(Pageable(0, limit), category, criteria) }
     )
     DragRefreshLayout(state = pullRefreshState) {
         DesignStatefulScaffold<Flow<PagingData<UiVideo>>>(
             state = derivedState,
-            onRefresh = { viewModel.load(Pageable(0, limit), mode, category, criteria) }
+            onRefresh = { viewModel.load(Pageable(0, limit), category, criteria) }
         ) { flow ->
             val lazyPagingItems = flow.collectAsLazyPagingItems()
             if (lazyPagingItems.loadState.refresh is LoadState.Loading) {
@@ -102,13 +101,13 @@ fun VideoOverlay(
                     lazyPagingItems.loadState.refresh is LoadState.NotLoading
                 } }
                 EngagementScreen(
-                    limit,
-                    refreshed,
-                    onMentionClick,
-                    onHashtagClick,
-                    onAuthorClick,
-                    component,
-                    viewModelStoreOwner
+                    postLimit = limit,
+                    refresh = refreshed,
+                    onMentionClick = onMentionClick,
+                    onHashtagClick = onHashtagClick,
+                    onAuthorClick = onAuthorClick,
+                    provider = component,
+                    viewModelStoreOwner = viewModelStoreOwner
                 ) { engagement ->
                     ModerationScreen(
                         component,

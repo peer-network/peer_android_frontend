@@ -39,7 +39,6 @@ import eu.peernetwork.wallet.ui.saveable.UiRecipientSaver
 @Composable
 fun WalletScreen(
     id: String,
-    mode: String?,
     postLimit: Int,
     provider: UiComponentProvider,
     viewModelState: ViewModelState
@@ -61,7 +60,6 @@ fun WalletScreen(
     val lastUpdated = remember { mutableLongStateOf(System.currentTimeMillis()) }
     WalletNavigation(
         id = id,
-        mode = mode,
         provider = component,
         viewModelStore = viewModelState
     ) { controller ->

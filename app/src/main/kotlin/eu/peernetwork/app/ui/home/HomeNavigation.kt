@@ -20,7 +20,6 @@ import eu.peernetwork.core.ui.model.ViewModelState
 @Composable
 fun HomeNavigation(
     id: String,
-    mode: String?,
     startDestination: String,
     navController: NavHostController,
     component: Home.Component,
@@ -46,7 +45,6 @@ fun HomeNavigation(
                     is HomeRoute.Profile -> ProfileScreen(
                         principal = id,
                         userId = id,
-                        mode = mode,
                         provider = component,
                         viewModelStore = viewModelStore,
                     )
@@ -60,14 +58,12 @@ fun HomeNavigation(
                     )
                     is HomeRoute.Wallet -> WalletScreen(
                         id = id,
-                        mode = mode,
                         postLimit = BuildConfig.PAGING_LIMIT,
                         provider = component,
                         viewModelState = viewModelStore
                     )
                     is HomeRoute.Search -> SearchScreen(
                         id = id,
-                        mode = mode,
                         postLimit = BuildConfig.PAGING_LIMIT,
                         provider = component,
                         viewModelStore = viewModelStore,
@@ -78,7 +74,6 @@ fun HomeNavigation(
         }
     }
 }
-
 
 sealed class HomeRoute(
     val icon: Int,

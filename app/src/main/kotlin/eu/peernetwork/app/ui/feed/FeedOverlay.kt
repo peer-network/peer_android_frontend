@@ -37,7 +37,6 @@ fun FeedOverlay(
     overlay: MutableState<FeedOverlayState>,
     userId: String,
     postLimit: Int,
-    mode: String? = null,
     criteria: Criteria? = null,
     component: Feed.Component,
     viewModelStore: ViewModelState,
@@ -56,7 +55,6 @@ fun FeedOverlay(
         val overlayState = remember { mutableStateOf<FeedOverlayState?>(overlay.value) }
         FeedNavigation(
             userId = userId,
-            mode = mode,
             startDestination = "overlay",
             postLimit = postLimit,
             controller = controller,
@@ -73,7 +71,6 @@ fun FeedOverlay(
                         position = state.position,
                         category = Category.ALL,
                         criteria = criteria,
-                        mode = mode,
                         provider = component,
                         viewModelStoreOwner = viewModelStore.get(criteria?.toString() ?: userId),
                         onMentionClick = { controller.navigateToUsernameSearch(it) },
@@ -101,7 +98,6 @@ fun FeedOverlay(
                         limit = postLimit,
                         position = state.position,
                         enabled = visible.value,
-                        mode = mode,
                         category = Category.ALL,
                         criteria = criteria,
                         provider = component,

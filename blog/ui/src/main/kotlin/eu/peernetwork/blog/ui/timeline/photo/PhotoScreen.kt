@@ -36,7 +36,6 @@ fun PhotoScreen(
     postLimit: Int,
     category: Category,
     criteria: Criteria? = null,
-    mode: String? = null,
     onMentionClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
     onPostClick: (String, Int) -> Unit,
@@ -77,7 +76,7 @@ fun PhotoScreen(
     }
     DesignPagingScaffold<UiPost>(
         state = derivedState,
-        onRefresh = { viewModel.load(Pageable(0, postLimit), mode, category, criteria) },
+        onRefresh = { viewModel.load(Pageable(0, postLimit), category, criteria) },
         placeholder = { PostPlaceholder() },
         errorContent = { error, refresh ->
             DesignError(refresh, error, component.resource())
@@ -142,7 +141,7 @@ fun PhotoScreen(
     }
     LaunchedEffect(category, criteria) {
         if (category != viewModel.lastCategory) {
-            viewModel.load(Pageable(0, postLimit), mode, category, criteria)
+            viewModel.load(Pageable(0, postLimit), category, criteria)
         }
     }
 }

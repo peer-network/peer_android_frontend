@@ -43,7 +43,6 @@ fun PhotoOverlay(
     position: Int,
     category: Category,
     criteria: Criteria? = null,
-    mode: String? = null,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
     onAuthorClick: (String) -> Unit = {},
@@ -77,11 +76,11 @@ fun PhotoOverlay(
         }
     }
     val pullRefreshState = rememberPullRefreshState(refreshing = false, onRefresh = {
-        viewModel.load(Pageable(0, limit), mode, category, criteria)
+        viewModel.load(Pageable(0, limit), category, criteria)
     })
     DragRefreshLayout(state = pullRefreshState) {
         DesignStatefulScaffold<Flow<PagingData<UiPost>>>(state = derivedState, onRefresh = {
-            viewModel.load(Pageable(0, limit), mode, category, criteria)
+            viewModel.load(Pageable(0, limit), category, criteria)
         }) { flow ->
             val lazyPagingItems = flow.collectAsLazyPagingItems()
             if (lazyPagingItems.loadState.refresh is LoadState.Loading) {

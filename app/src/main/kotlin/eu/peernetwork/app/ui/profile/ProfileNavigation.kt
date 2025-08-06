@@ -21,7 +21,6 @@ import eu.peernetwork.core.ui.model.ViewModelState
 fun ProfileNavigation(
     principal: String,
     userId: String,
-    mode: String?,
     startDestination: String = "content",
     controller: NavHostController,
     provider: UiComponentProvider,
@@ -57,7 +56,6 @@ fun ProfileNavigation(
                 ProfileScreen(
                     principal = principal,
                     userId = id,
-                    mode = mode,
                     provider = provider,
                     viewModelStore = viewModelStore,
                 )
@@ -70,7 +68,7 @@ fun ProfileNavigation(
                 viewModelStore = viewModelStore,
                 mode = windowMode,
                 onCancel = onCancel,
-            ) { SettingsScreen(userId, mode, component, viewModelStore) }
+            ) { SettingsScreen(userId, component, viewModelStore) }
         }
         composable(
             route = "search/{type}/{query}",
@@ -95,7 +93,6 @@ fun ProfileNavigation(
             ) {
                 SearchScreen(
                     id = userId,
-                    mode = mode,
                     postLimit = BuildConfig.PAGING_LIMIT,
                     provider = component,
                     viewModelStore = viewModelStore,

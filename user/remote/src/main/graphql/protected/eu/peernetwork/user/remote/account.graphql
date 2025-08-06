@@ -1,3 +1,22 @@
+query Account {
+    getUserInfo {
+        status
+        ResponseCode
+        affectedRows {
+            userid
+            liquidity
+            invited
+            amountfollowed
+            amountfollower
+            amountposts
+            amountfriends,
+            userPreferences {
+                contentFilteringSeverityLevel
+            }
+        }
+    }
+}
+
 query Profile($userid: ID) {
     getProfile(userid: $userid) {
         status

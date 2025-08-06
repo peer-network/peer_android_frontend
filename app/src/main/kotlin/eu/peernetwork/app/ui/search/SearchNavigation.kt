@@ -22,7 +22,6 @@ import eu.peernetwork.core.ui.model.ViewModelState
 @Composable
 fun SearchNavigation(
     userId: String,
-    mode: String? = null,
     component: Search.Component,
     viewModelStore: ViewModelState,
     controller: NavHostController,
@@ -61,7 +60,6 @@ fun SearchNavigation(
                 ProfileScreen(
                     principal = userId,
                     userId = id,
-                    mode = mode,
                     provider = component,
                     viewModelStore = viewModelStore,
                 )
@@ -83,7 +81,6 @@ fun SearchNavigation(
             ) {
                 FeedScreen(
                     id = userId,
-                    mode = mode,
                     postLimit = BuildConfig.PAGING_LIMIT,
                     provider = component,
                     viewModelStore = viewModelStore,
@@ -143,7 +140,6 @@ fun SearchNavigation(
             ) {
                 SearchScreen(
                     id = userId,
-                    mode = mode,
                     postLimit = BuildConfig.PAGING_LIMIT,
                     provider = component,
                     viewModelStore = viewModelStore,

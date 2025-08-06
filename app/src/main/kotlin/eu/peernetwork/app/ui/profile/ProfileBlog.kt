@@ -27,7 +27,6 @@ import eu.peernetwork.media.core.model.UiMimeType
 @Composable
 fun ProfileBlog(
     id: String,
-    mode: String?,
     enable: Boolean,
     lastUpdated: State<Long>,
     limit: Int,
@@ -46,7 +45,6 @@ fun ProfileBlog(
         when (offset) {
             0 -> PhotoScreen(
                 author = id,
-                mode = mode,
                 postLimit = limit,
                 lastUpdated = lastUpdated,
                 provider = provider,
@@ -59,7 +57,6 @@ fun ProfileBlog(
             )
             1 -> VideoScreen(
                 author = id,
-                mode = mode,
                 enable = enable,
                 postLimit = limit,
                 lastUpdated = lastUpdated,

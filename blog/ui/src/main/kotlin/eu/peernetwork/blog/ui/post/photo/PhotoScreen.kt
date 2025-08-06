@@ -30,7 +30,6 @@ import eu.peernetwork.core.ui.extension.builder
 @OptIn(ExperimentalMaterial3Api::class)
 fun PhotoScreen(
     author: String,
-    mode: String?,
     postLimit: Int,
     lastUpdated: State<Long>,
     provider: UiComponentProvider,
@@ -71,7 +70,7 @@ fun PhotoScreen(
     DesignPagingScaffold<UiPost>(
         state = derivedState,
         placeholder = { PostPlaceholder() },
-        onRefresh = { viewModel.load(author, mode, Pageable(0, postLimit)) },
+        onRefresh = { viewModel.load(author, Pageable(0, postLimit)) },
         errorContent = { error, refresh ->
             DesignError(refresh, error, component.resource())
         }

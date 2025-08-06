@@ -37,7 +37,6 @@ fun VideoScreen(
     postLimit: Int,
     category: Category,
     criteria: Criteria? = null,
-    mode: String? = null,
     onMentionClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
     provider: UiComponentProvider,
@@ -80,7 +79,7 @@ fun VideoScreen(
     } }
     DesignPagingScaffold<UiVideo>(
         state = derivedState,
-        onRefresh = { viewModel.load(Pageable(0, postLimit), mode, category, criteria) },
+        onRefresh = { viewModel.load(Pageable(0, postLimit), category, criteria) },
         placeholder = { PostPlaceholder() },
         errorContent = { error, refresh ->
             DesignError(refresh, error, component.resource())
@@ -159,7 +158,7 @@ fun VideoScreen(
     }
     LaunchedEffect(category, criteria) {
         if (category != viewModel.lastCategory) {
-            viewModel.load(Pageable(0, postLimit), mode, category, criteria)
+            viewModel.load(Pageable(0, postLimit), category, criteria)
         }
     }
 }

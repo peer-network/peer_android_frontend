@@ -25,7 +25,6 @@ fun FeedScreen(
     provider: UiComponentProvider,
     viewModelStore: ViewModelState,
     title: String? = null,
-    mode: String? = null,
     criteria: Criteria? = null,
     hasUpdate: MutableState<Boolean>,
 ) {
@@ -55,7 +54,6 @@ fun FeedScreen(
         FeedOverlay(
             overlay = overlay,
             userId = id,
-            mode = mode,
             criteria = criteria,
             postLimit = postLimit,
             component = component,
@@ -64,7 +62,6 @@ fun FeedScreen(
         ) {
             FeedNavigation(
                 userId = id,
-                mode = mode,
                 postLimit = postLimit,
                 controller = controller,
                 component = component,

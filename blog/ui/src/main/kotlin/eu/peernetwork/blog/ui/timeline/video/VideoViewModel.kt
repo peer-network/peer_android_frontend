@@ -47,7 +47,6 @@ class VideoViewModel @Inject constructor(
 
     fun load(
         page: Pageable,
-        mode: String? = null,
         category: Category = Category.ALL,
         criteria: Criteria? = null,
     ) {
@@ -55,7 +54,6 @@ class VideoViewModel @Inject constructor(
         viewModelScope.launch {
             usecase(
                 UserVideosUsecase.Parameter(
-                    mode = mode,
                     category = category,
                     criteria = criteria,
                     page = page

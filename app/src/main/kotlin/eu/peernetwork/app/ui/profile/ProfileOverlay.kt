@@ -43,7 +43,6 @@ fun ProfileOverlay(
     overlay: MutableState<ProfileOverlayState>,
     principal: String,
     userId: String,
-    mode: String?,
     limit: Int,
     connectionController: ConnectionController,
     provider: UiComponentProvider,
@@ -69,7 +68,6 @@ fun ProfileOverlay(
             ProfileNavigation(
                 principal = principal,
                 userId = userId,
-                mode = mode,
                 startDestination = "overlay",
                 controller = controller,
                 provider = provider,
@@ -82,7 +80,6 @@ fun ProfileOverlay(
                         val state = (overlayState.value as ProfileOverlayState.Photo)
                         PhotoOverlay(
                             author = userId,
-                            mode = mode,
                             limit = limit,
                             position = state.position,
                             provider = component,
@@ -112,7 +109,6 @@ fun ProfileOverlay(
                         val state = (overlayState.value as ProfileOverlayState.Video)
                         VideoOverlay(
                             author = userId,
-                            mode = mode,
                             enable = visible.value,
                             limit = limit,
                             position = state.position,

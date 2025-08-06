@@ -19,7 +19,6 @@ import java.net.URLEncoder
 @Composable
 fun FeedNavigation(
     userId: String,
-    mode: String?,
     postLimit: Int,
     startDestination: String = "content",
     controller: NavHostController,
@@ -55,7 +54,6 @@ fun FeedNavigation(
             ) {
                 ProfileScreen(
                     principal = userId,
-                    mode = mode,
                     userId = backStackEntry.arguments?.getString("id") ?: "",
                     provider = component,
                     viewModelStore = viewModelStore,
@@ -85,7 +83,6 @@ fun FeedNavigation(
             ) {
                 SearchScreen(
                     id = userId,
-                    mode = mode,
                     postLimit = postLimit,
                     provider = component,
                     viewModelStore = viewModelStore,

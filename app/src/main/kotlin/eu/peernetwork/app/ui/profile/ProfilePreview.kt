@@ -37,7 +37,6 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 fun ProfilePreview(
     id: String,
-    mode: String?,
     title: String?,
     enable: Boolean,
     limit: Int,
@@ -95,7 +94,6 @@ fun ProfilePreview(
         ) {
             ProfileBlog(
                 id = id,
-                mode = mode,
                 enable = enable,
                 lastUpdated = lastUpdated,
                 limit = limit,

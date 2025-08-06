@@ -29,7 +29,6 @@ import eu.peernetwork.core.ui.extension.builder
 @Composable
 fun VideoScreen(
     author: String,
-    mode: String?,
     enable: Boolean,
     postLimit: Int,
     lastUpdated: State<Long>,
@@ -74,7 +73,7 @@ fun VideoScreen(
     DesignPagingScaffold<UiVideo>(
         state = derivedState,
         placeholder = { PostPlaceholder() },
-        onRefresh = { viewModel.load(author, mode, Pageable(0, postLimit)) },
+        onRefresh = { viewModel.load(author, Pageable(0, postLimit)) },
         errorContent = { error, refresh ->
             DesignError(refresh, error, component.resource())
         }

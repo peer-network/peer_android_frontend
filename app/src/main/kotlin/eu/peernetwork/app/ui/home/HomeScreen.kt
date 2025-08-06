@@ -90,7 +90,6 @@ fun HomeScreen(provider: UiComponentProvider) {
         ) { state ->
             HomeNavigation(
                 id = data.first,
-                mode = null,
                 startDestination = startDestination,
                 navController = controller,
                 component = component,

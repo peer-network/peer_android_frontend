@@ -30,7 +30,6 @@ class PhotoViewModel @Inject constructor(
 
     fun load(
         page: Pageable,
-        mode: String? = null,
         category: Category = Category.ALL,
         criteria: Criteria? = null
     ) {
@@ -38,7 +37,6 @@ class PhotoViewModel @Inject constructor(
         viewModelScope.launch {
             usecase(
                 UserPostsUsecase.Parameter(
-                    mode = mode,
                     category = category,
                     criteria = criteria,
                     page = page
