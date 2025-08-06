@@ -8,9 +8,6 @@ fun Long.format(): Long {
         seconds >= 3600 -> {
             seconds / 3600
         }
-        seconds >= 60 -> {
-            seconds / 60
-        }
         else -> {
             seconds
         }
@@ -22,9 +19,6 @@ fun Long.offset(time: Long): Long {
     return when {
         seconds >= 3600 -> {
             time * 3600
-        }
-        seconds >= 60 -> {
-            time * 60
         }
         else -> {
             time
