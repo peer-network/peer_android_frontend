@@ -8,6 +8,7 @@ fun Media.mapFromDomain(): UiMedia {
         path = path,
         options = UiMedia.Options(
             size = options.size,
+            cover = options.cover,
             resolution = options.resolution
         )
     )

@@ -10,6 +10,7 @@ data class UiMedia(
     @Immutable
     data class Options(
         val size: String,
-        val resolution: Pair<Int, Int>?
+        val resolution: Pair<Int, Int>?,
+        val cover: String? = null
     )
 }
