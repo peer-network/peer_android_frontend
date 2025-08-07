@@ -24,6 +24,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableFloatState
 import androidx.compose.runtime.MutableLongState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -73,6 +74,8 @@ class VideoPlayerDelegate @Inject constructor(
         val scope = rememberCoroutineScope()
         var mute = media.mute().collectAsStateWithLifecycle(player.isDeviceMuted)
         val dimension = media.observer.collectAsStateWithLifecycle()
+        val audio = remember { context.getSystemService(Context.AUDIO_SERVICE) as AudioManager }
+        val lastVolume = remember(spec.enabled) { mutableIntStateOf(audio.getStreamVolume(AudioManager.STREAM_MUSIC)) }
         val listener = remember {
             object : Player.Listener {
                 override fun onIsPlayingChanged(playing: Boolean) {
@@ -83,10 +86,14 @@ class VideoPlayerDelegate @Inject constructor(
                 }
 
                 override fun onEvents(player: Player, events: Player.Events) {
-                    if (events.containsAny(Player.EVENT_POSITION_DISCONTINUITY,
-                            Player.EVENT_TIMELINE_CHANGED)) {
+                    if (events.containsAny(
+                            Player.EVENT_POSITION_DISCONTINUITY,
+                            Player.EVENT_TIMELINE_CHANGED
+                        )
+                    ) {
                         spec.length.longValue = player.duration.coerceAtLeast(1L)
-                        spec.progress.floatValue = player.currentPosition.toFloat() / spec.length.longValue
+                        spec.progress.floatValue =
+                            player.currentPosition.toFloat() / spec.length.longValue
                     }
                 }
 
@@ -97,31 +104,39 @@ class VideoPlayerDelegate @Inject constructor(
             }
         }
         val texture = remember { TextureView(context) }
-
-      DisposableEffect(Unit) {
-            var lastVolume = -1
-            val receiver = object : BroadcastReceiver() {
+        val lifecycleObserver = remember {
+            LifecycleEventObserver { _, event ->
+                when (event) {
+                    Lifecycle.Event.ON_RESUME -> {
+                        player.play()
+                    }
+                    Lifecycle.Event.ON_STOP -> {
+                        player.pause()
+                    }
+                    else -> Unit
+                }
+            }
+        }
+        val receiver = remember {
+            object : BroadcastReceiver() {
                 override fun onReceive(context: Context, intent: Intent) {
                     if (intent.action == "android.media.VOLUME_CHANGED_ACTION") {
-                        val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
-                        val currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
-                        if (lastVolume != -1 && currentVolume > lastVolume) {
-                            if (!mute.value) {
-                                scope.launch { interactor.mute(true) }
-                            }
+                        val currentVolume = audio.getStreamVolume(AudioManager.STREAM_MUSIC)
+                        if (currentVolume > lastVolume.intValue && !mute.value) {
+                            scope.launch { interactor.mute(true) }
                         }
-                        lastVolume = currentVolume
+                        lastVolume.intValue = currentVolume
                     }
                 }
             }
+        }
+        DisposableEffect(Unit) {
             val filter = IntentFilter("android.media.VOLUME_CHANGED_ACTION")
             context.registerReceiver(receiver, filter)
-
             onDispose {
                 context.unregisterReceiver(receiver)
             }
         }
-
         Box(
             modifier = modifier,
             contentAlignment = Alignment.Center
@@ -155,7 +170,8 @@ class VideoPlayerDelegate @Inject constructor(
                     it.alpha = dimension.value[spec.url]?.let { 1f } ?: 0f
                     isReady = dimension.value[spec.url] != null
                 },
-                modifier = Modifier.wrapContentSize()
+                modifier = Modifier
+                    .wrapContentSize()
                     .clickable {
                         if (!isPlaying.value && !hasSession.value) {
                             session.longValue = System.currentTimeMillis()
@@ -200,7 +216,8 @@ class VideoPlayerDelegate @Inject constructor(
             while (isPlaying.value && spec.enabled) {
                 withFrameMillis {
                     spec.length.longValue = player.duration.coerceAtLeast(1L)
-                    spec.progress.floatValue = player.currentPosition.toFloat() / spec.length.longValue
+                    spec.progress.floatValue =
+                        player.currentPosition.toFloat() / spec.length.longValue
                 }
                 delay(16)
             }
@@ -213,20 +230,9 @@ class VideoPlayerDelegate @Inject constructor(
             }
         }
         DisposableEffect(lifecycleOwner) {
-            val observer = LifecycleEventObserver { _, event ->
-                when (event) {
-                    Lifecycle.Event.ON_RESUME -> {
-                        player.play()
-                    }
-                    Lifecycle.Event.ON_STOP -> {
-                        player.pause()
-                    }
-                    else -> Unit
-                }
-            }
-            lifecycleOwner.lifecycle.addObserver(observer)
+            lifecycleOwner.lifecycle.addObserver(lifecycleObserver)
             onDispose {
-                lifecycleOwner.lifecycle.removeObserver(observer)
+                lifecycleOwner.lifecycle.removeObserver(lifecycleObserver)
             }
         }
     }
