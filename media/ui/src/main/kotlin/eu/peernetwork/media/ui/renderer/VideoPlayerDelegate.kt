@@ -1,6 +1,10 @@
 package eu.peernetwork.media.ui.renderer
 
 import android.content.Context
+import android.content.BroadcastReceiver
+import android.content.Intent
+import android.content.IntentFilter
+import android.media.AudioManager
 import android.view.TextureView
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -66,6 +70,7 @@ class VideoPlayerDelegate @Inject constructor(
         val errorState = remember { mutableStateOf<Throwable?>(null) }
         val session = remember { mutableLongStateOf(System.currentTimeMillis()) }
         val isLoading = remember { mutableStateOf(!spec.enabled) }
+        val scope = rememberCoroutineScope()
         var mute = media.mute().collectAsStateWithLifecycle(player.isDeviceMuted)
         val dimension = media.observer.collectAsStateWithLifecycle()
         val listener = remember {
@@ -92,6 +97,31 @@ class VideoPlayerDelegate @Inject constructor(
             }
         }
         val texture = remember { TextureView(context) }
+
+      DisposableEffect(Unit) {
+            var lastVolume = -1
+            val receiver = object : BroadcastReceiver() {
+                override fun onReceive(context: Context, intent: Intent) {
+                    if (intent.action == "android.media.VOLUME_CHANGED_ACTION") {
+                        val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+                        val currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
+                        if (lastVolume != -1 && currentVolume > lastVolume) {
+                            if (!mute.value) {
+                                scope.launch { interactor.mute(true) }
+                            }
+                        }
+                        lastVolume = currentVolume
+                    }
+                }
+            }
+            val filter = IntentFilter("android.media.VOLUME_CHANGED_ACTION")
+            context.registerReceiver(receiver, filter)
+
+            onDispose {
+                context.unregisterReceiver(receiver)
+            }
+        }
+
         Box(
             modifier = modifier,
             contentAlignment = Alignment.Center
