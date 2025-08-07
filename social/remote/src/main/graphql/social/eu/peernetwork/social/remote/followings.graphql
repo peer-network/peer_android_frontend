@@ -1,5 +1,15 @@
-query ListFollowingsRelations($userid: ID!, $offset: Int!, $limit: Int!) {
-    listFollowRelations(userid: $userid, offset: $offset, limit: $limit) {
+query ListFollowingsRelations(
+    $userid: ID!,
+    $contentFilterBy: ContentFilterType,
+    $offset: Int!,
+    $limit: Int!
+) {
+    listFollowRelations(
+        userid: $userid,
+        contentFilterBy: $contentFilterBy,
+        offset: $offset,
+        limit: $limit
+    ) {
         status
         counter
         ResponseCode

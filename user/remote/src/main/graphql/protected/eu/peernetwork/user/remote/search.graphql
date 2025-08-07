@@ -1,5 +1,5 @@
-query Searchuser($username: String!, $offset: Int!, $limit: Int!) {
-    searchUser(username: $username, offset: $offset, limit: $limit) {
+query Searchuser($username: String!, $contentFilterBy: ContentFilterType, $offset: Int!, $limit: Int!) {
+    searchUser(username: $username, contentFilterBy: $contentFilterBy, offset: $offset, limit: $limit) {
         status
         counter
         ResponseCode
