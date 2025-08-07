@@ -12,7 +12,7 @@ data class Draft(
         data class Video(val files: List<String>) : Type
         data class Audio(
             val files: List<String>,
-            val cover: List<String>? = null
+            val cover: String? = null
         ) : Type
     }
 }

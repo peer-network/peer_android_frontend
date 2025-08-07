@@ -100,10 +100,8 @@ fun CreatorScreen(
             draft.value = UiDraft(
                 title = it.title,
                 description = it.description,
-                media = if (attachment.value.files.isEmpty()) {
-                    UiMimeType.Text
-                } else { attachment.value.media },
-                attachment = attachment.value
+                attachment = attachment.value,
+                cover = (attachment.value as? UiAttachment.File)?.cover
             ) },
         isLoading = isLoading,
         enabled = enabled,
