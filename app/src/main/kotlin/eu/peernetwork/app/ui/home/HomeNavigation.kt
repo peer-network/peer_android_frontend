@@ -10,6 +10,7 @@ import androidx.navigation.compose.composable
 import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.app.ui.composer.ComposerScreen
 import eu.peernetwork.app.ui.feed.FeedScreen
+import eu.peernetwork.app.ui.messaging.MessagingScreen
 import eu.peernetwork.app.ui.profile.ProfileScreen
 import eu.peernetwork.app.ui.search.SearchScreen
 import eu.peernetwork.app.ui.wallet.WalletScreen
@@ -72,6 +73,9 @@ fun HomeNavigation(
                 }
             }
         }
+        composable(HomeRoute.Chat.path) {
+            MessagingScreen(id, component, viewModelStore.get(id))
+        }
     }
 }
 
@@ -106,7 +110,7 @@ sealed class HomeRoute(
         R.drawable.ic_profile,
         R.string.profile_label
     )
-    data object Comment: HomeRoute(
+    data object Chat: HomeRoute(
         R.drawable.ic_chat_outline,
         R.drawable.ic_chat,
         R.string.chat_label
