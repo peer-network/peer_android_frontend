@@ -46,6 +46,7 @@ fun FeedScreen(
         }
     }
     val overlay = remember { mutableStateOf<FeedOverlayState>(FeedOverlayState.Empty) }
+    val enable = remember { derivedStateOf { overlay.value == FeedOverlayState.Empty } }
     val controller = rememberNavController()
     ConnectionScreen(
         provider = component,
@@ -69,7 +70,7 @@ fun FeedScreen(
             ) {
                 FeedPreview(
                     id = id,
-                    enable = overlay.value == FeedOverlayState.Empty,
+                    enable = enable,
                     ordinal = ordinal.value,
                     state = pageState,
                     requireUpdate = hasUpdate,

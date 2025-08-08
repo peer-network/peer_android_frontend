@@ -39,7 +39,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun FeedPreview(
     id: String,
-    enable: Boolean,
+    enable: State<Boolean>,
     ordinal: Int,
     state: MutableIntState,
     requireUpdate: MutableState<Boolean>,
@@ -104,6 +104,7 @@ fun FeedPreview(
         video = {
             VideoScreen(
                 id = id,
+                enable = enable,
                 postLimit = BuildConfig.PAGING_LIMIT,
                 category = category,
                 criteria = criteria,
@@ -141,7 +142,7 @@ fun FeedPreview(
             }
         }
     }
-    BackHandler(enabled = pageState.currentPage == 1 && enable) {
+    BackHandler(enabled = pageState.currentPage == 1 && enable.value) {
         coroutine.launch { pageState.animateScrollToPage(0) }
         state.intValue = 0
         handleOnNavigate(0)

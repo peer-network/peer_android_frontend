@@ -30,6 +30,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun VideoScreen(
     id: String,
+    enable: State<Boolean>,
     postLimit: Int,
     category: Category,
     criteria: Criteria? = null,
@@ -107,6 +108,7 @@ fun VideoScreen(
                 ) { moderation ->
                     VideoListing(
                         id = id,
+                        state = enable,
                         component = component,
                         viewModel = viewModel,
                         listState = listState,

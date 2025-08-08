@@ -27,6 +27,7 @@ import eu.peernetwork.core.ui.extension.builder
 @Composable
 fun VideoScreen(
     author: String,
+    enable: State<Boolean>,
     postLimit: Int,
     lastUpdated: State<Long>,
     provider: UiComponentProvider,
@@ -88,6 +89,7 @@ fun VideoScreen(
             ) { moderation ->
                 VideoListing(
                     author = author,
+                    state = enable,
                     component = component,
                     viewModel = viewModel,
                     lazyPagingItems = lazyPagingItems,

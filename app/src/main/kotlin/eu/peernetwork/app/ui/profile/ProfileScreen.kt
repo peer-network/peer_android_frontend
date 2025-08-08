@@ -2,6 +2,7 @@ package eu.peernetwork.app.ui.profile
 
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
@@ -28,6 +29,7 @@ fun ProfileScreen(
         provider.builder(Profile.Builder::class.java).build(context)
     }
     val overlay = remember { mutableStateOf<ProfileOverlayState>(ProfileOverlayState.Empty) }
+    val enable =  remember { derivedStateOf { overlay.value == ProfileOverlayState.Empty } }
     val controller = rememberNavController()
     ConnectionScreen(
         provider = component,
@@ -55,7 +57,7 @@ fun ProfileScreen(
                 val videoState = rememberLazyListState()
                 ProfilePreview(
                     id = userId,
-                    enable = overlay.value == ProfileOverlayState.Empty,
+                    enable = enable,
                     title = title,
                     limit = BuildConfig.PAGING_LIMIT,
                     onSettings = { controller.navigateIfNecessary("settings") },

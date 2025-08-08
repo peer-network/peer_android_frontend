@@ -12,6 +12,7 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -39,6 +40,7 @@ import eu.peernetwork.media.core.renderer.VideoThumbnail
 @Composable
 fun VideoListing(
     author: String,
+    state: State<Boolean>,
     component: Video.Component,
     viewModel: VideoViewModel,
     lazyPagingItems: LazyPagingItems<UiVideo>,
@@ -62,7 +64,7 @@ fun VideoListing(
                 }
             ) { index ->
                 val enable = remember { derivedStateOf { !listState.isScrollInProgress } }
-                val isPlaying = remember { derivedStateOf { index == position.value } }
+                val isPlaying = remember { derivedStateOf { index == position.value && state.value } }
                 lazyPagingItems[index]?.let { post ->
                     val postThumbnail = remember { derivedStateOf { thumbnail.value[post.media] } }
                     VideoListing(
