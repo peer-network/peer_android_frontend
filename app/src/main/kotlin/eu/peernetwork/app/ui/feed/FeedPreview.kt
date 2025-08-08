@@ -104,7 +104,6 @@ fun FeedPreview(
         video = {
             VideoScreen(
                 id = id,
-                enable = enable,
                 postLimit = BuildConfig.PAGING_LIMIT,
                 category = category,
                 criteria = criteria,

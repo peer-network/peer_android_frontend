@@ -45,7 +45,7 @@ import eu.peernetwork.media.ui.compose.VolumeControl
 import eu.peernetwork.media.ui.core.MediaPlayer
 import eu.peernetwork.media.ui.extension.format
 import eu.peernetwork.media.ui.extension.offset
-import eu.peernetwork.media.ui.model.UiMetadata
+import eu.peernetwork.media.core.model.UiMediaProperty
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.debounce
 
@@ -85,7 +85,7 @@ fun VideoScreen(
     val scrollState = rememberLazyListState()
     val canLoad = remember { derivedStateOf { !scrollState.isScrollInProgress } }
     val handleProceed by rememberUpdatedState(onProceed)
-    DesignStatefulScaffold<UiMetadata>(
+    DesignStatefulScaffold<UiMediaProperty>(
         state = derivedState,
         onRefresh = { viewModel.get(path) },
         contentAlignment = Alignment.TopCenter,
@@ -120,14 +120,14 @@ fun VideoScreen(
                 val key = "$path?time=$it"
                 DesignThumbnail(
                     thumbnail = path,
-                    visible = canLoad,
+                    enable = canLoad,
                     bitmap = thumbnail.value[key],
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(64.dp)
                         .background(MaterialTheme.colorScheme.tertiaryContainer)
                 ) { path ->
-                    viewModel.sync(
+                    viewModel.videoThumbnail(
                         path,
                         key,
                         it * 1_000_000L
@@ -141,11 +141,11 @@ fun VideoScreen(
                 val height = with(density) { maxHeight.toPx().toInt() }
                 DesignThumbnail(
                     thumbnail = path,
-                    visible = canLoad,
+                    enable = canLoad,
                     bitmap = thumbnail.value[key],
                     modifier = Modifier.fillMaxSize()
                         .background(MaterialTheme.colorScheme.surfaceContainerLow)
-                ) { path -> viewModel.background(path, width, height) }
+                ) { path -> viewModel.cover(path, width, height) }
                 component.videoPlayer()(
                     Modifier.fillMaxHeight(),
                     VideoPlayer.Spec(
@@ -196,6 +196,11 @@ fun VideoScreen(
                 preview.value = false
                 player.seekTo(it.duration.offset(start.longValue))
             }
+        }
+    }
+    LaunchedEffect(canLoad.value) {
+        if (!canLoad.value) {
+            viewModel.reset()
         }
     }
     LaunchedEffect(Unit) {

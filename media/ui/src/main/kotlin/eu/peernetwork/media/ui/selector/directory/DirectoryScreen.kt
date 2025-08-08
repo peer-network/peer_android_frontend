@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -104,7 +105,14 @@ fun DirectoryScreen(
                                 onSelect(item.path)
                             }
                     ) {
-                        DesignThumbnail(thumbnail.value[item.thumbnail])
+                        DesignThumbnail(
+                            enable = canLoad,
+                            thumbnail = item.thumbnail,
+                            bitmap = thumbnail.value[item.thumbnail],
+                            modifier = Modifier.fillMaxWidth()
+                                .aspectRatio(1f)
+                                .background(MaterialTheme.colorScheme.surfaceVariant)
+                        ) { viewModel.mediaThumbnail(it, type) }
                         Image(
                             painter = painterResource(R.drawable.overlay_gradient),
                             contentDescription = null,
@@ -127,12 +135,8 @@ fun DirectoryScreen(
         }
     }
     LaunchedEffect(canLoad.value) {
-        if (canLoad.value) {
-            viewModel.sync(
-                type,
-                listState.firstVisibleItemIndex,
-                listState.layoutInfo.visibleItemsInfo.lastOrNull()?.let { it.index + 1 } ?: 0
-            )
+        if (!canLoad.value) {
+            viewModel.reset()
         }
     }
     LaunchedEffect(type) {

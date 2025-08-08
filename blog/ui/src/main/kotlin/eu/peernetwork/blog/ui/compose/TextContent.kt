@@ -13,13 +13,13 @@ import eu.peernetwork.blog.ui.engagement.Engagements
 import eu.peernetwork.blog.ui.mapper.mapToContent
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.moderation.ModerationScreen
-import eu.peernetwork.blog.ui.moderation.Moderations
+import eu.peernetwork.blog.ui.moderation.ModerationAction
 
 @Composable
 fun TextContent(
     post: UiPost,
     engagements: Engagements,
-    moderations: Moderations,
+    moderationAction: ModerationAction,
     onAuthorClick: (String) -> Unit = {},
     onMentionClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
@@ -50,7 +50,7 @@ fun TextContent(
         moderation = {
             ModerationScreen(
                 uiContent,
-                moderations,
+                moderationAction,
                 color = MaterialTheme.colorScheme.onBackground,
             )
         },

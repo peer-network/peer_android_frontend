@@ -27,7 +27,7 @@ import eu.peernetwork.blog.ui.engagement.Engagements
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
 import eu.peernetwork.blog.ui.mapper.mapToContent
 import eu.peernetwork.blog.ui.model.UiPost
-import eu.peernetwork.blog.ui.moderation.Moderations
+import eu.peernetwork.blog.ui.moderation.ModerationAction
 import eu.peernetwork.blog.ui.moderation.ModerationScreen
 import eu.peernetwork.media.core.renderer.ImageView
 
@@ -38,7 +38,7 @@ fun PhotoListing(
     lazyPagingItems: LazyPagingItems<UiPost>,
     listState: LazyListState,
     engagement: Engagements,
-    moderation: Moderations,
+    moderation: ModerationAction,
     onMentionClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
     onPostClick: (String, Int) -> Unit,
@@ -59,7 +59,7 @@ fun PhotoListing(
                     post = post,
                     index = index,
                     engagements = engagement,
-                    moderations = moderation,
+                    moderationAction = moderation,
                     onAuthorClick = onAuthorClick,
                     onPostClick = onPostClick,
                     onHashtagClick = onHashtagClick,
@@ -129,7 +129,7 @@ fun LazyItemScope.PhotoListing(
     post: UiPost,
     index: Int,
     engagements: Engagements,
-    moderations: Moderations,
+    moderationAction: ModerationAction,
     onAuthorClick: (String) -> Unit = {},
     onPostClick: (String, Int) -> Unit,
     onMentionClick: (String) -> Unit = {},
@@ -156,7 +156,7 @@ fun LazyItemScope.PhotoListing(
         moderation = {
             ModerationScreen(
                 uiContent,
-                moderations
+                moderationAction
             )
         },
         content = content,

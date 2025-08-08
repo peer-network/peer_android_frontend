@@ -57,7 +57,6 @@ fun ProfileBlog(
             )
             1 -> VideoScreen(
                 author = id,
-                enable = enable,
                 postLimit = limit,
                 lastUpdated = lastUpdated,
                 provider = provider,

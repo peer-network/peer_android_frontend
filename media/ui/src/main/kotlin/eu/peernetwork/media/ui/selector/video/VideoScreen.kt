@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
@@ -124,7 +125,14 @@ fun VideoScreen(
                             }
                         }
                     }) {
-                    DesignThumbnail(thumbnail.value[it[index].path])
+                    DesignThumbnail(
+                        enable = canLoad,
+                        thumbnail = it[index].path,
+                        bitmap = thumbnail.value[it[index].path],
+                        modifier = Modifier.fillMaxWidth()
+                            .aspectRatio(1f)
+                            .background(MaterialTheme.colorScheme.surfaceVariant)
+                    ) { viewModel.mediaThumbnail(it, UiMimeType.Video) }
                     Box(modifier = Modifier.fillMaxSize()
                         .graphicsLayer {
                             alpha = if (selected.value.files.firstOrNull()?.path == it[index].path) {
@@ -144,12 +152,8 @@ fun VideoScreen(
             }
         }
         LaunchedEffect(canLoad.value, directory.value) {
-            if (canLoad.value) {
-                viewModel.sync(
-                    UiMimeType.Video,
-                    listState.firstVisibleItemIndex,
-                    listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
-                )
+            if (!canLoad.value) {
+                viewModel.reset()
             }
         }
     }

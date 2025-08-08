@@ -9,13 +9,11 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.LoadState
-import eu.peernetwork.blog.ui.model.UiVideo
 import eu.peernetwork.blog.ui.compose.PostPlaceholder
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
 import eu.peernetwork.blog.ui.moderation.ModerationScreen
@@ -29,7 +27,6 @@ import eu.peernetwork.core.ui.extension.builder
 @Composable
 fun VideoScreen(
     author: String,
-    enable: Boolean,
     postLimit: Int,
     lastUpdated: State<Long>,
     provider: UiComponentProvider,
@@ -41,7 +38,6 @@ fun VideoScreen(
     listState: LazyListState = rememberLazyListState(),
 ) {
     val context = LocalContext.current
-    val configuration = LocalConfiguration.current
     val component = remember {
         provider.builder(Video.Builder::class.java).build(context)
     }
@@ -65,12 +61,8 @@ fun VideoScreen(
             }
         }
     } }
-    val thumbnail = viewModel.thumbnail.collectAsStateWithLifecycle()
     val updatedAt = remember { mutableLongStateOf(lastUpdated.value) }
-    val canLoad = remember { derivedStateOf {
-        listState.layoutInfo.totalItemsCount > 0 && !listState.isScrollInProgress
-    } }
-    DesignPagingScaffold<UiVideo>(
+    DesignPagingScaffold(
         state = derivedState,
         placeholder = { PostPlaceholder() },
         onRefresh = { viewModel.load(author, Pageable(0, postLimit)) },
@@ -96,27 +88,15 @@ fun VideoScreen(
             ) { moderation ->
                 VideoListing(
                     author = author,
-                    enable = enable,
                     component = component,
+                    viewModel = viewModel,
                     lazyPagingItems = lazyPagingItems,
                     listState = listState,
                     engagement = engagement,
                     moderation = moderation,
-                    onLoadBitmap = { thumbnail.value[it] },
                     onMentionClick = onMentionClick,
                     onHashtagClick = onHashtagClick,
                     onPostClick = onPostClick,
-                )
-            }
-        }
-        LaunchedEffect(canLoad.value) {
-            if (canLoad.value) {
-                viewModel.sync(
-                    lazyPagingItems.itemSnapshotList.items,
-                    configuration.screenWidthDp,
-                    listState.firstVisibleItemIndex,
-                    listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index
-                        ?: listState.firstVisibleItemIndex
                 )
             }
         }
@@ -128,4 +108,3 @@ fun VideoScreen(
         }
     }
 }
-

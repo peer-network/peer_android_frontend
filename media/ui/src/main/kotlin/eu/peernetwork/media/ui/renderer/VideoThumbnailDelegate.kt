@@ -21,6 +21,8 @@ import androidx.core.view.isVisible
 import eu.peernetwork.media.core.interactor.VideoInteractor
 import eu.peernetwork.media.ui.compose.VolumeControl
 import eu.peernetwork.media.ui.core.MediaPlayer
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
 class VideoThumbnailDelegate @Inject constructor(
@@ -48,7 +50,7 @@ class VideoThumbnailDelegate @Inject constructor(
             AndroidView(
                 factory = { surfaceView },
                 update = {
-                    it.visibility = if (spec.isPlaying) {
+                    it.visibility = if (spec.isPlaying.value) {
                         View.VISIBLE
                     } else {
                         View.INVISIBLE
@@ -80,23 +82,28 @@ class VideoThumbnailDelegate @Inject constructor(
                 VolumeControl(mute) { scope.launch { interactor.mute(it) } }
             }
         }
-        LaunchedEffect(spec.isPlaying) {
-            if (spec.isPlaying) {
-                surfaceView.surfaceTexture?.let {
-                    interactor.attach(it, spec.url)
+        LaunchedEffect(Unit) {
+            snapshotFlow { spec.isPlaying.value }
+                .distinctUntilChanged()
+                .debounce(300)
+                .collect { playing ->
+                    if (playing) {
+                        surfaceView.surfaceTexture?.let {
+                            interactor.attach(it, spec.url)
+                        }
+                    } else {
+                        surfaceView.surfaceTexture?.let {
+                            interactor.detach(it)
+                        }
+                    }
                 }
-            } else {
-                surfaceView.surfaceTexture?.let {
-                    interactor.detach(it)
-                }
-            }
         }
-        LaunchedEffect(mute.value) {
-            media.player().volume = if (mute.value) {
-                1f
-            } else {
-                0f
-            }
+        LaunchedEffect(Unit) {
+            snapshotFlow { mute.value }
+                .distinctUntilChanged()
+                .collect { muted ->
+                    media.player().volume = if (muted) 1f else 0f
+                }
         }
     }
 }

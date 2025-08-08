@@ -1,22 +1,19 @@
-package eu.peernetwork.media.ui.usecase
+package eu.peernetwork.media.core.usecase
 
 import eu.peernetwork.core.common.usecase.ParameterizedSuspendableUseCase
 import eu.peernetwork.media.core.interactor.ThumbnailInteractor
+import eu.peernetwork.media.core.model.UiMediaProperty
 import eu.peernetwork.media.core.model.UiMimeType
-import eu.peernetwork.media.ui.model.UiMetadata
 import javax.inject.Inject
 
 class CoverUsecase @Inject constructor(
-    private val usecase: MetadataRetrieverUsecase,
     private val interactor: ThumbnailInteractor,
-) : ParameterizedSuspendableUseCase<CoverUsecase.Parameter, UiMetadata?> {
-    override suspend fun invoke(param: Parameter): UiMetadata? {
-        val metadata = usecase(
-            MetadataRetrieverUsecase.Parameter(
-                url = param.url,
-                type = param.type,
-                frame = param.frame
-            )
+) : ParameterizedSuspendableUseCase<CoverUsecase.Parameter, UiMediaProperty?> {
+    override suspend fun invoke(param: Parameter): UiMediaProperty? {
+        val metadata = interactor.get(
+            url = param.url,
+            type = param.type,
+            frame = param.frame
         )
         return metadata?.bitmap?.let {
             val blur = interactor.blur(it, 10)

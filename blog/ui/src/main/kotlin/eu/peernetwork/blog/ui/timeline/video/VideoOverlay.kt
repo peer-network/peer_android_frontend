@@ -30,12 +30,14 @@ import eu.peernetwork.blog.ui.engagement.EngagementScreen
 import eu.peernetwork.blog.ui.model.UiVideo
 import eu.peernetwork.blog.ui.moderation.ModerationScreen
 import eu.peernetwork.blog.ui.compose.VideoPage
+import eu.peernetwork.blog.ui.mapper.query
 import eu.peernetwork.core.common.model.Pageable
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffold
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
 import eu.peernetwork.core.ui.design.compose.DesignThumbnail
 import eu.peernetwork.core.ui.extension.builder
+import eu.peernetwork.media.core.model.UiMimeType
 import eu.peernetwork.media.core.renderer.VideoPlayer
 import kotlinx.coroutines.flow.Flow
 
@@ -119,12 +121,13 @@ fun VideoOverlay(
                             engagement = engagement,
                             moderation = moderation,
                             lazyPagingItems = lazyPagingItems,
-                            onLoad = { position ->
-                                viewModel.sync(
-                                    lazyPagingItems.itemSnapshotList.items,
+                            onLoad = { post ->
+                                viewModel.videoBackground(
+                                    "${post.media}${UiMimeType.Video.query()}",
+                                    post.aspectRatio,
                                     configuration.screenWidthDp,
                                     configuration.screenHeightDp,
-                                    position,
+                                    true
                                 )
                             },
                             onPostClick = onPostClick,

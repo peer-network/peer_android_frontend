@@ -6,6 +6,7 @@ import eu.peernetwork.core.common.provider.Dispatcher
 import eu.peernetwork.media.core.annotation.DiskCache
 import eu.peernetwork.media.core.annotation.MemoryCache
 import eu.peernetwork.media.core.interactor.ThumbnailInteractor
+import eu.peernetwork.media.core.model.UiMediaProperty
 import eu.peernetwork.media.core.model.UiMimeType
 import eu.peernetwork.media.ui.usecase.BitmapMergeUsecase
 import eu.peernetwork.media.ui.usecase.BlurUsecase
@@ -66,6 +67,16 @@ class ThumbnailInteractorDelegate @Inject constructor(
         dimen: Pair<Float, Float>
     ): Bitmap? = withContext(dispatcher.io) {
         get(url, type)?.let{ scale(it, dimen) }
+    }
+
+    override suspend fun get(url: String, type: UiMimeType, frame: Long): UiMediaProperty? {
+        return metadataRetrieverUsecase(
+            MetadataRetrieverUsecase.Parameter(
+                url = url,
+                type = type,
+                frame = frame
+            )
+        )
     }
 
     override suspend fun save(url: String, bitmap: Bitmap): Bitmap = withContext(dispatcher.io) {

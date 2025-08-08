@@ -20,7 +20,7 @@ import androidx.paging.compose.LazyPagingItems
 import eu.peernetwork.blog.ui.engagement.Engagements
 import eu.peernetwork.blog.ui.mapper.query
 import eu.peernetwork.blog.ui.model.UiVideo
-import eu.peernetwork.blog.ui.moderation.Moderations
+import eu.peernetwork.blog.ui.moderation.ModerationAction
 import eu.peernetwork.media.core.model.UiMimeType
 
 @Composable
@@ -28,9 +28,9 @@ fun VideoPage(
     position: Int,
     enabled: Boolean,
     engagement: Engagements,
-    moderation: Moderations,
+    moderation: ModerationAction,
     lazyPagingItems: LazyPagingItems<UiVideo>,
-    onLoad: (Int) -> Unit,
+    onLoad: (UiVideo) -> Unit,
     onPostClick: (String, Int) -> Unit,
     onAuthorClick: (String) -> Unit = {},
     onMentionClick: (String) -> Unit = {},
@@ -63,7 +63,7 @@ fun VideoPage(
                     post = post,
                     index = page,
                     engagements = engagement,
-                    moderations = moderation,
+                    moderationAction = moderation,
                     onAuthorClick = onAuthorClick,
                     onPostClick = onPostClick,
                     onMentionClick = onMentionClick,
@@ -76,11 +76,11 @@ fun VideoPage(
             } else {
                 CircularProgressIndicator()
             }
-        }
-    }
-    LaunchedEffect(canLoad.value) {
-        if (canLoad.value) {
-            handleLoad(pagerState.currentPage)
+            LaunchedEffect(canLoad.value) {
+                if (canLoad.value) {
+                    post?.let { handleLoad(it) }
+                }
+            }
         }
     }
 }

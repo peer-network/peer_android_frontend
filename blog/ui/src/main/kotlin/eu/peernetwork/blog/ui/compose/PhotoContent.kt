@@ -20,7 +20,7 @@ import eu.peernetwork.blog.ui.engagement.Engagements
 import eu.peernetwork.blog.ui.mapper.mapToContent
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.moderation.ModerationScreen
-import eu.peernetwork.blog.ui.moderation.Moderations
+import eu.peernetwork.blog.ui.moderation.ModerationAction
 import eu.peernetwork.core.ui.design.compose.DesignRichText
 import eu.peernetwork.core.ui.design.compose.DesignTitleStyle
 
@@ -29,7 +29,7 @@ fun PhotoContent(
     id: String,
     post: UiPost,
     engagements: Engagements,
-    moderations: Moderations,
+    moderationAction: ModerationAction,
     onAuthorClick: (String) -> Unit = {},
     onMentionClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
@@ -87,7 +87,7 @@ fun PhotoContent(
         moderation = {
             ModerationScreen(
                 uiContent,
-                moderations,
+                moderationAction,
                 color = MaterialTheme.colorScheme.onBackground,
             )
         },

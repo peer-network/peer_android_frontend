@@ -5,15 +5,15 @@ import android.media.MediaMetadataRetriever
 import eu.peernetwork.core.common.provider.Dispatcher
 import eu.peernetwork.core.common.usecase.ParameterizedSuspendableUseCase
 import eu.peernetwork.media.core.model.UiMimeType
-import eu.peernetwork.media.ui.model.UiMetadata
+import eu.peernetwork.media.core.model.UiMediaProperty
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class MetadataRetrieverUsecase @Inject constructor(
     private val dispatcher: Dispatcher,
-) : ParameterizedSuspendableUseCase<MetadataRetrieverUsecase.Parameter, UiMetadata?> {
+) : ParameterizedSuspendableUseCase<MetadataRetrieverUsecase.Parameter, UiMediaProperty?> {
 
-    override suspend fun invoke(param: Parameter): UiMetadata? = withContext(dispatcher.io) {
+    override suspend fun invoke(param: Parameter): UiMediaProperty? = withContext(dispatcher.io) {
         if (param.type == UiMimeType.Video) {
             val retriever = MediaMetadataRetriever()
             try {
@@ -22,7 +22,7 @@ class MetadataRetrieverUsecase @Inject constructor(
                 val width = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH)?.toInt() ?: 0
                 val height = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT)?.toInt() ?: 0
                 val duration = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)?.toLong() ?: 0L
-                UiMetadata(
+                UiMediaProperty(
                     width = width,
                     height = height,
                     bitmap = bitmap,
@@ -37,7 +37,7 @@ class MetadataRetrieverUsecase @Inject constructor(
             }
         } else {
             BitmapFactory.decodeFile(param.url)?.let {
-                UiMetadata(
+                UiMediaProperty(
                     width = it.width,
                     height = it.height,
                     bitmap = it,

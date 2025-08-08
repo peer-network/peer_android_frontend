@@ -1,6 +1,7 @@
 package eu.peernetwork.media.core.interactor
 
 import android.graphics.Bitmap
+import eu.peernetwork.media.core.model.UiMediaProperty
 import eu.peernetwork.media.core.model.UiMimeType
 import kotlinx.coroutines.flow.Flow
 
@@ -16,6 +17,8 @@ interface ThumbnailInteractor {
         type: UiMimeType,
         dimen: Pair<Float, Float>,
     ): Bitmap?
+
+    suspend fun get(url: String, type: UiMimeType, frame: Long): UiMediaProperty?
 
     suspend fun save(
         url: String,

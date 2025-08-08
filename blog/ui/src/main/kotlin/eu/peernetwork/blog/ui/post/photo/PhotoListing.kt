@@ -25,7 +25,7 @@ import eu.peernetwork.blog.ui.engagement.Engagements
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
 import eu.peernetwork.blog.ui.mapper.mapToContent
 import eu.peernetwork.blog.ui.model.UiPost
-import eu.peernetwork.blog.ui.moderation.Moderations
+import eu.peernetwork.blog.ui.moderation.ModerationAction
 import eu.peernetwork.blog.ui.moderation.ModerationScreen
 import eu.peernetwork.media.core.renderer.ImageView
 
@@ -36,7 +36,7 @@ fun PhotoListing(
     lazyPagingItems: LazyPagingItems<UiPost>,
     listState: LazyListState,
     engagement: Engagements,
-    moderation: Moderations,
+    moderation: ModerationAction,
     onMentionClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
     onPostClick: (String, Int) -> Unit,
@@ -54,7 +54,7 @@ fun PhotoListing(
                     onMentionClick = onMentionClick,
                     onHashtagClick = onHashtagClick,
                     engagements = engagement,
-                    moderations = moderation
+                    moderationAction = moderation
                 ) {
                     if (photo.media.size > 1) {
                         val pagerState = rememberPagerState(initialPage = 0) { photo.media.size }
@@ -119,7 +119,7 @@ fun LazyItemScope.PhotoListing(
     onHashtagClick: (String) -> Unit = {},
     onPostClick: (String, Int) -> Unit,
     engagements: Engagements,
-    moderations: Moderations,
+    moderationAction: ModerationAction,
     content: @Composable (UiPost) -> Unit = {}
 ) {
     val uiContent = post.mapToContent()
@@ -137,7 +137,7 @@ fun LazyItemScope.PhotoListing(
         moderation = {
             ModerationScreen(
                 model = uiContent,
-                event = moderations
+                event = moderationAction
             )
         },
         content = content

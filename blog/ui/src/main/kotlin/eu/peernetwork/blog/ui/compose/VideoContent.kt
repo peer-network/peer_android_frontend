@@ -21,7 +21,7 @@ import eu.peernetwork.blog.ui.engagement.Engagements
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
 import eu.peernetwork.blog.ui.mapper.mapToContent
 import eu.peernetwork.blog.ui.model.UiVideo
-import eu.peernetwork.blog.ui.moderation.Moderations
+import eu.peernetwork.blog.ui.moderation.ModerationAction
 import eu.peernetwork.blog.ui.moderation.ModerationScreen
 import eu.peernetwork.core.ui.design.compose.DesignRichText
 import eu.peernetwork.core.ui.design.compose.DesignTitleStyle
@@ -31,7 +31,7 @@ fun VideoContent(
     post: UiVideo,
     index: Int,
     engagements: Engagements,
-    moderations: Moderations,
+    moderationAction: ModerationAction,
     onAuthorClick: (String) -> Unit = {},
     onPostClick: (String, Int) -> Unit,
     onMentionClick: (String) -> Unit = {},
@@ -91,7 +91,7 @@ fun VideoContent(
         moderation = {
             ModerationScreen(
                 uiContent,
-                moderations,
+                moderationAction,
                 color = MaterialTheme.colorScheme.onBackground,
             )
         },

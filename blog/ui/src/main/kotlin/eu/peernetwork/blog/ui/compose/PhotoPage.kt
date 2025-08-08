@@ -16,7 +16,7 @@ import androidx.paging.compose.LazyPagingItems
 import eu.peernetwork.blog.ui.engagement.Engagements
 import eu.peernetwork.blog.ui.model.UiMedia
 import eu.peernetwork.blog.ui.model.UiPost
-import eu.peernetwork.blog.ui.moderation.Moderations
+import eu.peernetwork.blog.ui.moderation.ModerationAction
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toPersistentList
 
@@ -25,7 +25,7 @@ fun PhotoPage(
     id: String,
     position: Int,
     engagement: Engagements,
-    moderation: Moderations,
+    moderation: ModerationAction,
     lazyPagingItems: LazyPagingItems<UiPost>,
     onAuthorClick: (String) -> Unit = {},
     onMentionClick: (String) -> Unit = {},
@@ -55,7 +55,7 @@ fun PhotoPage(
                         onMentionClick = onMentionClick,
                         onHashtagClick = onHashtagClick,
                         engagements = engagement,
-                        moderations = moderation,
+                        moderationAction = moderation,
                         connection = {
                             if (id != post.author.id) {
                                 updatedConnection(
@@ -74,7 +74,7 @@ fun PhotoPage(
                         id = id,
                         post = post,
                         engagements = engagement,
-                        moderations = moderation,
+                        moderationAction = moderation,
                         header = header,
                         indicator = { updatedIndicator(state, post.media.toPersistentList()) },
                         onAuthorClick = onAuthorClick,
