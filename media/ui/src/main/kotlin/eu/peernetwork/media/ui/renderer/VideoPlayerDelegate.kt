@@ -65,14 +65,13 @@ class VideoPlayerDelegate @Inject constructor(
     ) {
         val lifecycleOwner = LocalLifecycleOwner.current
         val player = remember { media.player() }
-        var isReady by remember { mutableStateOf(false) }
         val isPlaying = remember { mutableStateOf(false) }
         val hasSession = remember { mutableStateOf(false) }
         val errorState = remember { mutableStateOf<Throwable?>(null) }
         val session = remember { mutableLongStateOf(System.currentTimeMillis()) }
         val isLoading = remember { mutableStateOf(!spec.enabled) }
         val scope = rememberCoroutineScope()
-        var mute = media.mute().collectAsStateWithLifecycle(player.isDeviceMuted)
+        val mute = media.mute().collectAsStateWithLifecycle(player.isDeviceMuted)
         val dimension = media.observer.collectAsStateWithLifecycle()
         val audio = remember { context.getSystemService(Context.AUDIO_SERVICE) as AudioManager }
         val lastVolume = remember(spec.enabled) { mutableIntStateOf(audio.getStreamVolume(AudioManager.STREAM_MUSIC)) }
@@ -168,7 +167,6 @@ class VideoPlayerDelegate @Inject constructor(
                         }
                     }
                     it.alpha = dimension.value[spec.url]?.let { 1f } ?: 0f
-                    isReady = dimension.value[spec.url] != null
                 },
                 modifier = Modifier
                     .wrapContentSize()
@@ -245,7 +243,7 @@ class VideoPlayerDelegate @Inject constructor(
     ) {
         val scope = rememberCoroutineScope()
         val player = remember { media.player() }
-        var mute = media.mute().collectAsStateWithLifecycle(player.isDeviceMuted)
+        val mute = media.mute().collectAsStateWithLifecycle(player.isDeviceMuted)
         Row(
             modifier = modifier,
             verticalAlignment = Alignment.CenterVertically,

@@ -18,6 +18,8 @@ import eu.peernetwork.media.core.renderer.VideoThumbnail
 import kotlinx.coroutines.FlowPreview
 import javax.inject.Inject
 import androidx.core.view.isVisible
+import androidx.media3.common.PlaybackException
+import androidx.media3.common.Player
 import eu.peernetwork.media.core.interactor.VideoInteractor
 import eu.peernetwork.media.ui.compose.VolumeControl
 import eu.peernetwork.media.ui.core.MediaPlayer
@@ -38,9 +40,19 @@ class VideoThumbnailDelegate @Inject constructor(
     ) {
         val context = LocalContext.current
         val scope = rememberCoroutineScope()
+        val player = remember { media.player() }
         val surfaceView = remember { TextureView(context) }
         val dimension = media.observer.collectAsStateWithLifecycle()
-        var mute = media.mute().collectAsStateWithLifecycle(media.player().isDeviceMuted)
+        val mute = media.mute().collectAsStateWithLifecycle(media.player().isDeviceMuted)
+        val listener = remember {
+            object : Player.Listener {
+                override fun onPlayerError(error: PlaybackException) {
+                    surfaceView.surfaceTexture?.let {
+                        interactor.attach(it, spec.url)
+                    }
+                }
+            }
+        }
         Box(
             contentAlignment = Alignment.Center,
             modifier = modifier
@@ -90,10 +102,12 @@ class VideoThumbnailDelegate @Inject constructor(
                     if (playing) {
                         surfaceView.surfaceTexture?.let {
                             interactor.attach(it, spec.url)
+                            player.addListener(listener)
                         }
                     } else {
                         surfaceView.surfaceTexture?.let {
                             interactor.detach(it)
+                            player.removeListener(listener)
                         }
                     }
                 }
