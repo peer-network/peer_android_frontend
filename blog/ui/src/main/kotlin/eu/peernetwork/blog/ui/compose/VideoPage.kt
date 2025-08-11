@@ -17,18 +17,18 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.paging.compose.LazyPagingItems
-import eu.peernetwork.blog.ui.engagement.Engagements
+import eu.peernetwork.blog.ui.event.UiEngagementEvent
 import eu.peernetwork.blog.ui.mapper.query
 import eu.peernetwork.blog.ui.model.UiVideo
-import eu.peernetwork.blog.ui.moderation.ModerationAction
+import eu.peernetwork.blog.ui.event.UiModerationEvent
 import eu.peernetwork.media.core.model.UiMimeType
 
 @Composable
 fun VideoPage(
     position: Int,
     enabled: Boolean,
-    engagement: Engagements,
-    moderation: ModerationAction,
+    engagement: UiEngagementEvent,
+    moderation: UiModerationEvent,
     lazyPagingItems: LazyPagingItems<UiVideo>,
     onLoad: (UiVideo) -> Unit,
     onPostClick: (String, Int) -> Unit,
@@ -62,8 +62,8 @@ fun VideoPage(
                 VideoContent(
                     post = post,
                     index = page,
-                    engagements = engagement,
-                    moderationAction = moderation,
+                    uiEngagementEvent = engagement,
+                    uiModerationEvent = moderation,
                     onAuthorClick = onAuthorClick,
                     onPostClick = onPostClick,
                     onMentionClick = onMentionClick,

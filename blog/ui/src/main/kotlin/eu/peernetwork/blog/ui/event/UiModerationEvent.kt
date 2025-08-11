@@ -1,6 +1,6 @@
-package eu.peernetwork.blog.ui.moderation
+package eu.peernetwork.blog.ui.event
 
-data class ModerationAction(
+data class UiModerationEvent(
     val onReport: (String) -> Unit,
     val onSave: (String) -> Unit = {}
 )

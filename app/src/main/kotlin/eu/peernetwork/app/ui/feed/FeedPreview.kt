@@ -24,8 +24,11 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import eu.peernetwork.app.BuildConfig
+import eu.peernetwork.app.extension.navigateToTagSearch
+import eu.peernetwork.app.extension.navigateToUsernameSearch
 import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.blog.domain.model.Category
+import eu.peernetwork.blog.ui.event.UiPostEvent
 import eu.peernetwork.blog.ui.timeline.photo.PhotoScreen
 import eu.peernetwork.blog.ui.timeline.video.VideoScreen
 import eu.peernetwork.core.ui.design.compose.DesignTab
@@ -39,9 +42,9 @@ import kotlinx.coroutines.launch
 @Composable
 fun FeedPreview(
     id: String,
-    enable: State<Boolean>,
     ordinal: Int,
     state: MutableIntState,
+    selected: MutableState<FeedOverlayState>,
     requireUpdate: MutableState<Boolean>,
     component: Feed.Component,
     viewModelStoreOwner: ViewModelStoreOwner,
@@ -51,15 +54,11 @@ fun FeedPreview(
     criteria: Criteria? = null,
     onNavigate: (Int) -> Unit = {},
     onFilter: (Int) -> Unit = {},
-    onAuthorClick: (String) -> Unit = {},
-    onMentionClick: (String) -> Unit = {},
-    onHashtagClick: (String) -> Unit = {},
-    onPhotoClick: (String, Int) -> Unit = { _, _ -> },
-    onVideoClick: (String, Int) -> Unit = { _, _ -> },
 ) {
     val photoState = rememberLazyListState()
     val videoState = rememberLazyListState()
     val coroutine = rememberCoroutineScope()
+    val enable = remember { derivedStateOf { selected.value == FeedOverlayState.Empty } }
     val connection by connectionController.observe().collectAsStateWithLifecycle()
     var category by remember {
         mutableStateOf(Category.entries.getOrNull(ordinal) ?: Category.ALL)
@@ -71,6 +70,23 @@ fun FeedPreview(
         pageCount = { UiMimeType.TYPES.size },
         initialPage = state.intValue
     )
+    val event = remember {
+        object : UiPostEvent {
+            override fun onMentionClick(username: String) = controller.navigateToUsernameSearch(username)
+
+            override fun onHashtagClick(tag: String) = controller.navigateToTagSearch(tag)
+
+            override fun onPostClick(id: String, position: Int) {
+                selected.value = FeedOverlayState.Photo(id, position)
+            }
+
+            override fun onVideoClick(id: String, position: Int) {
+                selected.value = FeedOverlayState.Video(id, position)
+            }
+
+            override fun onAuthorClick(id: String) = controller.navigateIfNecessary("profile/$id")
+        }
+    }
     FeedPreview(
         state = state,
         pageState = pageState,
@@ -85,12 +101,9 @@ fun FeedPreview(
                 postLimit = BuildConfig.PAGING_LIMIT,
                 category = category,
                 criteria = criteria,
-                onMentionClick = onMentionClick,
-                onHashtagClick = onHashtagClick,
-                onPostClick = onPhotoClick,
+                event = event,
                 provider = component,
                 viewModelStoreOwner = viewModelStoreOwner,
-                onAuthorClick = onAuthorClick,
                 requireUpdate = requireUpdate,
                 listState = photoState,
             ) {
@@ -108,12 +121,9 @@ fun FeedPreview(
                 postLimit = BuildConfig.PAGING_LIMIT,
                 category = category,
                 criteria = criteria,
-                onMentionClick = { controller.navigateToUsernameSearch(it) },
-                onHashtagClick = { controller.navigateToTagSearch(it) },
+                event = event,
                 provider = component,
                 viewModelStoreOwner = viewModelStoreOwner,
-                onPostClick = onVideoClick,
-                onAuthorClick = { controller.navigateIfNecessary("profile/$it") },
                 requireUpdate = requireUpdate,
                 listState = videoState,
             ) {

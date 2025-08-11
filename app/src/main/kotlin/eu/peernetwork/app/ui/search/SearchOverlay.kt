@@ -7,8 +7,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import eu.peernetwork.app.ui.feed.navigateToTagSearch
-import eu.peernetwork.app.ui.feed.navigateToUsernameSearch
+import eu.peernetwork.app.extension.navigateToTagSearch
+import eu.peernetwork.app.extension.navigateToUsernameSearch
 import eu.peernetwork.app.ui.window.WindowTitle
 import eu.peernetwork.blog.ui.explore.ExploreOverlay
 import eu.peernetwork.core.ui.design.compose.DesignOverlay

@@ -18,6 +18,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
+import eu.peernetwork.blog.ui.event.UiPostEvent
 import eu.peernetwork.blog.ui.post.photo.PhotoScreen
 import eu.peernetwork.blog.ui.post.video.VideoScreen
 import eu.peernetwork.core.ui.component.UiComponentProvider
@@ -33,11 +34,7 @@ fun ProfileBlog(
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
     onNavigate: (Int) -> Unit = {},
-    onMentionClick: (String) -> Unit = {},
-    onHashtagClick: (String) -> Unit = {},
-    onAuthorClicked: (String) -> Unit = {},
-    onPhotoClick: (String, Int) -> Unit = { id, position -> },
-    onVideoClick: (String, Int) -> Unit = { id, position -> },
+    event: UiPostEvent,
     photoState: LazyListState,
     videoState: LazyListState
 ) {
@@ -49,10 +46,7 @@ fun ProfileBlog(
                 lastUpdated = lastUpdated,
                 provider = provider,
                 viewModelStoreOwner = viewModelStoreOwner,
-                onMentionClick = onMentionClick,
-                onHashtagClick = onHashtagClick,
-                onPostClick = onPhotoClick,
-                onAuthorClick = onAuthorClicked,
+                event = event,
                 listState = photoState
             )
             1 -> VideoScreen(
@@ -62,10 +56,7 @@ fun ProfileBlog(
                 lastUpdated = lastUpdated,
                 provider = provider,
                 viewModelStoreOwner = viewModelStoreOwner,
-                onMentionClick = onMentionClick,
-                onHashtagClick = onHashtagClick,
-                onAuthorClick = onAuthorClicked,
-                onPostClick = onVideoClick,
+                event = event,
                 listState = videoState
             )
         }

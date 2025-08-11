@@ -24,6 +24,7 @@ import eu.peernetwork.blog.ui.compose.PhotoIndicator
 import eu.peernetwork.blog.ui.compose.PhotoPage
 import eu.peernetwork.blog.ui.compose.PhotoPager
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
+import eu.peernetwork.blog.ui.event.UiPostEvent
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.moderation.ModerationScreen
 import eu.peernetwork.core.common.model.Pageable
@@ -41,9 +42,7 @@ fun PhotoOverlay(
     position: Int,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
-    onAuthorClick: (String) -> Unit = {},
-    onMentionClick: (String) -> Unit = {},
-    onHashtagClick: (String) -> Unit = {},
+    event: UiPostEvent,
     header: @Composable () -> Unit = {},
     connection: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit = {}
 ) {
@@ -92,9 +91,9 @@ fun PhotoOverlay(
                 EngagementScreen(
                     postLimit = limit,
                     refresh = refreshed,
-                    onMentionClick = onMentionClick,
-                    onHashtagClick = onHashtagClick,
-                    onAuthorClick = onAuthorClick,
+                    onMentionClick = event::onMentionClick,
+                    onHashtagClick = event::onHashtagClick,
+                    onAuthorClick = event::onAuthorClick,
                     provider = component,
                     viewModelStoreOwner = viewModelStoreOwner
                 ) { engagement ->
@@ -108,9 +107,9 @@ fun PhotoOverlay(
                             engagement = engagement,
                             moderation = moderation,
                             lazyPagingItems = lazyPagingItems,
-                            onAuthorClick = onAuthorClick,
-                            onMentionClick = onMentionClick,
-                            onHashtagClick = onHashtagClick,
+                            onAuthorClick = event::onAuthorClick,
+                            onMentionClick = event::onMentionClick,
+                            onHashtagClick = event::onHashtagClick,
                             connection = connection,
                             header = header,
                             indicator = { state, items -> PhotoIndicator(state, items) },

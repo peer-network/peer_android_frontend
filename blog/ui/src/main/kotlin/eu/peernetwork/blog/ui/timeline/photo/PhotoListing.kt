@@ -23,11 +23,11 @@ import androidx.paging.compose.LazyPagingItems
 import eu.peernetwork.blog.ui.compose.PhotoIndicator
 import eu.peernetwork.blog.ui.compose.PostItem
 import eu.peernetwork.blog.ui.compose.PhotoPager
-import eu.peernetwork.blog.ui.engagement.Engagements
+import eu.peernetwork.blog.ui.event.UiEngagementEvent
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
 import eu.peernetwork.blog.ui.mapper.mapToContent
 import eu.peernetwork.blog.ui.model.UiPost
-import eu.peernetwork.blog.ui.moderation.ModerationAction
+import eu.peernetwork.blog.ui.event.UiModerationEvent
 import eu.peernetwork.blog.ui.moderation.ModerationScreen
 import eu.peernetwork.media.core.renderer.ImageView
 
@@ -37,8 +37,8 @@ fun PhotoListing(
     component: Photo.Component,
     lazyPagingItems: LazyPagingItems<UiPost>,
     listState: LazyListState,
-    engagement: Engagements,
-    moderation: ModerationAction,
+    engagement: UiEngagementEvent,
+    moderation: UiModerationEvent,
     onMentionClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
     onPostClick: (String, Int) -> Unit,
@@ -58,8 +58,8 @@ fun PhotoListing(
                     id = id,
                     post = post,
                     index = index,
-                    engagements = engagement,
-                    moderationAction = moderation,
+                    uiEngagementEvent = engagement,
+                    uiModerationEvent = moderation,
                     onAuthorClick = onAuthorClick,
                     onPostClick = onPostClick,
                     onHashtagClick = onHashtagClick,
@@ -128,8 +128,8 @@ fun LazyItemScope.PhotoListing(
     id: String,
     post: UiPost,
     index: Int,
-    engagements: Engagements,
-    moderationAction: ModerationAction,
+    uiEngagementEvent: UiEngagementEvent,
+    uiModerationEvent: UiModerationEvent,
     onAuthorClick: (String) -> Unit = {},
     onPostClick: (String, Int) -> Unit,
     onMentionClick: (String) -> Unit = {},
@@ -151,12 +151,12 @@ fun LazyItemScope.PhotoListing(
         engagements = {
             EngagementScreen(
                 uiContent,
-                engagements,
+                uiEngagementEvent,
             ) },
         moderation = {
             ModerationScreen(
                 uiContent,
-                moderationAction
+                uiModerationEvent
             )
         },
         content = content,

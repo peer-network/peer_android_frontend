@@ -32,11 +32,11 @@ import androidx.paging.compose.LazyPagingItems
 import eu.peernetwork.blog.ui.compose.MediaView
 import eu.peernetwork.blog.ui.compose.TextView
 import eu.peernetwork.blog.ui.compose.ListPreview
-import eu.peernetwork.blog.ui.engagement.Engagements
+import eu.peernetwork.blog.ui.event.UiEngagementEvent
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
 import eu.peernetwork.blog.ui.mapper.mapToContent
 import eu.peernetwork.blog.ui.model.UiVideo
-import eu.peernetwork.blog.ui.moderation.ModerationAction
+import eu.peernetwork.blog.ui.event.UiModerationEvent
 import eu.peernetwork.blog.ui.moderation.ModerationScreen
 import eu.peernetwork.core.ui.design.compose.DesignThumbnail
 import eu.peernetwork.media.core.renderer.VideoThumbnail
@@ -49,8 +49,8 @@ fun VideoListing(
     viewModel: VideoViewModel,
     lazyPagingItems: LazyPagingItems<UiVideo>,
     listState: LazyListState,
-    engagement: Engagements,
-    moderation: ModerationAction,
+    engagement: UiEngagementEvent,
+    moderation: UiModerationEvent,
     onMentionClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
     onPostClick: (String, Int) -> Unit,
@@ -77,8 +77,8 @@ fun VideoListing(
                         id = id,
                         post = post,
                         index = index,
-                        engagements = engagement,
-                        moderationAction = moderation,
+                        uiEngagementEvent = engagement,
+                        uiModerationEvent = moderation,
                         onAuthorClick = onAuthorClick,
                         onPostClick = onPostClick,
                         onMentionClick = onMentionClick,
@@ -131,8 +131,8 @@ fun VideoListing(
     id: String,
     post: UiVideo,
     index: Int,
-    engagements: Engagements,
-    moderationAction: ModerationAction,
+    uiEngagementEvent: UiEngagementEvent,
+    uiModerationEvent: UiModerationEvent,
     onAuthorClick: (String) -> Unit = {},
     onPostClick: (String, Int) -> Unit,
     onMentionClick: (String) -> Unit = {},
@@ -161,7 +161,7 @@ fun VideoListing(
         },
         engagements = {
             EngagementScreen(
-                event = engagements,
+                event = uiEngagementEvent,
                 model = uiContent,
                 padding = PaddingValues(end = 4.dp),
             )
@@ -169,7 +169,7 @@ fun VideoListing(
         moderation = {
             ModerationScreen(
                 uiContent,
-                moderationAction
+                uiModerationEvent
             )
         },
         modifier = Modifier.padding(bottom = 16.dp),

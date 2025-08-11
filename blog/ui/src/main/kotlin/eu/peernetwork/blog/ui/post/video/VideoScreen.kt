@@ -16,6 +16,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.LoadState
 import eu.peernetwork.blog.ui.compose.PostPlaceholder
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
+import eu.peernetwork.blog.ui.event.UiPostEvent
 import eu.peernetwork.blog.ui.moderation.ModerationScreen
 import eu.peernetwork.core.common.model.Pageable
 import eu.peernetwork.core.ui.component.UiComponentProvider
@@ -32,10 +33,7 @@ fun VideoScreen(
     lastUpdated: State<Long>,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
-    onMentionClick: (String) -> Unit = {},
-    onHashtagClick: (String) -> Unit = {},
-    onAuthorClick: (String) -> Unit = {},
-    onPostClick: (String, Int) -> Unit,
+    event: UiPostEvent,
     listState: LazyListState = rememberLazyListState(),
 ) {
     val context = LocalContext.current
@@ -77,9 +75,9 @@ fun VideoScreen(
         EngagementScreen(
             postLimit = postLimit,
             refresh = refreshed,
-            onMentionClick = onMentionClick,
-            onHashtagClick = onHashtagClick,
-            onAuthorClick = onAuthorClick,
+            onMentionClick = event::onMentionClick,
+            onHashtagClick = event::onHashtagClick,
+            onAuthorClick = event::onAuthorClick,
             provider = component,
             viewModelStoreOwner = viewModelStoreOwner
         ) { engagement ->
@@ -96,9 +94,9 @@ fun VideoScreen(
                     listState = listState,
                     engagement = engagement,
                     moderation = moderation,
-                    onMentionClick = onMentionClick,
-                    onHashtagClick = onHashtagClick,
-                    onPostClick = onPostClick,
+                    onMentionClick = event::onMentionClick,
+                    onHashtagClick = event::onHashtagClick,
+                    onPostClick = event::onVideoClick,
                 )
             }
         }

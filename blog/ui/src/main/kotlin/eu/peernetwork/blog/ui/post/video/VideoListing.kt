@@ -28,11 +28,11 @@ import androidx.paging.compose.LazyPagingItems
 import eu.peernetwork.blog.ui.compose.MediaView
 import eu.peernetwork.blog.ui.compose.TextView
 import eu.peernetwork.blog.ui.compose.ListPreview
-import eu.peernetwork.blog.ui.engagement.Engagements
+import eu.peernetwork.blog.ui.event.UiEngagementEvent
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
 import eu.peernetwork.blog.ui.mapper.mapToContent
 import eu.peernetwork.blog.ui.model.UiVideo
-import eu.peernetwork.blog.ui.moderation.ModerationAction
+import eu.peernetwork.blog.ui.event.UiModerationEvent
 import eu.peernetwork.blog.ui.moderation.ModerationScreen
 import eu.peernetwork.core.ui.design.compose.DesignThumbnail
 import eu.peernetwork.media.core.renderer.VideoThumbnail
@@ -45,8 +45,8 @@ fun VideoListing(
     viewModel: VideoViewModel,
     lazyPagingItems: LazyPagingItems<UiVideo>,
     listState: LazyListState,
-    engagement: Engagements,
-    moderation: ModerationAction,
+    engagement: UiEngagementEvent,
+    moderation: UiModerationEvent,
     onMentionClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
     onPostClick: (String, Int) -> Unit,
@@ -72,7 +72,7 @@ fun VideoListing(
                         index = index,
                         onMentionClick = onMentionClick,
                         onHashtagClick = onHashtagClick,
-                        engagements = engagement,
+                        uiEngagementEvent = engagement,
                         moderation = moderation,
                         onPostClick = onPostClick,
                     ) {
@@ -123,8 +123,8 @@ fun VideoListing(
     index: Int,
     onMentionClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
-    engagements: Engagements,
-    moderation: ModerationAction,
+    uiEngagementEvent: UiEngagementEvent,
+    moderation: UiModerationEvent,
     onPostClick: (String, Int) -> Unit,
     content: @Composable (UiVideo) -> Unit = {}
 ) {
@@ -147,7 +147,7 @@ fun VideoListing(
         engagements = {
             EngagementScreen(
                 uiContent,
-                engagements
+                uiEngagementEvent
             )
         },
         moderation = {

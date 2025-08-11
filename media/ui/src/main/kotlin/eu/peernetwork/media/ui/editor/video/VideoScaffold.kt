@@ -56,7 +56,7 @@ fun VideoScaffold() {
                 repeat(size) {
                     Box(modifier = Modifier.weight(1f)
                         .aspectRatio(1f)
-                        .background(MaterialTheme.colorScheme.surfaceContainerLow))
+                        .background(MaterialTheme.colorScheme.surfaceVariant))
                     if (it != size - 1) {
                         Spacer(modifier = Modifier.width(3.dp))
                     }
@@ -67,7 +67,7 @@ fun VideoScaffold() {
         Box(modifier = Modifier
             .padding(bottom = 24.dp)
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.surfaceContainerLow))
+            .background(MaterialTheme.colorScheme.surfaceVariant))
     }
 }
 

@@ -28,6 +28,7 @@ import eu.peernetwork.blog.ui.engagement.EngagementScreen
 import eu.peernetwork.blog.ui.model.UiVideo
 import eu.peernetwork.blog.ui.moderation.ModerationScreen
 import eu.peernetwork.blog.ui.compose.VideoPage
+import eu.peernetwork.blog.ui.event.UiPostEvent
 import eu.peernetwork.blog.ui.mapper.query
 import eu.peernetwork.core.common.model.Pageable
 import eu.peernetwork.core.ui.component.UiComponentProvider
@@ -47,10 +48,7 @@ fun VideoOverlay(
     position: Int,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
-    onPostClick: (String, Int) -> Unit,
-    onAuthorClick: (String) -> Unit = {},
-    onMentionClick: (String) -> Unit = {},
-    onHashtagClick: (String) -> Unit = {},
+    event: UiPostEvent,
     header: @Composable () -> Unit = {},
     connection: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit = {}
 ) {
@@ -100,9 +98,9 @@ fun VideoOverlay(
                 EngagementScreen(
                     postLimit = limit,
                     refresh = refreshed,
-                    onMentionClick = onMentionClick,
-                    onHashtagClick = onHashtagClick,
-                    onAuthorClick = onAuthorClick,
+                    onMentionClick = event::onMentionClick,
+                    onHashtagClick = event::onHashtagClick,
+                    onAuthorClick = event::onAuthorClick,
                     provider = component,
                     viewModelStoreOwner = viewModelStoreOwner
                 ) { engagement ->
@@ -125,10 +123,10 @@ fun VideoOverlay(
                                     true
                                 )
                             },
-                            onPostClick = onPostClick,
-                            onAuthorClick = onAuthorClick,
-                            onMentionClick = onMentionClick,
-                            onHashtagClick = onHashtagClick,
+                            onPostClick = event::onVideoClick,
+                            onAuthorClick = event::onAuthorClick,
+                            onMentionClick = event::onMentionClick,
+                            onHashtagClick = event::onHashtagClick,
                             progress = {
                                 component.videoPlayer().Controller(
                                     modifier = Modifier.padding(horizontal = 24.dp)
