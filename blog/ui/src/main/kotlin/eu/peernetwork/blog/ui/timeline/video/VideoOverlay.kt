@@ -119,15 +119,6 @@ fun VideoOverlay(
                             engagement = engagement,
                             moderation = moderation,
                             lazyPagingItems = lazyPagingItems,
-                            onLoad = { post ->
-                                viewModel.videoBackground(
-                                    "${post.media}${UiMimeType.Video.query()}",
-                                    post.aspectRatio,
-                                    configuration.screenWidthDp,
-                                    configuration.screenHeightDp,
-                                    true
-                                )
-                            },
                             onPostClick = event::onVideoClick,
                             onAuthorClick = event::onAuthorClick,
                             onMentionClick = event::onMentionClick,
@@ -143,7 +134,19 @@ fun VideoOverlay(
                             },
                             header = header,
                             connection = connection,
-                            background = { DesignThumbnail(thumbnail.value[it]) },
+                            background = { post ->
+                                val path = "${post.media}${UiMimeType.Video.query()}"
+                                val bitmap = remember { derivedStateOf { thumbnail.value[path] } }
+                                DesignThumbnail(post.media, bitmap) {
+                                    viewModel.videoBackground(
+                                        path,
+                                        post.aspectRatio,
+                                        configuration.screenWidthDp,
+                                        configuration.screenHeightDp,
+                                        true
+                                    )
+                                }
+                            },
                             content = { post, shouldPlay, progress ->
                                 component.videoPlayer()(
                                     Modifier,

@@ -74,14 +74,14 @@ fun VideoScreen(
         errorContent = { error, refresh -> DesignError(refresh, error, component.resource()) }
     ) { state, lazyPagingItems ->
         val refreshState = remember { derivedStateOf {
-            if (lazyPagingItems.loadState.refresh is LoadState.Loading) {
-                DesignStatefulScaffoldState.Loading
-            } else if (lazyPagingItems.loadState.refresh is LoadState.Error) {
-                DesignStatefulScaffoldState.Error(
-                    (lazyPagingItems.loadState.refresh as LoadState.Error).error
-                )
-            } else {
-                state.value
+            when (lazyPagingItems.loadState.refresh) {
+                is LoadState.Loading -> DesignStatefulScaffoldState.Loading
+                is LoadState.Error -> {
+                    DesignStatefulScaffoldState.Error(
+                        (lazyPagingItems.loadState.refresh as LoadState.Error).error
+                    )
+                }
+                else -> state.value
             }
         } }
         val refreshed = remember { derivedStateOf {

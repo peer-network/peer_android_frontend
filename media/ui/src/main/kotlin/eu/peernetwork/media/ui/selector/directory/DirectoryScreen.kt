@@ -18,6 +18,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -76,9 +77,7 @@ fun DirectoryScreen(
     }
     val thumbnail = viewModel.thumbnail.collectAsStateWithLifecycle()
     val listState = rememberLazyGridState()
-    val canLoad = remember { derivedStateOf {
-        listState.layoutInfo.totalItemsCount > 0 && !listState.isScrollInProgress
-    } }
+    val enable = remember { derivedStateOf { !listState.isScrollInProgress } }
     DesignStatefulScaffold<Set<UiDirectory>>(
         state = derivedState,
         onRefresh = { viewModel.initialize(type) },
@@ -95,6 +94,7 @@ fun DirectoryScreen(
         ) {
             items(it.size) { index ->
                 val item = it.elementAt(index)
+                val bitmap = remember { derivedStateOf { thumbnail.value[item.thumbnail] } }
                 key(item.name) {
                     Box(
                         contentAlignment = Alignment.BottomStart,
@@ -106,13 +106,13 @@ fun DirectoryScreen(
                             }
                     ) {
                         DesignThumbnail(
-                            enable = canLoad,
+                            enable = enable,
                             thumbnail = item.thumbnail,
-                            bitmap = thumbnail.value[item.thumbnail],
+                            bitmap = bitmap,
                             modifier = Modifier.fillMaxWidth()
                                 .aspectRatio(1f)
                                 .background(MaterialTheme.colorScheme.surfaceVariant)
-                        ) { viewModel.mediaThumbnail(it, type) }
+                        ) { media -> viewModel.mediaThumbnail(media, type) }
                         Image(
                             painter = painterResource(R.drawable.overlay_gradient),
                             contentDescription = null,
@@ -134,12 +134,10 @@ fun DirectoryScreen(
             }
         }
     }
-    LaunchedEffect(canLoad.value) {
-        if (!canLoad.value) {
-            viewModel.reset()
-        }
-    }
     LaunchedEffect(type) {
         viewModel.initialize(type)
+    }
+    DisposableEffect(Unit) {
+        onDispose { viewModel.reset() }
     }
 }

@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.derivedStateOf
@@ -47,6 +48,8 @@ import eu.peernetwork.media.ui.extension.format
 import eu.peernetwork.media.ui.extension.offset
 import eu.peernetwork.media.core.model.UiMediaProperty
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 
 @Composable
@@ -83,7 +86,7 @@ fun VideoScreen(
     } }
     val thumbnail = viewModel.thumbnail.collectAsStateWithLifecycle()
     val scrollState = rememberLazyListState()
-    val canLoad = remember { derivedStateOf { !scrollState.isScrollInProgress } }
+    val enable = remember { derivedStateOf { !scrollState.isScrollInProgress } }
     val handleProceed by rememberUpdatedState(onProceed)
     DesignStatefulScaffold<UiMediaProperty>(
         state = derivedState,
@@ -91,8 +94,8 @@ fun VideoScreen(
         contentAlignment = Alignment.TopCenter,
         modifier = Modifier.fillMaxSize(),
         placeholder = { VideoScaffold() }
-    ) {
-        val duration = it.duration.format()
+    ) { metaData ->
+        val duration = metaData.duration.format()
         val start = remember { mutableLongStateOf(0) }
         val stop = remember { mutableLongStateOf(duration) }
         val progress = remember { mutableFloatStateOf(0f) }
@@ -111,26 +114,27 @@ fun VideoScreen(
             minFrameSize = 2,
             onProceed = {
                 handleProceed(
-                    it.duration.offset(start.longValue),
-                    it.duration.offset(stop.longValue),
-                    it.duration
+                    metaData.duration.offset(start.longValue),
+                    metaData.duration.offset(stop.longValue),
+                    metaData.duration
                 )
             },
-            thumbnail = {
-                val key = "$path?time=$it"
+            thumbnail = { time ->
+                val key = "$path?time=$time"
+                val bitmap = remember { derivedStateOf { thumbnail.value[key] } }
                 DesignThumbnail(
                     thumbnail = path,
-                    enable = canLoad,
-                    bitmap = thumbnail.value[key],
+                    enable = enable,
+                    bitmap = bitmap,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(64.dp)
-                        .background(MaterialTheme.colorScheme.tertiaryContainer)
+                        .background(MaterialTheme.colorScheme.surfaceVariant)
                 ) { path ->
                     viewModel.videoThumbnail(
                         path,
                         key,
-                        it * 1_000_000L
+                        time * 1_000_000L
                     )
                 }
             }
@@ -139,18 +143,19 @@ fun VideoScreen(
                 val key = "$path?blur=true"
                 val width = with(density) { maxWidth.toPx().toInt() }
                 val height = with(density) { maxHeight.toPx().toInt() }
+                val bitmap = remember { derivedStateOf { thumbnail.value[key] } }
                 DesignThumbnail(
                     thumbnail = path,
-                    enable = canLoad,
-                    bitmap = thumbnail.value[key],
+                    enable = enable,
+                    bitmap = bitmap,
                     modifier = Modifier.fillMaxSize()
-                        .background(MaterialTheme.colorScheme.surfaceContainerLow)
+                        .background(MaterialTheme.colorScheme.surfaceVariant)
                 ) { path -> viewModel.cover(path, width, height) }
                 component.videoPlayer()(
                     Modifier.fillMaxHeight(),
                     VideoPlayer.Spec(
                         url = path,
-                        ratio = it.height / it.width.toFloat(),
+                        ratio = metaData.height / metaData.width.toFloat(),
                         progress = progress,
                         resolution = Pair(width, height),
                         length = length,
@@ -175,36 +180,45 @@ fun VideoScreen(
                         isReady.value = true
                     }
             }
-            LaunchedEffect(preview.value) {
-                if (preview.value) {
-                    player.play()
-                } else {
-                    player.pause()
+            LaunchedEffect(Unit) {
+                snapshotFlow { preview.value }
+                    .collect { value ->
+                        if (value) {
+                            player.play()
+                        } else {
+                            player.pause()
+                        }
+                    }
+            }
+            LaunchedEffect(Unit) {
+                snapshotFlow { progress.floatValue }
+                    .collect { value ->
+                        val startOffset = metaData.duration.offset(start.longValue)
+                        val endOffset = metaData.duration.offset(stop.longValue)
+                        if (player.currentPosition >= endOffset) {
+                            player.seekTo(startOffset)
+                        } else if (player.currentPosition < startOffset) {
+                            player.seekTo(startOffset)
+                            player.play()
+                        }
+                    }
+            }
+            LaunchedEffect(Unit) {
+                combine(
+                    snapshotFlow { start.longValue },
+                    snapshotFlow { stop.longValue }
+                ) { begin, end -> Pair(begin, end) }.collectLatest {
+                    preview.value = false
+                    player.seekTo(metaData.duration.offset(it.first))
                 }
             }
-            LaunchedEffect(progress.floatValue) {
-                val startOffset = it.duration.offset(start.longValue)
-                val endOffset = it.duration.offset(stop.longValue)
-                if (player.currentPosition >= endOffset) {
-                    player.seekTo(startOffset)
-                } else if (player.currentPosition < startOffset) {
-                    player.seekTo(startOffset)
-                    player.play()
-                }
-            }
-            LaunchedEffect(start.longValue, stop.longValue) {
-                preview.value = false
-                player.seekTo(it.duration.offset(start.longValue))
-            }
-        }
-    }
-    LaunchedEffect(canLoad.value) {
-        if (!canLoad.value) {
-            viewModel.reset()
         }
     }
     LaunchedEffect(Unit) {
         viewModel.get(path)
+    }
+    DisposableEffect(Unit) {
+        onDispose { viewModel.reset() }
     }
 }
 
@@ -267,12 +281,12 @@ fun PreviewVideoScreen() {
                 Box(modifier = Modifier
                     .fillMaxWidth()
                     .height(64.dp)
-                    .background(MaterialTheme.colorScheme.tertiaryContainer))
+                    .background(MaterialTheme.colorScheme.surfaceVariant))
             }
         ) {
             Box(modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background))
+                .background(MaterialTheme.colorScheme.surfaceVariant))
         }
     }
 }

@@ -12,6 +12,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
@@ -76,7 +77,6 @@ fun VideoScreen(
             }
         }
     }
-    val current = rememberSaveable(directory.value) { mutableStateOf(directory.value) }
     val selected = rememberSaveable(saver = UiAttachmentSaver) { mutableStateOf<UiAttachment>(
         (attachment.value as? UiAttachment.File?)?.let {
             if (it.type != UiMimeType.Video) {
@@ -89,10 +89,8 @@ fun VideoScreen(
     val color = MaterialTheme.colorScheme.primary
     val thumbnail = viewModel.thumbnail.collectAsStateWithLifecycle()
     val listState = rememberLazyGridState()
-    val canLoad = remember { derivedStateOf {
-        listState.layoutInfo.totalItemsCount > 0 && !listState.isScrollInProgress
-    } }
     val handleSelect by rememberUpdatedState(onSelect)
+    val enable = remember { derivedStateOf { !listState.isScrollInProgress } }
     DesignStatefulScaffold<List<UiFile>>(
         state = derivedState,
         onRefresh = { viewModel.initialize(directory.value) },
@@ -108,6 +106,7 @@ fun VideoScreen(
             horizontalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             items(it.size) { index ->
+                val bitmap = remember { derivedStateOf { thumbnail.value[it[index].path] } }
                 Box(modifier = Modifier.aspectRatio(1f)
                     .background(MaterialTheme.colorScheme.surfaceVariant)
                     .clickable(role = Role.Button) {
@@ -126,13 +125,13 @@ fun VideoScreen(
                         }
                     }) {
                     DesignThumbnail(
-                        enable = canLoad,
+                        enable = enable,
                         thumbnail = it[index].path,
-                        bitmap = thumbnail.value[it[index].path],
+                        bitmap = bitmap,
                         modifier = Modifier.fillMaxWidth()
                             .aspectRatio(1f)
                             .background(MaterialTheme.colorScheme.surfaceVariant)
-                    ) { viewModel.mediaThumbnail(it, UiMimeType.Video) }
+                    ) { media -> viewModel.mediaThumbnail(media, UiMimeType.Video) }
                     Box(modifier = Modifier.fillMaxSize()
                         .graphicsLayer {
                             alpha = if (selected.value.files.firstOrNull()?.path == it[index].path) {
@@ -151,13 +150,11 @@ fun VideoScreen(
                 }
             }
         }
-        LaunchedEffect(canLoad.value, directory.value) {
-            if (!canLoad.value) {
-                viewModel.reset()
-            }
-        }
     }
-    LaunchedEffect(current.value) {
+    LaunchedEffect(directory.value) {
         viewModel.initialize(directory.value)
+    }
+    DisposableEffect(Unit) {
+        onDispose { viewModel.reset() }
     }
 }

@@ -73,10 +73,10 @@ fun AttachmentPreview(
         onRemove = onRemove,
         onPreview = onPreview,
     ) { index ->
-        DesignThumbnail(
-            attached.files[index].path,
-            handleOnLoad(attached.files[index].path),
-        ) { handleOnRefresh(index) }
+//        DesignThumbnail(
+//            attached.files[index].path,
+//            handleOnLoad(attached.files[index].path),
+//        ) { handleOnRefresh(index) }
     }
     LaunchedEffect(pagerState.currentPage) {
         if (pagerState.currentPage != pagerState.pageCount - 1) {
