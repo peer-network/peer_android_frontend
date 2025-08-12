@@ -1,7 +1,7 @@
 package eu.peernetwork.app.interactor
 
 interface SettingsInteractor {
-    fun set(url: String)
+    suspend fun setUser(user: String)
 
-    fun invite(url: String)
+    suspend fun setMode(mode: String)
 }

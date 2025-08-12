@@ -1,5 +1,7 @@
 package eu.peernetwork.user.remote.api
 
+import com.apollographql.apollo3.api.Optional
+import eu.peernetwork.core.common.interactor.SessionInteractor
 import eu.peernetwork.core.common.model.Page
 import eu.peernetwork.core.common.model.Pageable
 import eu.peernetwork.core.remote.extension.assertOrThrow
@@ -9,6 +11,7 @@ import eu.peernetwork.core.remote.api.RequestClient
 import eu.peernetwork.user.data.api.SearchApi
 import eu.peernetwork.user.domain.model.User
 import eu.peernetwork.user.remote.mapper.mapToDomain
+import eu.peernetwork.user.remote.mapper.mapToScope
 import protected.eu.peernetwork.user.remote.SearchuserQuery
 import javax.inject.Inject
 import javax.inject.Named
@@ -16,9 +19,15 @@ import javax.inject.Named
 class SearchApiDelegate @Inject constructor(
     @Named("mediaUrl") private val url: String,
     private val client: RequestClient,
+    private val sessionInteractor: SessionInteractor
 ) : SearchApi {
     override suspend fun findByUsername(username: String, pageable: Pageable): Page<User> {
-        val query = SearchuserQuery(username, pageable.offset, pageable.limit)
+        val query = SearchuserQuery(
+            username,
+            Optional.present(sessionInteractor.mode().mapToScope()),
+            pageable.offset,
+            pageable.limit
+        )
         val response = client().query(query).executeOrThrow()
         val data = response.getOrThrow().searchUser
         response.assertOrThrow(data.status, data.ResponseCode)

@@ -8,9 +8,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import eu.peernetwork.app.extension.navigateToTagSearch
+import eu.peernetwork.app.extension.navigateToUsernameSearch
 import eu.peernetwork.app.ui.window.WindowTitle
 import eu.peernetwork.blog.domain.model.Filter.Criteria
-import eu.peernetwork.blog.domain.model.Relation
+import eu.peernetwork.blog.domain.model.Category
+import eu.peernetwork.blog.ui.event.UiPostEvent
 import eu.peernetwork.blog.ui.timeline.photo.PhotoOverlay
 import eu.peernetwork.blog.ui.timeline.video.VideoOverlay
 import eu.peernetwork.core.ui.design.compose.DesignOverlay
@@ -54,6 +57,23 @@ fun FeedOverlay(
         onDismiss = { overlay.value = FeedOverlayState.Empty }
     ) { controller ->
         val overlayState = remember { mutableStateOf<FeedOverlayState?>(overlay.value) }
+        val event = remember {
+            object : UiPostEvent {
+                override fun onMentionClick(username: String) = controller.navigateToUsernameSearch(username)
+
+                override fun onHashtagClick(tag: String) = controller.navigateToTagSearch(tag)
+
+                override fun onPostClick(id: String, position: Int) {
+                    overlay.value = FeedOverlayState.Photo(id, position)
+                }
+
+                override fun onVideoClick(id: String, position: Int) {
+                    overlay.value = FeedOverlayState.Video(id, position)
+                }
+
+                override fun onAuthorClick(id: String) = controller.navigateIfNecessary("profile/$id")
+            }
+        }
         FeedNavigation(
             userId = userId,
             startDestination = "overlay",
@@ -67,16 +87,14 @@ fun FeedOverlay(
                 is FeedOverlayState.Photo -> {
                     val state = (overlayState.value as FeedOverlayState.Photo)
                     PhotoOverlay(
-                        userId,
-                        postLimit,
-                        state.position,
-                        Relation.NONE,
-                        criteria,
-                        component,
-                        viewModelStore.get(criteria?.toString() ?: userId),
-                        onMentionClick = { controller.navigateToUsernameSearch(it) },
-                        onHashtagClick = { controller.navigateToTagSearch(it) },
-                        onAuthorClick = { controller.navigateIfNecessary("profile/$it") },
+                        id = userId,
+                        limit = postLimit,
+                        position = state.position,
+                        category = Category.ALL,
+                        criteria = criteria,
+                        provider = component,
+                        viewModelStoreOwner = viewModelStore.get(criteria?.toString() ?: userId),
+                        event = event,
                         header = {
                             WindowTitle(
                                 id = userId,
@@ -96,18 +114,14 @@ fun FeedOverlay(
                 is FeedOverlayState.Video -> {
                     val state = (overlayState.value as FeedOverlayState.Video)
                     VideoOverlay(
-                        postLimit,
-                        state.position,
-                        visible.value,
-                        Relation.NONE,
-                        criteria,
-                        component,
-                        viewModelStore.get(criteria?.toString() ?: userId),
-                        onPostClick = { id, index ->
-                            overlay.value = FeedOverlayState.Video(id, index) },
-                        onMentionClick = { controller.navigateToUsernameSearch(it) },
-                        onHashtagClick = { controller.navigateToTagSearch(it) },
-                        onAuthorClick = { controller.navigateIfNecessary("profile/$it") },
+                        limit = postLimit,
+                        position = state.position,
+                        enabled = visible.value,
+                        category = Category.ALL,
+                        criteria = criteria,
+                        provider = component,
+                        viewModelStoreOwner = viewModelStore.get(criteria?.toString() ?: userId),
+                        event = event,
                         header = {
                             WindowTitle(
                                 id = userId,

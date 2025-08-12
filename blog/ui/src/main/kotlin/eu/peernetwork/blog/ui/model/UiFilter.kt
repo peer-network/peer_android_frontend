@@ -1,8 +1,8 @@
-package eu.peernetwork.app.model
+package eu.peernetwork.blog.ui.model
 
-import eu.peernetwork.user.ui.R
+import eu.peernetwork.blog.ui.R
 
-enum class UiRelation(val value: Int) {
+enum class UiFilter(val value: Int) {
     ALL(R.string.feed_label),
     FOLLOWED(R.string.following_label),
     FOLLOWER(R.string.follower_label)

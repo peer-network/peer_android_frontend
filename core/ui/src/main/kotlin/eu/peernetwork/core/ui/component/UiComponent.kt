@@ -1,7 +1,6 @@
 package eu.peernetwork.core.ui.component
 
 import android.content.Context
-import android.os.Parcelable
 
 interface UiComponent {
     interface Provider<T> {
@@ -14,7 +13,7 @@ interface UiComponent {
         abstract fun build(context: Context): C
     }
 
-    abstract class ParameterizedBuilder<A : Parcelable, P, C : P> : Builder {
+    abstract class ParameterizedBuilder<A, P, C : P> : Builder {
         abstract fun build(context: Context, param: A): C
     }
 }

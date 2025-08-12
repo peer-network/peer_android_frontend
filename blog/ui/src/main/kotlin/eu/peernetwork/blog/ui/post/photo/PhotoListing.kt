@@ -21,11 +21,11 @@ import androidx.paging.compose.LazyPagingItems
 import eu.peernetwork.blog.ui.compose.PhotoIndicator
 import eu.peernetwork.blog.ui.compose.PostItem
 import eu.peernetwork.blog.ui.compose.PhotoPager
-import eu.peernetwork.blog.ui.engagement.Engagements
+import eu.peernetwork.blog.ui.event.UiEngagementEvent
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
 import eu.peernetwork.blog.ui.mapper.mapToContent
 import eu.peernetwork.blog.ui.model.UiPost
-import eu.peernetwork.blog.ui.moderation.Moderations
+import eu.peernetwork.blog.ui.event.UiModerationEvent
 import eu.peernetwork.blog.ui.moderation.ModerationScreen
 import eu.peernetwork.media.core.renderer.ImageView
 
@@ -35,8 +35,8 @@ fun PhotoListing(
     component: Photo.Component,
     lazyPagingItems: LazyPagingItems<UiPost>,
     listState: LazyListState,
-    engagement: Engagements,
-    moderation: Moderations,
+    engagement: UiEngagementEvent,
+    moderation: UiModerationEvent,
     onMentionClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
     onPostClick: (String, Int) -> Unit,
@@ -53,8 +53,8 @@ fun PhotoListing(
                     onPostClick = onPostClick,
                     onMentionClick = onMentionClick,
                     onHashtagClick = onHashtagClick,
-                    engagements = engagement,
-                    moderations = moderation
+                    uiEngagementEvent = engagement,
+                    uiModerationEvent = moderation
                 ) {
                     if (photo.media.size > 1) {
                         val pagerState = rememberPagerState(initialPage = 0) { photo.media.size }
@@ -118,8 +118,8 @@ fun LazyItemScope.PhotoListing(
     onMentionClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
     onPostClick: (String, Int) -> Unit,
-    engagements: Engagements,
-    moderations: Moderations,
+    uiEngagementEvent: UiEngagementEvent,
+    uiModerationEvent: UiModerationEvent,
     content: @Composable (UiPost) -> Unit = {}
 ) {
     val uiContent = post.mapToContent()
@@ -132,12 +132,12 @@ fun LazyItemScope.PhotoListing(
         onHashtagClick = onHashtagClick,
         engagements = { EngagementScreen(
             uiContent,
-            engagements
+            uiEngagementEvent
         ) },
         moderation = {
             ModerationScreen(
                 model = uiContent,
-                event = moderations
+                event = uiModerationEvent
             )
         },
         content = content

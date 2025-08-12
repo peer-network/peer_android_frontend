@@ -1,12 +1,11 @@
-package eu.peernetwork.blog.ui.usecase
+package eu.peernetwork.media.core.usecase
 
 import android.graphics.Bitmap
 import eu.peernetwork.core.common.usecase.ParameterizedSuspendableUseCase
 import eu.peernetwork.media.core.interactor.ThumbnailInteractor
 import eu.peernetwork.media.core.model.UiMimeType
-import javax.inject.Inject
 
-class BackgroundUsecase @Inject constructor(
+class BackgroundUsecase(
     private val interactor: ThumbnailInteractor,
 ) : ParameterizedSuspendableUseCase<BackgroundUsecase.Parameter, Bitmap?> {
     override suspend fun invoke(param: Parameter): Bitmap? {

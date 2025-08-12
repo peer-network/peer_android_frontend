@@ -50,6 +50,7 @@ import kotlinx.coroutines.flow.debounce
 fun AttachmentScreen(
     attachment: MutableState<UiAttachment>,
     onAttach: () -> Unit,
+    onPreview: (UiAttachment) -> Unit,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
     modifier: Modifier = Modifier,
@@ -76,10 +77,11 @@ fun AttachmentScreen(
             listOf(Manifest.permission.READ_EXTERNAL_STORAGE)
         }
     )
+    val handleOnPreview by rememberUpdatedState(onPreview)
     val handleOnAttach by rememberUpdatedState(onAttach)
     val thumbnail = viewModel.thumbnail.collectAsStateWithLifecycle().value
     val imageToCrop = remember { mutableStateOf<Uri?>(null) }
-    val ratio = remember { mutableStateOf<PhotoAspectRatio>(PhotoAspectRatio.Square) }
+    val ratio = remember { mutableStateOf(PhotoAspectRatio.Square) }
     val launcher = remember { mutableLongStateOf(System.currentTimeMillis()) }
     AttachmentScreen(
         modifier = modifier,
@@ -87,7 +89,7 @@ fun AttachmentScreen(
         onLoad = { thumbnail[it] },
         onRefresh = {
             viewModel.thumbnail(
-                attachment.value.files[it].thumbnail,
+                attachment.value.files[it].path,
                 attachment.value.media
             )
         },
@@ -100,16 +102,20 @@ fun AttachmentScreen(
         },
         onSelect = { imageToCrop.value = attachment.value.files[it].uri },
         onPreview = {
-            imageToCrop.value = attachment.value.files[it].uri
-            launcher.longValue = System.currentTimeMillis() },
+            if (attachment.value.media == UiMimeType.Photo) {
+                imageToCrop.value = attachment.value.files[it].uri
+                launcher.longValue = System.currentTimeMillis()
+            } else {
+                handleOnPreview(attachment.value)
+            }},
         onSquareClick = {
             ratio.value = PhotoAspectRatio.Square
             launcher.longValue = System.currentTimeMillis() },
         onPortraitClick = {
             ratio.value = PhotoAspectRatio.Portrait
             launcher.longValue = System.currentTimeMillis() },
-        onDetach = {
-            val removed = attachment.value.files[it]
+        onDetach = { index ->
+            val removed = attachment.value.files[index]
             attachment.value = UiAttachment.File(
                 attachment.value.media,
                 attachment.value.files.filterNot {
@@ -213,7 +219,7 @@ fun PreviewAttachmentScreen() {
         val thumbnail = uri.toString()
         val attachment = UiAttachment.File(
             UiMimeType.Photo,
-            persistentListOf(UiFile(uri = uri, thumbnail = thumbnail))
+            persistentListOf(UiFile(uri = uri, path = thumbnail))
         )
         val state = remember { mutableStateOf<UiAttachment>(attachment) }
         AttachmentScreen(

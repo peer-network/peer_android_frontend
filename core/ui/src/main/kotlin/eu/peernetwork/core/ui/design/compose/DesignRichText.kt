@@ -3,7 +3,6 @@ package eu.peernetwork.core.ui.design.compose
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -36,7 +35,7 @@ fun DesignRichText(
     val handleOnClick by rememberUpdatedState(onClick)
     val handleMentionClick by rememberUpdatedState(onMentionClick)
     val handleHashtagClick by rememberUpdatedState(onHashtagClick)
-    ClickableText(
+    DesignCollapsibleText(
         text = text,
         style = style,
         overflow = TextOverflow.Ellipsis,
@@ -94,7 +93,7 @@ fun DesignRichText(
         verticalArrangement = verticalArrangement,
         horizontalAlignment = horizontalAlignment
     ) {
-        ClickableText(
+        DesignCollapsibleText(
             text = title,
             style = textStyle.style,
             overflow = TextOverflow.Ellipsis,
@@ -112,7 +111,7 @@ fun DesignRichText(
         )
         spacer()
         if (description.isNotEmpty()) {
-            ClickableText(
+            DesignCollapsibleText(
                 text = description,
                 maxLines = maxContentLines,
                 overflow = TextOverflow.Ellipsis,

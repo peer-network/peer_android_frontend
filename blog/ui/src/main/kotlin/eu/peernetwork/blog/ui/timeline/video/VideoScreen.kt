@@ -5,7 +5,6 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -16,39 +15,34 @@ import eu.peernetwork.core.ui.extension.builder
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import eu.peernetwork.blog.domain.model.Filter.Criteria
-import eu.peernetwork.blog.domain.model.Relation
-import eu.peernetwork.blog.ui.model.UiVideo
+import eu.peernetwork.blog.domain.model.Category
 import eu.peernetwork.blog.ui.compose.PostPlaceholder
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
+import eu.peernetwork.blog.ui.event.UiPostEvent
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.moderation.ModerationScreen
 import eu.peernetwork.core.ui.design.component.DesignError
 import eu.peernetwork.core.ui.design.component.DesignPagingScaffold
 import eu.peernetwork.core.ui.design.component.DesignRefreshableScaffold
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
-import eu.peernetwork.media.core.model.UiMimeType
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VideoScreen(
     id: String,
-    enable: Boolean,
+    enable: State<Boolean>,
     postLimit: Int,
-    relation: Relation,
+    category: Category,
     criteria: Criteria? = null,
-    onMentionClick: (String) -> Unit = {},
-    onHashtagClick: (String) -> Unit = {},
+    event: UiPostEvent,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
-    onPostClick: (String, Int) -> Unit,
-    onAuthorClick: (String) -> Unit = {},
     requireUpdate: MutableState<Boolean>,
     listState: LazyListState = rememberLazyListState(),
     connection: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit = {}
 ) {
     val context = LocalContext.current
-    val configuration = LocalConfiguration.current
     val coroutine = rememberCoroutineScope()
     val component = remember {
         provider.builder(Video.Builder::class.java).build(context)
@@ -73,27 +67,21 @@ fun VideoScreen(
             }
         }
     }
-    val thumbnail = viewModel.thumbnail.collectAsStateWithLifecycle()
-    val canLoad = remember { derivedStateOf {
-        listState.layoutInfo.totalItemsCount > 0 && !listState.isScrollInProgress
-    } }
-    DesignPagingScaffold<UiVideo>(
+    DesignPagingScaffold(
         state = derivedState,
-        onRefresh = { viewModel.load(Pageable(0, postLimit), relation, criteria) },
+        onRefresh = { viewModel.load(Pageable(0, postLimit), category, criteria) },
         placeholder = { PostPlaceholder() },
-        errorContent = { error, refresh ->
-            DesignError(refresh, error, component.resource())
-        }
+        errorContent = { error, refresh -> DesignError(refresh, error, component.resource()) }
     ) { state, lazyPagingItems ->
         val refreshState = remember { derivedStateOf {
-            if (lazyPagingItems.loadState.refresh is LoadState.Loading) {
-                DesignStatefulScaffoldState.Loading
-            } else if (lazyPagingItems.loadState.refresh is LoadState.Error) {
-                DesignStatefulScaffoldState.Error(
-                    (lazyPagingItems.loadState.refresh as LoadState.Error).error
-                )
-            } else {
-                state.value
+            when (lazyPagingItems.loadState.refresh) {
+                is LoadState.Loading -> DesignStatefulScaffoldState.Loading
+                is LoadState.Error -> {
+                    DesignStatefulScaffoldState.Error(
+                        (lazyPagingItems.loadState.refresh as LoadState.Error).error
+                    )
+                }
+                else -> state.value
             }
         } }
         val refreshed = remember { derivedStateOf {
@@ -106,9 +94,9 @@ fun VideoScreen(
             EngagementScreen(
                 postLimit,
                 refreshed,
-                onMentionClick,
-                onHashtagClick,
-                onAuthorClick,
+                event::onMentionClick,
+                event::onHashtagClick,
+                event::onAuthorClick,
                 component,
                 viewModelStoreOwner
             ) { engagement ->
@@ -118,17 +106,17 @@ fun VideoScreen(
                 ) { moderation ->
                     VideoListing(
                         id = id,
-                        enable = enable,
+                        state = enable,
                         component = component,
+                        viewModel = viewModel,
                         listState = listState,
                         lazyPagingItems = lazyPagingItems,
                         engagement = engagement,
                         moderation = moderation,
-                        onPostClick = onPostClick,
-                        onLoadBitmap = { thumbnail.value[it] },
-                        onAuthorClick = onAuthorClick,
-                        onHashtagClick = onHashtagClick,
-                        onMentionClick = onMentionClick,
+                        onPostClick = event::onVideoClick,
+                        onAuthorClick = event::onAuthorClick,
+                        onHashtagClick = event::onHashtagClick,
+                        onMentionClick = event::onMentionClick,
                         connection = connection
                     )
                 }
@@ -143,22 +131,10 @@ fun VideoScreen(
                 requireUpdate.value = false
             }
         }
-        LaunchedEffect(canLoad.value) {
-            if (canLoad.value) {
-                viewModel.sync(
-                    lazyPagingItems.itemSnapshotList.items,
-                    UiMimeType.Video,
-                    configuration.screenWidthDp,
-                    listState.firstVisibleItemIndex,
-                    listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index
-                        ?: listState.firstVisibleItemIndex
-                )
-            }
-        }
     }
-    LaunchedEffect(relation, criteria) {
-        if (relation != viewModel.lastRelation) {
-            viewModel.load(Pageable(0, postLimit), relation, criteria)
+    LaunchedEffect(category, criteria) {
+        if (category != viewModel.lastCategory) {
+            viewModel.load(Pageable(0, postLimit), category, criteria)
         }
     }
 }

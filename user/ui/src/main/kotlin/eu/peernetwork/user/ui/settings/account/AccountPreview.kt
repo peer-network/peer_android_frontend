@@ -20,7 +20,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -67,7 +66,7 @@ fun AccountPreview(
                 AccountViewModel.State.Loading -> DesignStatefulScaffoldState.Loading
                 is AccountViewModel.State.Content -> {
                     val content = (state as AccountViewModel.State.Content)
-                    DesignStatefulScaffoldState.Success(Pair(content.account, content.inviteUrl))
+                    DesignStatefulScaffoldState.Success(content.account)
                 }
                 is AccountViewModel.State.Failure -> {
                     DesignStatefulScaffoldState.Error((state as AccountViewModel.State.Failure).error)
@@ -75,7 +74,7 @@ fun AccountPreview(
             }
         }
     }
-    DesignStatefulScaffold<Pair<UiAccount, String>>(
+    DesignStatefulScaffold<UiAccount>(
         modifier = modifier,
         state = derivedState,
         onRefresh = { viewModel.getAccount() },
@@ -89,9 +88,9 @@ fun AccountPreview(
             }
         }
     ) {
-        AccountPreview(it.first.username, onClick = onClick) {
+        AccountPreview(it.username, onClick = onClick) {
             DesignAvatar {
-                DesignAsyncImage(it.first.username, it.first.imageUrl, size = 48.dp)
+                DesignAsyncImage(it.username, it.imageUrl, size = 48.dp)
             }
         }
     }

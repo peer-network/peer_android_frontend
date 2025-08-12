@@ -17,11 +17,11 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import eu.peernetwork.blog.ui.engagement.Engagements
+import eu.peernetwork.blog.ui.event.UiEngagementEvent
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
 import eu.peernetwork.blog.ui.mapper.mapToContent
 import eu.peernetwork.blog.ui.model.UiVideo
-import eu.peernetwork.blog.ui.moderation.Moderations
+import eu.peernetwork.blog.ui.event.UiModerationEvent
 import eu.peernetwork.blog.ui.moderation.ModerationScreen
 import eu.peernetwork.core.ui.design.compose.DesignRichText
 import eu.peernetwork.core.ui.design.compose.DesignTitleStyle
@@ -30,8 +30,8 @@ import eu.peernetwork.core.ui.design.compose.DesignTitleStyle
 fun VideoContent(
     post: UiVideo,
     index: Int,
-    engagements: Engagements,
-    moderations: Moderations,
+    uiEngagementEvent: UiEngagementEvent,
+    uiModerationEvent: UiModerationEvent,
     onAuthorClick: (String) -> Unit = {},
     onPostClick: (String, Int) -> Unit,
     onMentionClick: (String) -> Unit = {},
@@ -79,7 +79,7 @@ fun VideoContent(
         },
         engagements = {
             EngagementScreen(
-                event = engagements,
+                event = uiEngagementEvent,
                 model = uiContent,
                 size = 36.dp,
                 spacer = 6.dp,
@@ -91,7 +91,7 @@ fun VideoContent(
         moderation = {
             ModerationScreen(
                 uiContent,
-                moderations,
+                uiModerationEvent,
                 color = MaterialTheme.colorScheme.onBackground,
             )
         },

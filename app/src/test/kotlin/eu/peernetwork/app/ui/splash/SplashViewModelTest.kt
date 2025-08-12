@@ -2,8 +2,10 @@ package eu.peernetwork.app.ui.splash
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import app.cash.turbine.test
+import eu.peernetwork.app.usecase.LogDeviceModelUsecase
 import eu.peernetwork.app.usecase.VersionUseCase
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.mockk
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.Dispatchers
@@ -20,19 +22,21 @@ import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class SplashViewModelTest {
+
     @get:Rule
     val instantExecutorRule = InstantTaskExecutorRule()
 
     private val dispatcher = UnconfinedTestDispatcher()
 
     private val versionUseCase = mockk<VersionUseCase>()
+    private val logDeviceModelUsecase = mockk<LogDeviceModelUsecase>()
 
     private lateinit var viewModel: SplashViewModel
 
     @Before
     fun setup() {
         Dispatchers.setMain(dispatcher)
-        viewModel = SplashViewModel(versionUseCase)
+        viewModel = SplashViewModel(versionUseCase, logDeviceModelUsecase)
     }
 
     @After
@@ -41,25 +45,87 @@ internal class SplashViewModelTest {
     }
 
     @Test
-    fun `test initialize state`() = runTest {
+    fun `test initialize state - UpToDate`() = runTest {
+        coEvery { logDeviceModelUsecase() } returns Unit
         coEvery { versionUseCase() } coAnswers {
             delay(100)
             VersionUseCase.Result.UpToDate
         }
+
         viewModel.initialize()
+
         viewModel.state.test {
             assertEquals(SplashViewModel.State.Loading, awaitItem())
             assertEquals(SplashViewModel.State.Success(), awaitItem())
         }
+
+        coVerify(exactly = 1) { logDeviceModelUsecase() }
+        coVerify(exactly = 1) { versionUseCase() }
     }
 
     @Test
-    fun `test initialize state error`() = runTest {
+    fun `test initialize state - Outdated`() = runTest {
         val url = "<test-url>"
+
+        coEvery { logDeviceModelUsecase() } returns Unit
         coEvery { versionUseCase() } returns VersionUseCase.Result.Outdated(url)
+
         viewModel.initialize()
+
         viewModel.state.test {
             assertEquals(SplashViewModel.State.Success(url), awaitItem())
         }
+
+        coVerify(exactly = 1) { logDeviceModelUsecase() }
+        coVerify(exactly = 1) { versionUseCase() }
+    }
+
+
+    @Test
+    fun `test initialize state - VersionUseCase error`() = runTest {
+        val exception = Throwable("Simulated error")
+
+        coEvery { logDeviceModelUsecase() } returns Unit
+        coEvery { versionUseCase() } returns VersionUseCase.Result.Error(exception)
+
+        viewModel.initialize()
+
+        viewModel.state.test {
+            assertEquals(SplashViewModel.State.Error(exception), awaitItem())
+        }
+
+        coVerify(exactly = 1) { logDeviceModelUsecase() }
+        coVerify(exactly = 1) { versionUseCase() }
+    }
+
+    @Test
+    fun `test initialize state - LogDeviceModelUsecase success`() = runTest {
+        coEvery { logDeviceModelUsecase() } returns Unit
+        coEvery { versionUseCase() } returns VersionUseCase.Result.UpToDate
+
+        viewModel.initialize()
+
+        viewModel.state.test {
+            assertEquals(SplashViewModel.State.Success(), awaitItem())
+        }
+
+        coVerify(exactly = 1) { logDeviceModelUsecase() }
+        coVerify(exactly = 1) { versionUseCase() }
+    }
+    
+    @Test
+    fun `test initialize state - LogDeviceModelUsecase throws error`() = runTest {
+        val exception = Throwable("Device log failed")
+
+        coEvery { logDeviceModelUsecase() } throws exception
+
+        viewModel.initialize()
+
+        viewModel.state.test {
+            assertEquals(SplashViewModel.State.Error(exception), awaitItem())
+        }
+
+        coVerify(exactly = 1) { logDeviceModelUsecase() }
+        coVerify(exactly = 0) { versionUseCase() }
     }
 }

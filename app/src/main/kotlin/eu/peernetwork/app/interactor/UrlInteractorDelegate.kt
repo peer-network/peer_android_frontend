@@ -7,24 +7,13 @@ import javax.inject.Singleton
 
 @Singleton
 class UrlInteractorDelegate @Inject constructor(
-    @Named("baseUrl") private val baseUrl: String,
-    @Named("inviteUrl") private val defaultInviteUrl: String
-) : UrlInteractor, SettingsInteractor {
+    @Named("baseUrl") private val baseUrl: String
+) : UrlInteractor, RemoteInteractor {
     private var url: String = baseUrl
-
-    private var inviteUrl: String = defaultInviteUrl
 
     override fun get(): String = url
 
-    override fun invite(): String {
-        return inviteUrl
-    }
-
     override fun set(url: String) {
         this.url = url
-    }
-
-    override fun invite(url: String) {
-        inviteUrl = url
     }
 }

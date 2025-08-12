@@ -6,11 +6,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
@@ -75,15 +77,20 @@ fun VideoScreen(
             }
         }
     }
-    val current = rememberSaveable(directory.value) { mutableStateOf(directory.value) }
-    val selected = rememberSaveable(saver = UiAttachmentSaver) { mutableStateOf<UiAttachment>(attachment.value) }
+    val selected = rememberSaveable(saver = UiAttachmentSaver) { mutableStateOf<UiAttachment>(
+        (attachment.value as? UiAttachment.File?)?.let {
+            if (it.type != UiMimeType.Video) {
+                UiAttachment.Text
+            } else {
+                it
+            }
+        } ?: UiAttachment.Text
+    ) }
     val color = MaterialTheme.colorScheme.primary
     val thumbnail = viewModel.thumbnail.collectAsStateWithLifecycle()
     val listState = rememberLazyGridState()
-    val canLoad = remember { derivedStateOf {
-        listState.layoutInfo.totalItemsCount > 0 && !listState.isScrollInProgress
-    } }
     val handleSelect by rememberUpdatedState(onSelect)
+    val enable = remember { derivedStateOf { !listState.isScrollInProgress } }
     DesignStatefulScaffold<List<UiFile>>(
         state = derivedState,
         onRefresh = { viewModel.initialize(directory.value) },
@@ -99,37 +106,35 @@ fun VideoScreen(
             horizontalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             items(it.size) { index ->
+                val bitmap = remember { derivedStateOf { thumbnail.value[it[index].path] } }
                 Box(modifier = Modifier.aspectRatio(1f)
                     .background(MaterialTheme.colorScheme.surfaceVariant)
                     .clickable(role = Role.Button) {
-                        if (selected.value.files.firstOrNull() != it[index]) {
-                            UiAttachment.File(
-                                type = UiMimeType.Video,
-                                persistentListOf(it[index])
-                            ).apply {
-                                selected.value = this
-                                handleSelect(this)
-                            }
-                        } else if (selected.value == UiAttachment.Text) {
-                            UiAttachment.File(
-                                type = UiMimeType.Video,
-                                persistentListOf(it[index])
-                            ).apply {
-                                selected.value = this
-                                handleSelect(this)
-                            }
-                        } else {
+                        if (selected.value.files.firstOrNull()?.path == it[index].path) {
                             selected.value = UiAttachment.Text
                             handleSelect(UiAttachment.Text)
+                        } else if (selected.value == UiAttachment.Text ||
+                            selected.value.media is UiMimeType.Video) {
+                            UiAttachment.File(
+                                type = UiMimeType.Video,
+                                persistentListOf(it[index])
+                            ).apply {
+                                selected.value = this
+                                handleSelect(this)
+                            }
                         }
                     }) {
                     DesignThumbnail(
-                        it[index].thumbnail,
-                        thumbnail.value[it[index].thumbnail]
-                    ) {  }
+                        enable = enable,
+                        thumbnail = it[index].path,
+                        bitmap = bitmap,
+                        modifier = Modifier.fillMaxWidth()
+                            .aspectRatio(1f)
+                            .background(MaterialTheme.colorScheme.surfaceVariant)
+                    ) { media -> viewModel.mediaThumbnail(media, UiMimeType.Video) }
                     Box(modifier = Modifier.fillMaxSize()
                         .graphicsLayer {
-                            alpha = if (selected.value.files.firstOrNull() == it[index]) {
+                            alpha = if (selected.value.files.firstOrNull()?.path == it[index].path) {
                                 1f
                             } else {
                                 0f
@@ -145,17 +150,11 @@ fun VideoScreen(
                 }
             }
         }
-        LaunchedEffect(canLoad.value, directory.value) {
-            if (canLoad.value) {
-                viewModel.sync(
-                    UiMimeType.Video,
-                    listState.firstVisibleItemIndex,
-                    listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
-                )
-            }
-        }
     }
-    LaunchedEffect(current.value) {
+    LaunchedEffect(directory.value) {
         viewModel.initialize(directory.value)
+    }
+    DisposableEffect(Unit) {
+        onDispose { viewModel.reset() }
     }
 }

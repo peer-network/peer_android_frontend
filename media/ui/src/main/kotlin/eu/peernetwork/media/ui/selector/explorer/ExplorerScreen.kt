@@ -239,7 +239,7 @@ fun ExplorerScreen(
                     enabled = state.value
                 ) {
                     Text(
-                        stringResource(R.string.proceed_label),
+                        stringResource(R.string.continue_label),
                         modifier = Modifier.padding(end = 8.dp)
                     )
                 }

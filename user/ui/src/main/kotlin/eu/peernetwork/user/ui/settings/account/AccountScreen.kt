@@ -78,7 +78,7 @@ fun AccountScreen(
                 AccountViewModel.State.Loading -> DesignStatefulScaffoldState.Loading
                 is AccountViewModel.State.Content -> {
                     val content = (state as AccountViewModel.State.Content)
-                    DesignStatefulScaffoldState.Success(Pair(content.account, content.inviteUrl))
+                    DesignStatefulScaffoldState.Success(content.account)
                 }
                 is AccountViewModel.State.Failure -> {
                     DesignStatefulScaffoldState.Error((state as AccountViewModel.State.Failure).error)
@@ -93,7 +93,7 @@ fun AccountScreen(
     val isLoading = remember { derivedStateOf { content.value?.processing == true } }
     var status by remember { mutableStateOf(false) }
     val message = stringResource(R.string.profile_update_message)
-    DesignRefreshableScaffold<Pair<UiAccount, String>>(
+    DesignRefreshableScaffold<UiAccount>(
         state = derivedState,
         onRefresh = { viewModel.getAccount() },
         placeholder = {
@@ -105,19 +105,19 @@ fun AccountScreen(
         }
     ) {
         AccountScreen(
-            account = it.first,
+            account = it,
             isLoading = isLoading,
             error = error,
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = 24.dp),
-            requiresPassword = { models -> it.first.isPasswordRequired(models) },
+            requiresPassword = { models -> it.isPasswordRequired(models) },
             onLogout = { viewModel.logout() },
             onDeactivate = { viewModel.deactivate(it) }
         ) { model, password ->
             status = true
-            viewModel.update(it.first, model, password ?: "")
+            viewModel.update(it, model, password ?: "")
         }
     }
     DesignTitleBarHost("AccountScreen") {

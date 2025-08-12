@@ -23,8 +23,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.app.mapper.mapFromDomain
-import eu.peernetwork.app.model.UiRelation
-import eu.peernetwork.blog.domain.model.Relation
+import eu.peernetwork.blog.ui.model.UiFilter
+import eu.peernetwork.blog.domain.model.Category
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.design.compose.DesignDropDown
 import eu.peernetwork.core.ui.design.compose.DesignTitle
@@ -34,15 +34,15 @@ import eu.peernetwork.core.ui.design.compose.DesignTitleBarHost
 fun FeedMenu(
     id: String,
     title: String? = null,
-    relation: Relation,
-    onSelect: (Relation) -> Unit,
+    category: Category,
+    onSelect: (Category) -> Unit,
     onHome: () -> Unit
 ) {
     val handleOnSelect by rememberUpdatedState(onSelect)
     val relations = mapOf(
-        stringResource(UiRelation.ALL.value) to Relation.NONE,
-        stringResource(UiRelation.FOLLOWER.value) to Relation.FOLLOWER,
-        stringResource(UiRelation.FOLLOWED.value) to Relation.FOLLOWED,
+        stringResource(UiFilter.ALL.value) to Category.ALL,
+        stringResource(UiFilter.FOLLOWER.value) to Category.FOLLOWER,
+        stringResource(UiFilter.FOLLOWED.value) to Category.FOLLOWED,
     )
     DesignTitleBarHost(
         "FeedScreen$id$title",
@@ -56,7 +56,7 @@ fun FeedMenu(
                     expanded,
                     color = MaterialTheme.colorScheme.tertiaryContainer,
                     contentPadding = PaddingValues(vertical = 4.dp),
-                    default = stringResource(relation.mapFromDomain().value),
+                    default = stringResource(category.mapFromDomain().value),
                     modifier = Modifier
                         .padding(vertical = 4.dp)
                         .clip(RoundedCornerShape(6.dp))
@@ -69,7 +69,8 @@ fun FeedMenu(
                         }) { label, isActive ->
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier.padding(start = 8.dp),
+                                modifier = Modifier.padding(start = 8.dp)
+                                    .padding(vertical = 1.dp),
                             ) {
                                 Text(
                                     label,
