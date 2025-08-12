@@ -11,7 +11,7 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import eu.peernetwork.core.ui.design.compose.DesignCollapsableText
+import eu.peernetwork.core.ui.design.compose.DesignCollapsibleText
 
 @Composable
 fun PostTitle(
@@ -25,7 +25,7 @@ fun PostTitle(
     val handleHashTag by rememberUpdatedState(onHashtagClick)
     val uriHandler = LocalUriHandler.current
     Column(modifier = modifier) {
-        DesignCollapsableText(
+        DesignCollapsibleText(
             text = title,
             maxLines = 2,
             style = MaterialTheme.typography.headlineMedium.copy(
@@ -42,7 +42,7 @@ fun PostTitle(
                 }
             }
         )
-        DesignCollapsableText(
+        DesignCollapsibleText(
             text = description,
             maxLines = 3,
             style = MaterialTheme.typography.labelLarge.copy(

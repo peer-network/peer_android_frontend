@@ -35,7 +35,7 @@ fun DesignRichText(
     val handleOnClick by rememberUpdatedState(onClick)
     val handleMentionClick by rememberUpdatedState(onMentionClick)
     val handleHashtagClick by rememberUpdatedState(onHashtagClick)
-    DesignCollapsableText(
+    DesignCollapsibleText(
         text = text,
         style = style,
         overflow = TextOverflow.Ellipsis,
@@ -93,7 +93,7 @@ fun DesignRichText(
         verticalArrangement = verticalArrangement,
         horizontalAlignment = horizontalAlignment
     ) {
-        DesignCollapsableText(
+        DesignCollapsibleText(
             text = title,
             style = textStyle.style,
             overflow = TextOverflow.Ellipsis,
@@ -111,7 +111,7 @@ fun DesignRichText(
         )
         spacer()
         if (description.isNotEmpty()) {
-            DesignCollapsableText(
+            DesignCollapsibleText(
                 text = description,
                 maxLines = maxContentLines,
                 overflow = TextOverflow.Ellipsis,

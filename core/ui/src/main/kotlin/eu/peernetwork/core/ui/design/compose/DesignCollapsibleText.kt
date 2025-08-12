@@ -11,7 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.res.stringResource
@@ -26,10 +26,10 @@ import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.theme.PeerTheme
 
 @Composable
-fun DesignCollapsableText(
+fun DesignCollapsibleText(
     text: AnnotatedString,
     modifier: Modifier = Modifier,
-    expanded: MutableState<Boolean> = remember { mutableStateOf(false) },
+    expanded: MutableState<Boolean> = rememberSaveable { mutableStateOf(false) },
     maxLines: Int = Int.MAX_VALUE,
     overflow: TextOverflow = TextOverflow.Ellipsis,
     style: TextStyle = LocalTextStyle.current,
@@ -102,14 +102,14 @@ fun DesignCollapsableText(
 fun PreviewAttachmentPreview() {
     PeerTheme {
         Column {
-            DesignCollapsableText(
+            DesignCollapsibleText(
                 buildAnnotatedString {
                     append("Hello, world!")
                 },
                 maxLines = 1,
             )
             Spacer(modifier = Modifier.height(24.dp))
-            DesignCollapsableText(
+            DesignCollapsibleText(
                 buildAnnotatedString {
                     append("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse fringilla, dui nec viverra pretium, magna nisl congue turpis, a elementum turpis enim in lacus.")
                 },
