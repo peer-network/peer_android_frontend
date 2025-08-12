@@ -74,15 +74,16 @@ fun CreatorScreen(
         state is CreatorViewModel.State.Success
     } }
     val media = remember(attachment.value) { derivedStateOf {
-        if (attachment.value.files.isEmpty()) {
-            UiMimeType.Text
-        } else { attachment.value.media }
+        attachment.value.media
     } }
     val enabled = remember(attachment.value) { derivedStateOf {
-        if (media.value != UiMimeType.Text) {
-            true
-        } else {
-            attachment.value.files.isNotEmpty()
+        when {
+            media.value == UiMimeType.Text ->
+                title.text.isNotBlank() || description.text.isNotBlank()
+            media.value == UiMimeType.Music ->
+                attachment.value.files.isNotEmpty() &&
+                        attachment.value.files.any { it.coverUri != null }
+            else -> attachment.value.files.isNotEmpty()
         }
     } }
     val draft = remember { mutableStateOf<UiDraft?>(null) }
@@ -99,12 +100,11 @@ fun CreatorScreen(
             draft.value = UiDraft(
                 title = it.title,
                 description = it.description,
-                media = if (attachment.value.files.isEmpty()) {
-                    UiMimeType.Text
-                } else { attachment.value.media },
+                media = media.value,
                 attachments = attachment.value.files.map { file -> file.uri },
-                cover = (attachment.value as? UiAttachment.File)?.cover
-            ) },
+                cover = attachment.value.files.firstOrNull()?.coverUri
+            )
+        },
         isLoading = isLoading,
         enabled = enabled,
         error = error,

@@ -68,7 +68,7 @@ fun ComposerScreen(
                     AttachmentScreen(
                         attachment,
                         onAttach = { controller.navigateIfNecessary("explorer") },
-                        onEditThumbnail = { controller.navigateIfNecessary("explorer") },
+                        onSelectCover = { controller.navigate("cover?audioUri=${it.toString()}") },
                         component,
                         viewModelStore.get(key),
                         Modifier.padding(top = 4.dp),
@@ -142,6 +142,7 @@ fun PreviewComposerScreen() {
                     onAttach = {},
                     onPreview = {},
                     onSelect = {},
+                    onSelectCover = {},
                     onSquareClick = {},
                     onPortraitClick = {},
                     onDetach = {}

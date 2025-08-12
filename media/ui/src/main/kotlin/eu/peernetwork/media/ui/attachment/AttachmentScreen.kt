@@ -52,7 +52,7 @@ import kotlinx.coroutines.flow.debounce
 fun AttachmentScreen(
     attachment: MutableState<UiAttachment>,
     onAttach: () -> Unit,
-    onEditThumbnail: ((Int) -> Unit)? = null,
+    onSelectCover: (Uri) -> Unit,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
     modifier: Modifier = Modifier,
@@ -80,7 +80,6 @@ fun AttachmentScreen(
         }
     )
     val handleOnAttach by rememberUpdatedState(onAttach)
-    val handleOnEditThumbnail by rememberUpdatedState(onEditThumbnail)
     val thumbnail = viewModel.thumbnail.collectAsStateWithLifecycle().value
     val imageToCrop = remember { mutableStateOf<Uri?>(null) }
     val ratio = remember { mutableStateOf<PhotoAspectRatio>(PhotoAspectRatio.Square) }
@@ -102,8 +101,8 @@ fun AttachmentScreen(
                 timestamp = System.currentTimeMillis()
             }
         },
-        onEditThumbnail = handleOnEditThumbnail,
         onSelect = { imageToCrop.value = attachment.value.files[it].uri },
+        onSelectCover = onSelectCover,
         onPreview = {
             imageToCrop.value = attachment.value.files[it].uri
             launcher.longValue = System.currentTimeMillis() },
@@ -130,39 +129,14 @@ fun AttachmentScreen(
         state = launcher,
         imageUri = imageToCrop.value,
         selectedRatio = ratio.value,
-        onCropDone = { croppedFile ->
-            val currentAttachment = attachment.value
-            when (currentAttachment) {
-                is UiAttachment.File -> {
-                    if (currentAttachment.media == UiMimeType.Music) {
-                        val updatedFiles = currentAttachment.files.mapIndexed { index, file ->
-                            if (index == 0) {
-                                file.copy(thumbnail = croppedFile.thumbnail)
-                            } else file
-                        }.toPersistentList()
-
-                        attachment.value = UiAttachment.File(
-                            UiMimeType.Music,
-                            updatedFiles
-                        )
-                    } else {
-                        attachment.value = UiAttachment.File(
-                            UiMimeType.Photo,
-                            persistentListOf(croppedFile)
-                        )
-                    }
-                }
-
-                UiAttachment.Text -> {
-                    attachment.value = UiAttachment.File(
-                        UiMimeType.Photo,
-                        persistentListOf(croppedFile)
-                    )
-                }
-            }
+        onCropDone = {
+            attachment.value = UiAttachment.File(
+                UiMimeType.Photo,
+                persistentListOf(it)
+            )
         }
-
     )
+
     LaunchedEffect(permissionsState.allPermissionsGranted) {
         snapshotFlow { timestamp }
             .debounce(500L)
@@ -190,11 +164,11 @@ fun AttachmentScreen(
     onRefresh: (Int) -> Unit,
     onAttach: () -> Unit,
     onSelect: (Int) -> Unit,
+    onSelectCover: (Uri) -> Unit,
     onPreview: (Int) -> Unit,
     onSquareClick: () -> Unit,
     onPortraitClick: () -> Unit,
     onDetach: (Int) -> Unit,
-    onEditThumbnail: ((Int) -> Unit)? = null,
 ) {
     val imageToCrop = remember(attachment.value) {
         mutableStateOf<Uri?>(attachment.value.files.firstOrNull()?.uri)
@@ -240,9 +214,10 @@ fun AttachmentScreen(
                         files = attachment.value.files,
                         onRemove = onDetach,
                         onAttach = onAttach,
-                        onEditThumbnail = onEditThumbnail,
-                        modifier = Modifier
-                            .padding(horizontal = 56.dp),
+                        onSelectCover = { audioFileUri ->
+                            onSelectCover(audioFileUri)
+                        },
+                        modifier = Modifier.padding(horizontal = 56.dp),
                     )
                 }
             }
@@ -270,6 +245,7 @@ fun PreviewAttachmentScreen() {
             onLoad = { null },
             onRefresh = {},
             onAttach = {},
+            onSelectCover = {},
             onSelect = {},
             onPreview = {},
             onSquareClick = {},
