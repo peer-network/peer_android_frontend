@@ -62,7 +62,9 @@ fun PreviewMemberItem() {
             id = UUID.randomUUID().toString(),
             slug = "1234",
             username = "johnDoe",
-            imageUrl = "http://localhost"
+            imageUrl = "http://localhost",
+            isFollowing = false,
+            isFollowed = false
         )
         MemberItem(model) {}
     }

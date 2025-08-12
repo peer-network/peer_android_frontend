@@ -38,8 +38,7 @@ fun FollowingsScreen(
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
     onClick: (UiMember) -> Unit
-) { ConnectionScreen(provider = provider, viewModelStoreOwner = viewModelStoreOwner) { controller ->
-
+) {
     val context = LocalContext.current
     val component = remember {
         provider.builder(Followings.Builder::class.java).build(context)
@@ -49,7 +48,6 @@ fun FollowingsScreen(
         factory = component.viewModelFactory()
     )
     val state by viewModel.state.collectAsState()
-    val connection by controller.observe().collectAsState()
     val derivedState = remember {
         derivedStateOf {
             when (state) {
@@ -81,35 +79,41 @@ fun FollowingsScreen(
             }
         }
     ) { state, lazyPagingItems ->
-        LazyColumn(modifier = Modifier.fillMaxSize()) {
-            items(
-                count = lazyPagingItems.itemCount,
-                key = { index -> index }
-            ) { index ->
-                lazyPagingItems[index]?.let { member ->
-                    val isFollowed = connection[member.id] == false
-                    val triple = Triple(member.id, isFollowed, true)
-
-                    Peer(
-                        member = member,
-                        onClick = onClick,
-                        action = {
-                            ConnectionScreen(
-                                isFollowing = connection.getOrDefault(triple.first, triple.third),
-                                isFollowed = triple.second,
-                                onClick = { follow -> controller.invoke(triple.first, !follow) }
-                            )
-                        }
-                    )
+        ConnectionScreen(provider = provider, viewModelStoreOwner = viewModelStoreOwner) { controller ->
+            val connection by controller.value.observe().collectAsState()
+            LazyColumn(modifier = Modifier.fillMaxSize()) {
+                items(
+                    count = lazyPagingItems.itemCount,
+                    key = { index -> index }
+                ) { index ->
+                    lazyPagingItems[index]?.let { member ->
+                        Peer(
+                            member = member,
+                            onClick = onClick,
+                            action = {
+                                ConnectionScreen(
+                                    isFollowing = connection.getOrDefault(
+                                        member.id,
+                                        member.isFollowing
+                                    ),
+                                    isFollowed = member.isFollowed,
+                                    onClick = { follow ->
+                                        controller.value.invoke(
+                                            member.id,
+                                            !follow
+                                        )
+                                    }
+                                )
+                            }
+                        )
+                    }
                 }
+                item(key = "FollowingsListFooter") { Spacer(modifier = Modifier.height(56.dp)) }
             }
-            item(key = "FollowingsListFooter") { Spacer(modifier = Modifier.height(56.dp)) }
         }
     }
-
     DisposableEffect(Unit) {
         onDispose { viewModel.reset() }
     }
-}
 }
 

@@ -9,7 +9,7 @@ query ListPeers($offset: Int!, $limit: Int!) {
             username
             slug
             biography
-            updatedat
+            updatedat,
         }
     }
 }

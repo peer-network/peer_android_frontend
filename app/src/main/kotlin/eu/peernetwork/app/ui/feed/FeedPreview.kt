@@ -46,7 +46,7 @@ fun FeedPreview(
     component: Feed.Component,
     viewModelStoreOwner: ViewModelStoreOwner,
     controller: NavHostController,
-    connectionController: ConnectionController,
+    connectionController: State<ConnectionController>,
     title: String? = null,
     criteria: Criteria? = null,
     onNavigate: (Int) -> Unit = {},
@@ -60,7 +60,7 @@ fun FeedPreview(
     val photoState = rememberLazyListState()
     val videoState = rememberLazyListState()
     val coroutine = rememberCoroutineScope()
-    val connection by connectionController.observe().collectAsStateWithLifecycle()
+    val connection by connectionController.value.observe().collectAsStateWithLifecycle()
     var relation by rememberSaveable {
         mutableStateOf(Relation.entries.getOrNull(ordinal) ?: Relation.NONE)
     }
@@ -97,7 +97,7 @@ fun FeedPreview(
                 ConnectionScreen(
                     isFollowing = connection.getOrDefault(it.first, it.third),
                     isFollowed = it.second,
-                    onClick = { follow -> connectionController.invoke(it.first, !follow) },
+                    onClick = { follow -> connectionController.value.invoke(it.first, !follow) },
                 )
             }
         },
@@ -120,7 +120,7 @@ fun FeedPreview(
                 ConnectionScreen(
                     isFollowing = connection.getOrDefault(it.first, it.third),
                     isFollowed = it.second,
-                    onClick = { follow -> connectionController.invoke(it.first, !follow) }
+                    onClick = { follow -> connectionController.value.invoke(it.first, !follow) }
                 )
             }
         },

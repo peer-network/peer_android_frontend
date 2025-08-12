@@ -53,7 +53,7 @@ fun ProfilePreview(
 ) {
     val handleAuthorClicked by rememberUpdatedState(onAuthorClicked)
     val lastUpdated = rememberSaveable { mutableLongStateOf(System.currentTimeMillis()) }
-    var connection = remember { mutableStateOf<ConnectionStatus?>(null) }
+    val connection = remember { mutableStateOf<ConnectionStatus?>(null) }
     val showSheet = remember { mutableStateOf(false) }
     val coroutine = rememberCoroutineScope()
     var position by remember { mutableIntStateOf(0) }
@@ -61,7 +61,7 @@ fun ProfilePreview(
         provider = component,
         viewModelStoreOwner = viewModelStoreOwner
     ) { controller ->
-        val connectionState by controller.observe().collectAsStateWithLifecycle()
+        val connectionState by controller.value.observe().collectAsStateWithLifecycle()
         ProfilePreview(
             onRefresh = { lastUpdated.longValue = System.currentTimeMillis() },
             header = { scrollState ->
@@ -72,7 +72,7 @@ fun ProfilePreview(
                         ConnectionScreen(
                             isFollowing = connectionState.getOrDefault(id, it.first),
                             isFollowed = it.second,
-                            onClick = { follow -> controller.invoke(id, !follow) }
+                            onClick = { follow -> controller.value.invoke(id, !follow) }
                         )
                     },
                     onClick = { sheetType ->

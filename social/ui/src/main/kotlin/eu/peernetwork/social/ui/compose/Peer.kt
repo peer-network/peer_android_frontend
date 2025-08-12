@@ -27,6 +27,7 @@ fun Peer(
 ) {
     val slug = "#${member.slug}"
     val handleOnClick by rememberUpdatedState(onClick)
+    val updatedContent by rememberUpdatedState(action)
     SearchItem(
         modifier = Modifier
             .fillMaxWidth()
@@ -56,7 +57,7 @@ fun Peer(
                 color = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier.weight(1f)
             )
-            action?.invoke()
+            updatedContent?.invoke()
         }
     }
 }
@@ -69,7 +70,9 @@ fun PreviewFollowerItem() {
             id = UUID.randomUUID().toString(),
             slug = "1234",
             username = "johnDoe",
-            imageUrl = "http://localhost"
+            imageUrl = "http://localhost",
+            isFollowed = true,
+            isFollowing = true
         )
         Peer(model, onClick = {}) {
             ConnectionScreen(

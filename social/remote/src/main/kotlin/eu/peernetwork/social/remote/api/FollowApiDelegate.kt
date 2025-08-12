@@ -44,7 +44,9 @@ class FollowApiDelegate @Inject constructor(
                 id = it.id,
                 slug = it.slug!!.toString(),
                 username = it.username!!,
-                imageUrl = "$url/${it.img!!}".removeSuffix("/")
+                imageUrl = "$url/${it.img!!}".removeSuffix("/"),
+                isFollowing = it.isfollowing ?: false,
+                isFollowed = it.isfollowed ?: false
             )
         }
         return Page(
@@ -71,7 +73,9 @@ class FollowApiDelegate @Inject constructor(
                 id = it.id,
                 slug = it.slug!!.toString(),
                 username = it.username!!,
-                imageUrl = "$url/${it.img!!}".removeSuffix("/")
+                imageUrl = "$url/${it.img!!}".removeSuffix("/"),
+                isFollowing = it.isfollowing ?: false,
+                isFollowed = it.isfollowed ?: false
             )
         }
         return Page(
@@ -96,7 +100,9 @@ class FollowApiDelegate @Inject constructor(
                 id = it?.userid ?: "",
                 slug = it?.slug!!.toString(),
                 username = it.username ?: "Unknown",
-                imageUrl = "$url/${it.img!!}".removeSuffix("/")
+                imageUrl = "$url/${it.img!!}".removeSuffix("/"),
+                isFollowing = true,
+                isFollowed = true
             )
         }
         return Page(
