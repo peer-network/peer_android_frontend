@@ -73,7 +73,7 @@ fun ComposerScreen(
                             val path = it.files.first().path
                             controller.navigateIfNecessary("video?path=$path")
                         },
-                        onEditThumbnail = { controller.navigateIfNecessary("explorer") },
+                        onSelectCover = { controller.navigate("cover?audioUri=${it}") },
                         component,
                         viewModelStore.get(key),
                     )
@@ -146,6 +146,7 @@ fun PreviewComposerScreen() {
                     onAttach = {},
                     onPreview = {},
                     onSelect = {},
+                    onSelectCover = {},
                     onSquareClick = {},
                     onPortraitClick = {},
                     onDetach = {}

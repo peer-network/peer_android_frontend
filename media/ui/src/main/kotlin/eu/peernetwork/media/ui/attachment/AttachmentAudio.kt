@@ -1,46 +1,37 @@
 package eu.peernetwork.media.ui.attachment
 
+import android.net.Uri
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.CornerRadius
-import androidx.compose.ui.graphics.PathEffect
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
+import coil.compose.rememberAsyncImagePainter
 import eu.peernetwork.media.core.model.UiFile
-import eu.peernetwork.media.ui.R
 
 @Composable
 fun AttachmentAudio(
     files: List<UiFile>,
     onRemove: (Int) -> Unit,
     onAttach: () -> Unit,
-    onEditThumbnail: ((Int) -> Unit)? = null,
+    onSelectCover: (Uri) -> Unit,
     modifier: Modifier = Modifier
 ) {
     if (files.isEmpty()) {
@@ -66,39 +57,47 @@ fun AttachmentAudio(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             files.forEachIndexed { index, file ->
+                val coverForFile = file.cover
+
                 Box(
                     modifier = Modifier
                         .aspectRatio(1f)
                         .clip(RoundedCornerShape(24.dp))
-                        .background(MaterialTheme.colorScheme.surfaceVariant)
-                        .clickable { /* Optional: preview */ },
+                        .background(MaterialTheme.colorScheme.surfaceVariant),
                     contentAlignment = Alignment.Center
                 ) {
-                    Icon(
-                        painter = painterResource(id = eu.peernetwork.core.ui.R.drawable.ic_music),
-                        contentDescription = "Audio Icon",
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier
-                            .size(48.dp)
-                    )
-
-                    if (onEditThumbnail != null) {
-                        Box(
+                    if (coverForFile != null) {
+                        Image(
+                            painter = rememberAsyncImagePainter(coverForFile),
+                            contentDescription = "Cover Image",
                             modifier = Modifier
-                                .align(Alignment.BottomEnd)
-                                .padding(8.dp)
-                                .clip(CircleShape)
-                                .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.8f))
-                                .clickable { onEditThumbnail(index) }
-                                .padding(6.dp)
-                        ) {
-                            Icon(
-                                painter = painterResource(id = eu.peernetwork.core.ui.R.drawable.ic_edit),
-                                contentDescription = "Edit Thumbnail",
-                                tint = MaterialTheme.colorScheme.onPrimary,
-                                modifier = Modifier.size(14.dp)
-                            )
-                        }
+                                .fillMaxSize()
+                                .clip(RoundedCornerShape(8.dp))
+                        )
+                    } else {
+                        Icon(
+                            painter = painterResource(id = eu.peernetwork.core.ui.R.drawable.ic_music),
+                            contentDescription = "Audio Icon",
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(48.dp)
+                        )
+                    }
+
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .padding(8.dp)
+                            .clip(CircleShape)
+                            .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.8f))
+                            .clickable { onSelectCover(file.uri) }
+                            .padding(6.dp)
+                    ) {
+                        Icon(
+                            painter = painterResource(id = eu.peernetwork.core.ui.R.drawable.ic_edit),
+                            contentDescription = "Select Cover Image",
+                            tint = MaterialTheme.colorScheme.onPrimary,
+                            modifier = Modifier.size(14.dp)
+                        )
                     }
 
                     Box(
@@ -112,7 +111,7 @@ fun AttachmentAudio(
                     ) {
                         Icon(
                             painter = painterResource(id = eu.peernetwork.core.ui.R.drawable.ic_cancel),
-                            contentDescription = "Remove",
+                            contentDescription = "Remove Audio",
                             tint = MaterialTheme.colorScheme.tertiary,
                             modifier = Modifier.size(14.dp)
                         )

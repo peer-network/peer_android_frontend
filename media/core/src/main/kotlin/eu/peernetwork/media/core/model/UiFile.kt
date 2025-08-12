@@ -9,5 +9,6 @@ data class UiFile(
     val uri: Uri,
     val path: String = uri.path ?: uri.toString(),
     val name: String = uri.lastPathSegment ?: "Unknown",
-    val props: Bundle = Bundle()
+    val cover: Uri? = null,
+    val props: Bundle = Bundle(),
 )

@@ -53,7 +53,7 @@ fun AttachmentScreen(
     onAttach: () -> Unit,
     modifier: Modifier = Modifier,
     onPreview: (UiAttachment) -> Unit,
-    onEditThumbnail: ((Int) -> Unit)? = null,
+    onSelectCover: (Uri) -> Unit,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
 ) {
@@ -81,7 +81,6 @@ fun AttachmentScreen(
     )
     val handleOnPreview by rememberUpdatedState(onPreview)
     val handleOnAttach by rememberUpdatedState(onAttach)
-    val handleOnEditThumbnail by rememberUpdatedState(onEditThumbnail)
     val thumbnail = viewModel.thumbnail.collectAsStateWithLifecycle().value
     val imageToCrop = remember { mutableStateOf<Uri?>(null) }
     val ratio = remember { mutableStateOf(PhotoAspectRatio.Square) }
@@ -103,8 +102,8 @@ fun AttachmentScreen(
                 timestamp = System.currentTimeMillis()
             }
         },
-        onEditThumbnail = handleOnEditThumbnail,
         onSelect = { imageToCrop.value = attachment.value.files[it].uri },
+        onSelectCover = onSelectCover,
         onPreview = {
             if (attachment.value.media == UiMimeType.Photo) {
                 imageToCrop.value = attachment.value.files[it].uri
@@ -156,7 +155,6 @@ fun AttachmentScreen(
                         )
                     }
                 }
-
                 UiAttachment.Text -> {
                     attachment.value = UiAttachment.File(
                         UiMimeType.Photo,
@@ -165,8 +163,8 @@ fun AttachmentScreen(
                 }
             }
         }
-
     )
+
     LaunchedEffect(permissionsState.allPermissionsGranted) {
         snapshotFlow { timestamp }
             .debounce(500L)
@@ -194,14 +192,14 @@ fun AttachmentScreen(
     onRefresh: (Int) -> Unit,
     onAttach: () -> Unit,
     onSelect: (Int) -> Unit,
+    onSelectCover: (Uri) -> Unit,
     onPreview: (Int) -> Unit,
     onSquareClick: () -> Unit,
     onPortraitClick: () -> Unit,
     onDetach: (Int) -> Unit,
-    onEditThumbnail: ((Int) -> Unit)? = null,
 ) {
     val imageToCrop = remember(attachment.value) {
-        mutableStateOf<Uri?>(attachment.value.files.firstOrNull()?.uri)
+        mutableStateOf(attachment.value.files.firstOrNull()?.uri)
     }
     val isVisible by remember { derivedStateOf {
         imageToCrop.value != null && attachment.value.files.isNotEmpty()
@@ -244,9 +242,10 @@ fun AttachmentScreen(
                         files = attachment.value.files,
                         onRemove = onDetach,
                         onAttach = onAttach,
-                        onEditThumbnail = onEditThumbnail,
-                        modifier = Modifier
-                            .padding(horizontal = 56.dp),
+                        onSelectCover = { audioFileUri ->
+                            onSelectCover(audioFileUri)
+                        },
+                        modifier = Modifier.padding(horizontal = 56.dp),
                     )
                 }
             }
@@ -274,6 +273,7 @@ fun PreviewAttachmentScreen() {
             onLoad = { null },
             onRefresh = {},
             onAttach = {},
+            onSelectCover = {},
             onSelect = {},
             onPreview = {},
             onSquareClick = {},
