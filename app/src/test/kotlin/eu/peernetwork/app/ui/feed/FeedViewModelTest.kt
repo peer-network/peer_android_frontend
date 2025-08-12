@@ -55,7 +55,7 @@ internal class FeedViewModelTest {
         mutableState.tryEmit(page)
         val viewModel = FeedViewModel(retrievableInteger, observableInteger, publishableInteger)
         viewModel.state.test {
-            assertEquals(FeedViewModel.State.Initialize(page), awaitItem())
+            assertEquals(FeedViewModel.State.Initialize(page, page), awaitItem())
         }
     }
 
@@ -64,7 +64,7 @@ internal class FeedViewModelTest {
         val page = 5
         viewModel.lastVisited(page)
         viewModel.state.test {
-            assertEquals(FeedViewModel.State.Initialize(page), awaitItem())
+            assertEquals(FeedViewModel.State.Initialize(page, page), awaitItem())
         }
     }
 }
