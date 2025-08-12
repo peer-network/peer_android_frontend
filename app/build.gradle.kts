@@ -91,6 +91,7 @@ dependencies {
 
     implementation(libs.lottie)
 
+    implementation(libs.zxing.core)
 
     implementation(libs.dagger)
     ksp(libs.dagger.compiler)
