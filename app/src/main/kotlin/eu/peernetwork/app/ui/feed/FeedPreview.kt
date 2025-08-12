@@ -49,7 +49,7 @@ fun FeedPreview(
     component: Feed.Component,
     viewModelStoreOwner: ViewModelStoreOwner,
     controller: NavHostController,
-    connectionController: ConnectionController,
+    connectionController: State<ConnectionController>,
     title: String? = null,
     criteria: Criteria? = null,
     onNavigate: (Int) -> Unit = {},
@@ -59,7 +59,7 @@ fun FeedPreview(
     val videoState = rememberLazyListState()
     val coroutine = rememberCoroutineScope()
     val enable = remember { derivedStateOf { selected.value == FeedOverlayState.Empty } }
-    val connection by connectionController.observe().collectAsStateWithLifecycle()
+    val connection by connectionController.value.observe().collectAsStateWithLifecycle()
     var category by remember {
         mutableStateOf(Category.entries.getOrNull(ordinal) ?: Category.ALL)
     }
@@ -110,7 +110,7 @@ fun FeedPreview(
                 ConnectionScreen(
                     isFollowing = connection.getOrDefault(it.first, it.third),
                     isFollowed = it.second,
-                    onClick = { follow -> connectionController.invoke(it.first, !follow) },
+                    onClick = { follow -> connectionController.value.invoke(it.first, !follow) },
                 )
             }
         },
@@ -130,7 +130,7 @@ fun FeedPreview(
                 ConnectionScreen(
                     isFollowing = connection.getOrDefault(it.first, it.third),
                     isFollowed = it.second,
-                    onClick = { follow -> connectionController.invoke(it.first, !follow) }
+                    onClick = { follow -> connectionController.value.invoke(it.first, !follow) }
                 )
             }
         },

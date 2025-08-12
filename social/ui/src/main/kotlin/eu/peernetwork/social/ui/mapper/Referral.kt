@@ -8,6 +8,8 @@ fun Referral.mapFromDomain(): UiReferral {
         id = id,
         username = username,
         slug = slug,
-        img = img
+        img = img,
+        isFollowed = isFollowed,
+        isFollowing = isFollowing
     )
 }

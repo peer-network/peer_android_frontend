@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,14 +46,14 @@ fun ProfileOverlay(
     principal: String,
     userId: String,
     limit: Int,
-    connectionController: ConnectionController,
+    connectionController: State<ConnectionController>,
     provider: UiComponentProvider,
     component: Profile.Component,
     viewModelStore: ViewModelState,
     content: @Composable () -> Unit
 ) {
     val updatedContent by rememberUpdatedState(content)
-    val connection by connectionController.observe().collectAsStateWithLifecycle()
+    val connection by connectionController.value.observe().collectAsStateWithLifecycle()
     val visible = remember(overlay.value) { mutableStateOf(overlay.value !is ProfileOverlayState.Empty) }
     updatedContent()
     DesignOverlay(
@@ -116,7 +117,7 @@ fun ProfileOverlay(
                                 ConnectionScreen(
                                     isFollowing = connection.getOrDefault(it.first, it.third),
                                     isFollowed = it.second,
-                                    onClick = { follow -> connectionController.invoke(it.first, !follow) }
+                                    onClick = { follow -> connectionController.value.invoke(it.first, !follow) }
                                 )
                             }
                         }
@@ -144,7 +145,7 @@ fun ProfileOverlay(
                                 ConnectionScreen(
                                     isFollowing = connection.getOrDefault(it.first, it.third),
                                     isFollowed = it.second,
-                                    onClick = { follow -> connectionController.invoke(it.first, !follow) }
+                                    onClick = { follow -> connectionController.value.invoke(it.first, !follow) }
                                 )
                             }
                         }

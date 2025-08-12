@@ -8,7 +8,9 @@ object ReferralMock {
             id = "<test-id>",
             username = "<test-username>",
             slug = "<test-slug>",
-            img = "<test-image-url>"
+            img = "<test-image-url>",
+            isFollowed = true,
+            isFollowing = true
         )
     }
 }

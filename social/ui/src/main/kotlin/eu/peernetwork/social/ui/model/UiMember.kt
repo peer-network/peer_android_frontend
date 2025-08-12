@@ -8,4 +8,6 @@ data class UiMember(
     val slug: String,
     val username: String,
     val imageUrl: String,
+    val isFollowed: Boolean,
+    val isFollowing: Boolean,
 )

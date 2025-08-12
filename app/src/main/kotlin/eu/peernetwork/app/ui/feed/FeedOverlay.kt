@@ -2,6 +2,7 @@ package eu.peernetwork.app.ui.feed
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -43,11 +44,11 @@ fun FeedOverlay(
     criteria: Criteria? = null,
     component: Feed.Component,
     viewModelStore: ViewModelState,
-    connectionController: ConnectionController,
+    connectionController: State<ConnectionController>,
     content: @Composable () -> Unit
 ) {
     val updatedContent by rememberUpdatedState(content)
-    val connection by connectionController.observe().collectAsStateWithLifecycle()
+    val connection by connectionController.value.observe().collectAsStateWithLifecycle()
     val visible = remember(overlay.value) { mutableStateOf(overlay.value !is FeedOverlayState.Empty) }
     updatedContent()
     DesignOverlay(
@@ -106,7 +107,7 @@ fun FeedOverlay(
                         ConnectionScreen(
                             isFollowing = connection.getOrDefault(it.first, it.third),
                             isFollowed = it.second,
-                            onClick = { follow -> connectionController.invoke(it.first, !follow) }
+                            onClick = { follow -> connectionController.value.invoke(it.first, !follow) }
                         )
                     }
                 }
@@ -133,7 +134,7 @@ fun FeedOverlay(
                         ConnectionScreen(
                             isFollowing = connection.getOrDefault(it.first, it.third),
                             isFollowed = it.second,
-                            onClick = { follow -> connectionController.invoke(it.first, !follow) }
+                            onClick = { follow -> connectionController.value.invoke(it.first, !follow) }
                         )
                     }
                 }

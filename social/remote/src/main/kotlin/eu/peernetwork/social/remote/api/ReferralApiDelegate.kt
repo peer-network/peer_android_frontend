@@ -26,7 +26,9 @@ class ReferralApiDelegate @Inject constructor(
                 id = it.id,
                 username = it.username.toString(),
                 slug = it.slug.toString(),
-                img = "$url/${it.img!!}".removeSuffix("/")
+                img = "$url/${it.img!!}".removeSuffix("/"),
+                isFollowing = it.isfollowing ?: false,
+                isFollowed = it.isfollowed ?: false
             )
         }
 

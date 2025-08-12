@@ -14,7 +14,9 @@ fun GetallpostsQuery.AffectedRow.mapToDomain(url: String): Post {
             id = user.id,
             slug = user.slug.toString(),
             username = user.username!!,
-            imageUrl = "$url${user.img}"
+            imageUrl = "$url${user.img}",
+            isFollowed = user.isfollowed ?: false,
+            isFollowing = user.isfollowing ?: false
         )
     )
 }
