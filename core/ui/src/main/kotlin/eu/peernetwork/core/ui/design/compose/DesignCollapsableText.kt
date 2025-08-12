@@ -21,7 +21,6 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.theme.PeerTheme
@@ -71,7 +70,9 @@ fun DesignCollapsableText(
             maxWidth = constraints.maxWidth - labelPlaceable.width
         ))
         val placeable = measurables[0].measure(constraints)
-        val fullPlaceable = measurables[2].measure(constraints)
+        val fullPlaceable = measurables[2].measure(constraints.copy(
+            maxHeight = Int.MAX_VALUE
+        ))
         val width = constraints.maxWidth
         val height = if (expanded.value) {
             fullPlaceable.height + labelPlaceable.height
@@ -105,16 +106,15 @@ fun PreviewAttachmentPreview() {
                 buildAnnotatedString {
                     append("Hello, world!")
                 },
-                maxLines = 1
+                maxLines = 1,
             )
             Spacer(modifier = Modifier.height(24.dp))
             DesignCollapsableText(
                 buildAnnotatedString {
                     append("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse fringilla, dui nec viverra pretium, magna nisl congue turpis, a elementum turpis enim in lacus.")
                 },
-                maxLines = 1
+                maxLines = 1,
             )
-            Spacer(modifier = Modifier.height(24.dp))
         }
     }
 }
