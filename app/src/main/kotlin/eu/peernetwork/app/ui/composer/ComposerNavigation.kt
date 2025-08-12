@@ -64,7 +64,8 @@ fun ComposerNavigation(
             VideoScreen(
                 path = path,
                 provider = provider,
-                viewModelStoreOwner = viewModelStoreOwner
+                viewModelStoreOwner = viewModelStoreOwner,
+                onDiscard = { controller.popBackStack() }
             ) { start, stop, duration ->
                 val props = Bundle()
                 if (stop - start != duration) {

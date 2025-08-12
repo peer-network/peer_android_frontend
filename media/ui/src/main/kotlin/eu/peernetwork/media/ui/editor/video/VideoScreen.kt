@@ -59,6 +59,7 @@ fun VideoScreen(
     path: String,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
+    onDiscard: () -> Unit,
     onProceed: (Long, Long, Long) -> Unit
 ) {
     val context = LocalContext.current
@@ -112,6 +113,8 @@ fun VideoScreen(
             duration = duration,
             frameSize = duration.coerceAtMost(5).toInt(),
             minFrameSize = 2,
+            timestamp = metaData.duration,
+            onDiscard = onDiscard,
             onProceed = {
                 handleProceed(
                     metaData.duration.offset(start.longValue),
@@ -231,7 +234,9 @@ fun VideoScreen(
     duration: Long,
     frameSize: Int,
     minFrameSize: Int,
+    timestamp: Long,
     scrollState: LazyListState,
+    onDiscard: () -> Unit,
     onProceed: () -> Unit,
     thumbnail: @Composable (Long) -> Unit,
     content: @Composable BoxScope.() -> Unit
@@ -245,9 +250,11 @@ fun VideoScreen(
                 duration = duration,
                 frameSize = frameSize,
                 minFrameSize = minFrameSize,
+                timestamp = timestamp,
                 scrollState = scrollState,
+                onDiscard = onDiscard,
                 onProceed = onProceed,
-                thumbnail = thumbnail
+                thumbnail = thumbnail,
             )
         }
     ) {
@@ -275,7 +282,9 @@ fun PreviewVideoScreen() {
             duration = 60,
             frameSize = 5,
             minFrameSize = 2,
+            timestamp = 2,
             scrollState = scrollState,
+            onDiscard = { },
             onProceed = { },
             thumbnail = {
                 Box(modifier = Modifier
