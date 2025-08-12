@@ -87,7 +87,7 @@ fun AttachmentScreen(
         onLoad = { thumbnail[it] },
         onRefresh = {
             viewModel.thumbnail(
-                attachment.value.files[it].thumbnail,
+                attachment.value.files[it].path,
                 attachment.value.media
             )
         },
@@ -213,7 +213,7 @@ fun PreviewAttachmentScreen() {
         val thumbnail = uri.toString()
         val attachment = UiAttachment.File(
             UiMimeType.Photo,
-            persistentListOf(UiFile(uri = uri, thumbnail = thumbnail))
+            persistentListOf(UiFile(uri = uri, path = thumbnail))
         )
         val state = remember { mutableStateOf<UiAttachment>(attachment) }
         AttachmentScreen(

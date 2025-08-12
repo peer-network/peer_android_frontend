@@ -3,6 +3,7 @@ package eu.peernetwork.user.remote.api
 import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.ApolloResponse
 import com.apollographql.apollo3.api.Operation
+import eu.peernetwork.core.common.interactor.SessionInteractor
 import eu.peernetwork.core.common.model.Pageable
 import eu.peernetwork.core.remote.model.Status
 import eu.peernetwork.core.remote.api.RequestClient
@@ -24,13 +25,15 @@ internal class SearchApiDelegateTest {
 
     private val client = mockk<ApolloClient>()
 
+    private val sessionInteractor = mockk<SessionInteractor>(relaxed = true)
+
     private lateinit var api: SearchApi
 
     @Before
     fun setup() {
         api = SearchApiDelegate(url, object : RequestClient {
             override fun invoke(): ApolloClient = client
-        })
+        }, sessionInteractor)
     }
 
     @Test

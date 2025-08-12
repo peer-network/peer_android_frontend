@@ -1,10 +1,12 @@
 query GetComments(
     $postId: ID,
-    $offset: Int
+    $contentFilterBy: ContentFilterType,
+    $offset: Int,
     $limit: Int
 ) {
     listPosts(
         postid: $postId,
+        contentFilterBy: $contentFilterBy
         commentLimit: $limit,
         commentOffset: $offset
     ) {

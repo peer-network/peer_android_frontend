@@ -13,10 +13,10 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.paging.compose.LazyPagingItems
-import eu.peernetwork.blog.ui.engagement.Engagements
+import eu.peernetwork.blog.ui.event.UiEngagementEvent
 import eu.peernetwork.blog.ui.model.UiMedia
 import eu.peernetwork.blog.ui.model.UiPost
-import eu.peernetwork.blog.ui.moderation.Moderations
+import eu.peernetwork.blog.ui.event.UiModerationEvent
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toPersistentList
 
@@ -24,8 +24,8 @@ import kotlinx.collections.immutable.toPersistentList
 fun PhotoPage(
     id: String,
     position: Int,
-    engagement: Engagements,
-    moderation: Moderations,
+    engagement: UiEngagementEvent,
+    moderation: UiModerationEvent,
     lazyPagingItems: LazyPagingItems<UiPost>,
     onAuthorClick: (String) -> Unit = {},
     onMentionClick: (String) -> Unit = {},
@@ -54,8 +54,8 @@ fun PhotoPage(
                         onAuthorClick = onAuthorClick,
                         onMentionClick = onMentionClick,
                         onHashtagClick = onHashtagClick,
-                        engagements = engagement,
-                        moderations = moderation,
+                        uiEngagementEvent = engagement,
+                        uiModerationEvent = moderation,
                         connection = {
                             if (id != post.author.id) {
                                 updatedConnection(
@@ -73,8 +73,8 @@ fun PhotoPage(
                     PhotoContent(
                         id = id,
                         post = post,
-                        engagements = engagement,
-                        moderations = moderation,
+                        uiEngagementEvent = engagement,
+                        uiModerationEvent = moderation,
                         header = header,
                         indicator = { updatedIndicator(state, post.media.toPersistentList()) },
                         onAuthorClick = onAuthorClick,

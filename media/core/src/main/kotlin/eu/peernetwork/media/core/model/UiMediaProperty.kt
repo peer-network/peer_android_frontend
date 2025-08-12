@@ -1,10 +1,10 @@
 package eu.peernetwork.media.core.model
 
-import androidx.compose.runtime.Immutable
+import android.graphics.Bitmap
 
-@Immutable
 data class UiMediaProperty(
-    val size: String,
-    val description: String? = null,
-    val resolution: Pair<Int, Int>? = null
+    val width: Int,
+    val height: Int,
+    val duration: Long,
+    val bitmap: Bitmap?,
 )

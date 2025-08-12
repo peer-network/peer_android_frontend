@@ -29,21 +29,21 @@ scalar Int
 type Query {
   hello: HelloResponse!
 
-  searchUser(userid: ID, username: String, offset: Int, limit: Int): UserListResponse!
+  searchUser(userid: ID, contentFilterBy: ContentFilterType, username: String, offset: Int, limit: Int): UserListResponse!
 
-  listUsers(offset: Int, limit: Int): UserListResponse!
+  listUsers(contentFilterBy: ContentFilterType, offset: Int, limit: Int): UserListResponse!
 
-  getProfile(userid: ID, postLimit: Int): ProfileInfo!
+  getProfile(userid: ID, contentFilterBy: ContentFilterType, postLimit: Int): ProfileInfo!
 
-  listFollowRelations(userid: ID, offset: Int, limit: Int): FollowRelationsResponse!
+  listFollowRelations(contentFilterBy: ContentFilterType, userid: ID, offset: Int, limit: Int): FollowRelationsResponse!
 
-  listFriends(offset: Int, limit: Int): UserFriendsResponse!
+  listFriends(contentFilterBy: ContentFilterType, offset: Int, limit: Int): UserFriendsResponse!
 
   getUserInfo: UserInfoResponse!
 
   listBlockedUsers(offset: Int, limit: Int): BlockedUsersResponse!
 
-  listPosts(filterBy: [PostFilterType!], IgnorList: IgnoreOption, sortBy: PostSortType, userid: ID, postid: ID, title: String, tag: String, from: Date, to: Date, offset: Int, limit: Int, commentOffset: Int, commentLimit: Int): PostListResponse!
+  listPosts(filterBy: [PostFilterType!], contentFilterBy: ContentFilterType, IgnorList: IgnoreOption, sortBy: PostSortType, userid: ID, postid: ID, title: String, tag: String, from: Date, to: Date, offset: Int, limit: Int, commentOffset: Int, commentLimit: Int): PostListResponse!
 
   getPostInfo(postid: ID!): PostInfoResponse!
 
@@ -76,6 +76,10 @@ type Query {
   listTodaysInteractions: ListTodaysInteractionsResponse!
 
   getActionPrices: GetActionPricesResponse!
+
+  getTransactionHistory(type: TokenMovementFilterType, direction: DirectionFilterType, start_date: String, end_date: String, limit: Int, offset: Int, sort: SortFilterType): TransactionResponse!
+
+  postInteractions(getOnly: GetOnly!, postOrCommentId: ID!, offset: Int, limit: Int): PostInteractionResponse
 }
 
 """
@@ -91,6 +95,8 @@ values as specified by
 scalar Float
 
 type Mutation {
+  updateUserPreferences(userPreferences: UserPreferencesInput): UserPreferencesResponse!
+
   updateUsername(username: String!, password: String!): DefaultResponse!
 
   updateEmail(email: String!, password: String!): DefaultResponse!
@@ -127,6 +133,8 @@ type Mutation {
 
   reportComment(commentid: ID!): DefaultResponse!
 
+  reportUser(userid: ID!): DefaultResponse!
+
   deletePost(id: ID!): DefaultResponse!
 
   createPost(action: PostType!, input: PostInput!): PostResponse!
@@ -141,6 +149,40 @@ type Mutation {
 scalar Decimal
 
 scalar Date
+
+enum TokenMovementFilterType {
+  TRANSACTION
+
+  AIRDROP
+
+  MINT
+
+  PAYMENT
+
+  BURN
+}
+
+enum GetOnly {
+  VIEW
+
+  LIKE
+
+  DISLIKE
+
+  COMMENTLIKE
+}
+
+enum DirectionFilterType {
+  INCOME
+
+  DEDUCTION
+}
+
+enum SortFilterType {
+  NEWEST
+
+  OLDEST
+}
 
 enum PostActionType {
   LIKE
@@ -162,6 +204,12 @@ enum PostType {
 
 enum CommentType {
   COMMENT
+}
+
+enum ContentFilterType {
+  MYGRANDMALIKES
+
+  MYGRANDMAHATES
 }
 
 enum ContentType {
@@ -186,6 +234,8 @@ enum PostFilterType {
   FOLLOWED
 
   FOLLOWER
+
+  VIEWED
 }
 
 enum IgnoreOption {
@@ -206,6 +256,8 @@ enum PostSortType {
   VIEWS
 
   COMMENTS
+
+  FOR_ME
 }
 
 enum DayFilterType {
@@ -228,6 +280,42 @@ enum DayFilterType {
   Y0
 }
 
+input UserPreferencesInput {
+  contentFilteringSeverityLevel: ContentFilterType
+}
+
+type Transaction {
+  transactionid: String!
+
+  transuniqueid: String!
+
+  transactiontype: String!
+
+  senderid: String!
+
+  recipientid: String!
+
+  tokenamount: Decimal!
+
+  transferaction: String!
+
+  message: String!
+
+  createdat: String!
+}
+
+type TransactionResponse {
+  status: String!
+
+  responseCode: Int!
+
+  affectedRows: [Transaction!]
+}
+
+type UserPreferences {
+  contentFilteringSeverityLevel: ContentFilterType
+}
+
 type ListTodaysInteractionsResponse {
   status: String!
 
@@ -242,6 +330,14 @@ type TodaysInteractionsData {
   totalScore: Decimal
 
   totalDetails: TodaysInteractionsDetailsData
+}
+
+type PostInteractionResponse {
+  status: String!
+
+  ResponseCode: String
+
+  affectedRows: [ProfileUser!]
 }
 
 type TodaysInteractionsDetailsData {
@@ -270,6 +366,8 @@ type HelloResponse {
   wikiLink: String
 
   lastMergedPullRequestNumber: String
+
+  companyAccountId: ID
 }
 
 type LogWins {
@@ -348,6 +446,8 @@ type UserInfo {
   invited: ID!
 
   updatedat: Date
+
+  userPreferences: UserPreferences
 }
 
 type PostInfoResponse {
@@ -466,6 +566,14 @@ type DefaultResponse {
   ResponseCode: String
 }
 
+type UserPreferencesResponse {
+  status: String!
+
+  ResponseCode: String
+
+  affectedRows: UserPreferences
+}
+
 type AddPostResponse {
   status: String!
 
@@ -522,15 +630,15 @@ type ChatMessageInfo {
   createdat: Date
 }
 
-type Userinforesponse {
+type BasicUserInfoResponse {
   status: String!
 
   ResponseCode: String
 
-  affectedRows: Userinfo
+  affectedRows: BasicUserInfo
 }
 
-type Userinfo {
+type BasicUserInfo {
   userid: ID
 
   img: String
@@ -551,7 +659,7 @@ type UserFriendsResponse {
 
   ResponseCode: String
 
-  affectedRows: [Userinfo]
+  affectedRows: [BasicUserInfo]
 }
 
 type User {
@@ -924,17 +1032,19 @@ type __Type {
 
   description: String
 
-  fields(includeDeprecated: Boolean = false): [__Field!]
+  fields(includeDeprecated: Boolean! = false): [__Field!]
 
   interfaces: [__Type!]
 
   possibleTypes: [__Type!]
 
-  enumValues(includeDeprecated: Boolean = false): [__EnumValue!]
+  enumValues(includeDeprecated: Boolean! = false): [__EnumValue!]
 
-  inputFields(includeDeprecated: Boolean = false): [__InputValue!]
+  inputFields(includeDeprecated: Boolean! = false): [__InputValue!]
 
   ofType: __Type
+
+  isOneOf: Boolean
 }
 
 """
@@ -990,7 +1100,7 @@ type __Field {
 
   description: String
 
-  args(includeDeprecated: Boolean = false): [__InputValue!]!
+  args(includeDeprecated: Boolean! = false): [__InputValue!]!
 
   type: __Type!
 
@@ -1046,7 +1156,7 @@ type __Directive {
 
   locations: [__DirectiveLocation!]!
 
-  args: [__InputValue!]!
+  args(includeDeprecated: Boolean! = false): [__InputValue!]!
 }
 
 """
@@ -1163,6 +1273,11 @@ directive @skip ("Skipped when true." if: Boolean!) on FIELD|FRAGMENT_SPREAD|INL
 Marks an element of a GraphQL schema as no longer supported.
 """
 directive @deprecated ("Explains why this element was deprecated, usually also including a suggestion for how to access supported similar data. Formatted using the Markdown syntax, as specified by [CommonMark](https:\/\/commonmark.org\/)." reason: String = "No longer supported") on FIELD_DEFINITION|ENUM_VALUE|ARGUMENT_DEFINITION|INPUT_FIELD_DEFINITION
+
+"""
+Indicates that an Input Object is a OneOf Input Object (and thus requires exactly one of its fields be provided).
+"""
+directive @oneOf on INPUT_OBJECT
 
 schema {
   query: Query

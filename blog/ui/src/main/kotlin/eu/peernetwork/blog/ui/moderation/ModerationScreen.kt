@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import eu.peernetwork.blog.ui.event.UiModerationEvent
 import eu.peernetwork.blog.ui.model.UiContent
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.component.UiComponentProvider
@@ -31,7 +32,7 @@ import eu.peernetwork.core.ui.extension.builder
 fun ModerationScreen(
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
-    content: @Composable (Moderations) -> Unit
+    content: @Composable (UiModerationEvent) -> Unit
 ) {
     val context = LocalContext.current
     val component = remember {
@@ -48,7 +49,7 @@ fun ModerationScreen(
     val message = stringResource(eu.peernetwork.blog.ui.R.string.action_message)
     val updatedContent by rememberUpdatedState(content)
     val event = remember(state) {
-        Moderations(
+        UiModerationEvent(
             onSave = { viewModel.save(it) },
             onReport = { viewModel.report(it) }
         )
@@ -69,7 +70,7 @@ fun ModerationScreen(
 @Composable
 fun ModerationScreen(
     model: UiContent,
-    event: Moderations,
+    event: UiModerationEvent,
     size: Dp = 24.dp,
     color: Color = MaterialTheme.colorScheme.tertiary,
 ) {

@@ -32,7 +32,7 @@ fun SearchNavigation(
     val updatedContent by rememberUpdatedState(content)
     var id by remember { mutableStateOf<String>("") }
     val requireUpdate = remember { mutableStateOf(false) }
-    val mode = if (startDestination == "overlay") {
+    val windowMode = if (startDestination == "overlay") {
         DesignPageWindowMode.DOCKED
     } else {
         DesignPageWindowMode.HIDDEN
@@ -54,7 +54,7 @@ fun SearchNavigation(
                 id = userId,
                 provider = component,
                 viewModelStore = viewModelStore,
-                mode = mode,
+                mode = windowMode,
                 onCancel = onCancel,
             ) {
                 ProfileScreen(
@@ -76,17 +76,17 @@ fun SearchNavigation(
                 id = userId,
                 provider = component,
                 viewModelStore = viewModelStore,
-                mode = mode,
+                mode = windowMode,
                 onCancel = onCancel,
             ) {
                 FeedScreen(
-                    userId,
-                    BuildConfig.PAGING_LIMIT,
-                    component,
+                    id = userId,
+                    postLimit = BuildConfig.PAGING_LIMIT,
+                    provider = component,
                     viewModelStore = viewModelStore,
                     title = tag,
                     criteria = tag?.let { Filter.Criteria.Content(tag = it) },
-                    requireUpdate = requireUpdate
+                    hasUpdate = requireUpdate
                 )
             }
         }
@@ -103,7 +103,7 @@ fun SearchNavigation(
                 id = userId,
                 provider = component,
                 viewModelStore = viewModelStore,
-                mode = mode,
+                mode = windowMode,
                 onCancel = onCancel,
             ) {
                 FeedScreen(
@@ -113,7 +113,7 @@ fun SearchNavigation(
                     viewModelStore = viewModelStore,
                     title = query,
                     criteria = query?.let { Filter.Criteria.Content(title = it) },
-                    requireUpdate = requireUpdate
+                    hasUpdate = requireUpdate
                 )
             }
         }
@@ -135,7 +135,7 @@ fun SearchNavigation(
                 id = userId,
                 provider = component,
                 viewModelStore = viewModelStore,
-                mode = mode,
+                mode = windowMode,
                 onCancel = onCancel,
             ) {
                 SearchScreen(

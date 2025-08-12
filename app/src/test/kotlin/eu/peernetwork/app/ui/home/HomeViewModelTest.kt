@@ -2,9 +2,11 @@ package eu.peernetwork.app.ui.home
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import app.cash.turbine.test
+import eu.peernetwork.app.interactor.SettingsInteractor
 import eu.peernetwork.persistence.domain.publishable.PublishableInteger
 import eu.peernetwork.persistence.domain.retrievable.RetrievableInteger
 import eu.peernetwork.persistence.domain.retrievable.RetrievableString
+import eu.peernetwork.user.domain.usecase.PreferenceUsecase
 import eu.peernetwork.user.domain.usecase.PrincipalUsecase
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -30,6 +32,10 @@ internal class HomeViewModelTest {
 
     private val principalUsecase = mockk<PrincipalUsecase>()
 
+    private val preferenceUsecase = mockk<PreferenceUsecase>(relaxed = true)
+
+    private val settingsInteractor = mockk<SettingsInteractor>(relaxed = true)
+
     private val retrievableString = mockk<RetrievableString>()
 
     private val retrievableInteger = mockk<RetrievableInteger>()
@@ -45,6 +51,8 @@ internal class HomeViewModelTest {
         Dispatchers.setMain(dispatcher)
         viewModel = HomeViewModel(
             principalUsecase,
+            preferenceUsecase,
+            settingsInteractor,
             retrievableInteger,
             publishableInteger
         )
@@ -70,6 +78,8 @@ internal class HomeViewModelTest {
             assertEquals(HomeViewModel.State.Loading, awaitItem())
             assertEquals(HomeViewModel.State.Success(user, page), awaitItem())
         }
+        coVerify { settingsInteractor.setUser(any()) }
+        coVerify { settingsInteractor.setMode(any()) }
     }
 
     @Test

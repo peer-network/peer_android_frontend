@@ -18,6 +18,7 @@ import androidx.paging.LoadState
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.compose.PostPlaceholder
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
+import eu.peernetwork.blog.ui.event.UiPostEvent
 import eu.peernetwork.blog.ui.moderation.ModerationScreen
 import eu.peernetwork.core.common.model.Pageable
 import eu.peernetwork.core.ui.component.UiComponentProvider
@@ -34,10 +35,7 @@ fun PhotoScreen(
     lastUpdated: State<Long>,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
-    onMentionClick: (String) -> Unit = {},
-    onHashtagClick: (String) -> Unit = {},
-    onPostClick: (String, Int) -> Unit,
-    onAuthorClick: (String) -> Unit = {},
+    event: UiPostEvent,
     listState: LazyListState = rememberLazyListState(),
 ) {
     val context = LocalContext.current
@@ -81,9 +79,9 @@ fun PhotoScreen(
         EngagementScreen(
             postLimit,
             refreshed,
-            onMentionClick = onMentionClick,
-            onHashtagClick = onHashtagClick,
-            onAuthorClick,
+            onMentionClick = event::onMentionClick,
+            onHashtagClick = event::onHashtagClick,
+            event::onAuthorClick,
             component,
             viewModelStoreOwner
         ) { engagement ->
@@ -98,9 +96,9 @@ fun PhotoScreen(
                     listState = listState,
                     engagement = engagement,
                     moderation = moderation,
-                    onMentionClick,
-                    onHashtagClick,
-                    onPostClick,
+                    event::onMentionClick,
+                    event::onHashtagClick,
+                    event::onPostClick,
                 )
             }
         }

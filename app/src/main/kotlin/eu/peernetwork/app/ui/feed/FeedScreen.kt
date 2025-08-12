@@ -14,7 +14,6 @@ import androidx.navigation.compose.rememberNavController
 import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.extension.builder
-import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.core.ui.model.ViewModelState
 import eu.peernetwork.social.ui.connection.ConnectionScreen
 
@@ -26,7 +25,7 @@ fun FeedScreen(
     viewModelStore: ViewModelState,
     title: String? = null,
     criteria: Criteria? = null,
-    requireUpdate: MutableState<Boolean>,
+    hasUpdate: MutableState<Boolean>,
 ) {
     val context = LocalContext.current
     val component = remember {
@@ -69,26 +68,18 @@ fun FeedScreen(
             ) {
                 FeedPreview(
                     id = id,
-                    enable = overlay.value == FeedOverlayState.Empty,
                     ordinal = ordinal.value,
                     state = pageState,
-                    requireUpdate = requireUpdate,
+                    selected = overlay,
+                    requireUpdate = hasUpdate,
                     component = component,
                     viewModelStoreOwner = viewModelStoreOwner,
                     controller = controller,
                     connectionController = connectionController,
                     criteria = criteria,
-                    onMentionClick = { controller.navigateToUsernameSearch(it) },
-                    onHashtagClick = { controller.navigateToTagSearch(it) },
-                    onAuthorClick = { controller.navigateIfNecessary("profile/$it") },
                     title = title,
                     onNavigate = { viewModel.lastVisited(it) },
-                    onFilter = { viewModel.setFilter(it) },
-                    onPhotoClick = { id, index ->
-                        overlay.value = FeedOverlayState.Photo(id, index)
-                    },
-                    onVideoClick = { id, index ->
-                        overlay.value = FeedOverlayState.Video(id, index) }
+                    onFilter = { viewModel.setFilter(it) }
                 )
             }
         }

@@ -1,6 +1,7 @@
 package eu.peernetwork.user.remote.api
 
 import com.apollographql.apollo3.api.Optional
+import eu.peernetwork.core.common.interactor.SessionInteractor
 import eu.peernetwork.core.remote.extension.assertOrThrow
 import eu.peernetwork.core.remote.extension.executeOrThrow
 import eu.peernetwork.core.remote.extension.getOrThrow
@@ -11,6 +12,7 @@ import eu.peernetwork.user.domain.exception.AccountNotFoundException
 import eu.peernetwork.user.domain.exception.UserRegistrationException
 import eu.peernetwork.user.domain.model.UserDetail
 import eu.peernetwork.user.remote.mapper.mapToDomain
+import eu.peernetwork.user.remote.mapper.mapToScope
 import protected.eu.peernetwork.user.remote.DeleteAccountMutation
 import `protected`.eu.peernetwork.user.remote.ProfileQuery
 import protected.eu.peernetwork.user.remote.UpdatePasswordMutation
@@ -24,9 +26,10 @@ import javax.inject.Named
 class AccountApiDelegate @Inject constructor(
     @Named("mediaUrl") private val url: String,
     private val client: RequestClient,
+    private val sessionInteractor: SessionInteractor
 ) : AccountApi {
     override suspend fun get(id: String, refresh: Boolean): AccountModel {
-        val query = ProfileQuery(Optional.present(id))
+        val query = ProfileQuery(Optional.present(id), Optional.present(sessionInteractor.mode().mapToScope()))
         val response = client().query(query).executeOrThrow()
         val data = response.getOrThrow().getProfile
         response.assertOrThrow(data.status, data.ResponseCode)

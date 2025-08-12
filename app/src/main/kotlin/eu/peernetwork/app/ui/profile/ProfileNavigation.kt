@@ -30,7 +30,7 @@ fun ProfileNavigation(
     content: @Composable () -> Unit = {},
 ) {
     val updatedContent by rememberUpdatedState(content)
-    val mode = if (startDestination == "overlay") {
+    val windowMode = if (startDestination == "overlay") {
         DesignPageWindowMode.DOCKED
     } else {
         DesignPageWindowMode.HIDDEN
@@ -50,7 +50,7 @@ fun ProfileNavigation(
                 id = userId,
                 provider = component,
                 viewModelStore = viewModelStore,
-                mode = mode,
+                mode = windowMode,
                 onCancel = onCancel,
             ) {
                 ProfileScreen(
@@ -66,7 +66,7 @@ fun ProfileNavigation(
                 id = userId,
                 provider = component,
                 viewModelStore = viewModelStore,
-                mode = mode,
+                mode = windowMode,
                 onCancel = onCancel,
             ) { SettingsScreen(userId, component, viewModelStore) }
         }
@@ -88,7 +88,7 @@ fun ProfileNavigation(
                 id = userId,
                 provider = component,
                 viewModelStore = viewModelStore,
-                mode = mode,
+                mode = windowMode,
                 onCancel = onCancel,
             ) {
                 SearchScreen(
