@@ -10,6 +10,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -51,7 +52,7 @@ enum class ConnectionStatus {
 fun ConnectionScreen(
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
-    content: @Composable (ConnectionController) -> Unit
+    content: @Composable (State<ConnectionController>) -> Unit
 ) {
     val context = LocalContext.current
     val component = remember {
@@ -64,7 +65,7 @@ fun ConnectionScreen(
     val state = viewModel.state.collectAsState().value
     val updatedContent by rememberUpdatedState(content)
     val error = remember { derivedStateOf { (state as? ConnectionViewModel.State.Error)?.error } }
-    val controller by remember { derivedStateOf {
+    val controller = remember { derivedStateOf {
         object : ConnectionController {
             override fun invoke(id: String, value: Boolean) {
                 viewModel.connect(id, value)

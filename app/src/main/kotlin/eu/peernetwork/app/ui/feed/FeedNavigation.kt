@@ -28,7 +28,7 @@ fun FeedNavigation(
     content: @Composable () -> Unit = {}
 ) {
     val updatedContent by rememberUpdatedState(content)
-    val mode = if (startDestination == "overlay") {
+    val windowMode = if (startDestination == "overlay") {
         DesignPageWindowMode.DOCKED
     } else {
         DesignPageWindowMode.HIDDEN
@@ -49,7 +49,7 @@ fun FeedNavigation(
                 id = userId,
                 provider = component,
                 viewModelStore = viewModelStore,
-                mode = mode,
+                mode = windowMode,
                 onCancel = onCancel,
             ) {
                 ProfileScreen(
@@ -78,7 +78,7 @@ fun FeedNavigation(
                 id = userId,
                 provider = component,
                 viewModelStore = viewModelStore,
-                mode = mode,
+                mode = windowMode,
                 onCancel = onCancel,
             ) {
                 SearchScreen(
@@ -90,21 +90,5 @@ fun FeedNavigation(
                 )
             }
         }
-    }
-}
-
-fun NavHostController.navigateToTagSearch(tag: String) {
-    val cleanTag = tag.removePrefix("#")
-    val encoded = URLEncoder.encode(cleanTag, "UTF-8")
-    navigate("search/tag/$encoded") {
-        launchSingleTop = true
-    }
-}
-
-fun NavHostController.navigateToUsernameSearch(username: String) {
-    val cleanUsername = username.removePrefix("@")
-    val encoded = URLEncoder.encode(cleanUsername, "UTF-8")
-    navigate("search/username/$encoded") {
-        launchSingleTop = true
     }
 }

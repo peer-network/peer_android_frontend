@@ -61,7 +61,9 @@ fun PreviewTitleItem() {
             id = UUID.randomUUID().toString(),
             slug = "1234",
             username = "johnDoe",
-            imageUrl = "http://localhost"
+            imageUrl = "http://localhost",
+            isFollowed = false,
+            isFollowing = false
         )
         val post = UiPost(
             id = UUID.randomUUID().toString(),

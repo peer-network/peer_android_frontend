@@ -116,7 +116,9 @@ fun ReferralScreen(
                                 id = referral.id,
                                 username = referral.username,
                                 slug = referral.slug,
-                                imageUrl = referral.img
+                                imageUrl = referral.img,
+                                isFollowed = referral.isFollowed,
+                                isFollowing = referral.isFollowing
                             )
                             Peer(
                                 member = member,

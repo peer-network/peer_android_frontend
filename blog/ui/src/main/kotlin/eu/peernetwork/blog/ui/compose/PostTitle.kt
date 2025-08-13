@@ -2,7 +2,6 @@ package eu.peernetwork.blog.ui.compose
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -12,6 +11,7 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import eu.peernetwork.core.ui.design.compose.DesignCollapsibleText
 
 @Composable
 fun PostTitle(
@@ -25,8 +25,9 @@ fun PostTitle(
     val handleHashTag by rememberUpdatedState(onHashtagClick)
     val uriHandler = LocalUriHandler.current
     Column(modifier = modifier) {
-        ClickableText(
+        DesignCollapsibleText(
             text = title,
+            maxLines = 2,
             style = MaterialTheme.typography.headlineMedium.copy(
                 color = MaterialTheme.colorScheme.onBackground
             ),
@@ -41,8 +42,9 @@ fun PostTitle(
                 }
             }
         )
-        ClickableText(
+        DesignCollapsibleText(
             text = description,
+            maxLines = 3,
             style = MaterialTheme.typography.labelLarge.copy(
                 color = MaterialTheme.colorScheme.tertiary,
                 lineHeight = 18.sp

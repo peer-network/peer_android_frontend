@@ -3,6 +3,7 @@ package eu.peernetwork.user.remote.api
 import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.ApolloResponse
 import com.apollographql.apollo3.api.Operation
+import eu.peernetwork.core.common.interactor.SessionInteractor
 import eu.peernetwork.core.remote.model.Status
 import eu.peernetwork.core.remote.api.RequestClient
 import eu.peernetwork.user.data.api.AccountApi
@@ -30,13 +31,15 @@ internal class AccountApiDelegateTest {
 
     private val client = mockk<ApolloClient>()
 
+    private val session = mockk<SessionInteractor>(relaxed = true)
+
     private lateinit var api: AccountApi
 
     @Before
     fun setup() {
         api = AccountApiDelegate(url, object : RequestClient {
             override fun invoke(): ApolloClient = client
-        })
+        }, session)
     }
 
     @Test

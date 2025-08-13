@@ -21,11 +21,12 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import dev.materii.pullrefresh.DragRefreshLayout
 import dev.materii.pullrefresh.rememberPullRefreshState
 import eu.peernetwork.blog.domain.model.Filter.Criteria
-import eu.peernetwork.blog.domain.model.Relation
+import eu.peernetwork.blog.domain.model.Category
 import eu.peernetwork.blog.ui.compose.PhotoIndicator
 import eu.peernetwork.blog.ui.compose.PhotoPage
 import eu.peernetwork.blog.ui.compose.PhotoPager
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
+import eu.peernetwork.blog.ui.event.UiPostEvent
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.moderation.ModerationScreen
 import eu.peernetwork.core.common.model.Pageable
@@ -41,13 +42,11 @@ fun PhotoOverlay(
     id: String,
     limit: Int,
     position: Int,
-    relation: Relation,
+    category: Category,
     criteria: Criteria? = null,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
-    onAuthorClick: (String) -> Unit = {},
-    onMentionClick: (String) -> Unit = {},
-    onHashtagClick: (String) -> Unit = {},
+    event: UiPostEvent,
     header: @Composable () -> Unit = {},
     connection: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit = {}
 ) {
@@ -76,11 +75,11 @@ fun PhotoOverlay(
         }
     }
     val pullRefreshState = rememberPullRefreshState(refreshing = false, onRefresh = {
-        viewModel.load(Pageable(0, limit), relation, criteria)
+        viewModel.load(Pageable(0, limit), category, criteria)
     })
     DragRefreshLayout(state = pullRefreshState) {
         DesignStatefulScaffold<Flow<PagingData<UiPost>>>(state = derivedState, onRefresh = {
-            viewModel.load(Pageable(0, limit), relation, criteria)
+            viewModel.load(Pageable(0, limit), category, criteria)
         }) { flow ->
             val lazyPagingItems = flow.collectAsLazyPagingItems()
             if (lazyPagingItems.loadState.refresh is LoadState.Loading) {
@@ -94,9 +93,9 @@ fun PhotoOverlay(
                 EngagementScreen(
                     limit,
                     refreshed,
-                    onMentionClick,
-                    onHashtagClick,
-                    onAuthorClick,
+                    event::onMentionClick,
+                    event::onHashtagClick,
+                    event::onAuthorClick,
                     component,
                     viewModelStoreOwner
                 ) { engagement ->
@@ -110,9 +109,9 @@ fun PhotoOverlay(
                             engagement = engagement,
                             moderation = moderation,
                             lazyPagingItems = lazyPagingItems,
-                            onAuthorClick = onAuthorClick,
-                            onMentionClick = onMentionClick,
-                            onHashtagClick = onHashtagClick,
+                            onAuthorClick = event::onAuthorClick,
+                            onMentionClick = event::onMentionClick,
+                            onHashtagClick = event::onHashtagClick,
                             header = header,
                             connection = connection,
                             indicator = { state, items -> PhotoIndicator(state, items) },
@@ -134,7 +133,7 @@ fun PhotoOverlay(
                                         )
                                         component.imageView()(
                                             Modifier,
-                                            ImageView.Spec(path, post.aspectRatio)
+                                            ImageView.Spec(path, post.aspectRatio, zoomable = true)
                                         )
                                     }
                                 } else {
@@ -150,7 +149,7 @@ fun PhotoOverlay(
                                     )
                                     component.imageView()(
                                         Modifier,
-                                        ImageView.Spec(media.path, null)
+                                        ImageView.Spec(media.path, null, zoomable = true)
                                     )
                                 }
                             }

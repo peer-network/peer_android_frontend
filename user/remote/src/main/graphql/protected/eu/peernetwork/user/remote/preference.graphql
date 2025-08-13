@@ -1,0 +1,11 @@
+query Preference {
+    getUserInfo {
+        status
+        ResponseCode
+        affectedRows {
+            userPreferences {
+                contentFilteringSeverityLevel
+            }
+        }
+    }
+}

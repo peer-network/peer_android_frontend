@@ -23,7 +23,9 @@ class SearchInteractorDelegate @Inject constructor(
                     id = it.id,
                     slug = it.slug.toString(),
                     username = it.username,
-                    imageUrl = it.imageUrl
+                    imageUrl = it.imageUrl,
+                    isFollowed = false,
+                    isFollowing = false
                 )
             }
         )

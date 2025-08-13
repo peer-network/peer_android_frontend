@@ -16,10 +16,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import eu.peernetwork.blog.domain.model.Filter.Criteria
-import eu.peernetwork.blog.domain.model.Relation
+import eu.peernetwork.blog.domain.model.Category
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.compose.PostPlaceholder
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
+import eu.peernetwork.blog.ui.event.UiPostEvent
 import eu.peernetwork.core.common.model.Pageable
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
 import eu.peernetwork.blog.ui.moderation.ModerationScreen
@@ -34,14 +35,11 @@ import kotlinx.coroutines.launch
 fun PhotoScreen(
     id: String,
     postLimit: Int,
-    relation: Relation,
+    category: Category,
     criteria: Criteria? = null,
-    onMentionClick: (String) -> Unit = {},
-    onHashtagClick: (String) -> Unit = {},
-    onPostClick: (String, Int) -> Unit,
+    event: UiPostEvent,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
-    onAuthorClick: (String) -> Unit = {},
     requireUpdate: MutableState<Boolean>,
     listState: LazyListState = rememberLazyListState(),
     connection: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit = {}
@@ -74,9 +72,9 @@ fun PhotoScreen(
             }
         }
     }
-    DesignPagingScaffold<UiPost>(
+    DesignPagingScaffold(
         state = derivedState,
-        onRefresh = { viewModel.load(Pageable(0, postLimit), relation, criteria) },
+        onRefresh = { viewModel.load(Pageable(0, postLimit), category, criteria) },
         placeholder = { PostPlaceholder() },
         errorContent = { error, refresh ->
             DesignError(refresh, error, component.resource())
@@ -103,9 +101,9 @@ fun PhotoScreen(
             EngagementScreen(
                 postLimit,
                 refreshed,
-                onMentionClick,
-                onHashtagClick,
-                onAuthorClick,
+                event::onMentionClick,
+                event::onHashtagClick,
+                event::onAuthorClick,
                 component,
                 viewModelStoreOwner
             ) { engagement ->
@@ -120,10 +118,10 @@ fun PhotoScreen(
                         lazyPagingItems = lazyPagingItems,
                         engagement = engagement,
                         moderation = moderation,
-                        onPostClick = onPostClick,
-                        onAuthorClick = onAuthorClick,
-                        onHashtagClick = onHashtagClick,
-                        onMentionClick = onMentionClick,
+                        onPostClick = event::onPostClick,
+                        onAuthorClick = event::onAuthorClick,
+                        onHashtagClick = event::onHashtagClick,
+                        onMentionClick = event::onMentionClick,
                         connection = connection
                     )
                 }
@@ -139,9 +137,9 @@ fun PhotoScreen(
             }
         }
     }
-    LaunchedEffect(relation, criteria) {
-        if (relation != viewModel.lastRelation) {
-            viewModel.load(Pageable(0, postLimit), relation, criteria)
+    LaunchedEffect(category, criteria) {
+        if (category != viewModel.lastCategory) {
+            viewModel.load(Pageable(0, postLimit), category, criteria)
         }
     }
 }

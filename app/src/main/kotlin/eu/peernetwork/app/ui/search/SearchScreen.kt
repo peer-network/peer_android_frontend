@@ -15,12 +15,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.compose.rememberNavController
 import eu.peernetwork.blog.ui.explore.ExploreScreen
 import eu.peernetwork.core.ui.R
@@ -71,10 +69,10 @@ fun SearchScreen(
             connectionController = connection
         ) {
             SearchNavigation(
-                id,
-                component,
-                viewModelStore,
-                controller
+                userId = id,
+                component = component,
+                viewModelStore = viewModelStore,
+                controller = controller
             ) { controller ->
                 val listState = rememberLazyGridState()
                 SearchScreen(state = searchState) { mode, query ->

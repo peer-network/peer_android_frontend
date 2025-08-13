@@ -68,6 +68,10 @@ fun ComposerScreen(
                     AttachmentScreen(
                         attachment,
                         onAttach = { controller.navigateIfNecessary("explorer") },
+                        onPreview = {
+                            val path = it.files.first().path
+                            controller.navigateIfNecessary("video?path=$path")
+                        },
                         component,
                         viewModelStore.get(key),
                         Modifier.padding(top = 4.dp),
@@ -130,7 +134,7 @@ fun PreviewComposerScreen() {
     PeerTheme {
         val focus = remember { FocusRequester() }
         val title = remember { TextFieldState() }
-        var description = remember { TextFieldState() }
+        val description = remember { TextFieldState() }
         ComposerScreen(
             footer = {
                 val state = remember { mutableStateOf<UiAttachment>(UiAttachment.Text) }

@@ -1,6 +1,12 @@
 package eu.peernetwork.blog.ui.provider
 
+import eu.peernetwork.core.common.interactor.SessionInteractor
 import eu.peernetwork.core.common.provider.CoreProvider
 import eu.peernetwork.media.core.provider.MediaProvider
 
-interface BlogProvider : CoreProvider, MediaProvider, InteractorProvider, RepositoryProvider
+interface BlogProvider : CoreProvider,
+    MediaProvider,
+    InteractorProvider,
+    RepositoryProvider {
+    fun sessionInteractor(): SessionInteractor
+}

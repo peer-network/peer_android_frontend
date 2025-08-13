@@ -1,5 +1,13 @@
-query ListPeers($offset: Int!, $limit: Int!) {
-    listFriends(offset: $offset, limit: $limit) {
+query ListPeers(
+    $offset: Int!,
+    $limit: Int!,
+    $contentFilterBy: ContentFilterType,
+) {
+    listFriends(
+        offset: $offset,
+        limit: $limit,
+        contentFilterBy: $contentFilterBy,
+    ) {
         status
         counter
         ResponseCode
@@ -9,7 +17,7 @@ query ListPeers($offset: Int!, $limit: Int!) {
             username
             slug
             biography
-            updatedat
+            updatedat,
         }
     }
 }

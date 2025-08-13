@@ -5,15 +5,17 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import eu.peernetwork.app.ui.feed.navigateToTagSearch
-import eu.peernetwork.app.ui.feed.navigateToUsernameSearch
+import eu.peernetwork.app.extension.navigateToTagSearch
+import eu.peernetwork.app.extension.navigateToUsernameSearch
 import eu.peernetwork.app.ui.window.WindowTitle
+import eu.peernetwork.blog.ui.event.UiPostEvent
 import eu.peernetwork.blog.ui.post.photo.PhotoOverlay
 import eu.peernetwork.blog.ui.post.video.VideoOverlay
 import eu.peernetwork.core.ui.component.UiComponentProvider
@@ -44,14 +46,14 @@ fun ProfileOverlay(
     principal: String,
     userId: String,
     limit: Int,
-    connectionController: ConnectionController,
+    connectionController: State<ConnectionController>,
     provider: UiComponentProvider,
     component: Profile.Component,
     viewModelStore: ViewModelState,
     content: @Composable () -> Unit
 ) {
     val updatedContent by rememberUpdatedState(content)
-    val connection by connectionController.observe().collectAsStateWithLifecycle()
+    val connection by connectionController.value.observe().collectAsStateWithLifecycle()
     val visible = remember(overlay.value) { mutableStateOf(overlay.value !is ProfileOverlayState.Empty) }
     updatedContent()
     DesignOverlay(
@@ -65,6 +67,23 @@ fun ProfileOverlay(
                 .background(MaterialTheme.colorScheme.background)
         ) {
             val overlayState = remember { mutableStateOf<ProfileOverlayState?>(overlay.value) }
+            val event = remember {
+                object : UiPostEvent {
+                    override fun onMentionClick(username: String) = controller.navigateToUsernameSearch(username)
+
+                    override fun onHashtagClick(tag: String) = controller.navigateToTagSearch(tag)
+
+                    override fun onPostClick(id: String, position: Int) {
+                        overlay.value = ProfileOverlayState.Photo(id, position)
+                    }
+
+                    override fun onVideoClick(id: String, position: Int) {
+                        overlay.value = ProfileOverlayState.Video(id, position)
+                    }
+
+                    override fun onAuthorClick(id: String) = controller.navigateIfNecessary("profile/$id")
+                }
+            }
             ProfileNavigation(
                 principal = principal,
                 userId = userId,
@@ -83,10 +102,8 @@ fun ProfileOverlay(
                             limit = limit,
                             position = state.position,
                             provider = component,
-                            viewModelStore.get(userId),
-                            onMentionClick = { controller.navigateToUsernameSearch(it) },
-                            onHashtagClick = { controller.navigateToTagSearch(it) },
-                            onAuthorClick = { controller.navigateIfNecessary("profile/$it") },
+                            viewModelStoreOwner = viewModelStore.get(userId),
+                            event = event,
                             header = {
                                 WindowTitle(
                                     id = userId,
@@ -100,7 +117,7 @@ fun ProfileOverlay(
                                 ConnectionScreen(
                                     isFollowing = connection.getOrDefault(it.first, it.third),
                                     isFollowed = it.second,
-                                    onClick = { follow -> connectionController.invoke(it.first, !follow) }
+                                    onClick = { follow -> connectionController.value.invoke(it.first, !follow) }
                                 )
                             }
                         }
@@ -113,12 +130,8 @@ fun ProfileOverlay(
                             limit = limit,
                             position = state.position,
                             provider = component,
-                            viewModelStore.get(userId),
-                            onPostClick = { id, index ->
-                                overlay.value = ProfileOverlayState.Video(id, index) },
-                            onMentionClick = { controller.navigateToUsernameSearch(it) },
-                            onHashtagClick = { controller.navigateToTagSearch(it) },
-                            onAuthorClick = { controller.navigateIfNecessary("profile/$it") },
+                            viewModelStoreOwner = viewModelStore.get(userId),
+                            event = event,
                             header = {
                                 WindowTitle(
                                     id = userId,
@@ -132,7 +145,7 @@ fun ProfileOverlay(
                                 ConnectionScreen(
                                     isFollowing = connection.getOrDefault(it.first, it.third),
                                     isFollowed = it.second,
-                                    onClick = { follow -> connectionController.invoke(it.first, !follow) }
+                                    onClick = { follow -> connectionController.value.invoke(it.first, !follow) }
                                 )
                             }
                         }

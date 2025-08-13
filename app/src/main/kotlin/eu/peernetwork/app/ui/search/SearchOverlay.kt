@@ -2,13 +2,14 @@ package eu.peernetwork.app.ui.search
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import eu.peernetwork.app.ui.feed.navigateToTagSearch
-import eu.peernetwork.app.ui.feed.navigateToUsernameSearch
+import eu.peernetwork.app.extension.navigateToTagSearch
+import eu.peernetwork.app.extension.navigateToUsernameSearch
 import eu.peernetwork.app.ui.window.WindowTitle
 import eu.peernetwork.blog.ui.explore.ExploreOverlay
 import eu.peernetwork.core.ui.design.compose.DesignOverlay
@@ -32,11 +33,11 @@ fun SearchOverlay(
     overlay: MutableState<SearchOverlayState>,
     component: Search.Component,
     viewModelStore: ViewModelState,
-    connectionController: ConnectionController,
+    connectionController: State<ConnectionController>,
     content: @Composable () -> Unit
 ) {
     val updatedContent by rememberUpdatedState(content)
-    val connection by connectionController.observe().collectAsStateWithLifecycle()
+    val connection by connectionController.value.observe().collectAsStateWithLifecycle()
     val visible = remember(overlay.value) { mutableStateOf(overlay.value !is SearchOverlayState.Empty) }
     updatedContent()
     DesignOverlay(
@@ -75,7 +76,7 @@ fun SearchOverlay(
                 ConnectionScreen(
                     isFollowing = connection.getOrDefault(it.first, it.third),
                     isFollowed = it.second,
-                    onClick = { follow -> connectionController.invoke(it.first, !follow) }
+                    onClick = { follow -> connectionController.value.invoke(it.first, !follow) }
                 )
             }
         }

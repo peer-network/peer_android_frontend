@@ -25,17 +25,20 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import dev.materii.pullrefresh.DragRefreshLayout
 import dev.materii.pullrefresh.rememberPullRefreshState
 import eu.peernetwork.blog.domain.model.Filter.Criteria
-import eu.peernetwork.blog.domain.model.Relation
+import eu.peernetwork.blog.domain.model.Category
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
 import eu.peernetwork.blog.ui.model.UiVideo
 import eu.peernetwork.blog.ui.moderation.ModerationScreen
 import eu.peernetwork.blog.ui.compose.VideoPage
+import eu.peernetwork.blog.ui.event.UiPostEvent
+import eu.peernetwork.blog.ui.mapper.query
 import eu.peernetwork.core.common.model.Pageable
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffold
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
 import eu.peernetwork.core.ui.design.compose.DesignThumbnail
 import eu.peernetwork.core.ui.extension.builder
+import eu.peernetwork.media.core.model.UiMimeType
 import eu.peernetwork.media.core.renderer.VideoPlayer
 import kotlinx.coroutines.flow.Flow
 
@@ -44,14 +47,11 @@ fun VideoOverlay(
     limit: Int,
     position: Int,
     enabled: Boolean,
-    relation: Relation = Relation.NONE,
+    category: Category = Category.ALL,
     criteria: Criteria? = null,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
-    onPostClick: (String, Int) -> Unit,
-    onAuthorClick: (String) -> Unit = {},
-    onMentionClick: (String) -> Unit = {},
-    onHashtagClick: (String) -> Unit = {},
+    event: UiPostEvent,
     header: @Composable () -> Unit = {},
     connection: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit = {}
 ) {
@@ -84,12 +84,12 @@ fun VideoOverlay(
     val length = remember { mutableLongStateOf(0L) }
     val pullRefreshState = rememberPullRefreshState(
         refreshing = false,
-        onRefresh = { viewModel.load(Pageable(0, limit), relation, criteria) }
+        onRefresh = { viewModel.load(Pageable(0, limit), category, criteria) }
     )
     DragRefreshLayout(state = pullRefreshState) {
         DesignStatefulScaffold<Flow<PagingData<UiVideo>>>(
             state = derivedState,
-            onRefresh = { viewModel.load(Pageable(0, limit), relation, criteria) }
+            onRefresh = { viewModel.load(Pageable(0, limit), category, criteria) }
         ) { flow ->
             val lazyPagingItems = flow.collectAsLazyPagingItems()
             if (lazyPagingItems.loadState.refresh is LoadState.Loading) {
@@ -101,13 +101,13 @@ fun VideoOverlay(
                     lazyPagingItems.loadState.refresh is LoadState.NotLoading
                 } }
                 EngagementScreen(
-                    limit,
-                    refreshed,
-                    onMentionClick,
-                    onHashtagClick,
-                    onAuthorClick,
-                    component,
-                    viewModelStoreOwner
+                    postLimit = limit,
+                    refresh = refreshed,
+                    onMentionClick = event::onMentionClick,
+                    onHashtagClick = event::onHashtagClick,
+                    onAuthorClick = event::onAuthorClick,
+                    provider = component,
+                    viewModelStoreOwner = viewModelStoreOwner
                 ) { engagement ->
                     ModerationScreen(
                         component,
@@ -119,18 +119,10 @@ fun VideoOverlay(
                             engagement = engagement,
                             moderation = moderation,
                             lazyPagingItems = lazyPagingItems,
-                            onLoad = { position ->
-                                viewModel.sync(
-                                    lazyPagingItems.itemSnapshotList.items,
-                                    configuration.screenWidthDp,
-                                    configuration.screenHeightDp,
-                                    position,
-                                )
-                            },
-                            onPostClick = onPostClick,
-                            onAuthorClick = onAuthorClick,
-                            onMentionClick = onMentionClick,
-                            onHashtagClick = onHashtagClick,
+                            onPostClick = event::onVideoClick,
+                            onAuthorClick = event::onAuthorClick,
+                            onMentionClick = event::onMentionClick,
+                            onHashtagClick = event::onHashtagClick,
                             progress = {
                                 component.videoPlayer().Controller(
                                     modifier = Modifier.padding(horizontal = 24.dp)
@@ -142,14 +134,25 @@ fun VideoOverlay(
                             },
                             header = header,
                             connection = connection,
-                            background = { DesignThumbnail(thumbnail.value[it]) },
+                            background = { post ->
+                                val path = "${post.media}${UiMimeType.Video.query()}"
+                                val bitmap = remember { derivedStateOf { thumbnail.value[path] } }
+                                DesignThumbnail(post.media, bitmap) {
+                                    viewModel.videoBackground(
+                                        path,
+                                        post.aspectRatio,
+                                        configuration.screenWidthDp,
+                                        configuration.screenHeightDp,
+                                        true
+                                    )
+                                }
+                            },
                             content = { post, shouldPlay, progress ->
                                 component.videoPlayer()(
                                     Modifier,
                                     VideoPlayer.Spec(
                                         post.media,
                                         post.aspectRatio,
-                                        post.resolution,
                                         progress,
                                         length,
                                         shouldPlay,

@@ -27,6 +27,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import eu.peernetwork.blog.ui.comment.CommentScreen
 import eu.peernetwork.blog.ui.compose.PostIcon
+import eu.peernetwork.blog.ui.event.UiEngagementEvent
 import eu.peernetwork.blog.ui.mapper.mapToEngagement
 import eu.peernetwork.blog.ui.model.UiAction
 import eu.peernetwork.blog.ui.model.UiContent
@@ -46,7 +47,7 @@ fun EngagementScreen(
     onAuthorClick: (String) -> Unit = {},
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
-    content: @Composable (Engagements) -> Unit
+    content: @Composable (UiEngagementEvent) -> Unit
 ) {
     val context = LocalContext.current
     val component = remember {
@@ -72,23 +73,25 @@ fun EngagementScreen(
     val handleHashtagClick by rememberUpdatedState(onHashtagClick)
     val handleAuthorClick by rememberUpdatedState(onAuthorClick)
     val type = remember { mutableStateOf<EngagementType?>(null) }
-    val event = remember(state, reactionState.values) { Engagements(
-        onLoad = {
-            val isLiked = reactionState[it.id]?.isLiked
-            val isDisliked = reactionState[it.id]?.isDisliked
-            val commented = reactionState[it.id]?.commented ?: 0
-            it.mapToEngagement().copy(
-                likes = it.likes + (isLiked == true && !it.isLiked).toInt(),
-                isLiked = isLiked ?: it.isLiked,
-                dislikes = it.dislikes + (isDisliked == true && !it.isDisliked).toInt(),
-                isDisliked = isDisliked ?: it.isDisliked,
-                comment = it.comment + commented
-            )
-        },
-        onLike = { type.value = EngagementType.Like(it.id) },
-        onDisLike = { type.value = EngagementType.DisLike(it.id) },
-        onComment = { post.value = it }
-    ) }
+    val event = remember(state, reactionState.values) {
+        UiEngagementEvent(
+            onLoad = {
+                val isLiked = reactionState[it.id]?.isLiked
+                val isDisliked = reactionState[it.id]?.isDisliked
+                val commented = reactionState[it.id]?.commented ?: 0
+                it.mapToEngagement().copy(
+                    likes = it.likes + (isLiked == true && !it.isLiked).toInt(),
+                    isLiked = isLiked ?: it.isLiked,
+                    dislikes = it.dislikes + (isDisliked == true && !it.isDisliked).toInt(),
+                    isDisliked = isDisliked ?: it.isDisliked,
+                    comment = it.comment + commented
+                )
+            },
+            onLike = { type.value = EngagementType.Like(it.id) },
+            onDisLike = { type.value = EngagementType.DisLike(it.id) },
+            onComment = { post.value = it }
+        )
+    }
     updatedContent(event)
     LaunchedEffect(Unit) { viewModel.initialize() }
     LaunchedEffect(refresh.value) {
@@ -131,7 +134,7 @@ fun EngagementScreen(
 @Composable
 fun EngagementScreen(
     model: UiContent,
-    event: Engagements,
+    event: UiEngagementEvent,
     size: Dp = 28.dp,
     spacer: Dp = 0.dp,
     color: Color = MaterialTheme.colorScheme.tertiary,

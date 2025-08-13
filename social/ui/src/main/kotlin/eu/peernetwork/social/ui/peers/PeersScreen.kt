@@ -11,7 +11,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -29,6 +28,7 @@ import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.social.ui.compose.Peer
 import eu.peernetwork.social.ui.compose.SearchItemSkeleton
+import eu.peernetwork.social.ui.connection.ConnectionScreen
 import eu.peernetwork.social.ui.model.UiMember
 
 @Composable
@@ -79,19 +79,37 @@ fun PeersScreen(
             }
         }
     ) { state, lazyPagingItems ->
-        LazyColumn(modifier = Modifier.fillMaxSize()) {
-            items(
-                count = lazyPagingItems.itemCount,
-                key = { index -> index }
-            ) { index ->
-                lazyPagingItems[index]?.let { member ->
-                    Peer(
-                        member = member,
-                        onClick = onClick,
-                    )
+        ConnectionScreen(provider = provider, viewModelStoreOwner = viewModelStoreOwner) { controller ->
+            val connection by controller.value.observe().collectAsState()
+            LazyColumn(modifier = Modifier.fillMaxSize()) {
+                items(
+                    count = lazyPagingItems.itemCount,
+                    key = { index -> index }
+                ) { index ->
+                    lazyPagingItems[index]?.let { member ->
+                        Peer(
+                            member = member,
+                            onClick = onClick,
+                            action = {
+                                ConnectionScreen(
+                                    isFollowing = connection.getOrDefault(
+                                        member.id,
+                                        member.isFollowing
+                                    ),
+                                    isFollowed = member.isFollowed,
+                                    onClick = { follow ->
+                                        controller.value.invoke(
+                                            member.id,
+                                            !follow
+                                        )
+                                    }
+                                )
+                            }
+                        )
+                    }
                 }
+                item(key = "PeerListFooter")  { Spacer(modifier = Modifier.height(56.dp)) }
             }
-            item(key = "PeerListFooter") { Spacer(modifier = Modifier.height(56.dp)) }
         }
     }
     DisposableEffect(Unit) {

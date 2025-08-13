@@ -28,6 +28,7 @@ import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.social.ui.compose.Peer
 import eu.peernetwork.social.ui.compose.SearchItemSkeleton
+import eu.peernetwork.social.ui.connection.ConnectionScreen
 import eu.peernetwork.social.ui.model.UiMember
 
 @Composable
@@ -79,19 +80,34 @@ fun FollowersScreen(
             }
         }
     ) { state, lazyPagingItems ->
-        LazyColumn(modifier = Modifier.fillMaxSize()) {
-            items(
-                count = lazyPagingItems.itemCount,
-                key = { index -> index }
-            ) { index ->
-                lazyPagingItems[index]?.let { member ->
-                    Peer(
-                        member = member,
-                        onClick = onClick
-                    )
+        ConnectionScreen(provider = provider, viewModelStoreOwner = viewModelStoreOwner) { controller ->
+            val connection by controller.value.observe().collectAsState()
+            LazyColumn(modifier = Modifier.fillMaxSize()) {
+                items(lazyPagingItems.itemCount) { index ->
+                    lazyPagingItems[index]?.let { member ->
+                        Peer(
+                            member = member,
+                            onClick = onClick,
+                            action = {
+                                ConnectionScreen(
+                                    isFollowing = connection.getOrDefault(
+                                        member.id,
+                                        member.isFollowed
+                                    ),
+                                    isFollowed = member.isFollowing,
+                                    onClick = { follow ->
+                                        controller.value.invoke(
+                                            member.id,
+                                            !follow
+                                        )
+                                    }
+                                )
+                            }
+                        )
+                    }
                 }
+                item { Spacer(modifier = Modifier.height(56.dp)) }
             }
-            item(key = "FollowersListFooter") { Spacer(modifier = Modifier.height(56.dp)) }
         }
     }
     DisposableEffect(Unit) {

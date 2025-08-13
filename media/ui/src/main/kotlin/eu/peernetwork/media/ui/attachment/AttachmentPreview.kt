@@ -73,9 +73,10 @@ fun AttachmentPreview(
         onRemove = onRemove,
         onPreview = onPreview,
     ) { index ->
+        val bitmap = remember { derivedStateOf { handleOnLoad(attached.files[index].path) } }
         DesignThumbnail(
-            attached.files[index].thumbnail,
-            handleOnLoad(attached.files[index].thumbnail),
+            attached.files[index].path,
+            bitmap,
         ) { handleOnRefresh(index) }
     }
     LaunchedEffect(pagerState.currentPage) {

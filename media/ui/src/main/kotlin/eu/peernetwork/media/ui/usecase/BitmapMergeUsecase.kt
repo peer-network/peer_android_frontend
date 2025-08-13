@@ -17,6 +17,9 @@ class BitmapMergeUsecase @Inject constructor() : ParameterizedSuspendableUseCase
         if (ratio > param.aspectRatio || param.fit) {
             scaleWidth = param.width
             scaleHeight = (scaleWidth / ratio).toInt()
+        } else if (ratio >= 1) {
+            scaleWidth = param.width
+            scaleHeight = (scaleWidth * ratio).toInt()
         } else {
             scaleHeight = param.height
             scaleWidth = (scaleHeight * ratio).toInt()
