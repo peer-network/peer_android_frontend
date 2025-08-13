@@ -52,10 +52,12 @@ fun DesignTextExpandable(
                 modifier = Modifier.clickable { changeExpanded(!isExpanded) },
                 style = style,
                 onClick = { offset ->
-                    text.getStringAnnotations(start = offset, end = offset)
-                        .firstOrNull()?.let { ann ->
-                            onAnnotationClick(ann.tag, ann.item)
-                        }
+                    val annotation = text.getStringAnnotations(start = offset, end = offset).firstOrNull()
+                    if (annotation != null) {
+                        onAnnotationClick(annotation.tag, annotation.item)
+                    } else {
+                        changeExpanded(!isExpanded)
+                    }
                 }
             )
             ClickableText(
@@ -64,10 +66,12 @@ fun DesignTextExpandable(
                 style = style,
                 modifier = Modifier.clickable { changeExpanded(!isExpanded) },
                 onClick = { offset ->
-                    text.getStringAnnotations(start = offset, end = offset)
-                        .firstOrNull()?.let { ann ->
-                            onAnnotationClick(ann.tag, ann.item)
-                        }
+                    val annotation = text.getStringAnnotations(start = offset, end = offset).firstOrNull()
+                    if (annotation != null) {
+                        onAnnotationClick(annotation.tag, annotation.item)
+                    } else {
+                        changeExpanded(!isExpanded)
+                    }
                 }
             )
             Text(
