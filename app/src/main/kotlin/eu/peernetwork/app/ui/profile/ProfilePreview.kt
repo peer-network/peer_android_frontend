@@ -64,7 +64,7 @@ fun ProfilePreview(
         provider = component,
         viewModelStoreOwner = viewModelStoreOwner
     ) { connectionController ->
-        val connectionState by controller.value.observe().collectAsStateWithLifecycle()
+        val connectionState by connectionController.value.observe().collectAsStateWithLifecycle()
         val event = remember {
             object : UiPostEvent {
                 override fun onMentionClick(username: String) = controller.navigateToUsernameSearch(username)
@@ -92,7 +92,7 @@ fun ProfilePreview(
                         ConnectionScreen(
                             isFollowing = connectionState.getOrDefault(id, it.first),
                             isFollowed = it.second,
-                            onClick = { follow -> controller.value.invoke(id, !follow) }
+                            onClick = { follow -> connectionController.value.invoke(id, !follow) }
                         )
                     },
                     onClick = { sheetType ->

@@ -94,9 +94,9 @@ fun FollowingsScreen(
                                 ConnectionScreen(
                                     isFollowing = connection.getOrDefault(
                                         member.id,
-                                        member.isFollowing
+                                        member.isFollowed
                                     ),
-                                    isFollowed = member.isFollowed,
+                                    isFollowed = member.isFollowing,
                                     onClick = { follow ->
                                         controller.value.invoke(
                                             member.id,
