@@ -94,15 +94,6 @@ fun DesignLead(
                 ),
                 modifier = Modifier
                     .padding(top = 4.dp),
-                content = { text, maxLines, modifier, style, onClick ->
-                    ClickableText(
-                        text = text,
-                        maxLines = maxLines,
-                        modifier = modifier,
-                        style = style,
-                        onClick = onClick ?: {}
-                    )
-                },
                 onAnnotationClick = { tag, item ->
                     when (tag) {
                         "URL" -> uriHandler.openUri(item.lowercase())

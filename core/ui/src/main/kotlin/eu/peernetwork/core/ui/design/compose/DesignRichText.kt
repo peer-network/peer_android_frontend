@@ -120,15 +120,6 @@ fun DesignRichText(
                 expanded = expanded,
                 onExpandedChange = onExpandedChange,
                 modifier = modifier.padding(top = 2.dp),
-                content = { displayText, maxLines, modifier, style, onClick ->
-                    ClickableText(
-                        text = displayText,
-                        maxLines = maxLines,
-                        style = style,
-                        modifier = modifier,
-                        onClick = onClick ?: { _ -> }
-                    )
-                },
                 onAnnotationClick = { tag, item ->
                     when (tag) {
                         "URL" -> uriHandler.openUri(item.lowercase())
