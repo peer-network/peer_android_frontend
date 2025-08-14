@@ -24,7 +24,7 @@ fun ListPreview(
     content: @Composable (State<Int>) -> Unit
 ) {
     var position by remember { mutableIntStateOf(-1) }
-    var currentPosition = remember { mutableIntStateOf(-1) }
+    val currentPosition = remember { mutableIntStateOf(-1) }
     val handleClear by rememberUpdatedState(onClear)
     val updatedContent by rememberUpdatedState(content)
     LaunchedEffect(listState) {
