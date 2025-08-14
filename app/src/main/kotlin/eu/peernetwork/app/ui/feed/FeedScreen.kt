@@ -14,7 +14,7 @@ import androidx.navigation.compose.rememberNavController
 import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.extension.builder
-import eu.peernetwork.core.ui.model.ViewModelState
+import eu.peernetwork.core.ui.factory.UiViewModelStore
 import eu.peernetwork.social.ui.connection.ConnectionScreen
 
 @Composable
@@ -22,7 +22,7 @@ fun FeedScreen(
     id: String,
     postLimit: Int,
     provider: UiComponentProvider,
-    viewModelStore: ViewModelState,
+    viewModelStore: UiViewModelStore,
     title: String? = null,
     criteria: Criteria? = null,
     hasUpdate: MutableState<Boolean>,

@@ -58,6 +58,7 @@ compose-coil = { module = "io.coil-kt:coil-compose", version.ref = "coil-compose
 firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
 firebase-config = { module = "com.google.firebase:firebase-config" }
 firebase-messaging = { module = "com.google.firebase:firebase-messaging" }
+firebase-functions = { module = "com.google.firebase:firebase-functions" }
 firebase-store = { module = "com.google.firebase:firebase-firestore-ktx" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase-bom" }
 pullrefresh = { module = "dev.materii.pullrefresh:pullrefresh", version.ref = "pullrefresh" }

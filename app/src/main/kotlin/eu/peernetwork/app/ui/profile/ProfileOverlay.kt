@@ -22,7 +22,7 @@ import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.compose.DesignOverlay
 import eu.peernetwork.core.ui.design.compose.DesignOverlayPage
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
-import eu.peernetwork.core.ui.model.ViewModelState
+import eu.peernetwork.core.ui.factory.UiViewModelStore
 import eu.peernetwork.social.ui.connection.ConnectionController
 import eu.peernetwork.social.ui.connection.ConnectionScreen
 
@@ -49,7 +49,7 @@ fun ProfileOverlay(
     connectionController: State<ConnectionController>,
     provider: UiComponentProvider,
     component: Profile.Component,
-    viewModelStore: ViewModelState,
+    viewModelStore: UiViewModelStore,
     content: @Composable () -> Unit
 ) {
     val updatedContent by rememberUpdatedState(content)

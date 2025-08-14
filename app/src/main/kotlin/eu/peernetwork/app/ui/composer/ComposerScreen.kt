@@ -32,7 +32,7 @@ import eu.peernetwork.core.ui.design.compose.DesignTitle
 import eu.peernetwork.core.ui.design.compose.DesignTitleBarHost
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
-import eu.peernetwork.core.ui.model.ViewModelState
+import eu.peernetwork.core.ui.factory.UiViewModelStore
 import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.media.core.model.UiAttachment
 import eu.peernetwork.media.ui.attachment.AttachmentScreen
@@ -42,7 +42,7 @@ import eu.peernetwork.wallet.ui.model.UiToken
 @Composable
 fun ComposerScreen(
     provider: UiComponentProvider,
-    viewModelStore: ViewModelState,
+    viewModelStore: UiViewModelStore,
     onPostSuccess: () -> Unit
 ) {
     val context = LocalContext.current

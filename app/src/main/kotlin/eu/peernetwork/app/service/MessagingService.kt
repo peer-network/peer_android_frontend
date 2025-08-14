@@ -22,7 +22,9 @@ class MessagingService : FirebaseMessagingService() {
     @Inject
     internal lateinit var subscription: SubscriptionUsecase
 
-    private val scope = CoroutineScope(SupervisorJob() + dispatcher.io)
+    private val scope: CoroutineScope by lazy {
+        CoroutineScope(SupervisorJob() + dispatcher.io)
+    }
 
     override fun onCreate() {
         super.onCreate()

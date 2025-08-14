@@ -44,6 +44,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Composable
 fun VideoOverlay(
+    author: String,
     limit: Int,
     position: Int,
     enabled: Boolean,

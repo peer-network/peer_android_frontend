@@ -7,6 +7,7 @@ import eu.peernetwork.blog.domain.usecase.DislikeUsecase
 import eu.peernetwork.blog.domain.usecase.LikeUsecase
 import eu.peernetwork.blog.domain.usecase.ObserveReactionUsecase
 import eu.peernetwork.blog.ui.model.UiEngagement
+import eu.peernetwork.core.common.interactor.NotificationInteractor
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -33,12 +34,14 @@ internal class EngagementViewModelTest {
 
     private val observeReactionUsecase = mockk<ObserveReactionUsecase>()
 
+    private val notificationInteractor = mockk<NotificationInteractor>()
+
     private lateinit var viewModel: EngagementViewModel
 
     @Before
     fun setup() {
         Dispatchers.setMain(dispatcher)
-        viewModel = EngagementViewModel(likeUsecase, dislikeUsecase, observeReactionUsecase)
+        viewModel = EngagementViewModel(likeUsecase, dislikeUsecase, observeReactionUsecase, notificationInteractor)
     }
 
     @Test

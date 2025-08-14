@@ -10,7 +10,7 @@ import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
-import eu.peernetwork.core.ui.model.ViewModelState
+import eu.peernetwork.core.ui.factory.UiViewModelStore
 import eu.peernetwork.social.ui.connection.ConnectionScreen
 
 @Composable
@@ -18,7 +18,7 @@ fun ProfileScreen(
     principal: String,
     userId: String,
     provider: UiComponentProvider,
-    viewModelStore: ViewModelState,
+    viewModelStore: UiViewModelStore,
     title: String? = null,
 ) {
     val context = LocalContext.current

@@ -16,7 +16,7 @@ import eu.peernetwork.app.ui.search.SearchScreen
 import eu.peernetwork.app.ui.wallet.WalletScreen
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.design.compose.DesignNavigation
-import eu.peernetwork.core.ui.model.ViewModelState
+import eu.peernetwork.core.ui.factory.UiViewModelStore
 
 @Composable
 fun HomeNavigation(
@@ -24,7 +24,7 @@ fun HomeNavigation(
     startDestination: String,
     navController: NavHostController,
     component: Home.Component,
-    viewModelStore: ViewModelState,
+    viewModelStore: UiViewModelStore,
     onHome: () -> Unit
 ) {
     val hasUpdate = remember { mutableStateOf(false) }

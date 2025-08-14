@@ -65,7 +65,7 @@ fun EngagementScreen(
             (state as? EngagementViewModel.State.Error?)?.error
         }
     }
-    var post = remember { mutableStateOf<UiContent?>(null) }
+    val post = remember { mutableStateOf<UiContent?>(null) }
     val errorMessage = stringResource(R.string.unknown_error_message)
     val hasError = remember { derivedStateOf { error.value != null } }
     val updatedContent by rememberUpdatedState(content)
@@ -87,7 +87,7 @@ fun EngagementScreen(
                     comment = it.comment + commented
                 )
             },
-            onLike = { type.value = EngagementType.Like(it.id) },
+            onLike = { type.value = EngagementType.Like(it) },
             onDisLike = { type.value = EngagementType.DisLike(it.id) },
             onComment = { post.value = it }
         )
@@ -123,7 +123,7 @@ fun EngagementScreen(
             viewModelStoreOwner,
         ) {
             when(it) {
-                is EngagementType.Like -> viewModel.like(it.id)
+                is EngagementType.Like -> viewModel.like(it.content)
                 is EngagementType.DisLike -> viewModel.dislike(it.id)
                 else -> {}
             }
@@ -142,9 +142,6 @@ fun EngagementScreen(
     orientation: Orientation = Orientation.Horizontal,
 ) {
     val engagement by remember(model) { derivedStateOf { event.onLoad(model) } }
-    val handleOnLike by rememberUpdatedState(event.onLike)
-    val handleOnDisLike by rememberUpdatedState(event.onDisLike)
-    val handleOnComment by rememberUpdatedState(event.onComment)
     if (orientation == Orientation.Horizontal) {
         Row {
             PostIcon(
@@ -160,7 +157,7 @@ fun EngagementScreen(
                 orientation = orientation
             ) {
                 if (!engagement.isLiked) {
-                    handleOnLike(engagement)
+                    event.onLike(model)
                 }
             }
             Spacer(modifier = Modifier.size(spacer))
@@ -177,7 +174,7 @@ fun EngagementScreen(
                 orientation = orientation
             ) {
                 if (!engagement.isDisliked) {
-                    handleOnDisLike(engagement)
+                    event.onDisLike(model)
                 }
             }
             Spacer(modifier = Modifier.size(spacer))
@@ -187,7 +184,7 @@ fun EngagementScreen(
                 size = size,
                 padding = padding,
                 orientation = orientation
-            ) { handleOnComment(model) }
+            ) { event.onComment(model) }
         }
     } else {
         Column {
@@ -204,7 +201,7 @@ fun EngagementScreen(
                 orientation = orientation
             ) {
                 if (!engagement.isLiked) {
-                    handleOnLike(engagement)
+                    event.onLike(model)
                 }
             }
             Spacer(modifier = Modifier.size(spacer))
@@ -221,7 +218,7 @@ fun EngagementScreen(
                 orientation = orientation
             ) {
                 if (!engagement.isDisliked) {
-                    handleOnDisLike(engagement)
+                    event.onDisLike(model)
                 }
             }
             Spacer(modifier = Modifier.size(spacer))
@@ -232,7 +229,7 @@ fun EngagementScreen(
                 size = size,
                 padding = padding,
                 orientation = orientation
-            ) { handleOnComment(model) }
+            ) { event.onComment(model) }
         }
     }
 }

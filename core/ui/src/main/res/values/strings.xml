@@ -20,8 +20,8 @@
     <string name="video_label">Video</string>
     <string name="music_label">Music</string>
 
-    <string name="show_less">Show more</string>
-    <string name="show_more">Show less</string>
+    <string name="show_less">more</string>
+    <string name="show_more">less</string>
 
     <string name="refresh_message">Pull down to refresh</string>
     <string name="empty_message">No result found!</string>

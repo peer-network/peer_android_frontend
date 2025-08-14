@@ -5,7 +5,7 @@ import eu.peernetwork.blog.ui.model.UiEngagement
 
 data class UiEngagementEvent(
     val onLoad: (UiContent) -> UiEngagement,
-    val onLike: (UiEngagement) -> Unit,
-    val onDisLike: (UiEngagement) -> Unit,
+    val onLike: (UiContent) -> Unit,
+    val onDisLike: (UiContent) -> Unit,
     val onComment: (UiContent) -> Unit,
 )

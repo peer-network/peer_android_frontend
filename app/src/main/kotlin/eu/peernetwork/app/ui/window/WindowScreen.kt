@@ -20,7 +20,7 @@ import eu.peernetwork.core.ui.design.compose.DesignPageHeader
 import eu.peernetwork.core.ui.design.compose.DesignPageWindowMode
 import eu.peernetwork.core.ui.design.compose.DesignTitleBar
 import eu.peernetwork.core.ui.extension.builder
-import eu.peernetwork.core.ui.model.ViewModelState
+import eu.peernetwork.core.ui.factory.UiViewModelStore
 import eu.peernetwork.core.ui.theme.LightScheme
 import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.wallet.ui.reward.RewardScreen
@@ -29,7 +29,7 @@ import eu.peernetwork.wallet.ui.reward.RewardScreen
 fun WindowScreen(
     id: String,
     provider: UiComponentProvider,
-    viewModelStore: ViewModelState,
+    viewModelStore: UiViewModelStore,
     mode: DesignPageWindowMode = DesignPageWindowMode.HIDDEN,
     onCancel: () -> Unit = {},
     content: @Composable () -> Unit,
@@ -65,7 +65,7 @@ fun WindowScreen(
 fun WindowTitle(
     id: String,
     provider: UiComponentProvider,
-    viewModelStore: ViewModelState,
+    viewModelStore: UiViewModelStore,
     onCancel: () -> Unit = {}
 ) {
     val context = LocalContext.current

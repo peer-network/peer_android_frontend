@@ -43,7 +43,7 @@ import eu.peernetwork.core.ui.design.compose.DesignDropDown
 import eu.peernetwork.core.ui.design.compose.DesignTitle
 import eu.peernetwork.core.ui.design.compose.DesignTitleBarHost
 import eu.peernetwork.core.ui.extension.builder
-import eu.peernetwork.core.ui.model.ViewModelState
+import eu.peernetwork.core.ui.factory.UiViewModelStore
 import eu.peernetwork.media.core.model.UiAttachment
 import eu.peernetwork.media.core.model.UiMimeType
 import eu.peernetwork.media.ui.R
@@ -61,7 +61,7 @@ fun ExplorerScreen(
     onFinish: (UiAttachment) -> Unit,
 ) {
     val context = LocalContext.current
-    val viewModelStore = remember { ViewModelState() }
+    val viewModelStore = remember { UiViewModelStore.Delegate() }
     val component = remember { provider.builder(Explorer.Builder::class.java).build(context) }
     val default = stringResource(R.string.photo_label)
     val title = rememberSaveable { mutableStateOf(default) }

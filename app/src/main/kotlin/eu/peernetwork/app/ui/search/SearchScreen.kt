@@ -27,7 +27,7 @@ import eu.peernetwork.core.ui.design.compose.DesignTitle
 import eu.peernetwork.core.ui.design.compose.DesignTitleBarHost
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
-import eu.peernetwork.core.ui.model.ViewModelState
+import eu.peernetwork.core.ui.factory.UiViewModelStore
 import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.social.ui.connection.ConnectionScreen
 import eu.peernetwork.social.ui.search.member.MemberScreen
@@ -47,7 +47,7 @@ fun SearchScreen(
     id: String,
     postLimit: Int,
     provider: UiComponentProvider,
-    viewModelStore: ViewModelState,
+    viewModelStore: UiViewModelStore,
     searchState: SearchState = SearchState.Default,
     title: String? = null
 ) {
