@@ -37,6 +37,7 @@ import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.compose.DesignLabel
 import eu.peernetwork.core.ui.extension.builder
+import eu.peernetwork.media.core.extension.getCover
 import eu.peernetwork.media.core.model.UiAttachment
 import eu.peernetwork.media.core.model.UiMimeType
 
@@ -79,10 +80,13 @@ fun CreatorScreen(
         } else { attachment.value.media }
     } }
     val enabled = remember(attachment.value) { derivedStateOf {
-        if (media.value != UiMimeType.Text) {
-            true
-        } else {
-            attachment.value.files.isNotEmpty()
+        when {
+            media.value == UiMimeType.Text ->
+                title.text.isNotBlank() || description.text.isNotBlank()
+            media.value == UiMimeType.Music ->
+                attachment.value.files.isNotEmpty() &&
+                        attachment.value.files.any { it.getCover() != null }
+            else -> attachment.value.files.isNotEmpty()
         }
     } }
     val draft = remember { mutableStateOf<UiDraft?>(null) }
@@ -100,11 +104,11 @@ fun CreatorScreen(
             draft.value = UiDraft(
                 title = it.title,
                 description = it.description,
-                media = if (attachment.value.files.isEmpty()) {
-                    UiMimeType.Text
-                } else { attachment.value.media },
-                attachment = attachment.value
-            ) },
+                media = media.value,
+                attachment = attachment.value,
+                cover = attachment.value.files.firstOrNull()?.getCover()
+            )
+        },
         isLoading = isLoading,
         enabled = enabled,
         error = error,

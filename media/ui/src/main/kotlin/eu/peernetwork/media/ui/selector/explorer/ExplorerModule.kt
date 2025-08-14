@@ -8,6 +8,7 @@ import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.factory.UiBuilderFactory
 import eu.peernetwork.media.ui.camera.Camera
+import eu.peernetwork.media.ui.selector.audio.Audio
 import eu.peernetwork.media.ui.selector.directory.Directory
 import eu.peernetwork.media.ui.selector.photo.Photo
 import eu.peernetwork.media.ui.selector.video.Video
@@ -36,6 +37,14 @@ object ExplorerModule {
     @UiBuilder(Video.Builder::class)
     fun provideVideoBuilder(component: Explorer.Component): UiComponent.Builder {
         return Video.Builder(component)
+    }
+
+    @Explorer.Scope
+    @Provides
+    @IntoMap
+    @UiBuilder(Audio.Builder::class)
+    fun provideAudioBuilder(component: Explorer.Component): UiComponent.Builder {
+        return Audio.Builder(component)
     }
 
     @Explorer.Scope

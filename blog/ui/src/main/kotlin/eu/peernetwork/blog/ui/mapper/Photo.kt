@@ -31,6 +31,7 @@ fun Content.Type.mapFromDomain():  UiPost.Type {
     return when(this) {
         Content.Type.TEXT -> UiPost.Type.TEXT
         Content.Type.IMAGE -> UiPost.Type.IMAGE
+        Content.Type.AUDIO -> UiPost.Type.AUDIO
         else -> UiPost.Type.TEXT
     }
 }

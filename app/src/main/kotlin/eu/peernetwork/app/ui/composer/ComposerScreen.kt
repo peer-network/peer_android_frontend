@@ -68,6 +68,7 @@ fun ComposerScreen(
                     AttachmentScreen(
                         attachment,
                         onAttach = { controller.navigateIfNecessary("explorer") },
+                        onSelectCover = { controller.navigate("cover?audioUri=${it.toString()}") },
                         onPreview = {
                             val path = it.files.first().path
                             controller.navigateIfNecessary("video?path=$path")
@@ -145,6 +146,7 @@ fun PreviewComposerScreen() {
                     onAttach = {},
                     onPreview = {},
                     onSelect = {},
+                    onSelectCover = {},
                     onSquareClick = {},
                     onPortraitClick = {},
                     onDetach = {}

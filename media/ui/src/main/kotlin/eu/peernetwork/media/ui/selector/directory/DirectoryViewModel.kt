@@ -5,6 +5,7 @@ import eu.peernetwork.media.core.interactor.ThumbnailInteractor
 import eu.peernetwork.media.core.model.UiMimeType
 import eu.peernetwork.media.core.model.UiDirectory
 import eu.peernetwork.media.core.viewmodel.MediaViewModel
+import eu.peernetwork.media.ui.usecase.AudioDirectoryUsecase
 import eu.peernetwork.media.ui.usecase.PhotoDirectoryUsecase
 import eu.peernetwork.media.ui.usecase.VideoDirectoryUsecase
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,6 +17,7 @@ import javax.inject.Inject
 class DirectoryViewModel @Inject constructor(
     private val usecase: PhotoDirectoryUsecase,
     private val videoUsecase: VideoDirectoryUsecase,
+    private val audioUsecase: AudioDirectoryUsecase,
     interactor: ThumbnailInteractor
 ) : MediaViewModel(interactor){
     private val mutableState = MutableStateFlow<State>(State.Empty)
@@ -28,8 +30,10 @@ class DirectoryViewModel @Inject constructor(
             try {
                 if (type == UiMimeType.Video) {
                     mutableState.tryEmit(State.Success(videoUsecase()))
-                } else {
+                } else if (type == UiMimeType.Photo){
                     mutableState.tryEmit(State.Success(usecase()))
+                } else {
+                    mutableState.tryEmit(State.Success(audioUsecase()))
                 }
             } catch (error: Throwable) {
                 mutableState.tryEmit(State.Error(error))

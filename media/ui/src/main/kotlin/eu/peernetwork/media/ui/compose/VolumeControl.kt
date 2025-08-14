@@ -25,7 +25,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.core.ui.theme.PeerTheme
-import eu.peernetwork.media.ui.R
+import eu.peernetwork.media.core.R
 
 @Composable
 fun VolumeControl(
@@ -46,7 +46,7 @@ fun VolumeControl(
     ) {
         Icon(
             painter = painterResource(R.drawable.ic_mute),
-            contentDescription = stringResource(R.string.un_mute_label),
+            contentDescription = stringResource(eu.peernetwork.media.ui.R.string.un_mute_label),
             tint = MaterialTheme.colorScheme.background,
             modifier = Modifier.fillMaxSize()
                 .graphicsLayer {
@@ -55,7 +55,7 @@ fun VolumeControl(
         )
         Icon(
             painter = painterResource(R.drawable.ic_unmute),
-            contentDescription = stringResource(R.string.mute_label),
+            contentDescription = stringResource(eu.peernetwork.media.ui.R.string.mute_label),
             tint = MaterialTheme.colorScheme.background,
             modifier = Modifier.fillMaxSize()
                 .graphicsLayer {
