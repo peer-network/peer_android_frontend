@@ -1,8 +1,6 @@
 package eu.peernetwork.blog.ui.compose
 
-import android.content.res.Configuration
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -18,25 +16,47 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import eu.peernetwork.blog.ui.model.UiAuthor
 import eu.peernetwork.blog.ui.model.UiAction
+import eu.peernetwork.blog.ui.model.UiAuthor
 import eu.peernetwork.core.ui.design.compose.DesignTextButton
 import eu.peernetwork.core.ui.theme.PeerTheme
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.res.painterResource
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import eu.peernetwork.core.ui.R
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 
 @Composable
 fun TextPreview(
     author: UiAuthor,
     description: String,
     modifier: Modifier = Modifier,
+    isLiked: Boolean = false,
     onClick: () -> Unit = {},
+    onDoubleClick: () -> Unit = {},
     onAuthorClick: () -> Unit = {},
     contentPadding: PaddingValues = PaddingValues(
         top = 16.dp,
@@ -53,6 +73,34 @@ fun TextPreview(
     val updatedContent by rememberUpdatedState(content)
     val updatedEngagements by rememberUpdatedState(engagements)
     val updatedModeration by rememberUpdatedState(moderation)
+    val tap by rememberUpdatedState(onClick)
+    val dblTap by rememberUpdatedState(onDoubleClick)
+
+    val (playHeart, setPlayHeart) = remember { mutableStateOf(false) }
+    val composition by rememberLottieComposition(
+        LottieCompositionSpec.RawRes(R.raw.like)
+    )
+    val heartProgress by animateLottieCompositionAsState(
+        composition = composition,
+        isPlaying = playHeart,
+        iterations = 1,
+        speed = 1.0f
+    )
+    val (prevLiked, setPrevLiked) = remember { mutableStateOf(isLiked) }
+    LaunchedEffect(isLiked) {
+        if (!prevLiked && isLiked) {
+            setPlayHeart(false)
+            setPlayHeart(true)
+        }
+        setPrevLiked(isLiked)
+    }
+    LaunchedEffect(heartProgress) {
+        if (heartProgress >= 1f) setPlayHeart(false)
+    }
+
+    val scope = rememberCoroutineScope()
+    val (singleTapJob, setSingleTapJob) = remember { mutableStateOf<Job?>(null) }
+
     PostScaffold(
         modifier = modifier,
         header = {
@@ -73,12 +121,38 @@ fun TextPreview(
                     .background(
                         MaterialTheme.colorScheme.surfaceVariant,
                         RoundedCornerShape(24.dp)
-                    ).clickable(
-                        enabled = true,
-                        role = Role.Button,
-                        onClick = onClick
                     )
-            ) },
+                    .semantics { role = Role.Button }
+                    .pointerInput(Unit) {
+                        detectTapGestures(
+                            onTap = {
+                                val job = scope.launch {
+                                    delay(120)
+                                    tap()
+                                }
+                                setSingleTapJob(job)
+                            },
+                            onDoubleTap = {
+                                singleTapJob?.cancel()
+                                dblTap()
+                            }
+                        )
+                    }
+            ) {
+                AnimatedVisibility(
+                    visible = playHeart && heartProgress < 1f,
+                    enter = fadeIn(animationSpec = tween(160)),
+                    exit = fadeOut(animationSpec = tween(220)),
+                    modifier = Modifier.align(Alignment.Center)
+                ) {
+                    LottieAnimation(
+                        composition = composition,
+                        progress = { heartProgress },
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .size(140.dp)
+                    )
+                } } },
         contentPadding = contentPadding,
         footer = {
             Row(
@@ -94,7 +168,7 @@ fun TextPreview(
 }
 
 @Composable
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview
 fun PreviewTextPostCard() {
     PeerTheme {
         TextPreview(
@@ -108,6 +182,7 @@ fun PreviewTextPostCard() {
                 isfollowed = false
             ),
             description = "Description...",
+            isLiked = false,
             engagements = {
                 UiAction.ENGAGEMENTS.forEach {
                     DesignTextButton(

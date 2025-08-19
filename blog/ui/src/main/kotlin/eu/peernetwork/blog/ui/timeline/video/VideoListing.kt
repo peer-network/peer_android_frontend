@@ -1,7 +1,6 @@
 package eu.peernetwork.blog.ui.timeline.video
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.ScrollableDefaults
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -24,7 +23,6 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
@@ -145,10 +143,12 @@ fun VideoListing(
     val updatedContent by rememberUpdatedState(content)
     val updatedConnection by rememberUpdatedState(connection)
     val uiContent = post.mapToContent()
+    val engagementModel = uiEngagementEvent.onLoad(uiContent)
     MediaView(
         author = post.author,
         onAuthorClick = { clickHandler(post.author.id) },
         description = post.time,
+        isLiked = engagementModel.isLiked,
         caption = {
             TextView(
                 uiContent.author.username,
@@ -183,11 +183,14 @@ fun VideoListing(
                     )
                 )
             }
+        },
+        onClick = { selectHandler() },
+        onDoubleClick = {
+            if (!engagementModel.isLiked) {
+                uiEngagementEvent.onLike(engagementModel)
+            }
         }
     ) {
-        Box(modifier = Modifier.clickable(
-            role = Role.Button,
-            onClick = { selectHandler() }
-        )) { updatedContent(post) }
+        updatedContent(post)
     }
 }

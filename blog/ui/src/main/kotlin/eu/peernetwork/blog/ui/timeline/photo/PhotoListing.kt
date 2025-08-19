@@ -138,13 +138,20 @@ fun LazyItemScope.PhotoListing(
     content: @Composable (UiPost) -> Unit = {}
 ) {
     val uiContent = post.mapToContent()
+    val engagementModel = uiEngagementEvent.onLoad(uiContent)
     val clickHandler by rememberUpdatedState { onAuthorClick(post.author.id) }
     val updatedConnection by rememberUpdatedState(connection)
     val handleOnPostClick by rememberUpdatedState(onPostClick)
     PostItem(
         post = post,
         position = index,
+        isLiked = engagementModel.isLiked,
         onClick = { handleOnPostClick(post.id, index) },
+        onDoubleClick = {
+            if (!engagementModel.isLiked) {
+                uiEngagementEvent.onLike(engagementModel)
+            }
+        },
         onAuthorClick = clickHandler,
         onMentionClick = onMentionClick,
         onHashtagClick = onHashtagClick,
