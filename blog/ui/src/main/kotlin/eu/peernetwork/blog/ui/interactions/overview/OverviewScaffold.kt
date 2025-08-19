@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -19,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import eu.peernetwork.blog.ui.compose.PostIcon
 import eu.peernetwork.blog.ui.model.UiAction
 import eu.peernetwork.core.ui.design.compose.DesignTabLayout
+import eu.peernetwork.core.ui.theme.PeerAppRed
 import eu.peernetwork.core.ui.theme.PeerTheme
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
@@ -48,7 +50,12 @@ fun OverviewScaffold(
             PostIcon(
                 action = tabs[it],
                 value = updatedLabel(tabs[it]),
-                padding = PaddingValues(end = 8.dp)
+                padding = PaddingValues(end = 8.dp),
+                color = if (state.currentPage == it) {
+                    PeerAppRed
+                } else {
+                    MaterialTheme.colorScheme.tertiary
+                },
             ) { action ->
                 scope.launch { state.animateScrollToPage(tabs.indexOf(action)) }
             }

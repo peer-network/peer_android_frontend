@@ -20,6 +20,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -47,6 +48,7 @@ fun ListingScreen(
     size: Int,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
+    onAuthorClick: (String) -> Unit = {},
     connection: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit = {}
 ) {
     val context = LocalContext.current
@@ -74,6 +76,7 @@ fun ListingScreen(
         }
     }
     val updatedConnection by rememberUpdatedState(connection)
+    val handleAuthorClick by rememberUpdatedState(onAuthorClick)
     DesignPagingScaffold<UiAuthor>(
         state = derivedState,
         onRefresh = {
@@ -87,7 +90,8 @@ fun ListingScreen(
         modifier = Modifier.fillMaxSize(),
         placeholder = { ListItemSkeleton(modifier = Modifier.padding(horizontal = 16.dp)) },
         errorContent = { error, refresh ->
-            Column(modifier = Modifier.fillMaxSize()
+            Column(modifier = Modifier
+                .fillMaxSize()
                 .verticalScroll(rememberScrollState())) {
                 Spacer(modifier = Modifier.height(8.dp))
                 DesignErrorLabel(
@@ -100,12 +104,12 @@ fun ListingScreen(
         }
     ) { state, lazyPagingItems ->
         LazyColumn(modifier = Modifier.fillMaxSize()) {
-            item { Spacer(modifier = Modifier.height(4.dp)) }
+            item { Spacer(modifier = Modifier.height(6.dp)) }
             items(lazyPagingItems.itemCount) { index ->
                 lazyPagingItems[index]?.let { author ->
                     ListingScreen(
                         author = author,
-                        onClick = {}
+                        onClick = { handleAuthorClick(it.id) }
                     ) {
                         updatedConnection(
                             Triple(
@@ -148,7 +152,7 @@ fun ListingScreen(
             )
         }
     ) {
-        Row {
+        Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
                 text = "@${author.username} $slug".annotate(
                     slug,

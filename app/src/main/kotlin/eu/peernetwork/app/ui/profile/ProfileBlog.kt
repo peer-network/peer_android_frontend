@@ -49,7 +49,8 @@ fun ProfileBlog(
                 provider = provider,
                 viewModelStoreOwner = viewModelStoreOwner,
                 event = event,
-                listState = photoState
+                listState = photoState,
+                connection = connection
             )
             1 -> VideoScreen(
                 author = id,

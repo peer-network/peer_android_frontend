@@ -95,7 +95,8 @@ fun PhotoOverlay(
                     onHashtagClick = event::onHashtagClick,
                     onAuthorClick = event::onAuthorClick,
                     provider = component,
-                    viewModelStoreOwner = viewModelStoreOwner
+                    viewModelStoreOwner = viewModelStoreOwner,
+                    connection = connection
                 ) { engagement ->
                     ModerationScreen(
                         component,

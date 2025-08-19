@@ -125,7 +125,8 @@ fun EngagementScreen(
         state = overview,
         postLimit = postLimit,
         provider = component,
-        connection = connection
+        connection = connection,
+        onAuthorClick = { handleAuthorClick(it) }
     )
     component.engagementConfirmation()(
         Modifier,

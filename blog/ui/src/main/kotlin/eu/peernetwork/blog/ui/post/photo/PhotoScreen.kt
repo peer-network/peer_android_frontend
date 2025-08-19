@@ -16,7 +16,6 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.LoadState
-import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.compose.PostPlaceholder
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
 import eu.peernetwork.blog.ui.event.UiPostEvent
@@ -85,7 +84,8 @@ fun PhotoScreen(
             onHashtagClick = event::onHashtagClick,
             event::onAuthorClick,
             component,
-            viewModelStoreOwner
+            viewModelStoreOwner,
+            connection
         ) { engagement ->
             ModerationScreen(
                 component,

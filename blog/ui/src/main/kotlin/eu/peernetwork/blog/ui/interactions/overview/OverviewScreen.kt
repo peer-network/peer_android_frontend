@@ -9,8 +9,10 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -32,6 +34,7 @@ fun OverviewScreen(
     state: MutableState<UiContent?>,
     postLimit: Int,
     provider: UiComponentProvider,
+    onAuthorClick: (String) -> Unit = {},
     connection: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit = {}
 ) {
     val context = LocalContext.current
@@ -40,14 +43,20 @@ fun OverviewScreen(
     }
     val viewModelStore = remember { UiViewModelStore.Delegate() }
     val showSheet = remember { derivedStateOf { state.value != null } }
+    val action = remember { mutableStateOf<(() -> Unit)?>(null) }
+    val handleOnAuthorClick by rememberUpdatedState(onAuthorClick)
     DesignCollapsibleBottomSheet(
-        onDismiss = { state.value = null },
+        onDismiss = {
+            action.value?.invoke()
+            action.value = null
+            state.value = null },
         peekHeight = 400.dp,
         state = showSheet,
         content = {
             val content = remember { mutableStateOf(state.value) }
             OverviewScaffold(
-                modifier = Modifier.statusBarsPadding()
+                modifier = Modifier
+                    .statusBarsPadding()
                     .fillMaxSize(),
                 label = {
                     when(it) {
@@ -79,6 +88,10 @@ fun OverviewScreen(
                         postLimit = postLimit,
                         engagement = engagement,
                         provider = component,
+                        onAuthorClick = {
+                            action.value = { handleOnAuthorClick(it) }
+                            state.value = null
+                        },
                         viewModelStoreOwner = viewModelStore.get(tag),
                         connection = connection
                     )
@@ -93,7 +106,8 @@ fun OverviewScreen(
 fun PreviewCreatorScreen() {
     PeerTheme {
         OverviewScaffold(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
                 .padding(top = 16.dp),
             label = { "1" }
         ) {}

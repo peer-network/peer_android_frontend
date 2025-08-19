@@ -107,7 +107,8 @@ fun PhotoScreen(
                 event::onHashtagClick,
                 event::onAuthorClick,
                 component,
-                viewModelStoreOwner
+                viewModelStoreOwner,
+                connection
             ) { engagement ->
                 ModerationScreen(
                     component,
