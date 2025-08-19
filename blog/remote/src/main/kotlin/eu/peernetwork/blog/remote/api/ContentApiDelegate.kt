@@ -68,12 +68,26 @@ class ContentApiDelegate @Inject constructor(
         val response = client().query(query).executeOrThrow()
         val data = response.getOrThrow().listPosts
         val contents = data.affectedRows?.map { content ->
-            content.mapToDomain(url, gson.fromJson<List<MediaModel>>(
-                content.media,
-                object : TypeToken<List<MediaModel>>() {}.type
-            ).map { it.copy(options = it.options?.copy(cover = content.cover))
-                .mapFromDomain().copy(path = "$url${it.path}")
-            })
+            val coverPath = try {
+                gson.fromJson<List<Map<String, Any>>>(
+                    content.cover,
+                    object : TypeToken<List<Map<String, Any>>>() {}.type
+                ).firstOrNull()?.get("path") as? String
+            } catch (e: Exception) {
+                null
+            }?.let { "$url$it" }
+
+            content.mapToDomain(
+                url,
+                gson.fromJson<List<MediaModel>>(
+                    content.media,
+                    object : TypeToken<List<MediaModel>>() {}.type
+                ).map {
+                    it.copy(
+                        options = it.options?.copy(cover = coverPath)
+                    ).mapFromDomain().copy(path = "$url${it.path}")
+                }
+            )
         }
         response.assertOrThrow(data.status, data.ResponseCode)
         return Page(

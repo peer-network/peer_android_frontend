@@ -2,6 +2,7 @@ package eu.peernetwork.blog.ui.compose
 
 import android.media.MediaPlayer
 import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -38,10 +39,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import eu.peernetwork.blog.ui.model.UiAuthor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -55,6 +58,7 @@ fun AudioView(
     author: UiAuthor,
     description: String,
     audioUrl: String,
+    coverUrl: String?,
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {},
     onAuthorClick: () -> Unit = {},
@@ -126,28 +130,66 @@ fun AudioView(
 
             Spacer(modifier = Modifier.height(4.dp))
 
-            if (localAudioUri != null) {
-                AudioPlayer(audioUri = localAudioUri!!)
-            } else {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(60.dp)
-                        .padding(horizontal = 24.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceEvenly
-                ) {
-                    repeat(8) {
-                        Box(
-                            modifier = Modifier
-                                .size(8.dp)
-                                .background(Color.Gray, shape = RoundedCornerShape(50))
-                        )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(if (coverUrl != null) 200.dp else 60.dp)
+                    .background(
+                        if (coverUrl != null) MaterialTheme.colorScheme.surfaceVariant else Color.Transparent,
+                        RoundedCornerShape(12.dp)
+                    )
+            ) {
+                if (coverUrl != null) {
+                    AsyncImage(
+                        model = coverUrl,
+                        contentDescription = "Audio cover",
+                        modifier = Modifier.fillMaxSize()
+                    )
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(60.dp)
+                            .align(Alignment.BottomCenter)
+                            .background(
+                                Color.Black.copy(alpha = 0.6f),
+                                RoundedCornerShape(bottomStart = 12.dp, bottomEnd = 12.dp)
+                            )
+                    ) {
+                        if (localAudioUri != null) {
+                            AudioPlayer(
+                                audioUri = localAudioUri!!
+                            )
+                        } else {
+                            LoadingAudioPlayer()
+                        }
                     }
+                } else {
+                    AudioPlayer(
+                        audioUri = localAudioUri!!
+                    )
                 }
             }
         }
+    }
+}
 
+@Composable
+private fun LoadingAudioPlayer() {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(60.dp)
+            .padding(horizontal = 24.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceEvenly
+    ) {
+        repeat(8) {
+            Box(
+                modifier = Modifier
+                    .size(8.dp)
+                    .background(Color.Gray, shape = RoundedCornerShape(50))
+            )
+        }
     }
 }
 

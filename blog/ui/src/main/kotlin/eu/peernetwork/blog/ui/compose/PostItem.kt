@@ -1,5 +1,6 @@
 package eu.peernetwork.blog.ui.compose
 
+import android.net.Uri
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -59,11 +60,14 @@ fun LazyItemScope.PostItem(
         }
 
         UiPost.Type.AUDIO -> {
-            val audioUrl = post.media.firstOrNull()?.path.orEmpty()
-            AudioView(
+            val audioFile = post.media.firstOrNull()
+            val audioUrl = audioFile?.path.orEmpty()
+            val coverUrl = audioFile?.options?.cover.orEmpty()
+                AudioView(
                 author = post.author,
                 description = post.time,
                 audioUrl = audioUrl,
+                coverUrl = coverUrl,
                 modifier = Modifier
                     .padding(bottom = 12.dp)
                     .padding(horizontal = 8.dp),
