@@ -1,14 +1,19 @@
 package eu.peernetwork.blog.ui.compose
 
 import android.content.res.Configuration
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -23,6 +28,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.input.pointer.pointerInput
@@ -33,25 +40,61 @@ import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
 import eu.peernetwork.blog.ui.model.UiAction
 import eu.peernetwork.blog.ui.model.UiAuthor
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.design.compose.DesignTextButton
 import eu.peernetwork.core.ui.theme.PeerTheme
-import androidx.compose.foundation.gestures.detectTapGestures
-import com.airbnb.lottie.compose.LottieAnimation
-import com.airbnb.lottie.compose.LottieCompositionSpec
-import com.airbnb.lottie.compose.animateLottieCompositionAsState
-import com.airbnb.lottie.compose.rememberLottieComposition
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.ui.Alignment
+
+@Composable
+fun BoxScope.ConfirmedLikeHeartOverlay(
+    isLiked: Boolean,
+    modifier: Modifier = Modifier,
+    size: Dp = 160.dp,
+    rawRes: Int = R.raw.like
+) {
+    val (play, setPlay) = remember { mutableStateOf(false) }
+    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(rawRes))
+    val progress by animateLottieCompositionAsState(
+        composition = composition,
+        isPlaying = play,
+        iterations = 1,
+        speed = 1f
+    )
+    var prev by remember { mutableStateOf(isLiked) }
+    LaunchedEffect(isLiked) {
+        if (!prev && isLiked) {
+            setPlay(false)
+            setPlay(true)
+        }
+        prev = isLiked
+    }
+    LaunchedEffect(progress) {
+        if (progress >= 1f) setPlay(false)
+    }
+
+    AnimatedVisibility(
+        visible = play && progress < 1f,
+        enter = fadeIn(animationSpec = tween(160)),
+        exit = fadeOut(animationSpec = tween(220)),
+        modifier = modifier
+    ) {
+        LottieAnimation(
+            composition = composition,
+            progress = { progress },
+            modifier = Modifier.size(size)
+        )
+    }
+}
 
 @Composable
 fun MediaView(
@@ -77,29 +120,6 @@ fun MediaView(
     val click by rememberUpdatedState(onClick)
     val dblClick by rememberUpdatedState(onDoubleClick)
 
-    val (playHeart, setPlayHeart) = remember { mutableStateOf(false) }
-    val composition by rememberLottieComposition(
-        LottieCompositionSpec.RawRes(R.raw.like)
-    )
-    val heartProgress by animateLottieCompositionAsState(
-        composition = composition,
-        isPlaying = playHeart,
-        iterations = 1,
-        speed = 1.0f
-    )
-    val (prevLiked, setPrevLiked) = remember { mutableStateOf(isLiked) }
-    LaunchedEffect(isLiked) {
-        if (!prevLiked && isLiked) {
-            setPlayHeart(false)
-            setPlayHeart(true)
-        }
-        setPrevLiked(isLiked)
-    }
-
-    LaunchedEffect(heartProgress) {
-        if (heartProgress >= 1f) setPlayHeart(false)
-    }
-
     val scope = rememberCoroutineScope()
     val (singleTapJob, setSingleTapJob) = remember { mutableStateOf<Job?>(null) }
 
@@ -123,7 +143,8 @@ fun MediaView(
         footer = { }
     ) {
         Box(
-            modifier = Modifier.semantics { role = Role.Button }
+            modifier = Modifier
+                .semantics { role = Role.Button }
                 .pointerInput(Unit) {
                     detectTapGestures(
                         onTap = {
@@ -140,21 +161,11 @@ fun MediaView(
             ) }
         ) {
             updatedContent()
-
-            AnimatedVisibility(
-                visible = playHeart && heartProgress < 1f,
-                enter = fadeIn(animationSpec = tween(160)),
-                exit = fadeOut(animationSpec = tween(220)),
-                modifier = Modifier.align(Alignment.Center)
-            ) {
-                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    LottieAnimation(
-                        composition = composition,
-                        progress = { heartProgress },
-                        modifier = Modifier.size(160.dp)
-                    )
-                }
-            }
+            ConfirmedLikeHeartOverlay(
+                isLiked = isLiked,
+                modifier = Modifier.align(Alignment.Center),
+                size = 160.dp
+            )
 
             Image(
                 painter = painterResource(R.drawable.overlay_gradient),
