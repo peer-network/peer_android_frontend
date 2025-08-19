@@ -11,7 +11,8 @@ fun Content.mapToEngagement(): UiEngagement {
         isLiked = isLiked,
         isDisliked = isDisliked,
         dislikes = dislikes,
-        comment = comment
+        comment = comment,
+        views = views
     )
 }
 
@@ -22,6 +23,7 @@ fun UiContent.mapToEngagement(): UiEngagement {
         isLiked = isLiked,
         isDisliked = isDisliked,
         dislikes = dislikes,
-        comment = comment
+        comment = comment,
+        views = views
     )
 }

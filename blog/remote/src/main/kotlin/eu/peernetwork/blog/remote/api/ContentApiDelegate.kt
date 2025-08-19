@@ -122,10 +122,10 @@ class ContentApiDelegate @Inject constructor(
 
     private fun Draft.getCover(): Optional<List<String>> {
         return when (type) {
-            is Draft.Type.Text -> Optional.absent<List<String>>()
-            is Draft.Type.Video -> Optional.absent<List<String>>()
+            is Draft.Type.Text -> Optional.absent()
+            is Draft.Type.Video -> Optional.absent()
             is Draft.Type.Audio -> Optional.present(listOf((type as Draft.Type.Audio).cover))
-            is Draft.Type.Image -> Optional.absent<List<String>>()
+            is Draft.Type.Image -> Optional.absent()
         }
     }
 }

@@ -19,6 +19,7 @@ val DarkScheme = darkColorScheme(
     surfaceContainerLow = DarkGray,
     onTertiary = Gray5,
     tertiaryContainer = Gray,
+    onTertiaryContainer = Gray15,
     error = PeerAppDarkRed,
     errorContainer = PeerAppRed,
     onError = White,

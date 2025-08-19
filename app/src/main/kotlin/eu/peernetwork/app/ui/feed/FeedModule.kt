@@ -9,7 +9,7 @@ import eu.peernetwork.app.ui.profile.Profile
 import eu.peernetwork.app.ui.renderer.EngagementRenderer
 import eu.peernetwork.app.ui.search.Search
 import eu.peernetwork.app.ui.window.Window
-import eu.peernetwork.blog.ui.engagement.EngagementConfirmation
+import eu.peernetwork.blog.ui.engagement.EngagementDialog
 import eu.peernetwork.blog.ui.timeline.photo.Photo
 import eu.peernetwork.blog.ui.timeline.video.Video
 import eu.peernetwork.core.ui.annotation.UiBuilder
@@ -93,7 +93,7 @@ object FeedModule {
 
     @Feed.Scope
     @Provides
-    fun provideEngagementRenderer(component: Feed.Component): EngagementConfirmation {
+    fun provideEngagementRenderer(component: Feed.Component): EngagementDialog {
         return EngagementRenderer(component)
     }
 

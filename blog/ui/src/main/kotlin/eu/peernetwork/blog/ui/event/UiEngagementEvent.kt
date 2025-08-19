@@ -8,4 +8,5 @@ data class UiEngagementEvent(
     val onLike: (UiContent) -> Unit,
     val onDisLike: (UiContent) -> Unit,
     val onComment: (UiContent) -> Unit,
+    val onView: (UiContent) -> Unit,
 )

@@ -171,6 +171,7 @@ fun PreviewCommentForm() {
                 isLiked = true,
                 isDisliked = false,
                 dislikes = 3,
+                views = 2,
                 comment = 5
             )
         )

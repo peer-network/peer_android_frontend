@@ -1,5 +1,6 @@
 package eu.peernetwork.blog.ui.post.photo
 
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -37,6 +38,7 @@ fun PhotoScreen(
     viewModelStoreOwner: ViewModelStoreOwner,
     event: UiPostEvent,
     listState: LazyListState = rememberLazyListState(),
+    connection: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit = {},
 ) {
     val context = LocalContext.current
     val component = remember {
@@ -65,7 +67,7 @@ fun PhotoScreen(
             }
         }
     }
-    DesignPagingScaffold<UiPost>(
+    DesignPagingScaffold(
         state = derivedState,
         placeholder = { PostPlaceholder() },
         onRefresh = { viewModel.load(author, Pageable(0, postLimit)) },

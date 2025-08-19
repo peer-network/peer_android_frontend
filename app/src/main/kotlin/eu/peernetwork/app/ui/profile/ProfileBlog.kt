@@ -1,5 +1,6 @@
 package eu.peernetwork.app.ui.profile
 
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyListState
@@ -36,7 +37,8 @@ fun ProfileBlog(
     onNavigate: (Int) -> Unit = {},
     event: UiPostEvent,
     photoState: LazyListState,
-    videoState: LazyListState
+    videoState: LazyListState,
+    connection: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit = {},
 ) {
     ProfileBlog(onNavigate) { offset ->
         when (offset) {
@@ -57,7 +59,8 @@ fun ProfileBlog(
                 provider = provider,
                 viewModelStoreOwner = viewModelStoreOwner,
                 event = event,
-                listState = videoState
+                listState = videoState,
+                connection = connection
             )
         }
     }

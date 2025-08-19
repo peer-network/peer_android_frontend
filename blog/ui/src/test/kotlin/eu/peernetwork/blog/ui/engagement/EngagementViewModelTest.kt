@@ -52,6 +52,7 @@ internal class EngagementViewModelTest {
             dislikes = 0,
             isDisliked = false,
             isLiked = false,
+            views = 0,
             comment = 0
         )
         val mockData = mockk<Content>(relaxed = true)
@@ -73,6 +74,7 @@ internal class EngagementViewModelTest {
             dislikes = 0,
             isDisliked = false,
             isLiked = false,
+            views = 0,
             comment = 0
         )
         val error = RuntimeException()
@@ -91,6 +93,7 @@ internal class EngagementViewModelTest {
             dislikes = 0,
             isDisliked = false,
             isLiked = false,
+            views = 0,
             comment = 0
         )
         val mockData = mockk<Content>(relaxed = true)
@@ -112,6 +115,7 @@ internal class EngagementViewModelTest {
             dislikes = 0,
             isDisliked = false,
             isLiked = false,
+            views = 0,
             comment = 0
         )
         val error = RuntimeException()

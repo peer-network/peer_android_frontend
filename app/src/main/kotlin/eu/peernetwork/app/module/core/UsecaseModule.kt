@@ -4,8 +4,8 @@ import dagger.Binds
 import dagger.Module
 import eu.peernetwork.app.usecase.FileEncoderUsecaseDelegate
 import eu.peernetwork.app.usecase.TextEncoderUsecaseDelegate
-import eu.peernetwork.core.common.usecase.FileEncoderUsecase
-import eu.peernetwork.core.common.usecase.TextEncoderUsecase
+import eu.peernetwork.media.core.usecase.FileEncoderUsecase
+import eu.peernetwork.media.core.usecase.TextEncoderUsecase
 
 @Module
 internal interface UsecaseModule {

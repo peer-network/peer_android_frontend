@@ -2,7 +2,9 @@ package eu.peernetwork.app.ui.main
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import app.cash.turbine.test
+import eu.peernetwork.app.interceptor.SubscriptionInteractor
 import eu.peernetwork.user.domain.model.Token
+import eu.peernetwork.user.domain.usecase.PrincipalUsecase
 import eu.peernetwork.user.domain.usecase.TokenObserverUsecase
 import eu.peernetwork.user.domain.usecase.TokenUsecase
 import io.mockk.every
@@ -29,6 +31,10 @@ internal class MainViewModelTest {
 
     private val tokenObserverUsecase = mockk<TokenObserverUsecase>()
 
+    private val subscriptionInteractor = mockk<SubscriptionInteractor>(relaxed = true)
+
+    private val principalUsecase = mockk<PrincipalUsecase>(relaxed = true)
+
     private val tokenObserver = MutableSharedFlow<Token?>(replay = 1)
 
     private lateinit var viewModel: MainViewModel
@@ -40,7 +46,7 @@ internal class MainViewModelTest {
         Dispatchers.setMain(dispatcher)
         every { tokenUsecase() } returns null
         every { tokenObserverUsecase() } returns tokenObserver
-        viewModel = MainViewModel(tokenUsecase, tokenObserverUsecase)
+        viewModel = MainViewModel(tokenUsecase, tokenObserverUsecase, principalUsecase, subscriptionInteractor)
     }
 
     @After

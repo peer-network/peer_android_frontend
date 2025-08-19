@@ -2,7 +2,7 @@ package eu.peernetwork.app.usecase
 
 import android.util.Base64
 import android.util.Base64OutputStream
-import eu.peernetwork.core.common.usecase.FileEncoderUsecase
+import eu.peernetwork.media.core.usecase.FileEncoderUsecase
 import java.io.ByteArrayOutputStream
 import javax.inject.Inject
 

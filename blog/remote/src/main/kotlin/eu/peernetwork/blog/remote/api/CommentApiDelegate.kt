@@ -33,8 +33,8 @@ class CommentApiDelegate @Inject constructor(
         )
         val response = client().query(query).executeOrThrow()
         val data = response.getOrThrow().listPosts
-        val contents = data.affectedRows?.map {
-            it.mapToDomain().map {
+        val contents = data.affectedRows?.map { comments ->
+            comments.mapToDomain().map {
                 it.copy(author = it.author.copy(imageUrl = "$url${it.author.imageUrl}"))
             }
         }

@@ -1,7 +1,7 @@
 package eu.peernetwork.app.usecase
 
 import android.util.Base64
-import eu.peernetwork.core.common.usecase.TextEncoderUsecase
+import eu.peernetwork.media.core.usecase.TextEncoderUsecase
 import javax.inject.Inject
 
 class TextEncoderUsecaseDelegate @Inject constructor() : TextEncoderUsecase {

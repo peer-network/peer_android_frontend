@@ -28,6 +28,7 @@ fun UiComment.mapToContent(): UiContent {
         isLiked = isLiked,
         isDisliked = false,
         dislikes = 0,
+        views = 2,
         comment = 0
     )
 }

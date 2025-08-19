@@ -43,7 +43,7 @@ fun VideoScreen(
     connection: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit = {}
 ) {
     val context = LocalContext.current
-    val coroutine = rememberCoroutineScope()
+    val scope = rememberCoroutineScope()
     val component = remember {
         provider.builder(Video.Builder::class.java).build(context)
     }
@@ -125,7 +125,7 @@ fun VideoScreen(
         LaunchedEffect(requireUpdate.value) {
             if (requireUpdate.value) {
                 lazyPagingItems.refresh()
-                coroutine.launch {
+                scope.launch {
                     listState.animateScrollToItem(0)
                 }
                 requireUpdate.value = false

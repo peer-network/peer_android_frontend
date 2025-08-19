@@ -106,7 +106,7 @@ fun CommentScreen(
         },
         onSubmit = { id, comment -> viewModel.comment(id, comment) }
     ) { size, field ->
-        DesignPagingScaffold<UiComment>(
+        DesignPagingScaffold(
             state = derivedState,
             onRefresh = { state.value?.let { viewModel.load(it.id, Pageable(0, postLimit)) } },
             placeholder = { Placeholder(modifier = Modifier.padding(horizontal = 24.dp)) }

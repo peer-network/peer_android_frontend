@@ -6,5 +6,6 @@ data class UiEngagement(
     val dislikes: Int,
     val isLiked: Boolean,
     val isDisliked: Boolean,
+    val views: Int,
     val comment: Int
 )

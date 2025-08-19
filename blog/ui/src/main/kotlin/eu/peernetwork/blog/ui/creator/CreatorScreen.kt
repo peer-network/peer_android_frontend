@@ -30,7 +30,7 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import eu.peernetwork.blog.ui.R
-import eu.peernetwork.blog.ui.engagement.EngagementConfirmation
+import eu.peernetwork.blog.ui.engagement.EngagementDialog
 import eu.peernetwork.blog.ui.engagement.EngagementType
 import eu.peernetwork.blog.ui.model.UiDraft
 import eu.peernetwork.core.ui.theme.PeerTheme
@@ -112,7 +112,7 @@ fun CreatorScreen(
     )
     component.engagementConfirmation()(
         Modifier,
-        EngagementConfirmation.Spec(
+        EngagementDialog.Spec(
             type,
             viewModelStoreOwner,
         ) {

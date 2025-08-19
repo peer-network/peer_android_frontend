@@ -19,6 +19,7 @@ data class UiPost(
     val isLiked: Boolean,
     val isDisliked: Boolean,
     val dislikes: Int,
+    val views: Int,
     val comment: Int
 ) {
     enum class Type {

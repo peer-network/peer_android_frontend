@@ -20,6 +20,7 @@ fun Content.mapToVideo(context: Context, annotate: (String) -> AnnotatedString):
         isLiked = isLiked,
         isDisliked = isDisliked,
         dislikes = dislikes,
+        views = views,
         comment = comment,
         aspectRatio = media.getAspectRatio(),
         resolution = media.options.resolution
@@ -37,6 +38,7 @@ fun UiVideo.mapToContent(): UiContent {
         isLiked = isLiked,
         isDisliked = isDisliked,
         dislikes = dislikes,
+        views = views,
         comment = comment
     )
 }

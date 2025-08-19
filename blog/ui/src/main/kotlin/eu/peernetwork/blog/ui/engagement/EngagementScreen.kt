@@ -5,6 +5,7 @@ import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
@@ -25,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import eu.peernetwork.blog.ui.interactions.overview.OverviewScreen
 import eu.peernetwork.blog.ui.comment.CommentScreen
 import eu.peernetwork.blog.ui.compose.PostIcon
 import eu.peernetwork.blog.ui.event.UiEngagementEvent
@@ -47,6 +49,7 @@ fun EngagementScreen(
     onAuthorClick: (String) -> Unit = {},
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
+    connection: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit = {},
     content: @Composable (UiEngagementEvent) -> Unit
 ) {
     val context = LocalContext.current
@@ -66,6 +69,7 @@ fun EngagementScreen(
         }
     }
     val post = remember { mutableStateOf<UiContent?>(null) }
+    val overview = remember { mutableStateOf<UiContent?>(null) }
     val errorMessage = stringResource(R.string.unknown_error_message)
     val hasError = remember { derivedStateOf { error.value != null } }
     val updatedContent by rememberUpdatedState(content)
@@ -89,7 +93,8 @@ fun EngagementScreen(
             },
             onLike = { type.value = EngagementType.Like(it) },
             onDisLike = { type.value = EngagementType.DisLike(it.id) },
-            onComment = { post.value = it }
+            onComment = { post.value = it },
+            onView = { overview.value = it }
         )
     }
     updatedContent(event)
@@ -116,9 +121,15 @@ fun EngagementScreen(
         onHashtagClick = { handleHashtagClick(it) },
         onAuthorClick = { handleAuthorClick(it) }
     )
+    OverviewScreen(
+        state = overview,
+        postLimit = postLimit,
+        provider = component,
+        connection = connection
+    )
     component.engagementConfirmation()(
         Modifier,
-        EngagementConfirmation.Spec(
+        EngagementDialog.Spec(
             type,
             viewModelStoreOwner,
         ) {
@@ -185,6 +196,15 @@ fun EngagementScreen(
                 padding = padding,
                 orientation = orientation
             ) { event.onComment(model) }
+            Spacer(modifier = Modifier.size(spacer))
+            PostIcon(
+                action = UiAction.View,
+                value = engagement.views.toString(),
+                color = color,
+                size = size,
+                padding = padding,
+                orientation = orientation
+            ) { event.onView(model) }
         }
     } else {
         Column {
@@ -230,7 +250,15 @@ fun EngagementScreen(
                 padding = padding,
                 orientation = orientation
             ) { event.onComment(model) }
+            Spacer(modifier = Modifier.size(spacer))
+            PostIcon(
+                action = UiAction.View,
+                value = engagement.views.toString(),
+                color = color,
+                size = size,
+                padding = padding,
+                orientation = orientation
+            ) { event.onView(model) }
         }
     }
 }
-
