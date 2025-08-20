@@ -12,7 +12,7 @@ data class UiPost(
     val author: UiAuthor,
     val type: Type,
     val aspectRatio: Float,
-    val time: String,
+    val time: AnnotatedString,
     val createdAt: Long,
     val description: AnnotatedString,
     val likes: Int,

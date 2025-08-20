@@ -24,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.blog.ui.model.UiAuthor
@@ -34,7 +35,7 @@ import eu.peernetwork.core.ui.theme.PeerTheme
 @Composable
 fun TextPreview(
     author: UiAuthor,
-    description: String,
+    description: AnnotatedString,
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {},
     onAuthorClick: () -> Unit = {},
@@ -107,7 +108,7 @@ fun PreviewTextPostCard() {
                 isfollowing = false,
                 isfollowed = false
             ),
-            description = "Description...",
+            description = AnnotatedString("Description..."),
             engagements = {
                 UiAction.ENGAGEMENTS.forEach {
                     DesignTextButton(

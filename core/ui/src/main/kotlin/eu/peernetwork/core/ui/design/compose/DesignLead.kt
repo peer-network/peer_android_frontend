@@ -13,6 +13,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
@@ -33,7 +35,7 @@ data class DesignTitleStyle(
 fun DesignLead(
     title: String,
     caption: String,
-    description: String,
+    description: AnnotatedString,
     modifier: Modifier = Modifier,
     maxLines: Int = Int.MAX_VALUE,
     maxContentLines: Int = Int.MAX_VALUE,
@@ -41,7 +43,13 @@ fun DesignLead(
     style: DesignTitleStyle? = null,
     verticalArrangement: Arrangement.Vertical = Arrangement.Top,
     horizontalAlignment: Alignment.Horizontal = Alignment.Start,
+    onMentionClick: (String) -> Unit = {},
+    onHashtagClick: (String) -> Unit = {}
 ) {
+    val handleMention by rememberUpdatedState(onMentionClick)
+    val handleHashTag by rememberUpdatedState(onHashtagClick)
+    val uriHandler = LocalUriHandler.current
+
     val slug = if (caption.isEmpty()) {
         caption
     } else {
@@ -63,6 +71,7 @@ fun DesignLead(
             color = MaterialTheme.colorScheme.tertiary
         )
     )
+
     Column(
         modifier = modifier,
         verticalArrangement = verticalArrangement,
@@ -76,7 +85,7 @@ fun DesignLead(
         )
         updateSpacer()
         if (description.isNotEmpty()) {
-            Text(
+            DesignCollapsibleText(
                 text = description,
                 maxLines = maxContentLines,
                 overflow = TextOverflow.Ellipsis,
@@ -84,7 +93,17 @@ fun DesignLead(
                 modifier = Modifier.padding(
                     top = 2.dp,
                     end = 4.dp
-                )
+                ),
+                onClick = { offset ->
+                    val annotations = description.getStringAnnotations(start = offset, end = offset)
+                    annotations.firstOrNull()?.let { annotation ->
+                        when (annotation.tag) {
+                            "URL" -> uriHandler.openUri(annotation.item.lowercase())
+                            "MENTION" -> handleMention(annotation.item)
+                            "HASHTAG" -> handleHashTag(annotation.item)
+                        }
+                    }
+                }
             )
         }
     }
@@ -98,19 +117,19 @@ fun PreviewDesignTitle() {
             DesignLead(
                 title = "John Doe",
                 caption = "1675262",
-                description = "Hello, John...",
+                description = AnnotatedString("Hello, John..."),
             )
             Spacer(modifier = Modifier.height(12.dp))
             DesignLead(
                 title = "John Doe",
                 caption = "",
-                description = "Hello, John...",
+                description = AnnotatedString("Hello, John..."),
             )
             Spacer(modifier = Modifier.height(12.dp))
             DesignLead(
                 title = "John Doe",
                 caption = "1675262",
-                description = "",
+                description = AnnotatedString(""),
             )
         }
     }

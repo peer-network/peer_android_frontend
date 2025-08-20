@@ -49,7 +49,7 @@ import eu.peernetwork.core.ui.theme.PeerTheme
 fun TextScaffold(
     author: UiAuthor,
     title: AnnotatedString,
-    caption: String,
+    caption: AnnotatedString,
     description: AnnotatedString,
     modifier: Modifier = Modifier,
     onAuthorClick: (String) -> Unit = {},
@@ -188,7 +188,7 @@ fun PreviewTextScaffold() {
                 isfollowing = false,
                 isfollowed = false
             ),
-            caption = "2mins ago",
+            caption = AnnotatedString("2mins ago"),
             title = buildAnnotatedString { append("Title...") },
             description = buildAnnotatedString { append("Description...") },
             engagements = {

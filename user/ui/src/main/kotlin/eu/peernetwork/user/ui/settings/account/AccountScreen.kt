@@ -32,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
@@ -155,7 +156,7 @@ fun AccountScreen(
 ) {
     val image = remember { mutableStateOf<Uri?>(null) }
     val username = remember { TextFieldState(account.username) }
-    val bio = remember { TextFieldState(account.bio ?: "") }
+    val bio = remember { TextFieldState(account.bio?.text ?: "") }
     var showPassword = remember { mutableStateOf(false) }
     var showLogout = remember { mutableStateOf(false) }
     var showDeactivation = remember { mutableStateOf(false) }
@@ -239,7 +240,7 @@ fun PreviewAccountScreen() {
             id = System.currentTimeMillis().toString(),
             username = "John Doe",
             slug = 0,
-            bio = "Description....",
+            bio = AnnotatedString("Description...."),
             imageUrl = "",
             overview = UiOverview(
                 posts = 0,

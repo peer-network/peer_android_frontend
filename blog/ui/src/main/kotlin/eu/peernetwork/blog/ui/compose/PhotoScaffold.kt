@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontStyle
@@ -44,7 +45,7 @@ import eu.peernetwork.core.ui.theme.PeerTheme
 @Composable
 fun PhotoScaffold(
     author: UiAuthor,
-    description: String,
+    description: AnnotatedString,
     modifier: Modifier = Modifier,
     onAuthorClick: () -> Unit = {},
     indicator: @Composable () -> Unit = {},
@@ -158,7 +159,7 @@ fun PreviewPhotoScaffold() {
                 isfollowing = false,
                 isfollowed = false
             ),
-            description = "Description...",
+            description = AnnotatedString("Description..."),
             engagements = {
                 Column {
                     UiAction.ENGAGEMENTS.forEach {

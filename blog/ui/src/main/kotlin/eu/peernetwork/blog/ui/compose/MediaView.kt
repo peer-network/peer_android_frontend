@@ -25,6 +25,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -37,7 +38,7 @@ import eu.peernetwork.core.ui.theme.PeerTheme
 @Composable
 fun MediaView(
     author: UiAuthor,
-    description: String,
+    description: AnnotatedString,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp),
     onClick: () -> Unit = {},
@@ -119,7 +120,7 @@ fun PreviewMediaPreview() {
                 isfollowing = false,
                 isfollowed = false
             ),
-            description = "Description...",
+            description = AnnotatedString("Description..."),
             engagements = {
                 UiAction.ENGAGEMENTS.forEach {
                     DesignTextButton(

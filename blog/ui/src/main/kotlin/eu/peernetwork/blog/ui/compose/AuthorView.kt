@@ -12,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -29,7 +30,7 @@ import eu.peernetwork.core.ui.theme.PeerTheme
 @Composable
 fun AuthorView(
     author: UiAuthor,
-    description: String = "",
+    description: AnnotatedString = AnnotatedString(""),
     modifier: Modifier = Modifier,
     size: Dp = 36.dp,
     padding: PaddingValues = PaddingValues(start = 8.dp),
@@ -78,6 +79,8 @@ fun AuthorView(
             spacer = {},
             modifier = Modifier.padding(padding),
             style = style,
+            onMentionClick = {},
+            onHashtagClick = {}
         )
     }
 }
@@ -95,7 +98,7 @@ fun PreviewAuthorBadge() {
                 isfollowing = false,
                 isfollowed = false
             ),
-            description = "2 mins ago"
+            description = AnnotatedString("2 mins ago"),
         )
     }
 }

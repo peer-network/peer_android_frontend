@@ -17,7 +17,7 @@ fun Content.mapToPhoto(context: Context, annotate: (String) -> AnnotatedString):
         author = author.mapFromDomain(),
         type = type.mapFromDomain(),
         aspectRatio = media.getAspectRatio(),
-        time = context.timeAgo(createdAt, System.currentTimeMillis()),
+        time = AnnotatedString(context.timeAgo(createdAt, System.currentTimeMillis())),
         createdAt = createdAt,
         likes = likes,
         isLiked = isLiked,

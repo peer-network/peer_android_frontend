@@ -14,7 +14,7 @@ fun Content.mapToVideo(context: Context, annotate: (String) -> AnnotatedString):
         description = annotate(description),
         media = media.path,
         author = author.mapFromDomain(),
-        time = context.timeAgo(createdAt, System.currentTimeMillis()),
+        time = AnnotatedString(context.timeAgo(createdAt, System.currentTimeMillis())),
         createdAt = createdAt,
         likes = likes,
         isLiked = isLiked,

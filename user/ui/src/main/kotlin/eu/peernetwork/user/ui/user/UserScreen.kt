@@ -23,6 +23,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
@@ -185,7 +186,10 @@ fun UserScreen(
         DesignLead(
             account.username,
             account.slug.toString(),
-            account.bio ?: emptyDescription
+            account.bio ?: AnnotatedString(emptyDescription),
+            maxContentLines = 3,
+            onMentionClick = {},
+            onHashtagClick = {}
         )
     }
     DesignOverlay(
@@ -204,7 +208,7 @@ fun PreviewUserScreen() {
             id = System.currentTimeMillis().toString(),
             username = "John Doe",
             slug = 0,
-            bio = "Description....",
+            bio = AnnotatedString("Description...."),
             imageUrl = "",
             overview = UiOverview(
                 posts = 0,

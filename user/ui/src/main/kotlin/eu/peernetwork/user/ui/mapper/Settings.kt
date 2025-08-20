@@ -7,7 +7,7 @@ fun UiAccount.mapToModels(): List<UiSettings> {
     return listOf(
         UiSettings.Avatar(null),
         UiSettings.Username(username),
-        UiSettings.Description(bio ?: "")
+        UiSettings.Description(bio?.text ?: "")
     )
 }
 
