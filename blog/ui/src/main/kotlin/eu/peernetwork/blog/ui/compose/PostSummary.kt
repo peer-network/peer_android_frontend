@@ -117,6 +117,7 @@ fun PreviewPostSummary() {
                 likes = 25,
                 isLiked = true,
                 isDisliked = false,
+                isViewed = false,
                 dislikes = 3,
                 views = 2,
                 comment = 5

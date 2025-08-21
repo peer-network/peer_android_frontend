@@ -23,6 +23,8 @@ class EngagementInteractorDelegate @Inject constructor(
 
     private val comments = ConcurrentHashMap<String, Int>()
 
+    private val views = ConcurrentHashMap<String, Boolean>()
+
     private val state = MutableSharedFlow<Map<String, EngagementInteractor.Reaction>>(replay = 1)
 
     override suspend fun like(id: String) {
@@ -72,10 +74,35 @@ class EngagementInteractorDelegate @Inject constructor(
         invalidate()
     }
 
+    override suspend fun view(id: String) {
+        if (!mutexes.add(id)) return
+        val previous = views[id]
+        try {
+            views[id] = true
+            invalidate()
+            repository.post(id, Engagement.Content.View)
+        } catch (error: Throwable) {
+            if (previous == null) {
+                views.remove(id)
+            } else {
+                views[id] = previous
+            }
+            throw error
+        } finally {
+            mutexes.remove(id)
+            invalidate()
+        }
+    }
+
     private fun invalidate() {
         state.tryEmit(
-            (likes.keys + dislikes.keys + comments.keys).associateWith { key ->
-                EngagementInteractor.Reaction(likes[key], dislikes[key], comments[key])
+            (likes.keys + dislikes.keys + comments.keys + views.keys).associateWith { key ->
+                EngagementInteractor.Reaction(
+                    likes[key],
+                    dislikes[key],
+                    views[key],
+                    comments[key]
+                )
             }
         )
     }
@@ -96,6 +123,7 @@ class EngagementInteractorDelegate @Inject constructor(
         likes.clear()
         dislikes.clear()
         comments.clear()
+        views.clear()
         invalidate()
         refresh()
     }

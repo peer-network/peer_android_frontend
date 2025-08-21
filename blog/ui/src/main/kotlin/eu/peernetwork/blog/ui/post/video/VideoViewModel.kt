@@ -3,9 +3,10 @@ package eu.peernetwork.blog.ui.post.video
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import eu.peernetwork.blog.domain.usecase.ViewUsecase
 import eu.peernetwork.blog.ui.model.UiVideo
 import eu.peernetwork.blog.ui.usecase.AuthorVideoUsecase
-import eu.peernetwork.core.common.model.Pageable
+import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.media.core.interactor.ThumbnailInteractor
 import eu.peernetwork.media.core.viewmodel.MediaViewModel
 import kotlinx.coroutines.flow.Flow
@@ -20,6 +21,7 @@ import javax.inject.Inject
 
 class VideoViewModel @Inject constructor(
     private val usecase: AuthorVideoUsecase,
+    private val viewUsecase: ViewUsecase,
     interactor: ThumbnailInteractor
 ) : MediaViewModel(interactor) {
     private val mutableState = MutableStateFlow<State>(State.Empty)
@@ -39,6 +41,16 @@ class VideoViewModel @Inject constructor(
                 .apply {
                     collectLatest { mutableState.tryEmit(State.Success(this)) }
                 }
+        }
+    }
+
+    fun view(id: String) {
+        viewModelScope.launch {
+            try {
+                viewUsecase(id)
+            } catch (error: Throwable) {
+                error.printStackTrace()
+            }
         }
     }
 

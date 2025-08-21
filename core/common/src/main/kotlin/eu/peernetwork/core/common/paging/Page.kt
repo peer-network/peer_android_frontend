@@ -1,4 +1,4 @@
-package eu.peernetwork.core.common.model
+package eu.peernetwork.core.common.paging
 
 data class Page<T>(
     val count: Int,

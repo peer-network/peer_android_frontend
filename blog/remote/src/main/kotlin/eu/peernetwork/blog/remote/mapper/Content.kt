@@ -27,6 +27,7 @@ fun CreatePostMutation.AffectedRows.mapToDomain(url: String, media: List<Media>)
         isLiked = isliked,
         isDisliked = isdisliked,
         dislikes = amountdislikes,
+        isViewed = isviewed,
         views = amountviews,
         comment = amountcomments
     )
@@ -52,6 +53,7 @@ fun GetallpostsQuery.AffectedRow.mapToDomain(url: String, media: List<Media>): C
         isLiked = isliked,
         isDisliked = isdisliked,
         dislikes = amountdislikes,
+        isViewed = isviewed,
         views = amountviews,
         comment = amountcomments
     )

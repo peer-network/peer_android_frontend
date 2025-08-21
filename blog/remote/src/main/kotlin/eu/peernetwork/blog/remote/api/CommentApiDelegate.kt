@@ -9,8 +9,8 @@ import eu.peernetwork.blog.remote.comment.GetCommentsQuery
 import eu.peernetwork.blog.remote.mapper.mapToDomain
 import eu.peernetwork.blog.remote.mapper.mapToMode
 import eu.peernetwork.core.common.interactor.SessionInteractor
-import eu.peernetwork.core.common.model.Page
-import eu.peernetwork.core.common.model.Pageable
+import eu.peernetwork.core.common.paging.Page
+import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.core.remote.extension.assertOrThrow
 import eu.peernetwork.core.remote.extension.executeOrThrow
 import eu.peernetwork.core.remote.extension.getOrThrow

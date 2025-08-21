@@ -18,6 +18,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
+import eu.peernetwork.blog.ui.compose.ListPreview
 import eu.peernetwork.blog.ui.compose.PhotoIndicator
 import eu.peernetwork.blog.ui.compose.PostItem
 import eu.peernetwork.blog.ui.compose.PhotoPager
@@ -35,76 +36,88 @@ fun PhotoListing(
     component: Photo.Component,
     lazyPagingItems: LazyPagingItems<UiPost>,
     listState: LazyListState,
+    viewModel: PhotoViewModel,
     engagement: UiEngagementEvent,
     moderation: UiModerationEvent,
     onMentionClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
     onPostClick: (String, Int) -> Unit,
 ) {
-    LazyColumn(state = listState) {
-        items(
-            count = lazyPagingItems.itemCount,
-            key = { index -> lazyPagingItems[index]?.id?.let { "$it;$index" } ?: index }
-        ) { index ->
-            lazyPagingItems[index]?.let { photo ->
-                PhotoListing(
-                    post = photo,
-                    index = index,
-                    onPostClick = onPostClick,
-                    onMentionClick = onMentionClick,
-                    onHashtagClick = onHashtagClick,
-                    uiEngagementEvent = engagement,
-                    uiModerationEvent = moderation
-                ) {
-                    if (photo.media.size > 1) {
-                        val pagerState = rememberPagerState(initialPage = 0) { photo.media.size }
-                        PhotoPager(
-                            pagerState,
-                            photo.aspectRatio,
-                            photo.media,
-                            { PhotoIndicator(pagerState, photo.media) }
-                        ) { path ->
+    ListPreview(
+        listState = listState,
+        onFocus = { position ->
+            lazyPagingItems[position]?.let {
+                if (!it.isViewed) {
+                    viewModel.view(it.id)
+                }
+            }
+        }
+    ) {
+        LazyColumn(state = listState) {
+            items(
+                count = lazyPagingItems.itemCount,
+                key = { index -> lazyPagingItems[index]?.id?.let { "$it;$index" } ?: index }
+            ) { index ->
+                lazyPagingItems[index]?.let { photo ->
+                    PhotoListing(
+                        post = photo,
+                        index = index,
+                        onPostClick = onPostClick,
+                        onMentionClick = onMentionClick,
+                        onHashtagClick = onHashtagClick,
+                        uiEngagementEvent = engagement,
+                        uiModerationEvent = moderation
+                    ) {
+                        if (photo.media.size > 1) {
+                            val pagerState = rememberPagerState(initialPage = 0) { photo.media.size }
+                            PhotoPager(
+                                pagerState,
+                                photo.aspectRatio,
+                                photo.media,
+                                { PhotoIndicator(pagerState, photo.media) }
+                            ) { path ->
+                                component.imageView()(
+                                    Modifier,
+                                    ImageView.Spec(
+                                        path,
+                                        null,
+                                        ContentScale.Crop,
+                                        500f,
+                                    )
+                                )
+                                component.imageView()(
+                                    Modifier,
+                                    ImageView.Spec(path, photo.aspectRatio)
+                                )
+                            }
+                        } else {
+                            val media = photo.media.first()
                             component.imageView()(
                                 Modifier,
                                 ImageView.Spec(
-                                    path,
-                                    null,
+                                    media.path,
+                                    photo.aspectRatio,
                                     ContentScale.Crop,
                                     500f,
                                 )
                             )
                             component.imageView()(
                                 Modifier,
-                                ImageView.Spec(path, photo.aspectRatio)
+                                ImageView.Spec(media.path, photo.aspectRatio)
                             )
                         }
-                    } else {
-                        val media = photo.media.first()
-                        component.imageView()(
-                            Modifier,
-                            ImageView.Spec(
-                                media.path,
-                                photo.aspectRatio,
-                                ContentScale.Crop,
-                                500f,
-                            )
-                        )
-                        component.imageView()(
-                            Modifier,
-                            ImageView.Spec(media.path, photo.aspectRatio)
-                        )
                     }
                 }
             }
-        }
-        item(key = author) {
-            Box(
-                modifier = Modifier.fillMaxWidth()
-                    .height(56.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                if (lazyPagingItems.loadState.append is LoadState.Loading) {
-                    CircularProgressIndicator(modifier = Modifier.padding(16.dp))
+            item(key = author) {
+                Box(
+                    modifier = Modifier.fillMaxWidth()
+                        .height(56.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    if (lazyPagingItems.loadState.append is LoadState.Loading) {
+                        CircularProgressIndicator(modifier = Modifier.padding(16.dp))
+                    }
                 }
             }
         }

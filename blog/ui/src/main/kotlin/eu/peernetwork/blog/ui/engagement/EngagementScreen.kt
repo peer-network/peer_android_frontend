@@ -76,23 +76,28 @@ fun EngagementScreen(
     val handleMentionClick by rememberUpdatedState(onMentionClick)
     val handleHashtagClick by rememberUpdatedState(onHashtagClick)
     val handleAuthorClick by rememberUpdatedState(onAuthorClick)
-    val type = remember { mutableStateOf<EngagementType?>(null) }
+    val type = remember { mutableStateOf<EngagementEvent?>(null) }
     val event = remember(state, reactionState.values) {
         UiEngagementEvent(
             onLoad = {
                 val isLiked = reactionState[it.id]?.isLiked
                 val isDisliked = reactionState[it.id]?.isDisliked
+                val isViewed = reactionState[it.id]?.isViewed
                 val commented = reactionState[it.id]?.commented ?: 0
+                val likeCount = it.likes + (isLiked == true && !it.isLiked).toInt()
+                val dislikeCount = it.dislikes + (isDisliked == true && !it.isDisliked).toInt()
+                val viewCount = it.views + (isViewed == true && !it.isViewed).toInt()
                 it.mapToEngagement().copy(
-                    likes = it.likes + (isLiked == true && !it.isLiked).toInt(),
+                    likes = likeCount,
                     isLiked = isLiked ?: it.isLiked,
-                    dislikes = it.dislikes + (isDisliked == true && !it.isDisliked).toInt(),
+                    dislikes = dislikeCount,
                     isDisliked = isDisliked ?: it.isDisliked,
-                    comment = it.comment + commented
+                    comment = it.comment + commented,
+                    views = viewCount
                 )
             },
-            onLike = { type.value = EngagementType.Like(it) },
-            onDisLike = { type.value = EngagementType.DisLike(it.id) },
+            onLike = { type.value = EngagementEvent.Like(it) },
+            onDisLike = { type.value = EngagementEvent.DisLike(it.id) },
             onComment = { post.value = it },
             onView = { overview.value = it }
         )
@@ -135,8 +140,8 @@ fun EngagementScreen(
             viewModelStoreOwner,
         ) {
             when(it) {
-                is EngagementType.Like -> viewModel.like(it.content)
-                is EngagementType.DisLike -> viewModel.dislike(it.id)
+                is EngagementEvent.Like -> viewModel.like(it.content)
+                is EngagementEvent.DisLike -> viewModel.dislike(it.id)
                 else -> {}
             }
         }

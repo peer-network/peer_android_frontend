@@ -8,7 +8,7 @@ import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.blog.domain.model.Sort
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.usecase.ExplorePostsUsecase
-import eu.peernetwork.core.common.model.Pageable
+import eu.peernetwork.core.common.paging.Pageable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

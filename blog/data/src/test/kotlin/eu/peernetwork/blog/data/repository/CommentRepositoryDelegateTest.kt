@@ -3,8 +3,8 @@ package eu.peernetwork.blog.data.repository
 import eu.peernetwork.blog.data.api.CommentApi
 import eu.peernetwork.blog.domain.model.Comment
 import eu.peernetwork.blog.domain.repository.CommentRepository
-import eu.peernetwork.core.common.model.Page
-import eu.peernetwork.core.common.model.Pageable
+import eu.peernetwork.core.common.paging.Page
+import eu.peernetwork.core.common.paging.Pageable
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk

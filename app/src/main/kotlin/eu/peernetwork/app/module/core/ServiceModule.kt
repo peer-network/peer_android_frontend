@@ -9,20 +9,19 @@ import dagger.Provides
 import eu.peernetwork.app.interceptor.NotificationInteractorDelegate
 import eu.peernetwork.app.interceptor.SubscriptionInteractor
 import eu.peernetwork.app.service.BootstrapService
-import eu.peernetwork.app.service.ResourceServiceDelegate
+import eu.peernetwork.app.service.ResourceInteractorDelegate
 import eu.peernetwork.app.service.SubscriptionService
 import eu.peernetwork.core.common.interactor.NotificationInteractor
-import eu.peernetwork.core.common.service.ResourceService
+import eu.peernetwork.core.common.interactor.ResourceInteractor
 import javax.inject.Singleton
 
 @Module
 object ServiceModule {
     @Provides
-    @Singleton
-    fun resourceService(delegate: ResourceServiceDelegate): ResourceService = delegate
+    fun resourceService(delegate: ResourceInteractorDelegate): ResourceInteractor = delegate
 
     @Provides
-    fun resourceLoader(delegate: ResourceService): BootstrapService {
+    fun resourceLoader(delegate: ResourceInteractor): BootstrapService {
         return delegate as BootstrapService
     }
 

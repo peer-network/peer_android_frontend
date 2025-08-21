@@ -7,7 +7,7 @@ import androidx.paging.cachedIn
 import eu.peernetwork.blog.domain.model.Engagement
 import eu.peernetwork.blog.ui.model.UiAuthor
 import eu.peernetwork.blog.ui.usecase.InteractorUsecase
-import eu.peernetwork.core.common.model.Pageable
+import eu.peernetwork.core.common.paging.Pageable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -27,7 +27,6 @@ class ListingViewModel @Inject constructor(
 
     fun load(
         id: String,
-        size: Int,
         engagement: Engagement.Content,
         page: Pageable
     ) {
@@ -37,7 +36,6 @@ class ListingViewModel @Inject constructor(
                     id = id,
                     engagement = engagement,
                     page = page,
-                    size = size
                 )
             ).catch { mutableState.tryEmit(State.Error(it)) }
                 .onStart { mutableState.tryEmit(State.Loading) }

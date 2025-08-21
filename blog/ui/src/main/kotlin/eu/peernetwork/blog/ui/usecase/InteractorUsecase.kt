@@ -9,7 +9,7 @@ import eu.peernetwork.blog.domain.model.Engagement
 import eu.peernetwork.blog.domain.usecase.ContentInteractorUsecase
 import eu.peernetwork.blog.ui.mapper.mapFromDomain
 import eu.peernetwork.blog.ui.model.UiAuthor
-import eu.peernetwork.core.common.model.Pageable
+import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.core.common.provider.Dispatcher
 import eu.peernetwork.core.ui.exception.NoContentException
 import eu.peernetwork.core.ui.usecase.PagingUsecase
@@ -53,7 +53,7 @@ class InteractorUsecase @Inject constructor(
             LoadResult.Page(
                 data = response.items.map { it.mapFromDomain() },
                 prevKey = if (currentOffset <= 0) null else currentOffset - 1,
-                nextKey = if (response.items.isEmpty() || response.items.size == param.size) {
+                nextKey = if (response.items.isEmpty() || response.items.size < param.page.limit) {
                     null
                 } else {
                     currentOffset + response.items.size
@@ -64,7 +64,6 @@ class InteractorUsecase @Inject constructor(
 
     data class Parameter(
         val id: String,
-        val size: Int,
         val engagement: Engagement.Content,
         val page: Pageable
     )

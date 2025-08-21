@@ -3,7 +3,7 @@ package eu.peernetwork.social.ui.search.tag
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.paging.PagingData
 import app.cash.turbine.test
-import eu.peernetwork.core.common.model.Pageable
+import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.social.ui.mock.TagMock
 import eu.peernetwork.social.ui.usecase.TagUsecase
 import io.mockk.coEvery

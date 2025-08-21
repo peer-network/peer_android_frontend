@@ -31,7 +31,7 @@ import eu.peernetwork.blog.domain.model.Engagement
 import eu.peernetwork.blog.ui.compose.ListItem
 import eu.peernetwork.blog.ui.compose.ListItemSkeleton
 import eu.peernetwork.blog.ui.model.UiAuthor
-import eu.peernetwork.core.common.model.Pageable
+import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.component.DesignErrorLabel
 import eu.peernetwork.core.ui.design.component.DesignPagingScaffold
@@ -45,7 +45,6 @@ fun ListingScreen(
     id: String,
     engagement: Engagement.Content,
     postLimit: Int,
-    size: Int,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
     onAuthorClick: (String) -> Unit = {},
@@ -82,7 +81,6 @@ fun ListingScreen(
         onRefresh = {
             viewModel.load(
                 id,
-                size,
                 engagement,
                 Pageable(offset = 0, limit = postLimit)
             )

@@ -19,7 +19,7 @@ import eu.peernetwork.blog.ui.compose.PostPlaceholder
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
 import eu.peernetwork.blog.ui.event.UiPostEvent
 import eu.peernetwork.blog.ui.moderation.ModerationScreen
-import eu.peernetwork.core.common.model.Pageable
+import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.component.DesignError
 import eu.peernetwork.core.ui.design.component.DesignPagingScaffold

@@ -22,7 +22,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import eu.peernetwork.core.common.service.ResourceService
+import eu.peernetwork.core.common.interactor.ResourceInteractor
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.design.component.DesignErrorText
 import eu.peernetwork.core.ui.design.compose.DesignAvatar
@@ -33,7 +33,7 @@ import eu.peernetwork.core.ui.theme.PeerTheme
 @Composable
 fun ServiceError(
     error: Throwable,
-    resource: ResourceService,
+    resource: ResourceInteractor,
     onRetry: () -> Unit
 ) {
     val errorMessage = stringResource(R.string.unknown_error_message)
@@ -91,7 +91,8 @@ fun ServiceError(
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun PreviewErrorLabel() {
     PeerTheme {
-        val resource = remember { object : ResourceService {
+        val resource = remember { object : ResourceInteractor {
+            override fun getBaseUrl(): String = ""
             override fun string(key: String): String = key
         } }
         ServiceError(RuntimeException(), resource) {}

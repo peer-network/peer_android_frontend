@@ -37,7 +37,7 @@ class VersionUseCase @Inject constructor(
             Log.d("VersionControl", "Matched URL: ${minimumVersion?.url}")
             minimumVersion?.url?.let {
                 Log.d("VersionControl", "Updating provider baseUrl to: $it")
-                interactor.set(it)
+                interactor.setBaseUrl(it)
             } ?: Log.d("VersionControl", "No base URL found in matched version")
             if (minimumVersion != null && isOutdated(minimumVersion.version)) {
                 Log.d("VersionControl", "App version is outdated")

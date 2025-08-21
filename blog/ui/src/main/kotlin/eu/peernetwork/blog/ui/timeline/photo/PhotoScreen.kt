@@ -21,7 +21,7 @@ import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.compose.PostPlaceholder
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
 import eu.peernetwork.blog.ui.event.UiPostEvent
-import eu.peernetwork.core.common.model.Pageable
+import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
 import eu.peernetwork.blog.ui.moderation.ModerationScreen
 import eu.peernetwork.core.ui.R
@@ -116,6 +116,7 @@ fun PhotoScreen(
                 ) { moderation ->
                     PhotoListing(
                         id = id,
+                        viewModel = viewModel,
                         component = component,
                         listState = listState,
                         lazyPagingItems = lazyPagingItems,

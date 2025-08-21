@@ -4,7 +4,7 @@ import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.ApolloResponse
 import com.apollographql.apollo3.api.Operation
 import com.apollographql.apollo3.api.Optional
-import eu.peernetwork.core.common.model.Pageable
+import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.core.remote.model.Status
 import eu.peernetwork.core.remote.api.RequestClient
 import eu.peernetwork.social.data.api.SearchApi

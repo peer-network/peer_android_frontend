@@ -5,7 +5,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.PagingSource.LoadParams
 import androidx.paging.PagingSource.LoadResult
-import eu.peernetwork.core.common.model.Pageable
+import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.core.common.provider.Dispatcher
 import eu.peernetwork.core.ui.exception.NoContentException
 import eu.peernetwork.core.ui.usecase.PagingUsecase

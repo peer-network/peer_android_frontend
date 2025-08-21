@@ -114,7 +114,6 @@ fun FeedOverlay(
                 is FeedOverlayState.Video -> {
                     val state = (overlayState.value as FeedOverlayState.Video)
                     VideoOverlay(
-                        author = userId,
                         limit = postLimit,
                         position = state.position,
                         enabled = visible.value,

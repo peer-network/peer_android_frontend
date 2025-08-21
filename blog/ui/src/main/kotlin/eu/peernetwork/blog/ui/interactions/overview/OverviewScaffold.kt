@@ -1,13 +1,17 @@
 package eu.peernetwork.blog.ui.interactions.overview
 
 import android.content.res.Configuration
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -45,17 +49,18 @@ fun OverviewScaffold(
             state = state,
             fitEvenly = false,
             modifier = Modifier.fillMaxWidth()
-                .padding(horizontal = 24.dp)
+                .padding(horizontal = 24.dp),
+            indicator = {
+                Box(modifier = Modifier.fillMaxWidth()
+                    .height(1.dp)
+                    .background(PeerAppRed, shape = CircleShape))
+            }
         ) {
             PostIcon(
                 action = tabs[it],
                 value = updatedLabel(tabs[it]),
                 padding = PaddingValues(end = 8.dp),
-                color = if (state.currentPage == it) {
-                    PeerAppRed
-                } else {
-                    MaterialTheme.colorScheme.tertiary
-                },
+                color = MaterialTheme.colorScheme.tertiary,
             ) { action ->
                 scope.launch { state.animateScrollToPage(tabs.indexOf(action)) }
             }

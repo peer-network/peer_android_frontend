@@ -3,7 +3,7 @@ package eu.peernetwork.social.ui.block
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.paging.PagingData
 import app.cash.turbine.test
-import eu.peernetwork.core.common.model.Pageable
+import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.social.ui.mock.BlockMock
 import eu.peernetwork.social.ui.usecase.BlockListPagingUsecase
 import io.mockk.coEvery

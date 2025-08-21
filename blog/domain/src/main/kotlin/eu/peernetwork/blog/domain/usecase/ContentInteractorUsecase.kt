@@ -3,8 +3,8 @@ package eu.peernetwork.blog.domain.usecase
 import eu.peernetwork.blog.domain.model.Author
 import eu.peernetwork.blog.domain.model.Engagement
 import eu.peernetwork.blog.domain.repository.EngagementRepository
-import eu.peernetwork.core.common.model.Page
-import eu.peernetwork.core.common.model.Pageable
+import eu.peernetwork.core.common.paging.Page
+import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.core.common.usecase.ParameterizedSuspendableUseCase
 import javax.inject.Inject
 

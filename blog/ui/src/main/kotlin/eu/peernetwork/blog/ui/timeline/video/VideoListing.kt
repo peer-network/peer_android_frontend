@@ -59,7 +59,17 @@ fun VideoListing(
 ) {
     val configuration = LocalConfiguration.current
     val thumbnail = viewModel.thumbnail.collectAsStateWithLifecycle()
-    ListPreview(listState, { viewModel.reset() }) { position ->
+    ListPreview(
+        listState = listState,
+        onClear = { viewModel.reset() },
+        onFocus = { position ->
+            lazyPagingItems[position]?.let {
+                if (!it.isViewed) {
+                    viewModel.view(it.id)
+                }
+            }
+        }
+    ) { position ->
         LazyColumn(
             state = listState,
             modifier = Modifier.fillMaxSize(),

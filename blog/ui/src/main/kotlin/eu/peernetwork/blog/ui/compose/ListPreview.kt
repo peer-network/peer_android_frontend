@@ -21,11 +21,13 @@ import kotlinx.coroutines.flow.onEach
 fun ListPreview(
     listState: LazyListState,
     onClear: () -> Unit = {},
+    onFocus: (Int) -> Unit = {},
     content: @Composable (State<Int>) -> Unit
 ) {
     var position by remember { mutableIntStateOf(-1) }
     val currentPosition = remember { mutableIntStateOf(-1) }
     val handleClear by rememberUpdatedState(onClear)
+    val handleFocus by rememberUpdatedState(onFocus)
     val updatedContent by rememberUpdatedState(content)
     LaunchedEffect(listState) {
         snapshotFlow { listState.isScrollInProgress }
@@ -33,6 +35,8 @@ fun ListPreview(
             .onEach {
                 if (listState.isScrollInProgress) {
                     handleClear()
+                } else if (position != -1) {
+                    handleFocus(position)
                 }
             }.debounce(800)
             .collectLatest {

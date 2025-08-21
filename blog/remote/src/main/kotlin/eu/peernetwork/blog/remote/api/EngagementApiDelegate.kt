@@ -11,8 +11,8 @@ import eu.peernetwork.blog.remote.engagement.ReportCommentMutation
 import eu.peernetwork.blog.remote.engagement.ResolveActionPostMutation
 import eu.peernetwork.blog.remote.mapper.mapToAction
 import eu.peernetwork.blog.remote.mapper.mapToInteraction
-import eu.peernetwork.core.common.model.Page
-import eu.peernetwork.core.common.model.Pageable
+import eu.peernetwork.core.common.paging.Page
+import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.core.remote.extension.assertOrThrow
 import eu.peernetwork.core.remote.extension.executeOrThrow
 import eu.peernetwork.core.remote.extension.getOrThrow

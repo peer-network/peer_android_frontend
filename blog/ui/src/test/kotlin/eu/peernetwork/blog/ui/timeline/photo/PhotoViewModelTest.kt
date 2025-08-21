@@ -5,7 +5,7 @@ import androidx.paging.PagingData
 import app.cash.turbine.test
 import eu.peernetwork.blog.ui.mock.MockContent
 import eu.peernetwork.blog.ui.usecase.UserPostsUsecase
-import eu.peernetwork.core.common.model.Pageable
+import eu.peernetwork.core.common.paging.Pageable
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers

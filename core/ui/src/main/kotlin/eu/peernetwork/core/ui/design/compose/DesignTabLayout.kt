@@ -2,6 +2,7 @@ package eu.peernetwork.core.ui.design.compose
 
 import android.annotation.SuppressLint
 import android.content.res.Configuration
+import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -10,7 +11,9 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
@@ -18,11 +21,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalDensity
@@ -58,6 +63,7 @@ fun DesignTabLayout(
         val updatedIndicator by rememberUpdatedState(indicator)
         val updatedContent by rememberUpdatedState(content)
         val availableWidthPx = with(LocalDensity.current) { availableWidth.toPx().toInt() }
+        val offsets = remember { mutableMapOf<Int, Int>() }
         Row(
             modifier = Modifier
                 .horizontalScroll(rememberScrollState())
@@ -67,7 +73,9 @@ fun DesignTabLayout(
                 modifier = Modifier.padding(contentPadding),
                 content = {
                     repeat(state.pageCount) {
-                        updatedContent(it)
+                        Box(modifier = Modifier.graphicsLayer {
+                            alpha = if (state.currentPage == it) 1f else 0.2f
+                        }) { updatedContent(it) }
                     }
                     Box(Modifier.layoutId("indicator")) {
                         updatedIndicator()
@@ -89,6 +97,7 @@ fun DesignTabLayout(
                 } else {
                     tabMeasurables.map { measurable -> measurable.measure(constraints) }
                 }
+                val indicatorPlaceable = indicatorMeasurable?.measure(constraints)
                 val rowHeight = placeables.maxOfOrNull { it.height } ?: 100
                 val rowWidth = placeables.sumOf { it.width }
                 val maxLayoutWidth = maxOf(constraints.maxWidth, availableWidthPx)
@@ -96,14 +105,16 @@ fun DesignTabLayout(
                 val layoutHeight = rowHeight
                 layout(layoutWidth, layoutHeight) {
                     var xPosition = 0
-                    placeables.forEach { placeable ->
+                    placeables.forEachIndexed { index, placeable ->
                         if (xPosition + placeable.width <= layoutWidth) {
                             placeable.placeRelative(x = xPosition, y = 0)
                         } else {
                             placeable.placeRelative(x = xPosition, y = 0)
                         }
+                        offsets[index] = xPosition
                         xPosition += placeable.width
                     }
+                    indicatorPlaceable?.placeRelative(x = 0, y = layoutHeight)
                 }
             }
         }
@@ -114,18 +125,26 @@ fun DesignTabLayout(
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun PreviewDesignTabLayout() {
     PeerTheme {
-        val tabs = listOf("Home", "Explore", "Profile", "Settings", "More")
+        val tabs = listOf("xx", "xxxxx", "xxxxxxxxxx", "xxx", "xx")
         val state = rememberPagerState { tabs.size }
         Column(modifier = Modifier.fillMaxSize()) {
             DesignTabLayout(
                 state = state,
                 fitEvenly = false,
-                modifier = Modifier.padding(bottom = 8.dp)
+                modifier = Modifier.padding(bottom = 8.dp),
+                indicator = {
+                    Box(modifier = Modifier.fillMaxWidth()
+                        .height(4.dp)
+                        .background(MaterialTheme.colorScheme.primary))
+                }
             ) {
                 Text(
                     text = tabs[it],
                     modifier = Modifier.padding(horizontal = 24.dp)
                 )
+            }
+            HorizontalPager(state) {
+                Text(text = "Page $it", Modifier.fillMaxSize())
             }
         }
     }

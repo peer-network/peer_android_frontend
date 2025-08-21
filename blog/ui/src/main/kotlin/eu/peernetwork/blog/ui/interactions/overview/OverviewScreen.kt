@@ -84,7 +84,6 @@ fun OverviewScreen(
                     val tag = remember { "${engagement::class.java.name}/${content.value?.id}/$size" }
                     ListingScreen(
                         id = content.value?.id ?: "",
-                        size = size,
                         postLimit = postLimit,
                         engagement = engagement,
                         provider = component,
