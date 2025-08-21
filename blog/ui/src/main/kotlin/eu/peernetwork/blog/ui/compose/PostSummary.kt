@@ -2,8 +2,12 @@ package eu.peernetwork.blog.ui.compose
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -66,30 +70,33 @@ fun PostSummary(
         modifier = modifier
     ) {
         Row(modifier = Modifier.padding(start = 16.dp)) {
-            DesignRichText(
-                title = model.title,
-                description = model.description,
-                verticalArrangement = Arrangement.Center,
-                spacer = {},
-                maxLines = 1,
-                maxContentLines = 3,
-                modifier = Modifier.weight(1f),
-                titleOnClick = titleOnClick,
-                style = DesignTitleStyle(
-                    span = SpanStyle(
-                        fontStyle = FontStyle.Italic,
-                        fontWeight = FontWeight.Normal,
-                        fontSize = MaterialTheme.typography.labelSmall.fontSize,
-                        color = descriptionColor
+            Column(modifier = Modifier.weight(1f)
+                .heightIn(max = 128.dp)
+                .verticalScroll(rememberScrollState())) {
+                DesignRichText(
+                    title = model.title,
+                    description = model.description,
+                    verticalArrangement = Arrangement.Center,
+                    spacer = {},
+                    maxLines = 1,
+                    maxContentLines = 3,
+                    titleOnClick = titleOnClick,
+                    style = DesignTitleStyle(
+                        span = SpanStyle(
+                            fontStyle = FontStyle.Italic,
+                            fontWeight = FontWeight.Normal,
+                            fontSize = MaterialTheme.typography.labelSmall.fontSize,
+                            color = descriptionColor
+                        ),
+                        style = MaterialTheme.typography.headlineMedium.copy(color = color),
+                        descriptionStyle = MaterialTheme.typography.bodySmall.copy(
+                            color = descriptionColor
+                        )
                     ),
-                    style = MaterialTheme.typography.headlineMedium.copy(color = color),
-                    descriptionStyle = MaterialTheme.typography.bodySmall.copy(
-                        color = descriptionColor
-                    )
-                ),
-                onMentionClick = onMentionClick,
-                onHashtagClick = onHashtagClick
-            )
+                    onMentionClick = onMentionClick,
+                    onHashtagClick = onHashtagClick
+                )
+            }
             content()
         }
     }

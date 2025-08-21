@@ -99,7 +99,23 @@ fun EngagementScreen(
             onLike = { type.value = EngagementEvent.Like(it) },
             onDisLike = { type.value = EngagementEvent.DisLike(it.id) },
             onComment = { post.value = it },
-            onView = { overview.value = it }
+            onView = {
+                val isLiked = reactionState[it.id]?.isLiked
+                val isDisliked = reactionState[it.id]?.isDisliked
+                val isViewed = reactionState[it.id]?.isViewed
+                val commented = reactionState[it.id]?.commented ?: 0
+                val likeCount = it.likes + (isLiked == true && !it.isLiked).toInt()
+                val dislikeCount = it.dislikes + (isDisliked == true && !it.isDisliked).toInt()
+                val viewCount = it.views + (isViewed == true && !it.isViewed).toInt()
+                overview.value = it.copy(
+                    likes = likeCount,
+                    isLiked = isLiked ?: it.isLiked,
+                    dislikes = dislikeCount,
+                    isDisliked = isDisliked ?: it.isDisliked,
+                    comment = it.comment + commented,
+                    views = viewCount
+                )
+            }
         )
     }
     updatedContent(event)

@@ -2,9 +2,14 @@ package eu.peernetwork.blog.ui.compose
 
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -49,29 +54,32 @@ fun PhotoContent(
         description = post.time,
         indicator = indicator,
         caption = {
-            DesignRichText(
-                uiContent.title,
-                uiContent.description,
-                maxLines = 1,
-                maxContentLines = 2,
-                onMentionClick = onMentionClick,
-                onHashtagClick = onHashtagClick,
-                style = DesignTitleStyle(
-                    style = MaterialTheme.typography.bodySmall.copy(
-                        color = MaterialTheme.colorScheme.onBackground,
-                        fontWeight = FontWeight.SemiBold
+            Column(modifier = Modifier.heightIn(max = 128.dp)
+                .verticalScroll(rememberScrollState())) {
+                DesignRichText(
+                    uiContent.title,
+                    uiContent.description,
+                    maxLines = 1,
+                    maxContentLines = 2,
+                    onMentionClick = onMentionClick,
+                    onHashtagClick = onHashtagClick,
+                    style = DesignTitleStyle(
+                        style = MaterialTheme.typography.bodySmall.copy(
+                            color = MaterialTheme.colorScheme.onBackground,
+                            fontWeight = FontWeight.SemiBold
+                        ),
+                        descriptionStyle = MaterialTheme.typography.bodySmall.copy(
+                            color = MaterialTheme.colorScheme.onBackground.copy(alpha = .8f)
+                        ),
+                        span = SpanStyle(
+                            fontStyle = FontStyle.Italic,
+                            fontWeight = FontWeight.Normal,
+                            fontSize = MaterialTheme.typography.bodySmall.fontSize,
+                            color = MaterialTheme.colorScheme.tertiary
+                        ),
                     ),
-                    descriptionStyle = MaterialTheme.typography.bodySmall.copy(
-                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = .8f)
-                    ),
-                    span = SpanStyle(
-                        fontStyle = FontStyle.Italic,
-                        fontWeight = FontWeight.Normal,
-                        fontSize = MaterialTheme.typography.bodySmall.fontSize,
-                        color = MaterialTheme.colorScheme.tertiary
-                    ),
-                ),
-            )
+                )
+            }
         },
         engagements = {
             EngagementScreen(
