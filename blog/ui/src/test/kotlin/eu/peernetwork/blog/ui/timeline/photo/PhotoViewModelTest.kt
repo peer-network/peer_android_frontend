@@ -3,6 +3,7 @@ package eu.peernetwork.blog.ui.timeline.photo
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.paging.PagingData
 import app.cash.turbine.test
+import eu.peernetwork.blog.domain.usecase.ViewUsecase
 import eu.peernetwork.blog.ui.mock.MockContent
 import eu.peernetwork.blog.ui.usecase.UserPostsUsecase
 import eu.peernetwork.core.common.paging.Pageable
@@ -30,12 +31,14 @@ internal class PhotoViewModelTest {
 
     private val usecase = mockk<UserPostsUsecase>()
 
+    private val viewUsecase = mockk<ViewUsecase>()
+
     private lateinit var viewModel: PhotoViewModel
 
     @Before
     fun setup() {
         Dispatchers.setMain(dispatcher)
-        viewModel = PhotoViewModel(usecase)
+        viewModel = PhotoViewModel(usecase, viewUsecase)
     }
 
     @Test

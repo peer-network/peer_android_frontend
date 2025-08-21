@@ -5,10 +5,10 @@ import app.cash.turbine.test
 import eu.peernetwork.blog.ui.model.UiDraft
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.usecase.CreateUsecase
-import eu.peernetwork.core.common.usecase.TextEncoderUsecase
 import eu.peernetwork.media.core.model.UiAttachment
 import eu.peernetwork.media.core.model.UiMimeType
 import eu.peernetwork.media.core.usecase.MediaEncoderUsecase
+import eu.peernetwork.media.core.usecase.TextEncoderUsecase
 import eu.peernetwork.media.core.usecase.VideoEncoderUsecase
 import io.mockk.coEvery
 import io.mockk.every

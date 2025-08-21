@@ -46,7 +46,12 @@ internal class EngagementInteractorDelegateTest {
         interactor.observe().test {
             assertEquals(emptyMap(), awaitItem())
             interactor.like(id)
-            assertEquals(mapOf(id to EngagementInteractor.Reaction(like = true, dislike = null, commented = null)), awaitItem())
+            assertEquals(mapOf(id to EngagementInteractor.Reaction(
+                like = true,
+                dislike = null,
+                commented = null,
+                viewed = null
+            )), awaitItem())
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -61,7 +66,12 @@ internal class EngagementInteractorDelegateTest {
             try {
                 interactor.like(id)
             } catch (_: Throwable) {}
-            assertEquals(mapOf(id to EngagementInteractor.Reaction(like = true, dislike = null, commented = null)), awaitItem())
+            assertEquals(mapOf(id to EngagementInteractor.Reaction(
+                like = true,
+                dislike = null,
+                commented = null,
+                viewed = null
+            )), awaitItem())
             assertEquals(mapOf(), awaitItem())
             cancelAndIgnoreRemainingEvents()
         }
@@ -75,7 +85,12 @@ internal class EngagementInteractorDelegateTest {
         interactor.observe().test {
             assertEquals(emptyMap(), awaitItem())
             interactor.dislike(id)
-            assertEquals(mapOf(id to EngagementInteractor.Reaction(like = null, dislike = true, commented = null)), awaitItem())
+            assertEquals(mapOf(id to EngagementInteractor.Reaction(
+                like = null,
+                dislike = true,
+                commented = null,
+                viewed = null
+            )), awaitItem())
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -90,7 +105,12 @@ internal class EngagementInteractorDelegateTest {
             try {
                 interactor.dislike(id)
             } catch (_: Throwable) {}
-            assertEquals(mapOf(id to EngagementInteractor.Reaction(like = null, dislike = true, commented = null)), awaitItem())
+            assertEquals(mapOf(id to EngagementInteractor.Reaction(
+                like = null,
+                dislike = true,
+                commented = null,
+                viewed = null
+            )), awaitItem())
             assertEquals(mapOf(), awaitItem())
             cancelAndIgnoreRemainingEvents()
         }
@@ -104,7 +124,12 @@ internal class EngagementInteractorDelegateTest {
         interactor.observe().test {
             assertEquals(emptyMap(), awaitItem())
             interactor.comment(id)
-            assertEquals(mapOf(id to EngagementInteractor.Reaction(like = null, dislike = null, commented = 1)), awaitItem())
+            assertEquals(mapOf(id to EngagementInteractor.Reaction(
+                like = null,
+                dislike = null,
+                commented = 1,
+                viewed = null
+            )), awaitItem())
             cancelAndIgnoreRemainingEvents()
         }
     }

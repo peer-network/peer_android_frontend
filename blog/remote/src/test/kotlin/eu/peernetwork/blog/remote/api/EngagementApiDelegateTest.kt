@@ -31,7 +31,7 @@ internal class EngagementApiDelegateTest {
     fun setup() {
         api = EngagementApiDelegate(object : RequestClient {
             override fun invoke(): ApolloClient = client
-        })
+        }, "http://localhost")
     }
 
     @Test
