@@ -10,7 +10,9 @@ import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.Layout
@@ -35,6 +37,13 @@ fun DesignCollapsibleText(
     style: TextStyle = LocalTextStyle.current,
     onClick: (Int) -> Unit = {}
 ) {
+
+    val delegate by rememberUpdatedState(onClick)
+    val toggleOrDelegate: (Int) -> Unit = { offset ->
+        val hasSpan = text.getStringAnnotations(offset, offset).isNotEmpty()
+        if (hasSpan) delegate(offset) else expanded.value = !expanded.value
+    }
+
     Layout(
         modifier = modifier,
         content = {
@@ -43,16 +52,16 @@ fun DesignCollapsibleText(
                 maxLines = maxLines,
                 overflow = overflow,
                 style = style,
-                onClick = onClick
+                onClick = toggleOrDelegate
             )
             ClickableText(
                 text = text,
                 maxLines = maxLines,
                 overflow = overflow,
                 style = style,
-                onClick = onClick
+                onClick = toggleOrDelegate
             )
-            ClickableText(text = text, onClick = onClick, style = style)
+            ClickableText(text = text, onClick = toggleOrDelegate, style = style)
             Text(
                 text = if (!expanded.value) {
                     stringResource(R.string.show_less)
