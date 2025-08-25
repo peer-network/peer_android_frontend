@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -150,6 +151,11 @@ fun ExploreOverlay(
                                         Modifier,
                                         ImageView.Spec(media.path, null, zoomable = true )
                                     )
+                                }
+                                LaunchedEffect(Unit) {
+                                    if (!post.isViewed) {
+                                        viewModel.view(post.id)
+                                    }
                                 }
                             }
                         )

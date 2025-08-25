@@ -64,8 +64,10 @@ fun VideoListing(
         onClear = { viewModel.reset() },
         onFocus = { position ->
             lazyPagingItems[position]?.let {
-                if (!it.isViewed) {
-                    viewModel.view(it.id)
+                if (position < lazyPagingItems.itemCount) {
+                    if (!it.isViewed) {
+                        viewModel.view(it.id)
+                    }
                 }
             }
         }

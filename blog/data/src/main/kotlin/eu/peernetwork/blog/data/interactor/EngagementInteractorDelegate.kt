@@ -78,14 +78,12 @@ class EngagementInteractorDelegate @Inject constructor(
         if (!mutexes.add(id)) return
         val previous = views[id]
         try {
+            repository.post(id, Engagement.Content.View)
             views[id] = true
             invalidate()
-            repository.post(id, Engagement.Content.View)
         } catch (error: Throwable) {
             if (previous == null) {
                 views.remove(id)
-            } else {
-                views[id] = previous
             }
             throw error
         } finally {

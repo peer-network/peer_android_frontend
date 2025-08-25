@@ -46,9 +46,11 @@ fun PhotoListing(
     ListPreview(
         listState = listState,
         onFocus = { position ->
-            lazyPagingItems[position]?.let {
-                if (!it.isViewed) {
-                    viewModel.view(it.id)
+            if (position < lazyPagingItems.itemCount) {
+                lazyPagingItems[position]?.let {
+                    if (!it.isViewed) {
+                        viewModel.view(it.id)
+                    }
                 }
             }
         }
