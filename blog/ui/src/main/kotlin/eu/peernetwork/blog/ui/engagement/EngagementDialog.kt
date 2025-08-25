@@ -4,10 +4,10 @@ import androidx.compose.runtime.MutableState
 import androidx.lifecycle.ViewModelStoreOwner
 import eu.peernetwork.core.ui.renderer.Renderer
 
-interface EngagementConfirmation : Renderer.Stateful<EngagementConfirmation.Spec> {
+interface EngagementDialog : Renderer.Stateful<EngagementDialog.Spec> {
     data class Spec(
-        val type: MutableState<EngagementType?>,
+        val type: MutableState<EngagementEvent?>,
         val viewModelStoreOwner: ViewModelStoreOwner,
-        val onConfirm: (EngagementType) -> Unit
+        val onConfirm: (EngagementEvent) -> Unit
     )
 }

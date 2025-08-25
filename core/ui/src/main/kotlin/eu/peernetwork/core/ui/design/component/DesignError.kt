@@ -29,7 +29,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import eu.peernetwork.core.common.service.ResourceService
+import eu.peernetwork.core.common.interactor.ResourceInteractor
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.design.compose.DesignOutlinedButton
 import eu.peernetwork.core.ui.exception.NoContentException
@@ -111,7 +111,7 @@ fun DesignErrorText(
 fun DesignError(
     onRefresh: () -> Unit = {},
     error: Throwable,
-    resource: ResourceService
+    resource: ResourceInteractor
 ) {
     val errorMessage = stringResource(R.string.unknown_error_message)
     val noContentMessage = stringResource(R.string.empty_message)

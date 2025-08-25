@@ -23,6 +23,8 @@ fun Content.mapToPhoto(context: Context, annotate: (String) -> AnnotatedString):
         isLiked = isLiked,
         isDisliked = isDisliked,
         dislikes = dislikes,
+        isViewed = isViewed,
+        views = views,
         comment = comment
     )
 }
@@ -46,6 +48,8 @@ fun UiPost.mapToContent(): UiContent {
         isLiked = isLiked,
         isDisliked = isDisliked,
         dislikes = dislikes,
+        views = views,
+        isViewed = isViewed,
         comment = comment
     )
 }

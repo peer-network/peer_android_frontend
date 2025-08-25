@@ -28,7 +28,7 @@ import eu.peernetwork.core.ui.design.compose.DesignTitle
 import eu.peernetwork.core.ui.design.compose.DesignTitleBarHost
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
-import eu.peernetwork.core.ui.model.ViewModelState
+import eu.peernetwork.core.ui.factory.UiViewModelStore
 import eu.peernetwork.social.ui.search.member.MemberDialog
 import eu.peernetwork.wallet.ui.model.UiRecipient
 import eu.peernetwork.wallet.ui.overview.OverviewScreen
@@ -41,7 +41,7 @@ fun WalletScreen(
     id: String,
     postLimit: Int,
     provider: UiComponentProvider,
-    viewModelState: ViewModelState
+    viewModelState: UiViewModelStore
 ) {
     val context = LocalContext.current
     val component = remember {

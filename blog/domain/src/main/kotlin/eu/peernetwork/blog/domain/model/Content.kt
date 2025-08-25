@@ -12,7 +12,9 @@ data class Content(
     val dislikes: Int,
     val isLiked: Boolean,
     val isDisliked: Boolean,
-    val comment: Int
+    val isViewed: Boolean,
+    val views: Int,
+    val comment: Int,
 ) {
     enum class Type {
         IMAGE,

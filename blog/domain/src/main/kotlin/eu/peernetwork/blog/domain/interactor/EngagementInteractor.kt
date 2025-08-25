@@ -9,6 +9,8 @@ interface EngagementInteractor {
 
     suspend fun comment(id: String)
 
+    suspend fun view(id: String)
+
     fun observe(): SharedFlow<Map<String, Reaction>>
 
     suspend fun clear()
@@ -16,6 +18,7 @@ interface EngagementInteractor {
     data class Reaction(
         val like: Boolean?,
         val dislike: Boolean?,
+        val viewed: Boolean?,
         val commented: Int?
     )
 }

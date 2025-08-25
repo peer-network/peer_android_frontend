@@ -9,9 +9,8 @@ import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.app.interactor.RemoteInteractor
 import eu.peernetwork.app.interactor.SessionInteractorDelegate
 import eu.peernetwork.app.interactor.SettingsInteractor
-import eu.peernetwork.app.interactor.UrlInteractorDelegate
+import eu.peernetwork.app.service.ResourceInteractorDelegate
 import eu.peernetwork.core.common.interactor.SessionInteractor
-import eu.peernetwork.core.common.interactor.UrlInteractor
 import eu.peernetwork.core.common.provider.Dispatcher
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -32,10 +31,7 @@ object CoreModule {
     }
 
     @Provides
-    fun provideUrlProvider(delegate: UrlInteractorDelegate): UrlInteractor = delegate
-
-    @Provides
-    fun provideSettingsInteractor(delegate: UrlInteractorDelegate): RemoteInteractor = delegate
+    fun provideSettingsInteractor(delegate: ResourceInteractorDelegate): RemoteInteractor = delegate
 
     @Provides
     fun provideDispatcher(): Dispatcher {

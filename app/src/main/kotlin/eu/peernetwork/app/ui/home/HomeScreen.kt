@@ -39,12 +39,12 @@ import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
 import eu.peernetwork.core.ui.extension.attach
 import eu.peernetwork.core.ui.extension.attachIfNecessary
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
-import eu.peernetwork.core.ui.model.ViewModelState
+import eu.peernetwork.core.ui.factory.UiViewModelStore
 import eu.peernetwork.wallet.ui.reward.RewardScreen
 
 @Composable
 fun HomeScreen(provider: UiComponentProvider) {
-    val viewModelStore = remember { ViewModelState() }
+    val viewModelStore = remember { UiViewModelStore.Delegate() }
     val context = LocalContext.current
     val component = remember {
         provider.builder(Home.Builder::class.java).build(context)

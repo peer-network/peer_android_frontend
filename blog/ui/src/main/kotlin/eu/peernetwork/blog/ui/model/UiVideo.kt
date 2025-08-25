@@ -16,6 +16,8 @@ data class UiVideo(
     val dislikes: Int,
     val isLiked: Boolean,
     val isDisliked: Boolean,
+    val isViewed: Boolean,
+    val views: Int,
     val comment: Int,
     val aspectRatio: Float,
     val resolution: Pair<Int, Int>?

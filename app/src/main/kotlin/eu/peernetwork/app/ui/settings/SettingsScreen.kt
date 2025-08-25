@@ -21,7 +21,7 @@ import eu.peernetwork.core.ui.design.compose.DesignTitle
 import eu.peernetwork.core.ui.design.compose.DesignTitleBarHost
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
-import eu.peernetwork.core.ui.model.ViewModelState
+import eu.peernetwork.core.ui.factory.UiViewModelStore
 import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.user.ui.R
 import eu.peernetwork.user.ui.settings.account.AccountPreview
@@ -30,7 +30,7 @@ import eu.peernetwork.user.ui.settings.account.AccountPreview
 fun SettingsScreen(
     userId: String,
     provider: UiComponentProvider,
-    viewModelStore: ViewModelState,
+    viewModelStore: UiViewModelStore,
 ) {
     val context = LocalContext.current
     val component = remember {

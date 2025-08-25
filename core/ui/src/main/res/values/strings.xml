@@ -9,6 +9,7 @@
     <string name="chat_label">Chat</string>
     <string name="like_label">Likes</string>
     <string name="dislike_label">Dislikes</string>
+    <string name="view_label">Views</string>
     <string name="comment_label">Comments</string>
     <string name="settings_label">Settings</string>
     <string name="retry_label">Try again</string>
@@ -20,8 +21,8 @@
     <string name="video_label">Video</string>
     <string name="music_label">Music</string>
 
-    <string name="show_less">Show more</string>
-    <string name="show_more">Show less</string>
+    <string name="show_less">more</string>
+    <string name="show_more">less</string>
 
     <string name="refresh_message">Pull down to refresh</string>
     <string name="empty_message">No result found!</string>

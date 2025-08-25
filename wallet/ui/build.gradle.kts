@@ -18,6 +18,7 @@ dependencies {
     implementation(project(":wallet:domain"))
 
     implementation(libs.dagger)
+    implementation(libs.lottie)
     ksp(libs.dagger.compiler)
 
     testImplementation(libs.junit)

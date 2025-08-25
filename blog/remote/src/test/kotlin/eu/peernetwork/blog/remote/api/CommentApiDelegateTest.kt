@@ -9,7 +9,7 @@ import eu.peernetwork.blog.remote.comment.CreateCommentMutation
 import eu.peernetwork.blog.remote.comment.GetCommentsQuery
 import eu.peernetwork.blog.remote.mock.CommentMock
 import eu.peernetwork.core.common.interactor.SessionInteractor
-import eu.peernetwork.core.common.model.Pageable
+import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.core.remote.model.Status
 import eu.peernetwork.core.remote.api.RequestClient
 import io.mockk.coEvery

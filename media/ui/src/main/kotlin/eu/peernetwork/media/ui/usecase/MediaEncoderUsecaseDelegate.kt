@@ -5,7 +5,7 @@ import android.content.Context
 import android.net.Uri
 import android.webkit.MimeTypeMap
 import eu.peernetwork.core.common.provider.Dispatcher
-import eu.peernetwork.core.common.usecase.FileEncoderUsecase
+import eu.peernetwork.media.core.usecase.FileEncoderUsecase
 import eu.peernetwork.media.core.usecase.MediaEncoderUsecase
 import kotlinx.coroutines.withContext
 import javax.inject.Inject

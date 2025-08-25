@@ -2,7 +2,7 @@ package eu.peernetwork.core.ui.factory
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import eu.peernetwork.core.ui.exception.UiControllerException
+import eu.peernetwork.core.ui.exception.UiViewModelException
 import javax.inject.Provider
 
 class UiViewModelFactory(
@@ -12,6 +12,6 @@ class UiViewModelFactory(
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return classToViewModel[modelClass]?.get() as? T
-            ?: throw UiControllerException(modelClass.name)
+            ?: throw UiViewModelException(modelClass.name)
     }
 }

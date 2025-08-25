@@ -20,6 +20,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
+import eu.peernetwork.blog.ui.compose.ListPreview
 import eu.peernetwork.blog.ui.compose.PhotoIndicator
 import eu.peernetwork.blog.ui.compose.PostItem
 import eu.peernetwork.blog.ui.compose.PhotoPager
@@ -35,6 +36,7 @@ import eu.peernetwork.media.core.renderer.ImageView
 fun PhotoListing(
     id: String,
     component: Photo.Component,
+    viewModel: PhotoViewModel,
     lazyPagingItems: LazyPagingItems<UiPost>,
     listState: LazyListState,
     engagement: UiEngagementEvent,
@@ -45,6 +47,20 @@ fun PhotoListing(
     onAuthorClick: (String) -> Unit = {},
     connection: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit = {}
 ) {
+    ListPreview(
+        listState = listState,
+        onFocus = { position ->
+            if (position < lazyPagingItems.itemCount) {
+                lazyPagingItems[position]?.let {
+                    if (!it.isViewed) {
+                        viewModel.view(it.id)
+                    }
+                }
+            }
+        }
+    ) {
+
+    }
     LazyColumn(
         state = listState,
         modifier = Modifier.fillMaxSize()

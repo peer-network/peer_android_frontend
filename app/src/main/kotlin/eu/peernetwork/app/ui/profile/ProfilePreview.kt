@@ -122,7 +122,17 @@ fun ProfilePreview(
                 onNavigate = { position = it },
                 event = event,
                 photoState = photoState,
-                videoState = videoState
+                videoState = videoState,
+                connection =  {
+                    ConnectionScreen(
+                        isFollowing = connectionState.getOrDefault(
+                            key = it.first,
+                            defaultValue = it.second
+                        ),
+                        isFollowed = it.second,
+                        onClick = { follow -> connectionController.value.invoke(it.first, !follow) }
+                    )
+                }
             )
         }
         ProfileSheet(

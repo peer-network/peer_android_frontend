@@ -15,7 +15,7 @@ import eu.peernetwork.app.ui.profile.ProfileScreen
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.compose.DesignRouter
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
-import eu.peernetwork.core.ui.model.ViewModelState
+import eu.peernetwork.core.ui.factory.UiViewModelStore
 import eu.peernetwork.social.ui.referral.ReferralScreen
 import eu.peernetwork.user.ui.R
 import eu.peernetwork.user.ui.password.update.PasswordUpdateScreen
@@ -26,7 +26,7 @@ import eu.peernetwork.user.ui.settings.address.AddressScreen
 fun SettingsNavigation(
     userId: String,
     provider: UiComponentProvider,
-    viewModelStore: ViewModelState,
+    viewModelStore: UiViewModelStore,
     settings: @Composable (NavHostController) -> Unit
 ) {
     val controller = rememberNavController()

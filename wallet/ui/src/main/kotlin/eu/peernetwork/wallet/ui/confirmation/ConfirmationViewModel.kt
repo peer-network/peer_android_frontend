@@ -11,6 +11,7 @@ import eu.peernetwork.wallet.ui.model.UiToken
 import eu.peernetwork.wallet.ui.model.UiQuote
 import eu.peernetwork.wallet.ui.model.UiReward
 import eu.peernetwork.wallet.ui.model.UiWallet
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -26,10 +27,12 @@ class ConfirmationViewModel @Inject constructor(
 
     private val quotes = HashMap<UiToken, UiQuote>()
 
+    private var job: Job? = null
+
     val state: StateFlow<State> = mutableState.asStateFlow()
 
     fun initialize(token: UiToken) {
-        viewModelScope.launch {
+        job = viewModelScope.launch {
             mutableState.tryEmit(State.Loading)
             try {
                 val quote = quotes.getOrPut(token) {
@@ -44,6 +47,10 @@ class ConfirmationViewModel @Inject constructor(
                 mutableState.tryEmit(State.Error(error))
             }
         }
+    }
+
+    fun cancel() {
+        job?.cancel()
     }
 
     sealed interface State {

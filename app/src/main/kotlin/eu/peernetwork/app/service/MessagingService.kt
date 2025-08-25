@@ -1,49 +1,50 @@
 package eu.peernetwork.app.service
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.os.Build
-import androidx.core.app.NotificationCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-import eu.peernetwork.app.R
+import eu.peernetwork.app.PeerApplication
+import eu.peernetwork.app.usecase.NotificationUsecase
+import eu.peernetwork.app.usecase.SubscriptionUsecase
+import eu.peernetwork.core.common.provider.Dispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 class MessagingService : FirebaseMessagingService() {
-    private val channel = this::class.java.name
+    @Inject
+    internal lateinit var dispatcher: Dispatcher
 
-    private val title: String by lazy {
-        getString(R.string.app_name)
+    @Inject
+    internal lateinit var notification: NotificationUsecase
+
+    @Inject
+    internal lateinit var subscription: SubscriptionUsecase
+
+    private val scope: CoroutineScope by lazy {
+        CoroutineScope(SupervisorJob() + dispatcher.io)
     }
 
-    private val caption: String by lazy {
-        getString(R.string.notification_caption)
+    override fun onCreate() {
+        super.onCreate()
+        (application as PeerApplication).injector.inject(this)
     }
 
     override fun onNewToken(token: String) {
         super.onNewToken(token)
+        scope.launch {
+            subscription(token)
+        }
     }
 
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
-        val title = message.notification?.title ?: title
-        val message = message.notification?.body ?: caption
-        sendNotification(title, message)
+        notification(message)
     }
 
-    private fun sendNotification(title: String, message: String) {
-        val notificationBuilder = NotificationCompat.Builder(this, channel)
-            .setSmallIcon(R.drawable.ic_icon)
-            .setContentTitle(title)
-            .setContentText(message)
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
-        val notificationManager =
-            getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                channel, title, NotificationManager.IMPORTANCE_HIGH
-            )
-            notificationManager.createNotificationChannel(channel)
-        }
-        notificationManager.notify(0, notificationBuilder.build())
+    override fun onDestroy() {
+        super.onDestroy()
+        scope.cancel()
     }
 }

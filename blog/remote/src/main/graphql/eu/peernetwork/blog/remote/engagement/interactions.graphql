@@ -1,0 +1,24 @@
+query PostInteractions(
+    $GetOnly: GetOnly!,
+    $postOrCommentId: ID!,
+    $offset: Int,
+    $limit: Int
+) {
+    postInteractions(
+        getOnly: $GetOnly,
+        postOrCommentId: $postOrCommentId,
+        offset: $offset,
+        limit: $limit
+    ) {
+        status
+        ResponseCode
+        affectedRows {
+            id
+            username
+            slug
+            img
+            isfollowed
+            isfollowing
+        }
+    }
+}

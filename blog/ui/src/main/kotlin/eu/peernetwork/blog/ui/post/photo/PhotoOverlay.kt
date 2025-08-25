@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -27,7 +28,7 @@ import eu.peernetwork.blog.ui.engagement.EngagementScreen
 import eu.peernetwork.blog.ui.event.UiPostEvent
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.moderation.ModerationScreen
-import eu.peernetwork.core.common.model.Pageable
+import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffold
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
@@ -95,7 +96,8 @@ fun PhotoOverlay(
                     onHashtagClick = event::onHashtagClick,
                     onAuthorClick = event::onAuthorClick,
                     provider = component,
-                    viewModelStoreOwner = viewModelStoreOwner
+                    viewModelStoreOwner = viewModelStoreOwner,
+                    connection = connection
                 ) { engagement ->
                     ModerationScreen(
                         component,
@@ -148,6 +150,11 @@ fun PhotoOverlay(
                                     component.imageView()(
                                         Modifier,
                                         ImageView.Spec(media.path, null,zoomable = true))
+                                }
+                                LaunchedEffect(Unit) {
+                                    if (!post.isViewed) {
+                                        viewModel.view(post.id)
+                                    }
                                 }
                             }
                         )

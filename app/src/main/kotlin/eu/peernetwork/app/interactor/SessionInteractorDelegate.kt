@@ -10,7 +10,7 @@ class SessionInteractorDelegate @Inject constructor(): SessionInteractor, Settin
 
     private lateinit var mode: String
 
-    override suspend fun get(): String = user
+    override suspend fun principal(): String = user
 
     override suspend fun mode(): String = mode
 

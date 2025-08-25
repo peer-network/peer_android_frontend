@@ -9,7 +9,7 @@ import eu.peernetwork.blog.domain.usecase.CommentUpdateUsecase
 import eu.peernetwork.blog.domain.usecase.CommentUsecase
 import eu.peernetwork.blog.ui.model.UiComment
 import eu.peernetwork.blog.ui.usecase.CommentsUsecase
-import eu.peernetwork.core.common.model.Pageable
+import eu.peernetwork.core.common.paging.Pageable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

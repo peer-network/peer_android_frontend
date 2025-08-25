@@ -6,10 +6,10 @@ import eu.peernetwork.blog.domain.model.Draft
 import eu.peernetwork.blog.ui.model.UiDraft
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.usecase.CreateUsecase
-import eu.peernetwork.core.common.usecase.TextEncoderUsecase
 import eu.peernetwork.media.core.model.UiMimeType
 import eu.peernetwork.media.core.model.UiOffset
 import eu.peernetwork.media.core.usecase.MediaEncoderUsecase
+import eu.peernetwork.media.core.usecase.TextEncoderUsecase
 import eu.peernetwork.media.core.usecase.VideoEncoderUsecase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

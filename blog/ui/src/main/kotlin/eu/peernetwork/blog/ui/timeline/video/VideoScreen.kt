@@ -9,7 +9,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import eu.peernetwork.core.common.model.Pageable
+import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.extension.builder
 import androidx.paging.LoadState
@@ -43,7 +43,7 @@ fun VideoScreen(
     connection: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit = {}
 ) {
     val context = LocalContext.current
-    val coroutine = rememberCoroutineScope()
+    val scope = rememberCoroutineScope()
     val component = remember {
         provider.builder(Video.Builder::class.java).build(context)
     }
@@ -98,7 +98,8 @@ fun VideoScreen(
                 event::onHashtagClick,
                 event::onAuthorClick,
                 component,
-                viewModelStoreOwner
+                viewModelStoreOwner,
+                connection
             ) { engagement ->
                 ModerationScreen(
                     component,
@@ -125,7 +126,7 @@ fun VideoScreen(
         LaunchedEffect(requireUpdate.value) {
             if (requireUpdate.value) {
                 lazyPagingItems.refresh()
-                coroutine.launch {
+                scope.launch {
                     listState.animateScrollToItem(0)
                 }
                 requireUpdate.value = false

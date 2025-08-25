@@ -5,8 +5,8 @@ import eu.peernetwork.blog.domain.model.Content
 import eu.peernetwork.blog.domain.model.Draft
 import eu.peernetwork.blog.domain.model.Filter
 import eu.peernetwork.blog.domain.repository.ContentRepository
-import eu.peernetwork.core.common.model.Page
-import eu.peernetwork.core.common.model.Pageable
+import eu.peernetwork.core.common.paging.Page
+import eu.peernetwork.core.common.paging.Pageable
 import javax.inject.Inject
 
 class ContentRepositoryDelegate @Inject constructor(

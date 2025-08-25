@@ -8,11 +8,10 @@ import androidx.paging.PagingSource.LoadParams
 import androidx.paging.PagingSource.LoadResult
 import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.blog.domain.model.Category
-import eu.peernetwork.blog.domain.usecase.EngagementRefreshUsecase
 import eu.peernetwork.blog.domain.usecase.VideosUsecase
 import eu.peernetwork.blog.ui.mapper.mapToVideo
 import eu.peernetwork.blog.ui.model.UiVideo
-import eu.peernetwork.core.common.model.Pageable
+import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.core.common.provider.Dispatcher
 import eu.peernetwork.core.ui.exception.NoContentException
 import eu.peernetwork.core.ui.usecase.AnnotationUsecase
@@ -25,7 +24,6 @@ class UserVideosUsecase @Inject constructor(
     private val context: Context,
     private val dispatcher: Dispatcher,
     private val usecase: VideosUsecase,
-    private val engagementRefreshUsecase: EngagementRefreshUsecase,
     private val annotationUsecase: AnnotationUsecase,
 ) : PagingUsecase<UserVideosUsecase.Parameter, UiVideo>() {
     private lateinit var param: Parameter
@@ -54,9 +52,6 @@ class UserVideosUsecase @Inject constructor(
                 page = currentPage
             )
         )
-        if (currentOffset <= 0) {
-            engagementRefreshUsecase()
-        }
         if (response.items.isEmpty() && currentPage.offset == 0) {
             LoadResult.Error(NoContentException())
         } else {

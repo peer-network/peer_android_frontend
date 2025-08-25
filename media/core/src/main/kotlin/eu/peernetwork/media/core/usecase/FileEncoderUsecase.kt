@@ -1,5 +1,6 @@
-package eu.peernetwork.core.common.usecase
+package eu.peernetwork.media.core.usecase
 
+import eu.peernetwork.core.common.usecase.ParameterizedImmediateUseCase
 import java.io.InputStream
 
 interface FileEncoderUsecase : ParameterizedImmediateUseCase<FileEncoderUsecase.Parameter, String> {

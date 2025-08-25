@@ -127,8 +127,7 @@ fun AttachmentPreview(
                         scaleY = scale
                         shadowElevation = if (scale == 1f) 16.dp.toPx() else 8.dp.toPx()
                         translationX = pageOffset
-                    }
-                    .clip(RoundedCornerShape(24.dp))
+                    }.clip(RoundedCornerShape(24.dp))
             ) {
                 if (page == state.pageCount - 1) {
                     Box(

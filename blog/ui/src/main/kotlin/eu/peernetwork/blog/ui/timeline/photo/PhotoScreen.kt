@@ -21,7 +21,7 @@ import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.compose.PostPlaceholder
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
 import eu.peernetwork.blog.ui.event.UiPostEvent
-import eu.peernetwork.core.common.model.Pageable
+import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
 import eu.peernetwork.blog.ui.moderation.ModerationScreen
 import eu.peernetwork.core.ui.R
@@ -81,14 +81,16 @@ fun PhotoScreen(
         }
     ) { state, lazyPagingItems ->
         val refreshState = remember { derivedStateOf {
-            if (lazyPagingItems.loadState.refresh is LoadState.Loading) {
-                DesignStatefulScaffoldState.Loading
-            } else if (lazyPagingItems.loadState.refresh is LoadState.Error) {
-                DesignStatefulScaffoldState.Error(
-                    (lazyPagingItems.loadState.refresh as LoadState.Error).error
-                )
-            } else {
-                state.value
+            when (lazyPagingItems.loadState.refresh) {
+                is LoadState.Loading -> {
+                    DesignStatefulScaffoldState.Loading
+                }
+                is LoadState.Error -> {
+                    DesignStatefulScaffoldState.Error(
+                        (lazyPagingItems.loadState.refresh as LoadState.Error).error
+                    )
+                }
+                else -> state.value
             }
         } }
         val refreshed = remember { derivedStateOf {
@@ -105,7 +107,8 @@ fun PhotoScreen(
                 event::onHashtagClick,
                 event::onAuthorClick,
                 component,
-                viewModelStoreOwner
+                viewModelStoreOwner,
+                connection
             ) { engagement ->
                 ModerationScreen(
                     component,
@@ -113,6 +116,7 @@ fun PhotoScreen(
                 ) { moderation ->
                     PhotoListing(
                         id = id,
+                        viewModel = viewModel,
                         component = component,
                         listState = listState,
                         lazyPagingItems = lazyPagingItems,

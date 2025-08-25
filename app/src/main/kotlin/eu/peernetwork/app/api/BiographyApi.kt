@@ -1,6 +1,6 @@
 package eu.peernetwork.app.api
 
-import eu.peernetwork.core.common.usecase.TextEncoderUsecase
+import eu.peernetwork.media.core.usecase.TextEncoderUsecase
 import eu.peernetwork.user.data.api.SettingsApi
 import eu.peernetwork.user.remote.api.BiographySettingsApi
 import javax.inject.Inject
