@@ -77,7 +77,7 @@ fun EngagementScreen(
     val handleHashtagClick by rememberUpdatedState(onHashtagClick)
     val handleAuthorClick by rememberUpdatedState(onAuthorClick)
     val type = remember { mutableStateOf<EngagementEvent?>(null) }
-    val event = remember(state, reactionState.values) {
+    val event = remember(state) {
         UiEngagementEvent(
             onLoad = {
                 val isLiked = reactionState[it.id]?.isLiked
