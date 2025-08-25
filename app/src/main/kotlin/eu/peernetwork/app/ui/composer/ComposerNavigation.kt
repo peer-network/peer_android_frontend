@@ -1,10 +1,7 @@
 package eu.peernetwork.app.ui.composer
 
 import android.net.Uri
-<<<<<<< HEAD
 import android.os.Bundle
-=======
->>>>>>> d0719d61 (Audio cover upload)
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -25,12 +22,9 @@ import eu.peernetwork.media.core.model.UiMimeType
 import eu.peernetwork.media.core.model.UiOffset
 import eu.peernetwork.media.ui.editor.video.VideoScreen
 import eu.peernetwork.media.ui.selector.explorer.ExplorerScreen
-<<<<<<< HEAD
 import kotlinx.collections.immutable.persistentListOf
-import java.io.File
-=======
 import kotlinx.collections.immutable.toPersistentList
->>>>>>> d0719d61 (Audio cover upload)
+import java.io.File
 
 @Composable
 fun ComposerNavigation(
@@ -77,7 +71,6 @@ fun ComposerNavigation(
                             if (file.uri == uri) file.copy(cover = selectedUri)
                             else file
                         }.toPersistentList()
-
                         attachment.value = UiAttachment.File(
                             attachment.value.media,
                             updatedFiles
