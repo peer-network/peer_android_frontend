@@ -1,3 +1,4 @@
+@file:OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class)
 package eu.peernetwork.blog.ui.compose
 
 import androidx.compose.foundation.layout.RowScope
@@ -16,7 +17,9 @@ import eu.peernetwork.blog.ui.model.UiPost
 fun LazyItemScope.PostItem(
     post: UiPost,
     position: Int,
+    isLiked: Boolean = false,
     onClick: () -> Unit = {},
+    onDoubleClick: () -> Unit = {},
     onAuthorClick: () -> Unit = {},
     onMentionClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
@@ -37,6 +40,7 @@ fun LazyItemScope.PostItem(
         MediaView(
             author = post.author,
             description = post.time,
+            isLiked = isLiked,
             modifier = Modifier
                 .padding(bottom = 16.dp),
             caption = {
@@ -52,6 +56,7 @@ fun LazyItemScope.PostItem(
             engagements = engagements,
             moderation = moderation,
             onClick = onClick,
+            onDoubleClick = onDoubleClick,
             onAuthorClick = onAuthorClick,
             actions = actions
         ) { updatedContent(post) }
@@ -59,11 +64,13 @@ fun LazyItemScope.PostItem(
         TextPreview(
             author = post.author,
             description = post.time,
+            isLiked = isLiked,
             modifier = Modifier.padding(bottom = 12.dp)
                 .padding(horizontal = 8.dp),
             engagements = engagements,
             moderation = moderation,
             onClick = onClick,
+            onDoubleClick = onDoubleClick,
             onAuthorClick = onAuthorClick,
             actions = actions
         ) {

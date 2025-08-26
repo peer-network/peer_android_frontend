@@ -1,10 +1,15 @@
 package eu.peernetwork.blog.ui.compose
 
 import android.content.res.Configuration
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -17,22 +22,79 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import eu.peernetwork.blog.ui.model.UiAuthor
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
 import eu.peernetwork.blog.ui.model.UiAction
+import eu.peernetwork.blog.ui.model.UiAuthor
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.design.compose.DesignTextButton
 import eu.peernetwork.core.ui.theme.PeerTheme
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+
+@Composable
+fun BoxScope.ConfirmedLikeHeartOverlay(
+    isLiked: Boolean,
+    modifier: Modifier = Modifier,
+    size: Dp = 160.dp,
+    rawRes: Int = R.raw.like
+) {
+    val (play, setPlay) = remember { mutableStateOf(false) }
+    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(rawRes))
+    val progress by animateLottieCompositionAsState(
+        composition = composition,
+        isPlaying = play,
+        iterations = 1,
+        speed = 1f
+    )
+    var prev by remember { mutableStateOf(isLiked) }
+    LaunchedEffect(isLiked) {
+        if (!prev && isLiked) {
+            setPlay(false)
+            setPlay(true)
+        }
+        prev = isLiked
+    }
+    LaunchedEffect(progress) {
+        if (progress >= 1f) setPlay(false)
+    }
+
+    AnimatedVisibility(
+        visible = play && progress < 1f,
+        enter = fadeIn(animationSpec = tween(160)),
+        exit = fadeOut(animationSpec = tween(220)),
+        modifier = modifier
+    ) {
+        LottieAnimation(
+            composition = composition,
+            progress = { progress },
+            modifier = Modifier.size(size)
+        )
+    }
+}
 
 @Composable
 fun MediaView(
@@ -40,7 +102,9 @@ fun MediaView(
     description: String,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp),
+    isLiked: Boolean = false,
     onClick: () -> Unit = {},
+    onDoubleClick: () -> Unit = {},
     onAuthorClick: () -> Unit = {},
     actions: @Composable RowScope.() -> Unit = {},
     engagements: @Composable RowScope.() -> Unit = {},
@@ -53,6 +117,12 @@ fun MediaView(
     val updatedCaption by rememberUpdatedState(caption)
     val updatedEngagements by rememberUpdatedState(engagements)
     val updatedModeration by rememberUpdatedState(moderation)
+    val click by rememberUpdatedState(onClick)
+    val dblClick by rememberUpdatedState(onDoubleClick)
+
+    val scope = rememberCoroutineScope()
+    val (singleTapJob, setSingleTapJob) = remember { mutableStateOf<Job?>(null) }
+
     PostScaffold(
         modifier = modifier,
         header = {},
@@ -73,13 +143,30 @@ fun MediaView(
         footer = { }
     ) {
         Box(
-            modifier = Modifier.clickable(
-                enabled = true,
-                role = Role.Button,
-                onClick = onClick
-            )
+            modifier = Modifier
+                .semantics { role = Role.Button }
+                .pointerInput(Unit) {
+                    detectTapGestures(
+                        onTap = {
+                            val job = scope.launch {
+                                delay(120)
+                                click()
+                            }
+                            setSingleTapJob(job)
+                        },
+                        onDoubleTap = {
+                            singleTapJob?.cancel()
+                            dblClick()
+                        }
+            ) }
         ) {
             updatedContent()
+            ConfirmedLikeHeartOverlay(
+                isLiked = isLiked,
+                modifier = Modifier.align(Alignment.Center),
+                size = 160.dp
+            )
+
             Image(
                 painter = painterResource(R.drawable.overlay_gradient),
                 contentDescription = null,
@@ -120,6 +207,7 @@ fun PreviewMediaPreview() {
                 isfollowed = false
             ),
             description = "Description...",
+            isLiked = false,
             engagements = {
                 UiAction.ENGAGEMENTS.forEach {
                     DesignTextButton(
