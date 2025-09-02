@@ -126,10 +126,7 @@ fun PhotoScreen(
                     lazyPagingItems = list,
                     engagement = engagement,
                     moderation = moderation,
-                    onPostClick = event::onPostClick,
-                    onAuthorClick = event::onAuthorClick,
-                    onHashtagClick = event::onHashtagClick,
-                    onMentionClick = event::onMentionClick,
+                    event = event,
                     connection = connection,
                     audio = { post, index, position ->
                         val path by remember { derivedStateOf { post.media.first().path } }

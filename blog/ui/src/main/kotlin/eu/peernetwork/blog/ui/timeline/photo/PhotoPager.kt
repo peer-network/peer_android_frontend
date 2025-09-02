@@ -8,39 +8,53 @@ import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableFloatState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.paging.compose.LazyPagingItems
 import eu.peernetwork.blog.ui.compose.PhotoContent
+import eu.peernetwork.blog.ui.compose.PhotoPager
 import eu.peernetwork.blog.ui.compose.TextContent
+import eu.peernetwork.blog.ui.compose.VideoContent
 import eu.peernetwork.blog.ui.event.UiEngagementEvent
 import eu.peernetwork.blog.ui.model.UiMedia
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.event.UiModerationEvent
+import eu.peernetwork.blog.ui.event.UiPostEvent
+import eu.peernetwork.blog.ui.mapper.mapToVideo
+import eu.peernetwork.blog.ui.model.UiVideo
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toPersistentList
 
 @Composable
 fun PhotoPager(
-    id: String,
     position: Int,
+    enabled: Boolean,
     engagement: UiEngagementEvent,
     moderation: UiModerationEvent,
     lazyPagingItems: State<LazyPagingItems<UiPost>>,
-    onAuthorClick: (String) -> Unit = {},
-    onMentionClick: (String) -> Unit = {},
-    onHashtagClick: (String) -> Unit = {},
+    event: UiPostEvent,
+    progress: @Composable (MutableFloatState) -> Unit = {},
     header: @Composable () -> Unit = {},
+    background: @Composable (UiVideo) -> Unit = {},
     indicator: @Composable (PagerState, ImmutableList<UiMedia>) -> Unit = { state, items -> },
-    connection: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit = {},
-    content: @Composable (UiPost, PagerState, Boolean) -> Unit = { post, state, active -> },
+    connection: @Composable RowScope.(UiPost, Triple<String, Boolean, Boolean>) -> Unit = { post, status -> },
+    audio: @Composable (UiPost, PagerState, Boolean) -> Unit = { post, state, active -> },
+    video: @Composable (UiVideo, Boolean, MutableFloatState) -> Unit = { post, state, progress -> },
+    image: @Composable (UiPost, String) -> Unit = { post, path -> },
 ) {
-    val updatedContent by rememberUpdatedState(content)
+    val updatedProgress by rememberUpdatedState(progress)
+    val updatedBackground by rememberUpdatedState(background)
     val updatedIndicator by rememberUpdatedState(indicator)
     val updatedConnection by rememberUpdatedState(connection)
+    val updatedAudio by rememberUpdatedState(audio)
+    val updatedVideo by rememberUpdatedState(video)
+    val updatedImage by rememberUpdatedState(image)
     val pagerState = rememberPagerState(
         initialPage = position
     ) { lazyPagingItems.value.itemCount }
@@ -54,22 +68,12 @@ fun PhotoPager(
                 if (post.type == UiPost.Type.TEXT) {
                     TextContent(
                         post = post,
-                        onAuthorClick = onAuthorClick,
-                        onMentionClick = onMentionClick,
-                        onHashtagClick = onHashtagClick,
+                        onAuthorClick = event::onAuthorClick,
+                        onMentionClick = event::onMentionClick,
+                        onHashtagClick = event::onHashtagClick,
                         uiEngagementEvent = engagement,
                         uiModerationEvent = moderation,
-                        connection = {
-                            if (id != post.author.id) {
-                                updatedConnection(
-                                    Triple(
-                                        post.author.id,
-                                        post.author.isfollowing,
-                                        post.author.isfollowed
-                                    )
-                                )
-                            }
-                        },
+                        connection = { updatedConnection(post, it) },
                         header = header
                     )
                 } else if (post.type == UiPost.Type.IMAGE) {
@@ -80,25 +84,40 @@ fun PhotoPager(
                         uiModerationEvent = moderation,
                         header = header,
                         indicator = { updatedIndicator(state, post.media.toPersistentList()) },
-                        onAuthorClick = onAuthorClick,
-                        onMentionClick = onMentionClick,
-                        onHashtagClick = onHashtagClick,
-                        connection = {
-                            if (id != post.author.id) {
-                                updatedConnection(
-                                    Triple(
-                                        post.author.id,
-                                        post.author.isfollowing,
-                                        post.author.isfollowed
-                                    )
-                                )
-                            }
-                        },
-                    ) { updatedContent(post, state, page == pagerState.currentPage) }
+                        onAuthorClick = event::onAuthorClick,
+                        onMentionClick = event::onMentionClick,
+                        onHashtagClick = event::onHashtagClick,
+                        connection = { updatedConnection(post, it) },
+                    ) {
+                        if (post.media.size > 1) {
+                            PhotoPager(
+                                pagerState,
+                                0f,
+                                post.media
+                            ) { path -> updatedImage(post, path) }
+                        } else {
+                            updatedImage(post, post.media.first().path)
+                        }
+                    }
                 } else if (post.type == UiPost.Type.AUDIO) {
 
                 } else if (post.type == UiPost.Type.VIDEO) {
-
+                    val videoPost = post.mapToVideo()
+                    val progress = remember { mutableFloatStateOf(0f) }
+                    VideoContent(
+                        post = videoPost,
+                        index = page,
+                        uiEngagementEvent = engagement,
+                        uiModerationEvent = moderation,
+                        onAuthorClick = event::onAuthorClick,
+                        onPostClick = event::onPostClick,
+                        onMentionClick = event::onMentionClick,
+                        onHashtagClick = event::onHashtagClick,
+                        header = header,
+                        connection = { updatedConnection(post, it) },
+                        progress = { updatedProgress(progress) },
+                        background = { updatedBackground(videoPost) }
+                    ) { updatedVideo(videoPost, enabled && page == pagerState.currentPage, progress) }
                 }
             } else {
                 CircularProgressIndicator()

@@ -29,6 +29,7 @@ import eu.peernetwork.blog.ui.engagement.EngagementScreen
 import eu.peernetwork.blog.ui.mapper.mapToContent
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.event.UiModerationEvent
+import eu.peernetwork.blog.ui.event.UiPostEvent
 import eu.peernetwork.blog.ui.moderation.ModerationScreen
 import eu.peernetwork.core.ui.design.compose.DesignLoader
 
@@ -41,10 +42,7 @@ fun PhotoListing(
     listState: LazyListState,
     engagement: UiEngagementEvent,
     moderation: UiModerationEvent,
-    onMentionClick: (String) -> Unit = {},
-    onHashtagClick: (String) -> Unit = {},
-    onPostClick: (String, Int) -> Unit,
-    onAuthorClick: (String) -> Unit = {},
+    event: UiPostEvent,
     audio: @Composable (UiPost, Int, State<Int>) -> Unit = { path, index, position -> },
     video: @Composable (UiPost, Int, State<Int>) -> Unit = { path, index, position -> },
     image: @Composable (String, Float) -> Unit = { path, ratio -> },
@@ -54,7 +52,6 @@ fun PhotoListing(
     val updatedVideo by rememberUpdatedState(video)
     val updatedImage by rememberUpdatedState(image)
     val updatedConnection by rememberUpdatedState(connection)
-    val handleOnPostClick by rememberUpdatedState(onPostClick)
     PhotoListing(
         id = id,
         current = current,
@@ -63,14 +60,14 @@ fun PhotoListing(
         listState = listState,
     ) { post, index, position ->
         val uiContent by remember { derivedStateOf { post.mapToContent() } }
-        val handleAuthorClick by rememberUpdatedState { onAuthorClick(post.author.id) }
+        val handleAuthorClick by rememberUpdatedState { event.onAuthorClick(post.author.id) }
         PostItem(
             post = post,
             position = index,
-            onClick = { handleOnPostClick(post.id, index) },
+            onClick = { event.onPostClick(post.id, index) },
             onAuthorClick = handleAuthorClick,
-            onMentionClick = onMentionClick,
-            onHashtagClick = onHashtagClick,
+            onMentionClick = event::onMentionClick,
+            onHashtagClick = event::onHashtagClick,
             engagements = {
                 EngagementScreen(
                     uiContent,

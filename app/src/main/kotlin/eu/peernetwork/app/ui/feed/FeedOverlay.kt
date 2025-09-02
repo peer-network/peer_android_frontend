@@ -89,6 +89,7 @@ fun FeedOverlay(
                     PhotoOverlay(
                         id = userId,
                         limit = postLimit,
+                        enabled = visible.value,
                         position = state.position,
                         category = Category.ALL,
                         criteria = criteria,
