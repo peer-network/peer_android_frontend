@@ -1,12 +1,14 @@
 package eu.peernetwork.media.core.model
 
 import android.net.Uri
+import android.os.Bundle
 import androidx.compose.runtime.Immutable
 
 @Immutable
 data class UiFile(
     val uri: Uri,
-    val thumbnail: String = uri.path ?: uri.toString(),
+    val path: String = uri.path ?: uri.toString(),
+    val props: Bundle = Bundle(),
     val name: String = uri.lastPathSegment ?: "Unknown",
-    val coverUri: Uri? = null
+    val cover: Uri? = null,
 )

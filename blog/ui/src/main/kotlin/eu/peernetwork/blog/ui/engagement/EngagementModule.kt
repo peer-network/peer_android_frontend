@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
+import eu.peernetwork.blog.ui.interactions.overview.Overview
 import eu.peernetwork.blog.ui.comment.Comment
 import eu.peernetwork.core.ui.annotation.UiBuilder
 import eu.peernetwork.core.ui.annotation.UiViewModel
@@ -40,5 +41,13 @@ object EngagementModule {
     @UiBuilder(Comment.Builder::class)
     fun provideCommentBuilder(component: Engagement.Component): UiComponent.Builder {
         return Comment.Builder(component)
+    }
+
+    @Provides
+    @IntoMap
+    @Engagement.Scope
+    @UiBuilder(Overview.Builder::class)
+    fun provideOverviewBuilder(component: Engagement.Component): UiComponent.Builder {
+        return Overview.Builder(component)
     }
 }

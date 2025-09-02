@@ -22,9 +22,8 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import eu.peernetwork.blog.ui.compose.Placeholder
-import eu.peernetwork.blog.ui.model.UiComment
 import eu.peernetwork.blog.ui.model.UiContent
-import eu.peernetwork.core.common.model.Pageable
+import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.component.DesignPagingScaffold
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
@@ -106,7 +105,7 @@ fun CommentScreen(
         },
         onSubmit = { id, comment -> viewModel.comment(id, comment) }
     ) { size, field ->
-        DesignPagingScaffold<UiComment>(
+        DesignPagingScaffold(
             state = derivedState,
             onRefresh = { state.value?.let { viewModel.load(it.id, Pageable(0, postLimit)) } },
             placeholder = { Placeholder(modifier = Modifier.padding(horizontal = 24.dp)) }

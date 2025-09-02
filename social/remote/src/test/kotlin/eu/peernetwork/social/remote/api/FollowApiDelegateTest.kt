@@ -3,7 +3,9 @@ package eu.peernetwork.social.remote.api
 import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.ApolloResponse
 import com.apollographql.apollo3.api.Operation
-import eu.peernetwork.core.common.model.Pageable
+import com.apollographql.apollo3.api.Optional
+import eu.peernetwork.core.common.interactor.SessionInteractor
+import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.core.remote.model.Status
 import eu.peernetwork.core.remote.api.RequestClient
 import eu.peernetwork.social.data.api.FollowApi
@@ -19,6 +21,7 @@ import social.social.eu.peernetwork.social.remote.ListFollowRelationsQuery
 import social.social.eu.peernetwork.social.remote.ListFollowingsRelationsQuery
 import social.social.eu.peernetwork.social.remote.ListPeersQuery
 import social.social.eu.peernetwork.social.remote.UserFollowMutation
+import social.type.ContentFilterType
 import java.util.UUID
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -27,15 +30,18 @@ import kotlin.test.assertNull
 internal class FollowApiDelegateTest {
     private val client = mockk<ApolloClient>()
 
+    private val sessionInteractor = mockk<SessionInteractor>()
+
     private val url = "http://locahost"
 
     private lateinit var api: FollowApi
 
     @Before
     fun setup() {
+        coEvery { sessionInteractor.mode() } returns ContentFilterType.MYGRANDMALIKES.name
         api = FollowApiDelegate(url, object : RequestClient {
             override fun invoke(): ApolloClient = client
-        })
+        }, sessionInteractor)
     }
 
     @Test
@@ -101,7 +107,8 @@ internal class FollowApiDelegateTest {
         verify { client.query(ListFollowRelationsQuery(
             userid = id,
             limit = page.limit,
-            offset = page.offset
+            offset = page.offset,
+            contentFilterBy = Optional.present(ContentFilterType.MYGRANDMALIKES)
         )) }
     }
 
@@ -153,7 +160,8 @@ internal class FollowApiDelegateTest {
         verify { client.query(ListFollowingsRelationsQuery(
             userid = id,
             limit = page.limit,
-            offset = page.offset
+            offset = page.offset,
+            contentFilterBy = Optional.present(ContentFilterType.MYGRANDMALIKES)
         )) }
     }
 
@@ -203,7 +211,8 @@ internal class FollowApiDelegateTest {
 
         verify { client.query(ListPeersQuery(
             limit = page.limit,
-            offset = page.offset
+            offset = page.offset,
+            contentFilterBy = Optional.present(ContentFilterType.MYGRANDMALIKES)
         )) }
     }
 

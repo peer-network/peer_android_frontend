@@ -20,7 +20,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
-import eu.peernetwork.core.common.model.Pageable
+import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.component.DesignErrorLabel
 import eu.peernetwork.core.ui.design.component.DesignPagingScaffold
@@ -28,6 +28,7 @@ import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.social.ui.compose.Peer
 import eu.peernetwork.social.ui.compose.SearchItemSkeleton
+import eu.peernetwork.social.ui.connection.ConnectionScreen
 import eu.peernetwork.social.ui.model.UiMember
 
 @Composable
@@ -74,26 +75,55 @@ fun FollowingsScreen(
             Column(modifier = Modifier.fillMaxSize()
                 .verticalScroll(rememberScrollState())) {
                 Spacer(modifier = Modifier.height(8.dp))
-                DesignErrorLabel(refresh, error, component.resource(), PaddingValues(horizontal = 16.dp))
+                DesignErrorLabel(
+                    error = error,
+                    onRefresh = refresh,
+                    resource = component.resource(),
+                    contentPadding = PaddingValues(horizontal = 16.dp)
+                )
             }
         }
     ) { state, lazyPagingItems ->
-        LazyColumn(modifier = Modifier.fillMaxSize()) {
-            items(
-                count = lazyPagingItems.itemCount,
-                key = { index -> index }
-            ) { index ->
-                lazyPagingItems[index]?.let { member ->
-                    Peer(
-                        member = member,
-                        onClick = onClick
-                    )
+        ConnectionScreen(
+            provider = provider,
+            viewModelStoreOwner = viewModelStoreOwner
+        ) { controller ->
+            val connection by controller.value.observe().collectAsState()
+            LazyColumn(modifier = Modifier.fillMaxSize()) {
+                items(
+                    count = lazyPagingItems.itemCount,
+                    key = { index -> index }
+                ) { index ->
+                    lazyPagingItems[index]?.let { member ->
+                        Peer(
+                            member = member,
+                            onClick = onClick,
+                            action = {
+                                ConnectionScreen(
+                                    isFollowing = connection.getOrDefault(
+                                        member.id,
+                                        member.isFollowed
+                                    ),
+                                    isFollowed = member.isFollowing,
+                                    onClick = { follow ->
+                                        controller.value.invoke(
+                                            member.id,
+                                            !follow
+                                        )
+                                    }
+                                )
+                            }
+                        )
+                    }
+                }
+                item(key = "FollowingsListFooter") {
+                    Spacer(modifier = Modifier.height(56.dp))
                 }
             }
-            item(key = "FollowingsListFooter") { Spacer(modifier = Modifier.height(56.dp)) }
         }
     }
     DisposableEffect(Unit) {
         onDispose { viewModel.reset() }
     }
 }
+

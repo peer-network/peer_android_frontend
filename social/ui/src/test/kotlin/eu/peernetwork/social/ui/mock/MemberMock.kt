@@ -8,7 +8,9 @@ object MemberMock {
             id = "<test-id>",
             slug = "<test-slug>",
             username = "<test-username>",
-            imageUrl = "<test-image-url>"
+            imageUrl = "<test-image-url>",
+            isFollowed = true,
+            isFollowing = true
         )
     }
 }

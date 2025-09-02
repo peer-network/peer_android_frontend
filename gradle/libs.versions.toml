@@ -35,9 +35,10 @@ ucrop = "2.2.9"
 permissions = "0.28.0"
 blur = "1.0.7"
 media3 = "1.6.1"
+media3-transformer = "1.7.1"
 lrucache = "2.0.2"
 lottie = "6.6.6"
-media3-exoplayer = "1.7.1"
+zoomable = "1.5.0"
 
 [libraries]
 androidx-splash = { module = "androidx.core:core-splashscreen", version.ref = "androidx-splash" }
@@ -57,6 +58,8 @@ compose-coil = { module = "io.coil-kt:coil-compose", version.ref = "coil-compose
 firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
 firebase-config = { module = "com.google.firebase:firebase-config" }
 firebase-messaging = { module = "com.google.firebase:firebase-messaging" }
+firebase-functions = { module = "com.google.firebase:firebase-functions" }
+firebase-store = { module = "com.google.firebase:firebase-firestore-ktx" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase-bom" }
 pullrefresh = { module = "dev.materii.pullrefresh:pullrefresh", version.ref = "pullrefresh" }
 viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "androidx-lifecyle" }
@@ -66,6 +69,7 @@ collections = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", 
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 media3 = { module = "androidx.media3:media3-exoplayer", version.ref = "media3" }
 media3-ui = { module = "androidx.media3:media3-ui", version.ref = "media3" }
+media3-transformer = { module = "androidx.media3:media3-transformer", version = "media3-transformer" }
 lrucache = { module = "com.jakewharton:disklrucache", version.ref = "lrucache" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 fragment = { group = "androidx.fragment", name = "fragment", version.ref = "fragment" }
@@ -87,7 +91,7 @@ mockk-jvm = { module = "io.mockk:mockk-jvm", version.ref = "mockk-jvm" }
 permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "permissions" }
 blur = { module = "com.github.Commit451:NativeStackBlur", version.ref = "blur" }
 lottie = { module = "com.airbnb.android:lottie-compose", version.ref = "lottie" }
-androidx-media3-exoplayer = { group = "androidx.media3", name = "media3-exoplayer", version.ref = "media3-exoplayer" }
+zoomable = { module = "net.engawapg.lib:zoomable", version.ref = "zoomable" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

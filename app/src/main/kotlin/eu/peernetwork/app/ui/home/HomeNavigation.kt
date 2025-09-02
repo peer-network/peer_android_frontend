@@ -10,12 +10,13 @@ import androidx.navigation.compose.composable
 import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.app.ui.composer.ComposerScreen
 import eu.peernetwork.app.ui.feed.FeedScreen
+import eu.peernetwork.app.ui.messaging.MessagingScreen
 import eu.peernetwork.app.ui.profile.ProfileScreen
 import eu.peernetwork.app.ui.search.SearchScreen
 import eu.peernetwork.app.ui.wallet.WalletScreen
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.design.compose.DesignNavigation
-import eu.peernetwork.core.ui.model.ViewModelState
+import eu.peernetwork.core.ui.factory.UiViewModelStore
 
 @Composable
 fun HomeNavigation(
@@ -23,10 +24,10 @@ fun HomeNavigation(
     startDestination: String,
     navController: NavHostController,
     component: Home.Component,
-    viewModelStore: ViewModelState,
+    viewModelStore: UiViewModelStore,
     onHome: () -> Unit
 ) {
-    val requireUpdate = remember { mutableStateOf(false) }
+    val hasUpdate = remember { mutableStateOf(false) }
     val handleOnHomeClick by rememberUpdatedState(onHome)
     DesignNavigation(
         navController = navController,
@@ -36,45 +37,47 @@ fun HomeNavigation(
             composable(route.path) {
                 when (route) {
                     is HomeRoute.Home -> FeedScreen(
-                        id,
-                        BuildConfig.PAGING_LIMIT,
-                        component,
-                        viewModelStore,
-                        requireUpdate = requireUpdate
+                        id = id,
+                        postLimit = BuildConfig.PAGING_LIMIT,
+                        provider = component,
+                        viewModelStore = viewModelStore,
+                        hasUpdate = hasUpdate
                     )
                     is HomeRoute.Profile -> ProfileScreen(
-                        id,
-                        id,
-                        component,
-                        viewModelStore,
+                        principal = id,
+                        userId = id,
+                        provider = component,
+                        viewModelStore = viewModelStore,
                     )
                     is HomeRoute.Add -> ComposerScreen(
-                        component,
-                        viewModelStore,
+                        provider = component,
+                        viewModelStore = viewModelStore,
                         onPostSuccess = {
-                            requireUpdate.value = true
+                            hasUpdate.value = true
                             handleOnHomeClick()
                         }
                     )
                     is HomeRoute.Wallet -> WalletScreen(
-                        id,
-                        BuildConfig.PAGING_LIMIT,
-                        component,
-                        viewModelStore
+                        id = id,
+                        postLimit = BuildConfig.PAGING_LIMIT,
+                        provider = component,
+                        viewModelState = viewModelStore
                     )
                     is HomeRoute.Search -> SearchScreen(
-                        id,
-                        BuildConfig.PAGING_LIMIT,
-                        component,
-                        viewModelStore,
+                        id = id,
+                        postLimit = BuildConfig.PAGING_LIMIT,
+                        provider = component,
+                        viewModelStore = viewModelStore,
                     )
                     else -> {}
                 }
             }
         }
+        composable(HomeRoute.Chat.path) {
+            MessagingScreen(id, component, viewModelStore.get(id))
+        }
     }
 }
-
 
 sealed class HomeRoute(
     val icon: Int,
@@ -85,7 +88,7 @@ sealed class HomeRoute(
     data object Home: HomeRoute(
         R.drawable.ic_home_outline,
         R.drawable.ic_home,
-        eu.peernetwork.user.ui.R.string.feed_label,
+        eu.peernetwork.blog.ui.R.string.feed_label,
     )
     data object Search: HomeRoute(
         R.drawable.ic_search_outline,
@@ -107,7 +110,7 @@ sealed class HomeRoute(
         R.drawable.ic_profile,
         R.string.profile_label
     )
-    data object Comment: HomeRoute(
+    data object Chat: HomeRoute(
         R.drawable.ic_chat_outline,
         R.drawable.ic_chat,
         R.string.chat_label

@@ -7,8 +7,11 @@ import androidx.paging.cachedIn
 import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.usecase.UserPostsUsecase
-import eu.peernetwork.core.common.model.Pageable
-import eu.peernetwork.blog.domain.model.Relation
+import eu.peernetwork.core.common.paging.Pageable
+import eu.peernetwork.blog.domain.model.Category
+import eu.peernetwork.blog.domain.usecase.ViewUsecase
+import eu.peernetwork.media.core.interactor.ThumbnailInteractor
+import eu.peernetwork.media.core.viewmodel.MediaViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -21,23 +24,25 @@ import javax.inject.Inject
 
 class PhotoViewModel @Inject constructor(
     private val usecase: UserPostsUsecase,
-) : ViewModel() {
+    private val viewUsecase: ViewUsecase,
+    interactor: ThumbnailInteractor
+) : MediaViewModel(interactor) {
     private val mutableState = MutableStateFlow<State>(State.Empty)
 
     val state: StateFlow<State> = mutableState.asStateFlow()
 
-    var lastRelation: Relation? = null
+    var lastCategory: Category? = null
 
     fun load(
         page: Pageable,
-        relation: Relation = Relation.NONE,
+        category: Category = Category.ALL,
         criteria: Criteria? = null
     ) {
-        lastRelation = relation
+        lastCategory = category
         viewModelScope.launch {
             usecase(
                 UserPostsUsecase.Parameter(
-                    relation = relation,
+                    category = category,
                     criteria = criteria,
                     page = page
                 )
@@ -50,6 +55,16 @@ class PhotoViewModel @Inject constructor(
                             mutableState.tryEmit(State.Success(this))
                         }
                 }
+        }
+    }
+
+    fun view(id: String) {
+        viewModelScope.launch {
+            try {
+                viewUsecase(id)
+            } catch (error: Throwable) {
+                error.printStackTrace()
+            }
         }
     }
 

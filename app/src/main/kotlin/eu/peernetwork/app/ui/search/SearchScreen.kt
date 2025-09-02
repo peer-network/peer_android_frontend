@@ -15,12 +15,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.compose.rememberNavController
 import eu.peernetwork.blog.ui.explore.ExploreScreen
 import eu.peernetwork.core.ui.R
@@ -29,7 +27,7 @@ import eu.peernetwork.core.ui.design.compose.DesignTitle
 import eu.peernetwork.core.ui.design.compose.DesignTitleBarHost
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
-import eu.peernetwork.core.ui.model.ViewModelState
+import eu.peernetwork.core.ui.factory.UiViewModelStore
 import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.social.ui.connection.ConnectionScreen
 import eu.peernetwork.social.ui.search.member.MemberScreen
@@ -49,7 +47,7 @@ fun SearchScreen(
     id: String,
     postLimit: Int,
     provider: UiComponentProvider,
-    viewModelStore: ViewModelState,
+    viewModelStore: UiViewModelStore,
     searchState: SearchState = SearchState.Default,
     title: String? = null
 ) {
@@ -71,10 +69,10 @@ fun SearchScreen(
             connectionController = connection
         ) {
             SearchNavigation(
-                id,
-                component,
-                viewModelStore,
-                controller
+                userId = id,
+                component = component,
+                viewModelStore = viewModelStore,
+                controller = controller
             ) { controller ->
                 val listState = rememberLazyGridState()
                 SearchScreen(state = searchState) { mode, query ->

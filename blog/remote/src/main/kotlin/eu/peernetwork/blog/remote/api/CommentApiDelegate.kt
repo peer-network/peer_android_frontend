@@ -7,8 +7,10 @@ import eu.peernetwork.blog.domain.model.Comment
 import eu.peernetwork.blog.remote.comment.CreateCommentMutation
 import eu.peernetwork.blog.remote.comment.GetCommentsQuery
 import eu.peernetwork.blog.remote.mapper.mapToDomain
-import eu.peernetwork.core.common.model.Page
-import eu.peernetwork.core.common.model.Pageable
+import eu.peernetwork.blog.remote.mapper.mapToMode
+import eu.peernetwork.core.common.interactor.SessionInteractor
+import eu.peernetwork.core.common.paging.Page
+import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.core.remote.extension.assertOrThrow
 import eu.peernetwork.core.remote.extension.executeOrThrow
 import eu.peernetwork.core.remote.extension.getOrThrow
@@ -20,17 +22,19 @@ import javax.inject.Named
 class CommentApiDelegate @Inject constructor(
     private val client: RequestClient,
     @Named("mediaUrl") private val url: String,
+    private val sessionInteractor: SessionInteractor
 ) : CommentApi {
     override suspend fun getAll(id: String, page: Pageable): Page<Comment> {
         val query = GetCommentsQuery(
             postId = Optional.present(id),
+            contentFilterBy = Optional.present(sessionInteractor.mode().mapToMode()),
             offset = Optional.present(page.offset),
             limit = Optional.present(page.limit)
         )
         val response = client().query(query).executeOrThrow()
         val data = response.getOrThrow().listPosts
-        val contents = data.affectedRows?.map {
-            it.mapToDomain().map {
+        val contents = data.affectedRows?.map { comments ->
+            comments.mapToDomain().map {
                 it.copy(author = it.author.copy(imageUrl = "$url${it.author.imageUrl}"))
             }
         }

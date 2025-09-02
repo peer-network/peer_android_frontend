@@ -41,11 +41,11 @@ import eu.peernetwork.core.ui.design.compose.DesignDropDown
 import eu.peernetwork.core.ui.design.compose.DesignTitle
 import eu.peernetwork.core.ui.design.compose.DesignTitleBarHost
 import eu.peernetwork.core.ui.extension.builder
-import eu.peernetwork.core.ui.model.ViewModelState
+import eu.peernetwork.core.ui.factory.UiViewModelStore
 import eu.peernetwork.media.core.model.UiAttachment
 import eu.peernetwork.media.core.model.UiMimeType
 import eu.peernetwork.media.ui.R
-import eu.peernetwork.media.ui.compose.NudgeButton
+import eu.peernetwork.core.ui.design.compose.DesignPill
 import eu.peernetwork.media.ui.saveable.UiAttachmentSaver
 import eu.peernetwork.media.ui.selector.audio.AudioScreen
 import eu.peernetwork.media.ui.selector.directory.DirectoryScreen
@@ -59,7 +59,7 @@ fun ExplorerScreen(
     onFinish: (UiAttachment) -> Unit,
 ) {
     val context = LocalContext.current
-    val viewModelStore = remember { ViewModelState() }
+    val viewModelStore = remember { UiViewModelStore.Delegate() }
     val component = remember { provider.builder(Explorer.Builder::class.java).build(context) }
     val default = stringResource(R.string.photo_label)
     val title = rememberSaveable { mutableStateOf(default) }
@@ -252,14 +252,14 @@ fun ExplorerScreen(
             }
             Spacer(modifier = Modifier.weight(1f))
             AnimatedVisibility(state.value) {
-                NudgeButton(
+                DesignPill(
                     count = attachment.value.files.size,
                     onClick = onFinish,
                     color = border,
                     enabled = state.value
                 ) {
                     Text(
-                        stringResource(R.string.proceed_label),
+                        stringResource(R.string.continue_label),
                         modifier = Modifier.padding(end = 8.dp)
                     )
                 }

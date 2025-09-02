@@ -24,6 +24,8 @@ internal class FeedViewModelTest {
     @get:Rule
     val instantExecutorRule = InstantTaskExecutorRule()
 
+    val filter = 3
+
     private val retrievableInteger = mockk<RetrievableInteger>()
 
     private val publishableInteger = mockk<PublishableInteger>()
@@ -40,9 +42,10 @@ internal class FeedViewModelTest {
     fun setup() {
         Dispatchers.setMain(dispatcher)
         every { observableInteger(any()) } returns mutableState
-        every { retrievableInteger(any()) } answers {
+        every { retrievableInteger(FeedViewModel.TAG) } answers {
             mutableState.value
         }
+        every { retrievableInteger(FeedViewModel.FILTER) } answers { filter }
         coEvery { publishableInteger(any(), any()) } answers {
             mutableState.tryEmit(it.invocation.args[1] as Int)
         }
@@ -55,7 +58,7 @@ internal class FeedViewModelTest {
         mutableState.tryEmit(page)
         val viewModel = FeedViewModel(retrievableInteger, observableInteger, publishableInteger)
         viewModel.state.test {
-            assertEquals(FeedViewModel.State.Initialize(page), awaitItem())
+            assertEquals(FeedViewModel.State.Initialize(page, filter), awaitItem())
         }
     }
 
@@ -64,7 +67,7 @@ internal class FeedViewModelTest {
         val page = 5
         viewModel.lastVisited(page)
         viewModel.state.test {
-            assertEquals(FeedViewModel.State.Initialize(page), awaitItem())
+            assertEquals(FeedViewModel.State.Initialize(page, filter), awaitItem())
         }
     }
 }

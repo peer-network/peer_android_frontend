@@ -9,17 +9,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
-import eu.peernetwork.blog.ui.engagement.Engagements
+import eu.peernetwork.blog.ui.event.UiEngagementEvent
 import eu.peernetwork.blog.ui.mapper.mapToContent
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.moderation.ModerationScreen
-import eu.peernetwork.blog.ui.moderation.Moderations
+import eu.peernetwork.blog.ui.event.UiModerationEvent
 
 @Composable
 fun TextContent(
     post: UiPost,
-    engagements: Engagements,
-    moderations: Moderations,
+    uiEngagementEvent: UiEngagementEvent,
+    uiModerationEvent: UiModerationEvent,
     onAuthorClick: (String) -> Unit = {},
     onMentionClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
@@ -38,7 +38,7 @@ fun TextContent(
         onHashtagClick = onHashtagClick,
         engagements = {
             EngagementScreen(
-                event = engagements,
+                event = uiEngagementEvent,
                 model = uiContent,
                 size = 36.dp,
                 spacer = 6.dp,
@@ -50,7 +50,7 @@ fun TextContent(
         moderation = {
             ModerationScreen(
                 uiContent,
-                moderations,
+                uiModerationEvent,
                 color = MaterialTheme.colorScheme.onBackground,
             )
         },

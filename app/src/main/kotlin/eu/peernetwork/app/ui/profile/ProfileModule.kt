@@ -7,7 +7,7 @@ import eu.peernetwork.app.ui.renderer.EngagementRenderer
 import eu.peernetwork.app.ui.search.Search
 import eu.peernetwork.app.ui.settings.Settings
 import eu.peernetwork.app.ui.window.Window
-import eu.peernetwork.blog.ui.engagement.EngagementConfirmation
+import eu.peernetwork.blog.ui.engagement.EngagementDialog
 import eu.peernetwork.blog.ui.post.photo.Photo
 import eu.peernetwork.blog.ui.post.video.Video
 import eu.peernetwork.core.ui.annotation.UiBuilder
@@ -109,7 +109,7 @@ object ProfileModule {
 
     @Profile.Scope
     @Provides
-    fun provideEngagementRenderer(component: Profile.Component): EngagementConfirmation {
+    fun provideEngagementRenderer(component: Profile.Component): EngagementDialog {
         return EngagementRenderer(component)
     }
 

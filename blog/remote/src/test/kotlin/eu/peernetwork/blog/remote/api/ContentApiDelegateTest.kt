@@ -12,7 +12,8 @@ import eu.peernetwork.blog.domain.model.Filter
 import eu.peernetwork.blog.remote.content.CreatePostMutation
 import eu.peernetwork.blog.remote.content.GetallpostsQuery
 import eu.peernetwork.blog.remote.mock.ContentMock
-import eu.peernetwork.core.common.model.Pageable
+import eu.peernetwork.core.common.interactor.SessionInteractor
+import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.core.remote.model.Status
 import eu.peernetwork.core.remote.api.RequestClient
 import io.mockk.coEvery
@@ -22,6 +23,7 @@ import io.mockk.verify
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
+import type.ContentFilterType
 import type.ContentType
 import type.PostFilterType
 import type.PostSortType
@@ -36,15 +38,18 @@ internal class ContentApiDelegateTest {
 
     private val client = mockk<ApolloClient>()
 
+    private val sessionInteractor = mockk<SessionInteractor>(relaxed = true)
+
     private val url = "http://locahost"
 
     private lateinit var api: ContentApi
 
     @Before
     fun setup() {
+        coEvery { sessionInteractor.mode() } returns ContentFilterType.MYGRANDMALIKES.name
         api = ContentApiDelegate(gson, url, object : RequestClient {
             override fun invoke(): ApolloClient = client
-        })
+        }, sessionInteractor)
     }
 
     @Test
@@ -72,7 +77,8 @@ internal class ContentApiDelegateTest {
         verify { client.query(GetallpostsQuery(
             postId = Optional.present(postId),
             limit = Optional.present(page.limit),
-            offset = Optional.present(page.offset)
+            offset = Optional.present(page.offset),
+            contentFilterBy = Optional.present(ContentFilterType.MYGRANDMALIKES)
         )) }
     }
 
@@ -100,7 +106,8 @@ internal class ContentApiDelegateTest {
         verify { client.query(GetallpostsQuery(
             filter = Optional.present(listOf(PostFilterType.IMAGE)),
             limit = Optional.present(page.limit),
-            offset = Optional.present(page.offset)
+            offset = Optional.present(page.offset),
+            contentFilterBy = Optional.present(ContentFilterType.MYGRANDMALIKES)
         )) }
     }
 
@@ -128,7 +135,8 @@ internal class ContentApiDelegateTest {
         verify { client.query(GetallpostsQuery(
             sort = Optional.present(PostSortType.NEWEST),
             limit = Optional.present(page.limit),
-            offset = Optional.present(page.offset)
+            offset = Optional.present(page.offset),
+            contentFilterBy = Optional.present(ContentFilterType.MYGRANDMALIKES)
         )) }
     }
 

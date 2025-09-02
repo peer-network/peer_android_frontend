@@ -30,18 +30,19 @@ import eu.peernetwork.media.core.R
 @Composable
 fun VolumeControl(
     mute: State<Boolean>,
+    modifier: Modifier = Modifier,
     onMute: (Boolean) -> Unit
 ) {
     val handleOnMute by rememberUpdatedState(onMute)
     Box(
-        modifier = Modifier.padding(2.dp)
+        modifier = Modifier.then(modifier)
+            .padding(2.dp)
             .size(18.dp)
             .clip(RoundedCornerShape(12.dp))
             .background(MaterialTheme.colorScheme.onBackground)
-            .padding(4.dp)
             .clickable(role = Role.Button, enabled = true) {
                 handleOnMute(!mute.value)
-            }
+            }.padding(4.dp)
     ) {
         Icon(
             painter = painterResource(R.drawable.ic_mute),
@@ -68,6 +69,9 @@ fun VolumeControl(
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun PreviewVolumeControl() {
     PeerTheme {
-        VolumeControl(remember { mutableStateOf(false) }) {}
+        VolumeControl(
+            remember { mutableStateOf(false) },
+            modifier = Modifier.padding(16.dp)
+        ) {}
     }
 }

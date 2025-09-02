@@ -1,7 +1,7 @@
 package eu.peernetwork.social.data.interactor
 
-import eu.peernetwork.core.common.model.Page
-import eu.peernetwork.core.common.model.Pageable
+import eu.peernetwork.core.common.paging.Page
+import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.social.domain.interactor.SearchInteractor
 import eu.peernetwork.user.domain.model.User
 import eu.peernetwork.user.domain.repository.SearchRepository

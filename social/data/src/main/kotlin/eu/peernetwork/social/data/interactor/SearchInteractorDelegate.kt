@@ -1,7 +1,7 @@
 package eu.peernetwork.social.data.interactor
 
-import eu.peernetwork.core.common.model.Page
-import eu.peernetwork.core.common.model.Pageable
+import eu.peernetwork.core.common.paging.Page
+import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.social.domain.interactor.SearchInteractor
 import eu.peernetwork.social.domain.model.Member
 import eu.peernetwork.user.domain.repository.SearchRepository
@@ -23,7 +23,9 @@ class SearchInteractorDelegate @Inject constructor(
                     id = it.id,
                     slug = it.slug.toString(),
                     username = it.username,
-                    imageUrl = it.imageUrl
+                    imageUrl = it.imageUrl,
+                    isFollowed = false,
+                    isFollowing = false
                 )
             }
         )

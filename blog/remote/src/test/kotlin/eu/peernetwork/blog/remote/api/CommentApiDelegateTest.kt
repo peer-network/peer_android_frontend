@@ -8,7 +8,8 @@ import eu.peernetwork.blog.data.api.CommentApi
 import eu.peernetwork.blog.remote.comment.CreateCommentMutation
 import eu.peernetwork.blog.remote.comment.GetCommentsQuery
 import eu.peernetwork.blog.remote.mock.CommentMock
-import eu.peernetwork.core.common.model.Pageable
+import eu.peernetwork.core.common.interactor.SessionInteractor
+import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.core.remote.model.Status
 import eu.peernetwork.core.remote.api.RequestClient
 import io.mockk.coEvery
@@ -19,6 +20,7 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
 import type.CommentType
+import type.ContentFilterType
 import java.util.UUID
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -27,15 +29,18 @@ import kotlin.test.assertNull
 internal class CommentApiDelegateTest {
     private val client = mockk<ApolloClient>()
 
+    private val sessionInteractor = mockk<SessionInteractor>(relaxed = true)
+
     private val url = "http://locahost"
 
     private lateinit var api: CommentApi
 
     @Before
     fun setup() {
+        coEvery { sessionInteractor.mode() } returns ContentFilterType.MYGRANDMALIKES.name
         api = CommentApiDelegate(object : RequestClient {
             override fun invoke(): ApolloClient = client
-        }, url)
+        }, url, sessionInteractor)
     }
 
     @Test
@@ -62,7 +67,8 @@ internal class CommentApiDelegateTest {
         verify { client.query(GetCommentsQuery(
             postId = Optional.present(id),
             limit = Optional.present(page.limit),
-            offset = Optional.present(page.offset)
+            offset = Optional.present(page.offset),
+            contentFilterBy = Optional.present(ContentFilterType.MYGRANDMALIKES)
         )) }
     }
 
@@ -84,14 +90,15 @@ internal class CommentApiDelegateTest {
 
         val result = try {
             api.getAll(id, page)
-        } catch (error: Throwable) {
+        } catch (_: Throwable) {
             null
         }
         assertNull(result)
         verify { client.query(GetCommentsQuery(
             postId = Optional.present(id),
             limit = Optional.present(page.limit),
-            offset = Optional.present(page.offset)
+            offset = Optional.present(page.offset),
+            contentFilterBy = Optional.present(ContentFilterType.MYGRANDMALIKES)
         )) }
     }
 
@@ -140,7 +147,7 @@ internal class CommentApiDelegateTest {
 
         val result = try {
             api.comment(id, comment)
-        } catch (error: Throwable) {
+        } catch (_: Throwable) {
             null
         }
         assertNull(result)

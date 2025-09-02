@@ -8,7 +8,7 @@ import androidx.paging.PagingSource.LoadResult
 import eu.peernetwork.blog.domain.repository.CommentRepository
 import eu.peernetwork.blog.ui.mapper.mapToComment
 import eu.peernetwork.blog.ui.model.UiComment
-import eu.peernetwork.core.common.model.Pageable
+import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.core.ui.usecase.AnnotationUsecase
 import eu.peernetwork.core.ui.usecase.PagingUsecase
 import kotlinx.coroutines.flow.Flow
@@ -41,7 +41,6 @@ class CommentsUsecase @Inject constructor(
             id = param.id,
             page = currentPage
         )
-
         return LoadResult.Page(
             data = response.items.map { it.mapToComment { annotationUsecase(it) } },
             prevKey = if (currentOffset <= 0) null else currentOffset - 1,

@@ -26,7 +26,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
-import eu.peernetwork.core.common.model.Pageable
+import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.component.DesignErrorLabel
 import eu.peernetwork.core.ui.design.component.DesignPagingScaffold
@@ -116,7 +116,9 @@ fun ReferralScreen(
                                 id = referral.id,
                                 username = referral.username,
                                 slug = referral.slug,
-                                imageUrl = referral.img
+                                imageUrl = referral.img,
+                                isFollowed = referral.isFollowed,
+                                isFollowing = referral.isFollowing
                             )
                             Peer(
                                 member = member,

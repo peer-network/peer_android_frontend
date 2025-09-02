@@ -12,9 +12,11 @@ fun Post.mapFromDomain(): UiPost {
         description = description,
         author = UiMember(
             id = author.id,
-            slug = author.slug.toString(),
+            slug = author.slug,
             username = author.username,
-            imageUrl = author.imageUrl
+            imageUrl = author.imageUrl,
+            isFollowed = author.isFollowed,
+            isFollowing = author.isFollowing
         )
     )
 }

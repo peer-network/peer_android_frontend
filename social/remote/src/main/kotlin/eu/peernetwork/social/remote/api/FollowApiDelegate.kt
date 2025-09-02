@@ -1,13 +1,16 @@
 package eu.peernetwork.social.remote.api
 
-import eu.peernetwork.core.common.model.Page
-import eu.peernetwork.core.common.model.Pageable
+import com.apollographql.apollo3.api.Optional
+import eu.peernetwork.core.common.interactor.SessionInteractor
+import eu.peernetwork.core.common.paging.Page
+import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.core.remote.extension.assertOrThrow
 import eu.peernetwork.core.remote.extension.executeOrThrow
 import eu.peernetwork.core.remote.extension.getOrThrow
 import eu.peernetwork.core.remote.api.RequestClient
 import eu.peernetwork.social.data.api.FollowApi
 import eu.peernetwork.social.domain.model.Member
+import eu.peernetwork.social.remote.mapper.mapToMode
 import social.social.eu.peernetwork.social.remote.ListFollowRelationsQuery
 import social.social.eu.peernetwork.social.remote.ListFollowingsRelationsQuery
 import social.social.eu.peernetwork.social.remote.ListPeersQuery
@@ -17,7 +20,8 @@ import javax.inject.Named
 
 class FollowApiDelegate @Inject constructor(
     @Named("mediaUrl") private val url: String,
-    private val client: RequestClient
+    private val client: RequestClient,
+    private val sessionInteractor: SessionInteractor
 ) : FollowApi {
     override suspend fun follow(id: String): Boolean {
         val mutation = UserFollowMutation(id)
@@ -33,6 +37,7 @@ class FollowApiDelegate @Inject constructor(
     ): Page<Member> {
         val query = ListFollowRelationsQuery(
             userid = id,
+            contentFilterBy = Optional.present(sessionInteractor.mode().mapToMode()),
             offset = pageable.offset,
             limit = pageable.limit
         )
@@ -44,7 +49,9 @@ class FollowApiDelegate @Inject constructor(
                 id = it.id,
                 slug = it.slug!!.toString(),
                 username = it.username!!,
-                imageUrl = "$url/${it.img!!}".removeSuffix("/")
+                imageUrl = "$url/${it.img!!}".removeSuffix("/"),
+                isFollowing = it.isfollowing ?: false,
+                isFollowed = it.isfollowed ?: false
             )
         }
         return Page(
@@ -60,6 +67,7 @@ class FollowApiDelegate @Inject constructor(
     ): Page<Member> {
         val query = ListFollowingsRelationsQuery(
             userid = id,
+            contentFilterBy = Optional.present(sessionInteractor.mode().mapToMode()),
             offset = pageable.offset,
             limit = pageable.limit
         )
@@ -71,7 +79,9 @@ class FollowApiDelegate @Inject constructor(
                 id = it.id,
                 slug = it.slug!!.toString(),
                 username = it.username!!,
-                imageUrl = "$url/${it.img!!}".removeSuffix("/")
+                imageUrl = "$url/${it.img!!}".removeSuffix("/"),
+                isFollowing = it.isfollowing ?: false,
+                isFollowed = it.isfollowed ?: false
             )
         }
         return Page(
@@ -85,6 +95,7 @@ class FollowApiDelegate @Inject constructor(
         pageable: Pageable
     ): Page<Member> {
         val query = ListPeersQuery(
+            contentFilterBy = Optional.present(sessionInteractor.mode().mapToMode()),
             offset = pageable.offset,
             limit = pageable.limit
         )
@@ -96,7 +107,9 @@ class FollowApiDelegate @Inject constructor(
                 id = it?.userid ?: "",
                 slug = it?.slug!!.toString(),
                 username = it.username ?: "Unknown",
-                imageUrl = "$url/${it.img!!}".removeSuffix("/")
+                imageUrl = "$url/${it.img!!}".removeSuffix("/"),
+                isFollowing = true,
+                isFollowed = true
             )
         }
         return Page(

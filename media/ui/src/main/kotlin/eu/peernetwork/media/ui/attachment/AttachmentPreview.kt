@@ -76,16 +76,9 @@ fun AttachmentPreview(
         onRemove = onRemove,
         onPreview = onPreview,
     ) { index ->
-        val file = attached.files[index]
         when (attached.media) {
-            UiMimeType.Photo, UiMimeType.Video -> {
-                DesignThumbnail(
-                    file.thumbnail,
-                    handleOnLoad(file.thumbnail)
-                ) { handleOnRefresh(index) }
-            }
             UiMimeType.Music -> {
-                Box() {
+                Box {
                     Image(
                         painter = painterResource(id = eu.peernetwork.core.ui.R.drawable.ic_music),
                         contentDescription = "Audio Icon",
@@ -97,9 +90,10 @@ fun AttachmentPreview(
                 }
             }
             else -> {
+                val bitmap = remember { derivedStateOf { handleOnLoad(attached.files[index].path) } }
                 DesignThumbnail(
-                    file.thumbnail,
-                    handleOnLoad(file.thumbnail)
+                    attached.files[index].path,
+                    bitmap,
                 ) { handleOnRefresh(index) }
             }
         }
@@ -152,8 +146,7 @@ fun AttachmentPreview(
                         scaleY = scale
                         shadowElevation = if (scale == 1f) 16.dp.toPx() else 8.dp.toPx()
                         translationX = pageOffset
-                    }
-                    .clip(RoundedCornerShape(24.dp))
+                    }.clip(RoundedCornerShape(24.dp))
             ) {
                 if (page == state.pageCount - 1) {
                     Box(

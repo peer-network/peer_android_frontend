@@ -20,8 +20,8 @@ sealed class UiAction(
         R.string.comment_label,
     )
     data object View: UiAction(
-        R.drawable.ic_dislike,
-        R.string.dislike_label,
+        R.drawable.ic_view,
+        R.string.view_label,
     )
     companion object {
         val ENGAGEMENTS = arrayOf(Like, Dislike, Comment, View)

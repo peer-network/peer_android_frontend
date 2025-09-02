@@ -5,6 +5,7 @@ import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
@@ -25,8 +26,10 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import eu.peernetwork.blog.ui.interactions.overview.OverviewScreen
 import eu.peernetwork.blog.ui.comment.CommentScreen
 import eu.peernetwork.blog.ui.compose.PostIcon
+import eu.peernetwork.blog.ui.event.UiEngagementEvent
 import eu.peernetwork.blog.ui.mapper.mapToEngagement
 import eu.peernetwork.blog.ui.model.UiAction
 import eu.peernetwork.blog.ui.model.UiContent
@@ -40,13 +43,13 @@ import eu.peernetwork.core.ui.theme.PeerAppRed
 @Composable
 fun EngagementScreen(
     postLimit: Int,
-    refresh: State<Boolean>,
     onMentionClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
     onAuthorClick: (String) -> Unit = {},
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
-    content: @Composable (Engagements) -> Unit
+    connection: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit = {},
+    content: @Composable (UiEngagementEvent) -> Unit
 ) {
     val context = LocalContext.current
     val component = remember {
@@ -64,38 +67,58 @@ fun EngagementScreen(
             (state as? EngagementViewModel.State.Error?)?.error
         }
     }
-    var post = remember { mutableStateOf<UiContent?>(null) }
+    val post = remember { mutableStateOf<UiContent?>(null) }
+    val overview = remember { mutableStateOf<UiContent?>(null) }
     val errorMessage = stringResource(R.string.unknown_error_message)
     val hasError = remember { derivedStateOf { error.value != null } }
     val updatedContent by rememberUpdatedState(content)
     val handleMentionClick by rememberUpdatedState(onMentionClick)
     val handleHashtagClick by rememberUpdatedState(onHashtagClick)
     val handleAuthorClick by rememberUpdatedState(onAuthorClick)
-    val type = remember { mutableStateOf<EngagementType?>(null) }
-    val event = remember(state, reactionState.values) { Engagements(
-        onLoad = {
-            val isLiked = reactionState[it.id]?.isLiked
-            val isDisliked = reactionState[it.id]?.isDisliked
-            val commented = reactionState[it.id]?.commented ?: 0
-            it.mapToEngagement().copy(
-                likes = it.likes + (isLiked == true && !it.isLiked).toInt(),
-                isLiked = isLiked ?: it.isLiked,
-                dislikes = it.dislikes + (isDisliked == true && !it.isDisliked).toInt(),
-                isDisliked = isDisliked ?: it.isDisliked,
-                comment = it.comment + commented
-            )
-        },
-        onLike = { type.value = EngagementType.Like(it.id) },
-        onDisLike = { type.value = EngagementType.DisLike(it.id) },
-        onComment = { post.value = it }
-    ) }
+    val type = remember { mutableStateOf<EngagementEvent?>(null) }
+    val event = remember(state) {
+        UiEngagementEvent(
+            onLoad = {
+                val isLiked = reactionState[it.id]?.isLiked
+                val isDisliked = reactionState[it.id]?.isDisliked
+                val isViewed = reactionState[it.id]?.isViewed
+                val commented = reactionState[it.id]?.commented ?: 0
+                val likeCount = it.likes + (isLiked == true && !it.isLiked).toInt()
+                val dislikeCount = it.dislikes + (isDisliked == true && !it.isDisliked).toInt()
+                val viewCount = it.views + (isViewed == true && !it.isViewed).toInt()
+                it.mapToEngagement().copy(
+                    likes = likeCount,
+                    isLiked = isLiked ?: it.isLiked,
+                    dislikes = dislikeCount,
+                    isDisliked = isDisliked ?: it.isDisliked,
+                    comment = it.comment + commented,
+                    views = viewCount
+                )
+            },
+            onLike = { type.value = EngagementEvent.Like(it) },
+            onDisLike = { type.value = EngagementEvent.DisLike(it.id) },
+            onComment = { post.value = it },
+            onView = {
+                val isLiked = reactionState[it.id]?.isLiked
+                val isDisliked = reactionState[it.id]?.isDisliked
+                val isViewed = reactionState[it.id]?.isViewed
+                val commented = reactionState[it.id]?.commented ?: 0
+                val likeCount = it.likes + (isLiked == true && !it.isLiked).toInt()
+                val dislikeCount = it.dislikes + (isDisliked == true && !it.isDisliked).toInt()
+                val viewCount = it.views + (isViewed == true && !it.isViewed).toInt()
+                overview.value = it.copy(
+                    likes = likeCount,
+                    isLiked = isLiked ?: it.isLiked,
+                    dislikes = dislikeCount,
+                    isDisliked = isDisliked ?: it.isDisliked,
+                    comment = it.comment + commented,
+                    views = viewCount
+                )
+            }
+        )
+    }
     updatedContent(event)
     LaunchedEffect(Unit) { viewModel.initialize() }
-    LaunchedEffect(refresh.value) {
-        if (refresh.value) {
-            viewModel.reset()
-        }
-    }
     LaunchedEffect(hasError.value) {
         if (hasError.value) {
             val error = (state as? EngagementViewModel.State.Error)?.error?.message
@@ -113,15 +136,22 @@ fun EngagementScreen(
         onHashtagClick = { handleHashtagClick(it) },
         onAuthorClick = { handleAuthorClick(it) }
     )
+    OverviewScreen(
+        state = overview,
+        postLimit = postLimit,
+        provider = component,
+        connection = connection,
+        onAuthorClick = { handleAuthorClick(it) }
+    )
     component.engagementConfirmation()(
         Modifier,
-        EngagementConfirmation.Spec(
+        EngagementDialog.Spec(
             type,
             viewModelStoreOwner,
         ) {
             when(it) {
-                is EngagementType.Like -> viewModel.like(it.id)
-                is EngagementType.DisLike -> viewModel.dislike(it.id)
+                is EngagementEvent.Like -> viewModel.like(it.content)
+                is EngagementEvent.DisLike -> viewModel.dislike(it.id)
                 else -> {}
             }
         }
@@ -131,7 +161,7 @@ fun EngagementScreen(
 @Composable
 fun EngagementScreen(
     model: UiContent,
-    event: Engagements,
+    event: UiEngagementEvent,
     size: Dp = 28.dp,
     spacer: Dp = 0.dp,
     color: Color = MaterialTheme.colorScheme.tertiary,
@@ -139,9 +169,6 @@ fun EngagementScreen(
     orientation: Orientation = Orientation.Horizontal,
 ) {
     val engagement by remember(model) { derivedStateOf { event.onLoad(model) } }
-    val handleOnLike by rememberUpdatedState(event.onLike)
-    val handleOnDisLike by rememberUpdatedState(event.onDisLike)
-    val handleOnComment by rememberUpdatedState(event.onComment)
     if (orientation == Orientation.Horizontal) {
         Row {
             PostIcon(
@@ -157,7 +184,7 @@ fun EngagementScreen(
                 orientation = orientation
             ) {
                 if (!engagement.isLiked) {
-                    handleOnLike(engagement)
+                    event.onLike(model)
                 }
             }
             Spacer(modifier = Modifier.size(spacer))
@@ -174,7 +201,7 @@ fun EngagementScreen(
                 orientation = orientation
             ) {
                 if (!engagement.isDisliked) {
-                    handleOnDisLike(engagement)
+                    event.onDisLike(model)
                 }
             }
             Spacer(modifier = Modifier.size(spacer))
@@ -184,7 +211,16 @@ fun EngagementScreen(
                 size = size,
                 padding = padding,
                 orientation = orientation
-            ) { handleOnComment(model) }
+            ) { event.onComment(model) }
+            Spacer(modifier = Modifier.size(spacer))
+            PostIcon(
+                action = UiAction.View,
+                value = engagement.views.toString(),
+                color = color,
+                size = size,
+                padding = padding,
+                orientation = orientation
+            ) { event.onView(model) }
         }
     } else {
         Column {
@@ -201,7 +237,7 @@ fun EngagementScreen(
                 orientation = orientation
             ) {
                 if (!engagement.isLiked) {
-                    handleOnLike(engagement)
+                    event.onLike(model)
                 }
             }
             Spacer(modifier = Modifier.size(spacer))
@@ -218,7 +254,7 @@ fun EngagementScreen(
                 orientation = orientation
             ) {
                 if (!engagement.isDisliked) {
-                    handleOnDisLike(engagement)
+                    event.onDisLike(model)
                 }
             }
             Spacer(modifier = Modifier.size(spacer))
@@ -229,8 +265,16 @@ fun EngagementScreen(
                 size = size,
                 padding = padding,
                 orientation = orientation
-            ) { handleOnComment(model) }
+            ) { event.onComment(model) }
+            Spacer(modifier = Modifier.size(spacer))
+            PostIcon(
+                action = UiAction.View,
+                value = engagement.views.toString(),
+                color = color,
+                size = size,
+                padding = padding,
+                orientation = orientation
+            ) { event.onView(model) }
         }
     }
 }
-

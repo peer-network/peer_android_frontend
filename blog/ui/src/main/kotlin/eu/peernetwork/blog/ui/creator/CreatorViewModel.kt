@@ -6,9 +6,11 @@ import eu.peernetwork.blog.domain.model.Draft
 import eu.peernetwork.blog.ui.model.UiDraft
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.usecase.CreateUsecase
-import eu.peernetwork.core.common.usecase.TextEncoderUsecase
 import eu.peernetwork.media.core.model.UiMimeType
+import eu.peernetwork.media.core.model.UiOffset
 import eu.peernetwork.media.core.usecase.MediaEncoderUsecase
+import eu.peernetwork.media.core.usecase.TextEncoderUsecase
+import eu.peernetwork.media.core.usecase.VideoEncoderUsecase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -17,6 +19,7 @@ import javax.inject.Inject
 
 class CreatorViewModel @Inject constructor(
     private val usecase: CreateUsecase,
+    private val videoEncoderUsecase: VideoEncoderUsecase,
     private val mediaEncoderUsecase: MediaEncoderUsecase,
     private val textEncoderUsecase: TextEncoderUsecase
 ) : ViewModel() {
@@ -37,12 +40,27 @@ class CreatorViewModel @Inject constructor(
         }
     }
 
-    private fun UiDraft.mapToDomain(): Draft {
+    private suspend fun UiDraft.mapToDomain(): Draft {
+        val media = if (attachment.files.isEmpty()) {
+            UiMimeType.Text
+        } else {
+            attachment.media
+        }
         val type = when(media) {
-            UiMimeType.Photo -> Draft.Type.Image(attachments.mapNotNull { mediaEncoderUsecase(it) })
-            UiMimeType.Video -> Draft.Type.Video(attachments.mapNotNull { mediaEncoderUsecase(it) })
+            UiMimeType.Photo -> Draft.Type.Image(attachment.files.mapNotNull {
+                mediaEncoderUsecase(it.uri)
+            })
+            UiMimeType.Video -> Draft.Type.Video(attachment.files.mapNotNull {
+                val offset = it.props.getParcelable<UiOffset?>(it.path) ?: UiOffset.None
+                videoEncoderUsecase(
+                    VideoEncoderUsecase.Parameter(
+                        uri = it.uri,
+                        offset = offset
+                    )
+                )
+            })
             UiMimeType.Music -> Draft.Type.Audio(
-                files = attachments.mapNotNull { mediaEncoderUsecase(it) },
+                files = attachment.files.mapNotNull { mediaEncoderUsecase(it.uri) },
                 cover = cover?.let { uri ->
                     mediaEncoderUsecase(uri)
                 }

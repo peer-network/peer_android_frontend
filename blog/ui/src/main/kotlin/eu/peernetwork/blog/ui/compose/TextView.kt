@@ -45,6 +45,8 @@ fun TextView(
         DesignRichText(
             title = title,
             description = description,
+            maxLines = 2,
+            maxContentLines = 3,
             style = DesignTitleStyle(
                 style = MaterialTheme.typography.bodyMedium.copy(color = color),
                 descriptionStyle = MaterialTheme.typography.labelLarge.copy(

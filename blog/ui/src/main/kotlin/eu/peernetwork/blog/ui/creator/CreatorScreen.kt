@@ -30,8 +30,8 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import eu.peernetwork.blog.ui.R
-import eu.peernetwork.blog.ui.engagement.EngagementConfirmation
-import eu.peernetwork.blog.ui.engagement.EngagementType
+import eu.peernetwork.blog.ui.engagement.EngagementDialog
+import eu.peernetwork.blog.ui.engagement.EngagementEvent
 import eu.peernetwork.blog.ui.model.UiDraft
 import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.core.ui.component.UiComponentProvider
@@ -82,14 +82,15 @@ fun CreatorScreen(
                 title.text.isNotBlank() || description.text.isNotBlank()
             media.value == UiMimeType.Music ->
                 attachment.value.files.isNotEmpty() &&
-                        attachment.value.files.any { it.coverUri != null }
+                        attachment.value.files.any { it.cover != null }
             else -> attachment.value.files.isNotEmpty()
         }
     } }
     val draft = remember { mutableStateOf<UiDraft?>(null) }
     val type = remember(draft.value) {
-        mutableStateOf<EngagementType?>(draft.value?.let { EngagementType.Post(it) })
+        mutableStateOf<EngagementEvent?>(draft.value?.let { EngagementEvent.Post(it) })
     }
+    val handleOnClear by rememberUpdatedState(onClear)
     val handleOnSuccess by rememberUpdatedState(onSuccess)
     val successMessage = stringResource(R.string.post_success_message)
     CreatorScreen(
@@ -100,11 +101,9 @@ fun CreatorScreen(
             draft.value = UiDraft(
                 title = it.title,
                 description = it.description,
-                media = media.value,
-                attachments = attachment.value.files.map { file -> file.uri },
-                cover = attachment.value.files.firstOrNull()?.coverUri
-            )
-        },
+                attachment = attachment.value,
+                cover = (attachment.value as? UiAttachment.File)?.cover
+            ) },
         isLoading = isLoading,
         enabled = enabled,
         error = error,
@@ -112,23 +111,24 @@ fun CreatorScreen(
     )
     component.engagementConfirmation()(
         Modifier,
-        EngagementConfirmation.Spec(
+        EngagementDialog.Spec(
             type,
             viewModelStoreOwner,
         ) {
             when(it) {
-                is EngagementType.Post -> {
+                is EngagementEvent.Post -> {
                     viewModel.create(it.draft)
-                    draft.value = null
                 }
                 else -> {}
             }
+            draft.value = null
         }
     )
     LaunchedEffect(shouldReset.value) {
         if (shouldReset.value) {
             viewModel.reset()
-            onClear()
+            handleOnClear()
+            attachment.value = UiAttachment.Text
             Toast.makeText(context, successMessage, Toast.LENGTH_SHORT).show()
             handleOnSuccess()
         }

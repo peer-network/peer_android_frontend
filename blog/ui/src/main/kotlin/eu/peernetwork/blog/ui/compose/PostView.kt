@@ -53,6 +53,7 @@ fun TextPreview(
     val updatedContent by rememberUpdatedState(content)
     val updatedEngagements by rememberUpdatedState(engagements)
     val updatedModeration by rememberUpdatedState(moderation)
+    val handleClick by rememberUpdatedState(onClick)
     PostScaffold(
         modifier = modifier,
         header = {
@@ -75,9 +76,8 @@ fun TextPreview(
                         RoundedCornerShape(24.dp)
                     ).clickable(
                         enabled = true,
-                        role = Role.Button,
-                        onClick = onClick
-                    )
+                        role = Role.Button
+                    ) { handleClick() }
             ) },
         contentPadding = contentPadding,
         footer = {

@@ -1,5 +1,6 @@
 package eu.peernetwork.blog.ui.post.photo
 
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -14,12 +15,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.paging.LoadState
-import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.compose.PostPlaceholder
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
+import eu.peernetwork.blog.ui.event.UiPostEvent
 import eu.peernetwork.blog.ui.moderation.ModerationScreen
-import eu.peernetwork.core.common.model.Pageable
+import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.component.DesignError
 import eu.peernetwork.core.ui.design.component.DesignPagingScaffold
@@ -34,11 +34,9 @@ fun PhotoScreen(
     lastUpdated: State<Long>,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
-    onMentionClick: (String) -> Unit = {},
-    onHashtagClick: (String) -> Unit = {},
-    onPostClick: (String, Int) -> Unit,
-    onAuthorClick: (String) -> Unit = {},
+    event: UiPostEvent,
     listState: LazyListState = rememberLazyListState(),
+    connection: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit = {},
 ) {
     val context = LocalContext.current
     val component = remember {
@@ -67,7 +65,7 @@ fun PhotoScreen(
             }
         }
     }
-    DesignPagingScaffold<UiPost>(
+    DesignPagingScaffold(
         state = derivedState,
         placeholder = { PostPlaceholder() },
         onRefresh = { viewModel.load(author, Pageable(0, postLimit)) },
@@ -75,17 +73,14 @@ fun PhotoScreen(
             DesignError(refresh, error, component.resource())
         }
     ) { state, lazyPagingItems ->
-        val refreshed = remember { derivedStateOf {
-            lazyPagingItems.loadState.refresh is LoadState.NotLoading
-        } }
         EngagementScreen(
             postLimit,
-            refreshed,
-            onMentionClick = onMentionClick,
-            onHashtagClick = onHashtagClick,
-            onAuthorClick,
+            onMentionClick = event::onMentionClick,
+            onHashtagClick = event::onHashtagClick,
+            event::onAuthorClick,
             component,
-            viewModelStoreOwner
+            viewModelStoreOwner,
+            connection
         ) { engagement ->
             ModerationScreen(
                 component,
@@ -93,14 +88,15 @@ fun PhotoScreen(
             ) { moderation ->
                 PhotoListing(
                     author = author,
+                    viewModel = viewModel,
                     component = component,
                     lazyPagingItems = lazyPagingItems,
                     listState = listState,
                     engagement = engagement,
                     moderation = moderation,
-                    onMentionClick,
-                    onHashtagClick,
-                    onPostClick,
+                    onMentionClick = event::onMentionClick,
+                    onHashtagClick = event::onHashtagClick,
+                    onPostClick = event::onPostClick,
                 )
             }
         }

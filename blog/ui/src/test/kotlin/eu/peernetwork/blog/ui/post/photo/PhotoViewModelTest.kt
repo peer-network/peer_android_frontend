@@ -1,13 +1,12 @@
 package eu.peernetwork.blog.ui.post.photo
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.paging.PagingData
 import app.cash.turbine.test
-import eu.peernetwork.blog.ui.model.UiAuthor
-import eu.peernetwork.blog.ui.model.UiPost
+import eu.peernetwork.blog.domain.usecase.ViewUsecase
+import eu.peernetwork.blog.ui.mock.MockContent
 import eu.peernetwork.blog.ui.usecase.AuthorPostUsecase
-import eu.peernetwork.core.common.model.Pageable
+import eu.peernetwork.core.common.paging.Pageable
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
@@ -32,40 +31,20 @@ internal class PhotoViewModelTest {
 
     private val usecase = mockk<AuthorPostUsecase>()
 
+    private val viewUsecase = mockk<ViewUsecase>()
+
     private lateinit var viewModel: PhotoViewModel
 
     @Before
     fun setup() {
         Dispatchers.setMain(dispatcher)
-        viewModel = PhotoViewModel(usecase)
+        viewModel = PhotoViewModel(usecase, viewUsecase)
     }
 
     @Test
     fun `test get author photos success`() = runTest {
         val author = "<test-author>"
-        val mockData = UiPost(
-            id = "<test-id>",
-            title = buildAnnotatedString { append("<test-title>") },
-            media = mockk(),
-            author = UiAuthor(
-                id = "<test-id>",
-                username = "<test-username>",
-                slug = 0,
-                imageUrl = "http://localhost",
-                isfollowed = false,
-                isfollowing = false
-            ),
-            type = UiPost.Type.IMAGE,
-            time = "<test-time>",
-            createdAt = System.currentTimeMillis(),
-            description = buildAnnotatedString { append("<test-description>") },
-            likes = 0,
-            dislikes = 0,
-            isLiked = false,
-            isDisliked = false,
-            comment = 0,
-            aspectRatio = 0.1f
-        )
+        val mockData = MockContent.post()
         val mockPagingData = PagingData.from(listOf(mockData))
         coEvery { usecase(any()) } returns flow {
             delay(100)

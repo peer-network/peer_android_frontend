@@ -1,6 +1,10 @@
 package eu.peernetwork.media.ui.renderer
 
 import android.content.Context
+import android.content.BroadcastReceiver
+import android.content.Intent
+import android.content.IntentFilter
+import android.media.AudioManager
 import android.view.TextureView
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -19,12 +23,11 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableFloatState
 import androidx.compose.runtime.MutableLongState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.withFrameMillis
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,7 +45,7 @@ import eu.peernetwork.media.core.interactor.VideoInteractor
 import eu.peernetwork.media.core.renderer.VideoPlayer
 import eu.peernetwork.media.ui.compose.VideoControl
 import eu.peernetwork.media.ui.compose.VolumeControl
-import eu.peernetwork.media.ui.core.MediaPlayer
+import eu.peernetwork.media.ui.core.MediaSession
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -51,9 +54,7 @@ class VideoPlayerDelegate @Inject constructor(
     private val context: Context,
     private val interactor: VideoInteractor
 ) : VideoPlayer {
-    private val media = (interactor as MediaPlayer)
-
-    private val widthPixels: Int get() = context.resources.displayMetrics.widthPixels
+    private val mediaSession = (interactor as MediaSession)
 
     @Composable
     override fun invoke(
@@ -61,15 +62,17 @@ class VideoPlayerDelegate @Inject constructor(
         spec: VideoPlayer.Spec
     ) {
         val lifecycleOwner = LocalLifecycleOwner.current
-        val player = remember { media.player() }
-        var isReady by remember { mutableStateOf(false) }
+        val player = remember { mediaSession.exoPlayer() }
         val isPlaying = remember { mutableStateOf(false) }
         val hasSession = remember { mutableStateOf(false) }
         val errorState = remember { mutableStateOf<Throwable?>(null) }
         val session = remember { mutableLongStateOf(System.currentTimeMillis()) }
-        val isLoading = remember { mutableStateOf(false) }
-        var mute = media.mute().collectAsStateWithLifecycle(player.isDeviceMuted)
-        val dimension = media.observer.collectAsStateWithLifecycle()
+        val isLoading = remember { mutableStateOf(!spec.enabled) }
+        val scope = rememberCoroutineScope()
+        val mute = mediaSession.mute().collectAsStateWithLifecycle(player.isDeviceMuted)
+        val dimension = mediaSession.observer.collectAsStateWithLifecycle()
+        val audio = remember { context.getSystemService(Context.AUDIO_SERVICE) as AudioManager }
+        val lastVolume = remember(spec.enabled) { mutableIntStateOf(audio.getStreamVolume(AudioManager.STREAM_MUSIC)) }
         val listener = remember {
             object : Player.Listener {
                 override fun onIsPlayingChanged(playing: Boolean) {
@@ -80,10 +83,14 @@ class VideoPlayerDelegate @Inject constructor(
                 }
 
                 override fun onEvents(player: Player, events: Player.Events) {
-                    if (events.containsAny(Player.EVENT_POSITION_DISCONTINUITY,
-                            Player.EVENT_TIMELINE_CHANGED)) {
+                    if (events.containsAny(
+                            Player.EVENT_POSITION_DISCONTINUITY,
+                            Player.EVENT_TIMELINE_CHANGED
+                        )
+                    ) {
                         spec.length.longValue = player.duration.coerceAtLeast(1L)
-                        spec.progress.floatValue = player.currentPosition.toFloat() / spec.length.longValue
+                        spec.progress.floatValue =
+                            player.currentPosition.toFloat() / spec.length.longValue
                     }
                 }
 
@@ -94,20 +101,73 @@ class VideoPlayerDelegate @Inject constructor(
             }
         }
         val texture = remember { TextureView(context) }
-        Box(contentAlignment = Alignment.Center) {
+        val lifecycleObserver = remember {
+            LifecycleEventObserver { _, event ->
+                when (event) {
+                    Lifecycle.Event.ON_RESUME -> {
+                        player.play()
+                    }
+                    Lifecycle.Event.ON_STOP -> {
+                        player.pause()
+                    }
+                    else -> Unit
+                }
+            }
+        }
+        val receiver = remember {
+            object : BroadcastReceiver() {
+                override fun onReceive(context: Context, intent: Intent) {
+                    if (intent.action == "android.media.VOLUME_CHANGED_ACTION") {
+                        val currentVolume = audio.getStreamVolume(AudioManager.STREAM_MUSIC)
+                        if (currentVolume > lastVolume.intValue && !mute.value) {
+                            scope.launch { mediaSession.mute(true) }
+                        }
+                        lastVolume.intValue = currentVolume
+                    }
+                }
+            }
+        }
+        DisposableEffect(Unit) {
+            val filter = IntentFilter("android.media.VOLUME_CHANGED_ACTION")
+            context.registerReceiver(receiver, filter)
+            onDispose {
+                context.unregisterReceiver(receiver)
+            }
+        }
+        Box(
+            modifier = modifier,
+            contentAlignment = Alignment.Center
+        ) {
             AndroidView(
                 factory = { texture },
                 update = {
                     it.alpha = 0f
                     val dimen = dimension.value[spec.url] ?: spec.ratio
-                    it.layoutParams = it.layoutParams.apply {
-                        this.width = widthPixels
-                        this.height = (width / dimen).toInt()
+                    val width = context.resources.displayMetrics.widthPixels
+                    if (spec.resolution != null) {
+                        if (dimen >= 1) {
+                            val width = spec.resolution!!.first
+                            it.layoutParams = it.layoutParams.apply {
+                                this.width = width
+                                this.height = (width / dimen).toInt()
+                            }
+                        } else {
+                            val height = spec.resolution!!.second
+                            it.layoutParams = it.layoutParams.apply {
+                                this.width = (height * dimen).toInt()
+                                this.height = height
+                            }
+                        }
+                    } else {
+                        it.layoutParams = it.layoutParams.apply {
+                            this.width = width
+                            this.height = (width / dimen).toInt()
+                        }
                     }
                     it.alpha = dimension.value[spec.url]?.let { 1f } ?: 0f
-                    isReady = dimension.value[spec.url] != null
                 },
-                modifier = modifier.wrapContentSize()
+                modifier = Modifier
+                    .wrapContentSize()
                     .clickable {
                         if (!isPlaying.value && !hasSession.value) {
                             session.longValue = System.currentTimeMillis()
@@ -143,6 +203,7 @@ class VideoPlayerDelegate @Inject constructor(
                     player.addListener(listener)
                 }
             } else {
+                isLoading.value = false
                 isPlaying.value = false
                 player.removeListener(listener)
             }
@@ -151,7 +212,8 @@ class VideoPlayerDelegate @Inject constructor(
             while (isPlaying.value && spec.enabled) {
                 withFrameMillis {
                     spec.length.longValue = player.duration.coerceAtLeast(1L)
-                    spec.progress.floatValue = player.currentPosition.toFloat() / spec.length.longValue
+                    spec.progress.floatValue =
+                        player.currentPosition.toFloat() / spec.length.longValue
                 }
                 delay(16)
             }
@@ -164,20 +226,9 @@ class VideoPlayerDelegate @Inject constructor(
             }
         }
         DisposableEffect(lifecycleOwner) {
-            val observer = LifecycleEventObserver { _, event ->
-                when (event) {
-                    Lifecycle.Event.ON_RESUME -> {
-                        player.play()
-                    }
-                    Lifecycle.Event.ON_STOP -> {
-                        player.pause()
-                    }
-                    else -> Unit
-                }
-            }
-            lifecycleOwner.lifecycle.addObserver(observer)
+            lifecycleOwner.lifecycle.addObserver(lifecycleObserver)
             onDispose {
-                lifecycleOwner.lifecycle.removeObserver(observer)
+                lifecycleOwner.lifecycle.removeObserver(lifecycleObserver)
             }
         }
     }
@@ -189,8 +240,8 @@ class VideoPlayerDelegate @Inject constructor(
         length: MutableLongState
     ) {
         val scope = rememberCoroutineScope()
-        val player = remember { media.player() }
-        var mute = media.mute().collectAsStateWithLifecycle(player.isDeviceMuted)
+        val player = remember { mediaSession.exoPlayer() }
+        val mute = mediaSession.mute().collectAsStateWithLifecycle(player.isDeviceMuted)
         Row(
             modifier = modifier,
             verticalAlignment = Alignment.CenterVertically,
@@ -223,7 +274,7 @@ class VideoPlayerDelegate @Inject constructor(
                         .background(MaterialTheme.colorScheme.onBackground)
                 )
             }
-            VolumeControl(mute) { scope.launch { interactor.mute(it) } }
+            VolumeControl(mute) { scope.launch { mediaSession.mute(it) } }
         }
     }
 }

@@ -18,15 +18,19 @@ import eu.peernetwork.media.core.renderer.VideoThumbnail
 import kotlinx.coroutines.FlowPreview
 import javax.inject.Inject
 import androidx.core.view.isVisible
+import androidx.media3.common.PlaybackException
+import androidx.media3.common.Player
 import eu.peernetwork.media.core.interactor.VideoInteractor
 import eu.peernetwork.media.ui.compose.VolumeControl
-import eu.peernetwork.media.ui.core.MediaPlayer
+import eu.peernetwork.media.ui.core.MediaSession
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
 class VideoThumbnailDelegate @Inject constructor(
     private val interactor: VideoInteractor
 ) : VideoThumbnail {
-    private val media = (interactor as MediaPlayer)
+    private val session = (interactor as MediaSession)
 
     @Composable
     @OptIn(FlowPreview::class)
@@ -36,9 +40,19 @@ class VideoThumbnailDelegate @Inject constructor(
     ) {
         val context = LocalContext.current
         val scope = rememberCoroutineScope()
+        val player = remember { session.exoPlayer() }
         val surfaceView = remember { TextureView(context) }
-        val dimension = media.observer.collectAsStateWithLifecycle()
-        var mute = media.mute().collectAsStateWithLifecycle(media.player().isDeviceMuted)
+        val dimension = session.observer.collectAsStateWithLifecycle()
+        val mute = session.mute().collectAsStateWithLifecycle(session.exoPlayer().isDeviceMuted)
+        val listener = remember {
+            object : Player.Listener {
+                override fun onPlayerError(error: PlaybackException) {
+                    surfaceView.surfaceTexture?.let {
+                        interactor.attach(it, spec.url)
+                    }
+                }
+            }
+        }
         Box(
             contentAlignment = Alignment.Center,
             modifier = modifier
@@ -48,7 +62,7 @@ class VideoThumbnailDelegate @Inject constructor(
             AndroidView(
                 factory = { surfaceView },
                 update = {
-                    it.visibility = if (spec.isPlaying) {
+                    it.visibility = if (spec.isPlaying.value) {
                         View.VISIBLE
                     } else {
                         View.INVISIBLE
@@ -56,7 +70,7 @@ class VideoThumbnailDelegate @Inject constructor(
                     it.alpha = 0f
                     if (it.isVisible) {
                         val dimen = dimension.value[spec.url] ?: spec.ratio
-                        if (dimen > 1) {
+                        if (dimen >= 1) {
                             val width = it.measuredWidth
                             it.layoutParams = it.layoutParams.apply {
                                 this.width = width
@@ -77,26 +91,35 @@ class VideoThumbnailDelegate @Inject constructor(
             Box(modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(16.dp)) {
-                VolumeControl(mute) { scope.launch { interactor.mute(it) } }
+                VolumeControl(mute) { scope.launch { session.mute(it) } }
             }
         }
-        LaunchedEffect(spec.isPlaying) {
-            if (spec.isPlaying) {
-                surfaceView.surfaceTexture?.let {
-                    interactor.attach(it, spec.url)
+        LaunchedEffect(Unit) {
+            snapshotFlow { spec.isPlaying.value }
+                .distinctUntilChanged()
+                .debounce(300)
+                .collect { playing ->
+                    if (playing) {
+                        surfaceView.surfaceTexture?.let {
+                            interactor.attach(it, spec.url)
+                            player.addListener(listener)
+                            player.play()
+                        }
+                    } else {
+                        surfaceView.surfaceTexture?.let {
+                            interactor.detach(it)
+                            player.removeListener(listener)
+                            player.pause()
+                        }
+                    }
                 }
-            } else {
-                surfaceView.surfaceTexture?.let {
-                    interactor.detach(it)
-                }
-            }
         }
-        LaunchedEffect(mute.value) {
-            media.player().volume = if (mute.value) {
-                1f
-            } else {
-                0f
-            }
+        LaunchedEffect(Unit) {
+            snapshotFlow { mute.value }
+                .distinctUntilChanged()
+                .collect { muted ->
+                    session.exoPlayer().volume = if (muted) 1f else 0f
+                }
         }
     }
 }

@@ -91,7 +91,7 @@ fun ConfirmationScreen(
         state = showSheet,
         onDismiss = { handleOnDismiss() },
     ) {
-        val uiToken = remember { mutableStateOf<UiToken?>(token) }
+        val uiToken = remember { mutableStateOf(token) }
         DesignStatefulScaffold<Pair<UiQuote, UiWallet>>(
             derivedState,
             onRefresh = { uiToken.value?.let { viewModel.initialize(it) } },
@@ -118,6 +118,8 @@ fun ConfirmationScreen(
     LaunchedEffect(showSheet.value) {
         if (showSheet.value) {
             token?.let { viewModel.initialize(it) }
+        } else {
+            viewModel.cancel()
         }
     }
 }

@@ -96,8 +96,6 @@ fun PreviewDesignTab() {
     PeerTheme {
         DesignTab(
             rememberPagerState { 3 }
-        ) {
-            Text("$it")
-        }
+        ) { Text("$it") }
     }
 }

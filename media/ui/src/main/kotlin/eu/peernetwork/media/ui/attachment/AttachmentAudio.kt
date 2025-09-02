@@ -57,7 +57,7 @@ fun AttachmentAudio(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             files.forEachIndexed { index, file ->
-                val coverForFile = file.coverUri
+                val coverForFile = file.cover
 
                 Box(
                     modifier = Modifier

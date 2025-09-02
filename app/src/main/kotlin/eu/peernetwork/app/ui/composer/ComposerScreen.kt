@@ -32,7 +32,7 @@ import eu.peernetwork.core.ui.design.compose.DesignTitle
 import eu.peernetwork.core.ui.design.compose.DesignTitleBarHost
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
-import eu.peernetwork.core.ui.model.ViewModelState
+import eu.peernetwork.core.ui.factory.UiViewModelStore
 import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.media.core.model.UiAttachment
 import eu.peernetwork.media.ui.attachment.AttachmentScreen
@@ -42,7 +42,7 @@ import eu.peernetwork.wallet.ui.model.UiToken
 @Composable
 fun ComposerScreen(
     provider: UiComponentProvider,
-    viewModelStore: ViewModelState,
+    viewModelStore: UiViewModelStore,
     onPostSuccess: () -> Unit
 ) {
     val context = LocalContext.current
@@ -68,10 +68,14 @@ fun ComposerScreen(
                     AttachmentScreen(
                         attachment,
                         onAttach = { controller.navigateIfNecessary("explorer") },
-                        onSelectCover = { controller.navigate("cover?audioUri=${it.toString()}") },
+                        Modifier.padding(top = 4.dp),
+                        onPreview = {
+                            val path = it.files.first().path
+                            controller.navigateIfNecessary("video?path=$path")
+                        },
+                        onSelectCover = { controller.navigate("cover?audioUri=${it}") },
                         component,
                         viewModelStore.get(key),
-                        Modifier.padding(top = 4.dp),
                     )
                 },
                 content = {
@@ -131,7 +135,7 @@ fun PreviewComposerScreen() {
     PeerTheme {
         val focus = remember { FocusRequester() }
         val title = remember { TextFieldState() }
-        var description = remember { TextFieldState() }
+        val description = remember { TextFieldState() }
         ComposerScreen(
             footer = {
                 val state = remember { mutableStateOf<UiAttachment>(UiAttachment.Text) }
@@ -159,7 +163,7 @@ fun PreviewComposerScreen() {
                     modifier = Modifier
                         .padding(top = 8.dp)
                         .padding(horizontal = 16.dp)
-                ) {}
+                )
             }
         )
     }

@@ -13,8 +13,7 @@ import eu.peernetwork.app.ui.search.SearchState
 import eu.peernetwork.app.ui.window.WindowScreen
 import eu.peernetwork.core.ui.design.compose.DesignPageWindowMode
 import eu.peernetwork.core.ui.design.compose.DesignRouter
-import eu.peernetwork.core.ui.model.ViewModelState
-import java.net.URLEncoder
+import eu.peernetwork.core.ui.factory.UiViewModelStore
 
 @Composable
 fun FeedNavigation(
@@ -23,12 +22,12 @@ fun FeedNavigation(
     startDestination: String = "content",
     controller: NavHostController,
     component: Feed.Component,
-    viewModelStore: ViewModelState,
+    viewModelStore: UiViewModelStore,
     onCancel: () -> Unit = {},
     content: @Composable () -> Unit = {}
 ) {
     val updatedContent by rememberUpdatedState(content)
-    val mode = if (startDestination == "overlay") {
+    val windowMode = if (startDestination == "overlay") {
         DesignPageWindowMode.DOCKED
     } else {
         DesignPageWindowMode.HIDDEN
@@ -49,7 +48,7 @@ fun FeedNavigation(
                 id = userId,
                 provider = component,
                 viewModelStore = viewModelStore,
-                mode = mode,
+                mode = windowMode,
                 onCancel = onCancel,
             ) {
                 ProfileScreen(
@@ -78,7 +77,7 @@ fun FeedNavigation(
                 id = userId,
                 provider = component,
                 viewModelStore = viewModelStore,
-                mode = mode,
+                mode = windowMode,
                 onCancel = onCancel,
             ) {
                 SearchScreen(
@@ -90,21 +89,5 @@ fun FeedNavigation(
                 )
             }
         }
-    }
-}
-
-fun NavHostController.navigateToTagSearch(tag: String) {
-    val cleanTag = tag.removePrefix("#")
-    val encoded = URLEncoder.encode(cleanTag, "UTF-8")
-    navigate("search/tag/$encoded") {
-        launchSingleTop = true
-    }
-}
-
-fun NavHostController.navigateToUsernameSearch(username: String) {
-    val cleanUsername = username.removePrefix("@")
-    val encoded = URLEncoder.encode(cleanUsername, "UTF-8")
-    navigate("search/username/$encoded") {
-        launchSingleTop = true
     }
 }

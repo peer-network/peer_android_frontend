@@ -13,6 +13,8 @@ data class UiContent(
     val likes: Int,
     val isLiked: Boolean,
     val isDisliked: Boolean,
+    val isViewed: Boolean,
     val dislikes: Int,
+    val views: Int,
     val comment: Int
 )

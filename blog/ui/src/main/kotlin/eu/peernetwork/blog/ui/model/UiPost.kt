@@ -18,12 +18,15 @@ data class UiPost(
     val likes: Int,
     val isLiked: Boolean,
     val isDisliked: Boolean,
+    val isViewed: Boolean,
     val dislikes: Int,
+    val views: Int,
     val comment: Int
 ) {
     enum class Type {
         IMAGE,
         AUDIO,
-        TEXT
+        TEXT,
+        VIDEO,
     }
 }

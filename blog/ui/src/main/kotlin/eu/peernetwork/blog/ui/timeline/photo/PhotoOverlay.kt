@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -12,42 +13,36 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.LoadState
-import androidx.paging.PagingData
-import androidx.paging.compose.collectAsLazyPagingItems
-import dev.materii.pullrefresh.DragRefreshLayout
-import dev.materii.pullrefresh.rememberPullRefreshState
 import eu.peernetwork.blog.domain.model.Filter.Criteria
-import eu.peernetwork.blog.domain.model.Relation
+import eu.peernetwork.blog.domain.model.Category
+import eu.peernetwork.blog.ui.compose.ContentScaffold
 import eu.peernetwork.blog.ui.compose.PhotoIndicator
-import eu.peernetwork.blog.ui.compose.PhotoPage
 import eu.peernetwork.blog.ui.compose.PhotoPager
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
-import eu.peernetwork.blog.ui.model.UiPost
+import eu.peernetwork.blog.ui.event.UiPostEvent
 import eu.peernetwork.blog.ui.moderation.ModerationScreen
-import eu.peernetwork.core.common.model.Pageable
+import eu.peernetwork.core.common.paging.Pageable
+import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.component.DesignStatefulScaffold
-import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
+import eu.peernetwork.core.ui.design.compose.DesignSceneState
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.media.core.renderer.ImageView
-import kotlinx.coroutines.flow.Flow
 
 @Composable
 fun PhotoOverlay(
     id: String,
     limit: Int,
     position: Int,
-    relation: Relation,
+    category: Category,
     criteria: Criteria? = null,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
-    onAuthorClick: (String) -> Unit = {},
-    onMentionClick: (String) -> Unit = {},
-    onHashtagClick: (String) -> Unit = {},
+    event: UiPostEvent,
     header: @Composable () -> Unit = {},
     connection: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit = {}
 ) {
@@ -61,88 +56,72 @@ fun PhotoOverlay(
         factory = component.viewModelFactory()
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val errorMessage = stringResource(R.string.unknown_error_message)
     val derivedState = remember {
         derivedStateOf {
             when (state) {
-                PhotoViewModel.State.Empty -> DesignStatefulScaffoldState.Empty
-                PhotoViewModel.State.Loading -> DesignStatefulScaffoldState.Loading
-                is PhotoViewModel.State.Success -> DesignStatefulScaffoldState.Success(
+                PhotoViewModel.State.Empty -> DesignSceneState.Default
+                PhotoViewModel.State.Loading -> DesignSceneState.Loading
+                is PhotoViewModel.State.Success -> DesignSceneState.Success(
                     (state as PhotoViewModel.State.Success).content
                 )
-                is PhotoViewModel.State.Error -> DesignStatefulScaffoldState.Error(
-                    (state as PhotoViewModel.State.Error).error
+                is PhotoViewModel.State.Error -> DesignSceneState.Error(
+                    (state as PhotoViewModel.State.Error).error.let {
+                        Throwable(component.resource()
+                            .string(it.message ?: errorMessage), it)
+                    }
                 )
             }
         }
     }
-    val pullRefreshState = rememberPullRefreshState(refreshing = false, onRefresh = {
-        viewModel.load(Pageable(0, limit), relation, criteria)
-    })
-    DragRefreshLayout(state = pullRefreshState) {
-        DesignStatefulScaffold<Flow<PagingData<UiPost>>>(state = derivedState, onRefresh = {
-            viewModel.load(Pageable(0, limit), relation, criteria)
-        }) { flow ->
-            val lazyPagingItems = flow.collectAsLazyPagingItems()
-            if (lazyPagingItems.loadState.refresh is LoadState.Loading) {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator()
+    EngagementScreen(
+        limit,
+        event::onMentionClick,
+        event::onHashtagClick,
+        event::onAuthorClick,
+        component,
+        viewModelStoreOwner,
+        connection
+    ) { engagement ->
+        ModerationScreen(
+            component,
+            viewModelStoreOwner
+        ) { moderation ->
+            ContentScaffold(
+                state = derivedState,
+                resource = component.resource(),
+                onRefresh = {
+                    viewModel.load(Pageable(0, limit), category, criteria)
                 }
-            } else {
-                val refreshed = remember { derivedStateOf {
-                    lazyPagingItems.loadState.refresh is LoadState.NotLoading
-                } }
-                EngagementScreen(
-                    limit,
-                    refreshed,
-                    onMentionClick,
-                    onHashtagClick,
-                    onAuthorClick,
-                    component,
-                    viewModelStoreOwner
-                ) { engagement ->
-                    ModerationScreen(
-                        component,
-                        viewModelStoreOwner
-                    ) { moderation ->
-                        PhotoPage(
-                            id = id,
-                            position = position,
-                            engagement = engagement,
-                            moderation = moderation,
-                            lazyPagingItems = lazyPagingItems,
-                            onAuthorClick = onAuthorClick,
-                            onMentionClick = onMentionClick,
-                            onHashtagClick = onHashtagClick,
-                            header = header,
-                            connection = connection,
-                            indicator = { state, items -> PhotoIndicator(state, items) },
-                            content = { post, pagerState, active ->
-                                if (post.media.size > 1) {
-                                    PhotoPager(
-                                        pagerState,
-                                        0f,
-                                        post.media
-                                    ) { path ->
-                                        component.imageView()(
-                                            Modifier,
-                                            ImageView.Spec(
-                                                path,
-                                                null,
-                                                ContentScale.Crop,
-                                                500f,
-                                            )
-                                        )
-                                        component.imageView()(
-                                            Modifier,
-                                            ImageView.Spec(path, post.aspectRatio)
-                                        )
-                                    }
-                                } else {
-                                    val media = post.media.first()
+            ) { state, list ->
+                if (list.value.loadState.refresh is LoadState.Loading) {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator()
+                    }
+                } else {
+                    PhotoPager(
+                        id = id,
+                        position = position,
+                        engagement = engagement,
+                        moderation = moderation,
+                        lazyPagingItems = list,
+                        onAuthorClick = event::onAuthorClick,
+                        onMentionClick = event::onMentionClick,
+                        onHashtagClick = event::onHashtagClick,
+                        header = header,
+                        connection = connection,
+                        indicator = { state, items -> PhotoIndicator(state, items) },
+                        content = { post, pagerState, active ->
+                            if (post.media.size > 1) {
+                                PhotoPager(
+                                    pagerState,
+                                    0f,
+                                    post.media
+                                ) { path ->
                                     component.imageView()(
                                         Modifier,
                                         ImageView.Spec(
-                                            media.path,
+                                            path,
                                             null,
                                             ContentScale.Crop,
                                             500f,
@@ -150,12 +129,32 @@ fun PhotoOverlay(
                                     )
                                     component.imageView()(
                                         Modifier,
-                                        ImageView.Spec(media.path, null)
+                                        ImageView.Spec(path, post.aspectRatio, zoomable = true)
                                     )
                                 }
+                            } else {
+                                val media = remember { post.media.first() }
+                                component.imageView()(
+                                    Modifier,
+                                    ImageView.Spec(
+                                        media.path,
+                                        null,
+                                        ContentScale.Crop,
+                                        500f,
+                                    )
+                                )
+                                component.imageView()(
+                                    Modifier,
+                                    ImageView.Spec(media.path, null, zoomable = true)
+                                )
                             }
-                        )
-                    }
+                            LaunchedEffect(Unit) {
+                                if (!post.isViewed) {
+                                    viewModel.view(post.id)
+                                }
+                            }
+                        }
+                    )
                 }
             }
         }

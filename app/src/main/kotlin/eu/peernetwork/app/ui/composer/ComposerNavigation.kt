@@ -1,11 +1,10 @@
 package eu.peernetwork.app.ui.composer
 
 import android.net.Uri
+import android.os.Bundle
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.navigation.NavHostController
@@ -15,11 +14,17 @@ import androidx.navigation.navArgument
 import eu.peernetwork.blog.ui.explore.ExploreCoverScreen
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.compose.DesignRouter
+import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.core.ui.extension.route
 import eu.peernetwork.media.core.model.UiAttachment
+import eu.peernetwork.media.core.model.UiFile
+import eu.peernetwork.media.core.model.UiMimeType
+import eu.peernetwork.media.core.model.UiOffset
 import eu.peernetwork.media.ui.editor.video.VideoScreen
 import eu.peernetwork.media.ui.selector.explorer.ExplorerScreen
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
+import java.io.File
 
 @Composable
 fun ComposerNavigation(
@@ -40,8 +45,13 @@ fun ComposerNavigation(
                 attachment = attachment,
                 provider = provider,
             ) {
-                attachment.value = it
-                controller.route("editor")
+                if (it.media is UiMimeType.Video) {
+                    val path = it.files.first().path
+                    controller.navigateIfNecessary("video?path=$path")
+                } else {
+                    attachment.value = it
+                    controller.route("editor")
+                }
             }
         }
         composable(
@@ -58,10 +68,9 @@ fun ComposerNavigation(
                 onImageSelected = { selectedUri ->
                     audioUri?.let { uri ->
                         val updatedFiles = attachment.value.files.map { file ->
-                            if (file.uri == uri) file.copy(coverUri = selectedUri)
+                            if (file.uri == uri) file.copy(cover = selectedUri)
                             else file
                         }.toPersistentList()
-
                         attachment.value = UiAttachment.File(
                             attachment.value.media,
                             updatedFiles
@@ -81,7 +90,22 @@ fun ComposerNavigation(
             })
         ) { backStackEntry ->
             val path = backStackEntry.arguments?.getString("path") ?: ""
-            VideoScreen(path, provider, viewModelStoreOwner)
+            VideoScreen(
+                path = path,
+                provider = provider,
+                viewModelStoreOwner = viewModelStoreOwner,
+                onDiscard = { controller.popBackStack() }
+            ) { start, stop, duration ->
+                val props = Bundle()
+                if (stop - start != duration) {
+                    props.putParcelable(path, UiOffset.Value(start, stop))
+                }
+                attachment.value = UiAttachment.File(
+                    type = UiMimeType.Video,
+                    uris = persistentListOf(UiFile(Uri.fromFile(File(path)), path, props))
+                )
+                controller.route("editor")
+            }
         }
     }
 }

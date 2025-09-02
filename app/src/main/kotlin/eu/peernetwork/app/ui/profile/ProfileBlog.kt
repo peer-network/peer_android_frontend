@@ -1,5 +1,6 @@
 package eu.peernetwork.app.ui.profile
 
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyListState
@@ -18,6 +19,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
+import eu.peernetwork.blog.ui.event.UiPostEvent
 import eu.peernetwork.blog.ui.post.photo.PhotoScreen
 import eu.peernetwork.blog.ui.post.video.VideoScreen
 import eu.peernetwork.core.ui.component.UiComponentProvider
@@ -27,46 +29,39 @@ import eu.peernetwork.media.core.model.UiMimeType
 @Composable
 fun ProfileBlog(
     id: String,
-    enable: Boolean,
+    enable: State<Boolean>,
     lastUpdated: State<Long>,
     limit: Int,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
     onNavigate: (Int) -> Unit = {},
-    onMentionClick: (String) -> Unit = {},
-    onHashtagClick: (String) -> Unit = {},
-    onAuthorClicked: (String) -> Unit = {},
-    onPhotoClick: (String, Int) -> Unit = { id, position -> },
-    onVideoClick: (String, Int) -> Unit = { id, position -> },
+    event: UiPostEvent,
     photoState: LazyListState,
-    videoState: LazyListState
+    videoState: LazyListState,
+    connection: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit = {},
 ) {
     ProfileBlog(onNavigate) { offset ->
         when (offset) {
             0 -> PhotoScreen(
-                id,
-                limit,
-                lastUpdated,
-                provider,
-                viewModelStoreOwner,
-                onMentionClick,
-                onHashtagClick,
-                onPhotoClick,
-                onAuthorClicked,
-                photoState
+                author = id,
+                postLimit = limit,
+                lastUpdated = lastUpdated,
+                provider = provider,
+                viewModelStoreOwner = viewModelStoreOwner,
+                event = event,
+                listState = photoState,
+                connection = connection
             )
             1 -> VideoScreen(
-                id,
-                enable,
-                limit,
-                lastUpdated,
-                provider,
-                viewModelStoreOwner,
-                onMentionClick,
-                onHashtagClick,
-                onAuthorClicked,
-                onVideoClick,
-                videoState
+                author = id,
+                enable = enable,
+                postLimit = limit,
+                lastUpdated = lastUpdated,
+                provider = provider,
+                viewModelStoreOwner = viewModelStoreOwner,
+                event = event,
+                listState = videoState,
+                connection = connection
             )
         }
     }

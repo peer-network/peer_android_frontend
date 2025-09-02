@@ -4,5 +4,7 @@ data class Referral(
     val id: String,
     val username: String,
     val slug: String,
-    val img: String
+    val img: String,
+    val isFollowed: Boolean,
+    val isFollowing: Boolean
 )

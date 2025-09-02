@@ -11,7 +11,7 @@ import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.blog.domain.usecase.ExploreUsecase
 import eu.peernetwork.blog.ui.mapper.mapToPhoto
 import eu.peernetwork.blog.ui.model.UiPost
-import eu.peernetwork.core.common.model.Pageable
+import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.core.common.provider.Dispatcher
 import eu.peernetwork.core.ui.exception.NoContentException
 import eu.peernetwork.core.ui.usecase.PagingUsecase

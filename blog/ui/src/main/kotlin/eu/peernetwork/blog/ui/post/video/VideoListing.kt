@@ -1,6 +1,5 @@
 package eu.peernetwork.blog.ui.post.video
 
-import android.graphics.Bitmap
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -13,22 +12,27 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import eu.peernetwork.blog.ui.compose.MediaView
 import eu.peernetwork.blog.ui.compose.TextView
-import eu.peernetwork.blog.ui.compose.ListPreview
-import eu.peernetwork.blog.ui.engagement.Engagements
+import eu.peernetwork.blog.ui.compose.ListView
+import eu.peernetwork.blog.ui.event.UiEngagementEvent
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
 import eu.peernetwork.blog.ui.mapper.mapToContent
 import eu.peernetwork.blog.ui.model.UiVideo
-import eu.peernetwork.blog.ui.moderation.Moderations
+import eu.peernetwork.blog.ui.event.UiModerationEvent
 import eu.peernetwork.blog.ui.moderation.ModerationScreen
 import eu.peernetwork.core.ui.design.compose.DesignThumbnail
 import eu.peernetwork.media.core.renderer.VideoThumbnail
@@ -36,45 +40,72 @@ import eu.peernetwork.media.core.renderer.VideoThumbnail
 @Composable
 fun VideoListing(
     author: String,
-    enable: Boolean,
+    state: State<Boolean>,
     component: Video.Component,
+    viewModel: VideoViewModel,
     lazyPagingItems: LazyPagingItems<UiVideo>,
     listState: LazyListState,
-    engagement: Engagements,
-    moderation: Moderations,
-    onLoadBitmap: (String) -> Bitmap?,
+    engagement: UiEngagementEvent,
+    moderation: UiModerationEvent,
     onMentionClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
     onPostClick: (String, Int) -> Unit,
 ) {
-    val handleOnLoadBitmap by rememberUpdatedState(onLoadBitmap)
-    ListPreview(listState) { position ->
+    val configuration = LocalConfiguration.current
+    val thumbnail = viewModel.thumbnail.collectAsStateWithLifecycle()
+    ListView(
+        listState = listState,
+        onClear = { viewModel.reset() },
+        onFocus = { position ->
+            if (position < lazyPagingItems.itemCount) {
+                lazyPagingItems[position]?.let {
+                    viewModel.view(it.id)
+                }
+            }
+        }
+    ) { position ->
         LazyColumn(state = listState) {
             items(
                 count = lazyPagingItems.itemCount,
-                key = { index -> lazyPagingItems[index]?.id?.let { "$it;$index" } ?: index }
+                key = { index ->
+                    lazyPagingItems[index]?.id?.let {
+                        "$it;$index"
+                    } ?: index
+                }
             ) { index ->
+                val enable = remember { derivedStateOf { !listState.isScrollInProgress } }
+                val isPlaying = remember { derivedStateOf { index == position.value && state.value } }
                 lazyPagingItems[index]?.let { post ->
+                    val postThumbnail = remember { derivedStateOf { thumbnail.value[post.media] } }
                     VideoListing(
                         post = post,
                         index = index,
                         onMentionClick = onMentionClick,
                         onHashtagClick = onHashtagClick,
-                        engagements = engagement,
-                        moderations = moderation,
+                        uiEngagementEvent = engagement,
+                        moderation = moderation,
                         onPostClick = onPostClick,
                     ) {
-                        Box(
+                        DesignThumbnail(
+                            enable = enable,
+                            thumbnail = post.media,
+                            bitmap = postThumbnail,
                             modifier = Modifier.fillMaxWidth()
                                 .aspectRatio(post.aspectRatio)
                                 .background(MaterialTheme.colorScheme.background)
-                        ) { DesignThumbnail(handleOnLoadBitmap(post.media)) }
+                        ) {
+                            viewModel.videoBackground(
+                                it,
+                                post.aspectRatio,
+                                configuration.screenWidthDp,
+                            )
+                        }
                         component.videoThumbnail()(
                             Modifier,
                             VideoThumbnail.Spec(
                                 post.media,
                                 post.aspectRatio,
-                                index == position && enable,
+                                isPlaying,
                                 post.resolution
                             )
                         )
@@ -102,8 +133,8 @@ fun VideoListing(
     index: Int,
     onMentionClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
-    engagements: Engagements,
-    moderations: Moderations,
+    uiEngagementEvent: UiEngagementEvent,
+    moderation: UiModerationEvent,
     onPostClick: (String, Int) -> Unit,
     content: @Composable (UiVideo) -> Unit = {}
 ) {
@@ -126,13 +157,13 @@ fun VideoListing(
         engagements = {
             EngagementScreen(
                 uiContent,
-                engagements
+                uiEngagementEvent
             )
         },
         moderation = {
             ModerationScreen(
                 uiContent,
-                moderations
+                moderation
             )
         },
     ) {

@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
@@ -28,12 +29,15 @@ import eu.peernetwork.blog.ui.engagement.EngagementScreen
 import eu.peernetwork.blog.ui.model.UiVideo
 import eu.peernetwork.blog.ui.moderation.ModerationScreen
 import eu.peernetwork.blog.ui.compose.VideoPage
-import eu.peernetwork.core.common.model.Pageable
+import eu.peernetwork.blog.ui.event.UiPostEvent
+import eu.peernetwork.blog.ui.mapper.query
+import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffold
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
 import eu.peernetwork.core.ui.design.compose.DesignThumbnail
 import eu.peernetwork.core.ui.extension.builder
+import eu.peernetwork.media.core.model.UiMimeType
 import eu.peernetwork.media.core.renderer.VideoPlayer
 import kotlinx.coroutines.flow.Flow
 
@@ -45,10 +49,7 @@ fun VideoOverlay(
     position: Int,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
-    onPostClick: (String, Int) -> Unit,
-    onAuthorClick: (String) -> Unit = {},
-    onMentionClick: (String) -> Unit = {},
-    onHashtagClick: (String) -> Unit = {},
+    event: UiPostEvent,
     header: @Composable () -> Unit = {},
     connection: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit = {}
 ) {
@@ -92,21 +93,18 @@ fun VideoOverlay(
                     CircularProgressIndicator()
                 }
             } else {
-                val refreshed = remember { derivedStateOf {
-                    lazyPagingItems.loadState.refresh is LoadState.NotLoading
-                } }
                 EngagementScreen(
-                    limit,
-                    refreshed,
-                    onMentionClick,
-                    onHashtagClick,
-                    onAuthorClick,
-                    component,
-                    viewModelStoreOwner
+                    postLimit = limit,
+                    onMentionClick = event::onMentionClick,
+                    onHashtagClick = event::onHashtagClick,
+                    onAuthorClick = event::onAuthorClick,
+                    provider = component,
+                    viewModelStoreOwner = viewModelStoreOwner,
+                    connection = connection
                 ) { engagement ->
                     ModerationScreen(
-                        component,
-                        viewModelStoreOwner
+                        provider = component,
+                        viewModelStoreOwner = viewModelStoreOwner
                     ) { moderation ->
                         VideoPage(
                             position = position,
@@ -114,18 +112,10 @@ fun VideoOverlay(
                             engagement = engagement,
                             moderation = moderation,
                             lazyPagingItems = lazyPagingItems,
-                            onLoad = { position ->
-                                viewModel.load(
-                                    lazyPagingItems.itemSnapshotList.items,
-                                    configuration.screenWidthDp,
-                                    configuration.screenHeightDp,
-                                    position,
-                                )
-                            },
-                            onPostClick = onPostClick,
-                            onAuthorClick = onAuthorClick,
-                            onMentionClick = onMentionClick,
-                            onHashtagClick = onHashtagClick,
+                            onPostClick = event::onVideoClick,
+                            onAuthorClick = event::onAuthorClick,
+                            onMentionClick = event::onMentionClick,
+                            onHashtagClick = event::onHashtagClick,
                             progress = {
                                 component.videoPlayer().Controller(
                                     modifier = Modifier.padding(horizontal = 24.dp)
@@ -137,19 +127,35 @@ fun VideoOverlay(
                             },
                             connection = connection,
                             header = header,
-                            background = { DesignThumbnail(thumbnail.value[it]) },
+                            background = { post ->
+                                val path = "${post.media}${UiMimeType.Video.query()}"
+                                val bitmap = remember { derivedStateOf { thumbnail.value[path] } }
+                                DesignThumbnail(path, bitmap) {
+                                    viewModel.videoBackground(
+                                        path,
+                                        post.aspectRatio,
+                                        configuration.screenWidthDp,
+                                        configuration.screenHeightDp,
+                                        true
+                                    )
+                                }
+                            },
                             content = { post, shouldPlay, progress ->
                                 component.videoPlayer()(
                                     Modifier,
                                     VideoPlayer.Spec(
                                         post.media,
                                         post.aspectRatio,
-                                        post.resolution,
                                         progress,
                                         length,
                                         shouldPlay,
                                     )
                                 )
+                                LaunchedEffect(Unit) {
+                                    if (!post.isViewed) {
+                                        viewModel.view(post.id)
+                                    }
+                                }
                             }
                         )
                     }

@@ -1,8 +1,8 @@
 package eu.peernetwork.social.remote.api
 
 import com.apollographql.apollo3.api.Optional
-import eu.peernetwork.core.common.model.Page
-import eu.peernetwork.core.common.model.Pageable
+import eu.peernetwork.core.common.paging.Page
+import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.core.remote.api.RequestClient
 import eu.peernetwork.core.remote.extension.assertOrThrow
 import eu.peernetwork.core.remote.extension.getOrThrow
@@ -26,7 +26,9 @@ class ReferralApiDelegate @Inject constructor(
                 id = it.id,
                 username = it.username.toString(),
                 slug = it.slug.toString(),
-                img = "$url/${it.img!!}".removeSuffix("/")
+                img = "$url/${it.img!!}".removeSuffix("/"),
+                isFollowing = it.isfollowing ?: false,
+                isFollowed = it.isfollowed ?: false
             )
         }
 

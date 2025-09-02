@@ -1,175 +1,161 @@
 package eu.peernetwork.blog.ui.timeline.photo
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
+import eu.peernetwork.blog.ui.compose.ListView
 import eu.peernetwork.blog.ui.compose.PhotoIndicator
-import eu.peernetwork.blog.ui.compose.PostItem
 import eu.peernetwork.blog.ui.compose.PhotoPager
-import eu.peernetwork.blog.ui.engagement.Engagements
+import eu.peernetwork.blog.ui.compose.PostItem
+import eu.peernetwork.blog.ui.compose.PostPlaceholder
+import eu.peernetwork.blog.ui.event.UiEngagementEvent
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
 import eu.peernetwork.blog.ui.mapper.mapToContent
 import eu.peernetwork.blog.ui.model.UiPost
-import eu.peernetwork.blog.ui.moderation.Moderations
+import eu.peernetwork.blog.ui.event.UiModerationEvent
 import eu.peernetwork.blog.ui.moderation.ModerationScreen
-import eu.peernetwork.media.core.renderer.ImageView
+import eu.peernetwork.core.ui.design.compose.DesignLoader
 
 @Composable
 fun PhotoListing(
     id: String,
-    component: Photo.Component,
-    lazyPagingItems: LazyPagingItems<UiPost>,
+    current: MutableState<Int>,
+    viewModel: PhotoViewModel,
+    lazyPagingItems: State<LazyPagingItems<UiPost>>,
     listState: LazyListState,
-    engagement: Engagements,
-    moderation: Moderations,
+    engagement: UiEngagementEvent,
+    moderation: UiModerationEvent,
     onMentionClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
     onPostClick: (String, Int) -> Unit,
     onAuthorClick: (String) -> Unit = {},
+    audio: @Composable (UiPost, Int, State<Int>) -> Unit = { path, index, position -> },
+    video: @Composable (UiPost, Int, State<Int>) -> Unit = { path, index, position -> },
+    image: @Composable (String, Float) -> Unit = { path, ratio -> },
     connection: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit = {}
 ) {
-    LazyColumn(
-        state = listState,
-        modifier = Modifier.fillMaxSize()
-    ) {
-        items(
-            count = lazyPagingItems.itemCount,
-            key = { index -> lazyPagingItems[index]?.id?.let { "$it;$index" } ?: index }
-        ) { index ->
-            lazyPagingItems[index]?.let { post ->
-                PhotoListing(
-                    id = id,
-                    post = post,
-                    index = index,
-                    engagements = engagement,
-                    moderations = moderation,
-                    onAuthorClick = onAuthorClick,
-                    onPostClick = onPostClick,
-                    onHashtagClick = onHashtagClick,
-                    onMentionClick = onMentionClick,
-                    connection = connection,
-                    content = {
-                        if (post.media.size > 1) {
-                            val pagerState = rememberPagerState(initialPage = 0) { post.media.size }
-                            PhotoPager(
-                                pagerState,
-                                post.aspectRatio,
-                                post.media,
-                                { PhotoIndicator(pagerState, post.media) }
-                            ) { path ->
-                                component.imageView()(
-                                    Modifier,
-                                    ImageView.Spec(
-                                        path,
-                                        null,
-                                        ContentScale.Crop,
-                                        500f,
-                                    )
-                                )
-                                component.imageView()(
-                                    Modifier,
-                                    ImageView.Spec(path, post.aspectRatio)
-                                )
-                            }
-                        } else {
-                            val media = post.media.first()
-                            component.imageView()(
-                                Modifier,
-                                ImageView.Spec(
-                                    media.path,
-                                    post.aspectRatio,
-                                    ContentScale.Crop,
-                                    500f,
-                                )
-                            )
-                            component.imageView()(
-                                Modifier,
-                                ImageView.Spec(media.path, post.aspectRatio)
-                            )
-                        }
-                    }
+    val updatedAudio by rememberUpdatedState(audio)
+    val updatedVideo by rememberUpdatedState(video)
+    val updatedImage by rememberUpdatedState(image)
+    val updatedConnection by rememberUpdatedState(connection)
+    val handleOnPostClick by rememberUpdatedState(onPostClick)
+    PhotoListing(
+        id = id,
+        current = current,
+        viewModel = viewModel,
+        lazyPagingItems = lazyPagingItems,
+        listState = listState,
+    ) { post, index, position ->
+        val uiContent by remember { derivedStateOf { post.mapToContent() } }
+        val handleAuthorClick by rememberUpdatedState { onAuthorClick(post.author.id) }
+        PostItem(
+            post = post,
+            position = index,
+            onClick = { handleOnPostClick(post.id, index) },
+            onAuthorClick = handleAuthorClick,
+            onMentionClick = onMentionClick,
+            onHashtagClick = onHashtagClick,
+            engagements = {
+                EngagementScreen(
+                    uiContent,
+                    engagement,
                 )
-            }
-        }
-        item(key = id) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                if (lazyPagingItems.loadState.append is LoadState.Loading) {
-                    CircularProgressIndicator(modifier = Modifier.padding(16.dp))
+            },
+            moderation = {
+                ModerationScreen(
+                    uiContent,
+                    moderation
+                )
+            },
+            audio = { updatedAudio(it, index, position) },
+            video = { updatedVideo(it, index, position) },
+            image = { post ->
+                if (post.media.size == 1) {
+                    val path by remember { derivedStateOf { post.media.first().path } }
+                    updatedImage(path, post.aspectRatio)
+                } else {
+                    val pagerState = rememberPagerState(initialPage = 0) { post.media.size }
+                    PhotoPager(
+                        pagerState,
+                        post.aspectRatio,
+                        post.media,
+                        { PhotoIndicator(pagerState, post.media) }
+                    ) { updatedImage(it, post.aspectRatio) }
+                }
+            },
+            actions = {
+                if (id != post.author.id) {
+                    updatedConnection(
+                        Triple(
+                            post.author.id,
+                            post.author.isfollowing,
+                            post.author.isfollowed
+                        )
+                    )
                 }
             }
-        }
+        )
     }
 }
 
 @Composable
-fun LazyItemScope.PhotoListing(
+fun PhotoListing(
     id: String,
-    post: UiPost,
-    index: Int,
-    engagements: Engagements,
-    moderations: Moderations,
-    onAuthorClick: (String) -> Unit = {},
-    onPostClick: (String, Int) -> Unit,
-    onMentionClick: (String) -> Unit = {},
-    onHashtagClick: (String) -> Unit = {},
-    connection: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit,
-    content: @Composable (UiPost) -> Unit = {}
+    current: MutableState<Int>,
+    viewModel: PhotoViewModel,
+    lazyPagingItems: State<LazyPagingItems<UiPost>>,
+    listState: LazyListState,
+    content: @Composable (UiPost, Int, State<Int>) -> Unit = { post, index, position -> },
 ) {
-    val uiContent = post.mapToContent()
-    val clickHandler by rememberUpdatedState { onAuthorClick(post.author.id) }
-    val updatedConnection by rememberUpdatedState(connection)
-    val handleOnPostClick by rememberUpdatedState(onPostClick)
-    PostItem(
-        post = post,
-        position = index,
-        onClick = { handleOnPostClick(post.id, index) },
-        onAuthorClick = clickHandler,
-        onMentionClick = onMentionClick,
-        onHashtagClick = onHashtagClick,
-        engagements = {
-            EngagementScreen(
-                uiContent,
-                engagements,
-            ) },
-        moderation = {
-            ModerationScreen(
-                uiContent,
-                moderations
-            )
-        },
-        content = content,
-        actions = {
-            if (id != post.author.id) {
-                updatedConnection(
-                    Triple(
-                        post.author.id,
-                        post.author.isfollowing,
-                        post.author.isfollowed
-                    )
-                )
+    val updatedContent by rememberUpdatedState(content)
+    ListView(
+        listState = listState,
+        onFocused = { current.value = it },
+        onFocus = { position ->
+            if (position < lazyPagingItems.value.itemCount) {
+                lazyPagingItems.value[position]?.let {
+                    if (!it.isViewed) {
+                        viewModel.view(it.id)
+                    }
+                }
             }
         }
-    )
+    ) { position ->
+        LazyColumn(
+            state = listState,
+            modifier = Modifier.fillMaxSize()
+        ) {
+            items(
+                count = lazyPagingItems.value.itemCount,
+                key = { index -> lazyPagingItems.value[index]?.id?.let { "$it;$index" } ?: index }
+            ) { index ->
+                lazyPagingItems.value[index]?.let { post ->
+                    updatedContent(post, index, position)
+                }
+            }
+            item(key = id) {
+                Box(modifier = Modifier.fillMaxWidth()) {
+                    if (lazyPagingItems.value.loadState.append is LoadState.Loading) {
+                        DesignLoader { PostPlaceholder(contentPaddingValues = PaddingValues(16.dp)) }
+                    }
+                }
+            }
+        }
+    }
 }

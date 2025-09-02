@@ -2,6 +2,7 @@ package eu.peernetwork.wallet.ui.transfer
 
 import android.content.res.Configuration
 import androidx.compose.animation.Crossfade
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -30,13 +31,14 @@ import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
 import eu.peernetwork.core.ui.design.compose.DesignBottomSheetScaffold
 import eu.peernetwork.core.ui.extension.builder
-import eu.peernetwork.core.ui.theme.PeerAppGreen
 import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.wallet.ui.R
 import eu.peernetwork.wallet.ui.model.UiRecipient
 import eu.peernetwork.wallet.ui.model.UiTransfer
 import java.math.BigDecimal
 import java.util.UUID
+import eu.peernetwork.wallet.ui.compose.TickButton
+import eu.peernetwork.wallet.ui.compose.ToastLayout
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
@@ -80,7 +82,7 @@ fun TransferSheet(
         (derivedState.value as? DesignStatefulScaffoldState.Error?)?.error?.message?.let {
             component.resource().string(it)
         }
-    } }
+    }}
     val showRecipient = remember { mutableStateOf(false) }
     val showSheet = remember(transfer.value) { mutableStateOf(transfer.value != null) }
     val handleOnFinish by rememberUpdatedState(onFinish)
@@ -133,22 +135,23 @@ fun TransferSheet(
 ) {
     Crossfade(isSuccessful.value) { target ->
         if (target) {
-            TransferSheetScaffold(
-                state = state,
-                error = error,
-                title = stringResource(R.string.sent_label),
-                recipient = recipient,
-                token = token,
-                action = stringResource(R.string.close_label),
-                onClick = onClick,
-                onSubmit = onSubmit,
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_check),
-                    contentDescription = null,
-                    modifier = Modifier.size(18.dp),
-                    tint = PeerAppGreen
-                )
+            Box {
+                TransferSheetScaffold(
+                    state = state,
+                    error = error,
+                    title = stringResource(R.string.sent_label),
+                    recipient = recipient,
+                    token = token,
+                    action = stringResource(R.string.close_label),
+                    onClick = onClick,
+                    onSubmit = onSubmit,
+                ) {
+                    TickButton(
+                        modifier = Modifier.size(36.dp),
+                        rawRes = R.raw.tick
+                    )
+                }
+                ToastLayout()
             }
         } else {
             TransferSheetScaffold(

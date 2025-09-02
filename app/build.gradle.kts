@@ -5,8 +5,8 @@ plugins {
 
 android {
     defaultConfig {
-        versionCode = 24
-        versionName = "1.0.24"
+        versionCode = 28
+        versionName = "1.0.28"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
@@ -88,6 +88,8 @@ dependencies {
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.config)
     implementation(libs.firebase.messaging)
+    implementation(libs.firebase.functions)
+    implementation(libs.firebase.store)
 
     implementation(libs.lottie)
 

@@ -10,7 +10,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -20,18 +19,14 @@ import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
 import dev.materii.pullrefresh.DragRefreshLayout
 import dev.materii.pullrefresh.rememberPullRefreshState
-import eu.peernetwork.blog.ui.compose.PhotoIndicator
-import eu.peernetwork.blog.ui.compose.PhotoPage
-import eu.peernetwork.blog.ui.compose.PhotoPager
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.moderation.ModerationScreen
-import eu.peernetwork.core.common.model.Pageable
+import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffold
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
 import eu.peernetwork.core.ui.extension.builder
-import eu.peernetwork.media.core.renderer.ImageView
 import kotlinx.coroutines.flow.Flow
 
 @Composable
@@ -86,12 +81,8 @@ fun ExploreOverlay(
                     CircularProgressIndicator()
                 }
             } else {
-                val refreshed = remember { derivedStateOf {
-                    lazyPagingItems.loadState.refresh is LoadState.NotLoading
-                } }
                 EngagementScreen(
                     limit,
-                    refreshed,
                     onMentionClick,
                     onHashtagClick,
                     onAuthorClick,
@@ -102,57 +93,62 @@ fun ExploreOverlay(
                         component,
                         viewModelStoreOwner
                     ) { moderation ->
-                        PhotoPage(
-                            id = author,
-                            position = position,
-                            engagement = engagement,
-                            moderation = moderation,
-                            lazyPagingItems = lazyPagingItems,
-                            onAuthorClick = onAuthorClick,
-                            onMentionClick = onMentionClick,
-                            onHashtagClick = onHashtagClick,
-                            connection = connection,
-                            header = header,
-                            indicator = { state, items -> PhotoIndicator(state, items) },
-                            content = { post, pagerState, active ->
-                                if (post.media.size > 1) {
-                                    PhotoPager(
-                                        pagerState,
-                                        0f,
-                                        post.media
-                                    ) { path ->
-                                        component.imageView()(
-                                            Modifier,
-                                            ImageView.Spec(
-                                                path,
-                                                null,
-                                                ContentScale.Crop,
-                                                500f,
-                                            )
-                                        )
-                                        component.imageView()(
-                                            Modifier,
-                                            ImageView.Spec(path, post.aspectRatio)
-                                        )
-                                    }
-                                } else {
-                                    val media = post.media.first()
-                                    component.imageView()(
-                                        Modifier,
-                                        ImageView.Spec(
-                                            media.path,
-                                            null,
-                                            ContentScale.Crop,
-                                            500f,
-                                        )
-                                    )
-                                    component.imageView()(
-                                        Modifier,
-                                        ImageView.Spec(media.path, null)
-                                    )
-                                }
-                            }
-                        )
+//                        PhotoPage(
+//                            id = author,
+//                            position = position,
+//                            engagement = engagement,
+//                            moderation = moderation,
+//                            lazyPagingItems = lazyPagingItems,
+//                            onAuthorClick = onAuthorClick,
+//                            onMentionClick = onMentionClick,
+//                            onHashtagClick = onHashtagClick,
+//                            connection = connection,
+//                            header = header,
+//                            indicator = { state, items -> PhotoIndicator(state, items) },
+//                            content = { post, pagerState, active ->
+//                                if (post.media.size > 1) {
+//                                    PhotoPager(
+//                                        pagerState,
+//                                        0f,
+//                                        post.media
+//                                    ) { path ->
+//                                        component.imageView()(
+//                                            Modifier,
+//                                            ImageView.Spec(
+//                                                path,
+//                                                null,
+//                                                ContentScale.Crop,
+//                                                500f,
+//                                            )
+//                                        )
+//                                        component.imageView()(
+//                                            Modifier,
+//                                            ImageView.Spec(path, post.aspectRatio, zoomable = true )
+//                                        )
+//                                    }
+//                                } else {
+//                                    val media = post.media.first()
+//                                    component.imageView()(
+//                                        Modifier,
+//                                        ImageView.Spec(
+//                                            media.path,
+//                                            null,
+//                                            ContentScale.Crop,
+//                                            500f,
+//                                        )
+//                                    )
+//                                    component.imageView()(
+//                                        Modifier,
+//                                        ImageView.Spec(media.path, null, zoomable = true )
+//                                    )
+//                                }
+//                                LaunchedEffect(Unit) {
+//                                    if (!post.isViewed) {
+//                                        viewModel.view(post.id)
+//                                    }
+//                                }
+//                            }
+//                        )
                     }
                 }
             }

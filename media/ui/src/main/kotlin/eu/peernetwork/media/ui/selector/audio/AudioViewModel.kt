@@ -45,15 +45,15 @@ class AudioViewModel @Inject constructor(
 
     fun sync(type: UiMimeType, start: Int, limit: Int) {
         viewModelScope.launch {
-            (state.value as? State.Success?)?.audios?.let {
-                val end = if (it.size < limit + 1) {
-                    it.size
+            (state.value as? State.Success?)?.audios?.let { attachments ->
+                val end = if (attachments.size < limit + 1) {
+                    attachments.size
                 } else {
                     limit + 1
                 }
                 if (start <= end) {
-                    it.subList(start, end).asFlow().map {
-                        interactor.load(it.thumbnail, type, Pair(250f, 250f))
+                    attachments.subList(start, end).asFlow().map {
+                        interactor.load(it.path, type, Pair(250f, 250f))
                     }.collect {
                         interactor.invalidate()
                     }

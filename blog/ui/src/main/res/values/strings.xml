@@ -7,6 +7,11 @@
     <string name="post_success_message">Post successfully sent!</string>
     <string name="send_label">Send</string>
 
+    <string name="feed_label">Feeds</string>
+    <string name="follow_label">Follow</string>
+    <string name="following_label">Following</string>
+    <string name="follower_label">Followers</string>
+
     <string name="now_label">Just now</string>
     <string name="minute_label">%d minutes ago</string>
     <string name="hour_label">%d hours ago</string>

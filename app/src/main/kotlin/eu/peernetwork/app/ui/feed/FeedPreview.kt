@@ -24,8 +24,11 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import eu.peernetwork.app.BuildConfig
+import eu.peernetwork.app.extension.navigateToTagSearch
+import eu.peernetwork.app.extension.navigateToUsernameSearch
 import eu.peernetwork.blog.domain.model.Filter.Criteria
-import eu.peernetwork.blog.domain.model.Relation
+import eu.peernetwork.blog.domain.model.Category
+import eu.peernetwork.blog.ui.event.UiPostEvent
 import eu.peernetwork.blog.ui.timeline.photo.PhotoScreen
 import eu.peernetwork.blog.ui.timeline.video.VideoScreen
 import eu.peernetwork.core.ui.design.compose.DesignTab
@@ -39,30 +42,26 @@ import kotlinx.coroutines.launch
 @Composable
 fun FeedPreview(
     id: String,
-    enable: Boolean,
     ordinal: Int,
     state: MutableIntState,
+    selected: MutableState<FeedOverlayState>,
     requireUpdate: MutableState<Boolean>,
     component: Feed.Component,
     viewModelStoreOwner: ViewModelStoreOwner,
     controller: NavHostController,
-    connectionController: ConnectionController,
+    connectionController: State<ConnectionController>,
     title: String? = null,
     criteria: Criteria? = null,
     onNavigate: (Int) -> Unit = {},
     onFilter: (Int) -> Unit = {},
-    onAuthorClick: (String) -> Unit = {},
-    onMentionClick: (String) -> Unit = {},
-    onHashtagClick: (String) -> Unit = {},
-    onPhotoClick: (String, Int) -> Unit = { _, _ -> },
-    onVideoClick: (String, Int) -> Unit = { _, _ -> },
 ) {
     val photoState = rememberLazyListState()
     val videoState = rememberLazyListState()
     val coroutine = rememberCoroutineScope()
-    val connection by connectionController.observe().collectAsStateWithLifecycle()
-    var relation by rememberSaveable {
-        mutableStateOf(Relation.entries.getOrNull(ordinal) ?: Relation.NONE)
+    val enable = remember { derivedStateOf { selected.value == FeedOverlayState.Empty } }
+    val connection by connectionController.value.observe().collectAsStateWithLifecycle()
+    var category by remember {
+        mutableStateOf(Category.entries.getOrNull(ordinal) ?: Category.ALL)
     }
     var position by remember { mutableIntStateOf(state.intValue) }
     val handleOnNavigate by rememberUpdatedState(onNavigate)
@@ -71,6 +70,23 @@ fun FeedPreview(
         pageCount = { UiMimeType.TYPES.size },
         initialPage = state.intValue
     )
+    val event = remember {
+        object : UiPostEvent {
+            override fun onMentionClick(username: String) = controller.navigateToUsernameSearch(username)
+
+            override fun onHashtagClick(tag: String) = controller.navigateToTagSearch(tag)
+
+            override fun onPostClick(id: String, position: Int) {
+                selected.value = FeedOverlayState.Photo(id, position)
+            }
+
+            override fun onVideoClick(id: String, position: Int) {
+                selected.value = FeedOverlayState.Video(id, position)
+            }
+
+            override fun onAuthorClick(id: String) = controller.navigateIfNecessary("profile/$id")
+        }
+    }
     FeedPreview(
         state = state,
         pageState = pageState,
@@ -81,46 +97,41 @@ fun FeedPreview(
         },
         photo = {
             PhotoScreen(
-                id,
-                BuildConfig.PAGING_LIMIT,
-                relation,
-                criteria,
-                onMentionClick,
-                onHashtagClick,
-                onPhotoClick,
-                component,
-                viewModelStoreOwner,
-                onAuthorClick,
-                requireUpdate,
-                photoState,
+                id = id,
+                status = enable,
+                postLimit = BuildConfig.PAGING_LIMIT,
+                category = category,
+                criteria = criteria,
+                event = event,
+                provider = component,
+                viewModelStoreOwner = viewModelStoreOwner,
+                requireUpdate = requireUpdate,
+                listState = photoState,
             ) {
                 ConnectionScreen(
                     isFollowing = connection.getOrDefault(it.first, it.third),
                     isFollowed = it.second,
-                    onClick = { follow -> connectionController.invoke(it.first, !follow) },
+                    onClick = { follow -> connectionController.value.invoke(it.first, !follow) },
                 )
             }
         },
         video = {
             VideoScreen(
-                id,
-                enable,
-                BuildConfig.PAGING_LIMIT,
-                relation,
-                criteria,
-                { controller.navigateToUsernameSearch(it) },
-                { controller.navigateToTagSearch(it) },
-                component,
-                viewModelStoreOwner,
-                onVideoClick,
-                { controller.navigateIfNecessary("profile/$it") },
-                requireUpdate,
-                videoState,
+                id = id,
+                enable = enable,
+                postLimit = BuildConfig.PAGING_LIMIT,
+                category = category,
+                criteria = criteria,
+                event = event,
+                provider = component,
+                viewModelStoreOwner = viewModelStoreOwner,
+                requireUpdate = requireUpdate,
+                listState = videoState,
             ) {
                 ConnectionScreen(
                     isFollowing = connection.getOrDefault(it.first, it.third),
                     isFollowed = it.second,
-                    onClick = { follow -> connectionController.invoke(it.first, !follow) }
+                    onClick = { follow -> connectionController.value.invoke(it.first, !follow) }
                 )
             }
         },
@@ -128,10 +139,10 @@ fun FeedPreview(
     FeedMenu(
         id,
         title,
-        relation,
+        category,
         {
             handleOnFilter(it.ordinal)
-            relation = it
+            category = it
         }
     ) {
         coroutine.launch {
@@ -142,7 +153,7 @@ fun FeedPreview(
             }
         }
     }
-    BackHandler(enabled = pageState.currentPage == 1 && enable) {
+    BackHandler(enabled = pageState.currentPage == 1 && enable.value) {
         coroutine.launch { pageState.animateScrollToPage(0) }
         state.intValue = 0
         handleOnNavigate(0)
@@ -161,10 +172,10 @@ fun FeedPreview(
     val handleNavigation by rememberUpdatedState(onNavigate)
     Column {
         DesignTab(pageState) { index ->
-            UiMimeType.get(index)?.let {
+            UiMimeType.get(index)?.let { type ->
                 Icon(
-                    painter = painterResource(id = it.id),
-                    contentDescription = it.label?.let { stringResource(it) },
+                    painter = painterResource(id = type.id),
+                    contentDescription = type.label?.let { stringResource(it) },
                     tint = MaterialTheme.colorScheme.tertiary,
                     modifier = Modifier
                         .padding(vertical = 8.dp)

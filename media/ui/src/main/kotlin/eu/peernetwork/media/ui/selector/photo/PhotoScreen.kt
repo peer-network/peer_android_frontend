@@ -6,11 +6,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
@@ -19,7 +21,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -75,14 +76,19 @@ fun PhotoScreen(
         }
     }
     val color = MaterialTheme.colorScheme.primary
-    val current = rememberSaveable(directory.value) { mutableStateOf(directory.value) }
-    val selected = remember { mutableStateOf<UiAttachment>(attachment.value) }
+    val selected = remember { mutableStateOf(
+        (attachment.value as? UiAttachment.File?)?.let {
+            if (it.type != UiMimeType.Photo) {
+                UiAttachment.Text
+            } else {
+                it
+            }
+        } ?: UiAttachment.Text
+    ) }
     val thumbnail = viewModel.thumbnail.collectAsStateWithLifecycle()
     val listState = rememberLazyGridState()
-    val canLoad = remember { derivedStateOf {
-        listState.layoutInfo.totalItemsCount > 0 && !listState.isScrollInProgress
-    } }
     val handleSelect by rememberUpdatedState(onSelect)
+    val enable = remember { derivedStateOf { !listState.isScrollInProgress } }
     DesignStatefulScaffold<List<UiFile>>(
         state = derivedState,
         onRefresh = { viewModel.initialize(directory.value) },
@@ -99,6 +105,7 @@ fun PhotoScreen(
         ) {
             items(it.size) { index ->
                 val isSelected = selected.value.files.contains(it[index])
+                val bitmap = remember { derivedStateOf { thumbnail.value[it[index].path] } }
                 Box(modifier = Modifier
                     .aspectRatio(1f)
                     .background(MaterialTheme.colorScheme.surfaceVariant)
@@ -119,9 +126,13 @@ fun PhotoScreen(
                         handleSelect(selected.value)
                     }) {
                     DesignThumbnail(
-                        it[index].thumbnail,
-                        thumbnail.value[it[index].thumbnail]
-                    ) {  }
+                        enable = enable,
+                        thumbnail = it[index].path,
+                        bitmap = bitmap,
+                        modifier = Modifier.fillMaxWidth()
+                            .aspectRatio(1f)
+                            .background(MaterialTheme.colorScheme.surfaceVariant)
+                    ) { media -> viewModel.mediaThumbnail(media, UiMimeType.Photo) }
                     Box(modifier = Modifier
                         .fillMaxSize()
                         .graphicsLayer {
@@ -141,17 +152,11 @@ fun PhotoScreen(
                 }
             }
         }
-        LaunchedEffect(canLoad.value, directory.value) {
-            if (canLoad.value) {
-                viewModel.sync(
-                    UiMimeType.Photo,
-                    listState.firstVisibleItemIndex,
-                    listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
-                )
-            }
-        }
     }
-    LaunchedEffect(current.value) {
+    LaunchedEffect(directory.value) {
         viewModel.initialize(directory.value)
+    }
+    DisposableEffect(Unit) {
+        onDispose { viewModel.reset() }
     }
 }
