@@ -5,30 +5,28 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
-import eu.peernetwork.blog.ui.compose.ListPreview
-import eu.peernetwork.blog.ui.compose.PhotoIndicator
+import eu.peernetwork.blog.ui.compose.ListView
 import eu.peernetwork.blog.ui.compose.PostItem
-import eu.peernetwork.blog.ui.compose.PhotoPager
+import eu.peernetwork.blog.ui.compose.PostContent
 import eu.peernetwork.blog.ui.event.UiEngagementEvent
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
 import eu.peernetwork.blog.ui.mapper.mapToContent
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.event.UiModerationEvent
 import eu.peernetwork.blog.ui.moderation.ModerationScreen
-import eu.peernetwork.media.core.renderer.ImageView
 
 @Composable
 fun PhotoListing(
@@ -43,8 +41,12 @@ fun PhotoListing(
     onHashtagClick: (String) -> Unit = {},
     onPostClick: (String, Int) -> Unit,
 ) {
-    ListPreview(
+    val current = remember { mutableIntStateOf(-1) }
+    val imageView = remember { component.imageView() }
+    val audioPlayer = remember { component.audioPlayer() }
+    ListView(
         listState = listState,
+        onFocused = { current.intValue = it },
         onFocus = { position ->
             if (position < lazyPagingItems.itemCount) {
                 lazyPagingItems[position]?.let {
@@ -54,13 +56,14 @@ fun PhotoListing(
                 }
             }
         }
-    ) {
+    ) { position ->
         LazyColumn(state = listState) {
             items(
                 count = lazyPagingItems.itemCount,
                 key = { index -> lazyPagingItems[index]?.id?.let { "$it;$index" } ?: index }
             ) { index ->
                 lazyPagingItems[index]?.let { photo ->
+                    val enable = remember(position.value) { derivedStateOf { index == position.value } }
                     PhotoListing(
                         post = photo,
                         index = index,
@@ -70,44 +73,14 @@ fun PhotoListing(
                         uiEngagementEvent = engagement,
                         uiModerationEvent = moderation
                     ) {
-                        if (photo.media.size > 1) {
-                            val pagerState = rememberPagerState(initialPage = 0) { photo.media.size }
-                            PhotoPager(
-                                pagerState,
-                                photo.aspectRatio,
-                                photo.media,
-                                { PhotoIndicator(pagerState, photo.media) }
-                            ) { path ->
-                                component.imageView()(
-                                    Modifier,
-                                    ImageView.Spec(
-                                        path,
-                                        null,
-                                        ContentScale.Crop,
-                                        500f,
-                                    )
-                                )
-                                component.imageView()(
-                                    Modifier,
-                                    ImageView.Spec(path, photo.aspectRatio)
-                                )
-                            }
-                        } else {
-                            val media = photo.media.first()
-                            component.imageView()(
-                                Modifier,
-                                ImageView.Spec(
-                                    media.path,
-                                    photo.aspectRatio,
-                                    ContentScale.Crop,
-                                    500f,
-                                )
-                            )
-                            component.imageView()(
-                                Modifier,
-                                ImageView.Spec(media.path, photo.aspectRatio)
-                            )
-                        }
+                        PostContent(
+                            post = photo,
+                            position = index,
+                            imageView = imageView,
+                            audioPlayer = audioPlayer,
+                            enable = enable,
+                            current = current
+                        )
                     }
                 }
             }
@@ -127,7 +100,7 @@ fun PhotoListing(
 }
 
 @Composable
-fun LazyItemScope.PhotoListing(
+fun PhotoListing(
     post: UiPost,
     index: Int,
     onMentionClick: (String) -> Unit = {},
@@ -155,6 +128,8 @@ fun LazyItemScope.PhotoListing(
                 event = uiModerationEvent
             )
         },
-        content = content
+        audio = content,
+        video = content,
+        image = content,
     )
 }

@@ -93,12 +93,8 @@ fun VideoOverlay(
                     CircularProgressIndicator()
                 }
             } else {
-                val refreshed = remember { derivedStateOf {
-                    lazyPagingItems.loadState.refresh is LoadState.NotLoading
-                } }
                 EngagementScreen(
                     postLimit = limit,
-                    refresh = refreshed,
                     onMentionClick = event::onMentionClick,
                     onHashtagClick = event::onHashtagClick,
                     onAuthorClick = event::onAuthorClick,

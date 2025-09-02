@@ -10,7 +10,9 @@ import eu.peernetwork.core.common.usecase.ParameterizedObservableUseCase
 abstract class PagingUsecase<P, T : Any> : ParameterizedObservableUseCase<P, PagingData<T>> {
     fun source(): PagingSource<Int, T> {
         return object : PagingSource<Int, T>() {
-            override fun getRefreshKey(state: PagingState<Int, T>): Int? = null
+            override fun getRefreshKey(state: PagingState<Int, T>): Int? {
+                return null
+            }
 
             override suspend fun load(params: LoadParams<Int>): LoadResult<Int, T> {
                 return try {

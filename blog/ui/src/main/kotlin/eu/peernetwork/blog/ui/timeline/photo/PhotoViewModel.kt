@@ -10,6 +10,8 @@ import eu.peernetwork.blog.ui.usecase.UserPostsUsecase
 import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.blog.domain.model.Category
 import eu.peernetwork.blog.domain.usecase.ViewUsecase
+import eu.peernetwork.media.core.interactor.ThumbnailInteractor
+import eu.peernetwork.media.core.viewmodel.MediaViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -23,7 +25,8 @@ import javax.inject.Inject
 class PhotoViewModel @Inject constructor(
     private val usecase: UserPostsUsecase,
     private val viewUsecase: ViewUsecase,
-) : ViewModel() {
+    interactor: ThumbnailInteractor
+) : MediaViewModel(interactor) {
     private val mutableState = MutableStateFlow<State>(State.Empty)
 
     val state: StateFlow<State> = mutableState.asStateFlow()

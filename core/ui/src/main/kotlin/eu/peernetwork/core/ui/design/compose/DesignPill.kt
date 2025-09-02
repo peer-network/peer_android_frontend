@@ -1,4 +1,4 @@
-package eu.peernetwork.media.ui.compose
+package eu.peernetwork.core.ui.design.compose
 
 import android.content.res.Configuration
 import androidx.compose.foundation.BorderStroke
@@ -19,15 +19,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import eu.peernetwork.core.ui.design.compose.DesignOutlinedButton
-import eu.peernetwork.media.ui.R
 
 @Composable
-fun NudgeButton(
+fun DesignPill(
     count: Int,
     enabled: Boolean,
     color: Color,
@@ -76,13 +73,13 @@ fun NudgeButton(
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun PreviewNudgeButton() {
-    NudgeButton(
+    DesignPill(
         count = 2,
         enabled = true,
         color = MaterialTheme.colorScheme.surfaceVariant,
     ) {
         Text(
-            stringResource(R.string.done_label),
+            "Done",
             modifier = Modifier.padding(end = 8.dp)
         )
     }

@@ -33,7 +33,9 @@ class UserPostsUsecase @Inject constructor(
         return Pager(
             config = PagingConfig(
                 pageSize = param.page.limit,
-                enablePlaceholders = false
+                prefetchDistance = param.page.limit,
+                initialLoadSize = param.page.limit,
+                enablePlaceholders = false,
             ),
             pagingSourceFactory = { source() }
         ).flow
@@ -43,7 +45,7 @@ class UserPostsUsecase @Inject constructor(
         val currentOffset = params.key ?: param.page.offset
         val currentPage = Pageable(
             offset = currentOffset,
-            limit = param.page.limit
+            limit = params.loadSize
         )
         val response = usecase(
             PhotosUsecase.Parameter(
@@ -56,8 +58,14 @@ class UserPostsUsecase @Inject constructor(
             LoadResult.Error(NoContentException())
         } else {
             LoadResult.Page(
-                data = response.items.map { it.mapToPhoto(context) { annotationUsecase(it) } },
-                prevKey = if (currentOffset <= 0) null else currentOffset - 1,
+                data = response.items.map { photo ->
+                    photo.mapToPhoto(context) { annotationUsecase(it) }
+                },
+                prevKey = if (currentOffset != param.page.offset) {
+                    (currentOffset - params.loadSize).coerceAtLeast(0)
+                } else {
+                   null
+                },
                 nextKey = if (response.items.isNotEmpty()) {
                     currentOffset + response.items.size
                 } else {

@@ -1,4 +1,4 @@
-package eu.peernetwork.blog.ui.compose
+package eu.peernetwork.blog.ui.timeline.photo
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.RowScope
@@ -8,11 +8,14 @@ import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.paging.compose.LazyPagingItems
+import eu.peernetwork.blog.ui.compose.PhotoContent
+import eu.peernetwork.blog.ui.compose.TextContent
 import eu.peernetwork.blog.ui.event.UiEngagementEvent
 import eu.peernetwork.blog.ui.model.UiMedia
 import eu.peernetwork.blog.ui.model.UiPost
@@ -21,12 +24,12 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toPersistentList
 
 @Composable
-fun PhotoPage(
+fun PhotoPager(
     id: String,
     position: Int,
     engagement: UiEngagementEvent,
     moderation: UiModerationEvent,
-    lazyPagingItems: LazyPagingItems<UiPost>,
+    lazyPagingItems: State<LazyPagingItems<UiPost>>,
     onAuthorClick: (String) -> Unit = {},
     onMentionClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
@@ -40,13 +43,13 @@ fun PhotoPage(
     val updatedConnection by rememberUpdatedState(connection)
     val pagerState = rememberPagerState(
         initialPage = position
-    ) { lazyPagingItems.itemCount }
+    ) { lazyPagingItems.value.itemCount }
     VerticalPager(pagerState) { page ->
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier.fillMaxSize()
         ) {
-            val post = lazyPagingItems[page]
+            val post = lazyPagingItems.value[page]
             if (post != null) {
                 if (post.type == UiPost.Type.TEXT) {
                     TextContent(
@@ -65,13 +68,13 @@ fun PhotoPage(
                                         post.author.isfollowed
                                     )
                                 )
-                            } },
+                            }
+                        },
                         header = header
                     )
-                } else {
+                } else if (post.type == UiPost.Type.IMAGE) {
                     val state = rememberPagerState(initialPage = 0) { post.media.size }
                     PhotoContent(
-                        id = id,
                         post = post,
                         uiEngagementEvent = engagement,
                         uiModerationEvent = moderation,
@@ -89,8 +92,13 @@ fun PhotoPage(
                                         post.author.isfollowed
                                     )
                                 )
-                            } },
+                            }
+                        },
                     ) { updatedContent(post, state, page == pagerState.currentPage) }
+                } else if (post.type == UiPost.Type.AUDIO) {
+
+                } else if (post.type == UiPost.Type.VIDEO) {
+
                 }
             } else {
                 CircularProgressIndicator()

@@ -98,6 +98,7 @@ fun FeedPreview(
         photo = {
             PhotoScreen(
                 id = id,
+                status = enable,
                 postLimit = BuildConfig.PAGING_LIMIT,
                 category = category,
                 criteria = criteria,

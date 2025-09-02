@@ -76,7 +76,6 @@ fun AttachmentPreview(
         onRemove = onRemove,
         onPreview = onPreview,
     ) { index ->
-        val file = attached.files[index]
         when (attached.media) {
             UiMimeType.Music -> {
                 Box {

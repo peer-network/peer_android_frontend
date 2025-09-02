@@ -5,13 +5,11 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -21,9 +19,6 @@ import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
 import dev.materii.pullrefresh.DragRefreshLayout
 import dev.materii.pullrefresh.rememberPullRefreshState
-import eu.peernetwork.blog.ui.compose.PhotoIndicator
-import eu.peernetwork.blog.ui.compose.PhotoPage
-import eu.peernetwork.blog.ui.compose.PhotoPager
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
 import eu.peernetwork.blog.ui.event.UiPostEvent
 import eu.peernetwork.blog.ui.model.UiPost
@@ -33,7 +28,6 @@ import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffold
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
 import eu.peernetwork.core.ui.extension.builder
-import eu.peernetwork.media.core.renderer.ImageView
 import kotlinx.coroutines.flow.Flow
 
 @Composable
@@ -86,12 +80,8 @@ fun PhotoOverlay(
                     CircularProgressIndicator()
                 }
             } else {
-                val refreshed = remember { derivedStateOf {
-                    lazyPagingItems.loadState.refresh is LoadState.NotLoading
-                } }
                 EngagementScreen(
                     postLimit = limit,
-                    refresh = refreshed,
                     onMentionClick = event::onMentionClick,
                     onHashtagClick = event::onHashtagClick,
                     onAuthorClick = event::onAuthorClick,
@@ -103,61 +93,61 @@ fun PhotoOverlay(
                         component,
                         viewModelStoreOwner
                     ) { moderation ->
-                        PhotoPage(
-                            id = author,
-                            position = position,
-                            engagement = engagement,
-                            moderation = moderation,
-                            lazyPagingItems = lazyPagingItems,
-                            onAuthorClick = event::onAuthorClick,
-                            onMentionClick = event::onMentionClick,
-                            onHashtagClick = event::onHashtagClick,
-                            connection = connection,
-                            header = header,
-                            indicator = { state, items -> PhotoIndicator(state, items) },
-                            content = { post, pagerState, active ->
-                                if (post.media.size > 1) {
-                                    PhotoPager(
-                                        pagerState,
-                                        0f,
-                                        post.media
-                                    ) { path ->
-                                        component.imageView()(
-                                            Modifier,
-                                            ImageView.Spec(
-                                                path,
-                                                null,
-                                                ContentScale.Crop,
-                                                500f,
-                                            )
-                                        )
-                                        component.imageView()(
-                                            Modifier,
-                                            ImageView.Spec(path, post.aspectRatio, zoomable = true)
-                                        )
-                                    }
-                                } else {
-                                    val media = post.media.first()
-                                    component.imageView()(
-                                        Modifier,
-                                        ImageView.Spec(
-                                            media.path,
-                                            null,
-                                            ContentScale.Crop,
-                                            500f,
-                                        )
-                                    )
-                                    component.imageView()(
-                                        Modifier,
-                                        ImageView.Spec(media.path, null,zoomable = true))
-                                }
-                                LaunchedEffect(Unit) {
-                                    if (!post.isViewed) {
-                                        viewModel.view(post.id)
-                                    }
-                                }
-                            }
-                        )
+//                        PhotoPage(
+//                            id = author,
+//                            position = position,
+//                            engagement = engagement,
+//                            moderation = moderation,
+//                            lazyPagingItems = lazyPagingItems,
+//                            onAuthorClick = event::onAuthorClick,
+//                            onMentionClick = event::onMentionClick,
+//                            onHashtagClick = event::onHashtagClick,
+//                            connection = connection,
+//                            header = header,
+//                            indicator = { state, items -> PhotoIndicator(state, items) },
+//                            content = { post, pagerState, active ->
+//                                if (post.media.size > 1) {
+//                                    PhotoPager(
+//                                        pagerState,
+//                                        0f,
+//                                        post.media
+//                                    ) { path ->
+//                                        component.imageView()(
+//                                            Modifier,
+//                                            ImageView.Spec(
+//                                                path,
+//                                                null,
+//                                                ContentScale.Crop,
+//                                                500f,
+//                                            )
+//                                        )
+//                                        component.imageView()(
+//                                            Modifier,
+//                                            ImageView.Spec(path, post.aspectRatio, zoomable = true)
+//                                        )
+//                                    }
+//                                } else {
+//                                    val media = post.media.first()
+//                                    component.imageView()(
+//                                        Modifier,
+//                                        ImageView.Spec(
+//                                            media.path,
+//                                            null,
+//                                            ContentScale.Crop,
+//                                            500f,
+//                                        )
+//                                    )
+//                                    component.imageView()(
+//                                        Modifier,
+//                                        ImageView.Spec(media.path, null,zoomable = true))
+//                                }
+//                                LaunchedEffect(Unit) {
+//                                    if (!post.isViewed) {
+//                                        viewModel.view(post.id)
+//                                    }
+//                                }
+//                            }
+//                        )
                     }
                 }
             }

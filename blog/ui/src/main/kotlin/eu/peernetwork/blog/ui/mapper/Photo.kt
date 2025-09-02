@@ -34,6 +34,7 @@ fun Content.Type.mapFromDomain():  UiPost.Type {
         Content.Type.TEXT -> UiPost.Type.TEXT
         Content.Type.IMAGE -> UiPost.Type.IMAGE
         Content.Type.AUDIO -> UiPost.Type.AUDIO
+        Content.Type.VIDEO -> UiPost.Type.VIDEO
         else -> UiPost.Type.TEXT
     }
 }

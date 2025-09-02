@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.rememberScrollState
@@ -31,7 +30,6 @@ import eu.peernetwork.core.ui.design.compose.DesignTitleStyle
 
 @Composable
 fun PhotoContent(
-    id: String,
     post: UiPost,
     uiEngagementEvent: UiEngagementEvent,
     uiModerationEvent: UiModerationEvent,

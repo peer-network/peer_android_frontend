@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.compose.ui.text.AnnotatedString
 import eu.peernetwork.blog.domain.model.Content
 import eu.peernetwork.blog.ui.model.UiContent
+import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.model.UiVideo
 
 fun Content.mapToVideo(context: Context, annotate: (String) -> AnnotatedString): UiVideo {
@@ -42,5 +43,27 @@ fun UiVideo.mapToContent(): UiContent {
         isViewed = isViewed,
         views = views,
         comment = comment
+    )
+}
+
+fun UiPost.mapToVideo(): UiVideo {
+    val media = media.first()
+    return UiVideo(
+        id = id,
+        title = title,
+        description = description,
+        author = author,
+        createdAt = createdAt,
+        likes = likes,
+        isLiked = isLiked,
+        isDisliked = isDisliked,
+        dislikes = dislikes,
+        isViewed = isViewed,
+        views = views,
+        comment = comment,
+        aspectRatio = media.getAspectRatio(),
+        resolution = media.options.resolution,
+        time = time,
+        media = media.path
     )
 }

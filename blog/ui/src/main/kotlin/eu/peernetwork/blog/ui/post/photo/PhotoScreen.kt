@@ -15,7 +15,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.paging.LoadState
 import eu.peernetwork.blog.ui.compose.PostPlaceholder
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
 import eu.peernetwork.blog.ui.event.UiPostEvent
@@ -74,12 +73,8 @@ fun PhotoScreen(
             DesignError(refresh, error, component.resource())
         }
     ) { state, lazyPagingItems ->
-        val refreshed = remember { derivedStateOf {
-            lazyPagingItems.loadState.refresh is LoadState.NotLoading
-        } }
         EngagementScreen(
             postLimit,
-            refreshed,
             onMentionClick = event::onMentionClick,
             onHashtagClick = event::onHashtagClick,
             event::onAuthorClick,

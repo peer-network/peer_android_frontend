@@ -45,7 +45,7 @@ import eu.peernetwork.core.ui.factory.UiViewModelStore
 import eu.peernetwork.media.core.model.UiAttachment
 import eu.peernetwork.media.core.model.UiMimeType
 import eu.peernetwork.media.ui.R
-import eu.peernetwork.media.ui.compose.NudgeButton
+import eu.peernetwork.core.ui.design.compose.DesignPill
 import eu.peernetwork.media.ui.saveable.UiAttachmentSaver
 import eu.peernetwork.media.ui.selector.audio.AudioScreen
 import eu.peernetwork.media.ui.selector.directory.DirectoryScreen
@@ -252,7 +252,7 @@ fun ExplorerScreen(
             }
             Spacer(modifier = Modifier.weight(1f))
             AnimatedVisibility(state.value) {
-                NudgeButton(
+                DesignPill(
                     count = attachment.value.files.size,
                     onClick = onFinish,
                     color = border,

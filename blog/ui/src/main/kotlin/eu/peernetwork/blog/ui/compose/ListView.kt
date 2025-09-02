@@ -18,9 +18,10 @@ import kotlinx.coroutines.flow.onEach
 
 @Composable
 @OptIn(FlowPreview::class)
-fun ListPreview(
+fun ListView(
     listState: LazyListState,
     onClear: () -> Unit = {},
+    onFocused: (Int) -> Unit = {},
     onFocus: (Int) -> Unit = {},
     content: @Composable (State<Int>) -> Unit
 ) {
@@ -28,8 +29,9 @@ fun ListPreview(
     val currentPosition = remember { mutableIntStateOf(-1) }
     val handleClear by rememberUpdatedState(onClear)
     val handleFocus by rememberUpdatedState(onFocus)
+    val handleOnFocused by rememberUpdatedState(onFocused)
     val updatedContent by rememberUpdatedState(content)
-    LaunchedEffect(listState) {
+    LaunchedEffect(Unit) {
         snapshotFlow { listState.isScrollInProgress }
             .distinctUntilChanged()
             .onEach {
@@ -64,6 +66,7 @@ fun ListPreview(
                     position = newPosition
                 }
                 if (!listState.isScrollInProgress) {
+                    handleOnFocused(position)
                     currentPosition.intValue = position
                 }
             }

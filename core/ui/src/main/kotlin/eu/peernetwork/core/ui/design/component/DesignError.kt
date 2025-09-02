@@ -5,7 +5,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -73,7 +72,7 @@ fun DesignError(
 }
 
 @Composable
-fun ColumnScope.DesignError(
+fun DesignError(
     error: Throwable,
     color: Color = MaterialTheme.colorScheme.tertiary
 ) {
@@ -116,10 +115,13 @@ fun DesignError(
     val errorMessage = stringResource(R.string.unknown_error_message)
     val noContentMessage = stringResource(R.string.empty_message)
     DesignError(
-        if (error is NoContentException) {
+        error = if (error is NoContentException) {
             Throwable(noContentMessage, error)
         } else {
-            Throwable(resource.string(error.message ?: errorMessage), error)
+            Throwable(
+                message = resource.string(error.message ?: errorMessage),
+                cause = error
+            )
         },
         onRetry = onRefresh,
         modifier = Modifier.fillMaxSize()
@@ -135,14 +137,6 @@ fun PreviewDesignError() {
             DesignError(
                 error = RuntimeException(),
                 modifier = Modifier.fillMaxWidth().weight(1f),
-                onRetry = {  }
-            )
-            Spacer(modifier = Modifier.fillMaxWidth().height(1.dp)
-                .background(MaterialTheme.colorScheme.onBackground))
-            DesignError(
-                error = RuntimeException(),
-                modifier = Modifier.fillMaxWidth().weight(1f),
-                label = { Text("Hello, world!") },
                 onRetry = {  }
             )
             Spacer(modifier = Modifier.fillMaxWidth().height(1.dp)

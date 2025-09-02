@@ -189,7 +189,7 @@ fun DesignBottomSheetScaffold(
 fun PreviewDesignBottomSheetScaffold() {
     PeerTheme {
         val state = remember {
-            mutableStateOf<DesignBottomSheetState>(DesignBottomSheetState.HIDE)
+            mutableStateOf(DesignBottomSheetState.HIDE)
         }
         Box(
             contentAlignment = Alignment.Center,

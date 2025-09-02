@@ -43,7 +43,6 @@ import eu.peernetwork.core.ui.theme.PeerAppRed
 @Composable
 fun EngagementScreen(
     postLimit: Int,
-    refresh: State<Boolean>,
     onMentionClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
     onAuthorClick: (String) -> Unit = {},
@@ -120,11 +119,6 @@ fun EngagementScreen(
     }
     updatedContent(event)
     LaunchedEffect(Unit) { viewModel.initialize() }
-    LaunchedEffect(refresh.value) {
-        if (refresh.value) {
-            viewModel.reset()
-        }
-    }
     LaunchedEffect(hasError.value) {
         if (hasError.value) {
             val error = (state as? EngagementViewModel.State.Error)?.error?.message
