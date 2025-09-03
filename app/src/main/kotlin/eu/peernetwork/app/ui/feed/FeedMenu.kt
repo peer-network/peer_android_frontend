@@ -43,6 +43,8 @@ fun FeedMenu(
         stringResource(UiFilter.ALL.value) to Category.ALL,
         stringResource(UiFilter.FOLLOWER.value) to Category.FOLLOWER,
         stringResource(UiFilter.FOLLOWED.value) to Category.FOLLOWED,
+        stringResource(UiFilter.MOST_LIKED.value) to Category.MOST_LIKED,
+        stringResource(UiFilter.MOST_DISLIKED.value) to Category.MOST_DISLIKED,
     )
     DesignTitleBarHost(
         "FeedScreen$id$title",

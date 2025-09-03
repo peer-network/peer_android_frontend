@@ -28,6 +28,7 @@ import eu.peernetwork.app.extension.navigateToTagSearch
 import eu.peernetwork.app.extension.navigateToUsernameSearch
 import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.blog.domain.model.Category
+import eu.peernetwork.blog.domain.model.toCriteriaOrNull
 import eu.peernetwork.blog.ui.event.UiPostEvent
 import eu.peernetwork.blog.ui.timeline.photo.PhotoScreen
 import eu.peernetwork.blog.ui.timeline.video.VideoScreen
@@ -87,6 +88,9 @@ fun FeedPreview(
             override fun onAuthorClick(id: String) = controller.navigateIfNecessary("profile/$id")
         }
     }
+    val effectiveCriteria by remember(category, criteria) {
+        mutableStateOf(criteria ?: category.toCriteriaOrNull())
+    }
     FeedPreview(
         state = state,
         pageState = pageState,
@@ -101,7 +105,7 @@ fun FeedPreview(
                 status = enable,
                 postLimit = BuildConfig.PAGING_LIMIT,
                 category = category,
-                criteria = criteria,
+                criteria = effectiveCriteria,
                 event = event,
                 provider = component,
                 viewModelStoreOwner = viewModelStoreOwner,
@@ -121,7 +125,7 @@ fun FeedPreview(
                 enable = enable,
                 postLimit = BuildConfig.PAGING_LIMIT,
                 category = category,
-                criteria = criteria,
+                criteria = effectiveCriteria,
                 event = event,
                 provider = component,
                 viewModelStoreOwner = viewModelStoreOwner,

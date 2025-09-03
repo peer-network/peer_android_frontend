@@ -11,7 +11,9 @@ class CategoryUsecase @Inject constructor() : ParameterizedSuspendableUseCase<Ca
         return when (param.category) {
             Category.FOLLOWED  -> param.types + Content.Type.FOLLOWED
             Category.FOLLOWER  -> param.types + Content.Type.FOLLOWER
-            Category.ALL      -> param.types
+            Category.ALL,
+            Category.MOST_LIKED,
+            Category.MOST_DISLIKED -> param.types
         }
     }
 
