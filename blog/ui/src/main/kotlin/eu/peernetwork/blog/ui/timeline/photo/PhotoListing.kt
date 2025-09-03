@@ -81,6 +81,10 @@ fun PhotoListing(
                 )
             },
             audio = { updatedAudio(it, index, position) },
+            audioPreview = { post ->
+                val path = post.media.first().options.cover ?: ""
+                updatedImage(path, post.aspectRatio)
+            },
             video = { updatedVideo(it, index, position) },
             image = { post ->
                 if (post.media.size == 1) {

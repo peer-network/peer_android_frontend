@@ -44,13 +44,13 @@ fun ProfileBlog(
         when (offset) {
             0 -> PhotoScreen(
                 author = id,
+                status = enable,
                 postLimit = limit,
                 lastUpdated = lastUpdated,
                 provider = provider,
                 viewModelStoreOwner = viewModelStoreOwner,
                 event = event,
-                listState = photoState,
-                connection = connection
+                listState = photoState
             )
             1 -> VideoScreen(
                 author = id,

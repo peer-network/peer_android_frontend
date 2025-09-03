@@ -26,7 +26,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.LoadState
 import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.blog.domain.model.Category
-import eu.peernetwork.blog.ui.compose.ContentScaffold
+import eu.peernetwork.blog.ui.compose.RefreshableContentScaffold
 import eu.peernetwork.blog.ui.compose.PhotoIndicator
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
 import eu.peernetwork.blog.ui.event.UiPostEvent
@@ -101,7 +101,7 @@ fun PhotoOverlay(
             component,
             viewModelStoreOwner
         ) { moderation ->
-            ContentScaffold(
+            RefreshableContentScaffold(
                 state = derivedState,
                 resource = component.resource(),
                 onRefresh = {

@@ -1,4 +1,4 @@
-package eu.peernetwork.blog.ui.timeline.photo
+package eu.peernetwork.blog.ui.post.photo
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.RowScope
@@ -22,11 +22,11 @@ import eu.peernetwork.blog.ui.compose.PhotoPager
 import eu.peernetwork.blog.ui.compose.TextContent
 import eu.peernetwork.blog.ui.compose.VideoContent
 import eu.peernetwork.blog.ui.event.UiEngagementEvent
-import eu.peernetwork.blog.ui.model.UiMedia
-import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.event.UiModerationEvent
 import eu.peernetwork.blog.ui.event.UiPostEvent
 import eu.peernetwork.blog.ui.mapper.mapToVideo
+import eu.peernetwork.blog.ui.model.UiMedia
+import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.model.UiVideo
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toPersistentList

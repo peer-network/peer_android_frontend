@@ -23,6 +23,7 @@ import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import eu.peernetwork.core.common.interactor.ResourceInteractor
 import eu.peernetwork.core.ui.design.component.DesignError
+import eu.peernetwork.core.ui.design.compose.DesignPager
 import eu.peernetwork.core.ui.design.compose.DesignPagerState
 import eu.peernetwork.core.ui.design.compose.DesignRefreshablePager
 import eu.peernetwork.core.ui.design.compose.DesignSceneState
@@ -31,6 +32,34 @@ import kotlinx.coroutines.flow.Flow
 
 @Composable
 fun<T : Any> ContentScaffold(
+    state: State<DesignSceneState<Flow<PagingData<T>>>>,
+    modifier: Modifier = Modifier,
+    resource: ResourceInteractor,
+    onRefresh: () -> Unit = {},
+    default: @Composable () -> Unit = {
+        Box(modifier = Modifier.fillMaxSize()
+            .verticalScroll(rememberScrollState())
+        ) { PostPlaceholder(contentPaddingValues = PaddingValues(16.dp)) }
+    },
+    loading: @Composable () -> Unit = {
+        Box(modifier = Modifier.fillMaxSize()
+            .verticalScroll(rememberScrollState())
+        ) { PostPlaceholder(contentPaddingValues = PaddingValues(16.dp)) }
+    },
+    content: @Composable (State<DesignPagerState>, data: State<LazyPagingItems<T>>) -> Unit
+) {
+    DesignPager(
+        state = state,
+        modifier = modifier,
+        default = default,
+        loading = loading,
+        error = { DesignError(onRefresh, it.value, resource) },
+        content = content
+    )
+}
+
+@Composable
+fun<T : Any> RefreshableContentScaffold(
     state: State<DesignSceneState<Flow<PagingData<T>>>>,
     modifier: Modifier = Modifier,
     resource: ResourceInteractor,
@@ -113,7 +142,7 @@ private fun <T : Any> PreviewBox(
             color = MaterialTheme.colorScheme.onPrimary
         )
     ) {
-        ContentScaffold(
+        RefreshableContentScaffold(
             state = rememberedState,
             modifier = modifier,
             resource = resource,

@@ -15,6 +15,8 @@ interface AudioPlayer : Renderer.Stateful<AudioPlayer.Spec> {
         position: Int,
         pause: State<Boolean>,
         enable: State<Boolean>,
+        length: MutableLongState,
+        progress: MutableFloatState,
         current: MutableState<Int>,
         modifier: Modifier
     )

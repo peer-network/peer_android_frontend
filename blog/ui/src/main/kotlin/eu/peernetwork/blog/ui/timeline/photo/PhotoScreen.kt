@@ -25,7 +25,7 @@ import eu.peernetwork.core.ui.extension.builder
 import androidx.lifecycle.viewmodel.compose.viewModel
 import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.blog.domain.model.Category
-import eu.peernetwork.blog.ui.compose.ContentScaffold
+import eu.peernetwork.blog.ui.compose.RefreshableContentScaffold
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
 import eu.peernetwork.blog.ui.event.UiPostEvent
 import eu.peernetwork.blog.ui.mapper.mapToVideo
@@ -87,6 +87,7 @@ fun PhotoScreen(
     }
     val current = remember { mutableIntStateOf(-1) }
     val pause = remember { mutableStateOf(false) }
+    val length = remember { mutableLongStateOf(0L) }
     val lifecycleObserver = remember {
         LifecycleEventObserver { _, event ->
             when (event) {
@@ -113,7 +114,7 @@ fun PhotoScreen(
             provider = component,
             viewModelStoreOwner = viewModelStoreOwner
         ) { moderation ->
-            ContentScaffold(
+            RefreshableContentScaffold(
                 state = derivedState,
                 resource = component.resource(),
                 onRefresh = { viewModel.load(Pageable(0, postLimit), category, criteria) }
@@ -131,19 +132,22 @@ fun PhotoScreen(
                     audio = { post, index, position ->
                         val path by remember { derivedStateOf { post.media.first().path } }
                         val enable = remember { derivedStateOf { index == position.value } }
+                        val progress = remember { mutableFloatStateOf(0f) }
                         component.audioPlayer().Thumbnail(
                             path = path,
                             position = index,
                             enable = enable,
                             pause = pause,
+                            length = length,
+                            progress = progress,
                             current = current,
                             modifier = Modifier
                         )
                     },
                     video = { post, index, position ->
                         val videoPost = post.mapToVideo()
-                        val enable = remember { derivedStateOf { index == position.value } }
-                        val isPlaying = remember { derivedStateOf { enable.value && status.value } }
+                        val enable = remember { derivedStateOf { !listState.isScrollInProgress } }
+                        val isPlaying = remember { derivedStateOf { index == position.value && status.value } }
                         val postThumbnail = remember { derivedStateOf { thumbnail.value[videoPost.media] } }
                         DesignThumbnail(
                             enable = enable,

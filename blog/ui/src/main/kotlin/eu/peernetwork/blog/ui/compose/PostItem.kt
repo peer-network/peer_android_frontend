@@ -21,37 +21,62 @@ fun PostItem(
     moderation: @Composable RowScope.() -> Unit,
     actions: @Composable RowScope.() -> Unit = {},
     audio: @Composable (UiPost) -> Unit,
+    audioPreview: @Composable (UiPost) -> Unit,
     video: @Composable (UiPost) -> Unit,
     image: @Composable (UiPost) -> Unit
 ) {
     val updatedAudio by rememberUpdatedState(audio)
+    val updatedAudioPreview by rememberUpdatedState(audioPreview)
     val updatedVideo by rememberUpdatedState(video)
     val updatedImage by rememberUpdatedState(image)
     when (post.type) {
         UiPost.Type.AUDIO -> {
-            AudioView(
-                author = post.author,
-                description = post.time,
-                modifier = Modifier.padding(top = if (position == 0) {
-                    12.dp
-                } else {
-                    0.dp
-                }).padding(bottom = 12.dp)
-                    .padding(horizontal = 8.dp),
-                onClick = onClick,
-                onAuthorClick = onAuthorClick,
-                engagements = engagements,
-                moderation = moderation,
-                actions = actions,
-                audio = { updatedAudio(post) }
-            ) {
-                PostTitle(
-                    title = post.title,
-                    description = post.description,
-                    Modifier.padding(top = 12.dp, bottom = 4.dp),
-                    onMentionClick = onMentionClick,
-                    onHashtagClick = onHashtagClick
-                )
+            if (post.media.first().options.cover == null) {
+                AudioView(
+                    author = post.author,
+                    description = post.time,
+                    modifier = Modifier.padding(top = if (position == 0) {
+                        12.dp
+                    } else {
+                        0.dp
+                    }).padding(bottom = 12.dp)
+                        .padding(horizontal = 8.dp),
+                    onClick = onClick,
+                    onAuthorClick = onAuthorClick,
+                    engagements = engagements,
+                    moderation = moderation,
+                    actions = actions,
+                    audio = { updatedAudio(post) }
+                ) {
+                    PostTitle(
+                        title = post.title,
+                        description = post.description,
+                        Modifier.padding(top = 12.dp, bottom = 4.dp),
+                        onMentionClick = onMentionClick,
+                        onHashtagClick = onHashtagClick
+                    )
+                }
+            } else {
+                MediaView(
+                    author = post.author,
+                    description = post.time,
+                    modifier = Modifier.padding(bottom = 16.dp),
+                    caption = {
+                        TextView(
+                            username = post.author.username,
+                            title = post.title,
+                            description = post.description,
+                            onAuthorClick = onAuthorClick,
+                            onMentionClick = onMentionClick,
+                            onHashtagClick = onHashtagClick
+                        )
+                    },
+                    engagements = engagements,
+                    moderation = moderation,
+                    onClick = onClick,
+                    onAuthorClick = onAuthorClick,
+                    actions = actions
+                ) { updatedAudioPreview(post) }
             }
         }
         UiPost.Type.TEXT -> {

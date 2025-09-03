@@ -59,7 +59,6 @@ internal class CreatorViewModelTest {
         val draft = UiDraft(
             title = text,
             description = description,
-            media = UiMimeType.Text,
             attachment = UiAttachment.Text,
         )
         val mockData = mockk<UiPost>(relaxed = true)
@@ -80,7 +79,7 @@ internal class CreatorViewModelTest {
         val text = "<test-text>"
         val draft = mockk<UiDraft>(relaxed = true)
         val error = RuntimeException()
-        every { draft.media } returns UiMimeType.Text
+        every { draft.attachment.media } returns UiMimeType.Text
         every { textEncoderUsecase(any()) } returns text
         coEvery { contentCreationUsecase(any()) } throws error
         viewModel.create(draft)

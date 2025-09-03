@@ -1,6 +1,5 @@
 package eu.peernetwork.blog.ui.timeline.photo
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn

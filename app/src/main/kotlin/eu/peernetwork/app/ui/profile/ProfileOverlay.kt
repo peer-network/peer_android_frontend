@@ -17,6 +17,7 @@ import eu.peernetwork.app.extension.navigateToUsernameSearch
 import eu.peernetwork.app.ui.window.WindowTitle
 import eu.peernetwork.blog.ui.event.UiPostEvent
 import eu.peernetwork.blog.ui.post.photo.PhotoOverlay
+import eu.peernetwork.blog.ui.post.photo.PhotoPager
 import eu.peernetwork.blog.ui.post.video.VideoOverlay
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.compose.DesignOverlay
@@ -99,6 +100,7 @@ fun ProfileOverlay(
                         val state = (overlayState.value as ProfileOverlayState.Photo)
                         PhotoOverlay(
                             author = userId,
+                            enabled = visible.value,
                             limit = limit,
                             position = state.position,
                             provider = component,
