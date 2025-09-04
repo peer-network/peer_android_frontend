@@ -3,6 +3,7 @@ package eu.peernetwork.blog.ui.post.photo
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import eu.peernetwork.blog.domain.model.Content
 import eu.peernetwork.blog.domain.usecase.ViewUsecase
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.usecase.AuthorPostUsecase
@@ -28,11 +29,16 @@ class PhotoViewModel @Inject constructor(
 
     val state: StateFlow<State> = mutableState.asStateFlow()
 
-    fun load(author: String, page: Pageable) {
+    fun load(
+        author: String,
+        types: Set<Content.Type>,
+        page: Pageable
+    ) {
         viewModelScope.launch {
             usecase(
                 AuthorPostUsecase.Parameter(
                     author = author,
+                    types = types,
                     page = page
                 )
             ).catch { mutableState.tryEmit(State.Error(it)) }

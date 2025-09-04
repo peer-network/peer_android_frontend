@@ -53,7 +53,7 @@ internal class PhotoViewModelTest {
             delay(100)
             emit(mockPagingData)
         }
-        viewModel.load(author, Pageable(0, 1))
+        viewModel.load(author, setOf(), Pageable(0, 1))
         viewModel.state.test {
             assertTrue(awaitItem() is PhotoViewModel.State.Loading)
             assertTrue(awaitItem() is PhotoViewModel.State.Success)
@@ -69,7 +69,7 @@ internal class PhotoViewModelTest {
             throw error
         }
 
-        viewModel.load(author, Pageable(0, 1))
+        viewModel.load(author, setOf(), Pageable(0, 1))
         viewModel.state.test {
             assertEquals(PhotoViewModel.State.Error(error), awaitItem())
         }

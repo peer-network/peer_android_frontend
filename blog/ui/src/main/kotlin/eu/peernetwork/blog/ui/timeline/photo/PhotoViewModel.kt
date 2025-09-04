@@ -30,14 +30,11 @@ class PhotoViewModel @Inject constructor(
 
     val state: StateFlow<State> = mutableState.asStateFlow()
 
-    var lastCategory: Category? = null
-
     fun load(
         page: Pageable,
         category: Category = Category.ALL,
         criteria: Criteria? = null
     ) {
-        lastCategory = category
         viewModelScope.launch {
             usecase(
                 UserPostsUsecase.Parameter(

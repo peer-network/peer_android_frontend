@@ -15,7 +15,6 @@ import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.blog.domain.model.Category
 import eu.peernetwork.blog.ui.event.UiPostEvent
 import eu.peernetwork.blog.ui.timeline.photo.PhotoOverlay
-import eu.peernetwork.blog.ui.timeline.video.VideoOverlay
 import eu.peernetwork.core.ui.design.compose.DesignOverlay
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.core.ui.factory.UiViewModelStore
@@ -25,12 +24,12 @@ import eu.peernetwork.social.ui.connection.ConnectionScreen
 sealed interface FeedOverlayState {
     data object Empty : FeedOverlayState
 
-    data class Photo(
+    data class Post(
         val id: String,
         val position: Int
     ) : FeedOverlayState
 
-    data class Video(
+    data class Media(
         val id: String,
         val position: Int
     ) : FeedOverlayState
@@ -64,11 +63,11 @@ fun FeedOverlay(
                 override fun onHashtagClick(tag: String) = controller.navigateToTagSearch(tag)
 
                 override fun onPostClick(id: String, position: Int) {
-                    overlay.value = FeedOverlayState.Photo(id, position)
+                    overlay.value = FeedOverlayState.Post(id, position)
                 }
 
-                override fun onVideoClick(id: String, position: Int) {
-                    overlay.value = FeedOverlayState.Video(id, position)
+                override fun onMediaClick(id: String, position: Int) {
+                    overlay.value = FeedOverlayState.Media(id, position)
                 }
 
                 override fun onAuthorClick(id: String) = controller.navigateIfNecessary("profile/$id")
@@ -84,17 +83,18 @@ fun FeedOverlay(
             onCancel = { visible.value = false }
         ) {
             when (overlayState.value) {
-                is FeedOverlayState.Photo -> {
-                    val state = (overlayState.value as FeedOverlayState.Photo)
+                is FeedOverlayState.Post -> {
+                    val state = (overlayState.value as FeedOverlayState.Post)
+                    val storeKey = "${Category.FOLLOWER};${criteria?.toString() ?: userId}"
                     PhotoOverlay(
                         id = userId,
                         limit = postLimit,
                         enabled = visible.value,
                         position = state.position,
-                        category = Category.ALL,
+                        category = Category.FOLLOWER,
                         criteria = criteria,
                         provider = component,
-                        viewModelStoreOwner = viewModelStore.get(criteria?.toString() ?: userId),
+                        viewModelStoreOwner = viewModelStore.get(storeKey),
                         event = event,
                         header = {
                             WindowTitle(
@@ -112,16 +112,18 @@ fun FeedOverlay(
                         )
                     }
                 }
-                is FeedOverlayState.Video -> {
-                    val state = (overlayState.value as FeedOverlayState.Video)
-                    VideoOverlay(
+                is FeedOverlayState.Media -> {
+                    val state = (overlayState.value as FeedOverlayState.Media)
+                    val storeKey = "$userId;${Category.FOLLOWED};${criteria?.toString() ?: userId}"
+                    PhotoOverlay(
+                        id = userId,
                         limit = postLimit,
-                        position = state.position,
                         enabled = visible.value,
-                        category = Category.ALL,
+                        position = state.position,
+                        category = Category.FOLLOWED,
                         criteria = criteria,
                         provider = component,
-                        viewModelStoreOwner = viewModelStore.get(criteria?.toString() ?: userId),
+                        viewModelStoreOwner = viewModelStore.get(storeKey),
                         event = event,
                         header = {
                             WindowTitle(

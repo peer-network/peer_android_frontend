@@ -26,7 +26,6 @@ class AuthenticationInteractorDelegate @Inject constructor(
         if (currentUser != null) {
             return currentUser
         }
-        publisher(ACCOUNT_KEY, null)
         val user = authenticationRepository.authenticated()
         publisher(USER_KEY, user)
         return user

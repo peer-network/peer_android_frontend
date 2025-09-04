@@ -6,7 +6,6 @@ import eu.peernetwork.app.ui.search.Search
 import eu.peernetwork.app.ui.settings.Settings
 import eu.peernetwork.app.ui.window.Window
 import eu.peernetwork.blog.ui.post.photo.Photo
-import eu.peernetwork.blog.ui.post.video.Video
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.social.ui.connection.Connection
@@ -30,7 +29,6 @@ interface Profile : ApplicationProvider {
         UiComponentProvider,
         User,
         Photo,
-        Video,
         Search,
         Settings,
         Followers,

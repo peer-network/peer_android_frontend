@@ -3,6 +3,7 @@ package eu.peernetwork.blog.ui.post.photo
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -29,6 +30,7 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import eu.peernetwork.blog.domain.model.Content
 import eu.peernetwork.blog.ui.compose.ContentScaffold
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
 import eu.peernetwork.blog.ui.event.UiPostEvent
@@ -48,6 +50,7 @@ import eu.peernetwork.media.core.renderer.VideoThumbnail
 @OptIn(ExperimentalMaterial3Api::class)
 fun PhotoScreen(
     author: String,
+    types: Set<Content.Type>,
     postLimit: Int,
     status: State<Boolean>,
     lastUpdated: State<Long>,
@@ -60,9 +63,7 @@ fun PhotoScreen(
     val context = LocalContext.current
     val configuration = LocalConfiguration.current
     val lifecycleOwner = LocalLifecycleOwner.current
-    val component = remember {
-        provider.builder(Photo.Builder::class.java).build(context)
-    }
+    val component = remember { provider.builder(Photo.Builder::class.java).build(context) }
     val viewModel = viewModel(
         modelClass = PhotoViewModel::class.java,
         viewModelStoreOwner = viewModelStoreOwner,
@@ -122,7 +123,8 @@ fun PhotoScreen(
             ContentScaffold(
                 state = derivedState,
                 resource = component.resource(),
-                onRefresh = { viewModel.load(author, Pageable(0, postLimit)) }
+                onRefresh = { viewModel.load(author, types, Pageable(0, postLimit)) },
+                modifier = Modifier.fillMaxSize()
             ) { state, list ->
                 PhotoListing(
                     author = author,
@@ -222,7 +224,7 @@ fun PhotoScreen(
     }
     LaunchedEffect(Unit) {
         if (derivedState.value is DesignSceneState.Default) {
-            viewModel.load(author, Pageable(0, postLimit))
+            viewModel.load(author, types, Pageable(0, postLimit))
         }
     }
     DisposableEffect(Unit) {

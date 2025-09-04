@@ -22,11 +22,11 @@ fun ProfileScreen(
     title: String? = null,
 ) {
     val context = LocalContext.current
+    val controller = rememberNavController()
     val component = remember {
         provider.builder(Profile.Builder::class.java).build(context)
     }
     val overlay = remember { mutableStateOf<ProfileOverlayState>(ProfileOverlayState.Empty) }
-    val controller = rememberNavController()
     ConnectionScreen(
         provider = component,
         viewModelStoreOwner = viewModelStore.get(userId)
@@ -49,8 +49,8 @@ fun ProfileScreen(
                 component = component,
                 viewModelStore = viewModelStore,
             ) {
-                val photoState = rememberLazyListState()
-                val videoState = rememberLazyListState()
+                val postState = rememberLazyListState()
+                val mediaState = rememberLazyListState()
                 ProfilePreview(
                     id = userId,
                     state = overlay,
@@ -58,9 +58,9 @@ fun ProfileScreen(
                     limit = BuildConfig.PAGING_LIMIT,
                     onSettings = { controller.navigateIfNecessary("settings") },
                     component = component,
-                    viewModelStoreOwner = viewModelStore.get(userId),
-                    photoState = photoState,
-                    videoState = videoState,
+                    viewModelStore = viewModelStore,
+                    postState = postState,
+                    mediaState = mediaState,
                     controller = controller
                 )
             }

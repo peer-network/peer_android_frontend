@@ -24,6 +24,7 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.LoadState
+import eu.peernetwork.blog.domain.model.Content
 import eu.peernetwork.blog.ui.compose.PhotoIndicator
 import eu.peernetwork.blog.ui.compose.RefreshableContentScaffold
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
@@ -43,6 +44,7 @@ import eu.peernetwork.media.core.renderer.VideoPlayer
 @Composable
 fun PhotoOverlay(
     author: String,
+    types: Set<Content.Type>,
     limit: Int,
     position: Int,
     enabled: Boolean,
@@ -86,21 +88,21 @@ fun PhotoOverlay(
     val updatedConnection by rememberUpdatedState(connection)
     EngagementScreen(
         postLimit = limit,
-        event::onMentionClick,
-        event::onHashtagClick,
-        event::onAuthorClick,
-        component,
-        viewModelStoreOwner,
-        connection
+        onMentionClick = event::onMentionClick,
+        onHashtagClick = event::onHashtagClick,
+        onAuthorClick = event::onAuthorClick,
+        provider = component,
+        viewModelStoreOwner = viewModelStoreOwner,
+        connection = connection
     ) { engagement ->
         ModerationScreen(
-            component,
-            viewModelStoreOwner
+            provider = component,
+            viewModelStoreOwner = viewModelStoreOwner
         ) { moderation ->
             RefreshableContentScaffold(
                 state = derivedState,
                 resource = component.resource(),
-                onRefresh = { viewModel.load(author, Pageable(0, limit)) }
+                onRefresh = { viewModel.load(author, types, Pageable(0, limit)) }
             ) { state, list ->
                 if (list.value.loadState.refresh is LoadState.Loading) {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {

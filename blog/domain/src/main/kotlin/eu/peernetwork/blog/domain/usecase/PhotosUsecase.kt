@@ -15,11 +15,13 @@ class PhotosUsecase @Inject constructor(
     private val usecase: CategoryUsecase
 ) : ParameterizedSuspendableUseCase<Parameter, Page<Content>> {
     override suspend fun invoke(param: Parameter): Page<Content> {
-        val baseTypes = setOf(Content.Type.TEXT, Content.Type.IMAGE, Content.Type.AUDIO)
         return repository.getAll(
             filter = Filter(
                 author = param.author,
-                type = usecase(CategoryUsecase.Parameter(baseTypes, param.category)),
+                type = usecase(CategoryUsecase.Parameter(
+                    types = param.types,
+                    category = param.category
+                )),
                 criteria = param.criteria
             ),
             param.page
@@ -28,8 +30,15 @@ class PhotosUsecase @Inject constructor(
 
     data class Parameter(
         val author: String? = null,
+        val types: Set<Content.Type>,
         val category: Category = Category.ALL,
         val criteria: Filter.Criteria? = null,
         val page: Pageable
     )
+
+    companion object {
+        val POST = setOf(Content.Type.TEXT, Content.Type.IMAGE)
+        val MEDIA = setOf(Content.Type.VIDEO, Content.Type.AUDIO)
+        val FEED = setOf(Content.Type.TEXT, Content.Type.IMAGE, Content.Type.VIDEO, Content.Type.AUDIO)
+    }
 }

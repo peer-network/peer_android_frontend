@@ -20,7 +20,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import eu.peernetwork.app.BuildConfig
@@ -30,9 +29,9 @@ import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.blog.domain.model.Category
 import eu.peernetwork.blog.ui.event.UiPostEvent
 import eu.peernetwork.blog.ui.timeline.photo.PhotoScreen
-import eu.peernetwork.blog.ui.timeline.video.VideoScreen
 import eu.peernetwork.core.ui.design.compose.DesignTab
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
+import eu.peernetwork.core.ui.factory.UiViewModelStore
 import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.media.core.model.UiMimeType
 import eu.peernetwork.social.ui.connection.ConnectionController
@@ -47,7 +46,7 @@ fun FeedPreview(
     selected: MutableState<FeedOverlayState>,
     requireUpdate: MutableState<Boolean>,
     component: Feed.Component,
-    viewModelStoreOwner: ViewModelStoreOwner,
+    viewModelStore: UiViewModelStore,
     controller: NavHostController,
     connectionController: State<ConnectionController>,
     title: String? = null,
@@ -77,11 +76,11 @@ fun FeedPreview(
             override fun onHashtagClick(tag: String) = controller.navigateToTagSearch(tag)
 
             override fun onPostClick(id: String, position: Int) {
-                selected.value = FeedOverlayState.Photo(id, position)
+                selected.value = FeedOverlayState.Post(id, position)
             }
 
-            override fun onVideoClick(id: String, position: Int) {
-                selected.value = FeedOverlayState.Video(id, position)
+            override fun onMediaClick(id: String, position: Int) {
+                selected.value = FeedOverlayState.Media(id, position)
             }
 
             override fun onAuthorClick(id: String) = controller.navigateIfNecessary("profile/$id")
@@ -95,43 +94,49 @@ fun FeedPreview(
             position = it
             handleOnNavigate(it)
         },
-        photo = {
+        post = {
+            val storeKey = "${Category.FOLLOWER};${criteria?.toString() ?: id}"
             PhotoScreen(
                 id = id,
                 status = enable,
                 postLimit = BuildConfig.PAGING_LIMIT,
-                category = category,
+                category = Category.FOLLOWER,
                 criteria = criteria,
                 event = event,
                 provider = component,
-                viewModelStoreOwner = viewModelStoreOwner,
+                viewModelStoreOwner = viewModelStore.get(storeKey),
                 requireUpdate = requireUpdate,
                 listState = photoState,
             ) {
                 ConnectionScreen(
                     isFollowing = connection.getOrDefault(it.first, it.third),
                     isFollowed = it.second,
-                    onClick = { follow -> connectionController.value.invoke(it.first, !follow) },
+                    onClick = { follow ->
+                        connectionController.value(it.first, !follow)
+                    },
                 )
             }
         },
-        video = {
-            VideoScreen(
+        media = {
+            val storeKey = "${Category.FOLLOWED};${criteria?.toString() ?: id}"
+            PhotoScreen(
                 id = id,
-                enable = enable,
+                status = enable,
                 postLimit = BuildConfig.PAGING_LIMIT,
-                category = category,
+                category = Category.FOLLOWED,
                 criteria = criteria,
                 event = event,
                 provider = component,
-                viewModelStoreOwner = viewModelStoreOwner,
+                viewModelStoreOwner = viewModelStore.get(storeKey),
                 requireUpdate = requireUpdate,
-                listState = videoState,
+                listState = photoState,
             ) {
                 ConnectionScreen(
                     isFollowing = connection.getOrDefault(it.first, it.third),
                     isFollowed = it.second,
-                    onClick = { follow -> connectionController.value.invoke(it.first, !follow) }
+                    onClick = { follow ->
+                        connectionController.value(it.first, !follow)
+                    },
                 )
             }
         },
@@ -166,9 +171,11 @@ fun FeedPreview(
     pageState: PagerState,
     modifier: Modifier = Modifier,
     onNavigate: (Int) -> Unit = {},
-    photo: @Composable () -> Unit,
-    video: @Composable () -> Unit,
+    post: @Composable () -> Unit,
+    media: @Composable () -> Unit,
 ) {
+    val handlePost by rememberUpdatedState(post)
+    val handleMedia by rememberUpdatedState(media)
     val handleNavigation by rememberUpdatedState(onNavigate)
     Column {
         DesignTab(pageState) { index ->
@@ -189,8 +196,8 @@ fun FeedPreview(
             verticalAlignment = Alignment.Top,
         ) { page ->
             when (page) {
-                0 -> photo()
-                1 -> video()
+                0 -> handlePost()
+                1 -> handleMedia()
             }
         }
     }
@@ -210,8 +217,8 @@ fun PreviewFeedPreview() {
             state = state,
             pageState = pageState,
             modifier = Modifier.fillMaxSize(),
-            photo = { Text("Photo") },
-            video = { Text("Video") },
+            post = { Text("Photo") },
+            media = { Text("Video") },
         )
     }
 }

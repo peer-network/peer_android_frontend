@@ -89,13 +89,13 @@ fun PhotoOverlay(
     val length = remember { mutableLongStateOf(0L) }
     val updatedConnection by rememberUpdatedState(connection)
     EngagementScreen(
-        limit,
-        event::onMentionClick,
-        event::onHashtagClick,
-        event::onAuthorClick,
-        component,
-        viewModelStoreOwner,
-        connection
+        postLimit = limit,
+        onMentionClick = event::onMentionClick,
+        onHashtagClick = event::onHashtagClick,
+        onAuthorClick = event::onAuthorClick,
+        provider = component,
+        viewModelStoreOwner = viewModelStoreOwner,
+        connection = connection
     ) { engagement ->
         ModerationScreen(
             component,

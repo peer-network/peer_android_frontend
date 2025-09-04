@@ -65,8 +65,8 @@ fun PhotoScreen(
         viewModelStoreOwner = viewModelStoreOwner,
         factory = component.viewModelFactory()
     )
-    val state by viewModel.state.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
+    val state by viewModel.state.collectAsStateWithLifecycle()
     val thumbnail = viewModel.thumbnail.collectAsStateWithLifecycle()
     val errorMessage = stringResource(R.string.unknown_error_message)
     val derivedState = remember {
@@ -219,10 +219,8 @@ fun PhotoScreen(
             }
         }
     }
-    LaunchedEffect(category, criteria) {
-        if (category != viewModel.lastCategory) {
-            viewModel.load(Pageable(0, postLimit), category, criteria)
-        }
+    LaunchedEffect(Unit) {
+        viewModel.load(Pageable(0, postLimit), category, criteria)
     }
     DisposableEffect(Unit) {
         lifecycleOwner.lifecycle.addObserver(lifecycleObserver)

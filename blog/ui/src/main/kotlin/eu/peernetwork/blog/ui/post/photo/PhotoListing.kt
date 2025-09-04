@@ -59,11 +59,18 @@ fun PhotoListing(
         listState = listState,
     ) { post, index, position ->
         val uiContent by remember { derivedStateOf { post.mapToContent() } }
+        val handleClick by rememberUpdatedState {
+            if (post.type == UiPost.Type.IMAGE || post.type == UiPost.Type.TEXT) {
+                event.onPostClick(post.id, index)
+            } else {
+                event.onMediaClick(post.id, index)
+            }
+        }
         val handleAuthorClick by rememberUpdatedState { event.onAuthorClick(post.author.id) }
         PostItem(
             post = post,
             position = index,
-            onClick = { event.onPostClick(post.id, index) },
+            onClick = handleClick,
             onAuthorClick = handleAuthorClick,
             onMentionClick = event::onMentionClick,
             onHashtagClick = event::onHashtagClick,
@@ -135,7 +142,7 @@ fun PhotoListing(
                     updatedContent(post, index, position)
                 }
             }
-            item(key = id) {
+            item(key = "$id;${lazyPagingItems.value.itemCount}") {
                 Column(modifier = Modifier.fillMaxWidth()) {
                     if (lazyPagingItems.value.loadState.append is LoadState.Loading) {
                         DesignLoader { PostPlaceholder(contentPaddingValues = PaddingValues(16.dp)) }

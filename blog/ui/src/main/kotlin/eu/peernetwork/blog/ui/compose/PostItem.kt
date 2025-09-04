@@ -2,6 +2,8 @@ package eu.peernetwork.blog.ui.compose
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -79,7 +81,11 @@ fun PostItem(
                     onAuthorClick = onAuthorClick,
                     actions = actions
                 ) {
-                    Box(contentAlignment = Alignment.BottomEnd) {
+                    Box(
+                        contentAlignment = Alignment.BottomEnd,
+                        modifier = Modifier.fillMaxWidth()
+                            .aspectRatio(post.aspectRatio)
+                    ) {
                         updatedImage(post.copy(media = persistentListOf(post.media.first().copy(path = cover))))
                         Box(modifier = Modifier.padding(16.dp)) {
                             updatedAudio(post, true)
