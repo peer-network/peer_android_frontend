@@ -34,6 +34,7 @@ import eu.peernetwork.blog.ui.moderation.ModerationScreen
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.design.compose.DesignSceneState
 import eu.peernetwork.core.ui.design.compose.DesignThumbnail
+import eu.peernetwork.media.core.renderer.AudioPlayer
 import eu.peernetwork.media.core.renderer.ImageView
 import eu.peernetwork.media.core.renderer.VideoThumbnail
 import kotlinx.coroutines.launch
@@ -88,6 +89,7 @@ fun PhotoScreen(
     val current = remember { mutableIntStateOf(-1) }
     val pause = remember { mutableStateOf(false) }
     val length = remember { mutableLongStateOf(0L) }
+    val isActive = remember { derivedStateOf { status.value && !pause.value } }
     val lifecycleObserver = remember {
         LifecycleEventObserver { _, event ->
             when (event) {
@@ -129,20 +131,33 @@ fun PhotoScreen(
                     moderation = moderation,
                     event = event,
                     connection = connection,
-                    audio = { post, index, position ->
+                    audio = { post, index, position, expanded ->
                         val path by remember { derivedStateOf { post.media.first().path } }
                         val enable = remember { derivedStateOf { index == position.value } }
-                        val progress = remember { mutableFloatStateOf(0f) }
-                        component.audioPlayer().Thumbnail(
-                            path = path,
-                            position = index,
-                            enable = enable,
-                            pause = pause,
-                            length = length,
-                            progress = progress,
-                            current = current,
-                            modifier = Modifier
-                        )
+                        if (expanded) {
+                            component.audioPlayer()(
+                                modifier = Modifier,
+                                spec = AudioPlayer.Spec(
+                                    path = path,
+                                    position = index,
+                                    enable = enable,
+                                    isActive = isActive,
+                                    length = length,
+                                    current = current,
+                                    modifier = Modifier
+                                )
+                            )
+                        } else {
+                            component.audioPlayer().Thumbnail(
+                                path = path,
+                                position = index,
+                                enable = enable,
+                                isActive = isActive,
+                                length = length,
+                                current = current,
+                                modifier = Modifier
+                            )
+                        }
                     },
                     video = { post, index, position ->
                         val videoPost = post.mapToVideo()

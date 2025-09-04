@@ -1,9 +1,11 @@
 package eu.peernetwork.blog.ui.post.photo
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.pager.rememberPagerState
@@ -42,7 +44,7 @@ fun PhotoListing(
     engagement: UiEngagementEvent,
     moderation: UiModerationEvent,
     event: UiPostEvent,
-    audio: @Composable (UiPost, Int, State<Int>) -> Unit = { path, index, position -> },
+    audio: @Composable (UiPost, Int, State<Int>, Boolean) -> Unit = { post, index, position, expanded -> },
     video: @Composable (UiPost, Int, State<Int>) -> Unit = { path, index, position -> },
     image: @Composable (String, Float) -> Unit = { path, ratio -> }
 ) {
@@ -67,21 +69,17 @@ fun PhotoListing(
             onHashtagClick = event::onHashtagClick,
             engagements = {
                 EngagementScreen(
-                    uiContent,
-                    engagement,
+                    model = uiContent,
+                    event = engagement,
                 )
             },
             moderation = {
                 ModerationScreen(
-                    uiContent,
-                    moderation
+                    model = uiContent,
+                    event = moderation
                 )
             },
-            audio = { updatedAudio(it, index, position) },
-            audioPreview = { post ->
-                val path = post.media.first().options.cover ?: ""
-                updatedImage(path, post.aspectRatio)
-            },
+            audio = { post, expanded -> updatedAudio(post, index, position, expanded) },
             video = { updatedVideo(it, index, position) },
             image = { post ->
                 if (post.media.size == 1) {
@@ -92,8 +90,8 @@ fun PhotoListing(
                     PhotoPager(
                         pagerState,
                         post.aspectRatio,
-                        post.media,
-                        { PhotoIndicator(pagerState, post.media) }
+                        media = post.media,
+                        indicator = { PhotoIndicator(pagerState, post.media) }
                     ) { updatedImage(it, post.aspectRatio) }
                 }
             },
@@ -138,10 +136,12 @@ fun PhotoListing(
                 }
             }
             item(key = id) {
-                Box(modifier = Modifier.fillMaxWidth()) {
+                Column(modifier = Modifier.fillMaxWidth()) {
                     if (lazyPagingItems.value.loadState.append is LoadState.Loading) {
                         DesignLoader { PostPlaceholder(contentPaddingValues = PaddingValues(16.dp)) }
                     }
+                    Box(modifier = Modifier.fillMaxWidth()
+                        .height(48.dp))
                 }
             }
         }

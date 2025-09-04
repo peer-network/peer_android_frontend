@@ -17,6 +17,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.paging.compose.LazyPagingItems
+import eu.peernetwork.blog.ui.compose.AudioContent
 import eu.peernetwork.blog.ui.compose.PhotoContent
 import eu.peernetwork.blog.ui.compose.PhotoPager
 import eu.peernetwork.blog.ui.compose.TextContent
@@ -98,7 +99,21 @@ fun PhotoPager(
                         } else { updatedImage(post, post.media.first().path) }
                     }
                 } else if (post.type == UiPost.Type.AUDIO) {
-
+                    val progress = remember { mutableFloatStateOf(0f) }
+                    AudioContent(
+                        post = post,
+                        index = page,
+                        uiEngagementEvent = engagement,
+                        uiModerationEvent = moderation,
+                        onAuthorClick = event::onAuthorClick,
+                        onPostClick = event::onPostClick,
+                        onMentionClick = event::onMentionClick,
+                        onHashtagClick = event::onHashtagClick,
+                        header = header,
+                        connection = { updatedConnection(post, it) },
+                        progress = { updatedProgress(progress) },
+                        background = { updatedAudio(post, pagerState, enabled && page == pagerState.currentPage) }
+                    ) {}
                 } else if (post.type == UiPost.Type.VIDEO) {
                     val videoPost = post.mapToVideo()
                     val progress = remember { mutableFloatStateOf(0f) }

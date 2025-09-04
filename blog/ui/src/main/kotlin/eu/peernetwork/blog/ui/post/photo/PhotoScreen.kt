@@ -14,7 +14,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -41,6 +40,7 @@ import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.compose.DesignSceneState
 import eu.peernetwork.core.ui.design.compose.DesignThumbnail
 import eu.peernetwork.core.ui.extension.builder
+import eu.peernetwork.media.core.renderer.AudioPlayer
 import eu.peernetwork.media.core.renderer.ImageView
 import eu.peernetwork.media.core.renderer.VideoThumbnail
 
@@ -90,6 +90,7 @@ fun PhotoScreen(
     }
     val current = remember { mutableIntStateOf(-1) }
     val pause = remember { mutableStateOf(false) }
+    val isActive = remember { derivedStateOf { status.value && !pause.value } }
     val length = remember { mutableLongStateOf(0L) }
     val lifecycleObserver = remember {
         LifecycleEventObserver { _, event ->
@@ -132,20 +133,33 @@ fun PhotoScreen(
                     engagement = engagement,
                     moderation = moderation,
                     event = event,
-                    audio = { post, index, position ->
+                    audio = { post, index, position, expanded ->
                         val path by remember { derivedStateOf { post.media.first().path } }
                         val enable = remember { derivedStateOf { index == position.value } }
-                        val progress = remember { mutableFloatStateOf(0f) }
-                        component.audioPlayer().Thumbnail(
-                            path = path,
-                            position = index,
-                            enable = enable,
-                            pause = pause,
-                            length = length,
-                            progress = progress,
-                            current = current,
-                            modifier = Modifier
-                        )
+                        if (expanded) {
+                            component.audioPlayer()(
+                                modifier = Modifier,
+                                spec = AudioPlayer.Spec(
+                                    path = path,
+                                    position = index,
+                                    enable = enable,
+                                    isActive = isActive,
+                                    length = length,
+                                    current = current,
+                                    modifier = Modifier
+                                )
+                            )
+                        } else {
+                            component.audioPlayer().Thumbnail(
+                                path = path,
+                                position = index,
+                                enable = enable,
+                                isActive = isActive,
+                                length = length,
+                                current = current,
+                                modifier = Modifier
+                            )
+                        }
                     },
                     video = { post, index, position ->
                         val videoPost = post.mapToVideo()

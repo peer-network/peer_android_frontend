@@ -40,8 +40,6 @@ import eu.peernetwork.core.ui.theme.PeerTheme
 fun AudioView(
     author: UiAuthor,
     description: String,
-    audioUrl: String,
-    coverUrl: String?,
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {},
     onAuthorClick: () -> Unit = {},
@@ -137,7 +135,7 @@ fun PreviewAudioView() {
                     }
                 }
             },
-            audio = { Box(modifier = Modifier.height(56.dp)) }
+            audio = { Box(modifier = Modifier.height(56.dp)) },
         ) {
             PostTitle(
                 buildAnnotatedString { append("Hello, world!") },

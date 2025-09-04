@@ -1,7 +1,6 @@
 package eu.peernetwork.media.core.renderer
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableFloatState
 import androidx.compose.runtime.MutableLongState
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
@@ -13,19 +12,20 @@ interface AudioPlayer : Renderer.Stateful<AudioPlayer.Spec> {
     fun Thumbnail(
         path: String,
         position: Int,
-        pause: State<Boolean>,
+        isActive: State<Boolean>,
         enable: State<Boolean>,
         length: MutableLongState,
-        progress: MutableFloatState,
         current: MutableState<Int>,
         modifier: Modifier
     )
 
     data class Spec(
-        val url: String,
-        val progress: MutableFloatState,
+        val path: String,
+        val position: Int,
+        val isActive: State<Boolean>,
+        val enable: State<Boolean>,
         val length: MutableLongState,
-        val enabled: Boolean = false,
-        val volume: Float = 0f
+        val current: MutableState<Int>,
+        val modifier: Modifier
     )
 }

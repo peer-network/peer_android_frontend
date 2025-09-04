@@ -1,14 +1,16 @@
 package eu.peernetwork.blog.ui.compose
 
-import android.net.Uri
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.blog.ui.model.UiPost
+import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 fun PostItem(
@@ -21,18 +23,17 @@ fun PostItem(
     engagements: @Composable RowScope.() -> Unit,
     moderation: @Composable RowScope.() -> Unit,
     actions: @Composable RowScope.() -> Unit = {},
-    audio: @Composable (UiPost) -> Unit,
-    audioPreview: @Composable (UiPost) -> Unit,
+    audio: @Composable (UiPost, Boolean) -> Unit,
     video: @Composable (UiPost) -> Unit,
     image: @Composable (UiPost) -> Unit
 ) {
     val updatedAudio by rememberUpdatedState(audio)
-    val updatedAudioPreview by rememberUpdatedState(audioPreview)
     val updatedVideo by rememberUpdatedState(video)
     val updatedImage by rememberUpdatedState(image)
     when (post.type) {
         UiPost.Type.AUDIO -> {
-            if (post.media.first().options.cover == null) {
+            val cover = post.media.first().options.cover
+            if (cover == null) {
                 AudioView(
                     author = post.author,
                     description = post.time,
@@ -47,7 +48,7 @@ fun PostItem(
                     engagements = engagements,
                     moderation = moderation,
                     actions = actions,
-                    audio = { updatedAudio(post) }
+                    audio = { updatedAudio(post, false) }
                 ) {
                     PostTitle(
                         title = post.title,
@@ -77,7 +78,14 @@ fun PostItem(
                     onClick = onClick,
                     onAuthorClick = onAuthorClick,
                     actions = actions
-                ) { updatedAudioPreview(post) }
+                ) {
+                    Box(contentAlignment = Alignment.BottomEnd) {
+                        updatedImage(post.copy(media = persistentListOf(post.media.first().copy(path = cover))))
+                        Box(modifier = Modifier.padding(16.dp)) {
+                            updatedAudio(post, true)
+                        }
+                    }
+                }
             }
         }
         UiPost.Type.TEXT -> {

@@ -15,8 +15,8 @@ import eu.peernetwork.blog.remote.mapper.mapToDomain
 import eu.peernetwork.blog.remote.mapper.mapToFilter
 import eu.peernetwork.blog.remote.mapper.mapToSortType
 import eu.peernetwork.blog.remote.model.MediaModel
-import eu.peernetwork.core.common.model.Page
-import eu.peernetwork.core.common.model.Pageable
+import eu.peernetwork.core.common.paging.Page
+import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.core.remote.extension.assertOrThrow
 import eu.peernetwork.core.remote.extension.executeOrThrow
 import eu.peernetwork.core.remote.extension.getOrThrow
