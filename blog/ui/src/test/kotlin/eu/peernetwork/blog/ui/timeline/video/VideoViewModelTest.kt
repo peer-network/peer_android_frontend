@@ -3,9 +3,10 @@ package eu.peernetwork.blog.ui.timeline.video
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.paging.PagingData
 import app.cash.turbine.test
+import eu.peernetwork.blog.domain.usecase.ViewUsecase
 import eu.peernetwork.blog.ui.mock.MockContent
 import eu.peernetwork.blog.ui.usecase.UserVideosUsecase
-import eu.peernetwork.core.common.model.Pageable
+import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.media.core.interactor.ThumbnailInteractor
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -31,6 +32,8 @@ internal class VideoViewModelTest {
 
     private val usecase = mockk<UserVideosUsecase>()
 
+    private val viewUsecase = mockk<ViewUsecase>()
+
     private val interactor = mockk<ThumbnailInteractor>(relaxed = true)
 
     private lateinit var viewModel: VideoViewModel
@@ -38,7 +41,7 @@ internal class VideoViewModelTest {
     @Before
     fun setup() {
         Dispatchers.setMain(dispatcher)
-        viewModel = VideoViewModel(usecase, interactor)
+        viewModel = VideoViewModel(usecase, viewUsecase, interactor)
     }
 
     @Test

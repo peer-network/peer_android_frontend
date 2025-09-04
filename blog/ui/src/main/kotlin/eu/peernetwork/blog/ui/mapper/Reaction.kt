@@ -7,6 +7,7 @@ fun EngagementInteractor.Reaction.mapFromDomain(): UiReaction {
     return UiReaction(
         isLiked = like,
         isDisliked = dislike,
+        isViewed = viewed,
         commented = commented
     )
 }

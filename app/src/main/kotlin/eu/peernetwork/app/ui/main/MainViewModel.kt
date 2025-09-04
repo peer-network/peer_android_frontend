@@ -2,12 +2,15 @@ package eu.peernetwork.app.ui.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import eu.peernetwork.app.interceptor.SubscriptionInteractor
 import eu.peernetwork.user.domain.model.Token
+import eu.peernetwork.user.domain.usecase.PrincipalUsecase
 import eu.peernetwork.user.domain.usecase.TokenObserverUsecase
 import eu.peernetwork.user.domain.usecase.TokenUsecase
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
@@ -15,9 +18,15 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     tokenUsecase: TokenUsecase,
     tokenObserverUsecase: TokenObserverUsecase,
+    private val usecase: PrincipalUsecase,
+    private val interactor: SubscriptionInteractor
 ) : ViewModel() {
+    @OptIn(ExperimentalCoroutinesApi::class)
     val state: StateFlow<State> = tokenObserverUsecase()
-        .map { token ->
+        .mapLatest { token ->
+            token?.let {
+                interactor.subscribe(usecase())
+            } ?: interactor.unSubscribe()
             State(token)
         }.stateIn(
             scope = viewModelScope,

@@ -6,7 +6,9 @@ import eu.peernetwork.blog.domain.usecase.DislikeUsecase
 import eu.peernetwork.blog.domain.usecase.LikeUsecase
 import eu.peernetwork.blog.domain.usecase.ObserveReactionUsecase
 import eu.peernetwork.blog.ui.mapper.mapFromDomain
+import eu.peernetwork.blog.ui.model.UiContent
 import eu.peernetwork.blog.ui.model.UiReaction
+import eu.peernetwork.core.common.interactor.NotificationInteractor
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,6 +20,7 @@ class EngagementViewModel @Inject constructor(
     private val likeUsecase: LikeUsecase,
     private val dislikeUsecase: DislikeUsecase,
     private val observeReactionUsecase: ObserveReactionUsecase,
+    private val interactor: NotificationInteractor
 ) : ViewModel() {
     private val mutableState = MutableStateFlow<State>(State.Default)
 
@@ -29,21 +32,36 @@ class EngagementViewModel @Inject constructor(
 
     fun initialize() {
         viewModelScope.launch {
-            observeReactionUsecase().collectLatest {
-                mutableReactions.emit(it.mapValues { it.value.mapFromDomain() })
+            observeReactionUsecase().collectLatest { reactions ->
+                mutableReactions.emit(reactions.mapValues { it.value.mapFromDomain() })
             }
         }
     }
 
-    fun like(id: String) {
+    fun like(content: UiContent) {
         viewModelScope.launch {
-            mutableState.emit(State.Loading)
-            runCatching {
-                likeUsecase(id)
-                mutableState.emit(State.Success(id))
-            }.onFailure {
-                mutableState.emit(State.Error(id, it))
+            handleLike(content.id) {
+                try {
+                    interactor.send(
+                        to = content.author.id,
+                        action = "like",
+                        message = content.title.text
+                    )
+                } catch (_: Throwable) {}
             }
+        }
+    }
+
+    fun like(id: String) { viewModelScope.launch { handleLike(id) } }
+
+    suspend fun handleLike(id: String, callback: suspend () -> Unit = {}) {
+        mutableState.emit(State.Loading)
+        runCatching {
+            likeUsecase(id)
+            mutableState.emit(State.Success(id))
+            callback()
+        }.onFailure {
+            mutableState.emit(State.Error(id, it))
         }
     }
 

@@ -25,7 +25,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import eu.peernetwork.media.core.model.UiFile
-import eu.peernetwork.media.core.extension.getCover
 
 @Composable
 fun AttachmentAudio(
@@ -58,8 +57,7 @@ fun AttachmentAudio(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             files.forEachIndexed { index, file ->
-                val coverForFile = file.getCover()
-
+                val coverForFile = file.cover
                 Box(
                     modifier = Modifier
                         .aspectRatio(1f)

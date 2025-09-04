@@ -43,7 +43,7 @@ import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.media.core.renderer.VideoPlayer
 import eu.peernetwork.media.ui.compose.VolumeControl
-import eu.peernetwork.media.ui.core.MediaPlayer
+import eu.peernetwork.media.ui.core.MediaSession
 import eu.peernetwork.media.ui.extension.format
 import eu.peernetwork.media.ui.extension.offset
 import eu.peernetwork.media.core.model.UiMediaProperty
@@ -101,7 +101,7 @@ fun VideoScreen(
         val stop = remember { mutableLongStateOf(duration) }
         val progress = remember { mutableFloatStateOf(0f) }
         val length = remember { mutableLongStateOf(duration) }
-        val player = remember { (component.videoInteractor() as MediaPlayer).player() }
+        val player = remember { (component.videoInteractor() as MediaSession).exoPlayer() }
         val isReady = remember { mutableStateOf(false) }
         val preview = remember { mutableStateOf(false) }
         val mute = remember { mutableStateOf(true) }

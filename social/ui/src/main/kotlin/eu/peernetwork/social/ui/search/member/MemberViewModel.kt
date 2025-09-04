@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import eu.peernetwork.core.common.model.Pageable
+import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.social.ui.model.UiMember
 import eu.peernetwork.social.ui.usecase.MemberUsecase
 import kotlinx.coroutines.flow.Flow

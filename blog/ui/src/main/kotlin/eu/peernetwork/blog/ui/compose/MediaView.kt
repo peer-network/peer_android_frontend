@@ -42,12 +42,23 @@ fun MediaView(
     contentPadding: PaddingValues = PaddingValues(0.dp),
     onClick: () -> Unit = {},
     onAuthorClick: () -> Unit = {},
+    overlay: @Composable () -> Unit = {
+        Image(
+            painter = painterResource(R.drawable.overlay_gradient),
+            contentDescription = null,
+            modifier = Modifier.fillMaxWidth()
+                .height(120.dp)
+                .rotate(180f),
+            contentScale = ContentScale.FillWidth
+        )
+    },
     actions: @Composable RowScope.() -> Unit = {},
     engagements: @Composable RowScope.() -> Unit = {},
     moderation: @Composable RowScope.() -> Unit = {},
     caption: @Composable () -> Unit = {},
     content: @Composable () -> Unit,
 ) {
+    val updatedOverlay by rememberUpdatedState(overlay)
     val updatedAction by rememberUpdatedState(actions)
     val updatedContent by rememberUpdatedState(content)
     val updatedCaption by rememberUpdatedState(caption)
@@ -80,14 +91,7 @@ fun MediaView(
             )
         ) {
             updatedContent()
-            Image(
-                painter = painterResource(R.drawable.overlay_gradient),
-                contentDescription = null,
-                modifier = Modifier.fillMaxWidth()
-                    .height(120.dp)
-                    .rotate(180f),
-                contentScale = ContentScale.FillWidth
-            )
+            updatedOverlay()
             Row(modifier = Modifier.padding(
                 vertical = 16.dp,
                 horizontal = 24.dp

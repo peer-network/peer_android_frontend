@@ -1,7 +1,7 @@
 package eu.peernetwork.social.data.repository
 
-import eu.peernetwork.core.common.model.Page
-import eu.peernetwork.core.common.model.Pageable
+import eu.peernetwork.core.common.paging.Page
+import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.social.data.api.ReferralApi
 import eu.peernetwork.social.domain.model.Referral
 import eu.peernetwork.social.domain.repository.ReferralRepository

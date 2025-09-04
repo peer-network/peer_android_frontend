@@ -27,7 +27,7 @@ import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import eu.peernetwork.blog.ui.compose.MediaView
 import eu.peernetwork.blog.ui.compose.TextView
-import eu.peernetwork.blog.ui.compose.ListPreview
+import eu.peernetwork.blog.ui.compose.ListView
 import eu.peernetwork.blog.ui.event.UiEngagementEvent
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
 import eu.peernetwork.blog.ui.mapper.mapToContent
@@ -53,7 +53,17 @@ fun VideoListing(
 ) {
     val configuration = LocalConfiguration.current
     val thumbnail = viewModel.thumbnail.collectAsStateWithLifecycle()
-    ListPreview(listState, { viewModel.reset() }) { position ->
+    ListView(
+        listState = listState,
+        onClear = { viewModel.reset() },
+        onFocus = { position ->
+            if (position < lazyPagingItems.itemCount) {
+                lazyPagingItems[position]?.let {
+                    viewModel.view(it.id)
+                }
+            }
+        }
+    ) { position ->
         LazyColumn(state = listState) {
             items(
                 count = lazyPagingItems.itemCount,

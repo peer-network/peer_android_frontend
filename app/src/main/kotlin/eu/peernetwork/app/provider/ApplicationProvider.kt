@@ -5,6 +5,7 @@ import eu.peernetwork.core.common.provider.CoreProvider
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import eu.peernetwork.app.interactor.RemoteInteractor
 import eu.peernetwork.app.interactor.SettingsInteractor
+import eu.peernetwork.app.interceptor.SubscriptionInteractor
 import eu.peernetwork.app.service.BootstrapService
 import eu.peernetwork.app.service.NetworkService
 import eu.peernetwork.core.remote.api.RequestClient
@@ -26,4 +27,6 @@ interface ApplicationProvider : UserProvider, PreferenceProvider, ContentProvide
     fun remoteInteractor(): RemoteInteractor
     
     fun settingsInteractor(): SettingsInteractor
+
+    fun subscriptionInteractor(): SubscriptionInteractor
 }

@@ -2,13 +2,14 @@ package eu.peernetwork.blog.ui.engagement
 
 import android.content.Context
 import androidx.lifecycle.ViewModelProvider
+import eu.peernetwork.blog.ui.interactions.overview.Overview
 import eu.peernetwork.blog.ui.comment.Comment
 import eu.peernetwork.blog.ui.provider.BlogProvider
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
 
 interface Engagement : BlogProvider {
-    fun engagementConfirmation(): EngagementConfirmation
+    fun engagementConfirmation(): EngagementDialog
 
     @javax.inject.Scope
     @Retention(AnnotationRetention.RUNTIME)
@@ -19,7 +20,7 @@ interface Engagement : BlogProvider {
         dependencies = [Engagement::class],
         modules = [EngagementModule::class]
     )
-    interface Component : Engagement, UiComponentProvider, Comment {
+    interface Component : Engagement, UiComponentProvider, Comment, Overview {
         fun viewModelFactory(): ViewModelProvider.Factory
     }
 

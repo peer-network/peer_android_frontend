@@ -98,6 +98,7 @@ fun FeedPreview(
         photo = {
             PhotoScreen(
                 id = id,
+                status = enable,
                 postLimit = BuildConfig.PAGING_LIMIT,
                 category = category,
                 criteria = criteria,
@@ -171,10 +172,10 @@ fun FeedPreview(
     val handleNavigation by rememberUpdatedState(onNavigate)
     Column {
         DesignTab(pageState) { index ->
-            UiMimeType.get(index)?.let {
+            UiMimeType.get(index)?.let { type ->
                 Icon(
-                    painter = painterResource(id = it.id),
-                    contentDescription = it.label?.let { stringResource(it) },
+                    painter = painterResource(id = type.id),
+                    contentDescription = type.label?.let { stringResource(it) },
                     tint = MaterialTheme.colorScheme.tertiary,
                     modifier = Modifier
                         .padding(vertical = 8.dp)

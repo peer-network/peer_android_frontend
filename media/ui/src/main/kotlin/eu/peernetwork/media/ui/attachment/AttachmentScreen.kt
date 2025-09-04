@@ -52,10 +52,11 @@ fun AttachmentScreen(
     attachment: MutableState<UiAttachment>,
     onAttach: () -> Unit,
     onSelectCover: (Uri) -> Unit,
+    modifier: Modifier = Modifier,
     onPreview: (UiAttachment) -> Unit,
+    onSelectCover: (Uri) -> Unit,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
-    modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
     val component = remember {
@@ -134,13 +135,37 @@ fun AttachmentScreen(
         state = launcher,
         imageUri = imageToCrop.value,
         selectedRatio = ratio.value,
-        onCropDone = {
-            attachment.value = UiAttachment.File(
-                UiMimeType.Photo,
-                persistentListOf(it)
-            )
+        onCropDone = { croppedFile ->
+            val currentAttachment = attachment.value
+            when (currentAttachment) {
+                is UiAttachment.File -> {
+                    if (currentAttachment.media == UiMimeType.Music) {
+                        val updatedFiles = currentAttachment.files.mapIndexed { index, file ->
+                            if (index == 0) {
+                                file.copy(path = croppedFile.path)
+                            } else file
+                        }.toPersistentList()
+                        attachment.value = UiAttachment.File(
+                            UiMimeType.Music,
+                            updatedFiles
+                        )
+                    } else {
+                        attachment.value = UiAttachment.File(
+                            UiMimeType.Photo,
+                            persistentListOf(croppedFile)
+                        )
+                    }
+                }
+                UiAttachment.Text -> {
+                    attachment.value = UiAttachment.File(
+                        UiMimeType.Photo,
+                        persistentListOf(croppedFile)
+                    )
+                }
+            }
         }
     )
+
     LaunchedEffect(permissionsState.allPermissionsGranted) {
         snapshotFlow { timestamp }
             .debounce(500L)
@@ -175,7 +200,7 @@ fun AttachmentScreen(
     onDetach: (Int) -> Unit,
 ) {
     val imageToCrop = remember(attachment.value) {
-        mutableStateOf<Uri?>(attachment.value.files.firstOrNull()?.uri)
+        mutableStateOf(attachment.value.files.firstOrNull()?.uri)
     }
     val isVisible by remember { derivedStateOf {
         imageToCrop.value != null && attachment.value.files.isNotEmpty()
@@ -249,6 +274,7 @@ fun PreviewAttachmentScreen() {
             onLoad = { null },
             onRefresh = {},
             onAttach = {},
+            onSelectCover = {},
             onSelect = {},
             onSelectCover = {},
             onPreview = {},

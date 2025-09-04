@@ -33,6 +33,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
@@ -45,8 +46,9 @@ import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.media.core.model.UiAttachment
 import eu.peernetwork.media.core.model.UiFile
 import eu.peernetwork.media.core.model.UiMimeType
-import eu.peernetwork.media.core.extension.getName
+import eu.peernetwork.media.ui.R
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toPersistentList
 
 @Composable
 fun AudioScreen(
@@ -153,7 +155,7 @@ fun AudioScreen(
                             )
 
                             Text(
-                                text = audioFile.getName(),
+                                text = audioFile.name,
                                 style = MaterialTheme.typography.bodySmall,
                                 maxLines = 1,
                                 textAlign = TextAlign.Center,

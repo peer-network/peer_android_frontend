@@ -14,7 +14,7 @@ import eu.peernetwork.app.ui.window.WindowTitle
 import eu.peernetwork.blog.ui.explore.ExploreOverlay
 import eu.peernetwork.core.ui.design.compose.DesignOverlay
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
-import eu.peernetwork.core.ui.model.ViewModelState
+import eu.peernetwork.core.ui.factory.UiViewModelStore
 import eu.peernetwork.social.ui.connection.ConnectionController
 import eu.peernetwork.social.ui.connection.ConnectionScreen
 
@@ -32,7 +32,7 @@ fun SearchOverlay(
     limit: Int,
     overlay: MutableState<SearchOverlayState>,
     component: Search.Component,
-    viewModelStore: ViewModelState,
+    viewModelStore: UiViewModelStore,
     connectionController: State<ConnectionController>,
     content: @Composable () -> Unit
 ) {

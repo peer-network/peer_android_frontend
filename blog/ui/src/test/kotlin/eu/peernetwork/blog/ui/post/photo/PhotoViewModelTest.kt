@@ -3,9 +3,11 @@ package eu.peernetwork.blog.ui.post.photo
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.paging.PagingData
 import app.cash.turbine.test
+import eu.peernetwork.blog.domain.usecase.ViewUsecase
 import eu.peernetwork.blog.ui.mock.MockContent
 import eu.peernetwork.blog.ui.usecase.AuthorPostUsecase
-import eu.peernetwork.core.common.model.Pageable
+import eu.peernetwork.core.common.paging.Pageable
+import eu.peernetwork.media.core.interactor.ThumbnailInteractor
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
@@ -30,12 +32,16 @@ internal class PhotoViewModelTest {
 
     private val usecase = mockk<AuthorPostUsecase>()
 
+    private val viewUsecase = mockk<ViewUsecase>()
+
+    private val interactor = mockk<ThumbnailInteractor>(relaxed = true)
+
     private lateinit var viewModel: PhotoViewModel
 
     @Before
     fun setup() {
         Dispatchers.setMain(dispatcher)
-        viewModel = PhotoViewModel(usecase)
+        viewModel = PhotoViewModel(usecase, viewUsecase, interactor)
     }
 
     @Test

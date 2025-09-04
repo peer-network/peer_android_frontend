@@ -17,13 +17,13 @@ import eu.peernetwork.app.ui.window.WindowScreen
 import eu.peernetwork.blog.domain.model.Filter
 import eu.peernetwork.core.ui.design.compose.DesignPageWindowMode
 import eu.peernetwork.core.ui.design.compose.DesignRouter
-import eu.peernetwork.core.ui.model.ViewModelState
+import eu.peernetwork.core.ui.factory.UiViewModelStore
 
 @Composable
 fun SearchNavigation(
     userId: String,
     component: Search.Component,
-    viewModelStore: ViewModelState,
+    viewModelStore: UiViewModelStore,
     controller: NavHostController,
     startDestination: String = "search",
     onCancel: () -> Unit = {},

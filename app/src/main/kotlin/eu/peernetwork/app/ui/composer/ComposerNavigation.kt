@@ -73,7 +73,6 @@ fun ComposerNavigation(
                                 file.copy(props = newProps)
                             } else file
                         }.toPersistentList()
-
                         attachment.value = UiAttachment.File(
                             attachment.value.media,
                             updatedFiles

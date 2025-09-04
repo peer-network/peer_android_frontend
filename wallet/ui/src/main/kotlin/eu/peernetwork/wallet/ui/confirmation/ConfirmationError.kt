@@ -25,7 +25,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import eu.peernetwork.core.common.service.ResourceService
+import eu.peernetwork.core.common.interactor.ResourceInteractor
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.design.component.DesignErrorText
 import eu.peernetwork.core.ui.design.compose.DesignOutlinedButton
@@ -35,7 +35,7 @@ import eu.peernetwork.core.ui.theme.PeerTheme
 @Composable
 fun ConfirmationError(
     error: Throwable,
-    resource: ResourceService,
+    resource: ResourceInteractor,
     onRetry: () -> Unit
 ) {
     val errorMessage = stringResource(R.string.unknown_error_message)
@@ -88,7 +88,8 @@ fun ConfirmationError(
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun PreviewConfirmationError() {
     PeerTheme {
-        val resource = remember { object : ResourceService {
+        val resource = remember { object : ResourceInteractor {
+            override fun getBaseUrl(): String = ""
             override fun string(key: String): String = key
         } }
         ConfirmationError(RuntimeException(), resource) {}

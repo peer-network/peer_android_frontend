@@ -5,9 +5,9 @@ import eu.peernetwork.user.domain.interactor.AuthenticationInteractor
 import javax.inject.Inject
 
 class PrincipalUsecase @Inject constructor(
-    private val repository: AuthenticationInteractor
+    private val interactor: AuthenticationInteractor
 ) : SuspendableUseCase<String> {
     override suspend fun invoke(): String {
-        return repository.get()
+        return interactor.get()
     }
 }

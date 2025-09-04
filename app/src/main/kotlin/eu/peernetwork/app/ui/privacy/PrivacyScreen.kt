@@ -26,7 +26,7 @@ fun PrivacyScreen(
             webViewClient = WebViewClient()
         })
     }
-    val link = remember { mutableStateOf<String?>(null) }
+    val link = remember(url) { mutableStateOf<String?>(url) }
     Column(
         modifier = Modifier
             .fillMaxSize()

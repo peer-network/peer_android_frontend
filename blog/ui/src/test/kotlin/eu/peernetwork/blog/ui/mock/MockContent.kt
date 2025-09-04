@@ -29,6 +29,8 @@ object MockContent {
             isLiked = false,
             isDisliked = false,
             comment = 0,
+            views = 0,
+            isViewed = false,
             aspectRatio = 0.1f
         )
     }
@@ -54,6 +56,8 @@ object MockContent {
             isLiked = false,
             isDisliked = false,
             comment = 0,
+            views = 0,
+            isViewed = false,
             aspectRatio = 0.1f,
             resolution = null
         )

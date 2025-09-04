@@ -16,12 +16,13 @@ dependencies {
 
     implementation(project(":media:core"))
 
-    implementation(libs.permissions)
-    implementation(libs.media3)
+    api(libs.media3)
     implementation(libs.media3.ui)
     implementation(libs.media3.transformer)
+    implementation(libs.permissions)
     implementation(libs.ucrop)
-    implementation(libs.lrucache)
+
+    api(libs.lrucache)
     implementation(libs.blur)
     implementation(libs.zoomable)
 

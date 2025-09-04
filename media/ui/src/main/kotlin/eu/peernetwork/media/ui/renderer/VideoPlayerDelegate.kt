@@ -23,13 +23,11 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableFloatState
 import androidx.compose.runtime.MutableLongState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.withFrameMillis
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -47,7 +45,7 @@ import eu.peernetwork.media.core.interactor.VideoInteractor
 import eu.peernetwork.media.core.renderer.VideoPlayer
 import eu.peernetwork.media.ui.compose.VideoControl
 import eu.peernetwork.media.ui.compose.VolumeControl
-import eu.peernetwork.media.ui.core.MediaPlayer
+import eu.peernetwork.media.ui.core.MediaSession
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -56,7 +54,7 @@ class VideoPlayerDelegate @Inject constructor(
     private val context: Context,
     private val interactor: VideoInteractor
 ) : VideoPlayer {
-    private val media = (interactor as MediaPlayer)
+    private val mediaSession = (interactor as MediaSession)
 
     @Composable
     override fun invoke(
@@ -64,15 +62,15 @@ class VideoPlayerDelegate @Inject constructor(
         spec: VideoPlayer.Spec
     ) {
         val lifecycleOwner = LocalLifecycleOwner.current
-        val player = remember { media.player() }
+        val player = remember { mediaSession.exoPlayer() }
         val isPlaying = remember { mutableStateOf(false) }
         val hasSession = remember { mutableStateOf(false) }
         val errorState = remember { mutableStateOf<Throwable?>(null) }
         val session = remember { mutableLongStateOf(System.currentTimeMillis()) }
         val isLoading = remember { mutableStateOf(!spec.enabled) }
         val scope = rememberCoroutineScope()
-        val mute = media.mute().collectAsStateWithLifecycle(player.isDeviceMuted)
-        val dimension = media.observer.collectAsStateWithLifecycle()
+        val mute = mediaSession.mute().collectAsStateWithLifecycle(player.isDeviceMuted)
+        val dimension = mediaSession.observer.collectAsStateWithLifecycle()
         val audio = remember { context.getSystemService(Context.AUDIO_SERVICE) as AudioManager }
         val lastVolume = remember(spec.enabled) { mutableIntStateOf(audio.getStreamVolume(AudioManager.STREAM_MUSIC)) }
         val listener = remember {
@@ -122,7 +120,7 @@ class VideoPlayerDelegate @Inject constructor(
                     if (intent.action == "android.media.VOLUME_CHANGED_ACTION") {
                         val currentVolume = audio.getStreamVolume(AudioManager.STREAM_MUSIC)
                         if (currentVolume > lastVolume.intValue && !mute.value) {
-                            scope.launch { interactor.mute(true) }
+                            scope.launch { mediaSession.mute(true) }
                         }
                         lastVolume.intValue = currentVolume
                     }
@@ -242,8 +240,8 @@ class VideoPlayerDelegate @Inject constructor(
         length: MutableLongState
     ) {
         val scope = rememberCoroutineScope()
-        val player = remember { media.player() }
-        val mute = media.mute().collectAsStateWithLifecycle(player.isDeviceMuted)
+        val player = remember { mediaSession.exoPlayer() }
+        val mute = mediaSession.mute().collectAsStateWithLifecycle(player.isDeviceMuted)
         Row(
             modifier = modifier,
             verticalAlignment = Alignment.CenterVertically,
@@ -276,7 +274,7 @@ class VideoPlayerDelegate @Inject constructor(
                         .background(MaterialTheme.colorScheme.onBackground)
                 )
             }
-            VolumeControl(mute) { scope.launch { interactor.mute(it) } }
+            VolumeControl(mute) { scope.launch { mediaSession.mute(it) } }
         }
     }
 }

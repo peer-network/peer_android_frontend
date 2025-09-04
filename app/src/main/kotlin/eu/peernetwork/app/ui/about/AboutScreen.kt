@@ -43,7 +43,7 @@ fun AboutScreen(
     }
     AboutScreen(version, versionCode)
     title?.let {
-        DesignTitleBarHost(component.urlInteractor().get()) {
+        DesignTitleBarHost(component.resource().getBaseUrl()) {
             titleBar {
                 DesignTitle {
                     Text(it)

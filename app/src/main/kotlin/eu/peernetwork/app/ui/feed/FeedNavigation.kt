@@ -13,8 +13,7 @@ import eu.peernetwork.app.ui.search.SearchState
 import eu.peernetwork.app.ui.window.WindowScreen
 import eu.peernetwork.core.ui.design.compose.DesignPageWindowMode
 import eu.peernetwork.core.ui.design.compose.DesignRouter
-import eu.peernetwork.core.ui.model.ViewModelState
-import java.net.URLEncoder
+import eu.peernetwork.core.ui.factory.UiViewModelStore
 
 @Composable
 fun FeedNavigation(
@@ -23,7 +22,7 @@ fun FeedNavigation(
     startDestination: String = "content",
     controller: NavHostController,
     component: Feed.Component,
-    viewModelStore: ViewModelState,
+    viewModelStore: UiViewModelStore,
     onCancel: () -> Unit = {},
     content: @Composable () -> Unit = {}
 ) {

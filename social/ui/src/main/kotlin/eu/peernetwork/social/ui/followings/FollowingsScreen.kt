@@ -20,7 +20,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
-import eu.peernetwork.core.common.model.Pageable
+import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.component.DesignErrorLabel
 import eu.peernetwork.core.ui.design.component.DesignPagingScaffold
@@ -75,11 +75,19 @@ fun FollowingsScreen(
             Column(modifier = Modifier.fillMaxSize()
                 .verticalScroll(rememberScrollState())) {
                 Spacer(modifier = Modifier.height(8.dp))
-                DesignErrorLabel(refresh, error, component.resource(), PaddingValues(horizontal = 16.dp))
+                DesignErrorLabel(
+                    error = error,
+                    onRefresh = refresh,
+                    resource = component.resource(),
+                    contentPadding = PaddingValues(horizontal = 16.dp)
+                )
             }
         }
     ) { state, lazyPagingItems ->
-        ConnectionScreen(provider = provider, viewModelStoreOwner = viewModelStoreOwner) { controller ->
+        ConnectionScreen(
+            provider = provider,
+            viewModelStoreOwner = viewModelStoreOwner
+        ) { controller ->
             val connection by controller.value.observe().collectAsState()
             LazyColumn(modifier = Modifier.fillMaxSize()) {
                 items(
@@ -108,7 +116,9 @@ fun FollowingsScreen(
                         )
                     }
                 }
-                item(key = "FollowingsListFooter") { Spacer(modifier = Modifier.height(56.dp)) }
+                item(key = "FollowingsListFooter") {
+                    Spacer(modifier = Modifier.height(56.dp))
+                }
             }
         }
     }

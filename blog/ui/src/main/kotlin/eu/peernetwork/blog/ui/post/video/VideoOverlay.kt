@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
@@ -30,7 +31,7 @@ import eu.peernetwork.blog.ui.moderation.ModerationScreen
 import eu.peernetwork.blog.ui.compose.VideoPage
 import eu.peernetwork.blog.ui.event.UiPostEvent
 import eu.peernetwork.blog.ui.mapper.query
-import eu.peernetwork.core.common.model.Pageable
+import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffold
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
@@ -92,17 +93,14 @@ fun VideoOverlay(
                     CircularProgressIndicator()
                 }
             } else {
-                val refreshed = remember { derivedStateOf {
-                    lazyPagingItems.loadState.refresh is LoadState.NotLoading
-                } }
                 EngagementScreen(
                     postLimit = limit,
-                    refresh = refreshed,
                     onMentionClick = event::onMentionClick,
                     onHashtagClick = event::onHashtagClick,
                     onAuthorClick = event::onAuthorClick,
                     provider = component,
-                    viewModelStoreOwner = viewModelStoreOwner
+                    viewModelStoreOwner = viewModelStoreOwner,
+                    connection = connection
                 ) { engagement ->
                     ModerationScreen(
                         provider = component,
@@ -153,6 +151,11 @@ fun VideoOverlay(
                                         shouldPlay,
                                     )
                                 )
+                                LaunchedEffect(Unit) {
+                                    if (!post.isViewed) {
+                                        viewModel.view(post.id)
+                                    }
+                                }
                             }
                         )
                     }

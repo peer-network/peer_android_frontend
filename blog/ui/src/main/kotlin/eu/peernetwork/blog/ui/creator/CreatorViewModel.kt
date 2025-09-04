@@ -6,10 +6,10 @@ import eu.peernetwork.blog.domain.model.Draft
 import eu.peernetwork.blog.ui.model.UiDraft
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.usecase.CreateUsecase
-import eu.peernetwork.core.common.usecase.TextEncoderUsecase
 import eu.peernetwork.media.core.model.UiMimeType
 import eu.peernetwork.media.core.model.UiOffset
 import eu.peernetwork.media.core.usecase.MediaEncoderUsecase
+import eu.peernetwork.media.core.usecase.TextEncoderUsecase
 import eu.peernetwork.media.core.usecase.VideoEncoderUsecase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -41,6 +41,11 @@ class CreatorViewModel @Inject constructor(
     }
 
     private suspend fun UiDraft.mapToDomain(): Draft {
+        val media = if (attachment.files.isEmpty()) {
+            UiMimeType.Text
+        } else {
+            attachment.media
+        }
         val type = when(media) {
             UiMimeType.Photo -> Draft.Type.Image(attachment.files.mapNotNull {
                 mediaEncoderUsecase(it.uri)
@@ -55,10 +60,11 @@ class CreatorViewModel @Inject constructor(
                 )
             })
             UiMimeType.Music -> Draft.Type.Audio(
-                files = attachment.files.mapNotNull { file -> mediaEncoderUsecase(file.uri) },
-                cover = cover?.let { uri -> mediaEncoderUsecase(uri) }
+                files = attachment.files.mapNotNull { mediaEncoderUsecase(it.uri) },
+                cover = cover?.let { uri ->
+                    mediaEncoderUsecase(uri)
+                }
             )
-
             else -> Draft.Type.Text(listOf(textEncoderUsecase(description)))
         }
         return Draft(

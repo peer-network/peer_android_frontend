@@ -5,7 +5,7 @@ import dagger.Module
 import dagger.Provides
 import eu.peernetwork.app.interceptor.LoggingInterceptor
 import eu.peernetwork.app.interceptor.NetworkErrorInterceptor
-import eu.peernetwork.core.common.interactor.UrlInteractor
+import eu.peernetwork.core.common.interactor.ResourceInteractor
 import eu.peernetwork.user.data.api.AccountApi
 import eu.peernetwork.user.data.api.AuthenticationApi
 import eu.peernetwork.user.data.api.PreferenceApi
@@ -36,13 +36,13 @@ internal object ApiModule {
 
     @Provides
     fun providesTokenApi(
-        provider: UrlInteractor,
+        provider: ResourceInteractor,
         logger: LoggingInterceptor,
         network: NetworkErrorInterceptor,
         usecase: JwtExpiryUsecase
     ): TokenApi = TokenApiDelegate(
         ApolloClient.Builder()
-            .serverUrl("${provider.get()}/graphql")
+            .serverUrl("${provider.getBaseUrl()}/graphql")
             .addInterceptor(logger)
             .addInterceptor(network).build(),
         usecase

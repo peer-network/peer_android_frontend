@@ -6,9 +6,10 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.blog.domain.model.Sort
+import eu.peernetwork.blog.domain.usecase.ViewUsecase
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.usecase.ExplorePostsUsecase
-import eu.peernetwork.core.common.model.Pageable
+import eu.peernetwork.core.common.paging.Pageable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -20,7 +21,8 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class ExploreViewModel @Inject constructor(
-    private val usecase: ExplorePostsUsecase
+    private val usecase: ExplorePostsUsecase,
+    private val viewUsecase: ViewUsecase,
 ): ViewModel() {
     private val mutableState = MutableStateFlow<State>(State.Empty)
 
@@ -42,6 +44,16 @@ class ExploreViewModel @Inject constructor(
                         mutableState.tryEmit(State.Success(this))
                     }
                 }
+        }
+    }
+
+    fun view(id: String) {
+        viewModelScope.launch {
+            try {
+                viewUsecase(id)
+            } catch (error: Throwable) {
+                error.printStackTrace()
+            }
         }
     }
 
