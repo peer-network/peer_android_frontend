@@ -68,8 +68,10 @@ fun ComposerNavigation(
                 onImageSelected = { selectedUri ->
                     audioUri?.let { uri ->
                         val updatedFiles = attachment.value.files.map { file ->
-                            if (file.uri == uri) file.copy(cover = selectedUri)
-                            else file
+                            if (file.uri == uri) {
+                                val newProps = Bundle(file.props).apply { putParcelable("cover", selectedUri) }
+                                file.copy(props = newProps)
+                            } else file
                         }.toPersistentList()
                         attachment.value = UiAttachment.File(
                             attachment.value.media,

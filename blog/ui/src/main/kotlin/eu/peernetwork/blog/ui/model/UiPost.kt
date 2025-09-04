@@ -27,6 +27,6 @@ data class UiPost(
         IMAGE,
         AUDIO,
         TEXT,
-        VIDEO,
+        VIDEO
     }
 }

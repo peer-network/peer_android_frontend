@@ -51,6 +51,7 @@ import kotlinx.coroutines.flow.debounce
 fun AttachmentScreen(
     attachment: MutableState<UiAttachment>,
     onAttach: () -> Unit,
+    onSelectCover: (Uri) -> Unit,
     modifier: Modifier = Modifier,
     onPreview: (UiAttachment) -> Unit,
     onSelectCover: (Uri) -> Unit,
@@ -117,8 +118,8 @@ fun AttachmentScreen(
         onPortraitClick = {
             ratio.value = PhotoAspectRatio.Portrait
             launcher.longValue = System.currentTimeMillis() },
-        onDetach = { index ->
-            val removed = attachment.value.files[index]
+        onDetach = {
+            val removed = attachment.value.files[it]
             attachment.value = UiAttachment.File(
                 attachment.value.media,
                 attachment.value.files.filterNot {
@@ -275,6 +276,7 @@ fun PreviewAttachmentScreen() {
             onAttach = {},
             onSelectCover = {},
             onSelect = {},
+            onSelectCover = {},
             onPreview = {},
             onSquareClick = {},
             onPortraitClick = {},

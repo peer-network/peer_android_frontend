@@ -93,7 +93,7 @@ fun AttachmentPreview(
                 val bitmap = remember { derivedStateOf { handleOnLoad(attached.files[index].path) } }
                 DesignThumbnail(
                     attached.files[index].path,
-                    bitmap,
+                    bitmap
                 ) { handleOnRefresh(index) }
             }
         }

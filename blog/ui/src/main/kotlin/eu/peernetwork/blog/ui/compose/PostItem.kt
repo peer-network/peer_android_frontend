@@ -1,5 +1,6 @@
 package eu.peernetwork.blog.ui.compose
 
+import android.net.Uri
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
