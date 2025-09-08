@@ -54,8 +54,8 @@ fun FeedPreview(
     onNavigate: (Int) -> Unit = {},
     onFilter: (Int) -> Unit = {},
 ) {
-    val photoState = rememberLazyListState()
-    val videoState = rememberLazyListState()
+    val postState = rememberLazyListState()
+    val mediaState = rememberLazyListState()
     val coroutine = rememberCoroutineScope()
     val enable = remember { derivedStateOf { selected.value == FeedOverlayState.Empty } }
     val connection by connectionController.value.observe().collectAsStateWithLifecycle()
@@ -106,7 +106,7 @@ fun FeedPreview(
                 provider = component,
                 viewModelStoreOwner = viewModelStore.get(storeKey),
                 requireUpdate = requireUpdate,
-                listState = photoState,
+                listState = postState,
             ) {
                 ConnectionScreen(
                     isFollowing = connection.getOrDefault(it.first, it.third),
@@ -129,7 +129,7 @@ fun FeedPreview(
                 provider = component,
                 viewModelStoreOwner = viewModelStore.get(storeKey),
                 requireUpdate = requireUpdate,
-                listState = photoState,
+                listState = mediaState,
             ) {
                 ConnectionScreen(
                     isFollowing = connection.getOrDefault(it.first, it.third),
@@ -152,9 +152,9 @@ fun FeedPreview(
     ) {
         coroutine.launch {
             if (position == 0) {
-                photoState.animateScrollToItem(0)
+                postState.animateScrollToItem(0)
             } else {
-                videoState.animateScrollToItem(0)
+                mediaState.animateScrollToItem(0)
             }
         }
     }

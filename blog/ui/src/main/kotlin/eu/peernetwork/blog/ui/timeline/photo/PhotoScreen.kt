@@ -220,7 +220,9 @@ fun PhotoScreen(
         }
     }
     LaunchedEffect(Unit) {
-        viewModel.load(Pageable(0, postLimit), category, criteria)
+        if (state is PhotoViewModel.State.Empty) {
+            viewModel.load(Pageable(0, postLimit), category, criteria)
+        }
     }
     DisposableEffect(Unit) {
         lifecycleOwner.lifecycle.addObserver(lifecycleObserver)
