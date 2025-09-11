@@ -11,6 +11,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import eu.peernetwork.app.extension.navigateToTagSearch
 import eu.peernetwork.app.extension.navigateToUsernameSearch
 import eu.peernetwork.app.ui.window.WindowTitle
+import eu.peernetwork.blog.ui.event.UiPostEvent
 import eu.peernetwork.blog.ui.explore.ExploreOverlay
 import eu.peernetwork.core.ui.design.compose.DesignOverlay
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
@@ -46,6 +47,21 @@ fun SearchOverlay(
         onDismiss = { overlay.value = SearchOverlayState.Empty }
     ) { controller ->
         val overlayState = remember { mutableStateOf<SearchOverlayState?>(overlay.value) }
+        val event = remember {
+            object : UiPostEvent {
+                override fun onMentionClick(username: String) = controller.navigateToUsernameSearch(username)
+
+                override fun onHashtagClick(tag: String) = controller.navigateToTagSearch(tag)
+
+                override fun onPostClick(id: String, position: Int) {
+                    overlay.value = SearchOverlayState.Photo(id, position)
+                }
+
+                override fun onMediaClick(id: String, position: Int) {}
+
+                override fun onAuthorClick(id: String) = controller.navigateIfNecessary("profile/$id")
+            }
+        }
         SearchNavigation(
             userId = id,
             startDestination = "overlay",
@@ -56,14 +72,13 @@ fun SearchOverlay(
         ) {
             val state = (overlayState.value as SearchOverlayState.Photo)
             ExploreOverlay(
-                id,
-                limit,
-                state.position,
-                component,
-                viewModelStore.get(id),
-                onMentionClick = { controller.navigateToUsernameSearch(it) },
-                onHashtagClick = { controller.navigateToTagSearch(it) },
-                onAuthorClick = { controller.navigateIfNecessary("profile/$it") },
+                author = id,
+                limit = limit,
+                position = state.position,
+                enabled = visible.value,
+                provider = component,
+                viewModelStoreOwner = viewModelStore.get(id),
+                event = event,
                 header = {
                     WindowTitle(
                         id = id,

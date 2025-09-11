@@ -12,7 +12,7 @@ import coil.compose.AsyncImage
 import coil.request.CachePolicy
 import coil.request.ImageRequest
 import eu.peernetwork.media.core.renderer.ImageView
-import eu.peernetwork.media.ui.core.BlurTransformer
+import eu.peernetwork.media.ui.renderer.BlurTransformer
 import net.engawapg.lib.zoomable.rememberZoomState
 import net.engawapg.lib.zoomable.zoomable
 import javax.inject.Inject

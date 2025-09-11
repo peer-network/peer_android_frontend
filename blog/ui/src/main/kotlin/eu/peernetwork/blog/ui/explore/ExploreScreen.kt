@@ -61,7 +61,6 @@ fun ExploreScreen(
                 is ExploreViewModel.State.Success -> DesignStatefulScaffoldState.Success(
                     (state as ExploreViewModel.State.Success).content
                 )
-
                 is ExploreViewModel.State.Error -> DesignStatefulScaffoldState.Error(
                     (state as ExploreViewModel.State.Error).error.let {
                         Throwable(component.resource().string(it.message ?: errorMessage), it)
@@ -70,7 +69,7 @@ fun ExploreScreen(
             }
         }
     }
-    DesignPagingScaffold<UiPost>(
+    DesignPagingScaffold(
         state = derivedState,
         onRefresh = { viewModel.get(Pageable(0, postLimit)) },
         placeholder = { PhotoPlaceholder(modifier = Modifier.padding(top = 72.dp)) },

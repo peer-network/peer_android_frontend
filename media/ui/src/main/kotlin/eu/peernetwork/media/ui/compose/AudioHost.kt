@@ -10,7 +10,6 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -18,7 +17,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.withFrameMillis
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import eu.peernetwork.media.ui.core.MediaSession
+import eu.peernetwork.media.ui.interactor.MediaInteractor
 import eu.peernetwork.media.ui.exception.MediaPlaybackException
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.delay
@@ -35,26 +34,26 @@ fun AudioHost(
     active: State<Boolean>,
     enable: State<Boolean>,
     length: MutableLongState,
+    progress: MutableFloatState,
     current: MutableState<Int>,
-    session: MediaSession,
+    session: MediaInteractor,
+    source: () -> MediaPlayer,
     content: @Composable (
         MediaPlayer,
         MutableLongState,
         State<Boolean>,
         MutableState<Boolean>,
-        MutableFloatState,
         State<Boolean>,
         State<Throwable?>
     ) -> Unit
 ) {
     val state = remember { mutableLongStateOf(System.currentTimeMillis()) }
     val unMute = session.mute().collectAsStateWithLifecycle(enable.value)
-    val progress = remember { mutableFloatStateOf(0f) }
     val isLoading = remember { mutableStateOf(false) }
     val isPlaying = remember { mutableStateOf(false) }
     val errorState = remember { mutableStateOf<Throwable?>(null) }
     val shouldPlay = remember { derivedStateOf { current.value == position && unMute.value } }
-    val player = remember { session.audioPlayer().apply {
+    val player = remember { source().apply {
         isLooping = true
         setOnPreparedListener {
             if (unMute.value) {
@@ -77,7 +76,6 @@ fun AudioHost(
         state,
         isLoading,
         isPlaying,
-        progress,
         unMute,
         errorState
     )

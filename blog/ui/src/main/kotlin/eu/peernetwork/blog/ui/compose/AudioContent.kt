@@ -5,7 +5,6 @@ import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -47,7 +46,7 @@ fun AudioContent(
     val updatedContent by rememberUpdatedState(content)
     val updatedConnection by rememberUpdatedState(connection)
     val uiContent = post.mapToContent()
-    VideoScaffold(
+    MediaScaffold(
         author = post.author,
         onAuthorClick = { clickHandler(post.author.id) },
         description = post.time,
@@ -109,12 +108,9 @@ fun AudioContent(
     ) {
         Box(
             contentAlignment = Alignment.Center,
-            modifier = Modifier.fillMaxSize()
-        ) {
-            Box(modifier = Modifier.clickable(
+            modifier = Modifier.clickable(
                 role = Role.Button,
                 onClick = { selectHandler() }
             )) { updatedContent(post) }
-        }
     }
 }
