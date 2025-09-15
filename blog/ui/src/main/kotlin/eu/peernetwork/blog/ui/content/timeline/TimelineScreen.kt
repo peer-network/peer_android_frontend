@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -15,6 +16,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
@@ -23,6 +25,7 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.PagingData
+import androidx.paging.compose.LazyPagingItems
 import eu.peernetwork.blog.ui.compose.RefreshableContentScaffold
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
 import eu.peernetwork.blog.ui.event.UiPostEvent
@@ -49,6 +52,7 @@ fun TimelineScreen(
     listState: LazyListState = rememberLazyListState(),
     onView: (String) -> Unit,
     onRefresh: () -> Unit,
+    onLoad: (State<LazyPagingItems<UiPost>>) -> Unit = {},
     connection: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit = {}
 ) {
     val context = LocalContext.current
@@ -66,6 +70,7 @@ fun TimelineScreen(
     val length = remember { mutableLongStateOf(0L) }
     val isActive = remember { derivedStateOf { status.value && !pause.value } }
     val thumbnail = viewModel.thumbnail.collectAsStateWithLifecycle()
+    val handleOnLoad by rememberUpdatedState(onLoad)
     EngagementScreen(
         postLimit = limit,
         onMentionClick = event::onMentionClick,
@@ -156,6 +161,9 @@ fun TimelineScreen(
                         )
                     }
                 )
+                LaunchedEffect(Unit) {
+                    handleOnLoad(list)
+                }
             }
         }
     }

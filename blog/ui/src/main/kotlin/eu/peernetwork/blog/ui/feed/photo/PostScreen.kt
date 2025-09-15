@@ -23,6 +23,7 @@ import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.blog.ui.content.timeline.TimelineScreen
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.design.compose.DesignSceneState
+import kotlinx.coroutines.launch
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
@@ -40,6 +41,7 @@ fun PostScreen(
     connection: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit = {}
 ) {
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
     val lifecycleOwner = LocalLifecycleOwner.current
     val component = remember {
         provider.builder(Post.Builder::class.java).build(context)
@@ -92,6 +94,15 @@ fun PostScreen(
         listState = listState,
         viewModelStoreOwner = viewModelStoreOwner,
         onRefresh = { viewModel.load(Pageable(0, postLimit), category, criteria) },
+        onLoad = {
+            if (requireUpdate.value) {
+                it.value.refresh()
+                scope.launch {
+                    listState.animateScrollToItem(0)
+                }
+                requireUpdate.value = false
+            }
+        },
         onView = { viewModel.view(it) },
         status = status
     )
