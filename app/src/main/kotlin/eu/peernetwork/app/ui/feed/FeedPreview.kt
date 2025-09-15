@@ -56,8 +56,8 @@ fun FeedPreview(
     onNavigate: (Int) -> Unit = {},
     onFilter: (Int) -> Unit = {},
 ) {
-    val postState = rememberLazyListState()
-    val mediaState = rememberLazyListState()
+    val followerListState = rememberLazyListState()
+    val followedListState = rememberLazyListState()
     val coroutine = rememberCoroutineScope()
     val enable = remember { derivedStateOf { selected.value == FeedOverlayState.Empty } }
     val filter = remember(criteria) { mutableStateOf(criteria) }
@@ -121,9 +121,9 @@ fun FeedPreview(
             viewModelStoreOwner = viewModelStore.get(storeKey),
             requireUpdate = requireUpdate,
             listState = if (it == Category.FOLLOWER) {
-                postState
+                followerListState
             } else {
-                mediaState
+                followedListState
             },
         ) { relation ->
             ConnectionScreen(
@@ -152,9 +152,9 @@ fun FeedPreview(
     ) {
         coroutine.launch {
             if (pageState.currentPage == 0) {
-                postState.animateScrollToItem(0)
+                followerListState.animateScrollToItem(0)
             } else {
-                mediaState.animateScrollToItem(0)
+                followedListState.animateScrollToItem(0)
             }
         }
     }

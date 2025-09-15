@@ -14,7 +14,7 @@ import eu.peernetwork.blog.remote.mapper.mapFromDomain
 import eu.peernetwork.blog.remote.mapper.mapToDomain
 import eu.peernetwork.blog.remote.mapper.mapToFilter
 import eu.peernetwork.blog.remote.mapper.mapToMode
-import eu.peernetwork.blog.remote.mapper.engagementFilter
+import eu.peernetwork.blog.remote.mapper.sortType
 import eu.peernetwork.blog.remote.model.MediaModel
 import eu.peernetwork.core.common.interactor.SessionInteractor
 import eu.peernetwork.core.common.paging.Page
@@ -36,7 +36,7 @@ class ContentApiDelegate @Inject constructor(
     override suspend fun get(filter: Filter, page: Pageable): Page<Content> {
         val post = filter.postId?.let { Optional.present(it) } ?: Optional.absent()
         val author = filter.author?.let { Optional.present(it) } ?: Optional.absent()
-        val sortBy = filter.engagementFilter()?.let {
+        val sortBy = filter.sortType()?.let {
             Optional.present(it)
         } ?: Optional.absent()
         val filterBy = if (filter.type.isEmpty()) {

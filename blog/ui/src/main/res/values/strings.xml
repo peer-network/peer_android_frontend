@@ -8,6 +8,7 @@
     <string name="send_label">Send</string>
 
     <string name="feed_label">Feeds</string>
+    <string name="trend_label">Trends</string>
     <string name="follow_label">Follow</string>
     <string name="following_label">Following</string>
     <string name="follower_label">Followers</string>

@@ -40,7 +40,8 @@ fun FeedMenu(
 ) {
     val handleOnSelect by rememberUpdatedState(onSelect)
     val relations = mapOf(
-        UiFilter.ALL to Criteria.None,
+        UiFilter.NONE to Criteria.Content(Sort.NEW),
+        UiFilter.TRENDS to Criteria.Content(Sort.TREND),
         UiFilter.MOST_LIKED to Criteria.Content(Sort.MOST_LIKED),
         UiFilter.MOST_VIEWED to Criteria.Content(Sort.MOST_VIEWED),
         UiFilter.MOST_DISLIKED to Criteria.Content(Sort.MOST_DISLIKED)
@@ -58,7 +59,7 @@ fun FeedMenu(
                     expanded,
                     color = MaterialTheme.colorScheme.tertiaryContainer,
                     contentPadding = PaddingValues(vertical = 4.dp),
-                    default = (UiFilter.entries.getOrNull(default) ?: UiFilter.ALL).name,
+                    default = (UiFilter.entries.getOrNull(default) ?: UiFilter.NONE).name,
                     modifier = Modifier
                         .padding(vertical = 4.dp)
                         .clip(RoundedCornerShape(6.dp))
