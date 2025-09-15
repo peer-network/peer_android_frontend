@@ -10,17 +10,15 @@ import eu.peernetwork.core.common.usecase.ParameterizedSuspendableUseCase
 import javax.inject.Inject
 
 class VideosUsecase @Inject constructor(
-    private val repository: ContentRepository,
-    private val usecase: CategoryUsecase,
+    private val repository: ContentRepository
 ) : ParameterizedSuspendableUseCase<VideosUsecase.Parameter, Page<Content>> {
     override suspend fun invoke(param: Parameter): Page<Content> {
-        val baseTypes = setOf(Content.Type.VIDEO)
-
         return repository.getAll(
             filter = Filter(
                 author = param.author,
-                type = usecase(CategoryUsecase.Parameter(baseTypes, param.category)),
-                criteria = param.criteria
+                type = setOf(Content.Type.VIDEO),
+                criteria = param.criteria,
+                category = param.category
             ),
             param.page
         )
@@ -28,7 +26,7 @@ class VideosUsecase @Inject constructor(
 
     data class Parameter(
         val author: String? = null,
-        val category: Category = Category.ALL,
+        val category: Category = Category.NONE,
         val criteria: Filter.Criteria? = null,
         val page: Pageable
     )

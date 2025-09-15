@@ -15,7 +15,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import eu.peernetwork.app.extension.navigateToTagSearch
 import eu.peernetwork.app.extension.navigateToUsernameSearch
 import eu.peernetwork.app.ui.window.WindowTitle
-import eu.peernetwork.blog.domain.usecase.PhotosUsecase
+import eu.peernetwork.blog.domain.usecase.PostUsecase
 import eu.peernetwork.blog.ui.event.UiPostListener
 import eu.peernetwork.blog.ui.feed.author.PostOverlay
 import eu.peernetwork.core.ui.component.UiComponentProvider
@@ -96,7 +96,7 @@ fun ProfileOverlay(
                 val state = (overlayState.value as ProfileOverlayState.Photo)
                 PostOverlay(
                     author = userId,
-                    types = PhotosUsecase.POST,
+                    types = PostUsecase.POST,
                     enabled = visible.value,
                     limit = limit,
                     position = state.position,

@@ -5,7 +5,7 @@ import androidx.paging.PagingData
 import app.cash.turbine.test
 import eu.peernetwork.blog.domain.usecase.ViewUsecase
 import eu.peernetwork.blog.ui.mock.MockContent
-import eu.peernetwork.blog.ui.usecase.UserPostsUsecase
+import eu.peernetwork.blog.ui.usecase.FeedUsecase
 import eu.peernetwork.core.common.paging.Pageable
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -29,7 +29,7 @@ internal class PhotoViewModelTest {
 
     private val dispatcher = UnconfinedTestDispatcher()
 
-    private val usecase = mockk<UserPostsUsecase>()
+    private val usecase = mockk<FeedUsecase>()
 
     private val viewUsecase = mockk<ViewUsecase>()
 

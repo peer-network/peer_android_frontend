@@ -23,8 +23,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.blog.ui.model.UiFilter
-import eu.peernetwork.blog.domain.model.Engagement
 import eu.peernetwork.blog.domain.model.Filter.Criteria
+import eu.peernetwork.blog.domain.model.Sort
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.design.compose.DesignDropDown
 import eu.peernetwork.core.ui.design.compose.DesignTitle
@@ -40,10 +40,10 @@ fun FeedMenu(
 ) {
     val handleOnSelect by rememberUpdatedState(onSelect)
     val relations = mapOf(
-        UiFilter.ALL to Criteria.Default,
-        UiFilter.MOST_LIKED to Criteria.Reaction(Engagement.Content.Like),
-        UiFilter.MOST_VIEWED to Criteria.Reaction(Engagement.Content.View),
-        UiFilter.MOST_DISLIKED to Criteria.Reaction(Engagement.Content.Dislike)
+        UiFilter.ALL to Criteria.None,
+        UiFilter.MOST_LIKED to Criteria.Content(Sort.MOST_LIKED),
+        UiFilter.MOST_VIEWED to Criteria.Content(Sort.MOST_VIEWED),
+        UiFilter.MOST_DISLIKED to Criteria.Content(Sort.MOST_DISLIKED)
     )
     DesignTitleBarHost(
         tag = "FeedScreen$id$title",

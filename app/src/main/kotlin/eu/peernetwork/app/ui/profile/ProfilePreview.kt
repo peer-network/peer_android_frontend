@@ -32,7 +32,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import eu.peernetwork.app.extension.navigateToTagSearch
 import eu.peernetwork.app.extension.navigateToUsernameSearch
-import eu.peernetwork.blog.domain.usecase.PhotosUsecase
+import eu.peernetwork.blog.domain.usecase.PostUsecase
 import eu.peernetwork.blog.ui.event.UiPostListener
 import eu.peernetwork.blog.ui.feed.author.PostScreen
 import eu.peernetwork.core.ui.R
@@ -142,9 +142,9 @@ fun ProfilePreview(
             PostScreen(
                 author = id,
                 types = if (it == 0) {
-                    PhotosUsecase.POST
+                    PostUsecase.POST
                 } else {
-                    PhotosUsecase.MEDIA
+                    PostUsecase.MEDIA
                 },
                 status = enable,
                 postLimit = limit,

@@ -6,7 +6,7 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.blog.ui.model.UiPost
-import eu.peernetwork.blog.ui.usecase.UserPostsUsecase
+import eu.peernetwork.blog.ui.usecase.FeedUsecase
 import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.blog.domain.model.Category
 import eu.peernetwork.blog.domain.usecase.ViewUsecase
@@ -21,7 +21,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class PostViewModel @Inject constructor(
-    private val usecase: UserPostsUsecase,
+    private val usecase: FeedUsecase,
     private val viewUsecase: ViewUsecase
 ) : ViewModel() {
     private val mutableState = MutableStateFlow<State>(State.Empty)
@@ -30,12 +30,12 @@ class PostViewModel @Inject constructor(
 
     fun load(
         page: Pageable,
-        category: Category = Category.ALL,
+        category: Category = Category.NONE,
         criteria: Criteria? = null
     ) {
         viewModelScope.launch {
             usecase(
-                UserPostsUsecase.Parameter(
+                FeedUsecase.Parameter(
                     category = category,
                     criteria = criteria,
                     page = page

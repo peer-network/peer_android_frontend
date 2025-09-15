@@ -1,5 +1,6 @@
 package eu.peernetwork.blog.remote.mapper
 
+import eu.peernetwork.blog.domain.model.Category
 import eu.peernetwork.blog.domain.model.Content.Type
 import eu.peernetwork.blog.domain.model.Draft
 import type.ContentType
@@ -11,8 +12,14 @@ fun Type.mapToFilter(): PostFilterType {
         Type.AUDIO -> PostFilterType.AUDIO
         Type.IMAGE -> PostFilterType.IMAGE
         Type.VIDEO -> PostFilterType.VIDEO
-        Type.FOLLOWED -> PostFilterType.FOLLOWED
-        Type.FOLLOWER -> PostFilterType.FOLLOWER
+    }
+}
+
+fun Category.mapToFilter(): PostFilterType? {
+    return when(this) {
+        Category.FOLLOWED -> PostFilterType.FOLLOWED
+        Category.FOLLOWER -> PostFilterType.FOLLOWER
+        else -> null
     }
 }
 

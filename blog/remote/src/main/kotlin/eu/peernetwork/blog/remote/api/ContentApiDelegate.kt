@@ -14,7 +14,7 @@ import eu.peernetwork.blog.remote.mapper.mapFromDomain
 import eu.peernetwork.blog.remote.mapper.mapToDomain
 import eu.peernetwork.blog.remote.mapper.mapToFilter
 import eu.peernetwork.blog.remote.mapper.mapToMode
-import eu.peernetwork.blog.remote.mapper.mapToSortType
+import eu.peernetwork.blog.remote.mapper.engagementFilter
 import eu.peernetwork.blog.remote.model.MediaModel
 import eu.peernetwork.core.common.interactor.SessionInteractor
 import eu.peernetwork.core.common.paging.Page
@@ -36,28 +36,23 @@ class ContentApiDelegate @Inject constructor(
     override suspend fun get(filter: Filter, page: Pageable): Page<Content> {
         val post = filter.postId?.let { Optional.present(it) } ?: Optional.absent()
         val author = filter.author?.let { Optional.present(it) } ?: Optional.absent()
-        val sortBy = filter.mapToSortType()?.let {
+        val sortBy = filter.engagementFilter()?.let {
             Optional.present(it)
         } ?: Optional.absent()
         val filterBy = if (filter.type.isEmpty()) {
             Optional.absent()
         } else {
-            Optional.present(filter.type.map { it.mapToFilter() })
+            Optional.present(filter.type.map { it.mapToFilter() } +
+                    (filter.category?.mapToFilter()?.let { listOf(it) } ?: listOf()))
         }
-        val tag = if (filter.criteria is Filter.Criteria) {
-            filter.criteria?.tag?.let {
+        val tag = (filter.criteria as? Filter.Criteria.Content?)?.let {
+            it.tag?.let {
                 Optional.present(it)
             } ?: Optional.absent()
-        } else {
-            Optional.absent()
-        }
-        val title = if (filter.criteria is Filter.Criteria) {
-            filter.criteria?.title?.let {
-                Optional.present(it)
-            } ?: Optional.absent()
-        } else {
-            Optional.absent()
-        }
+        } ?: Optional.absent()
+        val title = (filter.criteria as? Filter.Criteria.Content?)?.title?.let {
+            Optional.present(it)
+        } ?: Optional.absent()
         val query = GetallpostsQuery(
             filter = filterBy,
             sort = sortBy,

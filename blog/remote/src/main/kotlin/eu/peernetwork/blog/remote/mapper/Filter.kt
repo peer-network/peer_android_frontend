@@ -5,26 +5,25 @@ import eu.peernetwork.blog.domain.model.Engagement
 import eu.peernetwork.blog.domain.model.Filter
 import type.PostSortType
 
-fun Filter.mapToSortType(): PostSortType? {
-    return when (criteria) {
-        is Filter.Criteria.Default -> (criteria as Filter.Criteria.Default).sort.mapFromDomain()
-        is Filter.Criteria.Reaction -> (criteria as Filter.Criteria.Reaction).engagement.mapFromDomain()
-        else -> null
-    }
+fun Filter.engagementFilter(): PostSortType? {
+    return (criteria as? Filter.Criteria.Content?)?.sort?.mapFromDomain()
 }
 
-fun Sort.mapFromDomain(): PostSortType {
+fun Sort.mapFromDomain(): PostSortType? {
     return when (this) {
         Sort.NEW -> PostSortType.NEWEST
         Sort.TREND -> PostSortType.TRENDING
+        Sort.MOST_LIKED -> PostSortType.LIKES
+        Sort.MOST_VIEWED -> PostSortType.VIEWS
+        Sort.MOST_DISLIKED -> PostSortType.DISLIKES
     }
 }
 
-fun Engagement.mapFromDomain(): PostSortType {
+fun Engagement.mapFromDomain(): PostSortType? {
     return when (this) {
         Engagement.Content.Like -> PostSortType.LIKES
         Engagement.Content.Dislike -> PostSortType.DISLIKES
         Engagement.Content.View -> PostSortType.VIEWS
-        else -> PostSortType.UNKNOWN__
+        else -> null
     }
 }

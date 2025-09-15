@@ -62,10 +62,10 @@ fun FeedPreview(
     val enable = remember { derivedStateOf { selected.value == FeedOverlayState.Empty } }
     val filter = remember(criteria) { mutableStateOf(criteria) }
     val derivedCriteria = remember(ordinal, filter.value) { derivedStateOf {
+        val content = criteria as? Criteria.Content?
         filter.value ?: UiFilter.entries.getOrNull(ordinal)?.mapToCriteria(
-            sort = criteria?.sort,
-            tag = criteria?.tag,
-            title = criteria?.title
+            tag = content?.tag,
+            title = content?.title
         )
     } }
     val connection by connectionController.value.observe().collectAsStateWithLifecycle()

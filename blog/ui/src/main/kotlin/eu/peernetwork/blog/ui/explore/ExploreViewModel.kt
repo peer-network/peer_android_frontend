@@ -32,7 +32,7 @@ class ExploreViewModel @Inject constructor(
         viewModelScope.launch {
             usecase(
                 ExplorePostsUsecase.Parameter(
-                    criteria = Criteria.Content(sortBy = Sort.TREND),
+                    criteria = Criteria.Content(sort = Sort.TREND),
                     page = page
                 )
             )

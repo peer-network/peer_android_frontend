@@ -9,8 +9,8 @@ import androidx.paging.PagingSource.LoadResult
 import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.blog.domain.model.Category
 import eu.peernetwork.blog.domain.model.Content
-import eu.peernetwork.blog.domain.usecase.PhotosUsecase
-import eu.peernetwork.blog.domain.usecase.PhotosUsecase.Companion.POST
+import eu.peernetwork.blog.domain.usecase.PostUsecase
+import eu.peernetwork.blog.domain.usecase.PostUsecase.Companion.POST
 import eu.peernetwork.blog.ui.mapper.mapToPhoto
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.core.common.paging.Pageable
@@ -25,7 +25,7 @@ import javax.inject.Inject
 class AuthorPostUsecase @Inject constructor(
     private val context: Context,
     private val dispatcher: Dispatcher,
-    private val usecase: PhotosUsecase,
+    private val usecase: PostUsecase,
     private val annotationUsecase: AnnotationUsecase
 ) : PagingUsecase<AuthorPostUsecase.Parameter, UiPost>() {
     private lateinit var param: Parameter
@@ -50,7 +50,7 @@ class AuthorPostUsecase @Inject constructor(
             limit = param.page.limit
         )
         val response = usecase(
-            PhotosUsecase.Parameter(
+            PostUsecase.Parameter(
                 types = param.types,
                 author = param.author,
                 criteria = param.criteria,
@@ -81,7 +81,7 @@ class AuthorPostUsecase @Inject constructor(
     data class Parameter(
         val author: String,
         val types: Set<Content.Type> = POST,
-        val category: Category = Category.ALL,
+        val category: Category = Category.NONE,
         val criteria: Criteria? = null,
         val page: Pageable
     )
