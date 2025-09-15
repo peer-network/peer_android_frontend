@@ -21,7 +21,7 @@ import eu.peernetwork.core.ui.design.compose.DesignSceneState
 import eu.peernetwork.core.ui.extension.builder
 
 @Composable
-fun PhotoOverlay(
+fun PostOverlay(
     id: String,
     limit: Int,
     position: Int,
@@ -36,10 +36,10 @@ fun PhotoOverlay(
 ) {
     val context = LocalContext.current
     val component = remember {
-        provider.builder(Photo.Builder::class.java).build(context)
+        provider.builder(Post.Builder::class.java).build(context)
     }
     val viewModel = viewModel(
-        modelClass = PhotoViewModel::class.java,
+        modelClass = PostViewModel::class.java,
         viewModelStoreOwner = viewModelStoreOwner,
         factory = component.viewModelFactory()
     )
@@ -48,13 +48,13 @@ fun PhotoOverlay(
     val derivedState = remember {
         derivedStateOf {
             when (state) {
-                PhotoViewModel.State.Empty -> DesignSceneState.Default
-                PhotoViewModel.State.Loading -> DesignSceneState.Loading
-                is PhotoViewModel.State.Success -> DesignSceneState.Success(
-                    (state as PhotoViewModel.State.Success).content
+                PostViewModel.State.Empty -> DesignSceneState.Default
+                PostViewModel.State.Loading -> DesignSceneState.Loading
+                is PostViewModel.State.Success -> DesignSceneState.Success(
+                    (state as PostViewModel.State.Success).content
                 )
-                is PhotoViewModel.State.Error -> DesignSceneState.Error(
-                    (state as PhotoViewModel.State.Error).error.let {
+                is PostViewModel.State.Error -> DesignSceneState.Error(
+                    (state as PostViewModel.State.Error).error.let {
                         Throwable(component.resource()
                             .string(it.message ?: errorMessage), it)
                     }

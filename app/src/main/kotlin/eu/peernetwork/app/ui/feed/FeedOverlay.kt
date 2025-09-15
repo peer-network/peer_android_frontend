@@ -14,7 +14,7 @@ import eu.peernetwork.app.ui.window.WindowTitle
 import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.blog.domain.model.Category
 import eu.peernetwork.blog.ui.event.UiPostEvent
-import eu.peernetwork.blog.ui.feed.photo.PhotoOverlay
+import eu.peernetwork.blog.ui.feed.photo.PostOverlay
 import eu.peernetwork.core.ui.design.compose.DesignOverlay
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.core.ui.factory.UiViewModelStore
@@ -86,7 +86,7 @@ fun FeedOverlay(
                 is FeedOverlayState.Post -> {
                     val state = (overlayState.value as FeedOverlayState.Post)
                     val storeKey = "${Category.FOLLOWER};${criteria?.toString() ?: userId}"
-                    PhotoOverlay(
+                    PostOverlay(
                         id = userId,
                         limit = postLimit,
                         enabled = visible.value,
@@ -115,7 +115,7 @@ fun FeedOverlay(
                 is FeedOverlayState.Media -> {
                     val state = (overlayState.value as FeedOverlayState.Media)
                     val storeKey = "$userId;${Category.FOLLOWED};${criteria?.toString() ?: userId}"
-                    PhotoOverlay(
+                    PostOverlay(
                         id = userId,
                         limit = postLimit,
                         enabled = visible.value,

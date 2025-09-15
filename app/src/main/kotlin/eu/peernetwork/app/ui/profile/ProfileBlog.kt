@@ -19,7 +19,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.blog.domain.usecase.PhotosUsecase
 import eu.peernetwork.blog.ui.event.UiPostEvent
-import eu.peernetwork.blog.ui.feed.author.PhotoScreen
+import eu.peernetwork.blog.ui.feed.author.PostScreen
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.compose.DesignTab
 import eu.peernetwork.core.ui.factory.UiViewModelStore
@@ -40,7 +40,7 @@ fun ProfileBlog(
 ) {
     ProfileBlog(onNavigate) { offset ->
         when (offset) {
-            0 -> PhotoScreen(
+            0 -> PostScreen(
                 author = id,
                 types = PhotosUsecase.POST,
                 status = enable,
@@ -51,7 +51,7 @@ fun ProfileBlog(
                 event = event,
                 listState = postState
             )
-            1 -> PhotoScreen(
+            1 -> PostScreen(
                 author = id,
                 types = PhotosUsecase.MEDIA,
                 status = enable,

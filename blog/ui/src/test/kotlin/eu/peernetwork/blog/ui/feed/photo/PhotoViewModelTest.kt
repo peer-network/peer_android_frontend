@@ -36,12 +36,12 @@ internal class PhotoViewModelTest {
 
     private val interactor = mockk<ThumbnailInteractor>(relaxed = true)
 
-    private lateinit var viewModel: PhotoViewModel
+    private lateinit var viewModel: PostViewModel
 
     @Before
     fun setup() {
         Dispatchers.setMain(dispatcher)
-        viewModel = PhotoViewModel(usecase, viewUsecase, interactor)
+        viewModel = PostViewModel(usecase, viewUsecase, interactor)
     }
 
     @Test
@@ -54,8 +54,8 @@ internal class PhotoViewModelTest {
         }
         viewModel.load(Pageable(0, 1))
         viewModel.state.test {
-            assertTrue(awaitItem() is PhotoViewModel.State.Loading)
-            assertTrue(awaitItem() is PhotoViewModel.State.Success)
+            assertTrue(awaitItem() is PostViewModel.State.Loading)
+            assertTrue(awaitItem() is PostViewModel.State.Success)
         }
     }
 
@@ -67,7 +67,7 @@ internal class PhotoViewModelTest {
         }
         viewModel.load(Pageable(0, 1))
         viewModel.state.test {
-            assertEquals(PhotoViewModel.State.Error(error), awaitItem())
+            assertEquals(PostViewModel.State.Error(error), awaitItem())
         }
     }
 }

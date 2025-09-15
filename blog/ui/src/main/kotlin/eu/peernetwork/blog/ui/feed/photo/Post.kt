@@ -1,4 +1,4 @@
-package eu.peernetwork.blog.ui.feed.author
+package eu.peernetwork.blog.ui.feed.photo
 
 import android.content.Context
 import androidx.lifecycle.ViewModelProvider
@@ -9,7 +9,7 @@ import eu.peernetwork.blog.ui.provider.BlogProvider
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
 
-interface Photo : BlogProvider {
+interface Post : BlogProvider {
     fun engagementConfirmation(): EngagementDialog
 
     @javax.inject.Scope
@@ -18,18 +18,18 @@ interface Photo : BlogProvider {
 
     @Scope
     @dagger.Component(
-        dependencies = [Photo::class ],
-        modules = [ PhotoModule::class ]
+        dependencies = [Post::class],
+        modules = [PostModule::class]
     )
-    interface Component : Photo, UiComponentProvider, Overlay, Timeline {
+    interface Component : Post, UiComponentProvider, Overlay, Timeline {
         fun viewModelFactory(): ViewModelProvider.Factory
     }
 
-    class Builder(private val dependency: Photo) : UiComponent.DefaultBuilder<Photo, Component>() {
+    class Builder(private val dependency: Post) : UiComponent.DefaultBuilder<Post, Component>() {
         override fun build(context: Context): Component {
-            return DaggerPhoto_Component.builder()
-                .photo(dependency)
-                .photoModule(PhotoModule(context))
+            return DaggerPost_Component.builder()
+                .post(dependency)
+                .postModule(PostModule(context))
                 .build()
         }
     }

@@ -28,7 +28,7 @@ import eu.peernetwork.app.extension.navigateToUsernameSearch
 import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.blog.domain.model.Category
 import eu.peernetwork.blog.ui.event.UiPostEvent
-import eu.peernetwork.blog.ui.feed.photo.PhotoScreen
+import eu.peernetwork.blog.ui.feed.photo.PostScreen
 import eu.peernetwork.core.ui.design.compose.DesignTab
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.core.ui.factory.UiViewModelStore
@@ -96,7 +96,7 @@ fun FeedPreview(
         },
         post = {
             val storeKey = "${Category.FOLLOWER};${criteria?.toString() ?: id}"
-            PhotoScreen(
+            PostScreen(
                 id = id,
                 status = enable,
                 postLimit = BuildConfig.PAGING_LIMIT,
@@ -119,7 +119,7 @@ fun FeedPreview(
         },
         media = {
             val storeKey = "${Category.FOLLOWED};${criteria?.toString() ?: id}"
-            PhotoScreen(
+            PostScreen(
                 id = id,
                 status = enable,
                 postLimit = BuildConfig.PAGING_LIMIT,

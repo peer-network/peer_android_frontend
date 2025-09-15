@@ -10,7 +10,7 @@ import eu.peernetwork.app.ui.renderer.EngagementRenderer
 import eu.peernetwork.app.ui.search.Search
 import eu.peernetwork.app.ui.window.Window
 import eu.peernetwork.blog.ui.engagement.EngagementDialog
-import eu.peernetwork.blog.ui.feed.photo.Photo
+import eu.peernetwork.blog.ui.feed.photo.Post
 import eu.peernetwork.core.ui.annotation.UiBuilder
 import eu.peernetwork.core.ui.annotation.UiViewModel
 import eu.peernetwork.core.ui.component.UiComponent
@@ -53,9 +53,9 @@ object FeedModule {
     @Feed.Scope
     @Provides
     @IntoMap
-    @UiBuilder(Photo.Builder::class)
+    @UiBuilder(Post.Builder::class)
     fun providePhotoBuilder(component: Feed.Component): UiComponent.Builder {
-        return Photo.Builder(component)
+        return Post.Builder(component)
     }
 
     @Feed.Scope

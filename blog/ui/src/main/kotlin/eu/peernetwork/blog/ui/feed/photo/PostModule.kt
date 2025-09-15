@@ -1,4 +1,4 @@
-package eu.peernetwork.blog.ui.feed.author
+package eu.peernetwork.blog.ui.feed.photo
 
 import android.content.Context
 import androidx.lifecycle.ViewModel
@@ -17,17 +17,17 @@ import eu.peernetwork.core.ui.factory.UiViewModelFactory
 import javax.inject.Provider
 
 @Module
-class PhotoModule(private val context: Context) {
+class PostModule(private val context: Context) {
     @Provides
-    @Photo.Scope
+    @Post.Scope
     fun provideContext(): Context = context
 
     @Provides
-    @Photo.Scope
+    @Post.Scope
     fun provideBuilderFactory(factory: UiBuilderFactory): UiComponentProvider.Factory = factory
 
     @Provides
-    @Photo.Scope
+    @Post.Scope
     fun provideViewModelFactory(
         classToViewModel:
         @JvmSuppressWildcards Map<Class<out ViewModel>, Provider<ViewModel>>
@@ -37,23 +37,23 @@ class PhotoModule(private val context: Context) {
 
     @Provides
     @IntoMap
-    @Photo.Scope
-    @UiViewModel(PhotoViewModel::class)
-    fun viewModel(viewModel: PhotoViewModel): ViewModel = viewModel
+    @Post.Scope
+    @UiViewModel(PostViewModel::class)
+    fun viewModel(viewModel: PostViewModel): ViewModel = viewModel
 
     @Provides
     @IntoMap
-    @Photo.Scope
-    @UiBuilder(Overlay.Builder::class)
-    fun provideOverlayBuilder(photo: Photo.Component): UiComponent.Builder {
-        return Overlay.Builder(photo)
+    @Post.Scope
+    @UiBuilder(Timeline.Builder::class)
+    fun provideTimelineBuilder(post: Post.Component): UiComponent.Builder {
+        return Timeline.Builder(post)
     }
 
     @Provides
     @IntoMap
-    @Photo.Scope
-    @UiBuilder(Timeline.Builder::class)
-    fun provideTimelineBuilder(photo: Photo.Component): UiComponent.Builder {
-        return Timeline.Builder(photo)
+    @Post.Scope
+    @UiBuilder(Overlay.Builder::class)
+    fun provideOverlayBuilder(post: Post.Component): UiComponent.Builder {
+        return Overlay.Builder(post)
     }
 }

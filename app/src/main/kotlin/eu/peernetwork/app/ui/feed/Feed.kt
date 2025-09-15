@@ -6,7 +6,7 @@ import eu.peernetwork.app.provider.ApplicationProvider
 import eu.peernetwork.app.ui.profile.Profile
 import eu.peernetwork.app.ui.search.Search
 import eu.peernetwork.app.ui.window.Window
-import eu.peernetwork.blog.ui.feed.photo.Photo
+import eu.peernetwork.blog.ui.feed.photo.Post
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.social.ui.connection.Connection
@@ -24,7 +24,7 @@ interface Feed : ApplicationProvider {
     )
     interface Component : Feed,
         UiComponentProvider,
-        Photo,
+        Post,
         Search,
         Profile,
         Connection,

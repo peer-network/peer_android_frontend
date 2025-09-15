@@ -1,14 +1,15 @@
-package eu.peernetwork.blog.ui.feed.author
+package eu.peernetwork.blog.ui.feed.photo
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import eu.peernetwork.blog.domain.model.Content
-import eu.peernetwork.blog.domain.usecase.ViewUsecase
+import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.blog.ui.model.UiPost
-import eu.peernetwork.blog.ui.usecase.AuthorPostUsecase
+import eu.peernetwork.blog.ui.usecase.UserPostsUsecase
 import eu.peernetwork.core.common.paging.Pageable
+import eu.peernetwork.blog.domain.model.Category
+import eu.peernetwork.blog.domain.usecase.ViewUsecase
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -19,8 +20,8 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class PhotoViewModel @Inject constructor(
-    private val usecase: AuthorPostUsecase,
+class PostViewModel @Inject constructor(
+    private val usecase: UserPostsUsecase,
     private val viewUsecase: ViewUsecase
 ) : ViewModel() {
     private val mutableState = MutableStateFlow<State>(State.Empty)
@@ -28,22 +29,25 @@ class PhotoViewModel @Inject constructor(
     val state: StateFlow<State> = mutableState.asStateFlow()
 
     fun load(
-        author: String,
-        types: Set<Content.Type>,
-        page: Pageable
+        page: Pageable,
+        category: Category = Category.ALL,
+        criteria: Criteria? = null
     ) {
         viewModelScope.launch {
             usecase(
-                AuthorPostUsecase.Parameter(
-                    author = author,
-                    types = types,
+                UserPostsUsecase.Parameter(
+                    category = category,
+                    criteria = criteria,
                     page = page
                 )
-            ).catch { mutableState.tryEmit(State.Error(it)) }
+            )
+                .catch { mutableState.tryEmit(State.Error(it)) }
                 .onStart { mutableState.tryEmit(State.Loading) }
                 .cachedIn(viewModelScope)
                 .apply {
-                    collectLatest { mutableState.tryEmit(State.Success(this)) }
+                        collectLatest {
+                            mutableState.tryEmit(State.Success(this))
+                        }
                 }
         }
     }
