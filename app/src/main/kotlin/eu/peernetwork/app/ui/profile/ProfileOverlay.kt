@@ -15,9 +15,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import eu.peernetwork.app.extension.navigateToTagSearch
 import eu.peernetwork.app.extension.navigateToUsernameSearch
 import eu.peernetwork.app.ui.window.WindowTitle
+import eu.peernetwork.blog.domain.usecase.PhotosUsecase
 import eu.peernetwork.blog.ui.event.UiPostEvent
-import eu.peernetwork.blog.ui.post.photo.PhotoOverlay
-import eu.peernetwork.blog.ui.post.video.VideoOverlay
+import eu.peernetwork.blog.ui.feed.author.PostOverlay
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.compose.DesignOverlay
 import eu.peernetwork.core.ui.design.compose.DesignOverlayPage
@@ -77,7 +77,7 @@ fun ProfileOverlay(
                         overlay.value = ProfileOverlayState.Photo(id, position)
                     }
 
-                    override fun onVideoClick(id: String, position: Int) {
+                    override fun onMediaClick(id: String, position: Int) {
                         overlay.value = ProfileOverlayState.Video(id, position)
                     }
 
@@ -97,12 +97,14 @@ fun ProfileOverlay(
                 when (overlayState.value) {
                     is ProfileOverlayState.Photo -> {
                         val state = (overlayState.value as ProfileOverlayState.Photo)
-                        PhotoOverlay(
+                        PostOverlay(
                             author = userId,
+                            types = PhotosUsecase.POST,
+                            enabled = visible.value,
                             limit = limit,
                             position = state.position,
                             provider = component,
-                            viewModelStoreOwner = viewModelStore.get(userId),
+                            viewModelStoreOwner = viewModelStore.get("$userId${PhotosUsecase.POST}"),
                             event = event,
                             header = {
                                 WindowTitle(
@@ -124,13 +126,14 @@ fun ProfileOverlay(
                     }
                     is ProfileOverlayState.Video -> {
                         val state = (overlayState.value as ProfileOverlayState.Video)
-                        VideoOverlay(
+                        PostOverlay(
                             author = userId,
-                            enable = visible.value,
+                            types = PhotosUsecase.MEDIA,
+                            enabled = visible.value,
                             limit = limit,
                             position = state.position,
                             provider = component,
-                            viewModelStoreOwner = viewModelStore.get(userId),
+                            viewModelStoreOwner = viewModelStore.get("$userId${PhotosUsecase.MEDIA}"),
                             event = event,
                             header = {
                                 WindowTitle(

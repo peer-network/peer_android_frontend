@@ -61,7 +61,7 @@ fun UiPost.mapToVideo(): UiVideo {
         isViewed = isViewed,
         views = views,
         comment = comment,
-        aspectRatio = media.getAspectRatio(),
+        aspectRatio = aspectRatio,
         resolution = media.options.resolution,
         time = time,
         media = media.path

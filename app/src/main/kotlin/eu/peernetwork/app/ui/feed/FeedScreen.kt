@@ -73,7 +73,7 @@ fun FeedScreen(
                     selected = overlay,
                     requireUpdate = hasUpdate,
                     component = component,
-                    viewModelStoreOwner = viewModelStoreOwner,
+                    viewModelStore = viewModelStore,
                     controller = controller,
                     connectionController = connectionController,
                     criteria = criteria,

@@ -54,7 +54,7 @@ abstract class MediaViewModel(
         }
         jobs[media] = viewModelScope.launch {
             try {
-                interactor.load(media, type, Pair(250f, 250f))
+                interactor.load(media, type, Pair(200f, 200f))
                 interactor.invalidate()
             } catch (_: Throwable) {}
             jobs.remove(media)

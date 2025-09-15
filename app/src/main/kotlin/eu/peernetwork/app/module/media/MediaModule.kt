@@ -15,6 +15,8 @@ import eu.peernetwork.media.core.renderer.AudioPlayer
 import eu.peernetwork.media.core.renderer.ImageView
 import eu.peernetwork.media.core.renderer.VideoPlayer
 import eu.peernetwork.media.core.renderer.VideoThumbnail
+import eu.peernetwork.media.ui.annotation.Screen
+import eu.peernetwork.media.ui.annotation.Timeline
 import eu.peernetwork.media.ui.renderer.AudioPlayerDelegate
 import eu.peernetwork.media.ui.renderer.ImageViewDelegate
 import eu.peernetwork.media.ui.renderer.VideoPlayerDelegate
@@ -28,7 +30,13 @@ import javax.inject.Singleton
 object MediaModule {
     @Provides
     @Singleton
+    @Screen
     fun provideMediaPlayer(): MediaPlayer = MediaPlayer()
+
+    @Provides
+    @Singleton
+    @Timeline
+    fun provideTimelineMediaPlayer(): MediaPlayer = MediaPlayer()
 
     @Provides
     @Singleton

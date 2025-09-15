@@ -47,7 +47,7 @@ fun VideoContent(
     val updatedContent by rememberUpdatedState(content)
     val updatedConnection by rememberUpdatedState(connection)
     val uiContent = post.mapToContent()
-    VideoScaffold(
+    MediaScaffold(
         author = post.author,
         onAuthorClick = { clickHandler(post.author.id) },
         description = post.time,

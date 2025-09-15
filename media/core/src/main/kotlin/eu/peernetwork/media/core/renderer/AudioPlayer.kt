@@ -13,17 +13,22 @@ interface AudioPlayer : Renderer.Stateful<AudioPlayer.Spec> {
     fun Thumbnail(
         path: String,
         position: Int,
-        pause: State<Boolean>,
+        hasControls: Boolean,
+        isActive: State<Boolean>,
         enable: State<Boolean>,
+        length: MutableLongState,
         current: MutableState<Int>,
         modifier: Modifier
     )
 
     data class Spec(
-        val url: String,
-        val progress: MutableFloatState,
+        val path: String,
+        val position: Int,
+        val isActive: State<Boolean>,
+        val enable: State<Boolean>,
         val length: MutableLongState,
-        val enabled: Boolean = false,
-        val volume: Float = 0f
+        val progress: MutableFloatState,
+        val current: MutableState<Int>,
+        val modifier: Modifier
     )
 }

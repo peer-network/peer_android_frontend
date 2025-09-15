@@ -45,7 +45,7 @@ import eu.peernetwork.media.core.interactor.VideoInteractor
 import eu.peernetwork.media.core.renderer.VideoPlayer
 import eu.peernetwork.media.ui.compose.VideoControl
 import eu.peernetwork.media.ui.compose.VolumeControl
-import eu.peernetwork.media.ui.core.MediaSession
+import eu.peernetwork.media.ui.interactor.MediaInteractor
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -54,7 +54,7 @@ class VideoPlayerDelegate @Inject constructor(
     private val context: Context,
     private val interactor: VideoInteractor
 ) : VideoPlayer {
-    private val mediaSession = (interactor as MediaSession)
+    private val mediaInteractor = (interactor as MediaInteractor)
 
     @Composable
     override fun invoke(
@@ -62,15 +62,15 @@ class VideoPlayerDelegate @Inject constructor(
         spec: VideoPlayer.Spec
     ) {
         val lifecycleOwner = LocalLifecycleOwner.current
-        val player = remember { mediaSession.exoPlayer() }
+        val player = remember { mediaInteractor.exoPlayer() }
         val isPlaying = remember { mutableStateOf(false) }
         val hasSession = remember { mutableStateOf(false) }
         val errorState = remember { mutableStateOf<Throwable?>(null) }
         val session = remember { mutableLongStateOf(System.currentTimeMillis()) }
         val isLoading = remember { mutableStateOf(!spec.enabled) }
         val scope = rememberCoroutineScope()
-        val mute = mediaSession.mute().collectAsStateWithLifecycle(player.isDeviceMuted)
-        val dimension = mediaSession.observer.collectAsStateWithLifecycle()
+        val mute = mediaInteractor.mute().collectAsStateWithLifecycle(player.isDeviceMuted)
+        val dimension = mediaInteractor.observer.collectAsStateWithLifecycle()
         val audio = remember { context.getSystemService(Context.AUDIO_SERVICE) as AudioManager }
         val lastVolume = remember(spec.enabled) { mutableIntStateOf(audio.getStreamVolume(AudioManager.STREAM_MUSIC)) }
         val listener = remember {
@@ -120,7 +120,7 @@ class VideoPlayerDelegate @Inject constructor(
                     if (intent.action == "android.media.VOLUME_CHANGED_ACTION") {
                         val currentVolume = audio.getStreamVolume(AudioManager.STREAM_MUSIC)
                         if (currentVolume > lastVolume.intValue && !mute.value) {
-                            scope.launch { mediaSession.mute(true) }
+                            scope.launch { mediaInteractor.mute(true) }
                         }
                         lastVolume.intValue = currentVolume
                     }
@@ -240,8 +240,8 @@ class VideoPlayerDelegate @Inject constructor(
         length: MutableLongState
     ) {
         val scope = rememberCoroutineScope()
-        val player = remember { mediaSession.exoPlayer() }
-        val mute = mediaSession.mute().collectAsStateWithLifecycle(player.isDeviceMuted)
+        val player = remember { mediaInteractor.exoPlayer() }
+        val mute = mediaInteractor.mute().collectAsStateWithLifecycle(player.isDeviceMuted)
         Row(
             modifier = modifier,
             verticalAlignment = Alignment.CenterVertically,
@@ -274,7 +274,7 @@ class VideoPlayerDelegate @Inject constructor(
                         .background(MaterialTheme.colorScheme.onBackground)
                 )
             }
-            VolumeControl(mute) { scope.launch { mediaSession.mute(it) } }
+            VolumeControl(mute) { scope.launch { mediaInteractor.mute(it) } }
         }
     }
 }

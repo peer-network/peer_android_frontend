@@ -11,7 +11,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import eu.peernetwork.blog.ui.explore.ExploreCoverScreen
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.compose.DesignRouter
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
@@ -23,7 +22,6 @@ import eu.peernetwork.media.core.model.UiOffset
 import eu.peernetwork.media.ui.editor.video.VideoScreen
 import eu.peernetwork.media.ui.selector.explorer.ExplorerScreen
 import kotlinx.collections.immutable.persistentListOf
-import kotlinx.collections.immutable.toPersistentList
 import java.io.File
 
 @Composable
@@ -60,27 +58,7 @@ fun ComposerNavigation(
                 type = NavType.StringType
                 nullable = true
             })
-        ) { backStackEntry ->
-            val audioUriString = backStackEntry.arguments?.getString("audioUri")
-            val audioUri = audioUriString?.let { Uri.parse(it) }
-
-            ExploreCoverScreen(
-                onImageSelected = { selectedUri ->
-                    audioUri?.let { uri ->
-                        val updatedFiles = attachment.value.files.map { file ->
-                            if (file.uri == uri) file.copy(cover = selectedUri)
-                            else file
-                        }.toPersistentList()
-                        attachment.value = UiAttachment.File(
-                            attachment.value.media,
-                            updatedFiles
-                        )
-                    }
-                    controller.navigate("editor")
-                },
-                onBack = { controller.navigate("editor") }
-            )
-        }
+        ) { backStackEntry -> }
         composable(
             route = "video?path={path}",
             arguments = listOf(navArgument("path") {

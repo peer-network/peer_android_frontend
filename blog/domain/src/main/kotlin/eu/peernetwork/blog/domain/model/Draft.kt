@@ -10,9 +10,6 @@ data class Draft(
         data class Text(val files: List<String>) : Type
         data class Image(val files: List<String>) : Type
         data class Video(val files: List<String>) : Type
-        data class Audio(
-            val files: List<String>,
-            val cover: String? = null
-        ) : Type
+        data class Audio(val files: List<String>, val cover: String? = null) : Type
     }
 }

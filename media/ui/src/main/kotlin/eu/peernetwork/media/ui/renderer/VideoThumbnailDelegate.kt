@@ -22,7 +22,7 @@ import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import eu.peernetwork.media.core.interactor.VideoInteractor
 import eu.peernetwork.media.ui.compose.VolumeControl
-import eu.peernetwork.media.ui.core.MediaSession
+import eu.peernetwork.media.ui.interactor.MediaInteractor
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
@@ -30,7 +30,7 @@ import kotlinx.coroutines.launch
 class VideoThumbnailDelegate @Inject constructor(
     private val interactor: VideoInteractor
 ) : VideoThumbnail {
-    private val session = (interactor as MediaSession)
+    private val session = (interactor as MediaInteractor)
 
     @Composable
     @OptIn(FlowPreview::class)

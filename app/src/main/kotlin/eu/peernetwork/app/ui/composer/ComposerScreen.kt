@@ -66,9 +66,9 @@ fun ComposerScreen(
             ComposerScreen(
                 footer = {
                     AttachmentScreen(
-                        attachment,
+                        attachment = attachment,
                         onAttach = { controller.navigateIfNecessary("explorer") },
-                        Modifier.padding(top = 4.dp),
+                        modifier = Modifier.padding(top = 4.dp),
                         onPreview = {
                             val path = it.files.first().path
                             controller.navigateIfNecessary("video?path=$path")

@@ -117,8 +117,8 @@ fun AttachmentScreen(
         onPortraitClick = {
             ratio.value = PhotoAspectRatio.Portrait
             launcher.longValue = System.currentTimeMillis() },
-        onDetach = { index ->
-            val removed = attachment.value.files[index]
+        onDetach = {
+            val removed = attachment.value.files[it]
             attachment.value = UiAttachment.File(
                 attachment.value.media,
                 attachment.value.files.filterNot {

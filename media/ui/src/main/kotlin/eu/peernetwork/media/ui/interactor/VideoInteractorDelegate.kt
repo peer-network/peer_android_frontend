@@ -1,7 +1,6 @@
 package eu.peernetwork.media.ui.interactor
 
 import android.graphics.SurfaceTexture
-import android.media.MediaPlayer
 import android.view.Surface
 import androidx.annotation.OptIn
 import androidx.media3.common.MediaItem
@@ -10,7 +9,6 @@ import androidx.media3.common.VideoSize
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import eu.peernetwork.media.core.interactor.VideoInteractor
-import eu.peernetwork.media.ui.core.MediaSession
 import eu.peernetwork.persistence.domain.observable.ObservableBoolean
 import eu.peernetwork.persistence.domain.publishable.PublishableBoolean
 import kotlinx.coroutines.flow.Flow
@@ -26,10 +24,9 @@ import javax.inject.Singleton
 @OptIn(UnstableApi::class)
 class VideoInteractorDelegate @Inject constructor(
     private val player: ExoPlayer,
-    private val audioPlayer: MediaPlayer,
     private val observableBoolean: ObservableBoolean,
     private val publishableBoolean: PublishableBoolean
-) : VideoInteractor, MediaSession {
+) : VideoInteractor, MediaInteractor {
     private var currentUrl: MediaItem? = null
 
     private var currentSurface: Surface? = null
@@ -62,8 +59,6 @@ class VideoInteractorDelegate @Inject constructor(
     }
 
     override fun exoPlayer(): ExoPlayer = player
-
-    override fun audioPlayer(): MediaPlayer = audioPlayer
 
     override fun attach(texture: SurfaceTexture, url: String) {
         val item = MediaItem.Builder().setUri(url).setMediaId(url).build()

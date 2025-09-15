@@ -2,6 +2,7 @@ package eu.peernetwork.media.ui.usecase
 
 import android.content.ContentUris
 import android.content.Context
+import android.os.Bundle
 import android.provider.MediaStore
 import eu.peernetwork.core.common.provider.Dispatcher
 import eu.peernetwork.core.common.usecase.ParameterizedSuspendableUseCase
@@ -57,7 +58,10 @@ class AudioUsecase @Inject constructor(
             while (it.moveToNext()) {
                 val audioUri = ContentUris.withAppendedId(uri, it.getLong(idColumn))
                 val name = it.getString(nameColumn)
-                files.add(UiFile(uri = audioUri, name = name))
+                val props = Bundle().apply {
+                    putString("name", name)
+                }
+                files.add(UiFile(uri = audioUri, props = props))
             }
         }
         files

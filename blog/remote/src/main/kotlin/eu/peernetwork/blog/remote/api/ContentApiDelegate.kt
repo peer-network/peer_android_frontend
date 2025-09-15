@@ -31,7 +31,7 @@ class ContentApiDelegate @Inject constructor(
     private val gson: Gson,
     @Named("mediaUrl") private val url: String,
     private val client: RequestClient,
-    private val sessionInteractor: SessionInteractor
+    private val interactor: SessionInteractor
 ) : ContentApi {
     override suspend fun get(filter: Filter, page: Pageable): Page<Content> {
         val post = filter.postId?.let { Optional.present(it) } ?: Optional.absent()
@@ -65,19 +65,33 @@ class ContentApiDelegate @Inject constructor(
             title = title,
             postId = post,
             userId = author,
-            contentFilterBy = Optional.present(sessionInteractor.mode().mapToMode()),
+            contentFilterBy = Optional.present(interactor.mode().mapToMode()),
             offset = Optional.present(page.offset),
             limit = Optional.present(page.limit)
         )
         val response = client().query(query).executeOrThrow()
         val data = response.getOrThrow().listPosts
         val contents = data.affectedRows?.map { content ->
-            content.mapToDomain(url, gson.fromJson<List<MediaModel>>(
-                content.media,
-                object : TypeToken<List<MediaModel>>() {}.type
-            ).map { it.copy(options = it.options?.copy(cover = content.cover))
-                .mapFromDomain().copy(path = "$url${it.path}")
-            })
+            val coverPath = try {
+                gson.fromJson<List<Map<String, Any>>>(
+                    content.cover,
+                    object : TypeToken<List<Map<String, Any>>>() {}.type
+                ).firstOrNull()?.get("path") as? String
+            } catch (e: Exception) {
+                null
+            }?.let { "$url$it" }
+
+            content.mapToDomain(
+                url,
+                gson.fromJson<List<MediaModel>>(
+                    content.media,
+                    object : TypeToken<List<MediaModel>>() {}.type
+                ).map {
+                    it.copy(
+                        options = it.options?.copy(cover = coverPath)
+                    ).mapFromDomain().copy(path = "$url${it.path}")
+                }
+            )
         }
         response.assertOrThrow(data.status, data.ResponseCode)
         return Page(

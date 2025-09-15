@@ -1,6 +1,5 @@
 package eu.peernetwork.app.ui.profile
 
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyListState
@@ -18,12 +17,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModelStoreOwner
+import eu.peernetwork.blog.domain.usecase.PhotosUsecase
 import eu.peernetwork.blog.ui.event.UiPostEvent
-import eu.peernetwork.blog.ui.post.photo.PhotoScreen
-import eu.peernetwork.blog.ui.post.video.VideoScreen
+import eu.peernetwork.blog.ui.feed.author.PostScreen
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.compose.DesignTab
+import eu.peernetwork.core.ui.factory.UiViewModelStore
 import eu.peernetwork.media.core.model.UiMimeType
 
 @Composable
@@ -33,35 +32,35 @@ fun ProfileBlog(
     lastUpdated: State<Long>,
     limit: Int,
     provider: UiComponentProvider,
-    viewModelStoreOwner: ViewModelStoreOwner,
+    viewModelStore: UiViewModelStore,
     onNavigate: (Int) -> Unit = {},
     event: UiPostEvent,
-    photoState: LazyListState,
-    videoState: LazyListState,
-    connection: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit = {},
+    postState: LazyListState,
+    mediaState: LazyListState,
 ) {
     ProfileBlog(onNavigate) { offset ->
         when (offset) {
-            0 -> PhotoScreen(
+            0 -> PostScreen(
                 author = id,
+                types = PhotosUsecase.POST,
+                status = enable,
                 postLimit = limit,
                 lastUpdated = lastUpdated,
                 provider = provider,
-                viewModelStoreOwner = viewModelStoreOwner,
+                viewModelStoreOwner = viewModelStore.get("$id${PhotosUsecase.POST}"),
                 event = event,
-                listState = photoState,
-                connection = connection
+                listState = postState
             )
-            1 -> VideoScreen(
+            1 -> PostScreen(
                 author = id,
-                enable = enable,
+                types = PhotosUsecase.MEDIA,
+                status = enable,
                 postLimit = limit,
                 lastUpdated = lastUpdated,
                 provider = provider,
-                viewModelStoreOwner = viewModelStoreOwner,
+                viewModelStoreOwner = viewModelStore.get("$id${PhotosUsecase.MEDIA}"),
                 event = event,
-                listState = videoState,
-                connection = connection
+                listState = mediaState
             )
         }
     }

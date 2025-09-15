@@ -22,7 +22,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import eu.peernetwork.app.extension.navigateToTagSearch
@@ -35,6 +34,7 @@ import eu.peernetwork.core.ui.design.compose.DesignScaffold
 import eu.peernetwork.core.ui.design.compose.DesignTitle
 import eu.peernetwork.core.ui.design.compose.DesignTitleBarHost
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
+import eu.peernetwork.core.ui.factory.UiViewModelStore
 import eu.peernetwork.social.ui.connection.ConnectionScreen
 import eu.peernetwork.social.ui.connection.ConnectionStatus
 import eu.peernetwork.user.ui.user.UserScreen
@@ -48,10 +48,10 @@ fun ProfilePreview(
     state: MutableState<ProfileOverlayState>,
     limit: Int,
     onSettings: () -> Unit = {},
-    photoState: LazyListState = rememberLazyListState(),
-    videoState: LazyListState = rememberLazyListState(),
+    postState: LazyListState = rememberLazyListState(),
+    mediaState: LazyListState = rememberLazyListState(),
     component: Profile.Component,
-    viewModelStoreOwner: ViewModelStoreOwner,
+    viewModelStore: UiViewModelStore,
     controller: NavHostController,
 ) {
     val lastUpdated = rememberSaveable { mutableLongStateOf(System.currentTimeMillis()) }
@@ -62,7 +62,7 @@ fun ProfilePreview(
     val enable =  remember { derivedStateOf { state.value == ProfileOverlayState.Empty } }
     ConnectionScreen(
         provider = component,
-        viewModelStoreOwner = viewModelStoreOwner
+        viewModelStoreOwner = viewModelStore.get(id)
     ) { connectionController ->
         val connectionState by connectionController.value.observe().collectAsStateWithLifecycle()
         val event = remember {
@@ -75,7 +75,7 @@ fun ProfilePreview(
                     state.value = ProfileOverlayState.Photo(id, position)
                 }
 
-                override fun onVideoClick(id: String, position: Int) {
+                override fun onMediaClick(id: String, position: Int) {
                     state.value = ProfileOverlayState.Video(id, position)
                 }
 
@@ -106,7 +106,7 @@ fun ProfilePreview(
                     },
                     onSettings = onSettings,
                     provider = component,
-                    viewModelStoreOwner = viewModelStoreOwner,
+                    viewModelStoreOwner = viewModelStore.get(id),
                     modifier = Modifier.Companion.padding(bottom = 8.dp)
                         .padding(end = 16.dp, start = 24.dp)
                 )
@@ -118,21 +118,11 @@ fun ProfilePreview(
                 lastUpdated = lastUpdated,
                 limit = limit,
                 provider = component,
-                viewModelStoreOwner = viewModelStoreOwner,
+                viewModelStore = viewModelStore,
                 onNavigate = { position = it },
                 event = event,
-                photoState = photoState,
-                videoState = videoState,
-                connection =  {
-                    ConnectionScreen(
-                        isFollowing = connectionState.getOrDefault(
-                            key = it.first,
-                            defaultValue = it.second
-                        ),
-                        isFollowed = it.second,
-                        onClick = { follow -> connectionController.value.invoke(it.first, !follow) }
-                    )
-                }
+                postState = postState,
+                mediaState = mediaState
             )
         }
         ProfileSheet(
@@ -141,15 +131,15 @@ fun ProfilePreview(
             limit = limit,
             status = connection,
             provider = component,
-            viewModelStoreOwner = viewModelStoreOwner
+            viewModelStoreOwner = viewModelStore.get(id)
         ) { event.onAuthorClick(it.id) }
     }
     DesignTitleBarHost("ProfileScreen$id", {
         coroutine.launch {
             if (position == 0) {
-                photoState.animateScrollToItem(0)
+                postState.animateScrollToItem(0)
             } else {
-                videoState.animateScrollToItem(0)
+                mediaState.animateScrollToItem(0)
             }
         }
     }) {

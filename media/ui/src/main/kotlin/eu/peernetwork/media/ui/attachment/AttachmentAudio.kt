@@ -58,7 +58,6 @@ fun AttachmentAudio(
         ) {
             files.forEachIndexed { index, file ->
                 val coverForFile = file.cover
-
                 Box(
                     modifier = Modifier
                         .aspectRatio(1f)

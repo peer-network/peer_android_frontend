@@ -9,8 +9,7 @@ class BackgroundUsecase(
     private val interactor: ThumbnailInteractor,
 ) : ParameterizedSuspendableUseCase<BackgroundUsecase.Parameter, Bitmap?> {
     override suspend fun invoke(param: Parameter): Bitmap? {
-        var bitmap = interactor.get(param.url)
-        return bitmap
+        return interactor.get(param.url)
             ?: interactor.get(param.url, param.type)?.let { foreground ->
                 interactor.merge(
                     param.url,

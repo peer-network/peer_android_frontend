@@ -135,7 +135,7 @@ fun PreviewAudioView() {
                     }
                 }
             },
-            audio = { Box(modifier = Modifier.height(56.dp)) }
+            audio = { Box(modifier = Modifier.height(56.dp)) },
         ) {
             PostTitle(
                 buildAnnotatedString { append("Hello, world!") },
