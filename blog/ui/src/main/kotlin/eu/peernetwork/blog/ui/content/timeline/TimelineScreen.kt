@@ -28,7 +28,7 @@ import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import eu.peernetwork.blog.ui.compose.RefreshableContentScaffold
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
-import eu.peernetwork.blog.ui.event.UiPostEvent
+import eu.peernetwork.blog.ui.event.UiPostListener
 import eu.peernetwork.blog.ui.mapper.mapToVideo
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.moderation.ModerationScreen
@@ -46,7 +46,7 @@ fun TimelineScreen(
     state: State<DesignSceneState<Flow<PagingData<UiPost>>>>,
     status: State<Boolean>,
     limit: Int,
-    event: UiPostEvent,
+    event: UiPostListener,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
     listState: LazyListState = rememberLazyListState(),

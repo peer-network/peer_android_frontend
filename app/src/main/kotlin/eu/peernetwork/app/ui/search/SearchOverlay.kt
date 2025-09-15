@@ -11,7 +11,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import eu.peernetwork.app.extension.navigateToTagSearch
 import eu.peernetwork.app.extension.navigateToUsernameSearch
 import eu.peernetwork.app.ui.window.WindowTitle
-import eu.peernetwork.blog.ui.event.UiPostEvent
+import eu.peernetwork.blog.ui.event.UiPostListener
 import eu.peernetwork.blog.ui.explore.ExploreOverlay
 import eu.peernetwork.core.ui.design.compose.DesignOverlay
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
@@ -48,7 +48,7 @@ fun SearchOverlay(
     ) { controller ->
         val overlayState = remember { mutableStateOf<SearchOverlayState?>(overlay.value) }
         val event = remember {
-            object : UiPostEvent {
+            object : UiPostListener {
                 override fun onMentionClick(username: String) = controller.navigateToUsernameSearch(username)
 
                 override fun onHashtagClick(tag: String) = controller.navigateToTagSearch(tag)
@@ -56,9 +56,6 @@ fun SearchOverlay(
                 override fun onPostClick(id: String, position: Int) {
                     overlay.value = SearchOverlayState.Photo(id, position)
                 }
-
-                override fun onMediaClick(id: String, position: Int) {}
-
                 override fun onAuthorClick(id: String) = controller.navigateIfNecessary("profile/$id")
             }
         }

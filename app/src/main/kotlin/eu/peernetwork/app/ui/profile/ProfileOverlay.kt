@@ -16,7 +16,7 @@ import eu.peernetwork.app.extension.navigateToTagSearch
 import eu.peernetwork.app.extension.navigateToUsernameSearch
 import eu.peernetwork.app.ui.window.WindowTitle
 import eu.peernetwork.blog.domain.usecase.PhotosUsecase
-import eu.peernetwork.blog.ui.event.UiPostEvent
+import eu.peernetwork.blog.ui.event.UiPostListener
 import eu.peernetwork.blog.ui.feed.author.PostOverlay
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.compose.DesignOverlay
@@ -68,17 +68,13 @@ fun ProfileOverlay(
         ) {
             val overlayState = remember { mutableStateOf<ProfileOverlayState?>(overlay.value) }
             val event = remember {
-                object : UiPostEvent {
+                object : UiPostListener {
                     override fun onMentionClick(username: String) = controller.navigateToUsernameSearch(username)
 
                     override fun onHashtagClick(tag: String) = controller.navigateToTagSearch(tag)
 
                     override fun onPostClick(id: String, position: Int) {
                         overlay.value = ProfileOverlayState.Photo(id, position)
-                    }
-
-                    override fun onMediaClick(id: String, position: Int) {
-                        overlay.value = ProfileOverlayState.Video(id, position)
                     }
 
                     override fun onAuthorClick(id: String) = controller.navigateIfNecessary("profile/$id")

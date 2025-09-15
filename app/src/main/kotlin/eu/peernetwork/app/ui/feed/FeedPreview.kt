@@ -28,7 +28,7 @@ import eu.peernetwork.app.extension.navigateToUsernameSearch
 import eu.peernetwork.app.mapper.mapToCriteria
 import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.blog.domain.model.Category
-import eu.peernetwork.blog.ui.event.UiPostEvent
+import eu.peernetwork.blog.ui.event.UiPostListener
 import eu.peernetwork.blog.ui.feed.photo.PostScreen
 import eu.peernetwork.blog.ui.model.UiFilter
 import eu.peernetwork.core.ui.design.compose.DesignTab
@@ -77,17 +77,17 @@ fun FeedPreview(
         initialPage = state.intValue
     )
     val event = remember {
-        object : UiPostEvent {
+        object : UiPostListener {
             override fun onMentionClick(username: String) = controller.navigateToUsernameSearch(username)
 
             override fun onHashtagClick(tag: String) = controller.navigateToTagSearch(tag)
 
             override fun onPostClick(id: String, position: Int) {
-                selected.value = FeedOverlayState.Post(id, position)
-            }
-
-            override fun onMediaClick(id: String, position: Int) {
-                selected.value = FeedOverlayState.Media(id, position)
+                if (pageState.currentPage == 0) {
+                    selected.value = FeedOverlayState.Post(id, position)
+                } else {
+                    selected.value = FeedOverlayState.Media(id, position)
+                }
             }
 
             override fun onAuthorClick(id: String) = controller.navigateIfNecessary("profile/$id")

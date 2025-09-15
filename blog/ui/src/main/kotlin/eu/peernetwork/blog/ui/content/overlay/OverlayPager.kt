@@ -26,7 +26,7 @@ import eu.peernetwork.blog.ui.event.UiEngagementEvent
 import eu.peernetwork.blog.ui.model.UiMedia
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.event.UiModerationEvent
-import eu.peernetwork.blog.ui.event.UiPostEvent
+import eu.peernetwork.blog.ui.event.UiPostListener
 import eu.peernetwork.blog.ui.mapper.mapToVideo
 import eu.peernetwork.blog.ui.model.UiVideo
 import eu.peernetwork.media.core.model.UiMimeType
@@ -40,7 +40,7 @@ fun OverlayPager(
     engagement: UiEngagementEvent,
     moderation: UiModerationEvent,
     lazyPagingItems: State<LazyPagingItems<UiPost>>,
-    event: UiPostEvent,
+    event: UiPostListener,
     progress: @Composable (UiMimeType, MutableFloatState) -> Unit = { _, _ -> },
     header: @Composable () -> Unit = {},
     background: @Composable (UiVideo) -> Unit = {},

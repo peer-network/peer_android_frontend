@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,7 +27,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import eu.peernetwork.app.extension.navigateToTagSearch
 import eu.peernetwork.app.extension.navigateToUsernameSearch
-import eu.peernetwork.blog.ui.event.UiPostEvent
+import eu.peernetwork.blog.ui.event.UiPostListener
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.design.component.DesignRefreshableScaffold
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
@@ -35,6 +36,7 @@ import eu.peernetwork.core.ui.design.compose.DesignTitle
 import eu.peernetwork.core.ui.design.compose.DesignTitleBarHost
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.core.ui.factory.UiViewModelStore
+import eu.peernetwork.media.core.model.UiMimeType
 import eu.peernetwork.social.ui.connection.ConnectionScreen
 import eu.peernetwork.social.ui.connection.ConnectionStatus
 import eu.peernetwork.user.ui.user.UserScreen
@@ -60,23 +62,27 @@ fun ProfilePreview(
     val coroutine = rememberCoroutineScope()
     var position by remember { mutableIntStateOf(0) }
     val enable =  remember { derivedStateOf { state.value == ProfileOverlayState.Empty } }
+    val pageState = rememberPagerState(
+        pageCount = { UiMimeType.TYPES.size },
+        initialPage = 0
+    )
     ConnectionScreen(
         provider = component,
         viewModelStoreOwner = viewModelStore.get(id)
     ) { connectionController ->
         val connectionState by connectionController.value.observe().collectAsStateWithLifecycle()
         val event = remember {
-            object : UiPostEvent {
+            object : UiPostListener {
                 override fun onMentionClick(username: String) = controller.navigateToUsernameSearch(username)
 
                 override fun onHashtagClick(tag: String) = controller.navigateToTagSearch(tag)
 
                 override fun onPostClick(id: String, position: Int) {
-                    state.value = ProfileOverlayState.Photo(id, position)
-                }
-
-                override fun onMediaClick(id: String, position: Int) {
-                    state.value = ProfileOverlayState.Video(id, position)
+                    if (pageState.currentPage == 0) {
+                        state.value = ProfileOverlayState.Photo(id, position)
+                    } else {
+                        state.value = ProfileOverlayState.Video(id, position)
+                    }
                 }
 
                 override fun onAuthorClick(id: String) = controller.navigateIfNecessary("profile/$id")
@@ -107,13 +113,15 @@ fun ProfilePreview(
                     onSettings = onSettings,
                     provider = component,
                     viewModelStoreOwner = viewModelStore.get(id),
-                    modifier = Modifier.Companion.padding(bottom = 8.dp)
+                    modifier = Modifier.Companion
+                        .padding(bottom = 8.dp)
                         .padding(end = 16.dp, start = 24.dp)
                 )
             },
         ) {
             ProfileBlog(
                 id = id,
+                state = pageState,
                 enable = enable,
                 lastUpdated = lastUpdated,
                 limit = limit,
@@ -132,7 +140,7 @@ fun ProfilePreview(
             status = connection,
             provider = component,
             viewModelStoreOwner = viewModelStore.get(id)
-        ) { event.onAuthorClick(it.id) }
+        ) { controller.navigateIfNecessary("profile/${it.id}") }
     }
     DesignTitleBarHost("ProfileScreen$id", {
         coroutine.launch {

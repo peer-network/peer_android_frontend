@@ -13,7 +13,7 @@ import eu.peernetwork.app.extension.navigateToUsernameSearch
 import eu.peernetwork.app.ui.window.WindowTitle
 import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.blog.domain.model.Category
-import eu.peernetwork.blog.ui.event.UiPostEvent
+import eu.peernetwork.blog.ui.event.UiPostListener
 import eu.peernetwork.blog.ui.feed.photo.PostOverlay
 import eu.peernetwork.core.ui.design.compose.DesignOverlay
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
@@ -57,17 +57,13 @@ fun FeedOverlay(
     ) { controller ->
         val overlayState = remember { mutableStateOf<FeedOverlayState?>(overlay.value) }
         val event = remember {
-            object : UiPostEvent {
+            object : UiPostListener {
                 override fun onMentionClick(username: String) = controller.navigateToUsernameSearch(username)
 
                 override fun onHashtagClick(tag: String) = controller.navigateToTagSearch(tag)
 
                 override fun onPostClick(id: String, position: Int) {
                     overlay.value = FeedOverlayState.Post(id, position)
-                }
-
-                override fun onMediaClick(id: String, position: Int) {
-                    overlay.value = FeedOverlayState.Media(id, position)
                 }
 
                 override fun onAuthorClick(id: String) = controller.navigateIfNecessary("profile/$id")
@@ -114,7 +110,7 @@ fun FeedOverlay(
                 }
                 is FeedOverlayState.Media -> {
                     val state = (overlayState.value as FeedOverlayState.Media)
-                    val storeKey = "$userId;${Category.FOLLOWED};${criteria?.toString() ?: userId}"
+                    val storeKey = "${Category.FOLLOWED};${criteria?.toString() ?: userId}"
                     PostOverlay(
                         id = userId,
                         limit = postLimit,

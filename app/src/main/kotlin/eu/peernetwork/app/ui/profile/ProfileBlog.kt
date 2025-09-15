@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -18,7 +19,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.blog.domain.usecase.PhotosUsecase
-import eu.peernetwork.blog.ui.event.UiPostEvent
+import eu.peernetwork.blog.ui.event.UiPostListener
 import eu.peernetwork.blog.ui.feed.author.PostScreen
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.compose.DesignTab
@@ -28,17 +29,18 @@ import eu.peernetwork.media.core.model.UiMimeType
 @Composable
 fun ProfileBlog(
     id: String,
+    state: PagerState,
     enable: State<Boolean>,
     lastUpdated: State<Long>,
     limit: Int,
     provider: UiComponentProvider,
     viewModelStore: UiViewModelStore,
     onNavigate: (Int) -> Unit = {},
-    event: UiPostEvent,
+    event: UiPostListener,
     postState: LazyListState,
     mediaState: LazyListState,
 ) {
-    ProfileBlog(onNavigate) { offset ->
+    ProfileBlog(state, onNavigate) { offset ->
         when (offset) {
             0 -> PostScreen(
                 author = id,
@@ -68,15 +70,12 @@ fun ProfileBlog(
 
 @Composable
 private fun ProfileBlog(
+    state: PagerState,
     onNavigate: (Int) -> Unit = {},
     content: @Composable (Int) -> Unit
 ) {
-    val pageState = rememberPagerState(
-        pageCount = { UiMimeType.TYPES.size },
-        initialPage = 0
-    )
     val handleNavigation by rememberUpdatedState(onNavigate)
-    DesignTab(pageState) { index ->
+    DesignTab(state) { index ->
         UiMimeType.get(index)?.let {
             Icon(
                 painter = painterResource(id = it.id),
@@ -87,8 +86,8 @@ private fun ProfileBlog(
         }
     }
     HorizontalPager(
-        state = pageState,
+        state = state,
         verticalAlignment = Alignment.Top,
     ) { page -> content(page) }
-    LaunchedEffect(pageState.currentPage) { handleNavigation(pageState.currentPage) }
+    LaunchedEffect(state.currentPage) { handleNavigation(state.currentPage) }
 }

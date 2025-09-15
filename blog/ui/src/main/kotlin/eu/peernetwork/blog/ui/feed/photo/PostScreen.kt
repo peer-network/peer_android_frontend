@@ -18,7 +18,7 @@ import eu.peernetwork.core.ui.extension.builder
 import androidx.lifecycle.viewmodel.compose.viewModel
 import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.blog.domain.model.Category
-import eu.peernetwork.blog.ui.event.UiPostEvent
+import eu.peernetwork.blog.ui.event.UiPostListener
 import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.blog.ui.content.timeline.TimelineScreen
 import eu.peernetwork.core.ui.R
@@ -32,7 +32,7 @@ fun PostScreen(
     status: State<Boolean>,
     postLimit: Int,
     category: Category,
-    event: UiPostEvent,
+    event: UiPostListener,
     criteria: Criteria? = null,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,

@@ -21,7 +21,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import eu.peernetwork.blog.domain.model.Content
-import eu.peernetwork.blog.ui.event.UiPostEvent
+import eu.peernetwork.blog.ui.event.UiPostListener
 import eu.peernetwork.blog.ui.content.timeline.TimelineScreen
 import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.core.ui.R
@@ -39,7 +39,7 @@ fun PostScreen(
     lastUpdated: State<Long>,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
-    event: UiPostEvent,
+    event: UiPostListener,
     listState: LazyListState = rememberLazyListState(),
     connection: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit = {},
 ) {

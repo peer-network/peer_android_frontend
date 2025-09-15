@@ -31,7 +31,7 @@ import eu.peernetwork.blog.ui.engagement.EngagementScreen
 import eu.peernetwork.blog.ui.mapper.mapToContent
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.event.UiModerationEvent
-import eu.peernetwork.blog.ui.event.UiPostEvent
+import eu.peernetwork.blog.ui.event.UiPostListener
 import eu.peernetwork.blog.ui.moderation.ModerationScreen
 import eu.peernetwork.core.ui.design.compose.DesignLoader
 
@@ -43,7 +43,7 @@ fun TimelineList(
     listState: LazyListState,
     engagement: UiEngagementEvent,
     moderation: UiModerationEvent,
-    event: UiPostEvent,
+    event: UiPostListener,
     onView: (String) -> Unit,
     audio: @Composable (UiPost, Int, State<Int>, Boolean) -> Unit = { path, index, position, expanded -> },
     video: @Composable (UiPost, Int, State<Int>) -> Unit = { path, index, position -> },

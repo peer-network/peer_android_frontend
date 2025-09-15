@@ -29,7 +29,7 @@ import androidx.paging.PagingData
 import eu.peernetwork.blog.ui.compose.PhotoIndicator
 import eu.peernetwork.blog.ui.compose.RefreshableContentScaffold
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
-import eu.peernetwork.blog.ui.event.UiPostEvent
+import eu.peernetwork.blog.ui.event.UiPostListener
 import eu.peernetwork.blog.ui.mapper.query
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.moderation.ModerationScreen
@@ -49,7 +49,7 @@ fun OverlayScreen(
     limit: Int,
     position: Int,
     enabled: Boolean,
-    event: UiPostEvent,
+    event: UiPostListener,
     state: State<DesignSceneState<Flow<PagingData<UiPost>>>>,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
