@@ -106,9 +106,18 @@ fun PostScreen(
         onView = { viewModel.view(it) },
         status = status
     )
-    LaunchedEffect(Unit) {
-        if (state is PostViewModel.State.Empty) {
+    LaunchedEffect(category, criteria) {
+        val isEmpty = state is PostViewModel.State.Empty
+        val currentState = state as? PostViewModel.State.Success?
+        val requiresChange = currentState?.category != category ||
+                currentState.criteria != criteria
+        if (isEmpty || requiresChange) {
             viewModel.load(Pageable(0, postLimit), category, criteria)
+        }
+        if (requiresChange) {
+            scope.launch {
+                listState.animateScrollToItem(0)
+            }
         }
     }
     DisposableEffect(Unit) {

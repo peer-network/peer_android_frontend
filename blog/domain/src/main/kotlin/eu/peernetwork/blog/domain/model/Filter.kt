@@ -6,12 +6,24 @@ data class Filter(
     val author: String? = null,
     val criteria: Criteria? = null
 ) {
-    sealed interface Criteria {
+    sealed class Criteria(
+        val sort: Sort = Sort.NEW,
+        val tag: String? = null,
+        val title: String? = null,
+    ) {
+        data object Default : Criteria()
+
         data class Content(
-            val sort: Sort = Sort.NEW,
-            val tag: String? = null,
-            val title: String? = null
-        ) : Criteria
-        data class Reaction(val engagement: Engagement) : Criteria
+            val sortBy: Sort = Sort.NEW,
+            val tagFilter: String? = null,
+            val titleFilter: String? = null
+        ) : Criteria(sortBy, tagFilter, titleFilter)
+
+        data class Reaction(
+            val engagement: Engagement,
+            val sortBy: Sort = Sort.NEW,
+            val tagFilter: String? = null,
+            val titleFilter: String? = null
+        ) : Criteria(sortBy, tagFilter, titleFilter)
     }
 }

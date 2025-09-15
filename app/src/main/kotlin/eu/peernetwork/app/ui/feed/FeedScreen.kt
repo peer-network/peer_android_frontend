@@ -76,7 +76,6 @@ fun FeedScreen(
                     viewModelStore = viewModelStore,
                     controller = controller,
                     connectionController = connectionController,
-                    criteria = criteria,
                     title = title,
                     onNavigate = { viewModel.lastVisited(it) },
                     onFilter = { viewModel.setFilter(it) }

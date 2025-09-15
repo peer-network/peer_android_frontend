@@ -7,7 +7,6 @@ import eu.peernetwork.blog.domain.usecase.ViewUsecase
 import eu.peernetwork.blog.ui.mock.MockContent
 import eu.peernetwork.blog.ui.usecase.AuthorPostUsecase
 import eu.peernetwork.core.common.paging.Pageable
-import eu.peernetwork.media.core.interactor.ThumbnailInteractor
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
@@ -34,14 +33,12 @@ internal class PhotoViewModelTest {
 
     private val viewUsecase = mockk<ViewUsecase>()
 
-    private val interactor = mockk<ThumbnailInteractor>(relaxed = true)
-
     private lateinit var viewModel: PostViewModel
 
     @Before
     fun setup() {
         Dispatchers.setMain(dispatcher)
-        viewModel = PostViewModel(usecase, viewUsecase, interactor)
+        viewModel = PostViewModel(usecase, viewUsecase)
     }
 
     @Test

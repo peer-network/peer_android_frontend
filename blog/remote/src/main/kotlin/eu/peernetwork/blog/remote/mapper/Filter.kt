@@ -7,7 +7,7 @@ import type.PostSortType
 
 fun Filter.mapToSortType(): PostSortType? {
     return when (criteria) {
-        is Filter.Criteria.Content -> (criteria as Filter.Criteria.Content).sort.mapFromDomain()
+        is Filter.Criteria.Default -> (criteria as Filter.Criteria.Default).sort.mapFromDomain()
         is Filter.Criteria.Reaction -> (criteria as Filter.Criteria.Reaction).engagement.mapFromDomain()
         else -> null
     }

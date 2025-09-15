@@ -85,7 +85,7 @@ fun SearchNavigation(
                     provider = component,
                     viewModelStore = viewModelStore,
                     title = tag,
-                    criteria = tag?.let { Filter.Criteria.Content(tag = it) },
+                    criteria = tag?.let { Filter.Criteria.Content(tagFilter = it) },
                     hasUpdate = requireUpdate
                 )
             }
@@ -112,7 +112,7 @@ fun SearchNavigation(
                     component,
                     viewModelStore = viewModelStore,
                     title = query,
-                    criteria = query?.let { Filter.Criteria.Content(title = it) },
+                    criteria = query?.let { Filter.Criteria.Content(titleFilter = it) },
                     hasUpdate = requireUpdate
                 )
             }

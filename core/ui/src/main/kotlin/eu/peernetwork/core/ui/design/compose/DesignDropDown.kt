@@ -26,7 +26,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -64,8 +63,7 @@ fun DesignDropDown(
     content: DesignDropDownBuilder.() -> Unit
 ) {
     val updatedContent by rememberUpdatedState(content)
-    var position by remember { mutableStateOf<Offset>(Offset.Zero) }
-    var size by remember { mutableStateOf<IntSize>(IntSize.Zero) }
+    var size by remember { mutableStateOf(IntSize.Zero) }
     val current = remember { mutableStateOf<DesignDropDownItem?>(null) }
     val factory = remember { mutableStateMapOf<String, DesignDropDownItem>() }
     val items = remember { mutableStateMapOf<Int, DesignDropDownItem>() }
@@ -85,7 +83,6 @@ fun DesignDropDown(
         .background(color = color)
         .onGloballyPositioned { coordinates ->
             size = coordinates.size
-            position = coordinates.localToWindow(Offset.Zero)
         }
     ) { current.value?.let {
         Box(modifier = Modifier.clickable(

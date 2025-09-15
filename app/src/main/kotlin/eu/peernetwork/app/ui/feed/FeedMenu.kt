@@ -22,9 +22,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import eu.peernetwork.app.mapper.mapFromDomain
 import eu.peernetwork.blog.ui.model.UiFilter
-import eu.peernetwork.blog.domain.model.Category
+import eu.peernetwork.blog.domain.model.Engagement
+import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.design.compose.DesignDropDown
 import eu.peernetwork.core.ui.design.compose.DesignTitle
@@ -33,24 +33,24 @@ import eu.peernetwork.core.ui.design.compose.DesignTitleBarHost
 @Composable
 fun FeedMenu(
     id: String,
+    default: Int,
     title: String? = null,
-    category: Category,
-    onSelect: (Category) -> Unit,
+    onSelect: (Int, Criteria) -> Unit,
     onHome: () -> Unit
 ) {
     val handleOnSelect by rememberUpdatedState(onSelect)
     val relations = mapOf(
-        stringResource(UiFilter.ALL.value) to Category.ALL,
-        stringResource(UiFilter.FOLLOWER.value) to Category.FOLLOWER,
-        stringResource(UiFilter.FOLLOWED.value) to Category.FOLLOWED,
-        stringResource(UiFilter.MOST_LIKED.value) to Category.MOST_LIKED,
-        stringResource(UiFilter.MOST_DISLIKED.value) to Category.MOST_DISLIKED,
+        UiFilter.ALL to Criteria.Default,
+        UiFilter.MOST_LIKED to Criteria.Reaction(Engagement.Content.Like),
+        UiFilter.MOST_VIEWED to Criteria.Reaction(Engagement.Content.View),
+        UiFilter.MOST_DISLIKED to Criteria.Reaction(Engagement.Content.Dislike)
     )
     DesignTitleBarHost(
-        "FeedScreen$id$title",
-        onHome) {
+        tag = "FeedScreen$id$title",
+        listener = onHome
+    ) {
         titleBar {
-            var expanded = remember { mutableStateOf(false) }
+            val expanded = remember { mutableStateOf(false) }
             if (title != null) {
                 DesignTitle { Text(title) }
             } else {
@@ -58,24 +58,25 @@ fun FeedMenu(
                     expanded,
                     color = MaterialTheme.colorScheme.tertiaryContainer,
                     contentPadding = PaddingValues(vertical = 4.dp),
-                    default = stringResource(category.mapFromDomain().value),
+                    default = (UiFilter.entries.getOrNull(default) ?: UiFilter.ALL).name,
                     modifier = Modifier
                         .padding(vertical = 4.dp)
                         .clip(RoundedCornerShape(6.dp))
                         .background(MaterialTheme.colorScheme.tertiaryContainer),
                 ) {
                     relations.entries.forEach {
-                        item(tag = it.key, {
-                            handleOnSelect(it.value)
+                        item(tag = it.key.name, {
+                            handleOnSelect(it.key.ordinal, it.value)
                             true
                         }) { label, isActive ->
+                            val filter = UiFilter.valueOf(label)
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
                                 modifier = Modifier.padding(start = 8.dp)
                                     .padding(vertical = 1.dp),
                             ) {
                                 Text(
-                                    label,
+                                    stringResource(filter.value),
                                     style = if (isActive) {
                                         MaterialTheme.typography.bodyMedium.copy(
                                             MaterialTheme.colorScheme.onBackground
@@ -90,7 +91,7 @@ fun FeedMenu(
                                     Spacer(modifier = Modifier.width(2.dp))
                                     Icon(
                                         painter = painterResource(R.drawable.ic_caret_down),
-                                        contentDescription = label,
+                                        contentDescription = stringResource(filter.value),
                                         modifier = Modifier.size(16.dp),
                                         tint = MaterialTheme.colorScheme.onSurface
                                     )

@@ -25,11 +25,12 @@ import androidx.navigation.NavHostController
 import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.app.extension.navigateToTagSearch
 import eu.peernetwork.app.extension.navigateToUsernameSearch
+import eu.peernetwork.app.mapper.mapToCriteria
 import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.blog.domain.model.Category
-import eu.peernetwork.blog.domain.model.toCriteriaOrNull
 import eu.peernetwork.blog.ui.event.UiPostEvent
 import eu.peernetwork.blog.ui.feed.photo.PostScreen
+import eu.peernetwork.blog.ui.model.UiFilter
 import eu.peernetwork.core.ui.design.compose.DesignTab
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.core.ui.factory.UiViewModelStore
@@ -59,10 +60,15 @@ fun FeedPreview(
     val mediaState = rememberLazyListState()
     val coroutine = rememberCoroutineScope()
     val enable = remember { derivedStateOf { selected.value == FeedOverlayState.Empty } }
+    val filter = remember(criteria) { mutableStateOf(criteria) }
+    val derivedCriteria = remember(ordinal, filter.value) { derivedStateOf {
+        filter.value ?: UiFilter.entries.getOrNull(ordinal)?.mapToCriteria(
+            sort = criteria?.sort,
+            tag = criteria?.tag,
+            title = criteria?.title
+        )
+    } }
     val connection by connectionController.value.observe().collectAsStateWithLifecycle()
-    var category by remember {
-        mutableStateOf(Category.entries.getOrNull(ordinal) ?: Category.ALL)
-    }
     var position by remember { mutableIntStateOf(state.intValue) }
     val handleOnNavigate by rememberUpdatedState(onNavigate)
     val handleOnFilter by rememberUpdatedState(onFilter)
@@ -87,9 +93,6 @@ fun FeedPreview(
             override fun onAuthorClick(id: String) = controller.navigateIfNecessary("profile/$id")
         }
     }
-    val effectiveCriteria by remember(category, criteria) {
-        mutableStateOf(criteria ?: category.toCriteriaOrNull())
-    }
     FeedPreview(
         state = state,
         pageState = pageState,
@@ -105,7 +108,7 @@ fun FeedPreview(
                 status = enable,
                 postLimit = BuildConfig.PAGING_LIMIT,
                 category = Category.FOLLOWER,
-                criteria = criteria,
+                criteria = derivedCriteria.value,
                 event = event,
                 provider = component,
                 viewModelStoreOwner = viewModelStore.get(storeKey),
@@ -128,7 +131,7 @@ fun FeedPreview(
                 status = enable,
                 postLimit = BuildConfig.PAGING_LIMIT,
                 category = Category.FOLLOWED,
-                criteria = criteria,
+                criteria = derivedCriteria.value,
                 event = event,
                 provider = component,
                 viewModelStoreOwner = viewModelStore.get(storeKey),
@@ -146,12 +149,12 @@ fun FeedPreview(
         },
     )
     FeedMenu(
-        id,
-        title,
-        category,
-        {
-            handleOnFilter(it.ordinal)
-            category = it
+        id = id,
+        default = ordinal,
+        title = title,
+        onSelect = { ordinal, criteria ->
+            handleOnFilter(ordinal)
+            filter.value = criteria
         }
     ) {
         coroutine.launch {

@@ -23,6 +23,7 @@
     <string name="description_label">Description</string>
     <string name="view_more_label">View more…</string>
 
-    <string name="most_liked_label">Liked Most</string>
-    <string name="most_disliked_label">Disliked Most</string>
+    <string name="most_liked_label">Most liked</string>
+    <string name="most_viewed_label">Most viewed</string>
+    <string name="most_disliked_label">Most disliked</string>
 </resources>

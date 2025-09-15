@@ -44,15 +44,15 @@ class ContentApiDelegate @Inject constructor(
         } else {
             Optional.present(filter.type.map { it.mapToFilter() })
         }
-        val tag = if (filter.criteria is Filter.Criteria.Content) {
-            (filter.criteria as? Filter.Criteria.Content?)?.tag?.let {
+        val tag = if (filter.criteria is Filter.Criteria) {
+            filter.criteria?.tag?.let {
                 Optional.present(it)
             } ?: Optional.absent()
         } else {
             Optional.absent()
         }
-        val title = if (filter.criteria is Filter.Criteria.Content) {
-            (filter.criteria as? Filter.Criteria.Content?)?.title?.let {
+        val title = if (filter.criteria is Filter.Criteria) {
+            filter.criteria?.title?.let {
                 Optional.present(it)
             } ?: Optional.absent()
         } else {
@@ -77,7 +77,7 @@ class ContentApiDelegate @Inject constructor(
                     content.cover,
                     object : TypeToken<List<Map<String, Any>>>() {}.type
                 ).firstOrNull()?.get("path") as? String
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 null
             }?.let { "$url$it" }
 

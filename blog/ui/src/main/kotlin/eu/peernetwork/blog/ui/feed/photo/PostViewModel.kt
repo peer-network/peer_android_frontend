@@ -46,7 +46,11 @@ class PostViewModel @Inject constructor(
                 .cachedIn(viewModelScope)
                 .apply {
                         collectLatest {
-                            mutableState.tryEmit(State.Success(this))
+                            mutableState.tryEmit(State.Success(
+                                category = category,
+                                criteria = criteria,
+                                content = this
+                            ))
                         }
                 }
         }
@@ -65,7 +69,11 @@ class PostViewModel @Inject constructor(
     sealed interface State {
         data object Empty : State
         data object Loading : State
-        data class Success(val content: Flow<PagingData<UiPost>>) : State
+        data class Success(
+            val category: Category,
+            val criteria: Criteria?,
+            val content: Flow<PagingData<UiPost>>
+        ) : State
         data class Error(val error: Throwable) : State
     }
 }
