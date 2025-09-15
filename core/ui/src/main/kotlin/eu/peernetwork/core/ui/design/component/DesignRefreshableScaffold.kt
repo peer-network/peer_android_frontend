@@ -41,7 +41,7 @@ fun<T> DesignRefreshableScaffold(
 ) {
     val contentState = remember {
         derivedStateOf {
-            (state.value as DesignStatefulScaffoldState.Success<*>).result as T
+            (state.value as? DesignStatefulScaffoldState.Success<*>?)?.result as T?
         }
     }
     val errorState = remember { derivedStateOf {

@@ -51,7 +51,8 @@ fun TimelineScreen(
     viewModelStoreOwner: ViewModelStoreOwner,
     listState: LazyListState = rememberLazyListState(),
     onView: (String) -> Unit,
-    onRefresh: () -> Unit,
+    enable: Boolean = true,
+    onRefresh: () -> Unit = {},
     onLoad: (State<LazyPagingItems<UiPost>>) -> Unit = {},
     connection: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit = {}
 ) {
@@ -86,6 +87,7 @@ fun TimelineScreen(
         ) { moderation ->
             RefreshableContentScaffold(
                 state = state,
+                enable = enable,
                 resource = component.resource(),
                 onRefresh = onRefresh
             ) { state, list ->

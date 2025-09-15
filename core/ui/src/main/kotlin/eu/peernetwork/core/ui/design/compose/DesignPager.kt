@@ -65,6 +65,7 @@ fun<T : Any> DesignRefreshablePager(
     modifier: Modifier = Modifier,
     animationSpec: FiniteAnimationSpec<Float> = tween(),
     label: String = "DesignRefreshablePager",
+    enable: Boolean = true,
     onRefresh: () -> Unit = {},
     default: @Composable () -> Unit = {},
     loading: @Composable () -> Unit = {},
@@ -99,16 +100,6 @@ fun<T : Any> DesignRefreshablePager(
                 }
             }
         } }
-        val refreshState = rememberPullRefreshState(
-            refreshing = isLoading.value,
-            onRefresh = {
-                if (lazyPagingItems.value.itemCount > 0) {
-                    lazyPagingItems.value.refresh()
-                } else {
-                    handleRefresh()
-                }
-            }
-        )
         val updatedLoading by rememberUpdatedState(loading)
         val updatedError by rememberUpdatedState(error)
         Crossfade(derivedState.value) { target ->
@@ -117,7 +108,21 @@ fun<T : Any> DesignRefreshablePager(
                 is DesignSceneState.Error -> {
                     updatedError(remember { derivedStateOf { target.error } })
                 }
-                else -> DragRefreshLayout(state = refreshState) {
+                else -> if (enable) {
+                    val refreshState = rememberPullRefreshState(
+                        refreshing = isLoading.value,
+                        onRefresh = {
+                            if (lazyPagingItems.value.itemCount > 0) {
+                                lazyPagingItems.value.refresh()
+                            } else {
+                                handleRefresh()
+                            }
+                        }
+                    )
+                    DragRefreshLayout(state = refreshState) {
+                        updatedContent(pageState, lazyPagingItems)
+                    }
+                } else {
                     updatedContent(pageState, lazyPagingItems)
                 }
             }

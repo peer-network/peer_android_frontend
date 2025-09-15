@@ -93,13 +93,27 @@ fun PostScreen(
         connection = connection,
         listState = listState,
         viewModelStoreOwner = viewModelStoreOwner,
-        onRefresh = { viewModel.load(author, types, Pageable(0, postLimit)) },
         onView = { viewModel.view(it) },
+        enable = false,
+        onRefresh = {
+            viewModel.load(
+                author,
+                types,
+                Pageable(0, postLimit),
+                lastUpdated.value
+            )
+        },
         status = status
     )
-    LaunchedEffect(Unit) {
-        if (derivedState.value is DesignSceneState.Default) {
-            viewModel.load(author, types, Pageable(0, postLimit))
+    LaunchedEffect(lastUpdated.value) {
+        val currentState = state as? PostViewModel.State.Success?
+        if (currentState?.updatedAt != lastUpdated.value) {
+            viewModel.load(
+                author,
+                types,
+                Pageable(0, postLimit),
+                lastUpdated.value
+            )
         }
     }
     DisposableEffect(Unit) {

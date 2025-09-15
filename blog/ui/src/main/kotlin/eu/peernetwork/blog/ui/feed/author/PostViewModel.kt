@@ -30,7 +30,8 @@ class PostViewModel @Inject constructor(
     fun load(
         author: String,
         types: Set<Content.Type>,
-        page: Pageable
+        page: Pageable,
+        updatedAt: Long = System.currentTimeMillis()
     ) {
         viewModelScope.launch {
             usecase(
@@ -43,7 +44,7 @@ class PostViewModel @Inject constructor(
                 .onStart { mutableState.tryEmit(State.Loading) }
                 .cachedIn(viewModelScope)
                 .apply {
-                    collectLatest { mutableState.tryEmit(State.Success(this)) }
+                    collectLatest { mutableState.tryEmit(State.Success(this, updatedAt)) }
                 }
         }
     }
@@ -61,7 +62,10 @@ class PostViewModel @Inject constructor(
     sealed interface State {
         data object Empty : State
         data object Loading : State
-        data class Success(val content: Flow<PagingData<UiPost>>) : State
+        data class Success(
+            val content: Flow<PagingData<UiPost>>,
+            val updatedAt: Long
+        ) : State
         data class Error(val error: Throwable) : State
     }
 }

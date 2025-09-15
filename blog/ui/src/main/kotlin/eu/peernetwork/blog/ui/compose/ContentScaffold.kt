@@ -62,8 +62,9 @@ fun<T : Any> ContentScaffold(
 fun<T : Any> RefreshableContentScaffold(
     state: State<DesignSceneState<Flow<PagingData<T>>>>,
     modifier: Modifier = Modifier,
-    resource: ResourceInteractor,
+    enable: Boolean = true,
     onRefresh: () -> Unit = {},
+    resource: ResourceInteractor,
     default: @Composable () -> Unit = {
         Box(modifier = Modifier.fillMaxSize()
             .verticalScroll(rememberScrollState())
@@ -79,6 +80,7 @@ fun<T : Any> RefreshableContentScaffold(
     DesignRefreshablePager(
         state = state,
         modifier = modifier,
+        enable = enable,
         onRefresh = onRefresh,
         default = default,
         loading = loading,
