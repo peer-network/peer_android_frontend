@@ -26,12 +26,8 @@ sealed interface FeedOverlayState {
 
     data class Post(
         val id: String,
-        val position: Int
-    ) : FeedOverlayState
-
-    data class Media(
-        val id: String,
-        val position: Int
+        val position: Int,
+        val category: Category
     ) : FeedOverlayState
 }
 
@@ -48,7 +44,9 @@ fun FeedOverlay(
 ) {
     val updatedContent by rememberUpdatedState(content)
     val connection by connectionController.value.observe().collectAsStateWithLifecycle()
-    val visible = remember(overlay.value) { mutableStateOf(overlay.value !is FeedOverlayState.Empty) }
+    val visible = remember(overlay.value) {
+        mutableStateOf(overlay.value !is FeedOverlayState.Empty)
+    }
     updatedContent()
     DesignOverlay(
         startDestination = "overlay",
@@ -58,15 +56,20 @@ fun FeedOverlay(
         val overlayState = remember { mutableStateOf<FeedOverlayState?>(overlay.value) }
         val event = remember {
             object : UiPostListener {
-                override fun onMentionClick(username: String) = controller.navigateToUsernameSearch(username)
-
-                override fun onHashtagClick(tag: String) = controller.navigateToTagSearch(tag)
-
-                override fun onPostClick(id: String, position: Int) {
-                    overlay.value = FeedOverlayState.Post(id, position)
+                override fun invoke(event: UiPostListener.Event) {
+                    when(event) {
+                        is UiPostListener.Event.Mention -> {
+                            controller.navigateToUsernameSearch(event.username)
+                        }
+                        is UiPostListener.Event.Hashtag -> {
+                            controller.navigateToTagSearch(event.tag)
+                        }
+                        is UiPostListener.Event.Author -> {
+                            controller.navigateIfNecessary("profile/${event.id}")
+                        }
+                        else -> {}
+                    }
                 }
-
-                override fun onAuthorClick(id: String) = controller.navigateIfNecessary("profile/$id")
             }
         }
         FeedNavigation(
@@ -78,66 +81,34 @@ fun FeedOverlay(
             viewModelStore = viewModelStore,
             onCancel = { visible.value = false }
         ) {
-            when (overlayState.value) {
-                is FeedOverlayState.Post -> {
-                    val state = (overlayState.value as FeedOverlayState.Post)
-                    val storeKey = "${Category.FOLLOWER};${criteria?.toString() ?: userId}"
-                    PostOverlay(
+            val state = (overlayState.value as FeedOverlayState.Post)
+            val storeKey = "${state.category};${criteria?.toString() ?: userId}"
+            PostOverlay(
+                id = userId,
+                limit = postLimit,
+                enabled = visible.value,
+                position = state.position,
+                category = state.category,
+                criteria = criteria,
+                provider = component,
+                viewModelStoreOwner = viewModelStore.get(storeKey),
+                event = event,
+                header = {
+                    WindowTitle(
                         id = userId,
-                        limit = postLimit,
-                        enabled = visible.value,
-                        position = state.position,
-                        category = Category.FOLLOWER,
-                        criteria = criteria,
                         provider = component,
-                        viewModelStoreOwner = viewModelStore.get(storeKey),
-                        event = event,
-                        header = {
-                            WindowTitle(
-                                id = userId,
-                                provider = component,
-                                viewModelStore = viewModelStore,
-                                onCancel = { visible.value = false },
-                            )
-                        }
-                    ) {
-                        ConnectionScreen(
-                            isFollowing = connection.getOrDefault(it.first, it.third),
-                            isFollowed = it.second,
-                            onClick = { follow -> connectionController.value.invoke(it.first, !follow) }
-                        )
-                    }
+                        viewModelStore = viewModelStore,
+                        onCancel = { visible.value = false },
+                    )
                 }
-                is FeedOverlayState.Media -> {
-                    val state = (overlayState.value as FeedOverlayState.Media)
-                    val storeKey = "${Category.FOLLOWED};${criteria?.toString() ?: userId}"
-                    PostOverlay(
-                        id = userId,
-                        limit = postLimit,
-                        enabled = visible.value,
-                        position = state.position,
-                        category = Category.FOLLOWED,
-                        criteria = criteria,
-                        provider = component,
-                        viewModelStoreOwner = viewModelStore.get(storeKey),
-                        event = event,
-                        header = {
-                            WindowTitle(
-                                id = userId,
-                                provider = component,
-                                viewModelStore = viewModelStore,
-                                onCancel = { visible.value = false },
-                            )
-                        }
-                    ) {
-                        ConnectionScreen(
-                            isFollowing = connection.getOrDefault(it.first, it.third),
-                            isFollowed = it.second,
-                            onClick = { follow -> connectionController.value.invoke(it.first, !follow) }
-                        )
+            ) {
+                ConnectionScreen(
+                    isFollowing = connection.getOrDefault(it.first, it.third),
+                    isFollowed = it.second,
+                    onClick = { follow ->
+                        connectionController.value.invoke(it.first, !follow)
                     }
-                }
-                else -> {}
+                )
             }
         }
     }

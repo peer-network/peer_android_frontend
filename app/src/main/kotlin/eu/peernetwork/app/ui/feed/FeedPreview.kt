@@ -69,7 +69,6 @@ fun FeedPreview(
         )
     } }
     val connection by connectionController.value.observe().collectAsStateWithLifecycle()
-    var position by remember { mutableIntStateOf(state.intValue) }
     val handleOnNavigate by rememberUpdatedState(onNavigate)
     val handleOnFilter by rememberUpdatedState(onFilter)
     val pageState = rememberPagerState(
@@ -78,76 +77,70 @@ fun FeedPreview(
     )
     val event = remember {
         object : UiPostListener {
-            override fun onMentionClick(username: String) = controller.navigateToUsernameSearch(username)
-
-            override fun onHashtagClick(tag: String) = controller.navigateToTagSearch(tag)
-
-            override fun onPostClick(id: String, position: Int) {
-                if (pageState.currentPage == 0) {
-                    selected.value = FeedOverlayState.Post(id, position)
-                } else {
-                    selected.value = FeedOverlayState.Media(id, position)
+            override fun invoke(event: UiPostListener.Event) {
+                when(event) {
+                    is UiPostListener.Event.Mention -> {
+                        controller.navigateToUsernameSearch(event.username)
+                    }
+                    is UiPostListener.Event.Hashtag -> {
+                        controller.navigateToTagSearch(event.tag)
+                    }
+                    is UiPostListener.Event.Author -> {
+                        controller.navigateIfNecessary("profile/${event.id}")
+                    }
+                    is UiPostListener.Event.Post -> {
+                        selected.value = FeedOverlayState.Post(
+                            id = event.id,
+                            position = event.position,
+                            category = if (pageState.currentPage == 0) {
+                                Category.FOLLOWER
+                            } else {
+                                Category.FOLLOWED
+                            }
+                        )
+                    }
                 }
             }
-
-            override fun onAuthorClick(id: String) = controller.navigateIfNecessary("profile/$id")
         }
     }
     FeedPreview(
         state = state,
         pageState = pageState,
         modifier = Modifier.fillMaxSize(),
-        onNavigate = {
-            position = it
-            handleOnNavigate(it)
-        },
-        post = {
-            val storeKey = "${Category.FOLLOWER};${criteria?.toString() ?: id}"
-            PostScreen(
-                id = id,
-                status = enable,
-                postLimit = BuildConfig.PAGING_LIMIT,
-                category = Category.FOLLOWER,
-                criteria = derivedCriteria.value,
-                event = event,
-                provider = component,
-                viewModelStoreOwner = viewModelStore.get(storeKey),
-                requireUpdate = requireUpdate,
-                listState = postState,
-            ) {
-                ConnectionScreen(
-                    isFollowing = connection.getOrDefault(it.first, it.third),
-                    isFollowed = it.second,
-                    onClick = { follow ->
-                        connectionController.value(it.first, !follow)
-                    },
-                )
-            }
-        },
-        media = {
-            val storeKey = "${Category.FOLLOWED};${criteria?.toString() ?: id}"
-            PostScreen(
-                id = id,
-                status = enable,
-                postLimit = BuildConfig.PAGING_LIMIT,
-                category = Category.FOLLOWED,
-                criteria = derivedCriteria.value,
-                event = event,
-                provider = component,
-                viewModelStoreOwner = viewModelStore.get(storeKey),
-                requireUpdate = requireUpdate,
-                listState = mediaState,
-            ) {
-                ConnectionScreen(
-                    isFollowing = connection.getOrDefault(it.first, it.third),
-                    isFollowed = it.second,
-                    onClick = { follow ->
-                        connectionController.value(it.first, !follow)
-                    },
-                )
-            }
-        },
-    )
+        onNavigate = { handleOnNavigate(it) }
+    ) {
+        val storeKey = "$it;${criteria?.toString() ?: id}"
+        PostScreen(
+            id = id,
+            status = enable,
+            postLimit = BuildConfig.PAGING_LIMIT,
+            category = it,
+            criteria = derivedCriteria.value,
+            event = event,
+            provider = component,
+            viewModelStoreOwner = viewModelStore.get(storeKey),
+            requireUpdate = requireUpdate,
+            listState = if (it == Category.FOLLOWER) {
+                postState
+            } else {
+                mediaState
+            },
+        ) { relation ->
+            ConnectionScreen(
+                isFollowing = connection.getOrDefault(
+                    key = relation.first,
+                    defaultValue = relation.third
+                ),
+                isFollowed = relation.second,
+                onClick = { follow ->
+                    connectionController.value(
+                        id = relation.first,
+                        value = !follow
+                    )
+                },
+            )
+        }
+    }
     FeedMenu(
         id = id,
         default = ordinal,
@@ -158,7 +151,7 @@ fun FeedPreview(
         }
     ) {
         coroutine.launch {
-            if (position == 0) {
+            if (pageState.currentPage == 0) {
                 postState.animateScrollToItem(0)
             } else {
                 mediaState.animateScrollToItem(0)
@@ -178,11 +171,9 @@ fun FeedPreview(
     pageState: PagerState,
     modifier: Modifier = Modifier,
     onNavigate: (Int) -> Unit = {},
-    post: @Composable () -> Unit,
-    media: @Composable () -> Unit,
+    content: @Composable (Category) -> Unit,
 ) {
-    val handlePost by rememberUpdatedState(post)
-    val handleMedia by rememberUpdatedState(media)
+    val handleContent by rememberUpdatedState(content)
     val handleNavigation by rememberUpdatedState(onNavigate)
     Column {
         DesignTab(pageState) { index ->
@@ -203,8 +194,8 @@ fun FeedPreview(
             verticalAlignment = Alignment.Top,
         ) { page ->
             when (page) {
-                0 -> handlePost()
-                1 -> handleMedia()
+                0 -> handleContent(Category.FOLLOWER)
+                1 -> handleContent(Category.FOLLOWED)
             }
         }
     }
@@ -223,9 +214,7 @@ fun PreviewFeedPreview() {
         FeedPreview(
             state = state,
             pageState = pageState,
-            modifier = Modifier.fillMaxSize(),
-            post = { Text("Photo") },
-            media = { Text("Video") },
-        )
+            modifier = Modifier.fillMaxSize()
+        ) { Text("Video") }
     }
 }

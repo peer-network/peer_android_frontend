@@ -70,9 +70,9 @@ fun OverlayPager(
                 if (post.type == UiPost.Type.TEXT) {
                     TextContent(
                         post = post,
-                        onAuthorClick = event::onAuthorClick,
-                        onMentionClick = event::onMentionClick,
-                        onHashtagClick = event::onHashtagClick,
+                        onAuthorClick = { event(UiPostListener.Event.Author(post.author.id)) },
+                        onMentionClick = { event(UiPostListener.Event.Mention(it)) },
+                        onHashtagClick = { event(UiPostListener.Event.Hashtag(it)) },
                         uiEngagementEvent = engagement,
                         uiModerationEvent = moderation,
                         connection = { updatedConnection(post, it) },
@@ -86,9 +86,9 @@ fun OverlayPager(
                         uiModerationEvent = moderation,
                         header = header,
                         indicator = { updatedIndicator(photoState, post.media.toPersistentList()) },
-                        onAuthorClick = event::onAuthorClick,
-                        onMentionClick = event::onMentionClick,
-                        onHashtagClick = event::onHashtagClick,
+                        onAuthorClick = { event(UiPostListener.Event.Author(it)) },
+                        onMentionClick = { event(UiPostListener.Event.Mention(it)) },
+                        onHashtagClick = { event(UiPostListener.Event.Hashtag(it)) },
                         connection = { updatedConnection(post, it) },
                     ) {
                         if (post.media.size > 1) {
@@ -106,10 +106,12 @@ fun OverlayPager(
                         index = page,
                         uiEngagementEvent = engagement,
                         uiModerationEvent = moderation,
-                        onAuthorClick = event::onAuthorClick,
-                        onPostClick = event::onPostClick,
-                        onMentionClick = event::onMentionClick,
-                        onHashtagClick = event::onHashtagClick,
+                        onPostClick = { id, position ->
+                            event(UiPostListener.Event.Post(id, position))
+                        },
+                        onAuthorClick = { event(UiPostListener.Event.Author(it)) },
+                        onMentionClick = { event(UiPostListener.Event.Mention(it)) },
+                        onHashtagClick = { event(UiPostListener.Event.Hashtag(it)) },
                         header = header,
                         connection = { updatedConnection(post, it) },
                         progress = { updatedProgress(UiMimeType.Music, progress) },
@@ -134,10 +136,12 @@ fun OverlayPager(
                         index = page,
                         uiEngagementEvent = engagement,
                         uiModerationEvent = moderation,
-                        onAuthorClick = event::onAuthorClick,
-                        onPostClick = event::onPostClick,
-                        onMentionClick = event::onMentionClick,
-                        onHashtagClick = event::onHashtagClick,
+                        onPostClick = { id, position ->
+                            event(UiPostListener.Event.Post(id, position))
+                        },
+                        onAuthorClick = { event(UiPostListener.Event.Author(it)) },
+                        onMentionClick = { event(UiPostListener.Event.Mention(it)) },
+                        onHashtagClick = { event(UiPostListener.Event.Hashtag(it)) },
                         header = header,
                         connection = { updatedConnection(post, it) },
                         progress = { updatedProgress(UiMimeType.Video, progress) },

@@ -49,14 +49,22 @@ fun SearchOverlay(
         val overlayState = remember { mutableStateOf<SearchOverlayState?>(overlay.value) }
         val event = remember {
             object : UiPostListener {
-                override fun onMentionClick(username: String) = controller.navigateToUsernameSearch(username)
-
-                override fun onHashtagClick(tag: String) = controller.navigateToTagSearch(tag)
-
-                override fun onPostClick(id: String, position: Int) {
-                    overlay.value = SearchOverlayState.Photo(id, position)
+                override fun invoke(event: UiPostListener.Event) {
+                    when(event) {
+                        is UiPostListener.Event.Mention -> {
+                            controller.navigateToUsernameSearch(event.username)
+                        }
+                        is UiPostListener.Event.Hashtag -> {
+                            controller.navigateToTagSearch(event.tag)
+                        }
+                        is UiPostListener.Event.Author -> {
+                            controller.navigateIfNecessary("profile/${event.id}")
+                        }
+                        is UiPostListener.Event.Post -> {
+                            overlay.value = SearchOverlayState.Photo(event.id, event.position)
+                        }
+                    }
                 }
-                override fun onAuthorClick(id: String) = controller.navigateIfNecessary("profile/$id")
             }
         }
         SearchNavigation(

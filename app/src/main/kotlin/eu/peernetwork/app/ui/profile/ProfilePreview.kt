@@ -2,36 +2,44 @@ package eu.peernetwork.app.ui.profile
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import eu.peernetwork.app.extension.navigateToTagSearch
 import eu.peernetwork.app.extension.navigateToUsernameSearch
+import eu.peernetwork.blog.domain.usecase.PhotosUsecase
 import eu.peernetwork.blog.ui.event.UiPostListener
+import eu.peernetwork.blog.ui.feed.author.PostScreen
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.design.component.DesignRefreshableScaffold
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
 import eu.peernetwork.core.ui.design.compose.DesignScaffold
+import eu.peernetwork.core.ui.design.compose.DesignTab
 import eu.peernetwork.core.ui.design.compose.DesignTitle
 import eu.peernetwork.core.ui.design.compose.DesignTitleBarHost
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
@@ -60,7 +68,6 @@ fun ProfilePreview(
     val connection = remember { mutableStateOf<ConnectionStatus?>(null) }
     val showSheet = remember { mutableStateOf(false) }
     val coroutine = rememberCoroutineScope()
-    var position by remember { mutableIntStateOf(0) }
     val enable =  remember { derivedStateOf { state.value == ProfileOverlayState.Empty } }
     val pageState = rememberPagerState(
         pageCount = { UiMimeType.TYPES.size },
@@ -73,22 +80,30 @@ fun ProfilePreview(
         val connectionState by connectionController.value.observe().collectAsStateWithLifecycle()
         val event = remember {
             object : UiPostListener {
-                override fun onMentionClick(username: String) = controller.navigateToUsernameSearch(username)
-
-                override fun onHashtagClick(tag: String) = controller.navigateToTagSearch(tag)
-
-                override fun onPostClick(id: String, position: Int) {
-                    if (pageState.currentPage == 0) {
-                        state.value = ProfileOverlayState.Photo(id, position)
-                    } else {
-                        state.value = ProfileOverlayState.Video(id, position)
+                override fun invoke(event: UiPostListener.Event) {
+                    when(event) {
+                        is UiPostListener.Event.Mention -> {
+                            controller.navigateToUsernameSearch(event.username)
+                        }
+                        is UiPostListener.Event.Hashtag -> {
+                            controller.navigateToTagSearch(event.tag)
+                        }
+                        is UiPostListener.Event.Author -> {
+                            controller.navigateIfNecessary("profile/${event.id}")
+                        }
+                        is UiPostListener.Event.Post -> {
+                            state.value = ProfileOverlayState.Photo(
+                                id = event.id,
+                                position = event.position,
+                                page = pageState.currentPage
+                            )
+                        }
                     }
                 }
-
-                override fun onAuthorClick(id: String) = controller.navigateIfNecessary("profile/$id")
             }
         }
         ProfilePreview(
+            pageState = pageState,
             onRefresh = { lastUpdated.longValue = System.currentTimeMillis() },
             header = { scrollState ->
                 UserScreen(
@@ -96,9 +111,14 @@ fun ProfilePreview(
                     lastUpdated = lastUpdated,
                     onFollow = {
                         ConnectionScreen(
-                            isFollowing = connectionState.getOrDefault(id, it.first),
                             isFollowed = it.second,
-                            onClick = { follow -> connectionController.value.invoke(id, !follow) }
+                            isFollowing = connectionState.getOrDefault(
+                                key = id,
+                                defaultValue = it.first
+                            ),
+                            onClick = { follow ->
+                                connectionController.value.invoke(id, !follow)
+                            }
                         )
                     },
                     onClick = { sheetType ->
@@ -119,18 +139,24 @@ fun ProfilePreview(
                 )
             },
         ) {
-            ProfileBlog(
-                id = id,
-                state = pageState,
-                enable = enable,
+            PostScreen(
+                author = id,
+                types = if (it == 0) {
+                    PhotosUsecase.POST
+                } else {
+                    PhotosUsecase.MEDIA
+                },
+                status = enable,
+                postLimit = limit,
                 lastUpdated = lastUpdated,
-                limit = limit,
                 provider = component,
-                viewModelStore = viewModelStore,
-                onNavigate = { position = it },
+                viewModelStoreOwner = viewModelStore.get("$id$it"),
                 event = event,
-                postState = postState,
-                mediaState = mediaState
+                listState =  if (it == 0) {
+                    postState
+                } else {
+                    mediaState
+                }
             )
         }
         ProfileSheet(
@@ -144,7 +170,7 @@ fun ProfilePreview(
     }
     DesignTitleBarHost("ProfileScreen$id", {
         coroutine.launch {
-            if (position == 0) {
+            if (pageState.currentPage == 0) {
                 postState.animateScrollToItem(0)
             } else {
                 mediaState.animateScrollToItem(0)
@@ -162,12 +188,15 @@ fun ProfilePreview(
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 fun ProfilePreview(
+    pageState: PagerState,
     modifier: Modifier = Modifier,
     onRefresh: () -> Unit = {},
     header: @Composable (State<Float>) -> Unit,
-    content: @Composable () -> Unit
+    content: @Composable (Int) -> Unit
 ) {
-    val state = remember { mutableStateOf(DesignStatefulScaffoldState.Success(Unit)) }
+    val state = remember {
+        mutableStateOf(DesignStatefulScaffoldState.Success(Unit))
+    }
     val updatedHeader by rememberUpdatedState(header)
     val updatedContent by rememberUpdatedState(content)
     DesignRefreshableScaffold<Unit>(
@@ -178,6 +207,21 @@ fun ProfilePreview(
         DesignScaffold(
             modifier = modifier.fillMaxSize(),
             header = updatedHeader,
-        ) { state -> updatedContent() }
+        ) {
+            DesignTab(pageState) { index ->
+                UiMimeType.get(index)?.let {
+                    Icon(
+                        painter = painterResource(id = it.id),
+                        contentDescription = it.label?.let { stringResource(it) },
+                        tint = MaterialTheme.colorScheme.tertiary,
+                        modifier = Modifier.padding(vertical = 8.dp).size(28.dp)
+                    )
+                }
+            }
+            HorizontalPager(
+                state = pageState,
+                verticalAlignment = Alignment.Top,
+            ) { page -> updatedContent(page) }
+        }
     }
 }

@@ -74,9 +74,9 @@ fun TimelineScreen(
     val handleOnLoad by rememberUpdatedState(onLoad)
     EngagementScreen(
         postLimit = limit,
-        onMentionClick = event::onMentionClick,
-        onHashtagClick = event::onHashtagClick,
-        onAuthorClick = event::onAuthorClick,
+        onAuthorClick = { event(UiPostListener.Event.Author(it)) },
+        onMentionClick = { event(UiPostListener.Event.Mention(it)) },
+        onHashtagClick = { event(UiPostListener.Event.Hashtag(it)) },
         provider = component,
         viewModelStoreOwner = viewModelStoreOwner,
         connection = connection

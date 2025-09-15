@@ -62,14 +62,15 @@ fun TimelineList(
         listState = listState,
     ) { post, index, position ->
         val uiContent by remember { derivedStateOf { post.mapToContent() } }
-        val handleAuthorClick by rememberUpdatedState { event.onAuthorClick(post.author.id) }
         PostItem(
             post = post,
             position = index,
-            onClick = { event.onPostClick(post.id, index) },
-            onAuthorClick = handleAuthorClick,
-            onMentionClick = event::onMentionClick,
-            onHashtagClick = event::onHashtagClick,
+            onClick = {
+                event(UiPostListener.Event.Post(post.id, index))
+            },
+            onAuthorClick = { event(UiPostListener.Event.Author(post.author.id)) },
+            onMentionClick = { event(UiPostListener.Event.Mention(it)) },
+            onHashtagClick = { event(UiPostListener.Event.Hashtag(it)) },
             engagements = {
                 EngagementScreen(
                     uiContent,

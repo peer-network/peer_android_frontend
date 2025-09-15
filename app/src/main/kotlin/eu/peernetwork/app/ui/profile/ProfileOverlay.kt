@@ -31,12 +31,8 @@ sealed interface ProfileOverlayState {
 
     data class Photo(
         val id: String,
-        val position: Int
-    ) : ProfileOverlayState
-
-    data class Video(
-        val id: String,
-        val position: Int
+        val position: Int,
+        val page: Int
     ) : ProfileOverlayState
 }
 
@@ -54,7 +50,9 @@ fun ProfileOverlay(
 ) {
     val updatedContent by rememberUpdatedState(content)
     val connection by connectionController.value.observe().collectAsStateWithLifecycle()
-    val visible = remember(overlay.value) { mutableStateOf(overlay.value !is ProfileOverlayState.Empty) }
+    val visible = remember(overlay.value) {
+        mutableStateOf(overlay.value !is ProfileOverlayState.Empty)
+    }
     updatedContent()
     DesignOverlay(
         startDestination = "overlay",
@@ -69,15 +67,20 @@ fun ProfileOverlay(
             val overlayState = remember { mutableStateOf<ProfileOverlayState?>(overlay.value) }
             val event = remember {
                 object : UiPostListener {
-                    override fun onMentionClick(username: String) = controller.navigateToUsernameSearch(username)
-
-                    override fun onHashtagClick(tag: String) = controller.navigateToTagSearch(tag)
-
-                    override fun onPostClick(id: String, position: Int) {
-                        overlay.value = ProfileOverlayState.Photo(id, position)
+                    override fun invoke(event: UiPostListener.Event) {
+                        when(event) {
+                            is UiPostListener.Event.Mention -> {
+                                controller.navigateToUsernameSearch(event.username)
+                            }
+                            is UiPostListener.Event.Hashtag -> {
+                                controller.navigateToTagSearch(event.tag)
+                            }
+                            is UiPostListener.Event.Author -> {
+                                controller.navigateIfNecessary("profile/${event.id}")
+                            }
+                            else -> {}
+                        }
                     }
-
-                    override fun onAuthorClick(id: String) = controller.navigateIfNecessary("profile/$id")
                 }
             }
             ProfileNavigation(
@@ -90,66 +93,34 @@ fun ProfileOverlay(
                 viewModelStore = viewModelStore,
                 onCancel = { visible.value = false }
             ) {
-                when (overlayState.value) {
-                    is ProfileOverlayState.Photo -> {
-                        val state = (overlayState.value as ProfileOverlayState.Photo)
-                        PostOverlay(
-                            author = userId,
-                            types = PhotosUsecase.POST,
-                            enabled = visible.value,
-                            limit = limit,
-                            position = state.position,
+                val state = (overlayState.value as ProfileOverlayState.Photo)
+                PostOverlay(
+                    author = userId,
+                    types = PhotosUsecase.POST,
+                    enabled = visible.value,
+                    limit = limit,
+                    position = state.position,
+                    provider = component,
+                    viewModelStoreOwner = viewModelStore.get("$userId${state.page}"),
+                    event = event,
+                    header = {
+                        WindowTitle(
+                            id = userId,
                             provider = component,
-                            viewModelStoreOwner = viewModelStore.get("$userId${PhotosUsecase.POST}"),
-                            event = event,
-                            header = {
-                                WindowTitle(
-                                    id = userId,
-                                    provider = component,
-                                    viewModelStore = viewModelStore,
-                                    onCancel = { visible.value = false },
-                                )
-                            }
-                        ) {
-                            if (userId != principal) {
-                                ConnectionScreen(
-                                    isFollowing = connection.getOrDefault(it.first, it.third),
-                                    isFollowed = it.second,
-                                    onClick = { follow -> connectionController.value.invoke(it.first, !follow) }
-                                )
-                            }
-                        }
+                            viewModelStore = viewModelStore,
+                            onCancel = { visible.value = false },
+                        )
                     }
-                    is ProfileOverlayState.Video -> {
-                        val state = (overlayState.value as ProfileOverlayState.Video)
-                        PostOverlay(
-                            author = userId,
-                            types = PhotosUsecase.MEDIA,
-                            enabled = visible.value,
-                            limit = limit,
-                            position = state.position,
-                            provider = component,
-                            viewModelStoreOwner = viewModelStore.get("$userId${PhotosUsecase.MEDIA}"),
-                            event = event,
-                            header = {
-                                WindowTitle(
-                                    id = userId,
-                                    provider = component,
-                                    viewModelStore = viewModelStore,
-                                    onCancel = { visible.value = false },
-                                )
+                ) {
+                    if (userId != principal) {
+                        ConnectionScreen(
+                            isFollowing = connection.getOrDefault(it.first, it.third),
+                            isFollowed = it.second,
+                            onClick = { follow ->
+                                connectionController.value.invoke(it.first, !follow)
                             }
-                        ) {
-                            if (userId != principal) {
-                                ConnectionScreen(
-                                    isFollowing = connection.getOrDefault(it.first, it.third),
-                                    isFollowed = it.second,
-                                    onClick = { follow -> connectionController.value.invoke(it.first, !follow) }
-                                )
-                            }
-                        }
+                        )
                     }
-                    else -> {}
                 }
             }
         }
