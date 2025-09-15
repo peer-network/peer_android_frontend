@@ -22,4 +22,7 @@
     <string name="point_description">You have %d Free %s</string>
     <string name="description_label">Description</string>
     <string name="view_more_label">View more…</string>
+
+    <string name="most_liked_label">Liked Most</string>
+    <string name="most_disliked_label">Disliked Most</string>
 </resources>

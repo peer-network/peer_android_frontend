@@ -27,6 +27,7 @@ import eu.peernetwork.app.extension.navigateToTagSearch
 import eu.peernetwork.app.extension.navigateToUsernameSearch
 import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.blog.domain.model.Category
+import eu.peernetwork.blog.domain.model.toCriteriaOrNull
 import eu.peernetwork.blog.ui.event.UiPostEvent
 import eu.peernetwork.blog.ui.feed.photo.PostScreen
 import eu.peernetwork.core.ui.design.compose.DesignTab
@@ -85,6 +86,9 @@ fun FeedPreview(
 
             override fun onAuthorClick(id: String) = controller.navigateIfNecessary("profile/$id")
         }
+    }
+    val effectiveCriteria by remember(category, criteria) {
+        mutableStateOf(criteria ?: category.toCriteriaOrNull())
     }
     FeedPreview(
         state = state,
