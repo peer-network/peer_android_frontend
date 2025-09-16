@@ -4,6 +4,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.paging.PagingData
 import app.cash.turbine.test
 import eu.peernetwork.blog.domain.usecase.ViewUsecase
+import eu.peernetwork.blog.ui.feed.timeline.PostViewModel
 import eu.peernetwork.blog.ui.mock.MockContent
 import eu.peernetwork.blog.ui.usecase.FeedUsecase
 import eu.peernetwork.core.common.paging.Pageable

@@ -5,6 +5,7 @@ import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -43,6 +44,7 @@ fun AudioContent(
 ) {
     val clickHandler by rememberUpdatedState(onAuthorClick)
     val selectHandler by rememberUpdatedState { onPostClick(post.id, index) }
+    val updatedBackground by rememberUpdatedState(background)
     val updatedContent by rememberUpdatedState(content)
     val updatedConnection by rememberUpdatedState(connection)
     val uiContent = post.mapToContent()
@@ -95,7 +97,12 @@ fun AudioContent(
             )
         },
         header = header,
-        background = background,
+        background = {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier.fillMaxSize()
+            ) { updatedBackground() }
+        },
         actions = {
             updatedConnection(
                 Triple(
@@ -108,9 +115,14 @@ fun AudioContent(
     ) {
         Box(
             contentAlignment = Alignment.Center,
-            modifier = Modifier.clickable(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            Box(modifier = Modifier.clickable(
                 role = Role.Button,
                 onClick = { selectHandler() }
-            )) { updatedContent(post) }
+            )) {
+                updatedContent(post)
+            }
+        }
     }
 }

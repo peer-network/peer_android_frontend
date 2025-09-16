@@ -62,7 +62,9 @@ fun AudioHost(
             length.longValue = it.duration.coerceAtLeast(1).toLong()
         }
         setOnErrorListener { _, what, extra ->
-            errorState.value = MediaPlaybackException(what, extra)
+            if (what == MediaPlayer.MEDIA_ERROR_SERVER_DIED) {
+                errorState.value = MediaPlaybackException(what, extra)
+            }
             true
         }
         setOnCompletionListener {

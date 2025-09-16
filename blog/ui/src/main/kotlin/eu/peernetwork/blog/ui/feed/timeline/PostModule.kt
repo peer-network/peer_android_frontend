@@ -1,4 +1,4 @@
-package eu.peernetwork.blog.ui.feed.photo
+package eu.peernetwork.blog.ui.feed.timeline
 
 import android.content.Context
 import androidx.lifecycle.ViewModel

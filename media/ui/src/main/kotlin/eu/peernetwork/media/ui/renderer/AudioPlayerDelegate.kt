@@ -1,21 +1,26 @@
 package eu.peernetwork.media.ui.renderer
 
 import android.media.MediaPlayer
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableLongState
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import eu.peernetwork.media.core.renderer.AudioPlayer
 import eu.peernetwork.media.ui.annotation.Screen
 import eu.peernetwork.media.ui.annotation.Timeline
 import eu.peernetwork.media.ui.compose.AudioHost
 import eu.peernetwork.media.ui.compose.AudioPlayerThumbnail
-import eu.peernetwork.media.ui.compose.VolumeControl
+import eu.peernetwork.media.ui.compose.VideoControl
 import eu.peernetwork.media.ui.interactor.MediaInteractor
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class AudioPlayerDelegate @Inject constructor(
@@ -53,11 +58,13 @@ class AudioPlayerDelegate @Inject constructor(
         modifier: Modifier,
         spec: AudioPlayer.Spec
     ) {
-        val scope = rememberCoroutineScope()
+        val isPaused = remember(spec.isActive.value) {
+            mutableStateOf(spec.isActive.value)
+        }
         AudioHost(
             path = spec.path,
             position = spec.position,
-            active = spec.isActive,
+            active = isPaused,
             enable = spec.enable,
             length = spec.length,
             progress = spec.progress,
@@ -65,13 +72,20 @@ class AudioPlayerDelegate @Inject constructor(
             session = session,
             source = { screenPlayer }
         ) { player, state, isLoading, isPlaying, mute, error ->
-            VolumeControl(mute) {
-                scope.launch { session.mute(it) }
-                if (it) {
-                    player.start()
-                } else {
-                    player.pause()
-                }
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier.fillMaxWidth()
+                    .aspectRatio(1f)
+            ) {
+                VideoControl(
+                    isLoading = isLoading,
+                    isPlaying = isPlaying,
+                    error = error,
+                    modifier = Modifier.fillMaxSize(),
+                    onPlay = {
+                        isPaused.value = !isPaused.value
+                    }
+                )
             }
         }
     }

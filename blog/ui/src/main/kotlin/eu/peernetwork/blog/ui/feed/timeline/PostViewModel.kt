@@ -1,4 +1,4 @@
-package eu.peernetwork.blog.ui.feed.photo
+package eu.peernetwork.blog.ui.feed.timeline
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

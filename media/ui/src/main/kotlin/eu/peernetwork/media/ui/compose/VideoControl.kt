@@ -7,6 +7,7 @@ import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
@@ -25,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -36,6 +38,7 @@ fun VideoControl(
     isLoading: State<Boolean>,
     isPlaying: State<Boolean>,
     error: State<Throwable?>,
+    modifier: Modifier = Modifier,
     durationMillis: Int = 1000,
     easing: Easing = FastOutSlowInEasing,
     onPlay: () -> Unit
@@ -53,6 +56,11 @@ fun VideoControl(
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier.wrapContentSize()
+            .clickable(enabled = true, role = Role.Button) {
+                if (!isLoading.value) {
+                    handleOnPlay()
+                }
+            }.then(modifier)
     ) {
         IconButton(
             { handleOnPlay() },

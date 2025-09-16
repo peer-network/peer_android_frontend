@@ -29,7 +29,7 @@ import eu.peernetwork.app.mapper.mapToCriteria
 import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.blog.domain.model.Category
 import eu.peernetwork.blog.ui.event.UiPostListener
-import eu.peernetwork.blog.ui.feed.photo.PostScreen
+import eu.peernetwork.blog.ui.feed.timeline.PostScreen
 import eu.peernetwork.blog.ui.model.UiFilter
 import eu.peernetwork.core.ui.design.compose.DesignTab
 import eu.peernetwork.core.ui.extension.navigateIfNecessary

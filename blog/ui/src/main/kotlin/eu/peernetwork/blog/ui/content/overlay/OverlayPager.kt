@@ -116,17 +116,20 @@ fun OverlayPager(
                         connection = { updatedConnection(post, it) },
                         progress = { updatedProgress(UiMimeType.Music, progress) },
                         background = {
-                            updatedAudio(
-                                post,
-                                pagerState,
-                                enabled && page == pagerState.currentPage,
-                                progress)
+                            val cover = post.media.firstOrNull()?.options?.cover
+                            if (cover != null) {
+                                updatedImage(post, cover)
+                            } else {
+                                updatedImage(post, post.author.imageUrl)
+                            }
                         }
                     ) {
-                        val cover = post.media.firstOrNull()?.options?.cover
-                        if (cover != null) {
-                            updatedImage(post, cover)
-                        }
+                        updatedAudio(
+                            post,
+                            pagerState,
+                            enabled && page == pagerState.currentPage,
+                            progress
+                        )
                     }
                 } else if (post.type == UiPost.Type.VIDEO) {
                     val videoPost = post.mapToVideo()
