@@ -13,6 +13,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.withFrameMillis
@@ -25,6 +26,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.launch
 
 @OptIn(FlowPreview::class)
 @Composable
@@ -47,18 +49,17 @@ fun AudioHost(
         State<Throwable?>
     ) -> Unit
 ) {
+    val scope = rememberCoroutineScope()
     val state = remember { mutableLongStateOf(System.currentTimeMillis()) }
     val unMute = session.mute().collectAsStateWithLifecycle(enable.value)
     val isLoading = remember { mutableStateOf(false) }
     val isPlaying = remember { mutableStateOf(false) }
     val errorState = remember { mutableStateOf<Throwable?>(null) }
-    val shouldPlay = remember { derivedStateOf { current.value == position && unMute.value } }
+    val shouldPlay = remember { derivedStateOf { current.value == position } }
     val player = remember { source().apply {
         isLooping = true
         setOnPreparedListener {
-            if (unMute.value) {
-                it.start()
-            }
+            it.start()
             length.longValue = it.duration.coerceAtLeast(1).toLong()
         }
         setOnErrorListener { _, what, extra ->
@@ -113,9 +114,15 @@ fun AudioHost(
         if (current.value == position) {
             if (!active.value) {
                 player.pause()
-            } else if (unMute.value) {
+            } else {
                 player.start()
             }
+        }
+    }
+    LaunchedEffect(unMute.value) {
+        scope.launch {
+            val volume = if (unMute.value) 1f else 0f
+            player.setVolume(volume, volume)
         }
     }
     LaunchedEffect(shouldPlay.value) {
