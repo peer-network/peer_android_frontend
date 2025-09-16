@@ -16,6 +16,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navDeepLink
 import eu.peernetwork.app.ui.launcher.LauncherScreen
 import eu.peernetwork.app.ui.splash.SplashScreen
+import eu.peernetwork.app.ui.onboarding.OnboardingScreen
 import eu.peernetwork.core.ui.design.compose.DesignNavigation
 import eu.peernetwork.core.ui.extension.attachIfNecessary
 
@@ -33,14 +34,27 @@ fun MainScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
     val derivedState = remember(state.token) { derivedStateOf { state.token?.access } }
     var playSplash by rememberSaveable { mutableStateOf(false) }
-    LaunchedEffect(playSplash) {
-        if (playSplash && controller.currentDestination?.route == "splash"
-            || controller.currentDestination?.route != "splash") {
-            controller.attachIfNecessary("launcher")
-        }
+
+    val onboardingCompleted by viewModel.onboardingCompleted.collectAsStateWithLifecycle()
+
+    LaunchedEffect(playSplash, onboardingCompleted) {
+        if (!playSplash) return@LaunchedEffect
+        val destination = if (onboardingCompleted) "launcher" else "onboarding"
+        controller.attachIfNecessary(destination)
     }
+
     DesignNavigation(navController = controller, startDestination = "splash") {
         composable("splash") { SplashScreen(component, viewModelStoreOwner) { playSplash = true } }
+
+        composable("onboarding") {
+            OnboardingScreen(
+                component,
+                viewModelStoreOwner
+            ) {
+                controller.attachIfNecessary("launcher")
+            }
+        }
+
         composable(
             "launcher",
             deepLinks = listOf(
