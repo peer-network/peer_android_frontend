@@ -3,6 +3,7 @@ package eu.peernetwork.app.ui.home
 import android.content.res.Configuration
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
@@ -29,6 +30,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.compose.DesignPage
 import eu.peernetwork.core.ui.design.compose.DesignPageHeader
@@ -40,6 +42,7 @@ import eu.peernetwork.core.ui.extension.attach
 import eu.peernetwork.core.ui.extension.attachIfNecessary
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.core.ui.factory.UiViewModelStore
+import eu.peernetwork.social.ui.feedback.FeedbackPopup
 import eu.peernetwork.wallet.ui.reward.RewardScreen
 
 @Composable
@@ -111,6 +114,11 @@ fun HomeScreen(provider: UiComponentProvider) {
         }
     }
     DisposableEffect(Unit) { onDispose { viewModelStore.clear() } }
+    FeedbackPopup(
+        BuildConfig.APPLICATION_ID,
+        component,
+        viewModelStore.get("FeedbackPopup")
+    )
 }
 
 @Composable
