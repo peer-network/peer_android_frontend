@@ -26,7 +26,7 @@ class FeedbackViewModel @Inject constructor(
     private val feedbackGivenKey = this::class.java.name + "_feedbackGiven"
 
     private val minInterval = 10_000L
-    private val maxPopups = 3
+    private val maxPopups = 4
 
     fun initialize() {
         viewModelScope.launch {
