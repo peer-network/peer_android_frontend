@@ -10,7 +10,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModelStoreOwner
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.extension.builder
-import eu.peernetwork.messaging.ui.chat.ChatScreen
+//import eu.peernetwork.messaging.ui.chat.ChatScreen
 
 @Composable
 fun MessagingScreen(
@@ -25,7 +25,7 @@ fun MessagingScreen(
     var selectedChatId by rememberSaveable { mutableStateOf<String?>(null) }
 
     if (selectedChatId == null) {
-        ChatScreen()
+//        ChatScreen()
     } else {
 
     }

@@ -14,8 +14,9 @@ android {
 dependencies {
     implementation(project(":core:common"))
     implementation(project(":core:ui"))
-
+    implementation(project(":blog:ui"))
     implementation(project(":messaging:domain"))
+    implementation(project(":media:core"))
 
     implementation(libs.dagger)
     ksp(libs.dagger.compiler)
