@@ -33,6 +33,7 @@ import eu.peernetwork.media.core.R
 
 @Composable
 fun AudioScaffold(
+    isEnabled: State<Boolean>,
     isPlaying: State<Boolean>,
     isLoading: State<Boolean>,
     durationMillis: Int = 1000,
@@ -60,7 +61,7 @@ fun AudioScaffold(
         }, modifier = Modifier.size(36.dp).graphicsLayer {
             this.alpha = if (isLoading.value) alpha else 1f }
         ) {
-            Crossfade(if (isPlaying.value) {
+            Crossfade(if (isPlaying.value && isEnabled.value) {
                 R.drawable.ic_pause
             } else {
                 R.drawable.ic_play
@@ -84,6 +85,7 @@ fun PreviewAudioScaffold() {
         val state = remember { mutableStateOf(false) }
         val isLoading = remember { mutableStateOf(true) }
         AudioScaffold(
+            isEnabled = state,
             isPlaying = state,
             isLoading = isLoading,
             onPlayPauseClick = { }

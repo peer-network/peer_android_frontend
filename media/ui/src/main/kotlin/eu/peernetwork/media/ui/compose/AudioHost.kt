@@ -142,7 +142,8 @@ fun AudioHost(
     DisposableEffect(Unit) {
         onDispose {
             if (current.value == position) {
-                player.pause()
+                player.reset()
+                current.value = -1
             }
         }
     }
