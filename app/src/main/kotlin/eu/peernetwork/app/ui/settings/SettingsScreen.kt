@@ -10,12 +10,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.compose.DesignTitle
 import eu.peernetwork.core.ui.design.compose.DesignTitleBarHost
@@ -23,6 +25,7 @@ import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.core.ui.factory.UiViewModelStore
 import eu.peernetwork.core.ui.theme.PeerTheme
+import eu.peernetwork.social.ui.feedback.FeedbackScreen
 import eu.peernetwork.user.ui.R
 import eu.peernetwork.user.ui.settings.account.AccountPreview
 
@@ -63,7 +66,9 @@ fun SettingsScreen(
     val referral = stringResource(R.string.referral_name_label)
     val password = stringResource(R.string.password_label)
     val preference = stringResource(R.string.preference_label)
+    val feedback = stringResource(R.string.feedback_label)
     val aboutUsLabel = stringResource(R.string.about_us_label)
+    val feedbackSession = remember { mutableLongStateOf(-1) }
     Column(modifier = Modifier
         .fillMaxSize()
         .verticalScroll(rememberScrollState())) {
@@ -79,10 +84,17 @@ fun SettingsScreen(
         SettingsItem(label = preference) {
             handleOnNavigate(preference)
         }
+        SettingsItem(label = feedback) {
+            feedbackSession.value = System.currentTimeMillis()
+        }
         SettingsItem(label = aboutUsLabel) {
             handleOnNavigate("about")
         }
     }
+    FeedbackScreen(
+        feedbackSession,
+        BuildConfig.APPLICATION_ID
+    )
 }
 
 @Composable
