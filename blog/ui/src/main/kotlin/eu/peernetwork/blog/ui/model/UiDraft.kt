@@ -8,8 +8,7 @@ import eu.peernetwork.media.core.model.UiAttachment
 data class UiDraft(
     val title: String,
     val description: String,
-    val attachment: UiAttachment,
-    val cover: Uri? = null
+    val attachment: UiAttachment
 ) {
     @Immutable
     data class Field(

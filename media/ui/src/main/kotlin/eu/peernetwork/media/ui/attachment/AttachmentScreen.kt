@@ -208,46 +208,43 @@ fun AttachmentScreen(
         modifier = modifier,
         visible = isVisible,
         label = {
-            if (attachment.value.media == UiMimeType.Photo) {
-                AttachmentOption(
-                    onSquareClick = onSquareClick,
-                    onPortraitClick = onPortraitClick,
-                    modifier = Modifier.fillMaxWidth()
+            Column(modifier = Modifier.fillMaxWidth()) {
+                AttachmentSize(
+                    attachment = attachment.value,
+                    modifier = Modifier
+                        .fillMaxWidth()
                         .padding(
                             top = 4.dp,
                             bottom = 8.dp
                         )
                 )
+                if (attachment.value.media == UiMimeType.Photo) {
+                    AttachmentOption(
+                        onSquareClick = onSquareClick,
+                        onPortraitClick = onPortraitClick,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(
+                                top = 4.dp,
+                                bottom = 8.dp
+                            )
+                    )
+                }
             }
         }
     ) {
         Column {
-            if (attachment.value.media != UiMimeType.Music) {
-                Box(modifier = Modifier.padding(bottom = 4.dp)) {
-                    AttachmentPreview(
-                        onAttach = onAttach,
-                        onLoad = onLoad,
-                        onRefresh = onRefresh,
-                        onRemove = onDetach,
-                        attachment = attachment,
-                        onSelect = onSelect,
-                        onPreview = onPreview
-                    )
-                }
-            }
-
-            if (attachment.value.media == UiMimeType.Music) {
-                Box(modifier = Modifier.padding(bottom = 4.dp)) {
-                    AttachmentAudio(
-                        files = attachment.value.files,
-                        onRemove = onDetach,
-                        onAttach = onAttach,
-                        onSelectCover = { audioFileUri ->
-                            onSelectCover(audioFileUri)
-                        },
-                        modifier = Modifier.padding(horizontal = 56.dp),
-                    )
-                }
+            Box(modifier = Modifier.padding(bottom = 4.dp)) {
+                AttachmentPreview(
+                    onAttach = onAttach,
+                    onLoad = onLoad,
+                    onRefresh = onRefresh,
+                    onRemove = onDetach,
+                    attachment = attachment,
+                    onSelect = onSelect,
+                    onPreview = onPreview,
+                    onSelectCover = onSelectCover
+                )
             }
         }
     }

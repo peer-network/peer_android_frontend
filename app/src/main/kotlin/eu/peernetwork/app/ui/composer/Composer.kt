@@ -8,6 +8,7 @@ import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.media.ui.attachment.Attachment
 import eu.peernetwork.media.ui.editor.video.Video
 import eu.peernetwork.media.ui.selector.explorer.Explorer
+import eu.peernetwork.media.ui.selector.photo.Photo
 import eu.peernetwork.wallet.ui.confirmation.Confirmation
 
 interface Composer : ApplicationProvider {
@@ -26,6 +27,7 @@ interface Composer : ApplicationProvider {
         Attachment,
         Confirmation,
         Video,
+        Photo,
         UiComponentProvider
 
     class Builder(private val dependency: Composer) : UiComponent.DefaultBuilder<Composer, Component>() {

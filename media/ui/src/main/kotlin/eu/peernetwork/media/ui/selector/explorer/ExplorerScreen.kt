@@ -64,8 +64,8 @@ fun ExplorerScreen(
     val default = stringResource(R.string.photo_label)
     val title = rememberSaveable { mutableStateOf(default) }
     val directory = rememberSaveable { mutableStateOf<String?>(null) }
-    val showDirectory = rememberSaveable { mutableStateOf<Boolean>(false) }
-    val selected = rememberSaveable(saver = UiAttachmentSaver) { mutableStateOf<UiAttachment>(attachment.value) }
+    val showDirectory = rememberSaveable { mutableStateOf(false) }
+    val selected = rememberSaveable(saver = UiAttachmentSaver) { mutableStateOf(attachment.value) }
     val handleFinish by rememberUpdatedState(onFinish)
     ExplorerScreen(
         title = title,
@@ -82,14 +82,12 @@ fun ExplorerScreen(
                 component,
                 viewModelStore.get(tag)
             ) { selected.value = it }
-
             UiMimeType.Photo -> PhotoScreen(
                 directory,
                 attachment,
                 component,
                 viewModelStore.get(tag)
             ) { selected.value = it }
-
             UiMimeType.Music -> AudioScreen(
                 type = type,
                 directory = directory,
@@ -97,10 +95,7 @@ fun ExplorerScreen(
                 provider = component,
                 viewModelStoreOwner = viewModelStore.get(tag)
             ) { selected.value = it }
-
-            else -> {
-
-            }
+            else -> {}
         }
         DesignCollapsibleBottomSheet(
             state = showDirectory,
@@ -185,7 +180,6 @@ fun ExplorerScreen(
                     audio to eu.peernetwork.core.ui.R.drawable.ic_music,
                     files to eu.peernetwork.core.ui.R.drawable.ic_wallet
                 )
-
                 items.entries.forEach { (label, iconRes) ->
                     item(tag = label, {
                         when (label) {

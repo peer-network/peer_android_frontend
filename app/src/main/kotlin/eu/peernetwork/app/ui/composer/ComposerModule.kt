@@ -13,6 +13,7 @@ import eu.peernetwork.core.ui.factory.UiBuilderFactory
 import eu.peernetwork.media.ui.attachment.Attachment
 import eu.peernetwork.media.ui.editor.video.Video
 import eu.peernetwork.media.ui.selector.explorer.Explorer
+import eu.peernetwork.media.ui.selector.photo.Photo
 import eu.peernetwork.wallet.ui.confirmation.Confirmation
 import javax.inject.Provider
 
@@ -69,5 +70,13 @@ object ComposerModule {
     @UiBuilder(Video.Builder::class)
     fun provideVideoBuilder(component: Composer.Component): UiComponent.Builder {
         return Video.Builder(component)
+    }
+
+    @Composer.Scope
+    @Provides
+    @IntoMap
+    @UiBuilder(Photo.Builder::class)
+    fun providePhotoBuilder(component: Composer.Component): UiComponent.Builder {
+        return Photo.Builder(component)
     }
 }
