@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableLongState
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
@@ -33,15 +34,11 @@ fun AudioPlayerThumbnail(
     val scope = rememberCoroutineScope()
     val progress = remember { mutableFloatStateOf(0f) }
     val unMute = session.mute().collectAsStateWithLifecycle(enable.value)
-    val isEnabled = remember {
-        derivedStateOf {
-            unMute.value && isActive.value
-        }
-    }
+    val canPlay = remember { derivedStateOf { unMute.value && isActive.value } }
     AudioHost(
         path = path,
         position = position,
-        active = isEnabled,
+        active = canPlay,
         enable = enable,
         length = length,
         progress = progress,
@@ -52,7 +49,7 @@ fun AudioPlayerThumbnail(
         if (hasControls) {
             AudioScaffold(
                 isPlaying = isPlaying,
-                isEnabled = isEnabled,
+                isEnabled = canPlay,
                 isLoading = isLoading,
                 onPlayPauseClick = {
                     if (current.value != position) {
@@ -81,6 +78,11 @@ fun AudioPlayerThumbnail(
                         .height(height = 3.dp)
                         .padding(start = 2.dp, end = 6.dp)
                 )
+                LaunchedEffect(canPlay.value) {
+                    if (!canPlay.value) {
+                        player.pause()
+                    }
+                }
             }
         } else {
             VolumeControl(mute) {
