@@ -173,7 +173,8 @@ fun PreviewCommentForm() {
                 dislikes = 3,
                 isViewed = true,
                 views = 2,
-                comment = 5
+                comment = 5,
+                url = ""
             )
         )
     }

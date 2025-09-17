@@ -16,5 +16,6 @@ data class UiContent(
     val isViewed: Boolean,
     val dislikes: Int,
     val views: Int,
-    val comment: Int
+    val comment: Int,
+    val url: String
 )

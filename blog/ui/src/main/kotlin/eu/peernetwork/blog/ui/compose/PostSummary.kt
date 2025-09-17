@@ -127,7 +127,8 @@ fun PreviewPostSummary() {
                 isViewed = false,
                 dislikes = 3,
                 views = 2,
-                comment = 5
+                comment = 5,
+                url = ""
             ),
         ) { Text("Hello, world!") }
     }

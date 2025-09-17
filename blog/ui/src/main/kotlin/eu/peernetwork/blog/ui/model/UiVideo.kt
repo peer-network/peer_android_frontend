@@ -20,5 +20,6 @@ data class UiVideo(
     val views: Int,
     val comment: Int,
     val aspectRatio: Float,
-    val resolution: Pair<Int, Int>?
+    val resolution: Pair<Int, Int>?,
+    val url: String
 )

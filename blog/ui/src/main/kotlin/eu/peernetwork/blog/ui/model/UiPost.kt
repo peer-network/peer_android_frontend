@@ -21,7 +21,8 @@ data class UiPost(
     val isViewed: Boolean,
     val dislikes: Int,
     val views: Int,
-    val comment: Int
+    val comment: Int,
+    val url: String
 ) {
     enum class Type {
         IMAGE,
