@@ -208,16 +208,28 @@ fun AttachmentScreen(
         modifier = modifier,
         visible = isVisible,
         label = {
-            if (attachment.value.media == UiMimeType.Photo) {
-                AttachmentOption(
-                    onSquareClick = onSquareClick,
-                    onPortraitClick = onPortraitClick,
-                    modifier = Modifier.fillMaxWidth()
+            Column(modifier = Modifier.fillMaxWidth()) {
+                AttachmentSize(
+                    attachment = attachment.value,
+                    modifier = Modifier
+                        .fillMaxWidth()
                         .padding(
                             top = 4.dp,
                             bottom = 8.dp
                         )
                 )
+                if (attachment.value.media == UiMimeType.Photo) {
+                    AttachmentOption(
+                        onSquareClick = onSquareClick,
+                        onPortraitClick = onPortraitClick,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(
+                                top = 4.dp,
+                                bottom = 8.dp
+                            )
+                    )
+                }
             }
         }
     ) {
