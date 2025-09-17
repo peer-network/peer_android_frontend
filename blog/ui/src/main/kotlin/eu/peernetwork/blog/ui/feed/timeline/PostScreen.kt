@@ -22,8 +22,11 @@ import eu.peernetwork.blog.ui.event.UiPostListener
 import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.blog.ui.content.timeline.TimelineScreen
 import eu.peernetwork.core.ui.R
+import eu.peernetwork.core.ui.design.component.DesignError
 import eu.peernetwork.core.ui.design.compose.DesignSceneState
 import kotlinx.coroutines.launch
+import androidx.navigation.NavController
+import eu.peernetwork.core.ui.extension.attachIfNecessary
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
@@ -84,32 +87,63 @@ fun PostScreen(
             }
         }
     }
-    TimelineScreen(
-        id = id,
-        limit = postLimit,
-        event = event,
-        state = derivedState,
-        provider = component,
-        connection = connection,
-        listState = listState,
-        viewModelStoreOwner = viewModelStoreOwner,
-        onRefresh = { viewModel.load(Pageable(0, postLimit), category, criteria) },
-        onLoad = {
-            if (requireUpdate.value) {
-                it.value.refresh()
-                scope.launch {
-                    listState.animateScrollToItem(0)
-                }
-                requireUpdate.value = false
-            }
+    PostNavigation(
+        explore = { navController: NavController ->
+            TimelineScreen(
+                id = id,
+                limit = postLimit,
+                event = event,
+                state = derivedState,
+                provider = component,
+                connection = connection,
+                listState = listState,
+                viewModelStoreOwner = viewModelStoreOwner,
+                onRefresh = { viewModel.load(Pageable(0, postLimit), Category.NONE, criteria) },
+                onLoad = {
+                    if (requireUpdate.value) {
+                        it.value.refresh()
+                        scope.launch {
+                            listState.animateScrollToItem(0)
+                        }
+                        requireUpdate.value = false
+                    }
+                },
+                onView = { viewModel.view(it) },
+                status = status
+            )
         },
-        onView = { viewModel.view(it) },
-        status = status
+        content = { navController ->
+            TimelineScreen(
+                id = id,
+                limit = postLimit,
+                event = event,
+                state = derivedState,
+                provider = component,
+                connection = connection,
+                listState = listState,
+                viewModelStoreOwner = viewModelStoreOwner,
+                onRefresh = { viewModel.load(Pageable(0, postLimit), category, criteria) },
+                onLoad = {
+                    if (requireUpdate.value) {
+                        it.value.refresh()
+                        scope.launch {
+                            listState.animateScrollToItem(0)
+                        }
+                        requireUpdate.value = false
+                    }
+                },
+                onExplore = {
+                    navController.attachIfNecessary("explore")
+                },
+                onView = { viewModel.view(it) },
+                status = status
+            )
+        }
     )
     LaunchedEffect(category, criteria) {
         val currentState = state as? PostViewModel.State.Success?
         val requiresChange = currentState?.category != category
-                || currentState.criteria != criteria
+                || currentState?.criteria != criteria
         if (requiresChange) {
             viewModel.load(Pageable(0, postLimit), category, criteria)
             requireUpdate.value = true

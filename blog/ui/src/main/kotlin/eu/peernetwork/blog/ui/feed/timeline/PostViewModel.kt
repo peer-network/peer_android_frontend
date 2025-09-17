@@ -41,17 +41,19 @@ class PostViewModel @Inject constructor(
                     page = page
                 )
             )
-                .catch { mutableState.tryEmit(State.Error(it)) }
+                .catch {
+                    mutableState.tryEmit(State.Error(it))
+                }
                 .onStart { mutableState.tryEmit(State.Loading) }
                 .cachedIn(viewModelScope)
                 .apply {
-                        collectLatest {
-                            mutableState.tryEmit(State.Success(
-                                category = category,
-                                criteria = criteria,
-                                content = this
-                            ))
-                        }
+                    collectLatest {
+                        mutableState.tryEmit(State.Success(
+                            category = category,
+                            criteria = criteria,
+                            content = this
+                        ))
+                    }
                 }
         }
     }

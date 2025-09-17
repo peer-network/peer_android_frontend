@@ -75,6 +75,8 @@ fun<T : Any> RefreshableContentScaffold(
             .verticalScroll(rememberScrollState())
         ) { PostPlaceholder(contentPaddingValues = PaddingValues(16.dp)) }
     },
+    empty: @Composable () -> Unit = {},
+    error: @Composable (error: State<Throwable>) -> Unit = { DesignError(onRefresh, it.value, resource) },
     content: @Composable (State<DesignPagerState>, data: State<LazyPagingItems<T>>) -> Unit
 ) {
     DesignRefreshablePager(
@@ -84,7 +86,8 @@ fun<T : Any> RefreshableContentScaffold(
         onRefresh = onRefresh,
         default = default,
         loading = loading,
-        error = { DesignError(onRefresh, it.value, resource) },
+        empty = empty,
+        error = error,
         content = content
     )
 }

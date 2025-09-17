@@ -16,6 +16,7 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import dev.materii.pullrefresh.DragRefreshLayout
 import dev.materii.pullrefresh.rememberPullRefreshState
+import eu.peernetwork.core.ui.exception.NoContentException
 import kotlinx.coroutines.flow.Flow
 
 sealed interface DesignPagerState {
@@ -69,6 +70,7 @@ fun<T : Any> DesignRefreshablePager(
     onRefresh: () -> Unit = {},
     default: @Composable () -> Unit = {},
     loading: @Composable () -> Unit = {},
+    empty: @Composable () -> Unit = {},
     error: @Composable (error: State<Throwable>) -> Unit = {},
     content: @Composable (State<DesignPagerState>, data: State<LazyPagingItems<T>>) -> Unit,
 ) {
@@ -101,12 +103,17 @@ fun<T : Any> DesignRefreshablePager(
             }
         } }
         val updatedLoading by rememberUpdatedState(loading)
+        val updatedEmpty by rememberUpdatedState(empty)
         val updatedError by rememberUpdatedState(error)
         Crossfade(derivedState.value) { target ->
             when (target) {
                 is DesignSceneState.Loading -> DesignLoader { updatedLoading() }
                 is DesignSceneState.Error -> {
-                    updatedError(remember { derivedStateOf { target.error } })
+                    if (target.error is NoContentException) {
+                        updatedEmpty()
+                    } else {
+                        updatedError(remember { derivedStateOf { target.error } })
+                    }
                 }
                 else -> if (enable) {
                     val refreshState = rememberPullRefreshState(
