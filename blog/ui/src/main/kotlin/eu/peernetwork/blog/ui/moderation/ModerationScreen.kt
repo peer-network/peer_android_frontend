@@ -1,7 +1,6 @@
 package eu.peernetwork.blog.ui.moderation
 
 import android.content.Intent
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
