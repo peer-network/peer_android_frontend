@@ -222,32 +222,17 @@ fun AttachmentScreen(
         }
     ) {
         Column {
-            if (attachment.value.media != UiMimeType.Music) {
-                Box(modifier = Modifier.padding(bottom = 4.dp)) {
-                    AttachmentPreview(
-                        onAttach = onAttach,
-                        onLoad = onLoad,
-                        onRefresh = onRefresh,
-                        onRemove = onDetach,
-                        attachment = attachment,
-                        onSelect = onSelect,
-                        onPreview = onPreview
-                    )
-                }
-            }
-
-            if (attachment.value.media == UiMimeType.Music) {
-                Box(modifier = Modifier.padding(bottom = 4.dp)) {
-                    AttachmentAudio(
-                        files = attachment.value.files,
-                        onRemove = onDetach,
-                        onAttach = onAttach,
-                        onSelectCover = { audioFileUri ->
-                            onSelectCover(audioFileUri)
-                        },
-                        modifier = Modifier.padding(horizontal = 56.dp),
-                    )
-                }
+            Box(modifier = Modifier.padding(bottom = 4.dp)) {
+                AttachmentPreview(
+                    onAttach = onAttach,
+                    onLoad = onLoad,
+                    onRefresh = onRefresh,
+                    onRemove = onDetach,
+                    attachment = attachment,
+                    onSelect = onSelect,
+                    onPreview = onPreview,
+                    onSelectCover = onSelectCover
+                )
             }
         }
     }

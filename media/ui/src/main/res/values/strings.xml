@@ -5,6 +5,7 @@
     <string name="video_label">Video</string>
     <string name="audio_label">Audio</string>
     <string name="file_label">Files</string>
+    <string name="browse_label">Browse</string>
     <string name="done_label">Done</string>
     <string name="continue_label">Continue</string>
     <string name="discard_label">Discard</string>

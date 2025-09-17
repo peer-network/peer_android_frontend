@@ -37,7 +37,6 @@ import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.compose.DesignLabel
 import eu.peernetwork.core.ui.extension.builder
-import eu.peernetwork.media.core.extension.getCover
 import eu.peernetwork.media.core.model.UiAttachment
 import eu.peernetwork.media.core.model.UiMimeType
 
@@ -102,8 +101,7 @@ fun CreatorScreen(
             draft.value = UiDraft(
                 title = it.title,
                 description = it.description,
-                attachment = attachment.value,
-                cover = (attachment.value as? UiAttachment.File)?.cover
+                attachment = attachment.value
             ) },
         isLoading = isLoading,
         enabled = enabled,

@@ -3,13 +3,13 @@ package eu.peernetwork.media.ui.attachment
 import android.annotation.SuppressLint
 import android.content.res.Configuration
 import android.graphics.Bitmap
+import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -37,14 +37,15 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
+import coil.compose.rememberAsyncImagePainter
 import eu.peernetwork.core.ui.design.compose.DesignThumbnail
 import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.media.core.model.UiAttachment
@@ -62,11 +63,13 @@ fun AttachmentPreview(
     onPreview: (Int) -> Unit,
     attachment: MutableState<UiAttachment>,
     onSelect: (Int) -> Unit,
+    onSelectCover: (Uri) -> Unit,
 ) {
     val attached = remember(attachment.value) { attachment.value }
     val handleOnLoad by rememberUpdatedState(onLoad)
     val handleOnRefresh by rememberUpdatedState(onRefresh)
     val handleOnSelect by rememberUpdatedState(onSelect)
+    val handleOnSelectCover by rememberUpdatedState(onSelectCover)
     val enabled = remember { derivedStateOf { attached.files.isNotEmpty() } }
     val pagerState = rememberPagerState(initialPage = 0) { attached.files.size + 1 }
     AttachmentPreview(
@@ -75,18 +78,31 @@ fun AttachmentPreview(
         onAttach = onAttach,
         onRemove = onRemove,
         onPreview = onPreview,
+        onSelectCover = {
+            attachment.value.files.firstOrNull()?.let {
+                handleOnSelectCover(it.uri) }
+        }
     ) { index ->
         when (attached.media) {
             UiMimeType.Music -> {
-                Box {
-                    Image(
-                        painter = painterResource(id = eu.peernetwork.core.ui.R.drawable.ic_music),
-                        contentDescription = "Audio Icon",
-                        modifier = Modifier
-                            .padding(8.dp)
-                            .fillMaxSize(),
-                        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary)
-                    )
+                val coverForFile = attachment.value.files.firstOrNull()?.cover
+                Box(modifier = Modifier.fillMaxSize()) {
+                    if (coverForFile != null) {
+                        Image(
+                            painter = rememberAsyncImagePainter(coverForFile),
+                            contentDescription = "Cover Image",
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    } else {
+                        Icon(
+                            painter = painterResource(id = eu.peernetwork.core.ui.R.drawable.ic_music),
+                            contentDescription = "Audio Icon",
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(48.dp)
+                                .align(Alignment.Center)
+                        )
+                    }
                 }
             }
             else -> {
@@ -113,6 +129,7 @@ fun AttachmentPreview(
     onAttach: () -> Unit,
     onRemove: (Int) -> Unit,
     onPreview: (Int) -> Unit,
+    onSelectCover: () -> Unit,
     content: @Composable (Int) -> Unit
 ) {
     val updatedContent by rememberUpdatedState(content)
@@ -165,15 +182,30 @@ fun AttachmentPreview(
                     }
                 } else {
                     Box(
-                        contentAlignment = Alignment.BottomEnd,
-                        modifier = Modifier.clickable(
-                            enabled = true,
-                            role = Role.Button
-                        ) { handleOnPreview(page) }
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(MaterialTheme.colorScheme.surfaceVariant)
+                            .clickable(
+                                enabled = true,
+                                role = Role.Button
+                            ) { handleOnPreview(page) }
                     ) {
                         updatedContent(page)
-                        Row(
+                        Icon(
+                            painter = painterResource(id = eu.peernetwork.core.ui.R.drawable.ic_edit),
+                            contentDescription = "Select Cover Image",
+                            tint = MaterialTheme.colorScheme.onPrimary,
+                            modifier = Modifier.padding(12.dp)
+                                .size(28.dp)
+                                .align(Alignment.TopEnd)
+                                .clip(CircleShape)
+                                .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.8f))
+                                .padding(8.dp)
+                                .clickable(onClick = onSelectCover)
+                        )
+                        Box(
                             modifier = Modifier
+                                .align(Alignment.BottomEnd)
                                 .padding(12.dp)
                                 .clip(CircleShape)
                                 .background(MaterialTheme.colorScheme.background)
@@ -207,7 +239,8 @@ fun PreviewAttachmentPreview() {
                 remember { mutableStateOf(false) },
                 {},
                 {},
-                {}
+                {},
+                {},
             ) {
                 Box(
                     modifier = Modifier
@@ -221,7 +254,8 @@ fun PreviewAttachmentPreview() {
                 remember { mutableStateOf(true) },
                 {},
                 {},
-                {}
+                {},
+                {},
             ) {
                 Box(
                     modifier = Modifier

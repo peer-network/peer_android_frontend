@@ -61,7 +61,7 @@ class CreatorViewModel @Inject constructor(
             })
             UiMimeType.Music -> Draft.Type.Audio(
                 files = attachment.files.mapNotNull { mediaEncoderUsecase(it.uri) },
-                cover = cover?.let { uri ->
+                cover = attachment.files.firstOrNull()?.cover?.let { uri ->
                     mediaEncoderUsecase(uri)
                 }
             )

@@ -35,6 +35,7 @@ import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.core.ui.factory.UiViewModelStore
 import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.media.core.model.UiAttachment
+import eu.peernetwork.media.core.model.UiMimeType
 import eu.peernetwork.media.ui.attachment.AttachmentScreen
 import eu.peernetwork.media.ui.saveable.UiAttachmentSaver
 import eu.peernetwork.wallet.ui.model.UiToken
@@ -71,7 +72,9 @@ fun ComposerScreen(
                         modifier = Modifier.padding(top = 4.dp),
                         onPreview = {
                             val path = it.files.first().path
-                            controller.navigateIfNecessary("video?path=$path")
+                            if (it.media == UiMimeType.Video) {
+                                controller.navigateIfNecessary("video?path=$path")
+                            }
                         },
                         onSelectCover = { controller.navigate("cover?audioUri=${it}") },
                         component,

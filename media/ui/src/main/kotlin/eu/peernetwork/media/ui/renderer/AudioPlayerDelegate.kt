@@ -58,9 +58,7 @@ class AudioPlayerDelegate @Inject constructor(
         modifier: Modifier,
         spec: AudioPlayer.Spec
     ) {
-        val isPaused = remember(spec.isActive.value) {
-            mutableStateOf(spec.isActive.value)
-        }
+        val isPaused = remember(spec.isActive.value) { mutableStateOf(spec.isActive.value) }
         AudioHost(
             path = spec.path,
             position = spec.position,

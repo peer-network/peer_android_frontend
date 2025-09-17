@@ -1,12 +1,7 @@
 package eu.peernetwork.media.ui.selector.photo
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
@@ -23,11 +18,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -39,7 +30,6 @@ import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.media.core.model.UiAttachment
 import eu.peernetwork.media.core.model.UiFile
 import eu.peernetwork.media.core.model.UiMimeType
-import eu.peernetwork.core.ui.design.compose.DesignThumbnail
 import eu.peernetwork.media.ui.compose.ThumbnailPlaceholder
 import kotlinx.collections.immutable.toPersistentList
 
@@ -106,10 +96,13 @@ fun PhotoScreen(
             items(it.size) { index ->
                 val isSelected = selected.value.files.contains(it[index])
                 val bitmap = remember { derivedStateOf { thumbnail.value[it[index].path] } }
-                Box(modifier = Modifier
-                    .aspectRatio(1f)
-                    .background(MaterialTheme.colorScheme.surfaceVariant)
-                    .clickable(role = Role.Button) {
+                PhotoItem(
+                    isSelected = isSelected,
+                    color = color,
+                    enable = enable,
+                    thumbnail = it[index].path,
+                    bitmap = bitmap,
+                    onSelect = {
                         selected.value = if (isSelected) {
                             UiAttachment.File(
                                 UiMimeType.Photo,
@@ -124,32 +117,8 @@ fun PhotoScreen(
                             )
                         }
                         handleSelect(selected.value)
-                    }) {
-                    DesignThumbnail(
-                        enable = enable,
-                        thumbnail = it[index].path,
-                        bitmap = bitmap,
-                        modifier = Modifier.fillMaxWidth()
-                            .aspectRatio(1f)
-                            .background(MaterialTheme.colorScheme.surfaceVariant)
-                    ) { media -> viewModel.mediaThumbnail(media, UiMimeType.Photo) }
-                    Box(modifier = Modifier
-                        .fillMaxSize()
-                        .graphicsLayer {
-                            alpha = if (isSelected) {
-                                1f
-                            } else {
-                                0f
-                            }
-                        }.drawBehind {
-                            drawRoundRect(
-                                color = color,
-                                size = size,
-                                style = Stroke(width = 4.dp.toPx())
-                            )
-                        }
-                    )
-                }
+                    }
+                ) { media -> viewModel.mediaThumbnail(media, UiMimeType.Photo) }
             }
         }
     }
