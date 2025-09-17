@@ -41,7 +41,9 @@ class PostViewModel @Inject constructor(
                     page = page
                 )
             )
-                .catch { mutableState.tryEmit(State.Error(it)) }
+                .catch {
+                    mutableState.tryEmit(State.Error(it))
+                }
                 .onStart { mutableState.tryEmit(State.Loading) }
                 .cachedIn(viewModelScope)
                 .apply {

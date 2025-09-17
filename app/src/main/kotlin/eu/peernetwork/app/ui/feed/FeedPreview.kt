@@ -177,17 +177,16 @@ fun FeedPreview(
     val handleNavigation by rememberUpdatedState(onNavigate)
     Column {
         DesignTab(pageState) { index ->
-            UiMimeType.get(index)?.let { type ->
-                Icon(
-                    painter = painterResource(id = type.id),
-                    contentDescription = type.label?.let { stringResource(it) },
-                    tint = MaterialTheme.colorScheme.tertiary,
-                    modifier = Modifier
-                        .padding(vertical = 8.dp)
-                        .size(28.dp)
-                )
-            }
+
+            Text(
+                text = if (index == 0) "Followers" else "Following",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.tertiary,
+                modifier = Modifier
+                    .padding(vertical = 8.dp)
+            )
         }
+
         HorizontalPager(
             state = pageState,
             modifier = modifier,

@@ -26,6 +26,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
+import eu.peernetwork.blog.ui.compose.EmptyFeed
 import eu.peernetwork.blog.ui.compose.RefreshableContentScaffold
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
 import eu.peernetwork.blog.ui.event.UiPostListener
@@ -53,6 +54,7 @@ fun TimelineScreen(
     onView: (String) -> Unit,
     enable: Boolean = true,
     onRefresh: () -> Unit = {},
+    onExplore: (() -> Unit)? = null,
     onLoad: (State<LazyPagingItems<UiPost>>) -> Unit = {},
     connection: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit = {}
 ) {
@@ -72,6 +74,8 @@ fun TimelineScreen(
     val isActive = remember { derivedStateOf { status.value && !pause.value } }
     val thumbnail = viewModel.thumbnail.collectAsStateWithLifecycle()
     val handleOnLoad by rememberUpdatedState(onLoad)
+    val handleOnRefresh by rememberUpdatedState(onRefresh)
+    val handleOnExplore by rememberUpdatedState(onExplore)
     EngagementScreen(
         postLimit = limit,
         onAuthorClick = { event(UiPostListener.Event.Author(it)) },
@@ -89,7 +93,12 @@ fun TimelineScreen(
                 state = state,
                 enable = enable,
                 resource = component.resource(),
-                onRefresh = onRefresh
+                onRefresh = onRefresh,
+                empty = {
+                    EmptyFeed({
+                        handleOnExplore?.invoke() ?: handleOnRefresh()
+                    })
+                }
             ) { state, list ->
                 TimelineList(
                     id = id,
@@ -124,7 +133,8 @@ fun TimelineScreen(
                             enable = enable,
                             thumbnail = videoPost.media,
                             bitmap = postThumbnail,
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier
+                                .fillMaxWidth()
                                 .aspectRatio(post.aspectRatio)
                                 .background(MaterialTheme.colorScheme.background)
                         ) {

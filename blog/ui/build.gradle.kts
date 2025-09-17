@@ -18,6 +18,8 @@ dependencies {
     implementation(libs.dagger)
     ksp(libs.dagger.compiler)
 
+    implementation(libs.lottie)
+
     testImplementation(libs.junit)
     testImplementation(libs.kotlin.test)
     testImplementation(libs.androidx.test)
