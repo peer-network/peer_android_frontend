@@ -112,12 +112,12 @@ fun TimelineScreen(
                     connection = connection,
                     audio = { post, index, position, expanded ->
                         val path by remember { derivedStateOf { post.media.first().path } }
-                        val enable = remember { derivedStateOf { index == position.value } }
+                        val isPlaying = remember { derivedStateOf { index == position.value && status.value } }
                         component.audioPlayer().Thumbnail(
                             path = path,
                             hasControls = !expanded,
                             position = index,
-                            enable = enable,
+                            enable = isPlaying,
                             isActive = isActive,
                             length = length,
                             current = current,

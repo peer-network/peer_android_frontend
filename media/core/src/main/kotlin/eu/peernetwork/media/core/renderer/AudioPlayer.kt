@@ -23,12 +23,9 @@ interface AudioPlayer : Renderer.Stateful<AudioPlayer.Spec> {
 
     data class Spec(
         val path: String,
-        val position: Int,
-        val isActive: State<Boolean>,
-        val enable: State<Boolean>,
-        val length: MutableLongState,
         val progress: MutableFloatState,
-        val current: MutableState<Int>,
+        val length: MutableLongState,
+        val enabled: Boolean,
         val modifier: Modifier
     )
 }

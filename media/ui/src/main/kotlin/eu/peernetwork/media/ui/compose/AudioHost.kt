@@ -8,54 +8,43 @@ import androidx.compose.runtime.MutableFloatState
 import androidx.compose.runtime.MutableLongState
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.withFrameMillis
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import eu.peernetwork.media.ui.interactor.MediaInteractor
 import eu.peernetwork.media.ui.exception.MediaPlaybackException
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
 @OptIn(FlowPreview::class)
 @Composable
 fun AudioHost(
-    path: String,
-    position: Int,
     active: State<Boolean>,
-    enable: State<Boolean>,
     length: MutableLongState,
     progress: MutableFloatState,
-    current: MutableState<Int>,
     session: MediaInteractor,
     source: () -> MediaPlayer,
     content: @Composable (
         MediaPlayer,
-        MutableLongState,
-        State<Boolean>,
         MutableState<Boolean>,
-        State<Boolean>,
+        MutableState<Boolean>,
         State<Throwable?>
     ) -> Unit
 ) {
     val scope = rememberCoroutineScope()
-    val state = remember { mutableLongStateOf(System.currentTimeMillis()) }
-    val unMute = session.mute().collectAsStateWithLifecycle(enable.value)
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val volume = session.volume().collectAsStateWithLifecycle(active.value)
     val isLoading = remember { mutableStateOf(false) }
     val isPlaying = remember { mutableStateOf(false) }
     val errorState = remember { mutableStateOf<Throwable?>(null) }
-    val shouldPlay = remember { derivedStateOf { current.value == position } }
     val player = remember { source().apply {
         isLooping = true
         setOnPreparedListener {
@@ -74,63 +63,39 @@ fun AudioHost(
         }
     } }
     val updatedContent by rememberUpdatedState(content)
+    val observer = remember { LifecycleEventObserver { _, event ->
+        when (event) {
+            Lifecycle.Event.ON_PAUSE -> {
+                if (isPlaying.value) {
+                    player.pause()
+                }
+            }
+            Lifecycle.Event.ON_RESUME -> {
+                if (isPlaying.value) {
+                    player.start()
+                }
+            }
+            else -> Unit
+        }
+    } }
     updatedContent(
         player,
-        state,
         isLoading,
         isPlaying,
-        unMute,
         errorState
     )
-    LaunchedEffect(Unit) {
-        val enableFlow = snapshotFlow { enable.value }.distinctUntilChanged()
-        val currentFlow = snapshotFlow { current.value }.distinctUntilChanged()
-        combine(enableFlow, currentFlow) { enabled, position ->
-            Pair(enabled, position)
-        }.distinctUntilChanged()
-            .debounce(300)
-            .collectLatest { result ->
-                if (result.second == position && result.first) {
-                    player.reset()
-                    player.setDataSource(path)
-                    player.prepareAsync()
-                }
-            }
-    }
-    LaunchedEffect(Unit) {
-        snapshotFlow { state.longValue }
-            .distinctUntilChanged()
-            .debounce(300)
-            .collectLatest { result ->
-                if (!enable.value && current.value == position) {
-                    player.reset()
-                    player.setDataSource(path)
-                    player.prepareAsync()
-                    isLoading.value = true
-                }
-            }
-    }
-    LaunchedEffect(active.value) {
-        if (current.value == position) {
-            if (!active.value) {
-                player.pause()
-            } else {
-                player.start()
-            }
-        }
-    }
-    LaunchedEffect(unMute.value) {
+    LaunchedEffect(volume.value) {
         scope.launch {
-            val volume = if (unMute.value) 1f else 0f
+            val volume = if (volume.value) 1f else 0f
             player.setVolume(volume, volume)
         }
     }
-    LaunchedEffect(shouldPlay.value) {
-        while (shouldPlay.value) {
+    LaunchedEffect(active.value) {
+        while (active.value) {
             withFrameMillis {
                 val currentProgress = player.currentPosition.toFloat() / length.longValue
-                isLoading.value = currentProgress == progress.floatValue && active.value
-                isPlaying.value = currentProgress != progress.floatValue || isLoading.value
+                isPlaying.value = true
+                isLoading.value = currentProgress == progress.floatValue
                 progress.floatValue = currentProgress
             }
             delay(16)
@@ -139,12 +104,10 @@ fun AudioHost(
         isLoading.value = false
         player.pause()
     }
-    DisposableEffect(Unit) {
+    DisposableEffect(lifecycleOwner) {
+        lifecycleOwner.lifecycle.addObserver(observer)
         onDispose {
-            if (current.value == position) {
-                player.reset()
-                current.value = -1
-            }
+            lifecycleOwner.lifecycle.removeObserver(observer)
         }
     }
 }

@@ -46,7 +46,7 @@ fun OverlayPager(
     background: @Composable (UiVideo) -> Unit = {},
     indicator: @Composable (PagerState, ImmutableList<UiMedia>) -> Unit = { state, items -> },
     connection: @Composable RowScope.(UiPost, Triple<String, Boolean, Boolean>) -> Unit = { post, status -> },
-    audio: @Composable (UiPost, PagerState, Boolean, MutableFloatState) -> Unit = { post, state, active, progress -> },
+    audio: @Composable (UiPost, Boolean, MutableFloatState) -> Unit = { post, state, progress -> },
     video: @Composable (UiVideo, Boolean, MutableFloatState) -> Unit = { post, state, progress -> },
     image: @Composable (UiPost, String) -> Unit = { post, path -> },
 ) {
@@ -126,8 +126,7 @@ fun OverlayPager(
                     ) {
                         updatedAudio(
                             post,
-                            pagerState,
-                            enabled && page == pagerState.currentPage,
+                            enabled && page == pagerState.targetPage,
                             progress
                         )
                     }

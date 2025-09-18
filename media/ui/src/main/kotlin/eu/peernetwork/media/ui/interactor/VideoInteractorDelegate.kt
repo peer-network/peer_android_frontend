@@ -50,11 +50,11 @@ class VideoInteractorDelegate @Inject constructor(
         }
     }
 
-    override fun mute(): Flow<Boolean> {
+    override fun volume(): Flow<Boolean> {
         return observableBoolean(VOLUME).map { it == true }
     }
 
-    override suspend fun mute(enable: Boolean) {
+    override suspend fun unmute(enable: Boolean) {
         publishableBoolean(VOLUME, enable)
     }
 

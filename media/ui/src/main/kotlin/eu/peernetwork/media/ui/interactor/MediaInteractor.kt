@@ -7,9 +7,9 @@ import kotlinx.coroutines.flow.StateFlow
 interface MediaInteractor {
     val observer: StateFlow<Map<String, Float>>
 
-    fun mute(): Flow<Boolean>
+    fun volume(): Flow<Boolean>
 
-    suspend fun mute(enable: Boolean)
+    suspend fun unmute(enable: Boolean)
 
     fun exoPlayer(): ExoPlayer
 }

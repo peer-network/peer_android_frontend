@@ -18,6 +18,9 @@ import eu.peernetwork.media.core.renderer.VideoThumbnail
 import kotlinx.coroutines.FlowPreview
 import javax.inject.Inject
 import androidx.core.view.isVisible
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import eu.peernetwork.media.core.interactor.VideoInteractor
@@ -40,16 +43,34 @@ class VideoThumbnailDelegate @Inject constructor(
     ) {
         val context = LocalContext.current
         val scope = rememberCoroutineScope()
+        val lifecycleOwner = LocalLifecycleOwner.current
         val player = remember { session.exoPlayer() }
         val surfaceView = remember { TextureView(context) }
         val dimension = session.observer.collectAsStateWithLifecycle()
-        val mute = session.mute().collectAsStateWithLifecycle(session.exoPlayer().isDeviceMuted)
+        val mute = session.volume().collectAsStateWithLifecycle(session.exoPlayer().isDeviceMuted)
         val listener = remember {
             object : Player.Listener {
                 override fun onPlayerError(error: PlaybackException) {
                     surfaceView.surfaceTexture?.let {
                         interactor.attach(it, spec.url)
                     }
+                }
+            }
+        }
+        val observer = remember {
+            LifecycleEventObserver { _, event ->
+                when (event) {
+                    Lifecycle.Event.ON_RESUME -> {
+                        if (spec.isPlaying.value) {
+                            player.play()
+                        }
+                    }
+                    Lifecycle.Event.ON_STOP -> {
+                        if (spec.isPlaying.value) {
+                            player.pause()
+                        }
+                    }
+                    else -> Unit
                 }
             }
         }
@@ -91,7 +112,7 @@ class VideoThumbnailDelegate @Inject constructor(
             Box(modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(16.dp)) {
-                VolumeControl(mute) { scope.launch { session.mute(it) } }
+                VolumeControl(mute) { scope.launch { session.unmute(it) } }
             }
         }
         LaunchedEffect(Unit) {
@@ -120,6 +141,12 @@ class VideoThumbnailDelegate @Inject constructor(
                 .collect { muted ->
                     session.exoPlayer().volume = if (muted) 1f else 0f
                 }
+        }
+        DisposableEffect(lifecycleOwner) {
+            lifecycleOwner.lifecycle.addObserver(observer)
+            onDispose {
+                lifecycleOwner.lifecycle.removeObserver(observer)
+            }
         }
     }
 }

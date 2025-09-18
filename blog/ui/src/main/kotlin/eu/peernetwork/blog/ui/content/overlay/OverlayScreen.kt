@@ -11,7 +11,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
@@ -71,7 +70,6 @@ fun OverlayScreen(
     val handleOnView by rememberUpdatedState(onView)
     val updatedConnection by rememberUpdatedState(connection)
     val length = remember { mutableLongStateOf(0L) }
-    val current = remember { mutableIntStateOf(position) }
     val thumbnail = viewModel.thumbnail.collectAsStateWithLifecycle()
     EngagementScreen(
         postLimit = limit,
@@ -130,40 +128,40 @@ fun OverlayScreen(
                             val bitmap = remember { derivedStateOf { thumbnail.value[path] } }
                             DesignThumbnail(post.media, bitmap) {
                                 viewModel.videoBackground(
-                                    path,
-                                    post.aspectRatio,
-                                    configuration.screenWidthDp,
-                                    configuration.screenHeightDp,
-                                    true
+                                    media = path,
+                                    aspectRatio = post.aspectRatio,
+                                    width = configuration.screenWidthDp,
+                                    height = configuration.screenHeightDp,
+                                    fit = true
                                 )
                             }
                         },
-                        audio = { post, state, active, progress ->
-                            val enable = remember { derivedStateOf { state.currentPage == position } }
-                            val isActive = remember { derivedStateOf { active && enable.value } }
+                        audio = { post, state, progress ->
                             component.audioPlayer()(
                                 Modifier,
-                                AudioPlayer.Spec(
+                                spec = AudioPlayer.Spec(
                                     path = post.media.first().path,
-                                    position = position,
-                                    enable = enable,
-                                    isActive = isActive,
                                     length = length,
-                                    current = current,
                                     modifier = Modifier,
-                                    progress = progress
+                                    progress = progress,
+                                    enabled = state
                                 )
                             )
+                            LaunchedEffect(Unit) {
+                                if (!post.isViewed) {
+                                    handleOnView(post.id)
+                                }
+                            }
                         },
                         video = { post, shouldPlay, progress ->
                             component.videoPlayer()(
                                 Modifier,
-                                VideoPlayer.Spec(
-                                    post.media,
-                                    post.aspectRatio,
-                                    progress,
-                                    length,
-                                    shouldPlay,
+                                spec = VideoPlayer.Spec(
+                                    url = post.media,
+                                    ratio = post.aspectRatio,
+                                    progress = progress,
+                                    length = length,
+                                    enabled = shouldPlay,
                                 )
                             )
                             LaunchedEffect(Unit) {
@@ -175,16 +173,16 @@ fun OverlayScreen(
                     ) { post, path ->
                         component.imageView()(
                             Modifier,
-                            ImageView.Spec(
-                                path,
-                                null,
-                                ContentScale.Crop,
-                                500f,
+                            spec = ImageView.Spec(
+                                url = path,
+                                ratio = null,
+                                contentScale = ContentScale.Crop,
+                                blur = 500f,
                             )
                         )
                         component.imageView()(
                             Modifier,
-                            ImageView.Spec(path, post.aspectRatio, zoomable = true)
+                            spec = ImageView.Spec(path, post.aspectRatio, zoomable = true)
                         )
                         LaunchedEffect(Unit) {
                             if (!post.isViewed) {

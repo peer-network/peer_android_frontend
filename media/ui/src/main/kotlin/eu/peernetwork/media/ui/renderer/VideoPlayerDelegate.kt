@@ -69,7 +69,7 @@ class VideoPlayerDelegate @Inject constructor(
         val session = remember { mutableLongStateOf(System.currentTimeMillis()) }
         val isLoading = remember { mutableStateOf(!spec.enabled) }
         val scope = rememberCoroutineScope()
-        val mute = mediaInteractor.mute().collectAsStateWithLifecycle(player.isDeviceMuted)
+        val mute = mediaInteractor.volume().collectAsStateWithLifecycle(player.isDeviceMuted)
         val dimension = mediaInteractor.observer.collectAsStateWithLifecycle()
         val audio = remember { context.getSystemService(Context.AUDIO_SERVICE) as AudioManager }
         val lastVolume = remember(spec.enabled) { mutableIntStateOf(audio.getStreamVolume(AudioManager.STREAM_MUSIC)) }
@@ -81,7 +81,6 @@ class VideoPlayerDelegate @Inject constructor(
                         isLoading.value = false
                     }
                 }
-
                 override fun onEvents(player: Player, events: Player.Events) {
                     if (events.containsAny(
                             Player.EVENT_POSITION_DISCONTINUITY,
@@ -93,7 +92,6 @@ class VideoPlayerDelegate @Inject constructor(
                             player.currentPosition.toFloat() / spec.length.longValue
                     }
                 }
-
                 override fun onPlayerError(error: PlaybackException) {
                     errorState.value = error
                     hasSession.value = false
@@ -120,7 +118,7 @@ class VideoPlayerDelegate @Inject constructor(
                     if (intent.action == "android.media.VOLUME_CHANGED_ACTION") {
                         val currentVolume = audio.getStreamVolume(AudioManager.STREAM_MUSIC)
                         if (currentVolume > lastVolume.intValue && !mute.value) {
-                            scope.launch { mediaInteractor.mute(true) }
+                            scope.launch { mediaInteractor.unmute(true) }
                         }
                         lastVolume.intValue = currentVolume
                     }
@@ -241,7 +239,7 @@ class VideoPlayerDelegate @Inject constructor(
     ) {
         val scope = rememberCoroutineScope()
         val player = remember { mediaInteractor.exoPlayer() }
-        val mute = mediaInteractor.mute().collectAsStateWithLifecycle(player.isDeviceMuted)
+        val mute = mediaInteractor.volume().collectAsStateWithLifecycle(player.isDeviceMuted)
         Row(
             modifier = modifier,
             verticalAlignment = Alignment.CenterVertically,
@@ -274,7 +272,7 @@ class VideoPlayerDelegate @Inject constructor(
                         .background(MaterialTheme.colorScheme.onBackground)
                 )
             }
-            VolumeControl(mute) { scope.launch { mediaInteractor.mute(it) } }
+            VolumeControl(mute) { scope.launch { mediaInteractor.unmute(it) } }
         }
     }
 }

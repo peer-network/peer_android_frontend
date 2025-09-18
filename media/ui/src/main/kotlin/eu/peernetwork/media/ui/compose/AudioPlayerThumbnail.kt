@@ -5,27 +5,34 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableLongState
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import eu.peernetwork.media.ui.interactor.MediaInteractor
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
+@OptIn(FlowPreview::class)
 @Composable
 fun AudioPlayerThumbnail(
     path: String,
     position: Int,
     hasControls: Boolean,
-    isActive: State<Boolean>,
-    enable: State<Boolean>,
+    enabled: State<Boolean>,
     length: MutableLongState,
     current: MutableState<Int>,
     session: MediaInteractor,
@@ -33,35 +40,39 @@ fun AudioPlayerThumbnail(
 ) {
     val scope = rememberCoroutineScope()
     val progress = remember { mutableFloatStateOf(0f) }
-    val unMute = session.mute().collectAsStateWithLifecycle(enable.value)
-    val canPlay = remember { derivedStateOf { unMute.value && isActive.value } }
+    val play = remember { mutableStateOf(false) }
+    val volume = session.volume().collectAsStateWithLifecycle(enabled.value)
+    val isEnabled = remember { derivedStateOf {
+        (enabled.value || play.value) && current.value == position && volume.value
+    } }
     AudioHost(
-        path = path,
-        position = position,
-        active = canPlay,
-        enable = enable,
+        active = isEnabled,
         length = length,
         progress = progress,
-        current = current,
         session = session,
         source = source
-    ) { player, state, isLoading, isPlaying, mute, error ->
+    ) { player, isLoading, isPlaying, error ->
+        val enabled = remember(isPlaying.value) { mutableStateOf(isPlaying.value) }
+        val loading = remember { derivedStateOf { isLoading.value && volume.value } }
         if (hasControls) {
             AudioScaffold(
                 isPlaying = isPlaying,
-                isEnabled = canPlay,
-                isLoading = isLoading,
+                isEnabled = enabled,
+                isLoading = loading,
                 onPlayPauseClick = {
                     if (current.value != position) {
+                        player.reset()
+                        play.value = true
                         current.value = position
-                        scope.launch { session.mute(true) }
-                        state.longValue = System.currentTimeMillis()
-                    } else if (isPlaying.value && mute.value) {
+                        scope.launch { session.unmute(true) }
+                    } else if (isPlaying.value) {
                         player.pause()
-                        scope.launch { session.mute(false) }
+                        enabled.value = false
+                        scope.launch { session.unmute(false) }
                     } else {
                         player.start()
-                        scope.launch { session.mute(true) }
+                        enabled.value = true
+                        scope.launch { session.unmute(true) }
                     }
                 }
             ) {
@@ -78,19 +89,40 @@ fun AudioPlayerThumbnail(
                         .height(height = 3.dp)
                         .padding(start = 2.dp, end = 6.dp)
                 )
-                LaunchedEffect(canPlay.value) {
-                    if (!canPlay.value) {
+                LaunchedEffect(enabled.value) {
+                    if (!enabled.value) {
                         player.pause()
+                        play.value = false
                     }
                 }
             }
         } else {
-            VolumeControl(mute) {
-                scope.launch { session.mute(it) }
+            VolumeControl(volume) {
+                scope.launch { session.unmute(it) }
                 if (it) {
                     player.start()
                 } else {
                     player.pause()
+                }
+            }
+        }
+        LaunchedEffect(Unit) {
+            snapshotFlow { isEnabled.value }.distinctUntilChanged()
+                .distinctUntilChanged()
+                .debounce(300)
+                .collectLatest { result ->
+                    if (result) {
+                        player.reset()
+                        player.setDataSource(path)
+                        player.prepareAsync()
+                    }
+                }
+        }
+        DisposableEffect(Unit) {
+            onDispose {
+                if (current.value == position || isEnabled.value) {
+                    player.pause()
+                    play.value = false
                 }
             }
         }

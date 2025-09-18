@@ -6,11 +6,13 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableLongState
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import eu.peernetwork.media.core.renderer.AudioPlayer
@@ -21,6 +23,7 @@ import eu.peernetwork.media.ui.compose.AudioPlayerThumbnail
 import eu.peernetwork.media.ui.compose.VideoControl
 import eu.peernetwork.media.ui.interactor.MediaInteractor
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class AudioPlayerDelegate @Inject constructor(
@@ -44,8 +47,7 @@ class AudioPlayerDelegate @Inject constructor(
             path = path,
             position = position,
             hasControls = hasControls,
-            isActive = isActive,
-            enable = enable,
+            enabled = enable,
             length = length,
             current = current,
             session = session,
@@ -58,18 +60,15 @@ class AudioPlayerDelegate @Inject constructor(
         modifier: Modifier,
         spec: AudioPlayer.Spec
     ) {
-        val isPaused = remember(spec.isActive.value) { mutableStateOf(spec.isActive.value) }
+        val scope = rememberCoroutineScope()
+        val isActive = remember(spec.enabled) { mutableStateOf(spec.enabled) }
         AudioHost(
-            path = spec.path,
-            position = spec.position,
-            active = isPaused,
-            enable = spec.enable,
+            active = isActive,
             length = spec.length,
             progress = spec.progress,
-            current = spec.current,
             session = session,
             source = { screenPlayer }
-        ) { player, state, isLoading, isPlaying, mute, error ->
+        ) { player, isLoading, isPlaying, error ->
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier.fillMaxWidth()
@@ -81,9 +80,22 @@ class AudioPlayerDelegate @Inject constructor(
                     error = error,
                     modifier = Modifier.fillMaxSize(),
                     onPlay = {
-                        isPaused.value = !isPaused.value
+                        isActive.value = !isActive.value
+                        if (isActive.value) {
+                            player.pause()
+                        } else {
+                            player.start()
+                        }
                     }
                 )
+            }
+            LaunchedEffect(spec.enabled) {
+                if (spec.enabled) {
+                    player.reset()
+                    player.setDataSource(spec.path)
+                    player.prepareAsync()
+                    scope.launch { session.unmute(true) }
+                }
             }
         }
     }
