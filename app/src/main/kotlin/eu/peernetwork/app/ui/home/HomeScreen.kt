@@ -3,7 +3,6 @@ package eu.peernetwork.app.ui.home
 import android.content.res.Configuration
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
@@ -91,16 +90,15 @@ fun HomeScreen(provider: UiComponentProvider) {
                 navigationState.intValue = it
                 controller.attachIfNecessary(HomeRoute.get(it).path)
             },
-            onChat = {
-                controller.navigateIfNecessary(HomeRoute.Chat.path)
-            }
+            onChat = { controller.navigateIfNecessary(HomeRoute.Chat.path) }
         ) { state ->
             HomeNavigation(
                 id = data.first,
                 startDestination = startDestination,
                 navController = controller,
                 component = component,
-                viewModelStore = viewModelStore
+                viewModelStore = viewModelStore,
+                onExplore = { controller.navigateIfNecessary("explore") }
             ) {
                 viewModel.lastVisited(0)
                 navigationState.intValue = 0

@@ -17,7 +17,7 @@ import eu.peernetwork.app.ui.search.SearchScreen
 import eu.peernetwork.app.ui.wallet.WalletScreen
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.design.compose.DesignNavigation
-import eu.peernetwork.core.ui.extension.attachIfNecessary
+import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.core.ui.factory.UiViewModelStore
 
 @Composable
@@ -27,6 +27,7 @@ fun HomeNavigation(
     navController: NavHostController,
     component: Home.Component,
     viewModelStore: UiViewModelStore,
+    onExplore: () -> Unit,
     onHome: () -> Unit
 ) {
     val hasUpdate = remember { mutableStateOf(false) }
@@ -44,7 +45,7 @@ fun HomeNavigation(
                         provider = component,
                         viewModelStore = viewModelStore,
                         hasUpdate = hasUpdate,
-                        onExplore = { navController.attachIfNecessary("explore") }
+                        onExplore = onExplore
                     )
                     is HomeRoute.Profile -> ProfileScreen(
                         principal = id,
@@ -86,7 +87,7 @@ fun HomeNavigation(
                 provider = component,
                 viewModelStore = viewModelStore,
                 hasUpdate = hasUpdate
-            ) { navController.attachIfNecessary("explore") }
+            ) { navController.navigateIfNecessary("explore") }
         }
     }
 }
