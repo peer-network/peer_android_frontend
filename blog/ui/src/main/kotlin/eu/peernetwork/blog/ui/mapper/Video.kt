@@ -25,7 +25,8 @@ fun Content.mapToVideo(context: Context, annotate: (String) -> AnnotatedString):
         isViewed = isViewed,
         comment = comment,
         aspectRatio = media.getAspectRatio(),
-        resolution = media.options.resolution
+        resolution = media.options.resolution,
+        url = url
     )
 }
 
@@ -42,7 +43,8 @@ fun UiVideo.mapToContent(): UiContent {
         dislikes = dislikes,
         isViewed = isViewed,
         views = views,
-        comment = comment
+        comment = comment,
+        url = url
     )
 }
 
@@ -64,6 +66,7 @@ fun UiPost.mapToVideo(): UiVideo {
         aspectRatio = aspectRatio,
         resolution = media.options.resolution,
         time = time,
-        media = media.path
+        media = media.path,
+        url = url
     )
 }

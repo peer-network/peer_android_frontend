@@ -30,6 +30,7 @@ fun UiComment.mapToContent(): UiContent {
         isDisliked = false,
         dislikes = 0,
         views = 2,
-        comment = 0
+        comment = 0,
+        url = ""
     )
 }
