@@ -27,7 +27,10 @@ import kotlinx.coroutines.launch
 @OptIn(FlowPreview::class)
 @Composable
 fun AudioHost(
-    active: State<Boolean>,
+    status: State<Boolean>,
+    enabled: State<Boolean>,
+    repeat: State<Boolean> = enabled,
+    isPlaying: MutableState<Boolean>,
     length: MutableLongState,
     progress: MutableFloatState,
     session: MediaInteractor,
@@ -35,31 +38,35 @@ fun AudioHost(
     content: @Composable (
         MediaPlayer,
         MutableState<Boolean>,
-        MutableState<Boolean>,
         State<Throwable?>
     ) -> Unit
 ) {
     val scope = rememberCoroutineScope()
     val lifecycleOwner = LocalLifecycleOwner.current
-    val volume = session.volume().collectAsStateWithLifecycle(active.value)
+    val volume = session.volume().collectAsStateWithLifecycle(enabled.value)
     val isLoading = remember { mutableStateOf(false) }
-    val isPlaying = remember { mutableStateOf(false) }
     val errorState = remember { mutableStateOf<Throwable?>(null) }
     val player = remember { source().apply {
         isLooping = true
         setOnPreparedListener {
-            it.start()
+            isLoading.value = false
+            if (status.value) {
+                it.start()
+            }
             length.longValue = it.duration.coerceAtLeast(1).toLong()
         }
         setOnErrorListener { _, what, extra ->
             if (what == MediaPlayer.MEDIA_ERROR_SERVER_DIED) {
+                isLoading.value = false
                 errorState.value = MediaPlaybackException(what, extra)
             }
             true
         }
         setOnCompletionListener {
             it.seekTo(0)
-            it.start()
+            if (repeat.value) {
+                it.start()
+            }
         }
     } }
     val updatedContent by rememberUpdatedState(content)
@@ -81,7 +88,6 @@ fun AudioHost(
     updatedContent(
         player,
         isLoading,
-        isPlaying,
         errorState
     )
     LaunchedEffect(volume.value) {
@@ -90,19 +96,19 @@ fun AudioHost(
             player.setVolume(volume, volume)
         }
     }
-    LaunchedEffect(active.value) {
-        while (active.value) {
+    LaunchedEffect(enabled.value) {
+        while (enabled.value) {
             withFrameMillis {
+                isPlaying.value = player.isPlaying
                 val currentProgress = player.currentPosition.toFloat() / length.longValue
-                isPlaying.value = true
-                isLoading.value = currentProgress == progress.floatValue
                 progress.floatValue = currentProgress
             }
             delay(16)
+            isPlaying.value = player.isPlaying
         }
         isPlaying.value = false
         isLoading.value = false
-        player.pause()
+        progress.floatValue = 0f
     }
     DisposableEffect(lifecycleOwner) {
         lifecycleOwner.lifecycle.addObserver(observer)

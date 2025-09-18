@@ -43,7 +43,7 @@ import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import eu.peernetwork.media.core.interactor.VideoInteractor
 import eu.peernetwork.media.core.renderer.VideoPlayer
-import eu.peernetwork.media.ui.compose.VideoControl
+import eu.peernetwork.media.ui.compose.MediaControl
 import eu.peernetwork.media.ui.compose.VolumeControl
 import eu.peernetwork.media.ui.interactor.MediaInteractor
 import kotlinx.coroutines.delay
@@ -177,7 +177,7 @@ class VideoPlayerDelegate @Inject constructor(
                         }
                     }
             )
-            VideoControl(
+            MediaControl(
                 isLoading = isLoading,
                 isPlaying = isPlaying,
                 error = errorState

@@ -26,6 +26,8 @@ interface AudioPlayer : Renderer.Stateful<AudioPlayer.Spec> {
         val progress: MutableFloatState,
         val length: MutableLongState,
         val enabled: Boolean,
+        val position: Int,
+        val current: MutableState<Int>,
         val modifier: Modifier
     )
 }

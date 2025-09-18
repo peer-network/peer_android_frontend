@@ -34,7 +34,7 @@ import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.media.core.R
 
 @Composable
-fun VideoControl(
+fun MediaControl(
     isLoading: State<Boolean>,
     isPlaying: State<Boolean>,
     error: State<Throwable?>,
@@ -113,7 +113,7 @@ fun VideoControl(
 @Preview
 fun PreviewVideoControl() {
     PeerTheme {
-        VideoControl(
+        MediaControl(
             remember { mutableStateOf(false) },
             remember { mutableStateOf(false) },
             remember { mutableStateOf(RuntimeException("Hello, world!")) },

@@ -32,6 +32,7 @@ fun AudioPlayerThumbnail(
     path: String,
     position: Int,
     hasControls: Boolean,
+    isActive: State<Boolean>,
     enabled: State<Boolean>,
     length: MutableLongState,
     current: MutableState<Int>,
@@ -41,37 +42,44 @@ fun AudioPlayerThumbnail(
     val scope = rememberCoroutineScope()
     val progress = remember { mutableFloatStateOf(0f) }
     val play = remember { mutableStateOf(false) }
+    val isPlaying = remember { mutableStateOf(false) }
     val volume = session.volume().collectAsStateWithLifecycle(enabled.value)
+    val status = remember(isPlaying.value) { mutableStateOf(isPlaying.value) }
     val isEnabled = remember { derivedStateOf {
-        (enabled.value || play.value) && current.value == position && volume.value
+        (enabled.value || play.value) && current.value == position
     } }
     AudioHost(
-        active = isEnabled,
+        enabled = isEnabled,
+        repeat = isActive,
+        isPlaying = isPlaying,
         length = length,
         progress = progress,
         session = session,
-        source = source
-    ) { player, isLoading, isPlaying, error ->
-        val enabled = remember(isPlaying.value) { mutableStateOf(isPlaying.value) }
+        source = source,
+        status = isActive
+    ) { player, isLoading, error ->
         val loading = remember { derivedStateOf { isLoading.value && volume.value } }
         if (hasControls) {
             AudioScaffold(
                 isPlaying = isPlaying,
-                isEnabled = enabled,
+                isEnabled = status,
                 isLoading = loading,
                 onPlayPauseClick = {
                     if (current.value != position) {
                         player.reset()
                         play.value = true
+                        status.value = true
                         current.value = position
                         scope.launch { session.unmute(true) }
-                    } else if (isPlaying.value) {
+                    } else if (play.value) {
                         player.pause()
-                        enabled.value = false
+                        play.value = false
+                        status.value = false
                         scope.launch { session.unmute(false) }
                     } else {
+                        play.value = true
+                        status.value = true
                         player.start()
-                        enabled.value = true
                         scope.launch { session.unmute(true) }
                     }
                 }
@@ -100,8 +108,10 @@ fun AudioPlayerThumbnail(
             VolumeControl(volume) {
                 scope.launch { session.unmute(it) }
                 if (it) {
+                    play.value = true
                     player.start()
                 } else {
+                    play.value = false
                     player.pause()
                 }
             }
@@ -111,18 +121,35 @@ fun AudioPlayerThumbnail(
                 .distinctUntilChanged()
                 .debounce(300)
                 .collectLatest { result ->
-                    if (result) {
+                    if (result && isActive.value) {
                         player.reset()
+                        play.value = true
+                        status.value = true
+                        isLoading.value = true
                         player.setDataSource(path)
                         player.prepareAsync()
+                    } else if (isActive.value) {
+                        player.pause()
+                        play.value = false
                     }
                 }
+        }
+        LaunchedEffect(isActive.value) {
+            if (current.value == position) {
+                if (!isActive.value) {
+                    play.value = false
+                    player.pause()
+                } else {
+                    play.value = true
+                    player.start()
+                }
+            }
         }
         DisposableEffect(Unit) {
             onDispose {
                 if (current.value == position || isEnabled.value) {
-                    player.pause()
                     play.value = false
+                    player.pause()
                 }
             }
         }

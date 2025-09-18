@@ -66,7 +66,7 @@ fun PostOverlay(
         id = id,
         limit = limit,
         position = position,
-        enabled = enabled,
+        status = enabled,
         event = event,
         state = derivedState,
         provider = component,

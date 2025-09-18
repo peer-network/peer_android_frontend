@@ -8,10 +8,15 @@ import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableFloatState
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
@@ -45,8 +50,10 @@ fun OverlayPager(
     header: @Composable () -> Unit = {},
     background: @Composable (UiVideo) -> Unit = {},
     indicator: @Composable (PagerState, ImmutableList<UiMedia>) -> Unit = { state, items -> },
-    connection: @Composable RowScope.(UiPost, Triple<String, Boolean, Boolean>) -> Unit = { post, status -> },
-    audio: @Composable (UiPost, Boolean, MutableFloatState) -> Unit = { post, state, progress -> },
+    connection: @Composable RowScope.(UiPost, Triple<String, Boolean, Boolean>) -> Unit =
+        { post, status -> },
+    audio: @Composable (UiPost, Boolean, Int, MutableState<Int>, MutableFloatState) -> Unit =
+        { post, state, index, current, progress -> },
     video: @Composable (UiVideo, Boolean, MutableFloatState) -> Unit = { post, state, progress -> },
     image: @Composable (UiPost, String) -> Unit = { post, path -> },
 ) {
@@ -60,6 +67,7 @@ fun OverlayPager(
     val pagerState = rememberPagerState(
         initialPage = position
     ) { lazyPagingItems.value.itemCount }
+    val current = remember { mutableIntStateOf(-1) }
     VerticalPager(pagerState) { page ->
         Box(
             contentAlignment = Alignment.Center,
@@ -126,7 +134,9 @@ fun OverlayPager(
                     ) {
                         updatedAudio(
                             post,
-                            enabled && page == pagerState.targetPage,
+                            enabled && page == pagerState.currentPage,
+                            page,
+                            current,
                             progress
                         )
                     }

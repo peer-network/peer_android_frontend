@@ -58,7 +58,7 @@ fun ExploreOverlay(
         id = author,
         limit = limit,
         position = position,
-        enabled = enabled,
+        status = enabled,
         event = event,
         state = derivedState,
         provider = component,

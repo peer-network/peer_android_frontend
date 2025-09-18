@@ -47,7 +47,7 @@ fun OverlayScreen(
     id: String,
     limit: Int,
     position: Int,
-    enabled: Boolean,
+    status: Boolean,
     event: UiPostListener,
     state: State<DesignSceneState<Flow<PagingData<UiPost>>>>,
     provider: UiComponentProvider,
@@ -96,7 +96,7 @@ fun OverlayScreen(
                 } else {
                     OverlayPager(
                         position = position,
-                        enabled = enabled,
+                        enabled = status,
                         engagement = engagement,
                         moderation = moderation,
                         lazyPagingItems = list,
@@ -136,7 +136,7 @@ fun OverlayScreen(
                                 )
                             }
                         },
-                        audio = { post, state, progress ->
+                        audio = { post, state, index, current, progress ->
                             component.audioPlayer()(
                                 Modifier,
                                 spec = AudioPlayer.Spec(
@@ -144,7 +144,9 @@ fun OverlayScreen(
                                     length = length,
                                     modifier = Modifier,
                                     progress = progress,
-                                    enabled = state
+                                    enabled = state,
+                                    current = current,
+                                    position = index
                                 )
                             )
                             LaunchedEffect(Unit) {
