@@ -9,6 +9,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.app.ui.composer.ComposerScreen
+import eu.peernetwork.app.ui.feed.FeedExplorer
 import eu.peernetwork.app.ui.feed.FeedScreen
 import eu.peernetwork.app.ui.messaging.MessagingScreen
 import eu.peernetwork.app.ui.profile.ProfileScreen
@@ -16,6 +17,7 @@ import eu.peernetwork.app.ui.search.SearchScreen
 import eu.peernetwork.app.ui.wallet.WalletScreen
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.design.compose.DesignNavigation
+import eu.peernetwork.core.ui.extension.attachIfNecessary
 import eu.peernetwork.core.ui.factory.UiViewModelStore
 
 @Composable
@@ -41,7 +43,8 @@ fun HomeNavigation(
                         postLimit = BuildConfig.PAGING_LIMIT,
                         provider = component,
                         viewModelStore = viewModelStore,
-                        hasUpdate = hasUpdate
+                        hasUpdate = hasUpdate,
+                        onExplore = { navController.attachIfNecessary("explore") }
                     )
                     is HomeRoute.Profile -> ProfileScreen(
                         principal = id,
@@ -75,6 +78,15 @@ fun HomeNavigation(
         }
         composable(HomeRoute.Chat.path) {
             MessagingScreen(id, component, viewModelStore.get(id))
+        }
+        composable("explore") {
+            FeedExplorer(
+                id = id,
+                postLimit = BuildConfig.PAGING_LIMIT,
+                provider = component,
+                viewModelStore = viewModelStore,
+                hasUpdate = hasUpdate
+            ) { navController.attachIfNecessary("explore") }
         }
     }
 }
