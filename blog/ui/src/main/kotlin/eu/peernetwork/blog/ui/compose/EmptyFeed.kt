@@ -27,7 +27,6 @@ fun EmptyFeed(
             Throwable("Explore...")
         }
     }
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -36,31 +35,35 @@ fun EmptyFeed(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
         val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.rocketexplore))
         LottieAnimation(
             composition = composition,
-            modifier = Modifier.size(128.dp).offset(y = 11.dp),
+            modifier = Modifier.size(80.dp).offset(y = 11.dp),
             isPlaying = true,
             iterations = LottieConstants.IterateForever
         )
-
         Spacer(modifier = Modifier.height(24.dp))
-
-
         Text(
-            text = "Looks quiet for now. \n" +
-                    "Discover what people are up to!",
+            text = "Looks quiet for now.",
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp),
             color = MaterialTheme.colorScheme.tertiary,
             fontSize = 15.sp,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.bodySmall
         )
-
         Spacer(modifier = Modifier.height(2.dp))
-
+        Text(
+            text = "Discover what people are up to!",
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            color = MaterialTheme.colorScheme.tertiary,
+            fontSize = 15.sp,
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.bodySmall
+        )
         DesignError(
             error = derivedError.value,
             onRetry = onRefresh,
