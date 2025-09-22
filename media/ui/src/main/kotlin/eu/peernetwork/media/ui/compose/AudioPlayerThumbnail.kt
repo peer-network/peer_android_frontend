@@ -46,7 +46,7 @@ fun AudioPlayerThumbnail(
     val volume = session.volume().collectAsStateWithLifecycle(enabled.value)
     val status = remember(isPlaying.value) { mutableStateOf(isPlaying.value) }
     val isEnabled = remember { derivedStateOf {
-        (enabled.value || play.value) && current.value == position
+        (enabled.value || play.value) && current.value == position && volume.value
     } }
     AudioHost(
         enabled = isEnabled,
@@ -121,7 +121,7 @@ fun AudioPlayerThumbnail(
                 .distinctUntilChanged()
                 .debounce(300)
                 .collectLatest { result ->
-                    if (result && isActive.value) {
+                    if (result) {
                         player.reset()
                         play.value = true
                         status.value = true
@@ -135,6 +135,9 @@ fun AudioPlayerThumbnail(
             if (!isActive.value && current.value == position) {
                 play.value = false
                 player.pause()
+            } else if (current.value == position) {
+                play.value = true
+                player.start()
             }
         }
         DisposableEffect(Unit) {
