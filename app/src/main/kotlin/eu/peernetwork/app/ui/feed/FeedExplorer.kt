@@ -137,7 +137,7 @@ private fun FeedExplorerTabs(
     Column {
         DesignTab(pageState) { index ->
             Text(
-                text = if (index == 0) "Trends" else "Latest",
+                text = stringResource(id = if (index == 0) R.string.trends_label else R.string.latest_label),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.tertiary,
                 modifier = Modifier.padding(vertical = 10.dp)
