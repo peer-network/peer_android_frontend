@@ -160,7 +160,7 @@ fun TimelineScreen(
                             modifier = Modifier,
                             spec = ImageView.Spec(
                                 url = path,
-                                ratio = null,
+                                ratio = aspectRatio,
                                 contentScale = ContentScale.Crop,
                                 blur = 500f,
                             )
