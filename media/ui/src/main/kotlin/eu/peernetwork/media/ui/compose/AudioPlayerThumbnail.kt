@@ -45,6 +45,7 @@ fun AudioPlayerThumbnail(
     val isPlaying = remember { mutableStateOf(false) }
     val volume = session.volume().collectAsStateWithLifecycle(enabled.value)
     val status = remember(isPlaying.value) { mutableStateOf(isPlaying.value) }
+    val isSuspended = remember { mutableStateOf(false) }
     val isEnabled = remember { derivedStateOf {
         (enabled.value || play.value) && current.value == position && volume.value
     } }
@@ -75,6 +76,7 @@ fun AudioPlayerThumbnail(
                         player.pause()
                         play.value = false
                         status.value = false
+                        isSuspended.value = true
                         scope.launch { session.unmute(false) }
                     } else {
                         play.value = true
@@ -121,11 +123,12 @@ fun AudioPlayerThumbnail(
                 .distinctUntilChanged()
                 .debounce(300)
                 .collectLatest { result ->
-                    if (result) {
+                    if (result && !isSuspended.value) {
                         player.reset()
                         play.value = true
                         status.value = true
                         isLoading.value = true
+                        isSuspended.value = false
                         player.setDataSource(path)
                         player.prepareAsync()
                     }
@@ -133,10 +136,8 @@ fun AudioPlayerThumbnail(
         }
         LaunchedEffect(isActive.value) {
             if (!isActive.value && current.value == position) {
-                play.value = false
                 player.pause()
             } else if (current.value == position) {
-                play.value = true
                 player.start()
             }
         }
