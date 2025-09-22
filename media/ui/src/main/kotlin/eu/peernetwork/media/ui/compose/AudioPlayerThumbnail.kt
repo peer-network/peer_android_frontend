@@ -131,13 +131,18 @@ fun AudioPlayerThumbnail(
                         isSuspended.value = false
                         player.setDataSource(path)
                         player.prepareAsync()
+                    } else if (isActive.value) {
+                        player.pause()
+                        play.value = false
                     }
                 }
         }
         LaunchedEffect(isActive.value) {
             if (!isActive.value && current.value == position) {
+                play.value = false
                 player.pause()
             } else if (current.value == position) {
+                play.value = true
                 player.start()
             }
         }
