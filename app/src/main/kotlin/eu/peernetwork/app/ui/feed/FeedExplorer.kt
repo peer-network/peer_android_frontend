@@ -90,6 +90,7 @@ fun FeedExplorer(
                     component = component,
                     viewModelStore = viewModelStore,
                     controller = controller,
+                    criteria = criteria,
                     connectionController = connectionController,
                     onExplore = onExplore
                 )
@@ -128,6 +129,7 @@ private fun FeedExplorerTabs(
     component: Feed.Component,
     viewModelStore: UiViewModelStore,
     controller: NavHostController,
+    criteria: Criteria?,
     connectionController: State<ConnectionController>,
     onExplore: (() -> Unit)? = null
 ) {
@@ -147,7 +149,11 @@ private fun FeedExplorerTabs(
             verticalAlignment = androidx.compose.ui.Alignment.Top,
         ) { page ->
             val sort = sortTypes[page]
-            val criteria = Criteria.Content(sort = sort)
+            val derivedCriteria = remember(sort) { derivedStateOf {
+                (criteria as? Criteria.Content?)?.copy(
+                    sort = sort,
+                )
+            } }
             val enable = remember { derivedStateOf { selected.value == FeedOverlayState.Empty } }
             val connection by connectionController.value.observe().collectAsStateWithLifecycle()
             val event = remember {
@@ -172,7 +178,7 @@ private fun FeedExplorerTabs(
                 status = enable,
                 postLimit = postLimit,
                 category = Category.NONE,
-                criteria = criteria,
+                criteria = derivedCriteria.value,
                 event = event,
                 provider = component,
                 viewModelStoreOwner = viewModelStore.get(storeKey),
