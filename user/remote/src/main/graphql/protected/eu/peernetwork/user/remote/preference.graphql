@@ -5,6 +5,7 @@ query Preference {
         affectedRows {
             userPreferences {
                 contentFilteringSeverityLevel
+                onboardingsWereShown
             }
         }
     }
