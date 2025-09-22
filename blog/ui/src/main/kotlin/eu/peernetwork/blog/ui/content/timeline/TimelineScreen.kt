@@ -56,6 +56,13 @@ fun TimelineScreen(
     onRefresh: () -> Unit = {},
     onExplore: (() -> Unit)? = null,
     onLoad: (State<LazyPagingItems<UiPost>>) -> Unit = {},
+    empty: @Composable () -> Unit = {
+        val handleOnRefresh by rememberUpdatedState(onRefresh)
+        val handleOnExplore by rememberUpdatedState(onExplore)
+        EmptyFeed {
+            handleOnExplore?.invoke() ?: handleOnRefresh()
+        }
+    },
     connection: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit = {}
 ) {
     val context = LocalContext.current
@@ -74,8 +81,6 @@ fun TimelineScreen(
     val isActive = remember { derivedStateOf { status.value && !pause.value } }
     val thumbnail = viewModel.thumbnail.collectAsStateWithLifecycle()
     val handleOnLoad by rememberUpdatedState(onLoad)
-    val handleOnRefresh by rememberUpdatedState(onRefresh)
-    val handleOnExplore by rememberUpdatedState(onExplore)
     EngagementScreen(
         postLimit = limit,
         onAuthorClick = { event(UiPostListener.Event.Author(it)) },
@@ -94,11 +99,7 @@ fun TimelineScreen(
                 enable = enable,
                 resource = component.resource(),
                 onRefresh = onRefresh,
-                empty = {
-                    EmptyFeed {
-                        handleOnExplore?.invoke() ?: handleOnRefresh()
-                    }
-                }
+                empty = empty
             ) { state, list ->
                 TimelineList(
                     id = id,

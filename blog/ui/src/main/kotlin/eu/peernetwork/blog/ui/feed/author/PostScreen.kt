@@ -26,7 +26,9 @@ import eu.peernetwork.blog.ui.content.timeline.TimelineScreen
 import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.component.UiComponentProvider
+import eu.peernetwork.core.ui.design.component.DesignError
 import eu.peernetwork.core.ui.design.compose.DesignSceneState
+import eu.peernetwork.core.ui.exception.NoContentException
 import eu.peernetwork.core.ui.extension.builder
 
 @Composable
@@ -103,6 +105,14 @@ fun PostScreen(
                 lastUpdated.value
             )
         },
+        empty = { DesignError({
+            viewModel.load(
+                author,
+                types,
+                Pageable(0, postLimit),
+                lastUpdated.value
+            )
+        }, NoContentException(), component.resource()) },
         status = status
     )
     LaunchedEffect(lastUpdated.value) {
