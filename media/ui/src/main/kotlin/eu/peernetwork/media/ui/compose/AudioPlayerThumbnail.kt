@@ -135,9 +135,6 @@ fun AudioPlayerThumbnail(
             if (!isActive.value && current.value == position) {
                 play.value = false
                 player.pause()
-            } else if (current.value == position) {
-                play.value = true
-                player.start()
             }
         }
         DisposableEffect(Unit) {
