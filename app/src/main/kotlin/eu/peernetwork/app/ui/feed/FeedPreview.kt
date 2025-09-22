@@ -4,20 +4,16 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -55,6 +51,7 @@ fun FeedPreview(
     criteria: Criteria? = null,
     onNavigate: (Int) -> Unit = {},
     onFilter: (Int) -> Unit = {},
+    onExplore: () -> Unit,
 ) {
     val followerListState = rememberLazyListState()
     val followedListState = rememberLazyListState()
@@ -125,6 +122,7 @@ fun FeedPreview(
             } else {
                 followedListState
             },
+            onExplore = onExplore
         ) { relation ->
             ConnectionScreen(
                 isFollowing = connection.getOrDefault(
@@ -186,7 +184,6 @@ fun FeedPreview(
                     .padding(vertical = 8.dp)
             )
         }
-
         HorizontalPager(
             state = pageState,
             modifier = modifier,

@@ -9,8 +9,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.app.ui.composer.ComposerScreen
+import eu.peernetwork.app.ui.feed.FeedExplorer
 import eu.peernetwork.app.ui.feed.FeedScreen
-import eu.peernetwork.app.ui.messaging.MessagingScreen
 import eu.peernetwork.app.ui.profile.ProfileScreen
 import eu.peernetwork.app.ui.search.SearchScreen
 import eu.peernetwork.app.ui.wallet.WalletScreen
@@ -25,6 +25,7 @@ fun HomeNavigation(
     navController: NavHostController,
     component: Home.Component,
     viewModelStore: UiViewModelStore,
+    onExplore: () -> Unit,
     onHome: () -> Unit
 ) {
     val hasUpdate = remember { mutableStateOf(false) }
@@ -41,7 +42,8 @@ fun HomeNavigation(
                         postLimit = BuildConfig.PAGING_LIMIT,
                         provider = component,
                         viewModelStore = viewModelStore,
-                        hasUpdate = hasUpdate
+                        hasUpdate = hasUpdate,
+                        onExplore = onExplore
                     )
                     is HomeRoute.Profile -> ProfileScreen(
                         principal = id,
@@ -73,8 +75,14 @@ fun HomeNavigation(
                 }
             }
         }
-        composable(HomeRoute.Chat.path) {
-            MessagingScreen(id, component, viewModelStore.get(id))
+        composable(HomeRoute.Explore.path) {
+            FeedExplorer(
+                id = id,
+                postLimit = BuildConfig.PAGING_LIMIT,
+                provider = component,
+                viewModelStore = viewModelStore,
+                hasUpdate = hasUpdate
+            )
         }
     }
 }
@@ -110,10 +118,10 @@ sealed class HomeRoute(
         R.drawable.ic_profile,
         R.string.profile_label
     )
-    data object Chat: HomeRoute(
-        R.drawable.ic_chat_outline,
-        R.drawable.ic_chat,
-        R.string.chat_label
+    data object Explore: HomeRoute(
+        R.drawable.ic_trend,
+        R.drawable.ic_trend,
+        R.string.trend_label
     )
     companion object {
         val ROUTES = arrayOf(Home, Search, Add, Wallet, Profile)
