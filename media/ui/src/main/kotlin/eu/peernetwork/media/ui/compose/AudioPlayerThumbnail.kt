@@ -119,7 +119,7 @@ fun AudioPlayerThumbnail(
         LaunchedEffect(Unit) {
             snapshotFlow { isEnabled.value }.distinctUntilChanged()
                 .distinctUntilChanged()
-                .debounce(100)
+                .debounce(300)
                 .collectLatest { result ->
                     if (result && isActive.value) {
                         player.reset()
