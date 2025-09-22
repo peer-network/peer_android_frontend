@@ -118,7 +118,7 @@ private fun FeedExplorerTabs(
                 text = if (index == 0) "Trends" else "Latest",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.tertiary,
-                modifier = Modifier.padding(vertical = 8.dp)
+                modifier = Modifier.padding(vertical = 10.dp)
             )
         }
         HorizontalPager(
@@ -127,7 +127,7 @@ private fun FeedExplorerTabs(
             verticalAlignment = androidx.compose.ui.Alignment.Top,
         ) { page ->
             val sort = sortTypes[page]
-            val criteria = Filter.Criteria.Content(sort = sort)
+            val criteria = Criteria.Content(sort = sort)
             val listState = rememberLazyListState()
             val enable = remember { derivedStateOf { selected.value == FeedOverlayState.Empty } }
             val connection by connectionController.value.observe().collectAsStateWithLifecycle()
