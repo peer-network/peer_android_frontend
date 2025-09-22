@@ -17,6 +17,11 @@
     <string name="back_label">Back</string>
     <string name="trend_label">Trend</string>
 
+    <string name="followers_label">Followers</string>
+    <string name="following_label">Following</string>
+    <string name="trends_label">Trends</string>
+    <string name="latest_label">Latest</string>
+
     <string name="text_label">Text</string>
     <string name="photo_label">Photo</string>
     <string name="video_label">Video</string>
