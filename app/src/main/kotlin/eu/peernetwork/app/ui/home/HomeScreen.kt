@@ -3,20 +3,14 @@ package eu.peernetwork.app.ui.home
 import android.content.res.Configuration
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.State
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -29,6 +23,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.compose.DesignPage
 import eu.peernetwork.core.ui.design.compose.DesignPageHeader
@@ -41,6 +36,7 @@ import eu.peernetwork.core.ui.extension.attachIfNecessary
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.core.ui.factory.UiViewModelStore
 import eu.peernetwork.wallet.ui.reward.RewardScreen
+import eu.peernetwork.social.ui.feedback.FeedbackPopup
 
 @Composable
 fun HomeScreen(provider: UiComponentProvider) {
@@ -88,16 +84,16 @@ fun HomeScreen(provider: UiComponentProvider) {
                 navigationState.intValue = it
                 controller.attachIfNecessary(HomeRoute.get(it).path)
             },
-            onChat = {
-                controller.navigateIfNecessary(HomeRoute.Chat.path)
-            }
+            // Chat is replaced with Explore
+            onExplore = { controller.navigateIfNecessary(HomeRoute.Explore.path) }
         ) { state ->
             HomeNavigation(
                 id = data.first,
                 startDestination = startDestination,
                 navController = controller,
                 component = component,
-                viewModelStore = viewModelStore
+                viewModelStore = viewModelStore,
+                onExplore = { controller.navigateIfNecessary("explore") }
             ) {
                 viewModel.lastVisited(0)
                 navigationState.intValue = 0
@@ -111,6 +107,11 @@ fun HomeScreen(provider: UiComponentProvider) {
         }
     }
     DisposableEffect(Unit) { onDispose { viewModelStore.clear() } }
+    FeedbackPopup(
+        BuildConfig.APPLICATION_ID,
+        component,
+        viewModelStore.get("FeedbackPopup")
+    )
 }
 
 @Composable
@@ -118,24 +119,24 @@ fun HomeScreen(
     start: State<Int>,
     options: @Composable () -> Unit,
     onClick: (Int) -> Unit,
-    onChat: () -> Unit,
+    onExplore: () -> Unit,
     content: @Composable (State<Float>) -> Unit
 ) {
     val updatedContent by rememberUpdatedState(content)
     val handleOnClick by rememberUpdatedState(onClick)
-    val handleOnChat by rememberUpdatedState(onChat)
+    val handleOnExplore by rememberUpdatedState(onExplore)
     DesignPage(
         header = {
             DesignPageHeader(
                 options = options,
                 action = {
                     IconButton(onClick = {
-                        handleOnChat()
+                        handleOnExplore()
                     }) {
                         Icon(
-                            painter = painterResource(id = HomeRoute.Chat.icon),
-                            contentDescription = stringResource(id = HomeRoute.Chat.icon),
-                            modifier = Modifier.size(32.dp)
+                            painter = painterResource(id = HomeRoute.Explore.icon),
+                            contentDescription = stringResource(id = HomeRoute.Explore.icon),
+                            modifier = Modifier.size(19.dp)
                         )
                     }
                 },
@@ -163,7 +164,7 @@ fun PreviewHomeScreen() {
             start = remember { mutableIntStateOf(0) },
             options = {},
             onClick = {},
-            onChat = {},
+            onExplore = {},
         ) { state ->
             Text(
                 text = "",

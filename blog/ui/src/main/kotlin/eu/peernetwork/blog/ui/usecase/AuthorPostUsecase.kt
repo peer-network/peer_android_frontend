@@ -8,7 +8,9 @@ import androidx.paging.PagingSource.LoadParams
 import androidx.paging.PagingSource.LoadResult
 import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.blog.domain.model.Category
-import eu.peernetwork.blog.domain.usecase.PhotosUsecase
+import eu.peernetwork.blog.domain.model.Content
+import eu.peernetwork.blog.domain.usecase.PostUsecase
+import eu.peernetwork.blog.domain.usecase.PostUsecase.Companion.POST
 import eu.peernetwork.blog.ui.mapper.mapToPhoto
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.core.common.paging.Pageable
@@ -23,7 +25,7 @@ import javax.inject.Inject
 class AuthorPostUsecase @Inject constructor(
     private val context: Context,
     private val dispatcher: Dispatcher,
-    private val usecase: PhotosUsecase,
+    private val usecase: PostUsecase,
     private val annotationUsecase: AnnotationUsecase
 ) : PagingUsecase<AuthorPostUsecase.Parameter, UiPost>() {
     private lateinit var param: Parameter
@@ -33,7 +35,9 @@ class AuthorPostUsecase @Inject constructor(
         return Pager(
             config = PagingConfig(
                 pageSize = param.page.limit,
-                enablePlaceholders = false
+                prefetchDistance = param.page.limit,
+                initialLoadSize = param.page.limit,
+                enablePlaceholders = false,
             ),
             pagingSourceFactory = { source() }
         ).flow
@@ -46,7 +50,8 @@ class AuthorPostUsecase @Inject constructor(
             limit = param.page.limit
         )
         val response = usecase(
-            PhotosUsecase.Parameter(
+            PostUsecase.Parameter(
+                types = param.types,
                 author = param.author,
                 criteria = param.criteria,
                 page = currentPage
@@ -56,16 +61,27 @@ class AuthorPostUsecase @Inject constructor(
             LoadResult.Error(NoContentException())
         } else {
             LoadResult.Page(
-                data = response.items.map { it.mapToPhoto(context) { annotationUsecase(it) } },
-                prevKey = if (currentOffset <= 0) null else currentOffset - 1,
-                nextKey = if (response.items.isEmpty()) null else currentOffset + response.items.size
+                data = response.items.map { photo ->
+                    photo.mapToPhoto(context) { annotationUsecase(it) }
+                },
+                prevKey = if (currentOffset != param.page.offset) {
+                    (currentOffset - params.loadSize).coerceAtLeast(0)
+                } else {
+                    null
+                },
+                nextKey = if (response.items.isNotEmpty()) {
+                    currentOffset + response.items.size
+                } else {
+                    null
+                }
             )
         }
     }
 
     data class Parameter(
         val author: String,
-        val category: Category = Category.ALL,
+        val types: Set<Content.Type> = POST,
+        val category: Category = Category.NONE,
         val criteria: Criteria? = null,
         val page: Pageable
     )

@@ -5,8 +5,13 @@ import androidx.lifecycle.ViewModelProvider
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
+import eu.peernetwork.core.ui.annotation.UiBuilder
 import eu.peernetwork.core.ui.annotation.UiViewModel
+import eu.peernetwork.core.ui.component.UiComponent
+import eu.peernetwork.core.ui.component.UiComponentProvider
+import eu.peernetwork.core.ui.factory.UiBuilderFactory
 import eu.peernetwork.core.ui.factory.UiViewModelFactory
+import eu.peernetwork.media.ui.selector.directory.Directory
 import javax.inject.Provider
 
 @Module
@@ -25,4 +30,19 @@ object PhotoModule {
     @Photo.Scope
     @UiViewModel(PhotoViewModel::class)
     fun viewModel(viewModel: PhotoViewModel): ViewModel = viewModel
+
+    @Provides
+    @Photo.Scope
+    fun provideBuilderFactory(factory: Map<Class<out UiComponent.Builder>,
+            @JvmSuppressWildcards Provider<UiComponent.Builder>>): UiComponentProvider.Factory {
+        return UiBuilderFactory(factory)
+    }
+
+    @Provides
+    @IntoMap
+    @Photo.Scope
+    @UiBuilder(Directory.Builder::class)
+    fun provideDirectoryBuilder(component: Photo.Component): UiComponent.Builder {
+        return Directory.Builder(component)
+    }
 }

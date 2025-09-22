@@ -38,6 +38,7 @@ query Getallposts(
             cover
             contenttype
             createdat
+            url
             user {
                 id
                 username

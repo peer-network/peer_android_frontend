@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
-import eu.peernetwork.blog.ui.interactions.overview.Overview
+import eu.peernetwork.blog.ui.interaction.overview.Overview
 import eu.peernetwork.blog.ui.comment.Comment
 import eu.peernetwork.core.ui.annotation.UiBuilder
 import eu.peernetwork.core.ui.annotation.UiViewModel

@@ -51,6 +51,7 @@
 
     <string name="app_information_label">App Information</string>
     <string name="about_us_label">About Us</string>
+    <string name="feedback_label">Feedback</string>
     <string name="app_name_label">App Name: Peer</string>
     <string name="version_text_label">Version: %s %d</string>
     <string name="developed_by_label">Developed by: Peer Network Team</string>

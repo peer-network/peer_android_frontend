@@ -6,6 +6,7 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -36,7 +37,7 @@ import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.media.core.model.UiAttachment
 import eu.peernetwork.media.core.model.UiFile
 import eu.peernetwork.media.core.model.UiMimeType
-import eu.peernetwork.media.ui.R
+import eu.peernetwork.media.core.R
 import eu.peernetwork.media.ui.editor.picture.PhotoAspectRatio
 import eu.peernetwork.media.ui.editor.picture.PhotoScreen
 import eu.peernetwork.media.ui.usecase.PermissionUsecase
@@ -50,10 +51,11 @@ import kotlinx.coroutines.flow.debounce
 fun AttachmentScreen(
     attachment: MutableState<UiAttachment>,
     onAttach: () -> Unit,
+    modifier: Modifier = Modifier,
     onPreview: (UiAttachment) -> Unit,
+    onSelectCover: (Uri) -> Unit,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
-    modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
     val component = remember {
@@ -72,7 +74,7 @@ fun AttachmentScreen(
     } }
     val permissionsState = rememberMultiplePermissionsState(
         permissions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            listOf(Manifest.permission.READ_MEDIA_IMAGES, Manifest.permission.READ_MEDIA_VIDEO)
+            listOf(Manifest.permission.READ_MEDIA_IMAGES, Manifest.permission.READ_MEDIA_VIDEO, Manifest.permission.READ_MEDIA_AUDIO)
         } else {
             listOf(Manifest.permission.READ_EXTERNAL_STORAGE)
         }
@@ -101,6 +103,7 @@ fun AttachmentScreen(
             }
         },
         onSelect = { imageToCrop.value = attachment.value.files[it].uri },
+        onSelectCover = onSelectCover,
         onPreview = {
             if (attachment.value.media == UiMimeType.Photo) {
                 imageToCrop.value = attachment.value.files[it].uri
@@ -114,8 +117,8 @@ fun AttachmentScreen(
         onPortraitClick = {
             ratio.value = PhotoAspectRatio.Portrait
             launcher.longValue = System.currentTimeMillis() },
-        onDetach = { index ->
-            val removed = attachment.value.files[index]
+        onDetach = {
+            val removed = attachment.value.files[it]
             attachment.value = UiAttachment.File(
                 attachment.value.media,
                 attachment.value.files.filterNot {
@@ -131,13 +134,37 @@ fun AttachmentScreen(
         state = launcher,
         imageUri = imageToCrop.value,
         selectedRatio = ratio.value,
-        onCropDone = {
-            attachment.value = UiAttachment.File(
-                UiMimeType.Photo,
-                persistentListOf(it)
-            )
+        onCropDone = { croppedFile ->
+            val currentAttachment = attachment.value
+            when (currentAttachment) {
+                is UiAttachment.File -> {
+                    if (currentAttachment.media == UiMimeType.Music) {
+                        val updatedFiles = currentAttachment.files.mapIndexed { index, file ->
+                            if (index == 0) {
+                                file.copy(path = croppedFile.path)
+                            } else file
+                        }.toPersistentList()
+                        attachment.value = UiAttachment.File(
+                            UiMimeType.Music,
+                            updatedFiles
+                        )
+                    } else {
+                        attachment.value = UiAttachment.File(
+                            UiMimeType.Photo,
+                            persistentListOf(croppedFile)
+                        )
+                    }
+                }
+                UiAttachment.Text -> {
+                    attachment.value = UiAttachment.File(
+                        UiMimeType.Photo,
+                        persistentListOf(croppedFile)
+                    )
+                }
+            }
         }
     )
+
     LaunchedEffect(permissionsState.allPermissionsGranted) {
         snapshotFlow { timestamp }
             .debounce(500L)
@@ -165,13 +192,14 @@ fun AttachmentScreen(
     onRefresh: (Int) -> Unit,
     onAttach: () -> Unit,
     onSelect: (Int) -> Unit,
+    onSelectCover: (Uri) -> Unit,
     onPreview: (Int) -> Unit,
     onSquareClick: () -> Unit,
     onPortraitClick: () -> Unit,
     onDetach: (Int) -> Unit,
 ) {
     val imageToCrop = remember(attachment.value) {
-        mutableStateOf<Uri?>(attachment.value.files.firstOrNull()?.uri)
+        mutableStateOf(attachment.value.files.firstOrNull()?.uri)
     }
     val isVisible by remember { derivedStateOf {
         imageToCrop.value != null && attachment.value.files.isNotEmpty()
@@ -180,29 +208,44 @@ fun AttachmentScreen(
         modifier = modifier,
         visible = isVisible,
         label = {
-            if (attachment.value.media == UiMimeType.Photo) {
-                AttachmentOption(
-                    onSquareClick = onSquareClick,
-                    onPortraitClick = onPortraitClick,
-                    modifier = Modifier.fillMaxWidth()
+            Column(modifier = Modifier.fillMaxWidth()) {
+                AttachmentSize(
+                    attachment = attachment.value,
+                    modifier = Modifier
+                        .fillMaxWidth()
                         .padding(
                             top = 4.dp,
                             bottom = 8.dp
                         )
                 )
+                if (attachment.value.media == UiMimeType.Photo) {
+                    AttachmentOption(
+                        onSquareClick = onSquareClick,
+                        onPortraitClick = onPortraitClick,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(
+                                top = 4.dp,
+                                bottom = 8.dp
+                            )
+                    )
+                }
             }
         }
     ) {
-        Box(modifier = Modifier.padding(bottom = 4.dp)) {
-            AttachmentPreview(
-                onAttach = onAttach,
-                onLoad = onLoad,
-                onRefresh = onRefresh,
-                onRemove = onDetach,
-                attachment = attachment,
-                onSelect = onSelect,
-                onPreview = onPreview
-            )
+        Column {
+            Box(modifier = Modifier.padding(bottom = 4.dp)) {
+                AttachmentPreview(
+                    onAttach = onAttach,
+                    onLoad = onLoad,
+                    onRefresh = onRefresh,
+                    onRemove = onDetach,
+                    attachment = attachment,
+                    onSelect = onSelect,
+                    onPreview = onPreview,
+                    onSelectCover = onSelectCover
+                )
+            }
         }
     }
 }
@@ -227,6 +270,7 @@ fun PreviewAttachmentScreen() {
             onLoad = { null },
             onRefresh = {},
             onAttach = {},
+            onSelectCover = {},
             onSelect = {},
             onPreview = {},
             onSquareClick = {},

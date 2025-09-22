@@ -15,13 +15,12 @@ data class Content(
     val isViewed: Boolean,
     val views: Int,
     val comment: Int,
+    val url: String
 ) {
     enum class Type {
         IMAGE,
         VIDEO,
         AUDIO,
         TEXT,
-        FOLLOWED,
-        FOLLOWER
     }
 }

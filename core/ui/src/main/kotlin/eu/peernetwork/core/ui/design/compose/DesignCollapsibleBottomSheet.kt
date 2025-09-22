@@ -47,13 +47,14 @@ fun DesignCollapsibleBottomSheet(
     state: State<Boolean>,
     behind: Boolean = true,
     peekHeight: Dp = 250.dp,
+    canDismiss: () -> Boolean = { true },
     color: Color = MaterialTheme.colorScheme.tertiaryContainer,
     orientation: Orientation = Orientation.Vertical,
     confirmValueChange: (DesignBottomSheetState) -> Boolean = { true },
     onStateChanged: (DesignBottomSheetState) -> Unit = {},
     onDismiss: () -> Unit = {},
     duration: Int = 250,
-    snapAnimationSpec: AnimationSpec<Float> = tween<Float>(
+    snapAnimationSpec: AnimationSpec<Float> = tween(
         durationMillis = duration,
         easing = CubicBezierEasing(0.2f, 0f, 0f, 1f)
     ),
@@ -71,7 +72,7 @@ fun DesignCollapsibleBottomSheet(
             handleOnDismiss()
         },
         duration = duration.toLong(),
-        canDismiss = dialogState.value == DesignBottomSheetState.HIDE,
+        canDismiss = canDismiss,
         onBackPressed = { dialogState.value = DesignBottomSheetState.HIDE }
     ) { controller, anim, cancelable ->
         val isDismissed = remember(anim.value, visible.value) {

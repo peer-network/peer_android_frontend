@@ -12,11 +12,9 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
@@ -41,7 +39,11 @@ fun<T> DesignRefreshableScaffold(
     errorContent: (@Composable (Throwable) -> Unit)? = null,
     content: @Composable (T) -> Unit,
 ) {
-    val contentState = remember { mutableStateOf<T?>(null) }
+    val contentState = remember {
+        derivedStateOf {
+            (state.value as? DesignStatefulScaffoldState.Success<*>?)?.result as T?
+        }
+    }
     val errorState = remember { derivedStateOf {
         (state.value as? DesignStatefulScaffoldState.Error?)?.error
     } }
@@ -70,11 +72,6 @@ fun<T> DesignRefreshableScaffold(
                 modifier = Modifier.fillMaxSize()
                     .verticalScroll(rememberScrollState())
             )
-        }
-    }
-    LaunchedEffect(state.value) {
-        if (state.value is DesignStatefulScaffoldState.Success<*>) {
-            contentState.value = (state.value as DesignStatefulScaffoldState.Success<*>).result as T
         }
     }
 }

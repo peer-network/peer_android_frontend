@@ -8,5 +8,7 @@ import androidx.compose.runtime.Immutable
 data class UiFile(
     val uri: Uri,
     val path: String = uri.path ?: uri.toString(),
-    val props: Bundle = Bundle()
+    val props: Bundle = Bundle(),
+    val name: String = uri.lastPathSegment ?: "Unknown",
+    val cover: Uri? = null,
 )

@@ -16,19 +16,18 @@ class SplashViewModel @Inject constructor(
     private val logDeviceModelUsecase: LogDeviceModelUsecase
 ) : ViewModel() {
     private val mutableState = MutableStateFlow<State>(State.Empty)
+
     val state: StateFlow<State> = mutableState.asStateFlow()
 
     fun initialize() {
         viewModelScope.launch {
             mutableState.tryEmit(State.Loading)
-
             runCatching {
                 logDeviceModelUsecase()
             }.onFailure {
                 mutableState.tryEmit(State.Error(it))
                 return@launch
             }
-
             when (val result = versionUseCase()) {
                 is VersionUseCase.Result.UpToDate -> {
                     mutableState.tryEmit(State.Success())

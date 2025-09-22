@@ -11,6 +11,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import eu.peernetwork.app.BuildConfig
+import eu.peernetwork.app.ui.feed.FeedExplorer
 import eu.peernetwork.app.ui.feed.FeedScreen
 import eu.peernetwork.app.ui.profile.ProfileScreen
 import eu.peernetwork.app.ui.window.WindowScreen
@@ -30,7 +31,7 @@ fun SearchNavigation(
     content: @Composable (NavHostController) -> Unit
 ) {
     val updatedContent by rememberUpdatedState(content)
-    var id by remember { mutableStateOf<String>("") }
+    var id by remember { mutableStateOf("") }
     val requireUpdate = remember { mutableStateOf(false) }
     val windowMode = if (startDestination == "overlay") {
         DesignPageWindowMode.DOCKED
@@ -79,7 +80,7 @@ fun SearchNavigation(
                 mode = windowMode,
                 onCancel = onCancel,
             ) {
-                FeedScreen(
+                FeedExplorer(
                     id = userId,
                     postLimit = BuildConfig.PAGING_LIMIT,
                     provider = component,
@@ -106,7 +107,7 @@ fun SearchNavigation(
                 mode = windowMode,
                 onCancel = onCancel,
             ) {
-                FeedScreen(
+                FeedExplorer(
                     userId,
                     BuildConfig.PAGING_LIMIT,
                     component,

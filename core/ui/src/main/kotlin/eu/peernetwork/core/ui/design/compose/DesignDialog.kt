@@ -44,7 +44,7 @@ fun  DesignDialog(
     state: State<Boolean>,
     startDestination: String? = null,
     dim: Boolean = false,
-    canDismiss: Boolean = true,
+    canDismiss: () -> Boolean = { true },
     onBackPressed: () -> Unit = {},
     onShow: () -> Unit = {},
     duration: Long = 250,
@@ -61,6 +61,7 @@ fun  DesignDialog(
     val handleBackPressed by rememberUpdatedState(onBackPressed)
     val handleShow by rememberUpdatedState(onShow)
     val handleDismissRequest by rememberUpdatedState(onDismiss)
+    val handleCanDismiss by rememberUpdatedState(canDismiss)
     val cancelable = remember { mutableStateOf(false) }
     val lastState = remember { mutableStateOf(state.value) }
     val session = remember { mutableLongStateOf(System.currentTimeMillis()) }
@@ -69,10 +70,10 @@ fun  DesignDialog(
     val dialog = remember(session.longValue) {
         object : Dialog(context, R.style.Theme_Peer_Overlay) {
             override fun onBackPressed() {
-                handleBackPressed()
-                if (!canDismiss) {
+                if (!handleCanDismiss()) {
                     return
                 }
+                handleBackPressed()
                 if (dispatcher?.hasEnabledCallbacks() != true || cancelable.value) {
                     dismiss()
                 } else {

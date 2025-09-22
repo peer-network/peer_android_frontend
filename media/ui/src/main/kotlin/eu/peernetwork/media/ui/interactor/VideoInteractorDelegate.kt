@@ -1,19 +1,14 @@
 package eu.peernetwork.media.ui.interactor
 
-import android.content.Context
 import android.graphics.SurfaceTexture
 import android.view.Surface
 import androidx.annotation.OptIn
-import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.common.VideoSize
 import androidx.media3.common.util.UnstableApi
-import androidx.media3.exoplayer.DefaultLoadControl
 import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
 import eu.peernetwork.media.core.interactor.VideoInteractor
-import eu.peernetwork.media.ui.core.MediaPlayer
 import eu.peernetwork.persistence.domain.observable.ObservableBoolean
 import eu.peernetwork.persistence.domain.publishable.PublishableBoolean
 import kotlinx.coroutines.flow.Flow
@@ -23,13 +18,15 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 @OptIn(UnstableApi::class)
 class VideoInteractorDelegate @Inject constructor(
-    context: Context,
+    private val player: ExoPlayer,
     private val observableBoolean: ObservableBoolean,
     private val publishableBoolean: PublishableBoolean
-) : VideoInteractor, MediaPlayer {
+) : VideoInteractor, MediaInteractor {
     private var currentUrl: MediaItem? = null
 
     private var currentSurface: Surface? = null
@@ -53,33 +50,15 @@ class VideoInteractorDelegate @Inject constructor(
         }
     }
 
-    val player = ExoPlayer.Builder(context)
-        .setTrackSelector(DefaultTrackSelector(context).apply {
-            parameters = buildUponParameters()
-                .setMaxVideoSize(640, 360)
-                .setForceLowestBitrate(true)
-                .setMaxVideoBitrate(1_500_000)
-                .build()
-        }).setLoadControl(DefaultLoadControl.Builder()
-            .setBufferDurationsMs(
-                1500,
-                5000,
-                500,
-                1000
-            ).build()).build().apply {
-            videoScalingMode = C.VIDEO_SCALING_MODE_SCALE_TO_FIT
-            repeatMode = Player.REPEAT_MODE_ALL
-        }
-
-    override fun mute(): Flow<Boolean> {
+    override fun volume(): Flow<Boolean> {
         return observableBoolean(VOLUME).map { it == true }
     }
 
-    override suspend fun mute(enable: Boolean) {
+    override suspend fun unmute(enable: Boolean) {
         publishableBoolean(VOLUME, enable)
     }
 
-    override fun player(): ExoPlayer = player
+    override fun exoPlayer(): ExoPlayer = player
 
     override fun attach(texture: SurfaceTexture, url: String) {
         val item = MediaItem.Builder().setUri(url).setMediaId(url).build()

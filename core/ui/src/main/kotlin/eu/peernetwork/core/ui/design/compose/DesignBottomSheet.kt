@@ -68,13 +68,14 @@ enum class DesignBottomSheetState { EXPAND, COLLAPSE, HIDE }
 fun DesignBottomSheet(
     state: State<Boolean>,
     dim: Boolean = true,
+    canDismiss: () -> Boolean = { true },
     color: Color = MaterialTheme.colorScheme.tertiaryContainer,
     peekHeight: Dp = 400.dp,
     orientation: Orientation = Orientation.Vertical,
     confirmValueChange: (DesignBottomSheetState) -> Boolean = { true },
     onStateChanged: (DesignBottomSheetState) -> Unit = {},
     onDismiss: () -> Unit = {},
-    snapAnimationSpec: AnimationSpec<Float> = tween<Float>(
+    snapAnimationSpec: AnimationSpec<Float> = tween(
         durationMillis = 250,
         easing = CubicBezierEasing(0.2f, 0f, 0f, 1f)
     ),
@@ -92,7 +93,7 @@ fun DesignBottomSheet(
             visible.value = false
             handleOnDismiss()
         },
-        canDismiss = dialogState.value == DesignBottomSheetState.HIDE,
+        canDismiss = canDismiss,
         onBackPressed = { dialogState.value = DesignBottomSheetState.HIDE }
     ) { controller, anim, cancelable ->
         val isDismissed = remember(anim.value, visible.value) {
@@ -148,7 +149,7 @@ fun DesignBottomSheet(
     onStateChanged: (DesignBottomSheetState) -> Unit = {},
     onDismiss: () -> Unit = {},
     peekHeight: Dp,
-    snapAnimationSpec: AnimationSpec<Float> = tween<Float>(
+    snapAnimationSpec: AnimationSpec<Float> = tween(
         durationMillis = 350,
         easing = CubicBezierEasing(0.2f, 0f, 0f, 1f)
     ),
@@ -169,7 +170,7 @@ fun DesignBottomSheet(
             positionalThreshold = { positionalThreshold },
             velocityThreshold = { with(density) { 125.dp.toPx() } },
             snapAnimationSpec = snapAnimationSpec,
-            decayAnimationSpec = exponentialDecay<Float>(),
+            decayAnimationSpec = exponentialDecay(),
             confirmValueChange = confirmValueChange,
         )
     }
@@ -379,7 +380,7 @@ internal class BottomSheetDraggableAnchorsNode<T>(
 fun PreviewDesignBottomSheet() {
     PeerTheme {
         val state = remember {
-            mutableStateOf<DesignBottomSheetState>(DesignBottomSheetState.HIDE)
+            mutableStateOf(DesignBottomSheetState.HIDE)
         }
         Box(
             contentAlignment = Alignment.Center,

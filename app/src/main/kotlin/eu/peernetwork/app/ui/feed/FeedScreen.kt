@@ -26,6 +26,7 @@ fun FeedScreen(
     title: String? = null,
     criteria: Criteria? = null,
     hasUpdate: MutableState<Boolean>,
+    onExplore: () -> Unit = {},
 ) {
     val context = LocalContext.current
     val component = remember {
@@ -44,8 +45,8 @@ fun FeedScreen(
             (state as? FeedViewModel.State.Initialize?)?.filter ?: 0
         }
     }
-    val overlay = remember { mutableStateOf<FeedOverlayState>(FeedOverlayState.Empty) }
     val controller = rememberNavController()
+    val overlay = remember { mutableStateOf<FeedOverlayState>(FeedOverlayState.Empty) }
     ConnectionScreen(
         provider = component,
         viewModelStoreOwner = viewModelStoreOwner
@@ -73,13 +74,13 @@ fun FeedScreen(
                     selected = overlay,
                     requireUpdate = hasUpdate,
                     component = component,
-                    viewModelStoreOwner = viewModelStoreOwner,
+                    viewModelStore = viewModelStore,
                     controller = controller,
                     connectionController = connectionController,
-                    criteria = criteria,
                     title = title,
                     onNavigate = { viewModel.lastVisited(it) },
-                    onFilter = { viewModel.setFilter(it) }
+                    onFilter = { viewModel.setFilter(it) },
+                    onExplore = onExplore
                 )
             }
         }

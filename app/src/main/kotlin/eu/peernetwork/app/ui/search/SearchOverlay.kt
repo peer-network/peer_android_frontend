@@ -11,6 +11,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import eu.peernetwork.app.extension.navigateToTagSearch
 import eu.peernetwork.app.extension.navigateToUsernameSearch
 import eu.peernetwork.app.ui.window.WindowTitle
+import eu.peernetwork.blog.ui.event.UiPostListener
 import eu.peernetwork.blog.ui.explore.ExploreOverlay
 import eu.peernetwork.core.ui.design.compose.DesignOverlay
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
@@ -46,6 +47,26 @@ fun SearchOverlay(
         onDismiss = { overlay.value = SearchOverlayState.Empty }
     ) { controller ->
         val overlayState = remember { mutableStateOf<SearchOverlayState?>(overlay.value) }
+        val event = remember {
+            object : UiPostListener {
+                override fun invoke(event: UiPostListener.Event) {
+                    when(event) {
+                        is UiPostListener.Event.Mention -> {
+                            controller.navigateToUsernameSearch(event.username)
+                        }
+                        is UiPostListener.Event.Hashtag -> {
+                            controller.navigateToTagSearch(event.tag)
+                        }
+                        is UiPostListener.Event.Author -> {
+                            controller.navigateIfNecessary("profile/${event.id}")
+                        }
+                        is UiPostListener.Event.Post -> {
+                            overlay.value = SearchOverlayState.Photo(event.id, event.position)
+                        }
+                    }
+                }
+            }
+        }
         SearchNavigation(
             userId = id,
             startDestination = "overlay",
@@ -56,14 +77,13 @@ fun SearchOverlay(
         ) {
             val state = (overlayState.value as SearchOverlayState.Photo)
             ExploreOverlay(
-                id,
-                limit,
-                state.position,
-                component,
-                viewModelStore.get(id),
-                onMentionClick = { controller.navigateToUsernameSearch(it) },
-                onHashtagClick = { controller.navigateToTagSearch(it) },
-                onAuthorClick = { controller.navigateIfNecessary("profile/$it") },
+                author = id,
+                limit = limit,
+                position = state.position,
+                enabled = visible.value,
+                provider = component,
+                viewModelStoreOwner = viewModelStore.get(id),
+                event = event,
                 header = {
                     WindowTitle(
                         id = id,

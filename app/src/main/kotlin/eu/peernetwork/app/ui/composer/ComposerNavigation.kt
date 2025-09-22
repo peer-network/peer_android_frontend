@@ -21,7 +21,9 @@ import eu.peernetwork.media.core.model.UiMimeType
 import eu.peernetwork.media.core.model.UiOffset
 import eu.peernetwork.media.ui.editor.video.VideoScreen
 import eu.peernetwork.media.ui.selector.explorer.ExplorerScreen
+import eu.peernetwork.media.ui.selector.photo.PhotoPage
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toPersistentList
 import java.io.File
 
 @Composable
@@ -50,6 +52,27 @@ fun ComposerNavigation(
                     attachment.value = it
                     controller.route("editor")
                 }
+            }
+        }
+        composable(
+            route = "cover?audioUri={audioUri}",
+            arguments = listOf(navArgument("audioUri") {
+                type = NavType.StringType
+                nullable = true
+            })
+        ) { backStackEntry ->
+            val path = backStackEntry.arguments?.getString("audioUri") ?: ""
+            PhotoPage(
+                attachment = UiFile(Uri.fromFile(File(path)), path, Bundle()),
+                provider = provider
+            ) {
+                attachment.value = UiAttachment.File(
+                    type = UiMimeType.Music,
+                    uris = attachment.value.files.map { file ->
+                        file.copy(cover = it.cover)
+                    }.toPersistentList()
+                )
+                controller.route("editor")
             }
         }
         composable(

@@ -8,6 +8,7 @@
     <string name="send_label">Send</string>
 
     <string name="feed_label">Feeds</string>
+    <string name="trend_label">Trends</string>
     <string name="follow_label">Follow</string>
     <string name="following_label">Following</string>
     <string name="follower_label">Followers</string>
@@ -22,4 +23,8 @@
     <string name="point_description">You have %d Free %s</string>
     <string name="description_label">Description</string>
     <string name="view_more_label">View more…</string>
+
+    <string name="most_liked_label">Most liked</string>
+    <string name="most_viewed_label">Most viewed</string>
+    <string name="most_disliked_label">Most disliked</string>
 </resources>

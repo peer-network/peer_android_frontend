@@ -3,8 +3,10 @@ package eu.peernetwork.media.ui.selector.photo
 import android.content.Context
 import androidx.lifecycle.ViewModelProvider
 import eu.peernetwork.core.ui.component.UiComponent
+import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.provider.UiProvider
 import eu.peernetwork.media.core.interactor.ThumbnailInteractor
+import eu.peernetwork.media.ui.selector.directory.Directory
 
 interface Photo : UiProvider {
     fun thumbnailInteractor(): ThumbnailInteractor
@@ -18,7 +20,7 @@ interface Photo : UiProvider {
         dependencies = [ Photo::class ],
         modules = [ PhotoModule::class ]
     )
-    interface Component : Photo {
+    interface Component : Photo, Directory, UiComponentProvider {
         fun viewModelFactory(): ViewModelProvider.Factory
     }
 

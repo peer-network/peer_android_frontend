@@ -1,5 +1,6 @@
 package eu.peernetwork.blog.ui.moderation
 
+import android.content.Intent
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -76,6 +77,7 @@ fun ModerationScreen(
 ) {
     var expanded by remember { mutableStateOf(false) }
     val handleOnReport by rememberUpdatedState(event.onReport)
+    val context = LocalContext.current
     Box {
         DesignTextButton(
             onClick = { expanded = true },
@@ -98,6 +100,20 @@ fun ModerationScreen(
                 onClick = {
                     expanded = false
                     handleOnReport(model.id)
+                }
+            )
+            DropdownMenuItem(
+                text = { Text("Share") },
+                onClick = {
+                    expanded = false
+                    model.url?.let { url ->
+                        val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                            type = "text/plain"
+                            putExtra(Intent.EXTRA_TEXT, url)
+                        }
+                        val chooser = Intent.createChooser(shareIntent, "Share via")
+                        context.startActivity(chooser)
+                    }
                 }
             )
         }

@@ -11,6 +11,7 @@ fun Engagement.Content.mapToAction(): PostActionType {
         Engagement.Content.View -> PostActionType.VIEW
         Engagement.Content.Report -> PostActionType.REPORT
         Engagement.Content.Save -> PostActionType.SAVE
+        else -> PostActionType.UNKNOWN__
     }
 }
 
@@ -18,6 +19,7 @@ fun Engagement.Content.mapToInteraction(): GetOnly {
     return when (this) {
         Engagement.Content.Like -> GetOnly.LIKE
         Engagement.Content.Dislike -> GetOnly.DISLIKE
+        Engagement.Content.LikedComment -> GetOnly.COMMENTLIKE
         else -> GetOnly.VIEW
     }
 }

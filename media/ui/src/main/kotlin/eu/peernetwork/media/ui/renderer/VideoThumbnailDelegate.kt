@@ -18,11 +18,14 @@ import eu.peernetwork.media.core.renderer.VideoThumbnail
 import kotlinx.coroutines.FlowPreview
 import javax.inject.Inject
 import androidx.core.view.isVisible
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import eu.peernetwork.media.core.interactor.VideoInteractor
 import eu.peernetwork.media.ui.compose.VolumeControl
-import eu.peernetwork.media.ui.core.MediaPlayer
+import eu.peernetwork.media.ui.interactor.MediaInteractor
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
@@ -30,7 +33,7 @@ import kotlinx.coroutines.launch
 class VideoThumbnailDelegate @Inject constructor(
     private val interactor: VideoInteractor
 ) : VideoThumbnail {
-    private val media = (interactor as MediaPlayer)
+    private val session = (interactor as MediaInteractor)
 
     @Composable
     @OptIn(FlowPreview::class)
@@ -40,16 +43,34 @@ class VideoThumbnailDelegate @Inject constructor(
     ) {
         val context = LocalContext.current
         val scope = rememberCoroutineScope()
-        val player = remember { media.player() }
+        val lifecycleOwner = LocalLifecycleOwner.current
+        val player = remember { session.exoPlayer() }
         val surfaceView = remember { TextureView(context) }
-        val dimension = media.observer.collectAsStateWithLifecycle()
-        val mute = media.mute().collectAsStateWithLifecycle(media.player().isDeviceMuted)
+        val dimension = session.observer.collectAsStateWithLifecycle()
+        val mute = session.volume().collectAsStateWithLifecycle(session.exoPlayer().isDeviceMuted)
         val listener = remember {
             object : Player.Listener {
                 override fun onPlayerError(error: PlaybackException) {
                     surfaceView.surfaceTexture?.let {
                         interactor.attach(it, spec.url)
                     }
+                }
+            }
+        }
+        val observer = remember {
+            LifecycleEventObserver { _, event ->
+                when (event) {
+                    Lifecycle.Event.ON_RESUME -> {
+                        if (spec.isPlaying.value) {
+                            player.play()
+                        }
+                    }
+                    Lifecycle.Event.ON_STOP -> {
+                        if (spec.isPlaying.value) {
+                            player.pause()
+                        }
+                    }
+                    else -> Unit
                 }
             }
         }
@@ -91,7 +112,7 @@ class VideoThumbnailDelegate @Inject constructor(
             Box(modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(16.dp)) {
-                VolumeControl(mute) { scope.launch { interactor.mute(it) } }
+                VolumeControl(mute) { scope.launch { session.unmute(it) } }
             }
         }
         LaunchedEffect(Unit) {
@@ -103,11 +124,13 @@ class VideoThumbnailDelegate @Inject constructor(
                         surfaceView.surfaceTexture?.let {
                             interactor.attach(it, spec.url)
                             player.addListener(listener)
+                            player.play()
                         }
                     } else {
                         surfaceView.surfaceTexture?.let {
                             interactor.detach(it)
                             player.removeListener(listener)
+                            player.pause()
                         }
                     }
                 }
@@ -116,8 +139,14 @@ class VideoThumbnailDelegate @Inject constructor(
             snapshotFlow { mute.value }
                 .distinctUntilChanged()
                 .collect { muted ->
-                    media.player().volume = if (muted) 1f else 0f
+                    session.exoPlayer().volume = if (muted) 1f else 0f
                 }
+        }
+        DisposableEffect(lifecycleOwner) {
+            lifecycleOwner.lifecycle.addObserver(observer)
+            onDispose {
+                lifecycleOwner.lifecycle.removeObserver(observer)
+            }
         }
     }
 }

@@ -8,10 +8,10 @@ import java.io.File
 
 class DiskCacheInteractor(
     context: Context,
-    directory: String
+    directory: String,
+    cacheDir: File = File(context.cacheDir, directory),
+    private val diskCache: DiskLruCache = DiskLruCache.open(cacheDir, 1, 1, 50L * 1024 * 1024)
 ) : BitmapInteractor {
-    private val cacheDir = File(context.cacheDir, directory)
-    private val diskCache = DiskLruCache.open(cacheDir, 1, 1, 50L * 1024 * 1024)
 
     override fun get(key: String): Bitmap? {
         val snapshot = diskCache.get(key.hashCode().toString()) ?: return null

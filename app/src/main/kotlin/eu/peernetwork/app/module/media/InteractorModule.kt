@@ -7,6 +7,7 @@ import eu.peernetwork.media.core.annotation.DiskCache
 import eu.peernetwork.media.core.annotation.MemoryCache
 import eu.peernetwork.media.core.interactor.ThumbnailInteractor
 import eu.peernetwork.media.core.interactor.VideoInteractor
+import eu.peernetwork.media.ui.interactor.MediaInteractor
 import eu.peernetwork.media.ui.interactor.BitmapInteractor
 import eu.peernetwork.media.ui.interactor.DiskCacheInteractor
 import eu.peernetwork.media.ui.interactor.MemoryCacheInteractor
@@ -38,6 +39,8 @@ object InteractorModule {
     fun bindThumbnailInteractor(delegate: ThumbnailInteractorDelegate): ThumbnailInteractor = delegate
 
     @Provides
-    @Singleton
     fun bindVideoInteractor(delegate: VideoInteractorDelegate): VideoInteractor = delegate
+
+    @Provides
+    fun bindMediaSession(delegate: VideoInteractorDelegate): MediaInteractor = delegate
 }

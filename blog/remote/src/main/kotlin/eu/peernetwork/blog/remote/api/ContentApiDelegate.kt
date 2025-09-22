@@ -14,7 +14,7 @@ import eu.peernetwork.blog.remote.mapper.mapFromDomain
 import eu.peernetwork.blog.remote.mapper.mapToDomain
 import eu.peernetwork.blog.remote.mapper.mapToFilter
 import eu.peernetwork.blog.remote.mapper.mapToMode
-import eu.peernetwork.blog.remote.mapper.mapToSortType
+import eu.peernetwork.blog.remote.mapper.sortType
 import eu.peernetwork.blog.remote.model.MediaModel
 import eu.peernetwork.core.common.interactor.SessionInteractor
 import eu.peernetwork.core.common.paging.Page
@@ -31,33 +31,28 @@ class ContentApiDelegate @Inject constructor(
     private val gson: Gson,
     @Named("mediaUrl") private val url: String,
     private val client: RequestClient,
-    private val sessionInteractor: SessionInteractor
+    private val interactor: SessionInteractor
 ) : ContentApi {
     override suspend fun get(filter: Filter, page: Pageable): Page<Content> {
         val post = filter.postId?.let { Optional.present(it) } ?: Optional.absent()
         val author = filter.author?.let { Optional.present(it) } ?: Optional.absent()
-        val sortBy = filter.mapToSortType()?.let {
+        val sortBy = filter.sortType()?.let {
             Optional.present(it)
         } ?: Optional.absent()
         val filterBy = if (filter.type.isEmpty()) {
             Optional.absent()
         } else {
-            Optional.present(filter.type.map { it.mapToFilter() })
+            Optional.present(filter.type.map { it.mapToFilter() } +
+                    (filter.category?.mapToFilter()?.let { listOf(it) } ?: listOf()))
         }
-        val tag = if (filter.criteria is Filter.Criteria.Content) {
-            (filter.criteria as? Filter.Criteria.Content?)?.tag?.let {
+        val tag = (filter.criteria as? Filter.Criteria.Content?)?.let {
+            it.tag?.let {
                 Optional.present(it)
             } ?: Optional.absent()
-        } else {
-            Optional.absent()
-        }
-        val title = if (filter.criteria is Filter.Criteria.Content) {
-            (filter.criteria as? Filter.Criteria.Content?)?.title?.let {
-                Optional.present(it)
-            } ?: Optional.absent()
-        } else {
-            Optional.absent()
-        }
+        } ?: Optional.absent()
+        val title = (filter.criteria as? Filter.Criteria.Content?)?.title?.let {
+            Optional.present(it)
+        } ?: Optional.absent()
         val query = GetallpostsQuery(
             filter = filterBy,
             sort = sortBy,
@@ -65,19 +60,33 @@ class ContentApiDelegate @Inject constructor(
             title = title,
             postId = post,
             userId = author,
-            contentFilterBy = Optional.present(sessionInteractor.mode().mapToMode()),
+            contentFilterBy = Optional.present(interactor.mode().mapToMode()),
             offset = Optional.present(page.offset),
             limit = Optional.present(page.limit)
         )
         val response = client().query(query).executeOrThrow()
         val data = response.getOrThrow().listPosts
         val contents = data.affectedRows?.map { content ->
-            content.mapToDomain(url, gson.fromJson<List<MediaModel>>(
-                content.media,
-                object : TypeToken<List<MediaModel>>() {}.type
-            ).map { it.copy(options = it.options?.copy(cover = content.cover))
-                .mapFromDomain().copy(path = "$url${it.path}")
-            })
+            val coverPath = try {
+                gson.fromJson<List<Map<String, Any>>>(
+                    content.cover,
+                    object : TypeToken<List<Map<String, Any>>>() {}.type
+                ).firstOrNull()?.get("path") as? String
+            } catch (_: Exception) {
+                null
+            }?.let { "$url$it" }
+
+            content.mapToDomain(
+                url,
+                gson.fromJson<List<MediaModel>>(
+                    content.media,
+                    object : TypeToken<List<MediaModel>>() {}.type
+                ).map {
+                    it.copy(
+                        options = it.options?.copy(cover = coverPath)
+                    ).mapFromDomain().copy(path = "$url${it.path}")
+                }
+            )
         }
         response.assertOrThrow(data.status, data.ResponseCode)
         return Page(
@@ -124,7 +133,10 @@ class ContentApiDelegate @Inject constructor(
         return when (type) {
             is Draft.Type.Text -> Optional.absent()
             is Draft.Type.Video -> Optional.absent()
-            is Draft.Type.Audio -> Optional.present(listOf((type as Draft.Type.Audio).cover))
+            is Draft.Type.Audio -> {
+                val cover = (type as Draft.Type.Audio).cover
+                if (cover != null) Optional.present(listOf(cover)) else Optional.absent()
+            }
             is Draft.Type.Image -> Optional.absent()
         }
     }

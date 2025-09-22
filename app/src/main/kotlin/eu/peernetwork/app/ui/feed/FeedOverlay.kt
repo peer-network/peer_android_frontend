@@ -13,9 +13,8 @@ import eu.peernetwork.app.extension.navigateToUsernameSearch
 import eu.peernetwork.app.ui.window.WindowTitle
 import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.blog.domain.model.Category
-import eu.peernetwork.blog.ui.event.UiPostEvent
-import eu.peernetwork.blog.ui.timeline.photo.PhotoOverlay
-import eu.peernetwork.blog.ui.timeline.video.VideoOverlay
+import eu.peernetwork.blog.ui.event.UiPostListener
+import eu.peernetwork.blog.ui.feed.timeline.PostOverlay
 import eu.peernetwork.core.ui.design.compose.DesignOverlay
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.core.ui.factory.UiViewModelStore
@@ -25,14 +24,10 @@ import eu.peernetwork.social.ui.connection.ConnectionScreen
 sealed interface FeedOverlayState {
     data object Empty : FeedOverlayState
 
-    data class Photo(
+    data class Post(
         val id: String,
-        val position: Int
-    ) : FeedOverlayState
-
-    data class Video(
-        val id: String,
-        val position: Int
+        val position: Int,
+        val category: Category
     ) : FeedOverlayState
 }
 
@@ -49,7 +44,9 @@ fun FeedOverlay(
 ) {
     val updatedContent by rememberUpdatedState(content)
     val connection by connectionController.value.observe().collectAsStateWithLifecycle()
-    val visible = remember(overlay.value) { mutableStateOf(overlay.value !is FeedOverlayState.Empty) }
+    val visible = remember(overlay.value) {
+        mutableStateOf(overlay.value !is FeedOverlayState.Empty)
+    }
     updatedContent()
     DesignOverlay(
         startDestination = "overlay",
@@ -58,20 +55,21 @@ fun FeedOverlay(
     ) { controller ->
         val overlayState = remember { mutableStateOf<FeedOverlayState?>(overlay.value) }
         val event = remember {
-            object : UiPostEvent {
-                override fun onMentionClick(username: String) = controller.navigateToUsernameSearch(username)
-
-                override fun onHashtagClick(tag: String) = controller.navigateToTagSearch(tag)
-
-                override fun onPostClick(id: String, position: Int) {
-                    overlay.value = FeedOverlayState.Photo(id, position)
+            object : UiPostListener {
+                override fun invoke(event: UiPostListener.Event) {
+                    when(event) {
+                        is UiPostListener.Event.Mention -> {
+                            controller.navigateToUsernameSearch(event.username)
+                        }
+                        is UiPostListener.Event.Hashtag -> {
+                            controller.navigateToTagSearch(event.tag)
+                        }
+                        is UiPostListener.Event.Author -> {
+                            controller.navigateIfNecessary("profile/${event.id}")
+                        }
+                        else -> {}
+                    }
                 }
-
-                override fun onVideoClick(id: String, position: Int) {
-                    overlay.value = FeedOverlayState.Video(id, position)
-                }
-
-                override fun onAuthorClick(id: String) = controller.navigateIfNecessary("profile/$id")
             }
         }
         FeedNavigation(
@@ -83,62 +81,34 @@ fun FeedOverlay(
             viewModelStore = viewModelStore,
             onCancel = { visible.value = false }
         ) {
-            when (overlayState.value) {
-                is FeedOverlayState.Photo -> {
-                    val state = (overlayState.value as FeedOverlayState.Photo)
-                    PhotoOverlay(
+            val state = (overlayState.value as FeedOverlayState.Post)
+            val storeKey = "${state.category};${criteria?.toString() ?: userId}"
+            PostOverlay(
+                id = userId,
+                limit = postLimit,
+                enabled = visible.value,
+                position = state.position,
+                category = state.category,
+                criteria = criteria,
+                provider = component,
+                viewModelStoreOwner = viewModelStore.get(storeKey),
+                event = event,
+                header = {
+                    WindowTitle(
                         id = userId,
-                        limit = postLimit,
-                        position = state.position,
-                        category = Category.ALL,
-                        criteria = criteria,
                         provider = component,
-                        viewModelStoreOwner = viewModelStore.get(criteria?.toString() ?: userId),
-                        event = event,
-                        header = {
-                            WindowTitle(
-                                id = userId,
-                                provider = component,
-                                viewModelStore = viewModelStore,
-                                onCancel = { visible.value = false },
-                            )
-                        }
-                    ) {
-                        ConnectionScreen(
-                            isFollowing = connection.getOrDefault(it.first, it.third),
-                            isFollowed = it.second,
-                            onClick = { follow -> connectionController.value.invoke(it.first, !follow) }
-                        )
-                    }
+                        viewModelStore = viewModelStore,
+                        onCancel = { visible.value = false },
+                    )
                 }
-                is FeedOverlayState.Video -> {
-                    val state = (overlayState.value as FeedOverlayState.Video)
-                    VideoOverlay(
-                        limit = postLimit,
-                        position = state.position,
-                        enabled = visible.value,
-                        category = Category.ALL,
-                        criteria = criteria,
-                        provider = component,
-                        viewModelStoreOwner = viewModelStore.get(criteria?.toString() ?: userId),
-                        event = event,
-                        header = {
-                            WindowTitle(
-                                id = userId,
-                                provider = component,
-                                viewModelStore = viewModelStore,
-                                onCancel = { visible.value = false },
-                            )
-                        }
-                    ) {
-                        ConnectionScreen(
-                            isFollowing = connection.getOrDefault(it.first, it.third),
-                            isFollowed = it.second,
-                            onClick = { follow -> connectionController.value.invoke(it.first, !follow) }
-                        )
+            ) {
+                ConnectionScreen(
+                    isFollowing = connection.getOrDefault(it.first, it.third),
+                    isFollowed = it.second,
+                    onClick = { follow ->
+                        connectionController.value.invoke(it.first, !follow)
                     }
-                }
-                else -> {}
+                )
             }
         }
     }

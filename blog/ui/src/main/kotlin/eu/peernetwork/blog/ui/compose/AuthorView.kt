@@ -63,7 +63,9 @@ fun AuthorView(
                     style = MaterialTheme.typography.bodyMedium.copy(
                         color = color,
                     ),
-                    modifier = Modifier.clickable(role = Role.Button, onClick = handleClick)
+                    modifier = Modifier.clickable(role = Role.Button) {
+                        handleClick()
+                    }
                 )
             }
         },

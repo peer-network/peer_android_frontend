@@ -48,6 +48,7 @@ fun PostSummary(
     content: @Composable () -> Unit
 ) {
     val handleAuthorClick by rememberUpdatedState(onAuthorClick)
+    val updatedContent by rememberUpdatedState(content)
     DesignDetailLayout(
         horizontalAlignment = horizontalAlignment,
         verticalArrangement = verticalArrangement,
@@ -97,7 +98,7 @@ fun PostSummary(
                     onHashtagClick = onHashtagClick
                 )
             }
-            content()
+            updatedContent()
         }
     }
 }
@@ -127,7 +128,8 @@ fun PreviewPostSummary() {
                 isViewed = false,
                 dislikes = 3,
                 views = 2,
-                comment = 5
+                comment = 5,
+                url = ""
             ),
         ) { Text("Hello, world!") }
     }

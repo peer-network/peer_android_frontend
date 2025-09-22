@@ -32,6 +32,7 @@ mutation CreatePost(
             cover
             contenttype
             createdat
+            url
             user {
                 id
                 username

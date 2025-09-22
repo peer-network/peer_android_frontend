@@ -50,7 +50,7 @@ internal class VideoViewModelTest {
     @Test
     fun `test initialize success`() = runTest {
         val thumbnail = "<test-thumbnail>"
-        val file = UiFile(mockk(), thumbnail)
+        val file = UiFile(mockk(relaxed = true), thumbnail)
         val videos = listOf(file)
         coEvery { usecase(any()) } coAnswers {
             delay(100)

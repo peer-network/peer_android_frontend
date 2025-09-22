@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -26,7 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import eu.peernetwork.blog.ui.interactions.overview.OverviewScreen
+import eu.peernetwork.blog.ui.interaction.overview.OverviewScreen
 import eu.peernetwork.blog.ui.comment.CommentScreen
 import eu.peernetwork.blog.ui.compose.PostIcon
 import eu.peernetwork.blog.ui.event.UiEngagementEvent
@@ -43,7 +42,6 @@ import eu.peernetwork.core.ui.theme.PeerAppRed
 @Composable
 fun EngagementScreen(
     postLimit: Int,
-    refresh: State<Boolean>,
     onMentionClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
     onAuthorClick: (String) -> Unit = {},
@@ -120,11 +118,6 @@ fun EngagementScreen(
     }
     updatedContent(event)
     LaunchedEffect(Unit) { viewModel.initialize() }
-    LaunchedEffect(refresh.value) {
-        if (refresh.value) {
-            viewModel.reset()
-        }
-    }
     LaunchedEffect(hasError.value) {
         if (hasError.value) {
             val error = (state as? EngagementViewModel.State.Error)?.error?.message
@@ -134,13 +127,14 @@ fun EngagementScreen(
         }
     }
     CommentScreen(
-        post,
-        postLimit,
-        component,
-        viewModelStoreOwner,
+        state = post,
+        postLimit = postLimit,
+        provider = component,
+        viewModelStoreOwner = viewModelStoreOwner,
         onMentionClick = { handleMentionClick(it) },
         onHashtagClick = { handleHashtagClick(it) },
-        onAuthorClick = { handleAuthorClick(it) }
+        onAuthorClick = { handleAuthorClick(it) },
+        connection = connection,
     )
     OverviewScreen(
         state = overview,

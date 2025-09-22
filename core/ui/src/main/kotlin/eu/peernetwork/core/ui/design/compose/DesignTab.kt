@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
@@ -54,6 +55,7 @@ fun DesignTab(
                 Box(
                     contentAlignment = Alignment.Center,
                     modifier = Modifier.weight(1f)
+                        .padding(vertical = 4.dp)
                         .graphicsLayer {
                             alpha = if (it == state.currentPage) 1f else .6f
                         }

@@ -1,19 +1,21 @@
 package eu.peernetwork.blog.ui.compose
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.blog.ui.model.UiPost
+import kotlinx.collections.immutable.persistentListOf
 
 @Composable
-fun LazyItemScope.PostItem(
+fun PostItem(
     post: UiPost,
     position: Int,
     onClick: () -> Unit = {},
@@ -23,57 +25,143 @@ fun LazyItemScope.PostItem(
     engagements: @Composable RowScope.() -> Unit,
     moderation: @Composable RowScope.() -> Unit,
     actions: @Composable RowScope.() -> Unit = {},
-    content: @Composable (UiPost) -> Unit
+    audio: @Composable (UiPost, Boolean) -> Unit,
+    video: @Composable (UiPost) -> Unit,
+    image: @Composable (UiPost) -> Unit
 ) {
-    val updatedContent by rememberUpdatedState(content)
-    Spacer(modifier = Modifier.height(
-        if (position == 0 && post.type == UiPost.Type.TEXT) {
-            12.dp
-        } else {
-            0.dp
-        }
-    ))
-    if (post.type != UiPost.Type.TEXT) {
-        MediaView(
-            author = post.author,
-            description = post.time,
-            modifier = Modifier
-                .padding(bottom = 16.dp),
-            caption = {
-                TextView(
-                    post.author.username,
-                    post.title,
-                    post.description,
+    val updatedAudio by rememberUpdatedState(audio)
+    val updatedVideo by rememberUpdatedState(video)
+    val updatedImage by rememberUpdatedState(image)
+    when (post.type) {
+        UiPost.Type.AUDIO -> {
+            val cover = post.media.first().options.cover
+            if (cover == null) {
+                AudioView(
+                    author = post.author,
+                    description = post.time,
+                    modifier = Modifier.padding(top = if (position == 0) {
+                        12.dp
+                    } else {
+                        0.dp
+                    }).padding(bottom = 12.dp)
+                        .padding(horizontal = 8.dp),
+                    onClick = onClick,
                     onAuthorClick = onAuthorClick,
+                    engagements = engagements,
+                    moderation = moderation,
+                    actions = actions,
+                    audio = { updatedAudio(post, false) }
+                ) {
+                    PostTitle(
+                        title = post.title,
+                        description = post.description,
+                        Modifier.padding(top = 12.dp, bottom = 4.dp),
+                        onMentionClick = onMentionClick,
+                        onHashtagClick = onHashtagClick
+                    )
+                }
+            } else {
+                MediaView(
+                    author = post.author,
+                    description = post.time,
+                    modifier = Modifier.padding(bottom = 16.dp),
+                    caption = {
+                        TextView(
+                            username = post.author.username,
+                            title = post.title,
+                            description = post.description,
+                            onAuthorClick = onAuthorClick,
+                            onMentionClick = onMentionClick,
+                            onHashtagClick = onHashtagClick
+                        )
+                    },
+                    engagements = engagements,
+                    moderation = moderation,
+                    onClick = onClick,
+                    onAuthorClick = onAuthorClick,
+                    actions = actions
+                ) {
+                    Box(
+                        contentAlignment = Alignment.BottomEnd,
+                        modifier = Modifier.fillMaxWidth()
+                            .aspectRatio(post.aspectRatio)
+                    ) {
+                        updatedImage(post.copy(media = persistentListOf(post.media.first().copy(path = cover))))
+                        Box(modifier = Modifier.padding(16.dp)) {
+                            updatedAudio(post, true)
+                        }
+                    }
+                }
+            }
+        }
+        UiPost.Type.TEXT -> {
+            TextPreview(
+                author = post.author,
+                description = post.time,
+                modifier = Modifier.padding(top = if (position == 0) {
+                    12.dp
+                } else {
+                    0.dp
+                }).padding(bottom = 12.dp)
+                    .padding(horizontal = 8.dp),
+                engagements = engagements,
+                moderation = moderation,
+                onClick = onClick,
+                onAuthorClick = onAuthorClick,
+                actions = actions
+            ) {
+                PostTitle(
+                    title = post.title,
+                    description = post.description,
+                    Modifier.padding(top = 12.dp, bottom = 4.dp),
                     onMentionClick = onMentionClick,
                     onHashtagClick = onHashtagClick
                 )
-            },
-            engagements = engagements,
-            moderation = moderation,
-            onClick = onClick,
-            onAuthorClick = onAuthorClick,
-            actions = actions
-        ) { updatedContent(post) }
-    } else {
-        TextPreview(
-            author = post.author,
-            description = post.time,
-            modifier = Modifier.padding(bottom = 12.dp)
-                .padding(horizontal = 8.dp),
-            engagements = engagements,
-            moderation = moderation,
-            onClick = onClick,
-            onAuthorClick = onAuthorClick,
-            actions = actions
-        ) {
-            PostTitle(
-                post.title,
-                post.description,
-                Modifier.padding(top = 12.dp, bottom = 4.dp),
-                onMentionClick = onMentionClick,
-                onHashtagClick = onHashtagClick
-            )
+            }
+        }
+        UiPost.Type.IMAGE -> {
+            MediaView(
+                author = post.author,
+                description = post.time,
+                modifier = Modifier.padding(bottom = 16.dp),
+                caption = {
+                    TextView(
+                        username = post.author.username,
+                        title = post.title,
+                        description = post.description,
+                        onAuthorClick = onAuthorClick,
+                        onMentionClick = onMentionClick,
+                        onHashtagClick = onHashtagClick
+                    )
+                },
+                engagements = engagements,
+                moderation = moderation,
+                onClick = onClick,
+                onAuthorClick = onAuthorClick,
+                actions = actions
+            ) { updatedImage(post) }
+        }
+        UiPost.Type.VIDEO -> {
+            MediaView(
+                author = post.author,
+                description = post.time,
+                modifier = Modifier.padding(bottom = 16.dp),
+                caption = {
+                    TextView(
+                        username = post.author.username,
+                        title = post.title,
+                        description = post.description,
+                        onAuthorClick = onAuthorClick,
+                        onMentionClick = onMentionClick,
+                        onHashtagClick = onHashtagClick
+                    )
+                },
+                engagements = engagements,
+                moderation = moderation,
+                onClick = onClick,
+                onAuthorClick = onAuthorClick,
+                actions = actions
+            ) { updatedVideo(post) }
         }
     }
 }

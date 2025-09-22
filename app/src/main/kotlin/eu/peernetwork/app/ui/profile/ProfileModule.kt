@@ -8,8 +8,7 @@ import eu.peernetwork.app.ui.search.Search
 import eu.peernetwork.app.ui.settings.Settings
 import eu.peernetwork.app.ui.window.Window
 import eu.peernetwork.blog.ui.engagement.EngagementDialog
-import eu.peernetwork.blog.ui.post.photo.Photo
-import eu.peernetwork.blog.ui.post.video.Video
+import eu.peernetwork.blog.ui.feed.author.Post
 import eu.peernetwork.core.ui.annotation.UiBuilder
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
@@ -38,17 +37,9 @@ object ProfileModule {
     @Profile.Scope
     @Provides
     @IntoMap
-    @UiBuilder(Photo.Builder::class)
+    @UiBuilder(Post.Builder::class)
     fun providePhotoBuilder(component: Profile.Component): UiComponent.Builder {
-        return Photo.Builder(component)
-    }
-
-    @Profile.Scope
-    @Provides
-    @IntoMap
-    @UiBuilder(Video.Builder::class)
-    fun provideVideoBuilder(component: Profile.Component): UiComponent.Builder {
-        return Video.Builder(component)
+        return Post.Builder(component)
     }
 
     @Profile.Scope

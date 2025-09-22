@@ -25,7 +25,8 @@ fun Content.mapToPhoto(context: Context, annotate: (String) -> AnnotatedString):
         dislikes = dislikes,
         isViewed = isViewed,
         views = views,
-        comment = comment
+        comment = comment,
+        url = url
     )
 }
 
@@ -33,7 +34,8 @@ fun Content.Type.mapFromDomain():  UiPost.Type {
     return when(this) {
         Content.Type.TEXT -> UiPost.Type.TEXT
         Content.Type.IMAGE -> UiPost.Type.IMAGE
-        else -> UiPost.Type.TEXT
+        Content.Type.AUDIO -> UiPost.Type.AUDIO
+        Content.Type.VIDEO -> UiPost.Type.VIDEO
     }
 }
 
@@ -50,6 +52,7 @@ fun UiPost.mapToContent(): UiContent {
         dislikes = dislikes,
         views = views,
         isViewed = isViewed,
-        comment = comment
+        comment = comment,
+        url = url
     )
 }

@@ -17,6 +17,8 @@ dependencies {
 
     implementation(project(":social:domain"))
 
+    implementation(project(":persistence:domain"))
+
     implementation(libs.dagger)
     ksp(libs.dagger.compiler)
 

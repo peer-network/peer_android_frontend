@@ -33,10 +33,13 @@ fun LauncherScreen(
     DesignNavigation(navController = controller, startDestination = "launcher") {
         composable("launcher") {  }
         composable("setup") {
-            SetupScreen(
-                referral = id ?: clipboardManager.getText()?.text
+            val code = try {
+                id ?: clipboardManager.getText()?.text
                     ?.takeIf { it.startsWith("peer://invite/") }
-                    ?.substringAfter("peer://invite/"),
+                    ?.substringAfter("peer://invite/")
+            } catch (_: Throwable) { null }
+            SetupScreen(
+                referral = code,
                 provider = component,
                 viewModelStoreOwner = viewModelStoreOwner
             )

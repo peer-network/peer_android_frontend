@@ -5,6 +5,7 @@ import app.cash.turbine.test
 import eu.peernetwork.media.core.interactor.ThumbnailInteractor
 import eu.peernetwork.media.core.model.UiMimeType
 import eu.peernetwork.media.core.model.UiDirectory
+import eu.peernetwork.media.ui.usecase.AudioDirectoryUsecase
 import eu.peernetwork.media.ui.usecase.PhotoDirectoryUsecase
 import eu.peernetwork.media.ui.usecase.VideoDirectoryUsecase
 import io.mockk.coEvery
@@ -33,6 +34,8 @@ internal class DirectoryViewModelTest {
 
     private val videoUsecase = mockk<VideoDirectoryUsecase>()
 
+    private val audioUsecase = mockk<AudioDirectoryUsecase>()
+
     private val thumbnailInteractor = mockk<ThumbnailInteractor>()
 
     private val dispatcher = UnconfinedTestDispatcher()
@@ -43,7 +46,7 @@ internal class DirectoryViewModelTest {
     fun setup() {
         Dispatchers.setMain(dispatcher)
         every { thumbnailInteractor.observe() } returns flowOf(emptyMap())
-        viewModel = DirectoryViewModel(usecase, videoUsecase, thumbnailInteractor)
+        viewModel = DirectoryViewModel(usecase, videoUsecase, audioUsecase, thumbnailInteractor)
     }
 
     @After

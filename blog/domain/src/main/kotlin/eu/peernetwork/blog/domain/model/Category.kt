@@ -1,7 +1,7 @@
 package eu.peernetwork.blog.domain.model
 
 enum class Category {
-    ALL,
+    FOLLOWER,
     FOLLOWED,
-    FOLLOWER
+    NONE,
 }

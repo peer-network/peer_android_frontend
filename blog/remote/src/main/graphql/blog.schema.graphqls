@@ -77,9 +77,13 @@ type Query {
 
   getActionPrices: GetActionPricesResponse!
 
+  postEligibility: PostEligibilityResponse!
+
   getTransactionHistory(type: TokenMovementFilterType, direction: DirectionFilterType, start_date: String, end_date: String, limit: Int, offset: Int, sort: SortFilterType): TransactionResponse!
 
   postInteractions(getOnly: GetOnly!, postOrCommentId: ID!, offset: Int, limit: Int): PostInteractionResponse
+
+  getTokenomics: TokenomicsResponse!
 }
 
 """
@@ -143,7 +147,9 @@ type Mutation {
 
   resolvePostAction(action: PostActionType!, postid: ID!): DefaultResponse!
 
-  resolveTransfer(recipient: ID!, numberoftokens: Int!): DefaultResponse!
+  resolveTransfer(recipient: ID!, numberoftokens: Int!): DefaultResponse! @deprecated(reason: "Use `resolveTransferV2`.")
+
+  resolveTransferV2(recipient: ID!, numberoftokens: Decimal!, message: String): TransferTokenResponse!
 }
 
 scalar Decimal
@@ -280,14 +286,20 @@ enum DayFilterType {
   Y0
 }
 
+enum OnboardingType {
+  INTROONBOARDING
+}
+
 input UserPreferencesInput {
   contentFilteringSeverityLevel: ContentFilterType
+
+  shownOnboardings: [OnboardingType!]
 }
 
 type Transaction {
   transactionid: String!
 
-  transuniqueid: String!
+  operationid: String!
 
   transactiontype: String!
 
@@ -307,13 +319,31 @@ type Transaction {
 type TransactionResponse {
   status: String!
 
-  responseCode: Int!
+  ResponseCode: String!
 
   affectedRows: [Transaction!]
 }
 
+type TransferTokenResponse {
+  status: String!
+
+  ResponseCode: String!
+
+  affectedRows: TransferToken!
+}
+
+type TransferToken {
+  tokenSend: Decimal
+
+  tokensSubstractedFromWallet: Decimal
+
+  createdat: String
+}
+
 type UserPreferences {
   contentFilteringSeverityLevel: ContentFilterType
+
+  onboardingsWereShown: [OnboardingType!]!
 }
 
 type ListTodaysInteractionsResponse {
@@ -410,6 +440,14 @@ type DailyFreeResponse {
   used: Int!
 
   available: Int!
+}
+
+type PostEligibilityResponse {
+  status: String!
+
+  ResponseCode: String!
+
+  eligibilityToken: String!
 }
 
 type CurrentLiquidity {
@@ -861,6 +899,8 @@ type Post {
 
   tags: [String]!
 
+  url: String!
+
   user: ProfileUser!
 
   comments: [Comment!]!
@@ -936,6 +976,8 @@ input PostInput {
   cover: [String!]
 
   tags: [String!]
+
+  uploadedFiles: String
 }
 
 input ChatInput {
@@ -988,6 +1030,32 @@ type GetActionPricesResponse {
   ResponseCode: String!
 
   affectedRows: ActionPriceResult!
+}
+
+type TokenomicsResponse {
+  status: String!
+
+  ResponseCode: Int!
+
+  actionTokenPrices: ActionPriceResult!
+
+  actionGemsReturns: ActionGemsReturns!
+
+  mintingData: MintingData!
+}
+
+type ActionGemsReturns {
+  viewGemsReturn: Float!
+
+  likeGemsReturn: Float!
+
+  dislikeGemsReturn: Float!
+
+  commentGemsReturn: Float!
+}
+
+type MintingData {
+  tokensMintedYesterday: Float!
 }
 
 """

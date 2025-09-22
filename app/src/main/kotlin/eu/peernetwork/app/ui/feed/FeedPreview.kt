@@ -4,35 +4,34 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import eu.peernetwork.core.ui.R
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.app.extension.navigateToTagSearch
 import eu.peernetwork.app.extension.navigateToUsernameSearch
+import eu.peernetwork.app.mapper.mapToCriteria
 import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.blog.domain.model.Category
-import eu.peernetwork.blog.ui.event.UiPostEvent
-import eu.peernetwork.blog.ui.timeline.photo.PhotoScreen
-import eu.peernetwork.blog.ui.timeline.video.VideoScreen
+import eu.peernetwork.blog.ui.event.UiPostListener
+import eu.peernetwork.blog.ui.feed.timeline.PostScreen
+import eu.peernetwork.blog.ui.model.UiFilter
 import eu.peernetwork.core.ui.design.compose.DesignTab
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
+import eu.peernetwork.core.ui.factory.UiViewModelStore
 import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.media.core.model.UiMimeType
 import eu.peernetwork.social.ui.connection.ConnectionController
@@ -47,23 +46,28 @@ fun FeedPreview(
     selected: MutableState<FeedOverlayState>,
     requireUpdate: MutableState<Boolean>,
     component: Feed.Component,
-    viewModelStoreOwner: ViewModelStoreOwner,
+    viewModelStore: UiViewModelStore,
     controller: NavHostController,
     connectionController: State<ConnectionController>,
     title: String? = null,
     criteria: Criteria? = null,
     onNavigate: (Int) -> Unit = {},
     onFilter: (Int) -> Unit = {},
+    onExplore: () -> Unit,
 ) {
-    val photoState = rememberLazyListState()
-    val videoState = rememberLazyListState()
+    val followerListState = rememberLazyListState()
+    val followedListState = rememberLazyListState()
     val coroutine = rememberCoroutineScope()
     val enable = remember { derivedStateOf { selected.value == FeedOverlayState.Empty } }
+    val filter = remember(criteria) { mutableStateOf(criteria) }
+    val derivedCriteria = remember(ordinal, filter.value) { derivedStateOf {
+        val content = criteria as? Criteria.Content?
+        filter.value ?: UiFilter.entries.getOrNull(ordinal)?.mapToCriteria(
+            tag = content?.tag,
+            title = content?.title
+        )
+    } }
     val connection by connectionController.value.observe().collectAsStateWithLifecycle()
-    var category by remember {
-        mutableStateOf(Category.entries.getOrNull(ordinal) ?: Category.ALL)
-    }
-    var position by remember { mutableIntStateOf(state.intValue) }
     val handleOnNavigate by rememberUpdatedState(onNavigate)
     val handleOnFilter by rememberUpdatedState(onFilter)
     val pageState = rememberPagerState(
@@ -71,84 +75,86 @@ fun FeedPreview(
         initialPage = state.intValue
     )
     val event = remember {
-        object : UiPostEvent {
-            override fun onMentionClick(username: String) = controller.navigateToUsernameSearch(username)
-
-            override fun onHashtagClick(tag: String) = controller.navigateToTagSearch(tag)
-
-            override fun onPostClick(id: String, position: Int) {
-                selected.value = FeedOverlayState.Photo(id, position)
+        object : UiPostListener {
+            override fun invoke(event: UiPostListener.Event) {
+                when(event) {
+                    is UiPostListener.Event.Mention -> {
+                        controller.navigateToUsernameSearch(event.username)
+                    }
+                    is UiPostListener.Event.Hashtag -> {
+                        controller.navigateToTagSearch(event.tag)
+                    }
+                    is UiPostListener.Event.Author -> {
+                        controller.navigateIfNecessary("profile/${event.id}")
+                    }
+                    is UiPostListener.Event.Post -> {
+                        selected.value = FeedOverlayState.Post(
+                            id = event.id,
+                            position = event.position,
+                            category = if (pageState.currentPage == 0) {
+                                Category.FOLLOWER
+                            } else {
+                                Category.FOLLOWED
+                            }
+                        )
+                    }
+                }
             }
-
-            override fun onVideoClick(id: String, position: Int) {
-                selected.value = FeedOverlayState.Video(id, position)
-            }
-
-            override fun onAuthorClick(id: String) = controller.navigateIfNecessary("profile/$id")
         }
     }
     FeedPreview(
         state = state,
         pageState = pageState,
         modifier = Modifier.fillMaxSize(),
-        onNavigate = {
-            position = it
-            handleOnNavigate(it)
-        },
-        photo = {
-            PhotoScreen(
-                id = id,
-                postLimit = BuildConfig.PAGING_LIMIT,
-                category = category,
-                criteria = criteria,
-                event = event,
-                provider = component,
-                viewModelStoreOwner = viewModelStoreOwner,
-                requireUpdate = requireUpdate,
-                listState = photoState,
-            ) {
-                ConnectionScreen(
-                    isFollowing = connection.getOrDefault(it.first, it.third),
-                    isFollowed = it.second,
-                    onClick = { follow -> connectionController.value.invoke(it.first, !follow) },
-                )
-            }
-        },
-        video = {
-            VideoScreen(
-                id = id,
-                enable = enable,
-                postLimit = BuildConfig.PAGING_LIMIT,
-                category = category,
-                criteria = criteria,
-                event = event,
-                provider = component,
-                viewModelStoreOwner = viewModelStoreOwner,
-                requireUpdate = requireUpdate,
-                listState = videoState,
-            ) {
-                ConnectionScreen(
-                    isFollowing = connection.getOrDefault(it.first, it.third),
-                    isFollowed = it.second,
-                    onClick = { follow -> connectionController.value.invoke(it.first, !follow) }
-                )
-            }
-        },
-    )
+        onNavigate = { handleOnNavigate(it) }
+    ) {
+        val storeKey = "$it;${criteria?.toString() ?: id}"
+        PostScreen(
+            id = id,
+            status = enable,
+            postLimit = BuildConfig.PAGING_LIMIT,
+            category = it,
+            criteria = derivedCriteria.value,
+            event = event,
+            provider = component,
+            viewModelStoreOwner = viewModelStore.get(storeKey),
+            requireUpdate = requireUpdate,
+            listState = if (it == Category.FOLLOWER) {
+                followerListState
+            } else {
+                followedListState
+            },
+            onExplore = onExplore
+        ) { relation ->
+            ConnectionScreen(
+                isFollowing = connection.getOrDefault(
+                    key = relation.first,
+                    defaultValue = relation.third
+                ),
+                isFollowed = relation.second,
+                onClick = { follow ->
+                    connectionController.value(
+                        id = relation.first,
+                        value = !follow
+                    )
+                },
+            )
+        }
+    }
     FeedMenu(
-        id,
-        title,
-        category,
-        {
-            handleOnFilter(it.ordinal)
-            category = it
+        id = id,
+        default = ordinal,
+        title = title,
+        onSelect = { ordinal, criteria ->
+            handleOnFilter(ordinal)
+            filter.value = criteria
         }
     ) {
         coroutine.launch {
-            if (position == 0) {
-                photoState.animateScrollToItem(0)
+            if (pageState.currentPage == 0) {
+                followerListState.animateScrollToItem(0)
             } else {
-                videoState.animateScrollToItem(0)
+                followedListState.animateScrollToItem(0)
             }
         }
     }
@@ -165,22 +171,19 @@ fun FeedPreview(
     pageState: PagerState,
     modifier: Modifier = Modifier,
     onNavigate: (Int) -> Unit = {},
-    photo: @Composable () -> Unit,
-    video: @Composable () -> Unit,
+    content: @Composable (Category) -> Unit,
 ) {
+    val handleContent by rememberUpdatedState(content)
     val handleNavigation by rememberUpdatedState(onNavigate)
     Column {
         DesignTab(pageState) { index ->
-            UiMimeType.get(index)?.let { type ->
-                Icon(
-                    painter = painterResource(id = type.id),
-                    contentDescription = type.label?.let { stringResource(it) },
-                    tint = MaterialTheme.colorScheme.tertiary,
-                    modifier = Modifier
-                        .padding(vertical = 8.dp)
-                        .size(28.dp)
-                )
-            }
+            Text(
+                text = stringResource(id = if (index == 0) R.string.followers_label else R.string.following_label),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.tertiary,
+                modifier = Modifier
+                    .padding(vertical = 10.dp)
+            )
         }
         HorizontalPager(
             state = pageState,
@@ -188,8 +191,8 @@ fun FeedPreview(
             verticalAlignment = Alignment.Top,
         ) { page ->
             when (page) {
-                0 -> photo()
-                1 -> video()
+                0 -> handleContent(Category.FOLLOWER)
+                1 -> handleContent(Category.FOLLOWED)
             }
         }
     }
@@ -208,9 +211,7 @@ fun PreviewFeedPreview() {
         FeedPreview(
             state = state,
             pageState = pageState,
-            modifier = Modifier.fillMaxSize(),
-            photo = { Text("Photo") },
-            video = { Text("Video") },
-        )
+            modifier = Modifier.fillMaxSize()
+        ) { Text("Video") }
     }
 }

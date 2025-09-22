@@ -44,7 +44,7 @@ class InteractorUsecase @Inject constructor(
             ContentInteractorUsecase.Parameter(
                 id = param.id,
                 engagement = param.engagement,
-                page = param.page
+                page = currentPage
             )
         )
         if (response.items.isEmpty() && currentPage.offset == 0) {
