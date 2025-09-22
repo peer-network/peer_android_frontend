@@ -119,7 +119,7 @@ fun AudioPlayerThumbnail(
         LaunchedEffect(Unit) {
             snapshotFlow { isEnabled.value }.distinctUntilChanged()
                 .distinctUntilChanged()
-                .debounce(300)
+                .debounce(100)
                 .collectLatest { result ->
                     if (result && isActive.value) {
                         player.reset()
@@ -128,21 +128,16 @@ fun AudioPlayerThumbnail(
                         isLoading.value = true
                         player.setDataSource(path)
                         player.prepareAsync()
-                    } else if (isActive.value) {
-                        player.pause()
-                        play.value = false
                     }
                 }
         }
         LaunchedEffect(isActive.value) {
-            if (current.value == position) {
-                if (!isActive.value) {
-                    play.value = false
-                    player.pause()
-                } else {
-                    play.value = true
-                    player.start()
-                }
+            if (!isActive.value && current.value == position) {
+                play.value = false
+                player.pause()
+            } else if (current.value == position) {
+                play.value = true
+                player.start()
             }
         }
         DisposableEffect(Unit) {

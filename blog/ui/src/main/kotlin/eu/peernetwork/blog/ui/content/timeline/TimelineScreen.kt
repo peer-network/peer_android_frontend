@@ -95,9 +95,9 @@ fun TimelineScreen(
                 resource = component.resource(),
                 onRefresh = onRefresh,
                 empty = {
-                    EmptyFeed({
+                    EmptyFeed {
                         handleOnExplore?.invoke() ?: handleOnRefresh()
-                    })
+                    }
                 }
             ) { state, list ->
                 TimelineList(
@@ -139,18 +139,19 @@ fun TimelineScreen(
                                 .background(MaterialTheme.colorScheme.background)
                         ) {
                             viewModel.videoBackground(
-                                it,
-                                videoPost.aspectRatio,
-                                configuration.screenWidthDp,
+                                media = it,
+                                aspectRatio = videoPost.aspectRatio,
+                                width = configuration.screenWidthDp,
+                                height = (configuration.screenWidthDp / videoPost.aspectRatio).toInt()
                             )
                         }
                         component.videoThumbnail()(
                             Modifier,
-                            VideoThumbnail.Spec(
-                                videoPost.media,
-                                post.aspectRatio,
-                                isPlaying,
-                                videoPost.resolution
+                            spec = VideoThumbnail.Spec(
+                                url = videoPost.media,
+                                ratio = post.aspectRatio,
+                                isPlaying = isPlaying,
+                                resolution = videoPost.resolution
                             )
                         )
                     },

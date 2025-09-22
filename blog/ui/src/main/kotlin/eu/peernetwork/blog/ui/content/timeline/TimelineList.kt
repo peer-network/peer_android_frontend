@@ -73,14 +73,14 @@ fun TimelineList(
             onHashtagClick = { event(UiPostListener.Event.Hashtag(it)) },
             engagements = {
                 EngagementScreen(
-                    uiContent,
-                    engagement,
+                    model = uiContent,
+                    event = engagement,
                 )
             },
             moderation = {
                 ModerationScreen(
-                    uiContent,
-                    moderation
+                    model = uiContent,
+                    event = moderation
                 )
             },
             audio = { post, expanded -> updatedAudio(post, index, position, expanded) },
