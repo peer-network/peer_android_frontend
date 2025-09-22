@@ -51,7 +51,7 @@ class CommentViewModel @Inject constructor(
                 .onStart { mutableState.tryEmit(State.Loading) }
                 .cachedIn(viewModelScope)
                 .apply { collectLatest {
-                    mutableState.tryEmit(State.Success(this))
+                    mutableState.tryEmit(State.Success(postId,this))
                 } }
         }
     }
@@ -119,7 +119,10 @@ class CommentViewModel @Inject constructor(
     sealed interface State {
         data object Empty: State
         data object Loading: State
-        data class Success(val content: Flow<PagingData<UiComment>>): State
+        data class Success(
+            val postId: String,
+            val content: Flow<PagingData<UiComment>>
+        ): State
         data class Error(val error: Throwable): State
     }
 }

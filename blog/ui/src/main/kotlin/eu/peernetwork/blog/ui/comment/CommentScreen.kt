@@ -179,7 +179,11 @@ fun CommentScreen(
         }
         LaunchedEffect(state.value) {
             if (state.value != null) {
-                state.value?.let { viewModel.load(it.id, Pageable(0, postLimit)) }
+                state.value?.let {
+                    if (it.id != (viewModel.state.value as? CommentViewModel.State.Success)?.postId) {
+                        viewModel.load(it.id, Pageable(0, postLimit))
+                    }
+                }
             } else {
                 viewModel.reset()
             }
