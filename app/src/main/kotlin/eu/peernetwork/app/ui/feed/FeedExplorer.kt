@@ -1,23 +1,34 @@
 package eu.peernetwork.app.ui.feed
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import eu.peernetwork.app.extension.navigateToTagSearch
 import eu.peernetwork.app.extension.navigateToUsernameSearch
 import eu.peernetwork.blog.domain.model.Category
+import eu.peernetwork.blog.domain.model.Filter
 import eu.peernetwork.blog.domain.model.Filter.Criteria
+import eu.peernetwork.blog.domain.model.Sort
 import eu.peernetwork.blog.ui.event.UiPostListener
 import eu.peernetwork.blog.ui.feed.timeline.PostScreen
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.compose.DesignTitle
 import eu.peernetwork.core.ui.design.compose.DesignTitleBarHost
+import eu.peernetwork.core.ui.design.compose.DesignTab
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.core.ui.factory.UiViewModelStore
@@ -62,7 +73,7 @@ fun FeedExplorer(
                 component = component,
                 viewModelStore = viewModelStore,
             ) {
-                FeedExplorer(
+                FeedExplorerTabs(
                     id = id,
                     postLimit = postLimit,
                     selected = overlay,
@@ -71,7 +82,7 @@ fun FeedExplorer(
                     viewModelStore = viewModelStore,
                     controller = controller,
                     connectionController = connectionController,
-                    criteria = criteria,
+                    title = title,
                     onExplore = onExplore
                 )
             }
@@ -87,7 +98,7 @@ fun FeedExplorer(
 }
 
 @Composable
-fun FeedExplorer(
+private fun FeedExplorerTabs(
     id: String,
     postLimit: Int,
     selected: MutableState<FeedOverlayState>,
@@ -96,55 +107,74 @@ fun FeedExplorer(
     viewModelStore: UiViewModelStore,
     controller: NavHostController,
     connectionController: State<ConnectionController>,
-    criteria: Criteria? = null,
+    title: String? = null,
     onExplore: (() -> Unit)? = null
 ) {
-    val listState = rememberLazyListState()
-    val enable = remember { derivedStateOf { selected.value == FeedOverlayState.Empty } }
-    val connection by connectionController.value.observe().collectAsStateWithLifecycle()
-    val category = Category.NONE
-    val event = remember {
-        object : UiPostListener {
-            override fun invoke(event: UiPostListener.Event) {
-                when(event) {
-                    is UiPostListener.Event.Mention -> controller.navigateToUsernameSearch(event.username)
-                    is UiPostListener.Event.Hashtag -> controller.navigateToTagSearch(event.tag)
-                    is UiPostListener.Event.Author -> controller.navigateIfNecessary("profile/${event.id}")
-                    is UiPostListener.Event.Post -> selected.value = FeedOverlayState.Post(
-                        id = event.id,
-                        position = event.position,
-                        category = category
-                    )
+    val pageState = rememberPagerState(pageCount = { 2 }, initialPage = 0)
+    val sortTypes = listOf(Sort.TREND, Sort.NEW)
+    Column {
+        DesignTab(pageState) { index ->
+            Text(
+                text = if (index == 0) "Trends" else "Latest",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.tertiary,
+                modifier = Modifier.padding(vertical = 8.dp)
+            )
+        }
+        HorizontalPager(
+            state = pageState,
+            modifier = Modifier.fillMaxSize(),
+            verticalAlignment = androidx.compose.ui.Alignment.Top,
+        ) { page ->
+            val sort = sortTypes[page]
+            val criteria = Filter.Criteria.Content(sort = sort)
+            val listState = rememberLazyListState()
+            val enable = remember { derivedStateOf { selected.value == FeedOverlayState.Empty } }
+            val connection by connectionController.value.observe().collectAsStateWithLifecycle()
+            val event = remember {
+                object : UiPostListener {
+                    override fun invoke(event: UiPostListener.Event) {
+                        when (event) {
+                            is UiPostListener.Event.Mention -> controller.navigateToUsernameSearch(event.username)
+                            is UiPostListener.Event.Hashtag -> controller.navigateToTagSearch(event.tag)
+                            is UiPostListener.Event.Author -> controller.navigateIfNecessary("profile/${event.id}")
+                            is UiPostListener.Event.Post -> selected.value = FeedOverlayState.Post(
+                                id = event.id,
+                                position = event.position,
+                                category = Category.NONE
+                            )
+                        }
+                    }
                 }
             }
-        }
-    }
-    val storeKey = "$category;${criteria?.toString() ?: id}"
-    PostScreen(
-        id = id,
-        status = enable,
-        postLimit = postLimit,
-        category = category,
-        criteria = criteria,
-        event = event,
-        provider = component,
-        viewModelStoreOwner = viewModelStore.get(storeKey),
-        requireUpdate = requireUpdate,
-        listState = listState,
-        onExplore = onExplore
-    ) { relation ->
-        ConnectionScreen(
-            isFollowing = connection.getOrDefault(
-                key = relation.first,
-                defaultValue = relation.third
-            ),
-            isFollowed = relation.second,
-            onClick = { follow ->
-                connectionController.value(
-                    id = relation.first,
-                    value = !follow
+            val storeKey = "explore;${id};${sort.name}"
+            PostScreen(
+                id = id,
+                status = enable,
+                postLimit = postLimit,
+                category = Category.NONE,
+                criteria = criteria,
+                event = event,
+                provider = component,
+                viewModelStoreOwner = viewModelStore.get(storeKey),
+                requireUpdate = requireUpdate,
+                listState = listState,
+                onExplore = onExplore
+            ) { relation ->
+                ConnectionScreen(
+                    isFollowing = connection.getOrDefault(
+                        key = relation.first,
+                        defaultValue = relation.third
+                    ),
+                    isFollowed = relation.second,
+                    onClick = { follow ->
+                        connectionController.value(
+                            id = relation.first,
+                            value = !follow
+                        )
+                    },
                 )
-            },
-        )
+            }
+        }
     }
 }

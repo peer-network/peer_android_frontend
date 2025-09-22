@@ -11,13 +11,11 @@ import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.app.ui.composer.ComposerScreen
 import eu.peernetwork.app.ui.feed.FeedExplorer
 import eu.peernetwork.app.ui.feed.FeedScreen
-import eu.peernetwork.app.ui.messaging.MessagingScreen
 import eu.peernetwork.app.ui.profile.ProfileScreen
 import eu.peernetwork.app.ui.search.SearchScreen
 import eu.peernetwork.app.ui.wallet.WalletScreen
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.design.compose.DesignNavigation
-import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.core.ui.factory.UiViewModelStore
 
 @Composable
@@ -77,17 +75,14 @@ fun HomeNavigation(
                 }
             }
         }
-        composable(HomeRoute.Chat.path) {
-            MessagingScreen(id, component, viewModelStore.get(id))
-        }
-        composable("explore") {
+        composable(HomeRoute.Explore.path) {
             FeedExplorer(
                 id = id,
                 postLimit = BuildConfig.PAGING_LIMIT,
                 provider = component,
                 viewModelStore = viewModelStore,
                 hasUpdate = hasUpdate
-            ) { navController.navigateIfNecessary("explore") }
+            )
         }
     }
 }
@@ -123,10 +118,10 @@ sealed class HomeRoute(
         R.drawable.ic_profile,
         R.string.profile_label
     )
-    data object Chat: HomeRoute(
-        R.drawable.ic_chat_outline,
-        R.drawable.ic_chat,
-        R.string.chat_label
+    data object Explore: HomeRoute(
+        R.drawable.ic_trend,
+        R.drawable.ic_trend,
+        R.string.trend_label
     )
     companion object {
         val ROUTES = arrayOf(Home, Search, Add, Wallet, Profile)
