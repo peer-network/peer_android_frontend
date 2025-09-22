@@ -180,7 +180,7 @@ fun FeedPreview(
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.tertiary,
                 modifier = Modifier
-                    .padding(vertical = 8.dp)
+                    .padding(vertical = 10.dp)
             )
         }
         HorizontalPager(
