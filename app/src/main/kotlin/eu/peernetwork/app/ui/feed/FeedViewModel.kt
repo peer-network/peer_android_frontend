@@ -7,6 +7,7 @@ import eu.peernetwork.persistence.domain.publishable.PublishableInteger
 import eu.peernetwork.persistence.domain.retrievable.RetrievableInteger
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -19,10 +20,13 @@ class FeedViewModel @Inject constructor(
     private val publishableInteger: PublishableInteger
 ) : ViewModel() {
 
-    val state: StateFlow<State> = observableInteger(TAG).map {
+    val state: StateFlow<State> = combine(
+        observableInteger(TAG),
+        observableInteger(FILTER),
+    ) { tag, filter -> Pair(tag, filter) }.map {
         State.Initialize(
-            retrievableInteger(TAG),
-            retrievableInteger(FILTER)
+            it.first,
+            it.second
         )
     }.stateIn(
         scope = viewModelScope,
