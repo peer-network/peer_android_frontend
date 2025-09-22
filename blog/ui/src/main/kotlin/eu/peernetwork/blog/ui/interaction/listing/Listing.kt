@@ -1,4 +1,4 @@
-package eu.peernetwork.blog.ui.interactions.listing
+package eu.peernetwork.blog.ui.interaction.listing
 
 import android.content.Context
 import androidx.lifecycle.ViewModelProvider

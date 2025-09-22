@@ -16,6 +16,7 @@ class SplashViewModel @Inject constructor(
     private val logDeviceModelUsecase: LogDeviceModelUsecase
 ) : ViewModel() {
     private val mutableState = MutableStateFlow<State>(State.Empty)
+
     val state: StateFlow<State> = mutableState.asStateFlow()
 
     fun initialize() {

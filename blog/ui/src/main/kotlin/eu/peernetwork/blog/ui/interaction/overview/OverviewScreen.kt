@@ -1,4 +1,4 @@
-package eu.peernetwork.blog.ui.interactions.overview
+package eu.peernetwork.blog.ui.interaction.overview
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.RowScope
@@ -19,7 +19,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.blog.domain.model.Engagement
-import eu.peernetwork.blog.ui.interactions.listing.ListingScreen
+import eu.peernetwork.blog.ui.interaction.listing.ListingScreen
 import eu.peernetwork.blog.ui.model.UiAction
 import eu.peernetwork.blog.ui.model.UiContent
 import eu.peernetwork.core.ui.component.UiComponentProvider

@@ -2,7 +2,7 @@ package eu.peernetwork.blog.ui.engagement
 
 import android.content.Context
 import androidx.lifecycle.ViewModelProvider
-import eu.peernetwork.blog.ui.interactions.overview.Overview
+import eu.peernetwork.blog.ui.interaction.overview.Overview
 import eu.peernetwork.blog.ui.comment.Comment
 import eu.peernetwork.blog.ui.provider.BlogProvider
 import eu.peernetwork.core.ui.component.UiComponent

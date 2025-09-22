@@ -1,4 +1,4 @@
-package eu.peernetwork.blog.ui.interactions.overview
+package eu.peernetwork.blog.ui.interaction.overview
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background

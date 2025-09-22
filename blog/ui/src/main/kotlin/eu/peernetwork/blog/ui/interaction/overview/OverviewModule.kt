@@ -1,9 +1,9 @@
-package eu.peernetwork.blog.ui.interactions.overview
+package eu.peernetwork.blog.ui.interaction.overview
 
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
-import eu.peernetwork.blog.ui.interactions.listing.Listing
+import eu.peernetwork.blog.ui.interaction.listing.Listing
 import eu.peernetwork.core.ui.annotation.UiBuilder
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider

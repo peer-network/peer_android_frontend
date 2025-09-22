@@ -32,6 +32,9 @@ fun ListView(
     val handleOnFocused by rememberUpdatedState(onFocused)
     val updatedContent by rememberUpdatedState(content)
     LaunchedEffect(Unit) {
+        if (listState.firstVisibleItemIndex == 0) {
+            currentPosition.intValue = 0
+        }
         snapshotFlow { listState.isScrollInProgress }
             .distinctUntilChanged()
             .onEach {

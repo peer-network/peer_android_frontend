@@ -175,7 +175,6 @@ fun FeedPreview(
     val handleNavigation by rememberUpdatedState(onNavigate)
     Column {
         DesignTab(pageState) { index ->
-
             Text(
                 text = if (index == 0) "Followers" else "Following",
                 style = MaterialTheme.typography.bodyMedium,

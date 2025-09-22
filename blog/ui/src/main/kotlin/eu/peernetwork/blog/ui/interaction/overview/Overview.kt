@@ -1,7 +1,7 @@
-package eu.peernetwork.blog.ui.interactions.overview
+package eu.peernetwork.blog.ui.interaction.overview
 
 import android.content.Context
-import eu.peernetwork.blog.ui.interactions.listing.Listing
+import eu.peernetwork.blog.ui.interaction.listing.Listing
 import eu.peernetwork.blog.ui.provider.BlogProvider
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
