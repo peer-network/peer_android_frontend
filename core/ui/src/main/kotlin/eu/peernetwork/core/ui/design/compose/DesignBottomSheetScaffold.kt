@@ -49,7 +49,8 @@ fun DesignBottomSheetScaffold(
     onStateChanged: (DesignBottomSheetState) -> Unit = {},
     onShow: () -> Unit = {},
     onDismiss: () -> Unit = {},
-    snapAnimationSpec: AnimationSpec<Float> = tween<Float>(
+    canDismiss: () -> Boolean = { true },
+    snapAnimationSpec: AnimationSpec<Float> = tween(
         durationMillis = 250,
         easing = CubicBezierEasing(0.2f, 0f, 0f, 1f)
     ),
@@ -67,7 +68,7 @@ fun DesignBottomSheetScaffold(
             visible.value = false
             handleOnDismiss()
         },
-        canDismiss = dialogState.value == DesignBottomSheetState.HIDE,
+        canDismiss = canDismiss,
         onBackPressed = { dialogState.value = DesignBottomSheetState.HIDE }
     ) { controller, anim, cancelable ->
         val isDismissed = remember(anim.value, visible.value) {

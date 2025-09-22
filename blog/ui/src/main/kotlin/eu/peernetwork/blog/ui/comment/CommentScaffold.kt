@@ -23,6 +23,7 @@ import eu.peernetwork.core.ui.design.compose.DesignBottomSheet
 @Composable
 fun CommentScaffold(
     state: MutableState<UiContent?>,
+    canDismiss: () -> Boolean,
     onDismiss: () -> Unit,
     sheet: @Composable () -> Unit,
     content: @Composable (State<Size>) -> Unit
@@ -33,6 +34,7 @@ fun CommentScaffold(
     val handleDismiss by rememberUpdatedState(onDismiss)
     DesignBottomSheet(
         state = showSheet,
+        canDismiss = canDismiss,
         onDismiss = {
             state.value = null
             handleDismiss()

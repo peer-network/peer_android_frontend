@@ -68,6 +68,7 @@ enum class DesignBottomSheetState { EXPAND, COLLAPSE, HIDE }
 fun DesignBottomSheet(
     state: State<Boolean>,
     dim: Boolean = true,
+    canDismiss: () -> Boolean = { true },
     color: Color = MaterialTheme.colorScheme.tertiaryContainer,
     peekHeight: Dp = 400.dp,
     orientation: Orientation = Orientation.Vertical,
@@ -92,7 +93,7 @@ fun DesignBottomSheet(
             visible.value = false
             handleOnDismiss()
         },
-        canDismiss = dialogState.value == DesignBottomSheetState.HIDE,
+        canDismiss = canDismiss,
         onBackPressed = { dialogState.value = DesignBottomSheetState.HIDE }
     ) { controller, anim, cancelable ->
         val isDismissed = remember(anim.value, visible.value) {

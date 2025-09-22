@@ -127,13 +127,14 @@ fun EngagementScreen(
         }
     }
     CommentScreen(
-        post,
-        postLimit,
-        component,
-        viewModelStoreOwner,
+        state = post,
+        postLimit = postLimit,
+        provider = component,
+        viewModelStoreOwner = viewModelStoreOwner,
         onMentionClick = { handleMentionClick(it) },
         onHashtagClick = { handleHashtagClick(it) },
-        onAuthorClick = { handleAuthorClick(it) }
+        onAuthorClick = { handleAuthorClick(it) },
+        connection = connection,
     )
     OverviewScreen(
         state = overview,
