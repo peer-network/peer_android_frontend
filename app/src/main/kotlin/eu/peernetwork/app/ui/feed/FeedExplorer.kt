@@ -3,9 +3,11 @@ package eu.peernetwork.app.ui.feed
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -19,7 +21,6 @@ import androidx.navigation.compose.rememberNavController
 import eu.peernetwork.app.extension.navigateToTagSearch
 import eu.peernetwork.app.extension.navigateToUsernameSearch
 import eu.peernetwork.blog.domain.model.Category
-import eu.peernetwork.blog.domain.model.Filter
 import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.blog.domain.model.Sort
 import eu.peernetwork.blog.ui.event.UiPostListener
@@ -34,6 +35,7 @@ import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.core.ui.factory.UiViewModelStore
 import eu.peernetwork.social.ui.connection.ConnectionController
 import eu.peernetwork.social.ui.connection.ConnectionScreen
+import kotlinx.coroutines.launch
 
 @Composable
 fun FeedExplorer(
@@ -47,12 +49,16 @@ fun FeedExplorer(
     onExplore: (() -> Unit)? = null
 ) {
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
     val component = remember {
         provider.builder(Feed.Builder::class.java).build(context)
     }
     val viewModelStoreOwner = viewModelStore.get(criteria?.toString() ?: id)
     val overlay = remember { mutableStateOf<FeedOverlayState>(FeedOverlayState.Empty) }
     val controller = rememberNavController()
+    val trendListState = rememberLazyListState()
+    val latestListState = rememberLazyListState()
+    val pageState = rememberPagerState(pageCount = { 2 }, initialPage = 0)
     ConnectionScreen(
         provider = component,
         viewModelStoreOwner = viewModelStoreOwner
@@ -77,18 +83,31 @@ fun FeedExplorer(
                     id = id,
                     postLimit = postLimit,
                     selected = overlay,
+                    pageState = pageState,
                     requireUpdate = hasUpdate,
+                    trendListState = trendListState,
+                    latestListState = latestListState,
                     component = component,
                     viewModelStore = viewModelStore,
                     controller = controller,
                     connectionController = connectionController,
-                    title = title,
                     onExplore = onExplore
                 )
             }
         }
     }
-    DesignTitleBarHost("FeedExplorer") {
+    DesignTitleBarHost(
+        tag = "FeedExplorer",
+        listener = {
+            scope.launch {
+                if (pageState.currentPage == 0) {
+                    trendListState.animateScrollToItem(0)
+                } else {
+                    latestListState.animateScrollToItem(0)
+                }
+            }
+        }
+    ) {
         titleBar {
             DesignTitle {
                 Text(title ?: stringResource(R.string.explore_label))
@@ -101,16 +120,17 @@ fun FeedExplorer(
 private fun FeedExplorerTabs(
     id: String,
     postLimit: Int,
+    pageState: PagerState,
     selected: MutableState<FeedOverlayState>,
     requireUpdate: MutableState<Boolean>,
+    trendListState: LazyListState,
+    latestListState: LazyListState,
     component: Feed.Component,
     viewModelStore: UiViewModelStore,
     controller: NavHostController,
     connectionController: State<ConnectionController>,
-    title: String? = null,
     onExplore: (() -> Unit)? = null
 ) {
-    val pageState = rememberPagerState(pageCount = { 2 }, initialPage = 0)
     val sortTypes = listOf(Sort.TREND, Sort.NEW)
     Column {
         DesignTab(pageState) { index ->
@@ -128,7 +148,6 @@ private fun FeedExplorerTabs(
         ) { page ->
             val sort = sortTypes[page]
             val criteria = Criteria.Content(sort = sort)
-            val listState = rememberLazyListState()
             val enable = remember { derivedStateOf { selected.value == FeedOverlayState.Empty } }
             val connection by connectionController.value.observe().collectAsStateWithLifecycle()
             val event = remember {
@@ -158,7 +177,7 @@ private fun FeedExplorerTabs(
                 provider = component,
                 viewModelStoreOwner = viewModelStore.get(storeKey),
                 requireUpdate = requireUpdate,
-                listState = listState,
+                listState = if (page == 0) trendListState else latestListState,
                 onExplore = onExplore
             ) { relation ->
                 ConnectionScreen(
