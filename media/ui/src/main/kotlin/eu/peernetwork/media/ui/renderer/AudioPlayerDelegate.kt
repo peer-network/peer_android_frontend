@@ -124,6 +124,7 @@ class AudioPlayerDelegate @Inject constructor(
                         repeat.value = false
                         isActive.value = false
                         status.value = false
+                        isPlaying.value = false
                     }
                 }
             }
