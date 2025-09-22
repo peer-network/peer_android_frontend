@@ -172,7 +172,7 @@ private fun FeedExplorerTabs(
                     }
                 }
             }
-            val storeKey = "explore;${id};${sort.name}"
+            val storeKey = "${Category.NONE};${criteria?.toString() ?: id}"
             PostScreen(
                 id = id,
                 status = enable,
