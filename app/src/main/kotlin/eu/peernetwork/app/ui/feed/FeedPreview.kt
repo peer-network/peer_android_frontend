@@ -91,6 +91,7 @@ fun FeedPreview(
                         selected.value = FeedOverlayState.Post(
                             id = event.id,
                             position = event.position,
+                            criteria = derivedCriteria.value,
                             category = if (pageState.currentPage == 0) {
                                 Category.FOLLOWER
                             } else {

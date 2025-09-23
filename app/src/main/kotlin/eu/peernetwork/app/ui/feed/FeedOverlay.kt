@@ -27,7 +27,8 @@ sealed interface FeedOverlayState {
     data class Post(
         val id: String,
         val position: Int,
-        val category: Category
+        val category: Category,
+        val criteria: Criteria? = null
     ) : FeedOverlayState
 }
 
@@ -82,7 +83,7 @@ fun FeedOverlay(
             onCancel = { visible.value = false }
         ) {
             val state = (overlayState.value as FeedOverlayState.Post)
-            val storeKey = "${state.category};${criteria?.toString() ?: userId}"
+            val storeKey = "${state.category};${state.criteria?.toString() ?: userId}"
             PostOverlay(
                 id = userId,
                 limit = postLimit,

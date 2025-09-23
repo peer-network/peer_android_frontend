@@ -98,7 +98,7 @@ fun HomeScreen(provider: UiComponentProvider) {
                 navController = controller,
                 component = component,
                 viewModelStore = viewModelStore,
-                onExplore = { controller.navigateIfNecessary("explore") }
+                onExplore = { controller.navigateIfNecessary(HomeRoute.Explore.path) }
             ) {
                 viewModel.lastVisited(0)
                 navigationState.intValue = 0
