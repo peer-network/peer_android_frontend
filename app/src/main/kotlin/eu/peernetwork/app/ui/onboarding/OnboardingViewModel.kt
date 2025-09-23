@@ -3,6 +3,7 @@ package eu.peernetwork.app.ui.onboarding
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import eu.peernetwork.app.model.Properties
+import eu.peernetwork.app.usecase.OnboardingUpdateUsecase
 import eu.peernetwork.app.usecase.OnboardingUsecase
 import eu.peernetwork.user.domain.model.Preference
 import eu.peernetwork.user.domain.usecase.PreferenceUpdateUsecase
@@ -14,7 +15,8 @@ import javax.inject.Inject
 
 class OnboardingViewModel @Inject constructor(
     private val preferenceUsecase: PreferenceUpdateUsecase,
-    private val onboardingUsecase: OnboardingUsecase
+    private val onboardingUsecase: OnboardingUsecase,
+    private val onboardingUpdateUsecase: OnboardingUpdateUsecase
 ) : ViewModel() {
     private val _status = MutableStateFlow<Status>(Status.Default)
 
@@ -36,21 +38,22 @@ class OnboardingViewModel @Inject constructor(
         }
     }
 
-    fun finish(preference: Preference) {
+    fun reset() {
+        viewModelScope.launch {
+            _status.tryEmit(Status.Default)
+        }
+    }
+
+    fun finish(status: Boolean, preference: Preference) {
         viewModelScope.launch {
             try {
                 _status.tryEmit(Status.Loading)
                 preferenceUsecase(preference)
+                onboardingUpdateUsecase(status)
                 _status.tryEmit(Status.Success(preference))
             } catch (error: Throwable) {
                 _status.tryEmit(Status.Error(error))
             }
-        }
-    }
-
-    fun reset() {
-        viewModelScope.launch {
-            _status.tryEmit(Status.Default)
         }
     }
 

@@ -61,34 +61,22 @@ fun OnboardingScreen(
     }
     val handleOnFinished by rememberUpdatedState(onFinished)
     val pagerState = rememberPagerState(initialPage = 0, pageCount = { 5 })
-
     DesignScene(
         state = derivedState,
         modifier = Modifier.fillMaxSize(),
-        error = {
-            DesignError(
-                onRefresh = { viewModel.initialize() },
-                error = it.value,
-                resource = component.resource()
-            )
-        }
-    ) {
-        OnboardingScreen(
-            state = pagerState,
-            properties = it.value.properties
-        ) {
-            viewModel.finish(
-                preference.copy(
-                    flags = it.value
-                        .properties
-                        .configuration
-                        .onboarding
-                        .availableOnboardings
-                )
-            )
-        }
-    }
-
+        error = { DesignError(
+            onRefresh = { viewModel.initialize() },
+            error = it.value,
+            resource = component.resource()) }
+    ) { state -> OnboardingScreen(pagerState, properties = state.value.properties) {
+        viewModel.finish(it, preference.copy(
+            flags = state.value
+                .properties
+                .configuration
+                .onboarding
+                .availableOnboardings
+        ))
+    } }
     LaunchedEffect(isFinished.value) {
         if (isFinished.value) {
             (status as? OnboardingViewModel.Status.Success?)?.preference?.let { pref ->
@@ -104,30 +92,27 @@ fun OnboardingScreen(
 fun OnboardingScreen(
     state: PagerState,
     properties: Properties,
-    onFinished: () -> Unit
+    onFinished: (Boolean) -> Unit
 ) {
     val scope = rememberCoroutineScope()
-
+    val handleOnFinished by rememberUpdatedState(onFinished)
     fun goNext() = scope.launch {
         state.animateScrollToPage((state.currentPage + 1).coerceAtMost(state.pageCount - 1))
     }
-
     fun goBack() = scope.launch {
         state.animateScrollToPage((state.currentPage - 1).coerceAtLeast(0))
     }
-
     HorizontalPager(
         state = state,
         userScrollEnabled = true
     ) { page ->
         when (page) {
             0 -> OnboardingPageOne(
-                onSkip = onFinished,
+                onSkip = { handleOnFinished(true) },
                 onNext = { goNext() }
             )
-
             1 -> OnboardingPageTwo(
-                onSkip = onFinished,
+                onSkip = { handleOnFinished(true) },
                 onBack = { goBack() },
                 onNext = { goNext() },
 
@@ -136,9 +121,8 @@ fun OnboardingScreen(
                 extraComment = properties.configuration.tokenomics.actionTokenPrices["comment"] ?: 0,
                 dislike = properties.configuration.tokenomics.actionTokenPrices["dislike"] ?: 0
             )
-
             2 -> OnboardingPageThree(
-                onSkip = onFinished,
+                onSkip = { handleOnFinished(true) },
                 onBack = { goBack() },
                 onNext = { goNext() },
 
@@ -147,16 +131,14 @@ fun OnboardingScreen(
                 commentReward = properties.configuration.tokenomics.actionGemsReturns["comment"] ?: 0.0,
                 viewReward = properties.configuration.tokenomics.actionGemsReturns["view"] ?: 0.0
             )
-
             3 -> OnboardingPageFour(
-                onSkip = onFinished,
+                onSkip = { handleOnFinished(true) },
                 onBack = { goBack() },
                 onNext = { goNext() },
 
                 dailyNumberToken = properties.configuration.minting.dailyNumberToken
             )
-
-            4 -> OnboardingPageFive(onSkip = onFinished)
+            4 -> OnboardingPageFive(onSkip = { handleOnFinished(false) })
         }
     }
 }
