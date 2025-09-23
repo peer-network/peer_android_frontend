@@ -33,7 +33,7 @@ class HomeViewModel @Inject constructor(
                 val principal = usecase()
                 val preference = preferenceUsecase()
                 interactor.setUser(principal)
-                interactor.setMode(preference.mode)
+                interactor.setMode(preference.mode.value)
                 mutableState.tryEmit(State.Success(principal, lastVisitedPage))
             } catch (error: Throwable) {
                 mutableState.tryEmit(State.Error(error))

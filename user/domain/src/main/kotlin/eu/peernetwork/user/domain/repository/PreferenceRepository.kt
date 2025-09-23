@@ -4,4 +4,6 @@ import eu.peernetwork.user.domain.model.Preference
 
 interface PreferenceRepository {
     suspend fun get(): Preference
+
+    suspend fun set(preference: Preference)
 }

@@ -2,6 +2,7 @@ package eu.peernetwork.app.ui.onboarding
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import eu.peernetwork.app.usecase.OnboardingUsecase
 import eu.peernetwork.persistence.domain.repository.PreferenceRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
@@ -12,9 +13,9 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class OnboardingViewModel @Inject constructor(
-    private val preferences: PreferenceRepository
+    private val preferences: PreferenceRepository,
+    private val onboardingUsecase: OnboardingUsecase
 ) : ViewModel() {
-
     companion object {
         const val KEY = "onboarding_completed"
     }
