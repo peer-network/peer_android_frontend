@@ -72,5 +72,6 @@ fun EmptyFeed(
             label = { Text(stringResource(eu.peernetwork.core.ui.R.string.explore_label)) },
             content = {}
         )
+        Spacer(modifier = Modifier.height(56.dp))
     }
 }

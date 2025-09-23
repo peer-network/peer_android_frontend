@@ -11,7 +11,7 @@ import javax.inject.Inject
 class OnboardingUsecase @Inject constructor(
     private val gson: Gson,
     private val dispatcher: Dispatcher,
-    private val repository: ResourceRepository,
+    private val repository: ResourceRepository
 ) : SuspendableUseCase<Properties> {
     override suspend fun invoke(): Properties = withContext(dispatcher.io) {
         val response = repository.string("/assets/constants.json")

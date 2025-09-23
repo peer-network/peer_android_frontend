@@ -1,54 +1,33 @@
 package eu.peernetwork.app.usecase
 
-import android.util.Log
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import eu.peernetwork.app.BuildConfig
+import eu.peernetwork.app.exception.VersionException
 import eu.peernetwork.app.interactor.RemoteInteractor
+import eu.peernetwork.app.model.Endpoint
 import eu.peernetwork.core.common.provider.Dispatcher
 import eu.peernetwork.core.common.usecase.SuspendableUseCase
-import kotlinx.coroutines.tasks.await
+import eu.peernetwork.user.domain.repository.ResourceRepository
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class VersionUseCase @Inject constructor(
+    private val gson: Gson,
+    private val dispatcher: Dispatcher,
     private val interactor: RemoteInteractor,
-    private val remoteConfig: FirebaseRemoteConfig,
-    private val dispatcher: Dispatcher
-) : SuspendableUseCase<VersionUseCase.Result> {
+    private val repository: ResourceRepository
+) : SuspendableUseCase<Unit> {
 
-    override suspend fun invoke(): Result = withContext(dispatcher.io) {
-        try {
-            remoteConfig.fetchAndActivate().await()
-            val json = remoteConfig.getString("minimum_required_version")
-            Log.d("VersionControl", "Fetched minimum_required_version JSON: $json")
-            val listType = object : TypeToken<List<MinimumRequiredVersion>>() {}.type
-            val versionList: List<MinimumRequiredVersion> = Gson().fromJson(json, listType)
-            val currentVersion = BuildConfig.VERSION_NAME
-            Log.d("VersionControl", "Current app version: $currentVersion")
-            val matchedVersion = versionList.firstOrNull { it.version == currentVersion }
-            val minimumVersion = matchedVersion ?: run {
-                val isDebug = currentVersion.contains("-DEBUG")
-                val fallbackList = versionList.filter { it.version.contains("-DEBUG") == isDebug }
-                fallbackList.maxByOrNull { it.version.split("-").first() }
-            }
-            Log.d("VersionControl", "Matched version: ${minimumVersion?.version}")
-            Log.d("VersionControl", "Matched URL: ${minimumVersion?.url}")
-            minimumVersion?.url?.let {
-                Log.d("VersionControl", "Updating provider baseUrl to: $it")
-                interactor.setBaseUrl(it)
-            } ?: Log.d("VersionControl", "No base URL found in matched version")
-            if (minimumVersion != null && isOutdated(minimumVersion.version)) {
-                Log.d("VersionControl", "App version is outdated")
-                  Result.Outdated(BuildConfig.PLAYSTORE_URL)
+    override suspend fun invoke(): Unit = withContext(dispatcher.io) {
+        val response = repository.string("/assets/endpoints.json")
+            .replace("""\\""".toRegex(), """\\\\""")
+        val endpoint = gson.fromJson(response, Endpoint::class.java)
+        endpoint.platform.configuration.firstOrNull()?.let {
+            if (!isOutdated(it.version)) {
+                interactor.setBaseUrl(it.url)
             } else {
-                Log.d("VersionControl", "App version is up to date")
-                Result.UpToDate
+                throw VersionException(it.version)
             }
-        } catch (e: Exception) {
-            Log.e("VersionControl", "Error during version check or remote config fetch", e)
-            Result.Error(e)
         }
     }
 
@@ -71,15 +50,4 @@ class VersionUseCase @Inject constructor(
         }
         return false
     }
-
-    sealed interface Result {
-        data object UpToDate : Result
-        data class Outdated(val url: String) : Result
-        data class Error(val throwable: Throwable) : Result
-    }
-
-    data class MinimumRequiredVersion(
-        val version: String,
-        val url: String
-    )
 }

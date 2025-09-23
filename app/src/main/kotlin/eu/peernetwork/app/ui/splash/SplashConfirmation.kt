@@ -1,7 +1,6 @@
 package eu.peernetwork.app.ui.splash
 
 import android.content.Intent
-import android.net.Uri
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -10,10 +9,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.core.net.toUri
+import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.app.R
 
 @Composable
-fun SplashConfirmation(state: State<Boolean>, uri: Uri) {
+fun SplashConfirmation(state: State<Boolean>) {
     val context = LocalContext.current
     if (state.value) {
         AlertDialog(
@@ -23,7 +24,7 @@ fun SplashConfirmation(state: State<Boolean>, uri: Uri) {
             confirmButton = {
                 TextButton(
                     onClick = {
-                        val intent = Intent(Intent.ACTION_VIEW, uri)
+                        val intent = Intent(Intent.ACTION_VIEW, BuildConfig.PLAYSTORE_URL.toUri())
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                         context.startActivity(intent)
                     }
