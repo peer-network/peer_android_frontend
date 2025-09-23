@@ -32,6 +32,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -70,14 +71,14 @@ fun OnboardingPageFour(
                 )
                 Spacer(modifier = Modifier.height(6.dp))
                 Text(
-                    text = "Your effort = Your reward",
+                    text = stringResource(R.string.onboarding_your_effort_reward),
                     style = MaterialTheme.typography.labelLarge.copy(fontSize = 20.sp),
                     color = MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier.offset(y = (-23).dp)
                 )
                 Spacer(modifier = Modifier.height(1.dp))
                 Text(
-                    text = "The more Gems you earn, the bigger your slice of the daily pool.",
+                    text = stringResource(R.string.onboarding_gems_slice_pool),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
                     modifier = Modifier.offset(y = (-22).dp)
@@ -128,7 +129,7 @@ fun OnboardingPageFour(
                         }
                         Spacer(modifier = Modifier.height(3.dp))
                         Text(
-                            text = "Distributed daily",
+                            text = stringResource(R.string.onboarding_pie_chart_distributed_daily),
                             modifier = Modifier.offset(y = (-6).dp),
                             style = MaterialTheme.typography.bodySmall.copy(
                                 fontWeight = FontWeight.Thin,
@@ -142,7 +143,7 @@ fun OnboardingPageFour(
                             horizontalArrangement = Arrangement.Center
                         ) {
                             Text(
-                                text = "100% of",
+                                text = stringResource(R.string.onboarding_pie_chart_100_percent_of),
                                 style = MaterialTheme.typography.bodySmall.copy(
                                     fontWeight = FontWeight.Thin,
                                     fontSize = 11.sp
@@ -157,7 +158,7 @@ fun OnboardingPageFour(
                                 tint = MaterialTheme.colorScheme.tertiary
                             )
                             Text(
-                                text = " Gems",
+                                text = stringResource(R.string.onboarding_pie_chart_gems_label),
                                 style = MaterialTheme.typography.bodySmall.copy(
                                     fontWeight = FontWeight.Thin,
                                     fontSize = 11.sp
@@ -221,14 +222,14 @@ fun OnboardingPageFour(
                         horizontalAlignment = Alignment.Start
                     ) {
                         Text(
-                            text = "User A",
+                            text = stringResource(R.string.onboarding_user_a),
                             style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
                             color = Color.White
                         )
                         Spacer(modifier = Modifier.height(2.dp))
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Text(
-                                text = "has 5 ",
+                                text = stringResource(R.string.onboarding_has_5),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = Color.White
                             )
@@ -239,7 +240,7 @@ fun OnboardingPageFour(
                                 tint = Color.White
                             )
                             Text(
-                                text = " Gems",
+                                text = stringResource(R.string.onboarding_pie_chart_gems_label),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = Color.White
                             )
@@ -247,7 +248,7 @@ fun OnboardingPageFour(
                         Spacer(modifier = Modifier.height(2.dp))
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Text(
-                                text = "will get 1 250 ",
+                                text = stringResource(R.string.onboarding_will_get_1250),
                                 style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
                                 color = Color.White
                             )
@@ -267,14 +268,14 @@ fun OnboardingPageFour(
                         horizontalAlignment = Alignment.Start
                     ) {
                         Text(
-                            text = "User B",
+                            text = stringResource(R.string.onboarding_user_b),
                             style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
                             color = Color.White
                         )
                         Spacer(modifier = Modifier.height(2.dp))
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Text(
-                                text = "has 5 ",
+                                text =stringResource(R.string.onboarding_has_5),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = Color.White
                             )
@@ -285,7 +286,7 @@ fun OnboardingPageFour(
                                 tint = Color.White
                             )
                             Text(
-                                text = " Gems",
+                                text = stringResource(R.string.onboarding_pie_chart_gems_label),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = Color.White
                             )
@@ -293,7 +294,7 @@ fun OnboardingPageFour(
                         Spacer(modifier = Modifier.height(2.dp))
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Text(
-                                text = "will get 1 250 ",
+                                text = stringResource(R.string.onboarding_will_get_1250),
                                 style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
                                 color = Color.White
                             )
@@ -311,7 +312,7 @@ fun OnboardingPageFour(
                         horizontalAlignment = Alignment.End
                     ) {
                         Text(
-                            text = "User C",
+                            text = stringResource(R.string.onboarding_user_c),
                             style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
                             color = Color.White,
                             textAlign = TextAlign.End
@@ -322,7 +323,7 @@ fun OnboardingPageFour(
                             horizontalArrangement = Arrangement.End
                         ) {
                             Text(
-                                text = "has 10 ",
+                                text = stringResource(R.string.onboarding_has_10),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = Color.White
                             )
@@ -333,7 +334,7 @@ fun OnboardingPageFour(
                                 tint = Color.White
                             )
                             Text(
-                                text = " Gems",
+                                text = stringResource(R.string.onboarding_pie_chart_gems_label),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = Color.White
                             )
@@ -344,7 +345,7 @@ fun OnboardingPageFour(
                             horizontalArrangement = Arrangement.End
                         ) {
                             Text(
-                                text = "will get 2 500 ",
+                                text = stringResource(R.string.onboarding_will_get_2500),
                                 style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
                                 color = Color.White
                             )
@@ -395,7 +396,7 @@ fun OnboardingPageFour(
                         ),
                         contentPadding = PaddingValues(horizontal = 36.dp, vertical = 8.dp)
                     ) {
-                        Text(text = "Skip", color = MaterialTheme.colorScheme.onBackground)
+                        Text(text = stringResource(R.string.onboarding_skip), color = MaterialTheme.colorScheme.onBackground)
                     }
 
                     Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -409,7 +410,7 @@ fun OnboardingPageFour(
                         ) {
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_back_arrow),
-                                contentDescription = "Back",
+                                contentDescription = stringResource(R.string.onboarding_back),
                                 modifier = Modifier.size(28.dp),
                                 tint = Color.Unspecified
                             )
@@ -427,7 +428,7 @@ fun OnboardingPageFour(
                     ) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_proceed_arrow),
-                            contentDescription = "Next",
+                            contentDescription = stringResource(R.string.onboarding_next),
                             modifier = Modifier.size(28.dp),
                             tint = Color.Unspecified
                         )
