@@ -49,14 +49,13 @@ internal class SplashViewModelTest {
         coEvery { logDeviceModelUsecase() } returns Unit
         coEvery { versionUseCase() } coAnswers {
             delay(100)
-            VersionUseCase.Result.UpToDate
         }
 
         viewModel.initialize()
 
         viewModel.state.test {
             assertEquals(SplashViewModel.State.Loading, awaitItem())
-            assertEquals(SplashViewModel.State.Success(), awaitItem())
+            assertEquals(SplashViewModel.State.Success, awaitItem())
         }
 
         coVerify(exactly = 1) { logDeviceModelUsecase() }
@@ -68,12 +67,12 @@ internal class SplashViewModelTest {
         val url = "<test-url>"
 
         coEvery { logDeviceModelUsecase() } returns Unit
-        coEvery { versionUseCase() } returns VersionUseCase.Result.Outdated(url)
+        coEvery { versionUseCase() } returns Unit
 
         viewModel.initialize()
 
         viewModel.state.test {
-            assertEquals(SplashViewModel.State.Success(url), awaitItem())
+            assertEquals(SplashViewModel.State.Success, awaitItem())
         }
 
         coVerify(exactly = 1) { logDeviceModelUsecase() }
@@ -86,7 +85,7 @@ internal class SplashViewModelTest {
         val exception = Throwable("Simulated error")
 
         coEvery { logDeviceModelUsecase() } returns Unit
-        coEvery { versionUseCase() } returns VersionUseCase.Result.Error(exception)
+        coEvery { versionUseCase() } throws exception
 
         viewModel.initialize()
 
@@ -101,12 +100,12 @@ internal class SplashViewModelTest {
     @Test
     fun `test initialize state - LogDeviceModelUsecase success`() = runTest {
         coEvery { logDeviceModelUsecase() } returns Unit
-        coEvery { versionUseCase() } returns VersionUseCase.Result.UpToDate
+        coEvery { versionUseCase() } returns Unit
 
         viewModel.initialize()
 
         viewModel.state.test {
-            assertEquals(SplashViewModel.State.Success(), awaitItem())
+            assertEquals(SplashViewModel.State.Success, awaitItem())
         }
 
         coVerify(exactly = 1) { logDeviceModelUsecase() }

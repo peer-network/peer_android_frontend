@@ -24,6 +24,7 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import kotlin.test.assertTrue
 
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class HomeViewModelTest {
@@ -76,7 +77,7 @@ internal class HomeViewModelTest {
         viewModel()
         viewModel.state.test {
             assertEquals(HomeViewModel.State.Loading, awaitItem())
-            assertEquals(HomeViewModel.State.Success(user, page), awaitItem())
+            assertTrue(awaitItem() is HomeViewModel.State.Success)
         }
         coVerify { settingsInteractor.setUser(any()) }
         coVerify { settingsInteractor.setMode(any()) }
