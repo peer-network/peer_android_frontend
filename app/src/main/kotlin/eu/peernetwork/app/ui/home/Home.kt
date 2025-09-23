@@ -9,6 +9,7 @@ import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.app.ui.feed.Feed
 import eu.peernetwork.app.ui.messaging.Messaging
+import eu.peernetwork.app.ui.onboarding.Onboarding
 import eu.peernetwork.app.ui.search.Search
 import eu.peernetwork.app.ui.wallet.Wallet
 import eu.peernetwork.messaging.ui.chat.Chat
@@ -25,7 +26,18 @@ interface Home : ApplicationProvider {
         dependencies = [ Home::class ],
         modules = [ HomeModule::class ]
     )
-    interface Component : Home, Feed, Profile, Messaging, UiComponentProvider, Reward, Composer, Wallet, Search, Chat, Feedback {
+    interface Component : Home,
+        Onboarding,
+        Feed,
+        Profile,
+        Messaging,
+        UiComponentProvider,
+        Reward,
+        Composer,
+        Wallet,
+        Search,
+        Chat,
+        Feedback {
         fun viewModelFactory(): ViewModelProvider.Factory
     }
 

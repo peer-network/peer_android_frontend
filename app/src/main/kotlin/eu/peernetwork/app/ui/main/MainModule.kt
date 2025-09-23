@@ -7,7 +7,6 @@ import dagger.Provides
 import dagger.multibindings.IntoMap
 import eu.peernetwork.app.ui.launcher.Launcher
 import eu.peernetwork.app.ui.splash.Splash
-import eu.peernetwork.app.ui.onboarding.Onboarding
 import eu.peernetwork.core.ui.annotation.UiBuilder
 import eu.peernetwork.core.ui.annotation.UiViewModel
 import eu.peernetwork.core.ui.component.UiComponent
@@ -51,13 +50,5 @@ object MainModule {
     @UiBuilder(Launcher.Builder::class)
     fun provideLauncherBuilder(component: Main.Component): UiComponent.Builder {
         return Launcher.Builder(component)
-    }
-
-    @Main.Scope
-    @Provides
-    @IntoMap
-    @UiBuilder(Onboarding.Builder::class)
-    fun provideOnboardingBuilder(component: Main.Component): UiComponent.Builder {
-        return Onboarding.Builder(component)
     }
 }

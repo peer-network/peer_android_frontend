@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import eu.peernetwork.app.interactor.SettingsInteractor
 import eu.peernetwork.persistence.domain.publishable.PublishableInteger
 import eu.peernetwork.persistence.domain.retrievable.RetrievableInteger
+import eu.peernetwork.user.domain.model.Preference
 import eu.peernetwork.user.domain.usecase.PreferenceUsecase
 import eu.peernetwork.user.domain.usecase.PrincipalUsecase
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -29,14 +30,26 @@ class HomeViewModel @Inject constructor(
         mutableState.tryEmit(State.Loading)
         viewModelScope.launch {
             try {
-                val lastVisitedPage = retrievableInteger(TAG) ?: 0
                 val principal = usecase()
                 val preference = preferenceUsecase()
+                val lastVisitedPage = retrievableInteger(TAG) ?: 0
                 interactor.setUser(principal)
                 interactor.setMode(preference.mode.value)
-                mutableState.tryEmit(State.Success(principal, lastVisitedPage))
+                mutableState.tryEmit(State.Success(
+                    userId = principal,
+                    lastVisitedPage = lastVisitedPage,
+                    preference = preference
+                ))
             } catch (error: Throwable) {
                 mutableState.tryEmit(State.Error(error))
+            }
+        }
+    }
+
+    operator fun invoke(preference: Preference) {
+        viewModelScope.launch {
+            (mutableState.value as? State.Success?)?.let {
+                mutableState.tryEmit(it.copy(preference = preference))
             }
         }
     }
@@ -50,7 +63,8 @@ class HomeViewModel @Inject constructor(
         data object Loading : State
         data class Success(
             val userId: String,
-            val lastVisitedPage: Int
+            val lastVisitedPage: Int,
+            val preference: Preference
         ) : State
         data class Error(val error: Throwable) : State
     }
