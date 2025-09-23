@@ -22,7 +22,9 @@ interface NetworkService : RequestClient {
         private var client = ApolloClient.Builder()
             .serverUrl("$cache/graphql")
             .addInterceptor(logger)
+            .addInterceptor(resourceInterceptor)
             .addInterceptor(jwtInterceptor)
+            .addInterceptor(network)
             .build()
 
         override fun invoke(): ApolloClient {
