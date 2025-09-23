@@ -15,6 +15,7 @@ import com.airbnb.lottie.compose.*
 import eu.peernetwork.blog.ui.R
 import androidx.compose.material3.Text
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 
@@ -44,7 +45,7 @@ fun EmptyFeed(
         )
         Spacer(modifier = Modifier.height(24.dp))
         Text(
-            text = "Looks quiet for now.",
+            text = stringResource(eu.peernetwork.core.ui.R.string.explore_message),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp),
@@ -55,7 +56,7 @@ fun EmptyFeed(
         )
         Spacer(modifier = Modifier.height(2.dp))
         Text(
-            text = "Discover what people are up to!",
+            text = stringResource(eu.peernetwork.core.ui.R.string.explore_message_continuation),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp),
@@ -68,7 +69,7 @@ fun EmptyFeed(
             error = derivedError.value,
             onRetry = onRefresh,
             modifier = Modifier.fillMaxWidth(),
-            label = { Text("Explore") },
+            label = { Text(stringResource(eu.peernetwork.core.ui.R.string.explore_label)) },
             content = {}
         )
     }

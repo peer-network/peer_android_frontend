@@ -78,13 +78,13 @@ fun OnboardingPageTwo(
                 )
                 Column(modifier = Modifier.offset(y = (-19).dp)) {
                     Text(
-                        text = "Create, Like, Comment\n\n - Smartly",
+                        text = stringResource(R.string.onboarding_create_like_comment)+ "\n\n"+ stringResource(R.string.onboarding_smartly),
                         style = MaterialTheme.typography.labelLarge.copy(fontSize = 20.sp),
                         color = MaterialTheme.colorScheme.onBackground
                     )
                     Spacer(modifier = Modifier.size(15.dp))
                     Text(
-                        text = "Your daily free pass",
+                        text = stringResource(R.string.onboarding_daily_free_pass),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
                     )
@@ -122,7 +122,7 @@ fun OnboardingPageTwo(
                             contentScale = ContentScale.Fit
                         )
                         Text(
-                            text = "1 post",
+                            text = stringResource(R.string.onboarding_post_count),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onBackground,
                             modifier = Modifier.offset(x = (-11).dp, y = (-2).dp)
@@ -151,7 +151,7 @@ fun OnboardingPageTwo(
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            text = "3 likes",
+                            text = stringResource(R.string.onboarding_like_count),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onBackground,
                             modifier = Modifier.offset(x = (-2).dp, y = 13.dp)
@@ -178,7 +178,7 @@ fun OnboardingPageTwo(
                             contentScale = ContentScale.Fit
                         )
                         Text(
-                            text = "4 comments",
+                            text = stringResource(R.string.onboarding_comment_count),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onBackground,
                             modifier = Modifier.offset(x = 3.dp, y = 15.dp)
@@ -189,7 +189,7 @@ fun OnboardingPageTwo(
 
             Column(modifier = Modifier.fillMaxWidth()) {
                 Text(
-                    text = "Want more?",
+                    text = stringResource(R.string.onboarding_want_more),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
                     modifier = Modifier
@@ -199,7 +199,7 @@ fun OnboardingPageTwo(
 
                 OptionRow(
                     leadingIconRes = R.drawable.ic_camera_outline,
-                    label = "Extra post",
+                    label = stringResource(R.string.onboarding_option_extra_post),
                     amount = "20",
                     amountIconRes = R.drawable.ic_icon,
                     modifier = Modifier
@@ -210,7 +210,7 @@ fun OnboardingPageTwo(
 
                 OptionRow(
                     leadingIconRes = R.drawable.ic_like_outline,
-                    label = "Extra like",
+                    label = stringResource(R.string.onboarding_option_extra_like),
                     amount = "3",
                     amountIconRes = R.drawable.ic_icon,
                     modifier = Modifier
@@ -221,7 +221,7 @@ fun OnboardingPageTwo(
 
                 OptionRow(
                     leadingIconRes = R.drawable.ic_chat_out,
-                    label = "Extra comments",
+                    label = stringResource(R.string.onboarding_option_extra_comments),
                     amount = "1",
                     amountIconRes = R.drawable.ic_icon,
                     modifier = Modifier
@@ -232,7 +232,7 @@ fun OnboardingPageTwo(
 
                 OptionRow(
                     leadingIconRes = R.drawable.ic_dislike_outline,
-                    label = "Want to give a dislike?",
+                    label = stringResource(R.string.onboarding_option_dislike),
                     amount = "3",
                     amountIconRes = R.drawable.ic_icon,
                     modifier = Modifier
@@ -248,11 +248,13 @@ fun OnboardingPageTwo(
             ) {
                 Text(
                     text = buildAnnotatedString {
-                        append("But hey - you can also invite friends and ")
+                        append(stringResource(R.string.onboarding_invite_friends_prefix))
+                        append(" ")
                         withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                            append("earn 1%")
+                            append(stringResource(R.string.onboarding_invite_friends_bold))
                         }
-                        append(" of their token income daily.")
+                        append(" ")
+                        append(stringResource(R.string.onboarding_invite_friends_suffix))
                     },
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.65f),
@@ -295,7 +297,7 @@ fun OnboardingPageTwo(
                         ),
                         contentPadding = PaddingValues(horizontal = 36.dp, vertical = 8.dp)
                     ) {
-                        Text(text = "Skip", color = MaterialTheme.colorScheme.onBackground)
+                        Text(text = stringResource(R.string.onboarding_skip), color = MaterialTheme.colorScheme.onBackground)
                     }
 
                     Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -309,7 +311,7 @@ fun OnboardingPageTwo(
                         ) {
                             Image(
                                 painter = painterResource(id = R.drawable.ic_back_arrow),
-                                contentDescription = "Back",
+                                contentDescription = stringResource(R.string.onboarding_back),
                                 modifier = Modifier.size(28.dp),
                                 contentScale = ContentScale.Fit
                             )
@@ -327,7 +329,7 @@ fun OnboardingPageTwo(
                     ) {
                         Image(
                             painter = painterResource(id = R.drawable.ic_proceed_arrow),
-                            contentDescription = "Next",
+                            contentDescription = stringResource(R.string.onboarding_next),
                             modifier = Modifier.size(28.dp),
                             contentScale = ContentScale.Fit
                         )

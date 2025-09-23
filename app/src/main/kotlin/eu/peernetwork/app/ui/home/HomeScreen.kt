@@ -3,12 +3,10 @@ package eu.peernetwork.app.ui.home
 import android.content.res.Configuration
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -73,9 +71,7 @@ fun HomeScreen(provider: UiComponentProvider) {
         val navigationState = rememberSaveable { mutableIntStateOf(data.second) }
         val startDestination = remember { HomeRoute.get(navigationState.intValue).path }
         val navBackStackEntry by controller.currentBackStackEntryAsState()
-        val currentStack = remember(navBackStackEntry?.id) {
-            mutableStateOf(controller.currentDestination?.route)
-        }
+        val currentRoute = navBackStackEntry?.destination?.route
         HomeScreen(
             start = navigationState,
             options = { RewardScreen(component, viewModelStore.get(data.first)) },
@@ -84,8 +80,8 @@ fun HomeScreen(provider: UiComponentProvider) {
                 navigationState.intValue = it
                 controller.attachIfNecessary(HomeRoute.get(it).path)
             },
-            // Chat is replaced with Explore
-            onExplore = { controller.navigateIfNecessary(HomeRoute.Explore.path) }
+            onExplore = { controller.navigateIfNecessary(HomeRoute.Explore.path) },
+            isExploreActive = currentRoute == HomeRoute.Explore.path
         ) { state ->
             HomeNavigation(
                 id = data.first,
@@ -100,7 +96,7 @@ fun HomeScreen(provider: UiComponentProvider) {
                 controller.attach(HomeRoute.Home.path)
             }
         }
-        BackHandler(enabled = currentStack.value != HomeRoute.Home.path) {
+        BackHandler(enabled = currentRoute != HomeRoute.Home.path) {
             viewModel.lastVisited(0)
             navigationState.intValue = 0
             controller.attachIfNecessary(HomeRoute.Home.path)
@@ -120,6 +116,7 @@ fun HomeScreen(
     options: @Composable () -> Unit,
     onClick: (Int) -> Unit,
     onExplore: () -> Unit,
+    isExploreActive: Boolean,
     content: @Composable (State<Float>) -> Unit
 ) {
     val updatedContent by rememberUpdatedState(content)
@@ -134,7 +131,9 @@ fun HomeScreen(
                         handleOnExplore()
                     }) {
                         Icon(
-                            painter = painterResource(id = HomeRoute.Explore.icon),
+                            painter = painterResource(
+                                id = if (isExploreActive) HomeRoute.Explore.activeIcon else HomeRoute.Explore.icon
+                            ),
                             contentDescription = stringResource(id = HomeRoute.Explore.icon),
                             modifier = Modifier.size(19.dp)
                         )
@@ -165,6 +164,7 @@ fun PreviewHomeScreen() {
             options = {},
             onClick = {},
             onExplore = {},
+            isExploreActive = false
         ) { state ->
             Text(
                 text = "",

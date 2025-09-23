@@ -12,6 +12,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontStyle
@@ -76,7 +77,7 @@ fun OnboardingPageOne(
                     )
                     Spacer(modifier = Modifier.height(11.dp))
                     Text(
-                        text = "Peer is the first social platform where your posts, likes, comments, and views help you earn real rewards.",
+                        text = stringResource(R.string.onboarding_about),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
                     )
@@ -97,7 +98,7 @@ fun OnboardingPageOne(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "Every interaction earns you Gems, your path to Peer Tokens.",
+                    text = stringResource(R.string.onboarding_about_Gems),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
                     textAlign = TextAlign.Center,
