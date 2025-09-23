@@ -39,6 +39,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import eu.peernetwork.core.ui.R
+import java.util.Locale
+import kotlin.math.abs
 import androidx.compose.foundation.background as fbBackground
 
 @Composable
@@ -46,6 +48,10 @@ fun OnboardingPageThree(
     onSkip: () -> Unit,
     onBack: () -> Unit,
     onNext: () -> Unit,
+    likeReward: Double,
+    dislikeReward: Double,
+    commentReward: Double,
+    viewReward: Double,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -239,7 +245,7 @@ fun OnboardingPageThree(
                 OptionRow(
                     leadingIconRes = R.drawable.ic_redheart,
                     label = stringResource(R.string.onboarding_got_like),
-                    amount = "+ 5",
+                    amount = formatReward(likeReward),
                     amountIconRes = R.drawable.ic_gem,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -250,7 +256,7 @@ fun OnboardingPageThree(
                 OptionRow(
                     leadingIconRes = R.drawable.ic_redislike,
                     label = stringResource(R.string.onboarding_got_dislike),
-                    amount = "- 3",
+                    amount = formatReward(dislikeReward),
                     amountIconRes = R.drawable.ic_gem,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -261,7 +267,7 @@ fun OnboardingPageThree(
                 OptionRow(
                     leadingIconRes = R.drawable.ic_comment,
                     label = stringResource(R.string.onboarding_got_comment),
-                    amount = "+ 2",
+                    amount = formatReward(commentReward),
                     amountIconRes = R.drawable.ic_gem,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -272,7 +278,7 @@ fun OnboardingPageThree(
                 OptionRow(
                     leadingIconRes = R.drawable.ic_view_whited,
                     label = stringResource(R.string.onboarding_got_view),
-                    amount = "+ 0.25",
+                    amount = formatReward(viewReward),
                     amountIconRes = R.drawable.ic_gem,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -369,6 +375,17 @@ fun OnboardingPageThree(
             }
         }
     }
+}
+
+private fun formatReward(value: Double): String {
+    val sign = if (value >= 0.0) "+" else "-"
+    val absVal = abs(value)
+    val text = if (absVal % 1.0 == 0.0) {
+        absVal.toInt().toString()
+    } else {
+        String.format(Locale.US, "%.2f", absVal).trimEnd('0').trimEnd('.')
+    }
+    return "$sign $text"
 }
 
 @Composable

@@ -41,44 +41,58 @@ fun OnboardingScreen(
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
     val status by viewModel.status.collectAsStateWithLifecycle()
-    val isFinished = remember { derivedStateOf {
-        status is OnboardingViewModel.Status.Success
-    } }
-    val derivedState = remember { derivedStateOf {
-        when(state) {
-            OnboardingViewModel.State.Default -> DesignSceneState.Default
-            OnboardingViewModel.State.Loading -> DesignSceneState.Loading
-            is OnboardingViewModel.State.Success -> {
-                val data = (state as OnboardingViewModel.State.Success)
-                DesignSceneState.Success(data)
-            }
-            is OnboardingViewModel.State.Error -> {
-                DesignSceneState.Error((state as OnboardingViewModel.State.Error).error)
+    val isFinished = remember {
+        derivedStateOf { status is OnboardingViewModel.Status.Success }
+    }
+    val derivedState = remember {
+        derivedStateOf {
+            when (state) {
+                OnboardingViewModel.State.Default -> DesignSceneState.Default
+                OnboardingViewModel.State.Loading -> DesignSceneState.Loading
+                is OnboardingViewModel.State.Success -> {
+                    val data = (state as OnboardingViewModel.State.Success)
+                    DesignSceneState.Success(data)
+                }
+                is OnboardingViewModel.State.Error -> {
+                    DesignSceneState.Error((state as OnboardingViewModel.State.Error).error)
+                }
             }
         }
-    } }
+    }
     val handleOnFinished by rememberUpdatedState(onFinished)
     val pagerState = rememberPagerState(initialPage = 0, pageCount = { 5 })
+
     DesignScene(
         state = derivedState,
         modifier = Modifier.fillMaxSize(),
-        error = { DesignError(
-            onRefresh = { viewModel.initialize() },
-            error = it.value,
-            resource = component.resource()) }
-    ) { OnboardingScreen(pagerState, properties = it.value.properties) {
-        viewModel.finish(preference.copy(
-            flags = it.value
-                .properties
-                .configuration
-                .onboarding
-                .availableOnboardings
-        ))
-    } }
+        error = {
+            DesignError(
+                onRefresh = { viewModel.initialize() },
+                error = it.value,
+                resource = component.resource()
+            )
+        }
+    ) {
+        OnboardingScreen(
+            state = pagerState,
+            properties = it.value.properties
+        ) {
+            viewModel.finish(
+                preference.copy(
+                    flags = it.value
+                        .properties
+                        .configuration
+                        .onboarding
+                        .availableOnboardings
+                )
+            )
+        }
+    }
+
     LaunchedEffect(isFinished.value) {
         if (isFinished.value) {
-            (status as? OnboardingViewModel.Status.Success?)?.preference?.let {
-                handleOnFinished(it)
+            (status as? OnboardingViewModel.Status.Success?)?.preference?.let { pref ->
+                handleOnFinished(pref)
                 viewModel.reset()
             }
         }
@@ -93,14 +107,15 @@ fun OnboardingScreen(
     onFinished: () -> Unit
 ) {
     val scope = rememberCoroutineScope()
+
     fun goNext() = scope.launch {
-        state.animateScrollToPage((state.currentPage + 1)
-            .coerceAtMost(state.pageCount - 1))
+        state.animateScrollToPage((state.currentPage + 1).coerceAtMost(state.pageCount - 1))
     }
+
     fun goBack() = scope.launch {
-        state.animateScrollToPage((state.currentPage - 1)
-            .coerceAtLeast(0))
+        state.animateScrollToPage((state.currentPage - 1).coerceAtLeast(0))
     }
+
     HorizontalPager(
         state = state,
         userScrollEnabled = true
@@ -110,21 +125,37 @@ fun OnboardingScreen(
                 onSkip = onFinished,
                 onNext = { goNext() }
             )
+
             1 -> OnboardingPageTwo(
                 onSkip = onFinished,
                 onBack = { goBack() },
-                onNext = { goNext() }
+                onNext = { goNext() },
+
+                extraPost = properties.configuration.tokenomics.actionTokenPrices["post"] ?: 0,
+                extraLike = properties.configuration.tokenomics.actionTokenPrices["like"] ?: 0,
+                extraComment = properties.configuration.tokenomics.actionTokenPrices["comment"] ?: 0,
+                dislike = properties.configuration.tokenomics.actionTokenPrices["dislike"] ?: 0
             )
+
             2 -> OnboardingPageThree(
                 onSkip = onFinished,
                 onBack = { goBack() },
-                onNext = { goNext() }
+                onNext = { goNext() },
+
+                likeReward = properties.configuration.tokenomics.actionGemsReturns["like"] ?: 0.0,
+                dislikeReward = properties.configuration.tokenomics.actionGemsReturns["dislike"] ?: 0.0,
+                commentReward = properties.configuration.tokenomics.actionGemsReturns["comment"] ?: 0.0,
+                viewReward = properties.configuration.tokenomics.actionGemsReturns["view"] ?: 0.0
             )
+
             3 -> OnboardingPageFour(
                 onSkip = onFinished,
                 onBack = { goBack() },
-                onNext = { goNext() }
+                onNext = { goNext() },
+
+                dailyNumberToken = properties.configuration.minting.dailyNumberToken
             )
+
             4 -> OnboardingPageFive(onSkip = onFinished)
         }
     }

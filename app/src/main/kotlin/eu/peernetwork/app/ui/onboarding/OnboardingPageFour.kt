@@ -38,12 +38,16 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import eu.peernetwork.core.ui.R
+import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
+import java.util.Locale
 
 @Composable
 fun OnboardingPageFour(
     onSkip: () -> Unit,
     onBack: () -> Unit,
     onNext: () -> Unit,
+    dailyNumberToken: Int,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -112,7 +116,7 @@ fun OnboardingPageFour(
                     ) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Text(
-                                text = "5 000",
+                                text = formatWithSpaces(dailyNumberToken),
                                 style = MaterialTheme.typography.headlineSmall.copy(
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 21.sp
@@ -275,7 +279,7 @@ fun OnboardingPageFour(
                         Spacer(modifier = Modifier.height(2.dp))
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Text(
-                                text =stringResource(R.string.onboarding_has_5),
+                                text = stringResource(R.string.onboarding_has_5),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = Color.White
                             )
@@ -451,3 +455,7 @@ private fun VerticalLine(modifier: Modifier = Modifier) {
     )
 }
 
+private fun formatWithSpaces(value: Int): String {
+    val symbols = DecimalFormatSymbols(Locale.US).apply { groupingSeparator = ' ' }
+    return DecimalFormat("#,###", symbols).format(value)
+}
