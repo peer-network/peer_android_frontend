@@ -42,6 +42,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import eu.peernetwork.core.ui.R
+import eu.peernetwork.app.R as AppR
 import androidx.compose.foundation.background as fbBackground
 
 @Composable
@@ -49,6 +50,10 @@ fun OnboardingPageTwo(
     onSkip: () -> Unit,
     onBack: () -> Unit,
     onNext: () -> Unit,
+    extraPost: Int,
+    extraLike: Int,
+    extraComment: Int,
+    dislike: Int,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -200,8 +205,8 @@ fun OnboardingPageTwo(
                 OptionRow(
                     leadingIconRes = R.drawable.ic_camera_outline,
                     label = stringResource(R.string.onboarding_option_extra_post),
-                    amount = "20",
-                    amountIconRes = R.drawable.ic_icon,
+                    amount = extraPost.toString(),
+                    amountIconRes = AppR.drawable.ic_icon,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 8.dp)
@@ -211,8 +216,8 @@ fun OnboardingPageTwo(
                 OptionRow(
                     leadingIconRes = R.drawable.ic_like_outline,
                     label = stringResource(R.string.onboarding_option_extra_like),
-                    amount = "3",
-                    amountIconRes = R.drawable.ic_icon,
+                    amount = extraLike.toString(),
+                    amountIconRes = AppR.drawable.ic_icon,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 8.dp)
@@ -222,8 +227,8 @@ fun OnboardingPageTwo(
                 OptionRow(
                     leadingIconRes = R.drawable.ic_chat_out,
                     label = stringResource(R.string.onboarding_option_extra_comments),
-                    amount = "1",
-                    amountIconRes = R.drawable.ic_icon,
+                    amount = extraComment.toString(),
+                    amountIconRes = AppR.drawable.ic_icon,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 8.dp)
@@ -233,8 +238,8 @@ fun OnboardingPageTwo(
                 OptionRow(
                     leadingIconRes = R.drawable.ic_dislike_outline,
                     label = stringResource(R.string.onboarding_option_dislike),
-                    amount = "3",
-                    amountIconRes = R.drawable.ic_icon,
+                    amount = dislike.toString(),
+                    amountIconRes = AppR.drawable.ic_icon,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 8.dp)
