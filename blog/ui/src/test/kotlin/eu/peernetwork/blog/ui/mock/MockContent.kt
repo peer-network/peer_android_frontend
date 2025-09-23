@@ -31,7 +31,8 @@ object MockContent {
             comment = 0,
             views = 0,
             isViewed = false,
-            aspectRatio = 0.1f
+            aspectRatio = 0.1f,
+            url = "http://localhost",
         )
     }
 
@@ -59,7 +60,8 @@ object MockContent {
             views = 0,
             isViewed = false,
             aspectRatio = 0.1f,
-            resolution = null
+            resolution = null,
+            url = "http://localhost",
         )
     }
 }

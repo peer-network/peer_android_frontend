@@ -11,4 +11,8 @@ class PreferenceRepositoryDelegate @Inject constructor(
     override suspend fun get(): Preference {
         return api.get()
     }
+
+    override suspend fun set(preference: Preference) {
+        return api.set(preference)
+    }
 }

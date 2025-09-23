@@ -67,8 +67,6 @@ fun<T> DesignScene(
     val updatedLoading by rememberUpdatedState(loading)
     val updatedError by rememberUpdatedState(error)
     val updatedContent by rememberUpdatedState(content)
-    val data = remember { derivedStateOf { (state.value as DesignSceneState.Success).data } }
-    val exception = remember { derivedStateOf { (state.value as DesignSceneState.Error).error } }
     Crossfade(
         targetState = state.value,
         modifier = modifier,
@@ -80,8 +78,14 @@ fun<T> DesignScene(
             is DesignSceneState.Loading -> Box(modifier = Modifier.graphicsLayer {
                 this.alpha = alpha
             }) { updatedLoading() }
-            is DesignSceneState.Success<*> -> updatedContent(data)
-            is DesignSceneState.Error -> updatedError(exception)
+            is DesignSceneState.Success<*> -> {
+                val data = remember { derivedStateOf { (target as DesignSceneState.Success).data } }
+                updatedContent(data)
+            }
+            is DesignSceneState.Error -> {
+                val exception = remember { derivedStateOf { target.error } }
+                updatedError(exception)
+            }
         }
     }
 }

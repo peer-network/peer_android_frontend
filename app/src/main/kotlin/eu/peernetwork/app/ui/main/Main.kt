@@ -6,7 +6,6 @@ import dagger.android.AndroidInjector
 import eu.peernetwork.app.provider.ApplicationProvider
 import eu.peernetwork.app.ui.launcher.Launcher
 import eu.peernetwork.app.ui.splash.Splash
-import eu.peernetwork.app.ui.onboarding.Onboarding
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.media.ui.selector.explorer.Explorer
@@ -25,7 +24,6 @@ interface Main : ApplicationProvider, Explorer {
         AndroidInjector<MainActivity>,
         Splash,
         Launcher,
-        Onboarding,
         UiComponentProvider {
         fun viewModelFactory(): ViewModelProvider.Factory
     }

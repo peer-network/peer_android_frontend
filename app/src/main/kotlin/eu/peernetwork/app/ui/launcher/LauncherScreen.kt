@@ -30,7 +30,10 @@ fun LauncherScreen(
         provider.builder(Launcher.Builder::class.java).build(context)
     }
     val controller = rememberNavController()
-    DesignNavigation(navController = controller, startDestination = "launcher") {
+    DesignNavigation(
+        navController = controller,
+        startDestination = "launcher"
+    ) {
         composable("launcher") {  }
         composable("setup") {
             val code = try {
@@ -46,7 +49,7 @@ fun LauncherScreen(
         }
         composable("home") { HomeScreen(component) }
     }
-    LaunchedEffect(token) {
+    LaunchedEffect(token.value) {
         if (token.value != null) {
             controller.route("home")
         } else {

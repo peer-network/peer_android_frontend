@@ -41,13 +41,13 @@ fun AudioPlayerThumbnail(
 ) {
     val scope = rememberCoroutineScope()
     val progress = remember { mutableFloatStateOf(0f) }
-    val play = remember { mutableStateOf(false) }
+    val hasFocus = remember { mutableStateOf(false) }
     val isPlaying = remember { mutableStateOf(false) }
     val volume = session.volume().collectAsStateWithLifecycle(enabled.value)
     val status = remember(isPlaying.value) { mutableStateOf(isPlaying.value) }
     val isSuspended = remember { mutableStateOf(false) }
     val isEnabled = remember { derivedStateOf {
-        (enabled.value || play.value) && current.value == position && volume.value
+        (enabled.value || hasFocus.value) && current.value == position && volume.value
     } }
     AudioHost(
         enabled = isEnabled,
@@ -68,18 +68,18 @@ fun AudioPlayerThumbnail(
                 onPlayPauseClick = {
                     if (current.value != position) {
                         player.reset()
-                        play.value = true
+                        hasFocus.value = true
                         status.value = true
                         current.value = position
                         scope.launch { session.unmute(true) }
-                    } else if (play.value) {
+                    } else if (hasFocus.value) {
                         player.pause()
-                        play.value = false
+                        hasFocus.value = false
                         status.value = false
                         isSuspended.value = true
                         scope.launch { session.unmute(false) }
                     } else {
-                        play.value = true
+                        hasFocus.value = true
                         status.value = true
                         player.start()
                         scope.launch { session.unmute(true) }
@@ -102,7 +102,7 @@ fun AudioPlayerThumbnail(
                 LaunchedEffect(enabled.value) {
                     if (!enabled.value) {
                         player.pause()
-                        play.value = false
+                        hasFocus.value = false
                     }
                 }
             }
@@ -110,10 +110,10 @@ fun AudioPlayerThumbnail(
             VolumeControl(volume) {
                 scope.launch { session.unmute(it) }
                 if (it) {
-                    play.value = true
+                    hasFocus.value = true
                     player.start()
                 } else {
-                    play.value = false
+                    hasFocus.value = false
                     player.pause()
                 }
             }
@@ -125,26 +125,31 @@ fun AudioPlayerThumbnail(
                 .collectLatest { result ->
                     if (result && !isSuspended.value) {
                         player.reset()
-                        play.value = true
+                        hasFocus.value = true
                         status.value = true
                         isLoading.value = true
                         isSuspended.value = false
                         player.setDataSource(path)
                         player.prepareAsync()
+                    } else if (isActive.value) {
+                        player.reset()
+                        hasFocus.value = false
                     }
                 }
         }
         LaunchedEffect(isActive.value) {
             if (!isActive.value && current.value == position) {
+                hasFocus.value = false
                 player.pause()
             } else if (current.value == position) {
+                hasFocus.value = true
                 player.start()
             }
         }
         DisposableEffect(Unit) {
             onDispose {
                 if (current.value == position || isEnabled.value) {
-                    play.value = false
+                    hasFocus.value = false
                     player.pause()
                 }
             }

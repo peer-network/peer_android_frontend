@@ -32,12 +32,15 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import eu.peernetwork.core.ui.R
+import java.util.Locale
+import kotlin.math.abs
 import androidx.compose.foundation.background as fbBackground
 
 @Composable
@@ -45,6 +48,10 @@ fun OnboardingPageThree(
     onSkip: () -> Unit,
     onBack: () -> Unit,
     onNext: () -> Unit,
+    likeReward: Double,
+    dislikeReward: Double,
+    commentReward: Double,
+    viewReward: Double,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -75,7 +82,7 @@ fun OnboardingPageThree(
                 )
                 Column(modifier = Modifier.offset(y = (-19).dp)) {
                     Text(
-                        text = "Engage & Earn",
+                        text = stringResource(R.string.onboarding_engage_earn),
                         style = MaterialTheme.typography.labelLarge.copy(fontSize = 20.sp),
                         color = MaterialTheme.colorScheme.onBackground
                     )
@@ -114,7 +121,7 @@ fun OnboardingPageThree(
                         }
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "peernetwork",
+                            text = stringResource(R.string.peernetwork_label),
                             style = MaterialTheme.typography.bodyMedium.copy(
                                 fontWeight = FontWeight.Bold,
                                 fontStyle = FontStyle.Italic
@@ -129,7 +136,7 @@ fun OnboardingPageThree(
                                 .offset(78.dp)
                         ) {
                             Text(
-                                text = "peer",
+                                text = stringResource(R.string.peertext_label),
                                 style = MaterialTheme.typography.labelSmall.copy(
                                     color = Color.White,
                                     fontSize = 11.sp,
@@ -151,7 +158,7 @@ fun OnboardingPageThree(
                     Spacer(modifier = Modifier.height(10.dp))
 
                     Text(
-                        text = "Created something people love?",
+                        text = stringResource(R.string.onboarding_created_something_love),
                         style = MaterialTheme.typography.bodyMedium.copy(
                             fontWeight = FontWeight.Bold,
                             fontSize = 16.sp
@@ -160,7 +167,7 @@ fun OnboardingPageThree(
                     )
                     Spacer(modifier = Modifier.height(2.dp))
                     Text(
-                        text = "\nGet rewarded!\n",
+                        text = stringResource(R.string.onboarding_get_rewarded),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.85f)
                     )
@@ -227,7 +234,7 @@ fun OnboardingPageThree(
 
             Column(modifier = Modifier.fillMaxWidth()) {
                 Text(
-                    text = "Here's how it works:",
+                    text = stringResource(R.string.onboarding_how_it_works),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
                     modifier = Modifier
@@ -237,8 +244,8 @@ fun OnboardingPageThree(
 
                 OptionRow(
                     leadingIconRes = R.drawable.ic_redheart,
-                    label = "Got a like",
-                    amount = "+ 5",
+                    label = stringResource(R.string.onboarding_got_like),
+                    amount = formatReward(likeReward),
                     amountIconRes = R.drawable.ic_gem,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -248,8 +255,8 @@ fun OnboardingPageThree(
 
                 OptionRow(
                     leadingIconRes = R.drawable.ic_redislike,
-                    label = "Got a dislike",
-                    amount = "- 3",
+                    label = stringResource(R.string.onboarding_got_dislike),
+                    amount = formatReward(dislikeReward),
                     amountIconRes = R.drawable.ic_gem,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -259,8 +266,8 @@ fun OnboardingPageThree(
 
                 OptionRow(
                     leadingIconRes = R.drawable.ic_comment,
-                    label = "Got a comment",
-                    amount = "+ 2",
+                    label = stringResource(R.string.onboarding_got_comment),
+                    amount = formatReward(commentReward),
                     amountIconRes = R.drawable.ic_gem,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -270,8 +277,8 @@ fun OnboardingPageThree(
 
                 OptionRow(
                     leadingIconRes = R.drawable.ic_view_whited,
-                    label = "Got a view",
-                    amount = "+ 0.25",
+                    label = stringResource(R.string.onboarding_got_view),
+                    amount = formatReward(viewReward),
                     amountIconRes = R.drawable.ic_gem,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -285,7 +292,7 @@ fun OnboardingPageThree(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "The more Gems you collect, the bigger your share of the 5,000 daily minted Peer Tokens. Simple.",
+                    text = stringResource(R.string.onboarding_gems_collect_explanation),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.65f),
                     textAlign = TextAlign.Center,
@@ -327,7 +334,7 @@ fun OnboardingPageThree(
                         ),
                         contentPadding = PaddingValues(horizontal = 36.dp, vertical = 8.dp)
                     ) {
-                        Text(text = "Skip", color = MaterialTheme.colorScheme.onBackground)
+                        Text(text = stringResource(R.string.onboarding_back), color = MaterialTheme.colorScheme.onBackground)
                     }
 
                     Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -341,7 +348,7 @@ fun OnboardingPageThree(
                         ) {
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_back_arrow),
-                                contentDescription = "Back",
+                                contentDescription = stringResource(R.string.onboarding_back),
                                 modifier = Modifier.size(28.dp),
                                 tint = Color.Unspecified
                             )
@@ -359,7 +366,7 @@ fun OnboardingPageThree(
                     ) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_proceed_arrow),
-                            contentDescription = "Next",
+                            contentDescription = stringResource(R.string.onboarding_next),
                             modifier = Modifier.size(28.dp),
                             tint = Color.Unspecified
                         )
@@ -368,6 +375,17 @@ fun OnboardingPageThree(
             }
         }
     }
+}
+
+private fun formatReward(value: Double): String {
+    val sign = if (value >= 0.0) "+" else "-"
+    val absVal = abs(value)
+    val text = if (absVal % 1.0 == 0.0) {
+        absVal.toInt().toString()
+    } else {
+        String.format(Locale.US, "%.2f", absVal).trimEnd('0').trimEnd('.')
+    }
+    return "$sign $text"
 }
 
 @Composable

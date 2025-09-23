@@ -41,7 +41,7 @@ class TokenRepositoryDelegate @Inject constructor(
     }
 
     override suspend fun clear() {
-        publisher(TAG, null)
+        onAuthenticationChanged(null)
     }
 
     internal companion object {

@@ -17,5 +17,3 @@ class LogDeviceModelUsecase @Inject constructor() : SuspendableUseCase<Unit> {
         })
     }
 }
-
-

@@ -14,6 +14,7 @@ import eu.peernetwork.core.ui.factory.UiBuilderFactory
 import eu.peernetwork.core.ui.factory.UiViewModelFactory
 import eu.peernetwork.app.ui.feed.Feed
 import eu.peernetwork.app.ui.messaging.Messaging
+import eu.peernetwork.app.ui.onboarding.Onboarding
 import eu.peernetwork.app.ui.profile.Profile
 import eu.peernetwork.app.ui.search.Search
 import eu.peernetwork.app.ui.wallet.Wallet
@@ -42,6 +43,14 @@ object HomeModule {
     @Home.Scope
     @UiViewModel(HomeViewModel::class)
     fun viewModel(viewModel: HomeViewModel): ViewModel = viewModel
+
+    @Home.Scope
+    @Provides
+    @IntoMap
+    @UiBuilder(Onboarding.Builder::class)
+    fun provideOnboardingBuilder(component: Home.Component): UiComponent.Builder {
+        return Onboarding.Builder(component)
+    }
 
     @Home.Scope
     @Provides

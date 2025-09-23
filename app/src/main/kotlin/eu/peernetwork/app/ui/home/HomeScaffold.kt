@@ -1,0 +1,39 @@
+package eu.peernetwork.app.ui.home
+
+import androidx.compose.animation.Crossfade
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.ui.Modifier
+import eu.peernetwork.core.common.interactor.ResourceInteractor
+import eu.peernetwork.core.ui.design.component.DesignError
+import eu.peernetwork.core.ui.design.compose.DesignScene
+import eu.peernetwork.core.ui.design.compose.DesignSceneState
+
+@Composable
+fun HomeScaffold(
+    state: State<DesignSceneState<HomeViewModel.State.Success>>,
+    onRefresh: () -> Unit = {},
+    resource: ResourceInteractor,
+    error: @Composable (error: State<Throwable>) -> Unit = { DesignError(onRefresh, it.value, resource) },
+    onboarding: @Composable (HomeViewModel.State.Success) -> Unit,
+    content: @Composable (HomeViewModel.State.Success) -> Unit
+) {
+    val updatedOnBoarding by rememberUpdatedState(onboarding)
+    val updatedContent by rememberUpdatedState(content)
+    DesignScene(
+        state = state,
+        modifier = Modifier.fillMaxSize(),
+        error = error
+    ) {
+        Crossfade(it.value) { target ->
+            if (target.preference.flags.isEmpty()) {
+                updatedOnBoarding(target)
+            } else {
+                updatedContent(target)
+            }
+        }
+    }
+}

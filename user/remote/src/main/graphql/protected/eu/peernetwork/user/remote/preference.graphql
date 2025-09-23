@@ -5,7 +5,17 @@ query Preference {
         affectedRows {
             userPreferences {
                 contentFilteringSeverityLevel
+                onboardingsWereShown
             }
         }
+    }
+}
+
+mutation UpdateUserPreferences($mode: ContentFilterType, $flag: [OnboardingType!]) {
+    updateUserPreferences(
+        userPreferences: { contentFilteringSeverityLevel: $mode, shownOnboardings: $flag }
+    ) {
+        status
+        ResponseCode
     }
 }

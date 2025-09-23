@@ -2,32 +2,73 @@ package eu.peernetwork.app.ui.onboarding
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import eu.peernetwork.persistence.domain.repository.PreferenceRepository
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.SharingStarted
+import eu.peernetwork.app.model.Properties
+import eu.peernetwork.app.usecase.OnboardingUpdateUsecase
+import eu.peernetwork.app.usecase.OnboardingUsecase
+import eu.peernetwork.user.domain.model.Preference
+import eu.peernetwork.user.domain.usecase.PreferenceUpdateUsecase
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class OnboardingViewModel @Inject constructor(
-    private val preferences: PreferenceRepository
+    private val preferenceUsecase: PreferenceUpdateUsecase,
+    private val onboardingUsecase: OnboardingUsecase,
+    private val onboardingUpdateUsecase: OnboardingUpdateUsecase
 ) : ViewModel() {
+    private val _status = MutableStateFlow<Status>(Status.Default)
 
-    companion object {
-        const val KEY = "onboarding_completed"
+    private val _state = MutableStateFlow<State>(State.Default)
+
+    val status: StateFlow<Status> = _status.asStateFlow()
+
+    val state: StateFlow<State> = _state.asStateFlow()
+
+    fun initialize() {
+        viewModelScope.launch {
+            try {
+                _state.tryEmit(State.Loading)
+                val properties = onboardingUsecase()
+                _state.tryEmit(State.Success(properties))
+            } catch (error: Throwable) {
+                _state.tryEmit(State.Error(error))
+            }
+        }
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
-    val completed: StateFlow<Boolean> = preferences
-        .observe(KEY, Boolean::class.java)
-        .map { it ?: false }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), preferences.get(KEY, Boolean::class.java) ?: false)
-
-    fun complete() {
+    fun reset() {
         viewModelScope.launch {
-            preferences.set(KEY, true)
+            _status.tryEmit(Status.Default)
         }
+    }
+
+    fun finish(status: Boolean, preference: Preference) {
+        viewModelScope.launch {
+            try {
+                _status.tryEmit(Status.Loading)
+                preferenceUsecase(preference)
+                onboardingUpdateUsecase(status)
+                _status.tryEmit(Status.Success(preference))
+            } catch (error: Throwable) {
+                _status.tryEmit(Status.Error(error))
+            }
+        }
+    }
+
+    sealed interface Status {
+        data object Default : Status
+        data object Loading : Status
+        data class Success(val preference: Preference) : Status
+        data class Error(val error: Throwable) : Status
+    }
+
+    sealed interface State {
+        data object Default : State
+        data object Loading : State
+
+        data class Success(val properties: Properties): State
+        data class Error(val error: Throwable) : State
     }
 }

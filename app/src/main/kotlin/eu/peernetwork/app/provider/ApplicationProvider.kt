@@ -3,6 +3,7 @@ package eu.peernetwork.app.provider
 import android.content.Context
 import eu.peernetwork.core.common.provider.CoreProvider
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import com.google.gson.Gson
 import eu.peernetwork.app.interactor.RemoteInteractor
 import eu.peernetwork.app.interactor.SettingsInteractor
 import eu.peernetwork.app.interceptor.SubscriptionInteractor
@@ -15,6 +16,8 @@ import eu.peernetwork.wallet.ui.provider.WalletProvider
 
 interface ApplicationProvider : UserProvider, PreferenceProvider, ContentProvider, WalletProvider, CoreProvider {
     fun context(): Context
+
+    fun gson(): Gson
 
     fun firebaseRemoteConfig(): FirebaseRemoteConfig
 

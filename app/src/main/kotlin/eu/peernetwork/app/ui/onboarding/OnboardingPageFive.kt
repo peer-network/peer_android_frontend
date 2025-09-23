@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -54,7 +55,7 @@ fun OnboardingPageFive(
                         .offset(x = (-6).dp, y = 12.dp)
                 )
                 Text(
-                    text = "How to use tokens?",
+                    text = stringResource(R.string.onboarding_how_to_use_tokens),
                     style = MaterialTheme.typography.labelLarge.copy(fontSize = 20.sp),
                     color = MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier
@@ -82,12 +83,12 @@ fun OnboardingPageFive(
                     ) {
                         FeatureCard(
                             iconRes = R.drawable.ic_unlock_blue,
-                            label = "Post and\nengage more"
+                            label = stringResource(R.string.onboarding_post_and)+"\n"+ stringResource(R.string.onboarding__engage_more),
                         )
                         FeatureCard(
                             iconRes = R.drawable.ic_ad,
-                            label = "Boost your\ncontent",
-                            info = "Coming soon..."
+                            label = stringResource(R.string.onboarding_boost_your)+"\n"+ stringResource(R.string.onboarding_content_label),
+                            info = stringResource(R.string.onboarding_coming_soon),
                         )
                     }
                     Spacer(modifier = Modifier.height(22.dp))
@@ -98,13 +99,13 @@ fun OnboardingPageFive(
                     ) {
                         FeatureCard(
                             iconRes = R.drawable.ic_shop,
-                            label = "Shop in-app",
-                            info = "Coming soon..."
+                            label =stringResource(R.string.onboarding_shop_in_app),
+                            info = stringResource(R.string.onboarding_coming_soon),
                         )
                         FeatureCard(
                             iconRes = R.drawable.ic_btctransfer,
-                            label = "Cash-out",
-                            info = "We're working on the license - stay tuned!"
+                            label = stringResource(R.string.onboarding_cash_out),
+                            info = stringResource(R.string.onboarding_cash_out_working_on_license),
                         )
                     }
                 }
@@ -142,7 +143,7 @@ fun OnboardingPageFive(
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
                 ) {
                     Text(
-                        text = "Lets go!",
+                        text = stringResource(R.string.onboarding_lets_go),
                         color = Color.White,
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 14.sp

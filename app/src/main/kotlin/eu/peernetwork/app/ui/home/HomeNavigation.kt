@@ -119,7 +119,7 @@ sealed class HomeRoute(
         R.string.profile_label
     )
     data object Explore: HomeRoute(
-        R.drawable.ic_trend,
+        R.drawable.ic_trend_outline,
         R.drawable.ic_trend,
         R.string.trend_label
     )

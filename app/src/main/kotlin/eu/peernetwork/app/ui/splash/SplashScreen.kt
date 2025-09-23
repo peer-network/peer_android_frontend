@@ -32,7 +32,6 @@ import eu.peernetwork.core.ui.design.component.DesignError
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffold
 import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
 import eu.peernetwork.core.ui.extension.builder
-import androidx.core.net.toUri
 
 @Composable
 fun SplashScreen(
@@ -51,16 +50,18 @@ fun SplashScreen(
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
     val showDialog = remember { mutableStateOf(false) }
-    val updateUrl = remember { mutableStateOf("") }
     val derivedState = remember {
         mutableStateOf<DesignStatefulScaffoldState>(DesignStatefulScaffoldState.Empty)
     }
     var play = remember { mutableStateOf(true) }
     val isLoading = remember(state) { derivedStateOf { state is SplashViewModel.State.Loading } }
     val isReady = remember(state) { derivedStateOf {
-        (state as? SplashViewModel.State.Success?)?.let {
-            it.update == null
-        } == true
+        state is SplashViewModel.State.Success
+    } }
+    val isOutdated = remember { derivedStateOf {
+        state is SplashViewModel.State.Error &&
+                (state as SplashViewModel.State.Error)
+                    .error is eu.peernetwork.app.exception.VersionException
     } }
     val onFinish by rememberUpdatedState(onAnimationFinished)
     DesignStatefulScaffold<Unit>(
@@ -92,10 +93,9 @@ fun SplashScreen(
             play.value = false
         }
     } }
-    SplashConfirmation(showDialog, updateUrl.value.toUri())
-    LaunchedEffect(state) {
-        (state as? SplashViewModel.State.Success?)?.update?.let {
-            updateUrl.value = it
+    SplashConfirmation(showDialog)
+    LaunchedEffect(isOutdated.value) {
+        if (isOutdated.value) {
             showDialog.value = true
         }
     }

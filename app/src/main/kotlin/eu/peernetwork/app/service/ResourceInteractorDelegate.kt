@@ -2,7 +2,7 @@ package eu.peernetwork.app.service
 
 import com.google.gson.Gson
 import eu.peernetwork.app.interactor.RemoteInteractor
-import eu.peernetwork.app.model.ResponseCode
+import eu.peernetwork.app.model.Response
 import eu.peernetwork.core.common.provider.Dispatcher
 import eu.peernetwork.core.common.interactor.ResourceInteractor
 import eu.peernetwork.user.domain.repository.ResourceRepository
@@ -20,7 +20,7 @@ class ResourceInteractorDelegate @Inject constructor(
 ) : ResourceInteractor, BootstrapService, RemoteInteractor {
     private var _baseUrl: String = baseUrl
 
-    private var mapper: Map<String, ResponseCode.Message> = mapOf<String, ResponseCode.Message>()
+    private var mapper: Map<String, Response.Message> = mapOf()
 
     override fun isReady(): Boolean {
         return mapper.isNotEmpty()
@@ -28,7 +28,7 @@ class ResourceInteractorDelegate @Inject constructor(
 
     override suspend fun initialize() = withContext(dispatcher.io) {
         val response = resourceRepository.string("/assets/response-codes.json")
-        val model = gson.fromJson(response, ResponseCode::class.java)
+        val model = gson.fromJson(response, Response::class.java)
         mapper = model.data
     }
 

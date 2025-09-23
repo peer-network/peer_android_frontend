@@ -28,16 +28,12 @@ class SplashViewModel @Inject constructor(
                 mutableState.tryEmit(State.Error(it))
                 return@launch
             }
-            when (val result = versionUseCase()) {
-                is VersionUseCase.Result.UpToDate -> {
-                    mutableState.tryEmit(State.Success())
-                }
-                is VersionUseCase.Result.Outdated -> {
-                    mutableState.tryEmit(State.Success(result.url))
-                }
-                is VersionUseCase.Result.Error -> {
-                    mutableState.tryEmit(State.Error(result.throwable))
-                }
+            runCatching {
+                versionUseCase()
+                mutableState.tryEmit(State.Success)
+            }.onFailure {
+                mutableState.tryEmit(State.Error(it))
+                return@launch
             }
         }
     }
@@ -45,7 +41,7 @@ class SplashViewModel @Inject constructor(
     sealed interface State {
         data object Empty : State
         data object Loading : State
-        data class Success(val update: String? = null) : State
+        data object Success : State
         data class Error(val error: Throwable) : State
     }
 }

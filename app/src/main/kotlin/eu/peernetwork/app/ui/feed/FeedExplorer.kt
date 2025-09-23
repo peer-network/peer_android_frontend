@@ -148,11 +148,10 @@ private fun FeedExplorerTabs(
             modifier = Modifier.fillMaxSize(),
             verticalAlignment = androidx.compose.ui.Alignment.Top,
         ) { page ->
-            val sort = sortTypes[page]
-            val derivedCriteria = remember(sort) { derivedStateOf {
+            val derivedCriteria = remember { derivedStateOf {
                 (criteria as? Criteria.Content?)?.copy(
-                    sort = sort,
-                )
+                    sort = sortTypes[page],
+                ) ?: Criteria.Content(sort = sortTypes[page])
             } }
             val enable = remember { derivedStateOf { selected.value == FeedOverlayState.Empty } }
             val connection by connectionController.value.observe().collectAsStateWithLifecycle()
@@ -166,13 +165,14 @@ private fun FeedExplorerTabs(
                             is UiPostListener.Event.Post -> selected.value = FeedOverlayState.Post(
                                 id = event.id,
                                 position = event.position,
-                                category = Category.NONE
+                                category = Category.NONE,
+                                criteria = derivedCriteria.value
                             )
                         }
                     }
                 }
             }
-            val storeKey = "explore;${id};${sort.name}"
+            val storeKey = "${Category.NONE};${derivedCriteria.value?.toString() ?: id}"
             PostScreen(
                 id = id,
                 status = enable,
