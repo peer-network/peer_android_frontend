@@ -20,6 +20,7 @@ import eu.peernetwork.media.core.model.UiFile
 import eu.peernetwork.media.core.model.UiMimeType
 import eu.peernetwork.media.core.model.UiOffset
 import eu.peernetwork.media.ui.editor.video.VideoScreen
+import eu.peernetwork.media.ui.editor.audio.AudioPreviewScreen
 import eu.peernetwork.media.ui.selector.explorer.ExplorerScreen
 import eu.peernetwork.media.ui.selector.photo.PhotoPage
 import kotlinx.collections.immutable.persistentListOf
@@ -44,13 +45,20 @@ fun ComposerNavigation(
             ExplorerScreen(
                 attachment = attachment,
                 provider = provider,
-            ) {
-                if (it.media is UiMimeType.Video) {
-                    val path = it.files.first().path
-                    controller.navigateIfNecessary("video?path=$path")
-                } else {
-                    attachment.value = it
-                    controller.route("editor")
+            ) { picked ->
+                when (picked.media) {
+                    is UiMimeType.Video -> {
+                        val file = picked.files.first()
+                        controller.navigateIfNecessary("video?path=${file.path}")
+                    }
+                    is UiMimeType.Music -> {
+                        val file = picked.files.first()
+                        val uriString = file.uri.toString()
+                        controller.navigateIfNecessary("music?uri=$uriString")
+                    }
+                    else -> {
+                    attachment.value = picked
+                   controller.route("editor") }
                 }
             }
         }
@@ -97,6 +105,38 @@ fun ComposerNavigation(
                 attachment.value = UiAttachment.File(
                     type = UiMimeType.Video,
                     uris = persistentListOf(UiFile(Uri.fromFile(File(path)), path, props))
+                )
+                controller.route("editor")
+            }
+        }
+        composable(
+            route = "music?uri={uri}",
+            arguments = listOf(
+                navArgument("uri") {
+                    type = NavType.StringType
+                    defaultValue = ""
+                    nullable = true
+                }
+            )
+        ) { backStackEntry ->
+            val uriString = backStackEntry.arguments?.getString("uri") ?: ""
+            AudioPreviewScreen(
+                source = uriString,
+                onDiscard = { controller.popBackStack() }
+            ) { start, stop, duration ->
+                val props = Bundle()
+                if (stop - start != duration) {
+                    props.putParcelable(uriString, UiOffset.Value(start, stop))
+                }
+                attachment.value = UiAttachment.File(
+                    type = UiMimeType.Music,
+                    uris = persistentListOf(
+                        UiFile(
+                            uri = Uri.parse(uriString),
+                            path = "",
+                            props = props
+                        )
+                    )
                 )
                 controller.route("editor")
             }

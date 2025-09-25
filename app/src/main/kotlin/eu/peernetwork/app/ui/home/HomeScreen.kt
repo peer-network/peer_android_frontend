@@ -48,19 +48,22 @@ fun HomeScreen(provider: UiComponentProvider) {
         factory = component.viewModelFactory()
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val derivedState = remember { derivedStateOf {
-        when(state) {
-            HomeViewModel.State.Empty -> DesignSceneState.Default
-            HomeViewModel.State.Loading -> DesignSceneState.Loading
-            is HomeViewModel.State.Success -> {
-                val data = (state as HomeViewModel.State.Success)
-                DesignSceneState.Success(data)
-            }
-            is HomeViewModel.State.Error -> {
-                DesignSceneState.Error((state as HomeViewModel.State.Error).error)
+    val derivedState = remember {
+        derivedStateOf {
+            when (state) {
+                HomeViewModel.State.Empty -> DesignSceneState.Default
+                HomeViewModel.State.Loading -> DesignSceneState.Loading
+                is HomeViewModel.State.Success -> {
+                    val data = (state as HomeViewModel.State.Success)
+                    DesignSceneState.Success(data)
+                }
+                is HomeViewModel.State.Error -> {
+                    DesignSceneState.Error((state as HomeViewModel.State.Error).error)
+                }
             }
         }
-    } }
+    }
+
     HomeScaffold(
         state = derivedState,
         resource = component.resource(),
@@ -78,44 +81,73 @@ fun HomeScreen(provider: UiComponentProvider) {
         val startDestination = remember { HomeRoute.get(navigationState.intValue).path }
         val navBackStackEntry by controller.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry?.destination?.route
+        val isExploreActive = currentRoute == HomeRoute.Explore.path
+
+        // Toggle logic for Explore icon
+        val toggleExplore: () -> Unit = {
+            if (isExploreActive) {
+                // ALWAYS go back to Home when Explore is active and icon is clicked again
+                viewModel.lastVisited(0)
+                navigationState.intValue = 0
+
+                // Try to pop Explore off the stack. We force Home afterwards anyway.
+                // If user came from Search/Profile/etc. we still want Home.
+                // popBackStack(route, inclusive=false) keeps Home if present.
+                val popped = controller.popBackStack(HomeRoute.Home.path, false)
+                if (!popped || controller.currentDestination?.route != HomeRoute.Home.path) {
+                    controller.attachIfNecessary(HomeRoute.Home.path)
+                }
+            } else {
+                controller.navigateIfNecessary(HomeRoute.Explore.path)
+            }
+        }
+
         HomeScreen(
             start = navigationState,
-            options = { RewardScreen(
-                provider = component,
-                viewModelStoreOwner = viewModelStore.get(data.userId)
-            ) },
+            options = {
+                RewardScreen(
+                    provider = component,
+                    viewModelStoreOwner = viewModelStore.get(data.userId)
+                )
+            },
             onClick = {
                 viewModel.lastVisited(it)
                 navigationState.intValue = it
                 controller.attachIfNecessary(HomeRoute.get(it).path)
             },
-            onExplore = { controller.navigateIfNecessary(HomeRoute.Explore.path) },
-            isExploreActive = currentRoute == HomeRoute.Explore.path
-        ) { state ->
+            onExplore = toggleExplore,
+            isExploreActive = isExploreActive
+        ) { stateProgress ->
             HomeNavigation(
                 id = data.userId,
                 startDestination = startDestination,
                 navController = controller,
                 component = component,
                 viewModelStore = viewModelStore,
-                onExplore = { controller.navigateIfNecessary(HomeRoute.Explore.path) }
+                // This onExplore is used by FeedScreen (if it has a shortcut). We want the same toggle behavior.
+                onExplore = toggleExplore
             ) {
+                // When something triggers returning "home" internally.
                 viewModel.lastVisited(0)
                 navigationState.intValue = 0
                 controller.attach(HomeRoute.Home.path)
             }
         }
+
         BackHandler(enabled = currentRoute != HomeRoute.Home.path) {
+            // Back always returns to Home (not to previous bottom tab) per your original pattern.
             viewModel.lastVisited(0)
             navigationState.intValue = 0
             controller.attachIfNecessary(HomeRoute.Home.path)
         }
     }
+
     FeedbackPopup(
         BuildConfig.APPLICATION_ID,
         component,
         viewModelStore.get("FeedbackPopup")
     )
+
     LaunchedEffect(Unit) { viewModel() }
     DisposableEffect(Unit) { onDispose { viewModelStore.clear() } }
 }
@@ -132,27 +164,29 @@ fun HomeScreen(
     val updatedContent by rememberUpdatedState(content)
     val handleOnClick by rememberUpdatedState(onClick)
     val handleOnExplore by rememberUpdatedState(onExplore)
+
     DesignPage(
         header = {
             DesignPageHeader(
                 options = options,
                 action = {
-                    IconButton(onClick = {
-                        handleOnExplore()
-                    }) {
+                    IconButton(onClick = { handleOnExplore() }) {
                         Icon(
-                            painter = painterResource(id = if (isExploreActive) {
-                                HomeRoute.Explore.activeIcon
-                            } else {
-                                HomeRoute.Explore.icon
-                            }),
+                            painter = painterResource(
+                                id = if (isExploreActive) {
+                                    HomeRoute.Explore.activeIcon
+                                } else {
+                                    HomeRoute.Explore.icon
+                                }
+                            ),
                             contentDescription = stringResource(id = HomeRoute.Explore.icon),
                             modifier = Modifier.size(19.dp)
                         )
                     }
                 },
                 modifier = Modifier.padding(top = 8.dp)
-            ) },
+            )
+        },
         footer = {
             HomeFooter(
                 start,
@@ -163,7 +197,8 @@ fun HomeScreen(
                         handleOnClick(next)
                     }
                 }
-            ) }
+            )
+        }
     ) { state -> updatedContent(state) }
 }
 
@@ -177,7 +212,7 @@ fun PreviewHomeScreen() {
             onClick = {},
             onExplore = {},
             isExploreActive = false
-        ) { state ->
+        ) { _ ->
             Text(
                 text = "",
                 textAlign = TextAlign.Center
