@@ -33,7 +33,6 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
@@ -155,7 +154,7 @@ fun AudioScreen(
                             )
 
                             Text(
-                                text = audioFile.name,
+                                text = audioFile.props?.getString("name") ?: audioFile.name,
                                 style = MaterialTheme.typography.bodySmall,
                                 maxLines = 1,
                                 textAlign = TextAlign.Center,

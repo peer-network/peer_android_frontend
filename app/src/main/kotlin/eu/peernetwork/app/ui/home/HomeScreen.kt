@@ -78,6 +78,20 @@ fun HomeScreen(provider: UiComponentProvider) {
         val startDestination = remember { HomeRoute.get(navigationState.intValue).path }
         val navBackStackEntry by controller.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry?.destination?.route
+        val isExploreActive = currentRoute == HomeRoute.Explore.path
+        val toggleExplore: () -> Unit = {
+            if (isExploreActive) {
+                viewModel.lastVisited(0)
+                navigationState.intValue = 0
+                val popped = controller.popBackStack(HomeRoute.Home.path, false)
+                if (!popped || controller.currentDestination?.route != HomeRoute.Home.path) {
+                    controller.attachIfNecessary(HomeRoute.Home.path)
+                }
+            } else {
+                controller.navigateIfNecessary(HomeRoute.Explore.path)
+            }
+        }
+
         HomeScreen(
             start = navigationState,
             options = { RewardScreen(
@@ -89,16 +103,16 @@ fun HomeScreen(provider: UiComponentProvider) {
                 navigationState.intValue = it
                 controller.attachIfNecessary(HomeRoute.get(it).path)
             },
-            onExplore = { controller.navigateIfNecessary(HomeRoute.Explore.path) },
-            isExploreActive = currentRoute == HomeRoute.Explore.path
-        ) { state ->
+            onExplore = toggleExplore,
+            isExploreActive = isExploreActive
+        ) { stateProgress ->
             HomeNavigation(
                 id = data.userId,
                 startDestination = startDestination,
                 navController = controller,
                 component = component,
                 viewModelStore = viewModelStore,
-                onExplore = { controller.navigateIfNecessary(HomeRoute.Explore.path) }
+                onExplore = toggleExplore
             ) {
                 viewModel.lastVisited(0)
                 navigationState.intValue = 0
