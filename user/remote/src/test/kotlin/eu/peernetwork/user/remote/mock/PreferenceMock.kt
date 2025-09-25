@@ -11,7 +11,8 @@ object PreferenceMock {
             ResponseCode = "1101",
             affectedRows = PreferenceQuery.AffectedRows(
                 userPreferences = PreferenceQuery.UserPreferences(
-                    ContentFilterType.MYGRANDMALIKES
+                    ContentFilterType.MYGRANDMALIKES,
+                    onboardingsWereShown = emptyList()
                 )
             )
         )

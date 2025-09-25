@@ -24,8 +24,6 @@ internal class FeedViewModelTest {
     @get:Rule
     val instantExecutorRule = InstantTaskExecutorRule()
 
-    val filter = 3
-
     private val retrievableInteger = mockk<RetrievableInteger>()
 
     private val publishableInteger = mockk<PublishableInteger>()
@@ -36,26 +34,26 @@ internal class FeedViewModelTest {
 
     private val mutableState = MutableStateFlow<Int?>(null)
 
+    private val mutableFilter = MutableStateFlow<Int?>(null)
+
     private lateinit var viewModel: FeedViewModel
 
     @Before
     fun setup() {
         Dispatchers.setMain(dispatcher)
-        every { observableInteger(any()) } returns mutableState
-        every { retrievableInteger(FeedViewModel.TAG) } answers {
-            mutableState.value
-        }
-        every { retrievableInteger(FeedViewModel.FILTER) } answers { filter }
-        coEvery { publishableInteger(any(), any()) } answers {
-            mutableState.tryEmit(it.invocation.args[1] as Int)
-        }
+        every { observableInteger(FeedViewModel.TAG) } returns mutableState
+        every { observableInteger(FeedViewModel.FILTER) } returns mutableFilter
+        every { retrievableInteger(FeedViewModel.TAG) } answers { mutableState.value }
+        every { retrievableInteger(FeedViewModel.FILTER) } answers { mutableFilter.value }
         viewModel = FeedViewModel(retrievableInteger, observableInteger, publishableInteger)
     }
 
     @Test
     fun `test initialize state`() = runTest {
         val page = 3
+        val filter = 5
         mutableState.tryEmit(page)
+        mutableFilter.tryEmit(filter)
         val viewModel = FeedViewModel(retrievableInteger, observableInteger, publishableInteger)
         viewModel.state.test {
             assertEquals(FeedViewModel.State.Initialize(page, filter), awaitItem())
@@ -65,6 +63,11 @@ internal class FeedViewModelTest {
     @Test
     fun `test update feed`() = runTest {
         val page = 5
+        val filter = 3
+        mutableFilter.tryEmit(filter)
+        coEvery { publishableInteger(any(), any()) } answers {
+            mutableState.tryEmit(it.invocation.args[1] as Int)
+        }
         viewModel.lastVisited(page)
         viewModel.state.test {
             assertEquals(FeedViewModel.State.Initialize(page, filter), awaitItem())

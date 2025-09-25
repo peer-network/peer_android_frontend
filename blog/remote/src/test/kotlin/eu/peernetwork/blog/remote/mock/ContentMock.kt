@@ -24,6 +24,7 @@ object ContentMock {
                 cover = "<test-cover>",
                 contenttype = "<test-contenttype>",
                 createdat = "2025-03-24 00:05:09.334000",
+                url = "<test-url>",
                 user = CreatePostMutation.User(
                     id = "<test-userid>",
                     username = "<test-username>",
@@ -57,6 +58,7 @@ object ContentMock {
                     cover = "<test-cover>",
                     contenttype = "<test-contenttype>",
                     createdat = "2025-03-24 00:05:09.334000",
+                    url = "<test-url>",
                     user = GetallpostsQuery.User(
                         id = "<test-userid>",
                         username = "<test-username>",
