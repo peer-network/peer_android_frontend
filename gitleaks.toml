@@ -1,0 +1,21 @@
+# title = "Peer Android Frontend Gitleaks Config"
+
+[[rules]]
+id = "android-catch-all"
+description = "Catch likely secrets in Android/Kotlin code"
+regex = '''(?i)(secret|key|token|api[_-]?key|password|auth|credential|bearer|jwt|session|client)\w*\s*[:=]\s*"?[A-Za-z0-9/\+=!@#$%^&*._-]{6,}"?|ghp_[0-9A-Za-z]{36}|github_pat_[0-9A-Za-z_]{20,}|glpat-[0-9A-Za-z\-_]{20}|AKIA[0-9A-Z]{16}|ASIA[0-9A-Z]{16}|AIza[0-9A-Za-z\-_]{35}|AAAA[A-Za-z0-9_-]{5,}:[A-Za-z0-9_-]{20,}|sk_live_[0-9a-zA-Z]{24}|pk_live_[0-9a-zA-Z]{24}|-----BEGIN( RSA| DSA| EC| OPENSSH)? PRIVATE KEY-----'''
+tags = ["key", "secret", "generic", "android"]
+
+[[rules]]
+id = "android-entropy-catch-all"
+description = "Catch any high-entropy random string (Android frontend)"
+regex = '''[A-Za-z0-9\+=!@#$%^&*.-]{30,}'''
+entropy = 3.5
+tags = ["key", "secret", "generic", "android"]
+
+[rules.allowlist]
+description = "Ignore safe variable references"
+regexes = [
+  '''(?i)secrets\.[A-Za-z0-9_]+''',
+  '''(?i)vars\.[A-Za-z0-9_]+'''
+]
