@@ -78,15 +78,12 @@ fun FeedPreview(
         object : UiPostListener {
             override fun invoke(event: UiPostListener.Event) {
                 when(event) {
-                    is UiPostListener.Event.Mention -> {
+                    is UiPostListener.Event.Mention ->
                         controller.navigateToUsernameSearch(event.username)
-                    }
-                    is UiPostListener.Event.Hashtag -> {
+                    is UiPostListener.Event.Hashtag ->
                         controller.navigateToTagSearch(event.tag)
-                    }
-                    is UiPostListener.Event.Author -> {
+                    is UiPostListener.Event.Author ->
                         controller.navigateIfNecessary("profile/${event.id}")
-                    }
                     is UiPostListener.Event.Post -> {
                         selected.value = FeedOverlayState.Post(
                             id = event.id,
@@ -109,7 +106,7 @@ fun FeedPreview(
         modifier = Modifier.fillMaxSize(),
         onNavigate = { handleOnNavigate(it) }
     ) {
-        val storeKey = "$it;${criteria?.toString() ?: id}"
+        val storeKey = "$it;${derivedCriteria.value?.toString() ?: id}"
         PostScreen(
             id = id,
             status = enable,
