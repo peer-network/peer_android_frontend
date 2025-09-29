@@ -10,3 +10,4 @@ release/
 local.properties
 google-services.json
 .gitleaks_out/
+.gitleaksignore
