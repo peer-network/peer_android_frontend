@@ -103,7 +103,7 @@ jobs:
       - uses: actions/download-artifact@v5
         with:
           name: gitleaksignore
-          path: .
+          path: .gitleaksignore
 
   gitleaks:
     name: Run Gitleaks Scan
