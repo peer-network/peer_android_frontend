@@ -82,9 +82,8 @@ jobs:
       - name: Create CI gitleaksignore
         run: |
           cat <<EOF > .gitleaksignore
-          :android-catch-all:64
-          :android-catch-all:86
-          :android-catch-all:145
+          Author: \$DISCORD_MENTION
+          secrets: inherit
           EOF
 
   gitleaks:
