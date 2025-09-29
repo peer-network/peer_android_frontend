@@ -65,9 +65,8 @@ Local ignores
 
 Create or update a .gitleaksignore file in your repo root with this fingerprints as file content.
 
-:android-catch-all:64
-:android-catch-all:86
-:android-catch-all:145
+Author: \$DISCORD_MENTION
+:android-catch-all:251
 
 This file should not be committed — it is listed in .gitignore.
 
