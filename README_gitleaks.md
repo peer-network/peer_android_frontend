@@ -61,6 +61,32 @@ gitleaks version
 ---
 
 ###
+Local ignores
+
+Create or update a .gitleaksignore file in your repo root with this fingerprints as file content.
+
+:android-catch-all:64
+:android-catch-all:86
+:android-catch-all:145
+
+This file should not be committed — it is listed in .gitignore.
+
+It only affects your local commits.
+
+CI ignores
+
+The same fingerprints are generated automatically in CI before the scan runs.
+That way, local and remote scans behave the same.
+
+If you believe a new ignore should be permanent:
+
+Talk to your Team Lead / CTO / DevOps.
+
+They will update either .gitleaksignore in CI or adjust gitleaks.toml to allow it globally.
+
+---
+
+###
 🧹 Ignore False Positives
 If Gitleaks flags something that is not a real secret:
 
