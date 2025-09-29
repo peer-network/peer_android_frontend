@@ -1,0 +1,170 @@
+name: Security Scan
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - development
+
+jobs:
+  check_branch_sync:
+    name: Check if PR Branch is Behind Base
+    runs-on: ubuntu-latest
+    outputs:
+      is_behind: ${{ steps.check.outputs.is_behind }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Fetch all branches
+        run: |
+          git fetch origin +refs/heads/*:refs/remotes/origin/*
+
+      - id: check
+        run: |
+          base_branch="${{ github.event.pull_request.base.ref }}"
+          pr_branch="${{ github.event.pull_request.head.ref }}"
+
+          echo "Comparing $pr_branch against $base_branch"
+          behind=$(git rev-list --left-right --count origin/${base_branch}...origin/${pr_branch} | awk '{print $1}')
+
+          if [ "$behind" -gt 0 ]; then
+            echo "Branch is behind!"
+            echo "is_behind=true" >> $GITHUB_OUTPUT
+          else
+            echo "Branch is up-to-date."
+            echo "is_behind=false" >> $GITHUB_OUTPUT
+          fi
+
+  notify_if_behind:
+    name: Notify on Outdated PR
+    runs-on: ubuntu-latest
+    needs: [check_branch_sync, map_pr_to_discord]
+    if: needs.check_branch_sync.outputs.is_behind == 'true'
+    steps:
+      - name: Send Discord Notification for Outdated PR
+        env:
+          ANDROID_DISCORD: ${{ secrets.ANDROID_DISCORD }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          DISCORD_MENTION: ${{ needs.map_pr_to_discord.outputs.discord_mention }}
+        run: |
+          MESSAGE=":warning: **Android PR Branch is Behind the Base Branch**\n"
+          MESSAGE+="**PR:** $PR_TITLE\n"
+          MESSAGE+="Link: <$PR_URL>\n"
+          MESSAGE+="Author: $DISCORD_MENTION\n"
+          MESSAGE+="Please update your branch with the latest changes from \`${{ github.event.pull_request.base.ref }}\`."
+
+          curl -H "Content-Type: application/json" \
+               -X POST \
+               -d "{\"content\": \"$MESSAGE\"}" \
+               "$ANDROID_DISCORD"
+
+  fail_outdated_branch:
+    name: Block CI Due to Outdated Branch
+    runs-on: ubuntu-latest
+    needs: [check_branch_sync]
+    if: needs.check_branch_sync.outputs.is_behind == 'true'
+    steps:
+      - run: |
+          echo " PR branch is behind the base branch."
+          exit 1
+
+  gitleaks:
+    uses: peer-network/peer_global_security/.github/workflows/security.yml@main
+    with:
+      config: gitleaks.toml
+    secrets: inherit
+
+  map_pr_to_discord:
+    name: Map PR to Discord User
+    runs-on: ubuntu-latest
+    outputs:
+      discord_mention: ${{ steps.map.outputs.discord_mention }}
+    steps:
+      - name: Map GitHub username to Discord ID
+        id: map
+        run: |
+          if [ "${{ github.event_name }}" != "pull_request" ]; then
+            echo "discord_mention=<@1362087975906967736>" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          case "${{ github.event.pull_request.user.login }}" in
+            WisdomNwaiwu)
+              echo "discord_mention=<@1362087975906967736>" >> $GITHUB_OUTPUT
+              ;;
+            jakobPeer)
+              echo "discord_mention=<@1334087880833892392>" >> $GITHUB_OUTPUT
+              ;;
+            Novachrono-Ryhze)
+              echo "discord_mention=<@1228316710264897596>" >> $GITHUB_OUTPUT
+              ;;
+            SandrZeus)
+              echo "discord_mention=<@273771478242295809>" >> $GITHUB_OUTPUT
+              ;;
+            conxtantyn)
+              echo "discord_mention=<@1354048093376610366>" >> $GITHUB_OUTPUT
+              ;;
+            NotBrightLight)
+              echo "discord_mention=<@310723093863858176>" >> $GITHUB_OUTPUT
+              ;;
+            *)
+              echo "discord_mention=<@1362087975906967736>" >> $GITHUB_OUTPUT
+              ;;
+          esac
+
+  notify_gitleaks_failure:
+    name: Notify on Gitleaks Failure
+    runs-on: ubuntu-latest
+    needs: [gitleaks, map_pr_to_discord]
+    if: always() && needs.gitleaks.result == 'failure'
+    steps:
+      - name: Send Discord Notification for Gitleaks Failure
+        env:
+          ANDROID_DISCORD: ${{ secrets.ANDROID_DISCORD }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+          DISCORD_MENTION: ${{ needs.map_pr_to_discord.outputs.discord_mention }}
+          RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          MESSAGE=":x: **Android Frontend Gitleaks Scan Failed!**\n"
+          MESSAGE+="**PR:** $PR_TITLE\n"
+          MESSAGE+="PR Link: <$PR_URL>\n"
+          MESSAGE+="CI Run: <$RUN_URL>\n"
+          MESSAGE+="Author: $DISCORD_MENTION\n\n"
+          MESSAGE+=":warning: **Secrets were detected by Gitleaks**\n"
+          MESSAGE+="You can:\n"
+          MESSAGE+="- [Click here to view workflow artifacts](<$RUN_URL>) (download the **gitleaks-report** artifact)\n"
+          MESSAGE+="- Check the **Actions → Artifacts** tab to view/download the report\n"
+          MESSAGE+=":no_entry: **Reminder:** Do NOT bypass with \`git commit --no-verify\`. CI will still block your PR.\n"
+          MESSAGE+="If this secret is actually required in the repo (false positive or approved usage),\n"
+          MESSAGE+="you MUST meet with the **CTO / Team Lead / DevOps** to approve and add it to the gitleaks ignore list."
+
+          curl -H "Content-Type: application/json" \
+               -X POST \
+               -d "{\"content\": \"$MESSAGE\"}" \
+               "$ANDROID_DISCORD"
+
+  final_check:
+    name: Final Check - Fail if Any Critical Job Failed
+    runs-on: ubuntu-latest
+    needs: [check_branch_sync, gitleaks]
+    if: always()
+    steps:
+      - run: |
+          if [ "${{ needs.check_branch_sync.outputs.is_behind }}" == "true" ]; then
+            echo "Failing: PR branch is behind base branch."
+            exit 1
+          fi
+
+          if [ "${{ needs.gitleaks.result }}" == "failure" ]; then
+            echo "Failing: Gitleaks detected secrets."
+            exit 1
+          fi
+
+          echo "All critical checks passed."
