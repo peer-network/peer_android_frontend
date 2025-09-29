@@ -23,9 +23,11 @@ else
 fi
 
 # Run scan on staged diff only
-git diff --cached --unified=0 --no-color | sh -c "$SCAN_CMD"
+git diff --cached --unified=0 --no-color \
+  | grep '^+' \
+  | grep -v '^+++' \
+  | sh -c "$SCAN_CMD"
 status=$?
-
 if [ $status -ne 0 ]; then
   echo "Possible secrets detected in staged changes!"
   echo "   See .gitleaks_out/gitleaks-precommit.json for details."
