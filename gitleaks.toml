@@ -21,7 +21,8 @@ regexes = [
   '''\$\{?[A-Z0-9_]+\}?''',
   '''\$[A-Za-z_][A-Za-z0-9_]*''',
   '''(?i)^\s*secrets:\s*inherit\s*$''',
-  '''(?i)Author:\s*\$[A-Za-z_][A-Za-z0-9_]*'''
+  '''(?i)Author:\s*\$[A-Za-z_][A-Za-z0-9_]*''',
+  '''Author:\s*\$DISCORD_MENTION'''
 ]
 paths = [
   '''\.github/workflows/.*'''
