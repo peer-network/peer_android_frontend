@@ -89,7 +89,7 @@ jobs:
 
   gitleaks:
     needs: prepare_ignore
-    uses: peer-network/peer_global_security/.github/workflows/security.yml@main
+    uses: peer-network/peer_global_security/.github/workflows/gitleaks.yml@main
     with:
       config: gitleaks.toml
     secrets: inherit
