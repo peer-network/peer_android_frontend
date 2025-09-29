@@ -83,7 +83,6 @@ jobs:
         run: |
           cat <<EOF > .gitleaksignore
           Author: \$DISCORD_MENTION
-          secrets: inherit
           EOF
 
   gitleaks:
@@ -91,7 +90,6 @@ jobs:
     uses: peer-network/peer_global_security/.github/workflows/gitleaks.yml@main
     with:
       config: gitleaks.toml
-    secrets: inherit
 
   map_pr_to_discord:
     name: Map PR to Discord User
