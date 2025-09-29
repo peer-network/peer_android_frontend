@@ -4,6 +4,29 @@ This repository uses **[Gitleaks](https://github.com/gitleaks/gitleaks)** to pre
 
 ---
 
+###
+Local ignores
+
+Create or update a .gitleaksignore file in your repo root with this fingerprints as file content.
+
+Author: \$DISCORD_MENTION
+
+This file should not be committed — it is listed in .gitignore.
+
+It only affects your local commits.
+
+CI ignores
+
+The same fingerprints are generated automatically in CI before the scan runs.
+That way, local and remote scans behave the same.
+
+If you believe a new ignore should be permanent:
+
+Talk to your Team Lead / CTO / DevOps.
+
+They will update either .gitleaksignore in CI or adjust gitleaks.toml to allow it globally.
+
+---
 ## 🚀 Setup
 
 Run the setup script once:
@@ -57,31 +80,6 @@ To check that everything is set up correctly:
 gitleaks version
 ```
 # should print: 8.28.0
-
----
-
-###
-Local ignores
-
-Create or update a .gitleaksignore file in your repo root with this fingerprints as file content.
-
-Author: \$DISCORD_MENTION
-:android-catch-all:251
-
-This file should not be committed — it is listed in .gitignore.
-
-It only affects your local commits.
-
-CI ignores
-
-The same fingerprints are generated automatically in CI before the scan runs.
-That way, local and remote scans behave the same.
-
-If you believe a new ignore should be permanent:
-
-Talk to your Team Lead / CTO / DevOps.
-
-They will update either .gitleaksignore in CI or adjust gitleaks.toml to allow it globally.
 
 ---
 
