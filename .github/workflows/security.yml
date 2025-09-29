@@ -95,6 +95,8 @@ jobs:
     with:
       config: gitleaks.toml
       ignore_path: ${{ needs.prepare_ignore.outputs.ignore-path }}
+    steps:
+      - run: cat .gitleaksignore
 
   map_pr_to_discord:
     name: Map PR to Discord User
