@@ -152,6 +152,31 @@ jobs:
                -d "{\"content\": \"$MESSAGE\"}" \
                "$ANDROID_DISCORD"
 
+  notify_success:
+    name: Notify on Success
+    runs-on: ubuntu-latest
+    needs: [final_check]
+    if: needs.final_check.result == 'success'
+    steps:
+      - name: Send Discord Notification for Successful Run
+        env:
+          ANDROID_DISCORD: ${{ secrets.ANDROID_DISCORD }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          TEAM_LEAD: "<@1354048093376610366>"
+          RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          MESSAGE=":white_check_mark: **Android Frontend Security Scan Passed!**\n"
+          MESSAGE+="**PR:** $PR_TITLE\n"
+          MESSAGE+="Link: <$PR_URL>\n"
+          MESSAGE+="CI Run: <$RUN_URL>\n\n"
+          MESSAGE+="All checks passed successfully. $TEAM_LEAD"
+
+          curl -H "Content-Type: application/json" \
+               -X POST \
+               -d "{\"content\": \"$MESSAGE\"}" \
+               "$ANDROID_DISCORD"
+
   final_check:
     name: Final Check - Fail if Any Critical Job Failed
     runs-on: ubuntu-latest
