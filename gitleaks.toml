@@ -3,27 +3,39 @@
 [[rules]]
 id = "android-catch-all"
 description = "Catch likely secrets in Android/Kotlin code"
-regex = '''(?i)(secret|key|token|api[_-]?key|password|auth(entication|orization|_?[a-z]+)?|credential|bearer|jwt|session|client)\w*\s*[:=]\s*"?[A-Za-z0-9/\+=!@#$%^&*._-]{6,}"?|ghp_[0-9A-Za-z]{36}|github_pat_[0-9A-Za-z_]{20,}|glpat-[0-9A-Za-z\-_]{20}|AKIA[0-9A-Z]{16}|ASIA[0-9A-Z]{16}|AIza[0-9A-Za-z\-_]{35}|AAAA[A-Za-z0-9_-]{5,}:[A-Za-z0-9_-]{20,}|sk_live_[0-9a-zA-Z]{24}|pk_live_[0-9a-zA-Z]{24}|-----BEGIN( RSA| DSA| EC| OPENSSH)? PRIVATE KEY-----'''
-tags = ["key", "secret", "generic", "android"]
+regex = '''(?i)(ghp_[0-9A-Za-z]{36}|github_pat_[0-9A-Za-z_]{20,}|glpat-[0-9A-Za-z\-_]{20}|AKIA[0-9A-Z]{16}|ASIA[0-9A-Z]{16}|AIza[0-9A-Za-z\-_]{35}|AAAA[A-Za-z0-9_-]{5,}:[A-Za-z0-9_-]{20,}|sk_live_[0-9a-zA-Z]{24}|pk_live_[0-9a-zA-Z]{24}|eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9._-]+\.[A-Za-z0-9._-]+|-----BEGIN( RSA| DSA| EC| OPENSSH)? PRIVATE KEY-----)'''
+tags = ["key", "secret", "android"]
 
 [[rules]]
 id = "android-entropy-catch-all"
 description = "Catch any high-entropy random string (Android frontend)"
-regex = '''[A-Za-z0-9\+=!@#$%^&*.-]{30,}'''
-entropy = 3.5
-tags = ["key", "secret", "generic", "android"]
+regex = '''[A-Za-z0-9\+=!@#$%^&*.-]{35,}'''
+entropy = 4.0
+tags = ["key", "secret", "android"]
 
-[allowlist]
-description = "Ignore safe variable references"
+[rules.allowlist]
+description = "Ignore CLI flags, file paths, placeholders"
 regexes = [
+  '''^--[a-zA-Z0-9._=-]+$''',
+  '''\.gitleaks_out/.*''',
+  '''^ghcr\.io/gitleaks/gitleaks.*''',
+  '''^/repo/.*''',
+  '''^[\+\-]?--config=.*gitleaks.*$''',
   '''(?i)secrets\.[A-Za-z0-9_]+''',
   '''(?i)vars\.[A-Za-z0-9_]+''',
-  '''\$\{?[A-Z0-9_]+\}?''',
-  '''\$[A-Za-z_][A-Za-z0-9_]*''',
-  '''(?i)^\s*secrets:\s*inherit\s*$''',
-  '''(?i)Author:\s*\$[A-Za-z_][A-Za-z0-9_]*''',
-  '''Author:\s*\$DISCORD_MENTION'''
+  '''(?i)github\.[A-Za-z0-9_]+''',
+  '''(?i)Author:\s*\$DISCORD_MENTION["']?$'''
 ]
-paths = [
-  '''\.github/workflows/.*'''
+[allowlist]
+description = "Ignore known safe cases"
+regexes = [
+  '''Author:\s*\$DISCORD_MENTION["']?$'''
+]
+[pathDenylist]
+description = "Exclude noisy generated/test files"
+regexes = [
+  '''^\.github/workflows/.*'''
+]
+stopwords = [
+  "steps.set-ignore.outputs.ignore-path"
 ]
