@@ -76,17 +76,34 @@ jobs:
   prepare_ignore:
     name: Prepare gitleaksignore
     runs-on: ubuntu-latest
-    needs: [map_pr_to_discord]
     outputs:
-      ignore-path: .gitleaksignore
+      ignore-path: ${{ steps.set-ignore.outputs.ignore-path }}
     steps:
       - uses: actions/checkout@v5
-      - name: Create CI gitleaksignore
+
+      - name: Run preliminary gitleaks to collect matches
         run: |
-          cat <<EOF > .gitleaksignore
-          Author: \$DISCORD_MENTION
-          EOF
-      - run: cat .gitleaksignore
+          mkdir -p .gitleaks_out
+          gitleaks detect \
+            --pipe \
+            --config=gitleaks.toml \
+            --report-format=json \
+            --report-path=.gitleaks_out/pre-scan.json \
+            --no-banner || true
+
+      - name: Generate dynamic .gitleaksignore
+        run: |
+          echo "# Auto-generated ignore for \$DISCORD_MENTION" > .gitleaksignore
+          jq -r '.[] 
+            | select(.Match | contains("Author: $DISCORD_MENTION")) 
+            | "[[ignore]]\ndescription = \"Ignore Discord mention placeholder\"\nfingerprint = \"" + .Fingerprint + "\"\n"' \
+            .gitleaks_out/pre-scan.json >> .gitleaksignore
+
+      - name: Debug .gitleaksignore
+        run: cat .gitleaksignore
+
+      - id: set-ignore
+        run: echo "ignore-path=.gitleaksignore" >> $GITHUB_OUTPUT
 
   gitleaks:
     name: Run Gitleaks Scan
@@ -95,8 +112,6 @@ jobs:
     with:
       config: gitleaks.toml
       ignore_path: ${{ needs.prepare_ignore.outputs.ignore-path }}
-    steps:
-      - run: cat .gitleaksignore
 
   map_pr_to_discord:
     name: Map PR to Discord User
