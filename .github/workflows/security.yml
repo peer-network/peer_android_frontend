@@ -73,45 +73,13 @@ jobs:
           echo " PR branch is behind the base branch."
           exit 1
 
-  prepare_ignore:
-    name: Prepare gitleaksignore
-    runs-on: ubuntu-latest
-    outputs:
-      ignore-path: ${{ steps.set-ignore.outputs.ignore-path }}
-    steps:
-      - uses: actions/checkout@v5
-
-      - name: Run preliminary gitleaks to collect matches
-        run: |
-          mkdir -p .gitleaks_out
-          gitleaks detect \
-            --pipe \
-            --config=gitleaks.toml \
-            --report-format=json \
-            --report-path=.gitleaks_out/pre-scan.json \
-            --no-banner || true
-
-      - name: Generate dynamic .gitleaksignore
-        run: |
-          echo "# Auto-generated ignore for \$DISCORD_MENTION" > .gitleaksignore
-          jq -r '.[] 
-            | select(.Match | contains("Author: $DISCORD_MENTION")) 
-            | "[[ignore]]\ndescription = \"Ignore Discord mention placeholder\"\nfingerprint = \"" + .Fingerprint + "\"\n"' \
-            .gitleaks_out/pre-scan.json >> .gitleaksignore
-
-      - name: Debug .gitleaksignore
-        run: cat .gitleaksignore
-
-      - id: set-ignore
-        run: echo "ignore-path=.gitleaksignore" >> $GITHUB_OUTPUT
-
   gitleaks:
     name: Run Gitleaks Scan
-    needs: [map_pr_to_discord, prepare_ignore]
+    needs: [map_pr_to_discord, check_branch_sync]
+    if: needs.check_branch_sync.outputs.is_behind == 'false'
     uses: peer-network/peer_global_security/.github/workflows/gitleaks.yml@main
     with:
       config: gitleaks.toml
-      ignore_path: ${{ needs.prepare_ignore.outputs.ignore-path }}
 
   map_pr_to_discord:
     name: Map PR to Discord User
@@ -195,10 +163,11 @@ jobs:
             echo "Failing: PR branch is behind base branch."
             exit 1
           fi
-
           if [ "${{ needs.gitleaks.result }}" == "failure" ]; then
             echo "Failing: Gitleaks detected secrets."
             exit 1
           fi
-
+          if [ "${{ needs.gitleaks.result }}" == "skipped" ]; then
+            echo "Note: Gitleaks was skipped because branch is outdated."
+          fi
           echo "All critical checks passed."
