@@ -4,6 +4,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
 import eu.peernetwork.app.ui.about.About
+import eu.peernetwork.app.ui.onboarding.Onboarding
 import eu.peernetwork.app.ui.profile.Profile
 import eu.peernetwork.core.ui.annotation.UiBuilder
 import eu.peernetwork.core.ui.component.UiComponent
@@ -66,5 +67,13 @@ object SettingsModule {
     @UiBuilder(Profile.Builder::class)
     fun provideProfileBuilder(component: Settings.Component): UiComponent.Builder {
         return Profile.Builder(component)
+    }
+
+    @Settings.Scope
+    @Provides
+    @IntoMap
+    @UiBuilder(Onboarding.Builder::class)
+    fun provideOnboardingBuilder(component: Settings.Component): UiComponent.Builder {
+        return Onboarding.Builder(component)
     }
 }

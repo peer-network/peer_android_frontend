@@ -68,6 +68,7 @@ fun SettingsScreen(
     val preference = stringResource(R.string.preference_label)
     val feedback = stringResource(R.string.feedback_label)
     val aboutUsLabel = stringResource(R.string.about_us_label)
+    val howItWorks = stringResource(R.string.how_it_works_label)
     val feedbackSession = remember { mutableLongStateOf(-1) }
     Column(modifier = Modifier
         .fillMaxSize()
@@ -85,10 +86,13 @@ fun SettingsScreen(
             handleOnNavigate(preference)
         }
         SettingsItem(label = feedback) {
-            feedbackSession.value = System.currentTimeMillis()
+            feedbackSession.longValue = System.currentTimeMillis()
         }
         SettingsItem(label = aboutUsLabel) {
             handleOnNavigate("about")
+        }
+        SettingsItem(label = howItWorks ) {
+            handleOnNavigate("how_it_works")
         }
     }
     FeedbackScreen(
