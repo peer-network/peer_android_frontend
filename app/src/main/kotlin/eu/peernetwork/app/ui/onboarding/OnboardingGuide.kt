@@ -1,13 +1,7 @@
 package eu.peernetwork.app.ui.onboarding
 
 import android.content.res.Configuration
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,10 +24,20 @@ import eu.peernetwork.core.ui.theme.PeerTheme
 
 sealed interface OnboardingGuideState {
     data object Introduction : OnboardingGuideState
-    data object Action : OnboardingGuideState
-    data class Diagram(val price: String) : OnboardingGuideState
-    data class Engagement(val price: String) : OnboardingGuideState
-    object Feature : OnboardingGuideState
+    data class Action(
+        val dailyFreeActions: Map<String, Int>,
+        val actionTokenPrices: Map<String, Int>
+    ) : OnboardingGuideState
+    data class Diagram(
+        val dailyNumberToken: Int,
+        val formatted: String
+    ) : OnboardingGuideState
+    data class Engagement(
+        val dailyNumberToken: Int,
+        val formatted: String,
+        val actionGemsReturns: Map<String, Double>
+    ) : OnboardingGuideState
+    data object Feature : OnboardingGuideState
 }
 
 @Composable
@@ -43,13 +47,18 @@ fun OnboardingGuide(
 ) {
     when (state) {
         is OnboardingGuideState.Introduction -> OnboardingIntroductionGuide(modifier)
-        is OnboardingGuideState.Action -> OnboardingActionGuide(modifier)
+        is OnboardingGuideState.Action -> OnboardingActionGuide(
+            dailyFreeActions = state.dailyFreeActions,
+            actionTokenPrices = state.actionTokenPrices,
+            modifier = modifier
+        )
         is OnboardingGuideState.Diagram -> OnboardingDiagramGuide(
-            price = state.price,
+            formatted = state.formatted,
             modifier = modifier
         )
         is OnboardingGuideState.Engagement -> OnboardingEngagementGuide(
-            price = state.price,
+            formatted = state.formatted,
+            actionGemsReturns = state.actionGemsReturns,
             modifier = modifier
         )
         is OnboardingGuideState.Feature -> OnboardingFeatureGuide(modifier)
@@ -73,11 +82,17 @@ private fun OnboardingIntroductionGuide(modifier: Modifier = Modifier) {
         description = description,
         slogan = slogan.annotate(),
         modifier = modifier
-    ) { InteractionCycle(modifier = Modifier.align(Alignment.Center)) }
+    ) {
+        InteractionCycle(modifier = Modifier.align(Alignment.Center))
+    }
 }
 
 @Composable
-private fun OnboardingActionGuide(modifier: Modifier = Modifier) {
+private fun OnboardingActionGuide(
+    dailyFreeActions: Map<String, Int>,
+    actionTokenPrices: Map<String, Int>,
+    modifier: Modifier = Modifier
+) {
     val title = stringResource(R.string.onboarding_create_like_comment)
     val slug = stringResource(R.string.onboarding_smartly)
     val slogan = stringResource(R.string.onboarding_invite_friends_prefix).annotate(
@@ -112,14 +127,14 @@ private fun OnboardingActionGuide(modifier: Modifier = Modifier) {
                 style = MaterialTheme.typography.labelLarge
             )
             Spacer(modifier = Modifier.height(12.dp))
-            OnboardingActionListing()
+            OnboardingActionListing(actionTokenPrices = actionTokenPrices)
         }
     }
 }
 
 @Composable
 private fun OnboardingDiagramGuide(
-    price: String,
+    formatted: String,
     modifier: Modifier = Modifier
 ) {
     val title = stringResource(R.string.onboarding_your_effort_reward)
@@ -132,35 +147,42 @@ private fun OnboardingDiagramGuide(
         title = title,
         description = description,
         modifier = modifier
-    ) { Box(modifier = Modifier.fillMaxWidth()
-        .align(Alignment.Center)) {
-        RewardDiagram(price)
-    } }
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.Center)
+        ) {
+            RewardDiagram(text = formatted)
+        }
+    }
 }
 
 @Composable
 private fun OnboardingEngagementGuide(
-    price: String,
+    formatted: String,
+    actionGemsReturns: Map<String, Double>,
     modifier: Modifier = Modifier
 ) {
     val title = stringResource(R.string.onboarding_engage_earn)
-    val slogan = stringResource(R.string.onboarding_gems_collect_explanation, price)
+    val slogan = stringResource(R.string.onboarding_gems_collect_explanation, formatted)
     OnboardingContentScaffold(
         title = title.annotate(),
         slogan = slogan.annotate(),
         modifier = modifier
     ) { Column(modifier = Modifier.fillMaxSize()) {
-        Spacer(modifier = Modifier.height(12.dp))
-        PostSnapshot()
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(
-            text = stringResource(R.string.onboarding_want_more),
-            color = MaterialTheme.colorScheme.tertiary,
-            style = MaterialTheme.typography.labelLarge
-        )
-        Spacer(modifier = Modifier.height(12.dp))
-        OnboardingEngagementListing()
-    } }
+            Spacer(modifier = Modifier.height(12.dp))
+            PostSnapshot()
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text = stringResource(R.string.onboarding_want_more),
+                color = MaterialTheme.colorScheme.tertiary,
+                style = MaterialTheme.typography.labelLarge
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+            OnboardingEngagementListing(actionGemsReturns = actionGemsReturns)
+        }
+    }
 }
 
 @Composable
@@ -187,6 +209,17 @@ private fun OnboardingGuidePreview() {
 private fun HowOnboardingGuidePreview() {
     PeerTheme {
         OnboardingActionGuide(
+            dailyFreeActions = mapOf(
+                "post" to 1,
+                "like" to 3,
+                "comment" to 4
+            ),
+            actionTokenPrices = mapOf(
+                "post" to 20,
+                "like" to 3,
+                "comment" to 1,
+                "dislike" to 3
+            ),
             modifier = Modifier.padding(24.dp)
         )
     }
@@ -197,7 +230,7 @@ private fun HowOnboardingGuidePreview() {
 private fun DiagramOnboardingGuidePreview() {
     PeerTheme {
         OnboardingDiagramGuide(
-            price = "5 000",
+            formatted = "5 000",
             modifier = Modifier.padding(24.dp)
         )
     }
@@ -208,7 +241,13 @@ private fun DiagramOnboardingGuidePreview() {
 private fun EngageOnboardingGuidePreview() {
     PeerTheme {
         OnboardingEngagementGuide(
-            price = "5,000",
+            formatted = "5,000",
+            actionGemsReturns = mapOf(
+                "like" to 5.0,
+                "dislike" to -3.0,
+                "comment" to 2.0,
+                "view" to 0.25
+            ),
             modifier = Modifier.padding(24.dp)
         )
     }

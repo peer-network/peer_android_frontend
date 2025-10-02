@@ -25,35 +25,43 @@ import eu.peernetwork.app.R as AppRes
 import eu.peernetwork.blog.ui.R
 import eu.peernetwork.core.ui.theme.PeerTheme
 import kotlinx.collections.immutable.persistentListOf
+import kotlin.math.absoluteValue
 
 @Composable
-fun OnboardingActionListing() {
+fun OnboardingActionListing(
+    actionTokenPrices: Map<String, Int>
+) {
+    val post = actionTokenPrices["post"] ?: 0
+    val like = actionTokenPrices["like"] ?: 0
+    val comment = actionTokenPrices["comment"] ?: 0
+    val dislike = actionTokenPrices["dislike"] ?: 0
+
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         PricingLabel(
             lead = painterResource(R.drawable.ic_camera_outline),
             trailing = painterResource(AppRes.drawable.ic_icon),
-            price = "+ 2",
+            price = post.toString(),
             label = stringResource(AppRes.string.onboarding_option_extra_post),
             color = MaterialTheme.colorScheme.onBackground
         )
         PricingLabel(
             lead = painterResource(R.drawable.ic_love_outline),
             trailing = painterResource(AppRes.drawable.ic_icon),
-            price = "+ 2",
+            price = like.toString(),
             label = stringResource(AppRes.string.onboarding_option_extra_like),
             color = MaterialTheme.colorScheme.onBackground
         )
         PricingLabel(
             lead = painterResource(R.drawable.ic_comment_outline),
             trailing = painterResource(AppRes.drawable.ic_icon),
-            price = "+ 2",
+            price = comment.toString(),
             label = stringResource(AppRes.string.onboarding_option_extra_comments),
             color = MaterialTheme.colorScheme.onBackground
         )
         PricingLabel(
             lead = painterResource(R.drawable.ic_hate_outline),
             trailing = painterResource(AppRes.drawable.ic_icon),
-            price = "+ 2",
+            price = dislike.toString(),
             label = stringResource(AppRes.string.onboarding_option_dislike),
             color = MaterialTheme.colorScheme.onBackground
         )
@@ -61,38 +69,60 @@ fun OnboardingActionListing() {
 }
 
 @Composable
-fun OnboardingEngagementListing() {
+fun OnboardingEngagementListing(
+    actionGemsReturns: Map<String, Double>
+) {
+    val like = actionGemsReturns["like"] ?: 0.0
+    val dislike = actionGemsReturns["dislike"] ?: 0.0
+    val comment = actionGemsReturns["comment"] ?: 0.0
+    val view = actionGemsReturns["view"] ?: 0.0
+
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         PricingLabel(
             lead = painterResource(R.drawable.ic_love),
             trailing = painterResource(R.drawable.ic_gem),
-            price = "+ 2",
+            price = like.toGemLabel(),
             trailingSize = 16.dp,
             label = stringResource(AppRes.string.onboarding_got_like)
         )
         PricingLabel(
             lead = painterResource(R.drawable.ic_hate),
             trailing = painterResource(R.drawable.ic_gem),
-            price = "+ 2",
+            price = dislike.toGemLabel(),
             trailingSize = 16.dp,
             label = stringResource(AppRes.string.onboarding_got_dislike)
         )
         PricingLabel(
             lead = painterResource(R.drawable.ic_comment),
             trailing = painterResource(R.drawable.ic_gem),
-            price = "+ 2",
+            price = comment.toGemLabel(),
             trailingSize = 16.dp,
             label = stringResource(AppRes.string.onboarding_got_comment)
         )
         PricingLabel(
             lead = painterResource(R.drawable.ic_view),
             trailing = painterResource(R.drawable.ic_gem),
-            price = "+ 2",
+            price = view.toGemLabel(),
             trailingSize = 16.dp,
             label = stringResource(AppRes.string.onboarding_got_view)
         )
     }
 }
+private fun Double.toGemLabel(): String {
+    val abs = absoluteValue
+    val base = if (abs == abs.toLong().toDouble()) abs.toLong().toString() else trimZeros()
+    return when {
+        this > 0 -> "+ $base"
+        this < 0 -> "- $base"
+        else -> "0"
+    }
+}
+
+private fun Double.trimZeros(): String {
+    val s = toString()
+    return if (s.contains('.')) s.trimEnd('0').trimEnd('.') else s
+}
+
 
 @Composable
 fun BoxScope.OnboardingFeatureListing() {
@@ -140,7 +170,14 @@ fun BoxScope.OnboardingFeatureListing() {
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun OnboardingActionListingPreview() {
     PeerTheme {
-        OnboardingActionListing()
+        OnboardingActionListing(
+            actionTokenPrices = mapOf(
+                "post" to 20,
+                "like" to 3,
+                "comment" to 1,
+                "dislike" to 3
+            )
+        )
     }
 }
 
@@ -148,7 +185,14 @@ fun OnboardingActionListingPreview() {
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun OnboardingEngagementListingPreview() {
     PeerTheme {
-        OnboardingEngagementListing()
+        OnboardingEngagementListing(
+            actionGemsReturns = mapOf(
+                "like" to 5.0,
+                "dislike" to -3.0,
+                "comment" to 2.0,
+                "view" to 0.25
+            )
+        )
     }
 }
 

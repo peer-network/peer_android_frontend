@@ -24,6 +24,8 @@ import eu.peernetwork.core.ui.design.compose.DesignSceneState
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.user.domain.model.Preference
 import kotlinx.collections.immutable.persistentListOf
+import java.text.NumberFormat
+import java.util.Locale
 
 @Composable
 fun OnboardingScreen(
@@ -50,7 +52,7 @@ fun OnboardingScreen(
                 OnboardingViewModel.State.Default -> DesignSceneState.Default
                 OnboardingViewModel.State.Loading -> DesignSceneState.Loading
                 is OnboardingViewModel.State.Success -> {
-                    val data = (state as OnboardingViewModel.State.Success)
+                    val data = state as OnboardingViewModel.State.Success
                     DesignSceneState.Success(data)
                 }
                 is OnboardingViewModel.State.Error -> {
@@ -94,12 +96,24 @@ fun OnboardingScreen(
     properties: Properties,
     onFinished: (Boolean) -> Unit
 ) {
-    val price = properties.configuration.minting.dailyNumberToken.toString()
+    val config = properties.configuration
+    val dailyNumberToken = config.minting.dailyNumberToken
+    val formattedDailyMint = dailyNumberToken.formatThousands()
     val states = persistentListOf(
         OnboardingGuideState.Introduction,
-        OnboardingGuideState.Action,
-        OnboardingGuideState.Diagram(price),
-        OnboardingGuideState.Engagement(price),
+        OnboardingGuideState.Action(
+            dailyFreeActions = config.dailyFree.dailyFreeActions,
+            actionTokenPrices = config.tokenomics.actionTokenPrices
+        ),
+        OnboardingGuideState.Diagram(
+            dailyNumberToken = dailyNumberToken,
+            formatted = formattedDailyMint
+        ),
+        OnboardingGuideState.Engagement(
+            dailyNumberToken = dailyNumberToken,
+            formatted = formattedDailyMint,
+            actionGemsReturns = config.tokenomics.actionGemsReturns
+        ),
         OnboardingGuideState.Feature
     )
     OnboardingScaffold(state, onFinish = onFinished) {
@@ -109,3 +123,6 @@ fun OnboardingScreen(
         )
     }
 }
+
+private fun Int.formatThousands(): String =
+    NumberFormat.getIntegerInstance(Locale.getDefault()).format(this)
