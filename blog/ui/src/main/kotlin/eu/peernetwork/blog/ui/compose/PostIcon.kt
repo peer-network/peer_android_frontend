@@ -74,6 +74,7 @@ fun PostIcon(
     value: String,
     modifier: Modifier = Modifier,
     size: Dp = 28.dp,
+    spacer: Dp = 0.dp,
     padding: PaddingValues = PaddingValues(4.dp),
     orientation: Orientation = Orientation.Horizontal,
     color: Color = MaterialTheme.colorScheme.tertiary,
@@ -89,7 +90,7 @@ fun PostIcon(
                 )
                 Text(
                     value,
-                    modifier = Modifier.padding(start = size),
+                    modifier = Modifier.padding(start = size + spacer),
                     style = MaterialTheme.typography.bodySmall.copy(
                         color = color
                     )

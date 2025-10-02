@@ -42,6 +42,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -78,7 +79,7 @@ fun OnboardingFooter(
             .padding(top = 8.dp))
         OnboardingFooterIndicator(pagerState = state)
         Spacer(modifier = Modifier.fillMaxWidth()
-            .padding(top = 24.dp))
+            .padding(top = 18.dp))
         Crossfade(targetState = derivedState.value) { stage ->
             OnboardingFooter(
                 state = stage,
@@ -134,8 +135,13 @@ fun OnboardingFooter(
                     .clip(CircleShape),
                 enabled = true,
                 shape = CircleShape,
-                minHeight = 46.dp,
-            ) { Text(stringResource(R.string.finish_label)) }
+                minHeight = 42.dp,
+            ) { Text(
+                text = stringResource(R.string.finish_label),
+                style = MaterialTheme.typography.labelLarge.copy(
+                    fontWeight = FontWeight.Bold
+                )
+            ) }
         }
     }
 }
@@ -159,7 +165,7 @@ fun RowScope.OnboardingFooter(
         ),
         minHeight = 38.dp,
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.onBackground),
-        contentPadding = PaddingValues(horizontal = 18.dp, vertical = 8.dp)
+        contentPadding = PaddingValues(horizontal = 24.dp, vertical = 8.dp)
     ) { Text(stringResource(R.string.skip_label)) }
     Spacer(modifier = Modifier.weight(1f))
     if (handleOnPreviousClick != null) {

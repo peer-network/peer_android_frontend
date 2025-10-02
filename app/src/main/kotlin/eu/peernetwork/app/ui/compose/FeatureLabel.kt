@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -20,6 +21,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.app.R
 import eu.peernetwork.core.ui.theme.PeerTheme
@@ -29,11 +31,13 @@ fun FeatureLabel(
     title: String,
     painter: Painter,
     modifier: Modifier = Modifier,
-    description: String? = null
+    description: String? = null,
+    spacer: Dp = 12.dp
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.clip(RoundedCornerShape(16.dp))
+        modifier = Modifier.padding(bottom = spacer)
+            .clip(RoundedCornerShape(16.dp))
             .background(MaterialTheme.colorScheme.tertiaryContainer)
             .padding(
                 vertical = 42.dp,
@@ -44,10 +48,10 @@ fun FeatureLabel(
             painter = painter,
             contentDescription = title,
         )
-        Spacer(modifier = Modifier.padding(top = 8.dp))
+        Spacer(modifier = Modifier.padding(top = 12.dp))
         Text(
             text = title,
-            style = MaterialTheme.typography.labelMedium,
+            style = MaterialTheme.typography.labelLarge,
             color = MaterialTheme.colorScheme.onBackground,
             textAlign = TextAlign.Center
         )
@@ -55,7 +59,7 @@ fun FeatureLabel(
             Spacer(modifier = Modifier.padding(top = 4.dp))
             Text(
                 text = it,
-                style = MaterialTheme.typography.labelSmall,
+                style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.tertiary,
                 textAlign = TextAlign.Center
             )

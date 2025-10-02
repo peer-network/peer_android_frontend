@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -104,7 +105,7 @@ private fun OnboardingActionGuide(modifier: Modifier = Modifier) {
             )
             Spacer(modifier = Modifier.height(12.dp))
             DailyFreebies()
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(20.dp))
             Text(
                 text = stringResource(R.string.onboarding_want_more),
                 color = MaterialTheme.colorScheme.tertiary,
@@ -131,8 +132,8 @@ private fun OnboardingDiagramGuide(
         title = title,
         description = description,
         modifier = modifier
-    ) { Box(modifier = Modifier.fillMaxSize()
-        .padding(top = 16.dp)) {
+    ) { Box(modifier = Modifier.fillMaxWidth()
+        .align(Alignment.Center)) {
         RewardDiagram(price)
     } }
 }

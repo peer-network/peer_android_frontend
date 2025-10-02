@@ -58,20 +58,21 @@ fun OnboardingScaffold(
             ).statusBarsPadding()
             .navigationBarsPadding()
     ) {
+        Spacer(modifier = Modifier.height(16.dp))
         Image(
             painter = painterResource(id = R.drawable.ic_logo),
             contentDescription = stringResource(eu.peernetwork.app.R.string.logo),
             modifier = Modifier.padding(horizontal = 22.dp)
-                .padding(vertical = 16.dp)
                 .height(48.dp)
         )
+        Spacer(modifier = Modifier.height(8.dp))
         HorizontalPager(
             state = state,
             modifier = Modifier.weight(1f),
         ) { page -> updatedContent(page) }
         OnboardingFooter(state, Modifier.padding(
             horizontal = 24.dp
-        ).padding(bottom = 16.dp)) { }
+        ).padding(bottom = 8.dp)) { }
     }
 }
 
@@ -108,13 +109,15 @@ fun OnboardingContentScaffold(
             Spacer(modifier = Modifier.height(12.dp))
             Text(
                 text = it,
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.labelLarge.copy(
+                    fontWeight = FontWeight.Normal
+                ),
                 color = MaterialTheme.colorScheme.surfaceTint,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth()
             )
         }
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(6.dp))
     }
 }
 

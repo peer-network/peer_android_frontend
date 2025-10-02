@@ -34,7 +34,7 @@ import eu.peernetwork.core.ui.theme.PeerTheme
 @Composable
 @SuppressLint("UnusedBoxWithConstraintsScope")
 fun RewardDiagram(text: String, modifier: Modifier = Modifier) {
-    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+    BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
         val width = maxWidth * .8f
         val verticalLineHeight = width * .35f
         Row(

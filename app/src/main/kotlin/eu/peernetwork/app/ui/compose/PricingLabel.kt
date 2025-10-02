@@ -32,6 +32,8 @@ fun PricingLabel(
     lead: Painter,
     trailing: Painter,
     size: Dp = 20.dp,
+    trailingSize: Dp = size,
+    color: Color = Color.Unspecified,
     contentDescription: String? = null,
     content: @Composable BoxScope.() -> Unit
 ) {
@@ -41,19 +43,21 @@ fun PricingLabel(
             .clip(RoundedCornerShape(32.dp))
             .background(MaterialTheme.colorScheme.tertiaryContainer)
             .padding(12.dp)
+            .padding(vertical = 2.dp)
+            .padding(start = 4.dp)
     ) {
         Icon(
             painter = lead,
             contentDescription = contentDescription,
             modifier = Modifier.size(size),
-            tint = Color.Unspecified
+            tint = color
         )
         Box(modifier = Modifier.weight(1f), content = content)
         Icon(
             painter = trailing,
             contentDescription = contentDescription,
-            modifier = Modifier.size(size),
-            tint = Color.Unspecified
+            modifier = Modifier.size(trailingSize),
+            tint = color
         )
     }
 }
@@ -63,6 +67,8 @@ fun PricingLabel(
     lead: Painter,
     trailing: Painter,
     size: Dp = 20.dp,
+    trailingSize: Dp = size,
+    color: Color = Color.Unspecified,
     contentDescription: String? = null,
     price: String,
     label: String
@@ -71,6 +77,8 @@ fun PricingLabel(
         lead = lead,
         trailing = trailing,
         size = size,
+        trailingSize = trailingSize,
+        color = color,
         contentDescription = contentDescription
     ) {
         Row(

@@ -74,10 +74,8 @@
     <string name="onboarding_will_get_2500">will get 2 500</string>
     <string name="onboarding_how_to_use_tokens">How to use tokens?</string>
     <string name="onboarding_lets_go">Let\'s go!</string>
-    <string name="onboarding_post_and">Post and</string>
-    <string name="onboarding__engage_more">engage more</string>
-    <string name="onboarding_boost_your">Boost your</string>
-    <string name="onboarding_content_label">content</string>
+    <string name="onboarding_post_and_engage">Post and engage more</string>
+    <string name="onboarding_boost_your_content">Boost your content</string>
     <string name="onboarding_shop_in_app">Shop in-app</string>
     <string name="onboarding_cash_out">Cash-out</string>
     <string name="onboarding_coming_soon">Coming soon…</string>

@@ -45,15 +45,16 @@ fun PostSnapshot(
                 DesignAvatar {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_icon),
-                        contentDescription = "profile",
-                        modifier = Modifier.size(28.dp),
+                        contentDescription = stringResource(R.string.app_name),
+                        modifier = Modifier.size(36.dp),
                         tint = Color.Unspecified
                     )
                 }
                 Text(
                     text = stringResource(R.string.peernetwork_label),
-                    style = MaterialTheme.typography.labelSmall.copy(
-                        fontStyle = FontStyle.Italic
+                    style = MaterialTheme.typography.labelLarge.copy(
+                        fontStyle = FontStyle.Italic,
+                        fontWeight = FontWeight.Bold
                     ),
                     color = MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier.padding(start = 4.dp)
@@ -61,17 +62,18 @@ fun PostSnapshot(
                 Spacer(modifier = Modifier.weight(1f))
                 Text(
                     text = stringResource(R.string.peertext_label),
-                    style = MaterialTheme.typography.labelSmall.copy(
-                        color = Color.White,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    style = MaterialTheme.typography.labelLarge.copy(
+                        fontWeight = FontWeight.SemiBold
                     ),
                     fontStyle = FontStyle.Italic,
                     modifier = Modifier.padding(end = 4.dp)
                         .background(
                             color = MaterialTheme.colorScheme.primary,
-                            shape = RoundedCornerShape(14.dp)
+                            shape = RoundedCornerShape(16.dp)
                         ).padding(
-                            horizontal = 12.dp,
-                            vertical = 4.dp
+                            horizontal = 16.dp,
+                            vertical = 6.dp
                         )
                 )
                 Icon(
@@ -98,41 +100,47 @@ fun PostSnapshot(
         Column(modifier = Modifier.fillMaxWidth()
             .padding(horizontal = 4.dp)
         ) {
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = stringResource(R.string.onboarding_created_something_love),
-                style = MaterialTheme.typography.labelMedium,
+                style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier.padding(vertical = 4.dp)
             )
             Text(
                 text = stringResource(R.string.onboarding_get_rewarded),
-                style = MaterialTheme.typography.labelSmall.copy(
+                style = MaterialTheme.typography.labelLarge.copy(
                     fontWeight = FontWeight.Normal,
                 ),
                 color = MaterialTheme.colorScheme.tertiary,
                 modifier = Modifier.padding(top = 4.dp)
             )
-            Spacer(modifier = Modifier.height(24.dp))
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            Spacer(modifier = Modifier.height(16.dp))
+            Row(
+                modifier = Modifier.padding(vertical = 8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
                 PostIcon(
-                    UiAction.Like,
-                    "5k",
-                    size = 24.dp,
+                    action = UiAction.Like,
+                    value = "5k",
+                    size = 18.dp,
+                    spacer = 4.dp,
                     padding = PaddingValues(0.dp)
-                ) { }
+                )
                 PostIcon(
-                    UiAction.Dislike,
-                    "5k",
-                    size = 24.dp,
+                    action = UiAction.Dislike,
+                    value = "5k",
+                    size = 18.dp,
+                    spacer = 4.dp,
                     padding = PaddingValues(0.dp)
-                ) { }
+                )
                 PostIcon(
-                    UiAction.Comment,
-                    "5k",
-                    size = 24.dp,
+                    action = UiAction.Comment,
+                    value = "5k",
+                    size = 18.dp,
+                    spacer = 4.dp,
                     padding = PaddingValues(0.dp)
-                ) { }
+                )
             }
         }
     }

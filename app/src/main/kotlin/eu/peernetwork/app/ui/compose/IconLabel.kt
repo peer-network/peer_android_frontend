@@ -2,8 +2,10 @@ package eu.peernetwork.app.ui.compose
 
 import android.content.res.Configuration
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,18 +27,51 @@ fun IconLabel(
     label: String,
     contentDescription: String? = label,
     modifier: Modifier = Modifier,
-    size: Dp = 64.dp,
+    size: Dp = 72.dp,
+    space: Dp = 0.dp,
     style: TextStyle = MaterialTheme.typography.bodySmall,
     color: Color = MaterialTheme.colorScheme.tertiary
 ) {
     Column(
         modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(space)
     ) {
         Image(
             painter = painter,
             contentDescription = contentDescription,
             modifier = Modifier.size(size)
+        )
+        Text(
+            text = label,
+            style = style,
+            color = color
+        )
+    }
+}
+
+@Composable
+fun IconLabel(
+    painter: Painter,
+    label: String,
+    contentDescription: String? = label,
+    modifier: Modifier = Modifier,
+    size: Dp = 72.dp,
+    space: Dp = 0.dp,
+    style: TextStyle = MaterialTheme.typography.bodySmall,
+    color: Color = MaterialTheme.colorScheme.tertiary,
+    tint: Color = MaterialTheme.colorScheme.tertiary,
+) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(space)
+    ) {
+        Icon(
+            painter = painter,
+            contentDescription = contentDescription,
+            modifier = Modifier.size(size),
+            tint = tint
         )
         Text(
             text = label,
