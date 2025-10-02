@@ -102,7 +102,17 @@ fun HomeScreen(provider: UiComponentProvider) {
                 navigationState.intValue = it
                 controller.attachIfNecessary(HomeRoute.get(it).path)
             },
-            onExplore = { controller.navigateIfNecessary(HomeRoute.Explore.path) },
+            onExplore = {
+                if (currentRoute == HomeRoute.Explore.path) {
+                    controller.navigateIfNecessary(HomeRoute.Home.path)
+                } else if (currentRoute == HomeRoute.Home.path) {
+                    controller.navigateIfNecessary(HomeRoute.Explore.path)
+                } else {
+                    viewModel.lastVisited(0)
+                    navigationState.intValue = 0
+                    controller.attach(HomeRoute.Home.path)
+                }
+            },
             isExploreActive = currentRoute == HomeRoute.Explore.path
         ) { state ->
             HomeNavigation(

@@ -96,7 +96,7 @@ fun SettingsScreen(
             handleOnNavigate("about")
         }
     }
-    FeedbackScreen(feedbackSession)
+    FeedbackScreen(feedbackSession, BuildConfig.FEED_BACK)
 }
 
 @Composable

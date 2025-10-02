@@ -13,6 +13,7 @@ android {
         }
         buildConfigField("int", "PAGING_LIMIT", "20")
         buildConfigField("String", "PLAYSTORE_URL", "\"https://play.google.com/store/apps/details?id=eu.peernetwork.app\"")
+        buildConfigField("String","FEED_BACK","\"https://docs.google.com/forms/d/e/1FAIpQLSeTRecbfUTKmpYHSaE7bSawEagUpkOPagJtLqZdsec659HaGw/viewform\"")
     }
     buildTypes {
         debug {

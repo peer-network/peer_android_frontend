@@ -6,18 +6,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.ui.platform.LocalContext
+import androidx.core.net.toUri
 
 @Composable
 fun FeedbackScreen(
-    session: State<Long>
+    session: State<Long>,
+    url: String
 ) {
     val context = LocalContext.current
     LaunchedEffect(session.value) {
         if (session.value != -1L) {
-            val formUrl = "https://docs.google.com/forms/d/e/1FAIpQLSeTRecbfUTKmpYHSaE7bSawEagUpkOPagJtLqZdsec659HaGw/viewform"
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(formUrl))
+            val intent = Intent(Intent.ACTION_VIEW, url.toUri())
             context.startActivity(intent)
         }
     }
 }
-
