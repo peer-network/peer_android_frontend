@@ -1,7 +1,7 @@
 package eu.peernetwork.app.ui.onboarding
 
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
@@ -9,10 +9,10 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -23,7 +23,7 @@ import eu.peernetwork.core.ui.design.compose.DesignScene
 import eu.peernetwork.core.ui.design.compose.DesignSceneState
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.user.domain.model.Preference
-import kotlinx.coroutines.launch
+import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 fun OnboardingScreen(
@@ -94,51 +94,18 @@ fun OnboardingScreen(
     properties: Properties,
     onFinished: (Boolean) -> Unit
 ) {
-    val scope = rememberCoroutineScope()
-    val handleOnFinished by rememberUpdatedState(onFinished)
-    fun goNext() = scope.launch {
-        state.animateScrollToPage((state.currentPage + 1).coerceAtMost(state.pageCount - 1))
-    }
-    fun goBack() = scope.launch {
-        state.animateScrollToPage((state.currentPage - 1).coerceAtLeast(0))
-    }
-    HorizontalPager(
-        state = state,
-        userScrollEnabled = true
-    ) { page ->
-        when (page) {
-            0 -> OnboardingPageOne(
-                onSkip = { handleOnFinished(true) },
-                onNext = { goNext() }
-            )
-            1 -> OnboardingPageTwo(
-                onSkip = { handleOnFinished(true) },
-                onBack = { goBack() },
-                onNext = { goNext() },
-
-                extraPost = properties.configuration.tokenomics.actionTokenPrices["post"] ?: 0,
-                extraLike = properties.configuration.tokenomics.actionTokenPrices["like"] ?: 0,
-                extraComment = properties.configuration.tokenomics.actionTokenPrices["comment"] ?: 0,
-                dislike = properties.configuration.tokenomics.actionTokenPrices["dislike"] ?: 0
-            )
-            2 -> OnboardingPageThree(
-                onSkip = { handleOnFinished(true) },
-                onBack = { goBack() },
-                onNext = { goNext() },
-
-                likeReward = properties.configuration.tokenomics.actionGemsReturns["like"] ?: 0.0,
-                dislikeReward = properties.configuration.tokenomics.actionGemsReturns["dislike"] ?: 0.0,
-                commentReward = properties.configuration.tokenomics.actionGemsReturns["comment"] ?: 0.0,
-                viewReward = properties.configuration.tokenomics.actionGemsReturns["view"] ?: 0.0
-            )
-            3 -> OnboardingPageFour(
-                onSkip = { handleOnFinished(true) },
-                onBack = { goBack() },
-                onNext = { goNext() },
-
-                dailyNumberToken = properties.configuration.minting.dailyNumberToken
-            )
-            4 -> OnboardingPageFive(onSkip = { handleOnFinished(false) })
-        }
+    val price = properties.configuration.minting.dailyNumberToken.toString()
+    val states = persistentListOf(
+        OnboardingGuideState.Introduction,
+        OnboardingGuideState.Action,
+        OnboardingGuideState.Diagram(price),
+        OnboardingGuideState.Engagement(price),
+        OnboardingGuideState.Feature
+    )
+    OnboardingScaffold(state) {
+        OnboardingGuide(
+            state = states[it],
+            modifier = Modifier.padding(horizontal = 24.dp)
+        )
     }
 }

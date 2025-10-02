@@ -1,7 +1,7 @@
 package eu.peernetwork.blog.ui.model
 
 import androidx.annotation.DrawableRes
-import eu.peernetwork.core.ui.R
+import eu.peernetwork.blog.ui.R
 
 sealed class UiAction(
     @DrawableRes val id: Int,
