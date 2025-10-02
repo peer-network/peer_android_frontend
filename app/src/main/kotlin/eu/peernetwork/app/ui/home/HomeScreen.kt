@@ -22,6 +22,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.app.ui.onboarding.OnboardingScreen
+import eu.peernetwork.app.ui.settings.SettingsEvent
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.compose.DesignPage
 import eu.peernetwork.core.ui.design.compose.DesignPageHeader
@@ -39,8 +40,13 @@ import eu.peernetwork.social.ui.feedback.FeedbackPopup
 fun HomeScreen(provider: UiComponentProvider) {
     val viewModelStore = remember { UiViewModelStore.Delegate() }
     val context = LocalContext.current
+    val rootController = rememberNavController()
     val component = remember {
-        provider.builder(Home.Builder::class.java).build(context)
+        provider.builder(Home.Builder::class.java).build(context, object : SettingsEvent {
+            override fun invoke(event: SettingsEvent.Event) {
+                rootController.navigateIfNecessary("onboarding")
+            }
+        })
     }
     val viewModel = viewModel(
         modelClass = HomeViewModel::class.java,
@@ -64,13 +70,20 @@ fun HomeScreen(provider: UiComponentProvider) {
     HomeScaffold(
         state = derivedState,
         resource = component.resource(),
+        navController = rootController,
         onRefresh = { viewModel() },
         onboarding = {
             OnboardingScreen(
                 preference = it.preference,
                 provider = component,
                 viewModelStoreOwner = viewModelStore.get(it.userId),
-            ) { preference -> viewModel(preference) }
+            ) { preference ->
+                if (preference.flags.isEmpty()) {
+                    viewModel(preference)
+                } else {
+                    rootController.attachIfNecessary("home")
+                }
+            }
         }
     ) { data ->
         val controller = rememberNavController()
@@ -112,9 +125,9 @@ fun HomeScreen(provider: UiComponentProvider) {
         }
     }
     FeedbackPopup(
-        BuildConfig.APPLICATION_ID,
-        component,
-        viewModelStore.get("FeedbackPopup")
+        appPackage = BuildConfig.APPLICATION_ID,
+        provider = component,
+        viewModelStoreOwner = viewModelStore.get("FeedbackPopup")
     )
     LaunchedEffect(Unit) { viewModel() }
     DisposableEffect(Unit) { onDispose { viewModelStore.clear() } }

@@ -41,7 +41,9 @@ fun SettingsScreen(
     }
     val account = stringResource(R.string.account_label)
     SettingsNavigation(userId, component, viewModelStore) { controller ->
-        SettingsScreen({ controller.navigateIfNecessary(it) }) {
+        SettingsScreen({
+            component.settingsEvent().invoke(SettingsEvent.Event.Tutorial)
+        }, { controller.navigateIfNecessary(it) }) {
             AccountPreview(component, viewModelStore.get(userId)) {
                 controller.navigateIfNecessary(account)
             }
@@ -58,6 +60,7 @@ fun SettingsScreen(
 
 @Composable
 fun SettingsScreen(
+    onTutorial: () -> Unit,
     onNavigate: (String) -> Unit,
     header: @Composable () -> Unit
 ) {
@@ -67,6 +70,7 @@ fun SettingsScreen(
     val password = stringResource(R.string.password_label)
     val preference = stringResource(R.string.preference_label)
     val feedback = stringResource(R.string.feedback_label)
+    val introduction = stringResource(R.string.how_it_works_label)
     val aboutUsLabel = stringResource(R.string.about_us_label)
     val feedbackSession = remember { mutableLongStateOf(-1) }
     Column(modifier = Modifier
@@ -85,8 +89,9 @@ fun SettingsScreen(
             handleOnNavigate(preference)
         }
         SettingsItem(label = feedback) {
-            feedbackSession.value = System.currentTimeMillis()
+            feedbackSession.longValue = System.currentTimeMillis()
         }
+        SettingsItem(label = introduction, onTutorial)
         SettingsItem(label = aboutUsLabel) {
             handleOnNavigate("about")
         }
@@ -101,7 +106,7 @@ fun SettingsScreen(
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun PreviewSettingsScreen() {
     PeerTheme {
-        SettingsScreen({}) {
+        SettingsScreen({}, {}) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()

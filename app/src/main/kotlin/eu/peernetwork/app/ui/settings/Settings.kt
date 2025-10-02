@@ -12,6 +12,8 @@ import eu.peernetwork.user.ui.settings.account.Account
 import eu.peernetwork.user.ui.settings.address.Address
 
 interface Settings : ApplicationProvider {
+    fun settingsEvent(): SettingsEvent
+
     @javax.inject.Scope
     @Retention(AnnotationRetention.RUNTIME)
     annotation class Scope

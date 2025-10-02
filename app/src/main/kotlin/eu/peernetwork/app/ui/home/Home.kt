@@ -11,6 +11,7 @@ import eu.peernetwork.app.ui.feed.Feed
 import eu.peernetwork.app.ui.messaging.Messaging
 import eu.peernetwork.app.ui.onboarding.Onboarding
 import eu.peernetwork.app.ui.search.Search
+import eu.peernetwork.app.ui.settings.SettingsEvent
 import eu.peernetwork.app.ui.wallet.Wallet
 import eu.peernetwork.messaging.ui.chat.Chat
 import eu.peernetwork.social.ui.feedback.Feedback
@@ -38,12 +39,25 @@ interface Home : ApplicationProvider {
         Search,
         Chat,
         Feedback {
+        @dagger.Component.Builder
+        interface Builder {
+            fun home(home: Home): Builder
+
+            @dagger.BindsInstance
+            fun event(event: SettingsEvent): Builder
+
+            fun build(): Component
+        }
+
         fun viewModelFactory(): ViewModelProvider.Factory
     }
 
-    class Builder(private val dependency: Home) : UiComponent.DefaultBuilder<Home, Component>() {
-        override fun build(context: Context): Component {
-            return DaggerHome_Component.builder().home(dependency).build()
+    class Builder(private val dependency: Home) : UiComponent.ParameterizedBuilder<SettingsEvent, Home, Component>() {
+        override fun build(context: Context, param: SettingsEvent): Component {
+            return DaggerHome_Component.builder()
+                .home(dependency)
+                .event(param)
+                .build()
         }
     }
 }
