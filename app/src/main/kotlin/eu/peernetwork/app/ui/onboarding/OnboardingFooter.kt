@@ -1,10 +1,12 @@
 package eu.peernetwork.app.ui.onboarding
 
 import android.content.res.Configuration
-import androidx.compose.animation.Crossfade
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.EaseOutCubic
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -13,8 +15,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -30,8 +32,10 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
@@ -80,54 +84,61 @@ fun OnboardingFooter(
         OnboardingFooterIndicator(pagerState = state)
         Spacer(modifier = Modifier.fillMaxWidth()
             .padding(top = 18.dp))
-        Crossfade(targetState = derivedState.value) { stage ->
-            OnboardingFooter(
-                state = stage,
-                onPreviousClick = {
-                    if (derivedState.value != OnboardingFooterState.BEGIN) {
-                        scope.launch {
-                            state.animateScrollToPage(state.currentPage - 1)
-                        }
+        OnboardingFooter(
+            state = derivedState,
+            onPreviousClick = {
+                if (derivedState.value != OnboardingFooterState.BEGIN) {
+                    scope.launch {
+                        state.animateScrollToPage(state.currentPage - 1)
                     }
-                },
-                onNextClick = {
-                    if (derivedState.value != OnboardingFooterState.COMPLETE) {
-                        scope.launch {
-                            state.animateScrollToPage(state.currentPage + 1)
-                        }
+                }
+            },
+            onNextClick = {
+                if (derivedState.value != OnboardingFooterState.COMPLETE) {
+                    scope.launch {
+                        state.animateScrollToPage(state.currentPage + 1)
                     }
-                },
-                onFinish = onFinish
-            )
-        }
+                }
+            },
+            onFinish = onFinish
+        )
     }
 }
 
 @Composable
 fun OnboardingFooter(
-    state: OnboardingFooterState,
+    state: State<OnboardingFooterState>,
     onPreviousClick: () -> Unit = {},
     onNextClick: () -> Unit = {},
     onFinish: (Boolean) -> Unit
 ) {
     val handleOnFinish by rememberUpdatedState(onFinish)
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .fillMaxWidth()
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier.fillMaxWidth()
             .height(64.dp)
     ) {
-        if (state != OnboardingFooterState.COMPLETE) {
+        val isFinished = remember { derivedStateOf { state.value == OnboardingFooterState.COMPLETE } }
+        AnimatedVisibility(
+            visible = !isFinished.value,
+            enter = fadeIn(),
+            exit = fadeOut()
+        ) {
             OnboardingFooter(
                 onNextClick = onNextClick,
                 onSkipClick = { handleOnFinish(false) },
-                onPreviousClick = if (state != OnboardingFooterState.BEGIN) {
+                onPreviousClick = if (state.value != OnboardingFooterState.BEGIN) {
                     onPreviousClick
                 } else {
                     null
                 }
             )
-        } else {
+        }
+        AnimatedVisibility(
+            visible = isFinished.value,
+            enter = fadeIn(),
+            exit = fadeOut()
+        ) {
             DesignButton(
                 onClick = { handleOnFinish(true) },
                 modifier = Modifier
@@ -147,28 +158,54 @@ fun OnboardingFooter(
 }
 
 @Composable
-fun RowScope.OnboardingFooter(
+fun OnboardingFooter(
     onPreviousClick: (() -> Unit)? = null,
     onNextClick: () -> Unit = {},
     onSkipClick: () -> Unit
 ) {
     val handleOnPreviousClick by rememberUpdatedState(onPreviousClick)
-    DesignOutlinedButton(
-        onClick = onSkipClick,
-        enabled = true,
-        shape = CircleShape,
-        textStyle = MaterialTheme.typography.labelLarge,
-        colors = ButtonDefaults.outlinedButtonColors(
-            containerColor = Color.Transparent,
-            contentColor = MaterialTheme.colorScheme.onBackground,
-            disabledContainerColor = Color.Transparent
-        ),
-        minHeight = 38.dp,
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.onBackground),
-        contentPadding = PaddingValues(horizontal = 24.dp, vertical = 8.dp)
-    ) { Text(stringResource(R.string.skip_label)) }
-    Spacer(modifier = Modifier.weight(1f))
-    if (handleOnPreviousClick != null) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.fillMaxSize()
+    ) {
+        DesignOutlinedButton(
+            onClick = onSkipClick,
+            enabled = true,
+            shape = CircleShape,
+            textStyle = MaterialTheme.typography.labelLarge,
+            colors = ButtonDefaults.outlinedButtonColors(
+                containerColor = Color.Transparent,
+                contentColor = MaterialTheme.colorScheme.onBackground,
+                disabledContainerColor = Color.Transparent
+            ),
+            minHeight = 38.dp,
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.onBackground),
+            contentPadding = PaddingValues(horizontal = 24.dp, vertical = 8.dp)
+        ) { Text(stringResource(R.string.skip_label)) }
+        Spacer(modifier = Modifier.weight(1f))
+        AnimatedVisibility(
+            visible = handleOnPreviousClick != null,
+            enter = fadeIn(),
+            exit = fadeOut()
+        ) {
+            Row {
+                IconButton(
+                    onClick = onNextClick,
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .size(48.dp)
+                        .background(MaterialTheme.colorScheme.primary),
+                ) {
+                    Image(
+                        painter = painterResource(id = eu.peernetwork.core.ui.R.drawable.ic_back_arrow),
+                        contentDescription = stringResource(R.string.back_label),
+                        modifier = Modifier.size(28.dp),
+                        contentScale = ContentScale.Fit
+                    )
+                }
+                Spacer(modifier = Modifier.width(12.dp))
+            }
+        }
         IconButton(
             onClick = onNextClick,
             modifier = Modifier
@@ -177,27 +214,12 @@ fun RowScope.OnboardingFooter(
                 .background(MaterialTheme.colorScheme.primary),
         ) {
             Image(
-                painter = painterResource(id = eu.peernetwork.core.ui.R.drawable.ic_back_arrow),
-                contentDescription = stringResource(R.string.back_label),
+                painter = painterResource(id = eu.peernetwork.core.ui.R.drawable.ic_proceed),
+                contentDescription = stringResource(R.string.proceed_label),
                 modifier = Modifier.size(28.dp),
                 contentScale = ContentScale.Fit
             )
         }
-        Spacer(modifier = Modifier.width(12.dp))
-    }
-    IconButton(
-        onClick = onNextClick,
-        modifier = Modifier
-            .clip(CircleShape)
-            .size(48.dp)
-            .background(MaterialTheme.colorScheme.primary),
-    ) {
-        Image(
-            painter = painterResource(id = eu.peernetwork.core.ui.R.drawable.ic_proceed),
-            contentDescription = stringResource(R.string.proceed_label),
-            modifier = Modifier.size(28.dp),
-            contentScale = ContentScale.Fit
-        )
     }
 }
 
@@ -256,9 +278,10 @@ fun OnboardingFooterPreview() {
             vertical = 8.dp,
             horizontal = 24.dp
         )) {
+            val state = remember { mutableStateOf(OnboardingFooterState.COMPLETE) }
             val pagerState = rememberPagerState(initialPage = 0, pageCount = { 6 })
             OnboardingFooter(pagerState) {}
-            OnboardingFooter(OnboardingFooterState.COMPLETE) {}
+            OnboardingFooter(state) {}
         }
     }
 }

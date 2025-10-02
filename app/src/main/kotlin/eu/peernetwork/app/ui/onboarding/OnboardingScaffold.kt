@@ -1,6 +1,7 @@
 package eu.peernetwork.app.ui.onboarding
 
 import android.content.res.Configuration
+import androidx.compose.animation.core.exponentialDecay
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.MaterialTheme
@@ -23,6 +25,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
@@ -37,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import eu.peernetwork.app.R
 import eu.peernetwork.core.ui.extension.annotate
 import eu.peernetwork.core.ui.theme.PeerTheme
+import kotlin.math.absoluteValue
 
 @Composable
 fun OnboardingScaffold(
@@ -68,8 +72,20 @@ fun OnboardingScaffold(
         Spacer(modifier = Modifier.height(8.dp))
         HorizontalPager(
             state = state,
+            flingBehavior = PagerDefaults.flingBehavior(
+                state = state,
+                decayAnimationSpec = exponentialDecay(frictionMultiplier = 2f)
+            ),
             modifier = Modifier.weight(1f),
-        ) { page -> updatedContent(page) }
+        ) { page ->
+            val pageOffset = ((state.currentPage - page) + state.currentPageOffsetFraction)
+                .absoluteValue
+            val alpha = (1 - (pageOffset * state.pageCount)).coerceIn(0f, 1f)
+            Box(
+                modifier = Modifier.fillMaxSize()
+                    .graphicsLayer { this.alpha = (alpha * 3f) }
+            ) { updatedContent(page) }
+        }
         OnboardingFooter(state, Modifier.padding(
             horizontal = 24.dp
         ).padding(bottom = 8.dp)) { }
