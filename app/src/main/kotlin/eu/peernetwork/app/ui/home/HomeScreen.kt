@@ -7,7 +7,15 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -91,8 +99,30 @@ fun HomeScreen(provider: UiComponentProvider) {
         val startDestination = remember { HomeRoute.get(navigationState.intValue).path }
         val navBackStackEntry by controller.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry?.destination?.route
+        val isExploreActive = currentRoute == HomeRoute.Explore.path
+        val toggleExplore: () -> Unit = {
+            when {
+                isExploreActive -> {
+                    val popped = controller.popBackStack()
+                    if (!popped) {
+                        controller.attachIfNecessary(HomeRoute.Home.path)
+                    }
+                }
+                currentRoute != HomeRoute.Home.path -> {
+                    viewModel.lastVisited(0)
+                    navigationState.intValue = 0
+                    controller.attachIfNecessary(HomeRoute.Home.path)
+                }
+                else -> {
+                controller.navigateIfNecessary(HomeRoute.Explore.path)
+                }
+            }
+        }
+        val startForFooter: State<Int> =
+            rememberUpdatedState(if (isExploreActive) -1 else navigationState.intValue)
+
         HomeScreen(
-            start = navigationState,
+            start = startForFooter,
             options = { RewardScreen(
                 provider = component,
                 viewModelStoreOwner = viewModelStore.get(data.userId)
@@ -102,16 +132,16 @@ fun HomeScreen(provider: UiComponentProvider) {
                 navigationState.intValue = it
                 controller.attachIfNecessary(HomeRoute.get(it).path)
             },
-            onExplore = { controller.navigateIfNecessary(HomeRoute.Explore.path) },
-            isExploreActive = currentRoute == HomeRoute.Explore.path
-        ) { state ->
+            onExplore = toggleExplore,
+            isExploreActive = isExploreActive
+        ) { stateProgress ->
             HomeNavigation(
                 id = data.userId,
                 startDestination = startDestination,
                 navController = controller,
                 component = component,
                 viewModelStore = viewModelStore,
-                onExplore = { controller.navigateIfNecessary(HomeRoute.Explore.path) }
+                onExplore = toggleExplore
             ) {
                 viewModel.lastVisited(0)
                 navigationState.intValue = 0
