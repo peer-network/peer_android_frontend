@@ -81,7 +81,7 @@ fun HomeScreen(provider: UiComponentProvider) {
                 if (preference.flags.isEmpty()) {
                     viewModel(preference)
                 } else {
-                    rootController.attachIfNecessary("home")
+                    rootController.popBackStack()
                 }
             }
         }

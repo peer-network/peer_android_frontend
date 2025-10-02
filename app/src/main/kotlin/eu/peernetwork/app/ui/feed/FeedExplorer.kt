@@ -133,7 +133,7 @@ private fun FeedExplorerTabs(
     connectionController: State<ConnectionController>,
     onExplore: (() -> Unit)? = null
 ) {
-    val sortTypes = listOf(Sort.TREND, Sort.NEW)
+    val sortTypes = listOf(Sort.NEW, Sort.TREND)
     Column {
         DesignTab(pageState) { index ->
             Text(

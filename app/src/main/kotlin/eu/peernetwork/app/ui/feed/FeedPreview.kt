@@ -90,9 +90,9 @@ fun FeedPreview(
                             position = event.position,
                             criteria = derivedCriteria.value,
                             category = if (pageState.currentPage == 0) {
-                                Category.FOLLOWER
-                            } else {
                                 Category.FOLLOWED
+                            } else {
+                                Category.FOLLOWER
                             }
                         )
                     }
@@ -176,7 +176,11 @@ fun FeedPreview(
     Column {
         DesignTab(pageState) { index ->
             Text(
-                text = stringResource(id = if (index == 0) R.string.followers_label else R.string.following_label),
+                text = stringResource(id = if (index == 0) {
+                    R.string.following_label
+                } else {
+                    R.string.followers_label
+                } ),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.tertiary,
                 modifier = Modifier
@@ -189,8 +193,8 @@ fun FeedPreview(
             verticalAlignment = Alignment.Top,
         ) { page ->
             when (page) {
-                0 -> handleContent(Category.FOLLOWER)
-                1 -> handleContent(Category.FOLLOWED)
+                0 -> handleContent(Category.FOLLOWED)
+                1 -> handleContent(Category.FOLLOWER)
             }
         }
     }
