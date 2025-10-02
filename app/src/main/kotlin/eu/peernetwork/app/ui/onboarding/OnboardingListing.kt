@@ -52,7 +52,7 @@ fun OnboardingActionListing() {
             color = MaterialTheme.colorScheme.onBackground
         )
         PricingLabel(
-            lead = painterResource(R.drawable.ic_hate),
+            lead = painterResource(R.drawable.ic_hate_outline),
             trailing = painterResource(AppRes.drawable.ic_icon),
             price = "+ 2",
             label = stringResource(AppRes.string.onboarding_option_dislike),
