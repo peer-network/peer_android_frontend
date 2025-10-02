@@ -96,10 +96,7 @@ fun SettingsScreen(
             handleOnNavigate("about")
         }
     }
-    FeedbackScreen(
-        feedbackSession,
-        BuildConfig.APPLICATION_ID
-    )
+    FeedbackScreen(feedbackSession)
 }
 
 @Composable
