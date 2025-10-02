@@ -18,6 +18,8 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -82,9 +84,10 @@ fun OnboardingScaffold(
             val pageOffset = ((state.currentPage - page)
                     + state.currentPageOffsetFraction).absoluteValue
             val alpha = (1 - (pageOffset * state.pageCount)).coerceIn(0f, 1f)
-            Box(
+            Column(
                 modifier = Modifier.fillMaxSize()
                     .graphicsLayer { this.alpha = (alpha * 3f) }
+                    .verticalScroll(rememberScrollState())
             ) { updatedContent(page) }
         }
         OnboardingFooter(
