@@ -33,7 +33,9 @@ import eu.peernetwork.core.ui.theme.PeerTheme
 fun PostIcon(
     action: UiAction,
     value: String,
+    isActive: Boolean = false,
     size: Dp = 28.dp,
+    spacer: Dp = 0.dp,
     padding: PaddingValues = PaddingValues(4.dp),
     orientation: Orientation = Orientation.Horizontal,
     color: Color = MaterialTheme.colorScheme.tertiary,
@@ -58,9 +60,11 @@ fun PostIcon(
         PostIcon(
             action = action,
             value = value,
+            isActive = isActive,
             modifier = Modifier.padding(padding)
                 .graphicsLayer { this.alpha = alpha },
             size = size,
+            spacer = spacer,
             padding = padding,
             orientation = orientation,
             color = color,
@@ -73,6 +77,7 @@ fun PostIcon(
     action: UiAction,
     value: String,
     modifier: Modifier = Modifier,
+    isActive: Boolean = false,
     size: Dp = 28.dp,
     spacer: Dp = 0.dp,
     padding: PaddingValues = PaddingValues(4.dp),
@@ -83,7 +88,11 @@ fun PostIcon(
         if (orientation == Orientation.Horizontal) {
             Box(contentAlignment = Alignment.CenterStart) {
                 Icon(
-                    painter = painterResource(id = action.id),
+                    painter = painterResource(id = if (!isActive) {
+                        action.id
+                    } else {
+                        action.activeId
+                    }),
                     contentDescription = action.label?.let { stringResource(it) },
                     tint = color,
                     modifier = Modifier.size(size)
@@ -99,7 +108,11 @@ fun PostIcon(
         } else {
             Box(contentAlignment = Alignment.TopCenter) {
                 Icon(
-                    painter = painterResource(id = action.id),
+                    painter = painterResource(id = if (!isActive) {
+                        action.id
+                    } else {
+                        action.activeId
+                    }),
                     contentDescription = action.label?.let { stringResource(it) },
                     tint = color,
                     modifier = Modifier.size(size)

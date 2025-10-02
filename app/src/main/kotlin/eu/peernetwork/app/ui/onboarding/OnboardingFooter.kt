@@ -79,10 +79,12 @@ fun OnboardingFooter(
         }
     }
     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = modifier) {
-        Spacer(modifier = Modifier.fillMaxWidth()
+        Spacer(modifier = Modifier
+            .fillMaxWidth()
             .padding(top = 8.dp))
         OnboardingFooterIndicator(pagerState = state)
-        Spacer(modifier = Modifier.fillMaxWidth()
+        Spacer(modifier = Modifier
+            .fillMaxWidth()
             .padding(top = 18.dp))
         OnboardingFooter(
             state = derivedState,
@@ -115,7 +117,8 @@ fun OnboardingFooter(
     val handleOnFinish by rememberUpdatedState(onFinish)
     Box(
         contentAlignment = Alignment.Center,
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
             .height(64.dp)
     ) {
         val isFinished = remember { derivedStateOf { state.value == OnboardingFooterState.COMPLETE } }
@@ -190,7 +193,7 @@ fun OnboardingFooter(
         ) {
             Row {
                 IconButton(
-                    onClick = onNextClick,
+                    onClick = { handleOnPreviousClick?.invoke() },
                     modifier = Modifier
                         .clip(CircleShape)
                         .size(48.dp)
@@ -262,7 +265,8 @@ fun OnboardingFooterIndicator(
         Box(
             modifier = Modifier
                 .size(size)
-                .offset(((spacing + size) * animatedOffset)).background(
+                .offset(((spacing + size) * animatedOffset))
+                .background(
                     color = activeColor,
                     shape = CircleShape
                 )

@@ -46,6 +46,7 @@ import kotlin.math.absoluteValue
 fun OnboardingScaffold(
     state: PagerState,
     modifier: Modifier = Modifier,
+    onFinish: (Boolean) -> Unit,
     content: @Composable (Int) -> Unit
 ) {
     val updatedContent by rememberUpdatedState(content)
@@ -78,17 +79,21 @@ fun OnboardingScaffold(
             ),
             modifier = Modifier.weight(1f),
         ) { page ->
-            val pageOffset = ((state.currentPage - page) + state.currentPageOffsetFraction)
-                .absoluteValue
+            val pageOffset = ((state.currentPage - page)
+                    + state.currentPageOffsetFraction).absoluteValue
             val alpha = (1 - (pageOffset * state.pageCount)).coerceIn(0f, 1f)
             Box(
                 modifier = Modifier.fillMaxSize()
                     .graphicsLayer { this.alpha = (alpha * 3f) }
             ) { updatedContent(page) }
         }
-        OnboardingFooter(state, Modifier.padding(
-            horizontal = 24.dp
-        ).padding(bottom = 8.dp)) { }
+        OnboardingFooter(
+            state = state,
+            modifier = Modifier.padding(
+                horizontal = 24.dp
+            ).padding(bottom = 8.dp),
+            onFinish = onFinish
+        )
     }
 }
 
@@ -142,7 +147,7 @@ fun OnboardingContentScaffold(
 fun OnboardingScaffoldPreview() {
     PeerTheme {
         val pagerState = rememberPagerState(initialPage = 0, pageCount = { 5 })
-        OnboardingScaffold(pagerState) {}
+        OnboardingScaffold(pagerState, onFinish = {}) {}
     }
 }
 

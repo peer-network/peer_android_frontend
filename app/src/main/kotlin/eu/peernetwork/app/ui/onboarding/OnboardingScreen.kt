@@ -102,7 +102,7 @@ fun OnboardingScreen(
         OnboardingGuideState.Engagement(price),
         OnboardingGuideState.Feature
     )
-    OnboardingScaffold(state) {
+    OnboardingScaffold(state, onFinish = onFinished) {
         OnboardingGuide(
             state = states[it],
             modifier = Modifier.padding(horizontal = 24.dp)
