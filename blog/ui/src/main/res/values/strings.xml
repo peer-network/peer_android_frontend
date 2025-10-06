@@ -19,6 +19,9 @@
     <string name="day_label">Yesterday</string>
     <string name="days_label">%d days ago</string>
 
+    <string name="likes_label">Liked by %d peers</string>
+    <string name="like_by_label">Liked by a peer</string>
+
     <string name="action_message">Action successfully completed</string>
     <string name="point_description">You have %d Free %s</string>
     <string name="description_label">Description</string>

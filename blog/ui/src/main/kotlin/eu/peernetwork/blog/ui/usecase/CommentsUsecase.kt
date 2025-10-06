@@ -9,6 +9,7 @@ import eu.peernetwork.blog.domain.repository.CommentRepository
 import eu.peernetwork.blog.ui.mapper.mapToComment
 import eu.peernetwork.blog.ui.model.UiComment
 import eu.peernetwork.core.common.paging.Pageable
+import eu.peernetwork.core.ui.exception.NoContentException
 import eu.peernetwork.core.ui.usecase.AnnotationUsecase
 import eu.peernetwork.core.ui.usecase.PagingUsecase
 import kotlinx.coroutines.flow.Flow
@@ -41,11 +42,15 @@ class CommentsUsecase @Inject constructor(
             id = param.id,
             page = currentPage
         )
-        return LoadResult.Page(
-            data = response.items.map { it.mapToComment { annotationUsecase(it) } },
-            prevKey = if (currentOffset <= 0) null else currentOffset - 1,
-            nextKey = if (response.items.isEmpty()) null else currentOffset + response.items.size
-        )
+        return if (response.items.isEmpty() && currentPage.offset == 0) {
+            LoadResult.Error(NoContentException())
+        } else {
+            LoadResult.Page(
+                data = response.items.map { it.mapToComment { annotationUsecase(it) } },
+                prevKey = if (currentOffset <= 0) null else currentOffset - 1,
+                nextKey = if (response.items.isEmpty()) null else currentOffset + response.items.size
+            )
+        }
     }
 
     data class Parameter(
