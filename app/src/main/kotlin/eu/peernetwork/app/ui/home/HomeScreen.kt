@@ -40,11 +40,11 @@ import eu.peernetwork.social.ui.feedback.FeedbackPopup
 fun HomeScreen(provider: UiComponentProvider) {
     val viewModelStore = remember { UiViewModelStore.Delegate() }
     val context = LocalContext.current
-    val rootController = rememberNavController()
+    val showOnboarding = remember { mutableStateOf(false) }
     val component = remember {
         provider.builder(Home.Builder::class.java).build(context, object : SettingsEvent {
             override fun invoke(event: SettingsEvent.Event) {
-                rootController.navigateIfNecessary("onboarding")
+                showOnboarding.value = true
             }
         })
     }
@@ -70,7 +70,7 @@ fun HomeScreen(provider: UiComponentProvider) {
     HomeScaffold(
         state = derivedState,
         resource = component.resource(),
-        navController = rootController,
+        showOnboarding = showOnboarding,
         onRefresh = { viewModel() },
         onboarding = {
             OnboardingScreen(
@@ -81,7 +81,7 @@ fun HomeScreen(provider: UiComponentProvider) {
                 if (preference.flags.isEmpty()) {
                     viewModel(preference)
                 } else {
-                    rootController.popBackStack()
+                    showOnboarding.value = false
                 }
             }
         }

@@ -35,7 +35,6 @@ fun OnboardingActionListing(
     val like = actionTokenPrices["like"] ?: 0
     val comment = actionTokenPrices["comment"] ?: 0
     val dislike = actionTokenPrices["dislike"] ?: 0
-
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         PricingLabel(
             lead = painterResource(R.drawable.ic_camera_outline),
@@ -76,7 +75,6 @@ fun OnboardingEngagementListing(
     val dislike = actionGemsReturns["dislike"] ?: 0.0
     val comment = actionGemsReturns["comment"] ?: 0.0
     val view = actionGemsReturns["view"] ?: 0.0
-
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         PricingLabel(
             lead = painterResource(R.drawable.ic_love),

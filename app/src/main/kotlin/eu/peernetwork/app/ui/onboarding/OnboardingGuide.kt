@@ -2,6 +2,8 @@ package eu.peernetwork.app.ui.onboarding
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -48,7 +50,6 @@ fun OnboardingGuide(
     when (state) {
         is OnboardingGuideState.Introduction -> OnboardingIntroductionGuide(modifier)
         is OnboardingGuideState.Action -> OnboardingActionGuide(
-            dailyFreeActions = state.dailyFreeActions,
             actionTokenPrices = state.actionTokenPrices,
             modifier = modifier
         )
@@ -89,7 +90,6 @@ private fun OnboardingIntroductionGuide(modifier: Modifier = Modifier) {
 
 @Composable
 private fun OnboardingActionGuide(
-    dailyFreeActions: Map<String, Int>,
     actionTokenPrices: Map<String, Int>,
     modifier: Modifier = Modifier
 ) {
@@ -112,7 +112,8 @@ private fun OnboardingActionGuide(
         slogan = slogan,
         modifier = modifier
     ) {
-        Column(modifier = Modifier.padding(top = 12.dp)) {
+        Column(modifier = Modifier.padding(top = 12.dp)
+            .verticalScroll(rememberScrollState())) {
             Text(
                 text = stringResource(R.string.onboarding_daily_free_pass),
                 color = MaterialTheme.colorScheme.tertiary,
@@ -170,7 +171,8 @@ private fun OnboardingEngagementGuide(
         title = title.annotate(),
         slogan = slogan.annotate(),
         modifier = modifier
-    ) { Column(modifier = Modifier.fillMaxSize()) {
+    ) { Column(modifier = Modifier.fillMaxSize()
+        .verticalScroll(rememberScrollState())) {
             Spacer(modifier = Modifier.height(12.dp))
             PostSnapshot()
             Spacer(modifier = Modifier.height(16.dp))
@@ -209,11 +211,6 @@ private fun OnboardingGuidePreview() {
 private fun HowOnboardingGuidePreview() {
     PeerTheme {
         OnboardingActionGuide(
-            dailyFreeActions = mapOf(
-                "post" to 1,
-                "like" to 3,
-                "comment" to 4
-            ),
             actionTokenPrices = mapOf(
                 "post" to 20,
                 "like" to 3,
