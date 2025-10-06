@@ -66,7 +66,7 @@ fun OnboardingScaffold(
         Spacer(modifier = Modifier.height(16.dp))
         Image(
             painter = painterResource(id = R.drawable.ic_logo),
-            contentDescription = stringResource(eu.peernetwork.app.R.string.logo),
+            contentDescription = stringResource(R.string.logo),
             modifier = Modifier.padding(horizontal = 22.dp)
                 .height(48.dp)
         )
@@ -157,9 +157,10 @@ fun OnboardingContentScaffoldPreview() {
     PeerTheme {
         val title = buildAnnotatedString {
             append("How ")
-            withStyle(style = SpanStyle(fontStyle = FontStyle.Italic, fontWeight = FontWeight.Bold)) {
-                append("peer")
-            }
+            withStyle(style = SpanStyle(
+                fontStyle = FontStyle.Italic,
+                fontWeight = FontWeight.Bold
+            )) { append("peer") }
             append(" works?")
         }
         val description = stringResource(R.string.onboarding_about)
