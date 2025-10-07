@@ -1,4 +1,4 @@
-package eu.peernetwork.blog.ui.content.detail
+package eu.peernetwork.blog.ui.feed.detail
 
 import android.content.Context
 import androidx.lifecycle.ViewModelProvider

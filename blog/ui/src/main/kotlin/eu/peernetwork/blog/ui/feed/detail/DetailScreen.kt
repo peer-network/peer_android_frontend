@@ -1,13 +1,9 @@
-package eu.peernetwork.blog.ui.content.detail
+package eu.peernetwork.blog.ui.feed.detail
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -89,83 +85,78 @@ fun DetailScreen(
             provider = component,
             viewModelStoreOwner = viewModelStoreOwner
         ) { moderation ->
-            Column(
-                modifier = Modifier.fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-            ) {
-                DetailPage(
-                    userId = userId,
-                    state = derivedState,
-                    event = event,
-                    engagement = engagement,
-                    moderation = moderation,
-                    connection = connection,
-                    onLoading = {
-                        isPlaying.value = true
-                        viewModel.view(it)
-                    },
-                    audio = { post, expanded ->
-                        val path by remember { derivedStateOf { post.media.first().path } }
-                        component.audioPlayer().Thumbnail(
-                            path = path,
-                            hasControls = !expanded,
-                            position = current.intValue,
-                            enable = enabled,
-                            isActive = isPlaying,
-                            length = length,
-                            current = current,
-                            modifier = Modifier
-                        )
-                    },
-                    video = { post ->
-                        val videoPost = post.mapToVideo()
-                        val postThumbnail = remember { derivedStateOf { thumbnail.value[videoPost.media] } }
-                        DesignThumbnail(
-                            enable = enabled,
-                            thumbnail = videoPost.media,
-                            bitmap = postThumbnail,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .aspectRatio(post.aspectRatio)
-                                .background(MaterialTheme.colorScheme.background)
-                        ) {
-                            viewModel.videoBackground(
-                                media = it,
-                                aspectRatio = videoPost.aspectRatio,
-                                width = configuration.screenWidthDp,
-                                height = (configuration.screenWidthDp / videoPost.aspectRatio).toInt()
-                            )
-                        }
-                        component.videoThumbnail()(
-                            Modifier,
-                            spec = VideoThumbnail.Spec(
-                                url = videoPost.media,
-                                ratio = post.aspectRatio,
-                                isPlaying = isPlaying,
-                                resolution = videoPost.resolution
-                            )
-                        )
-                    },
-                    image = { path, ratio ->
-                        component.imageView()(
-                            modifier = Modifier,
-                            spec = ImageView.Spec(
-                                url = path,
-                                ratio = ratio,
-                                contentScale = ContentScale.Crop,
-                                blur = 500f,
-                            )
-                        )
-                        component.imageView()(
-                            modifier = Modifier,
-                            spec = ImageView.Spec(
-                                url = path,
-                                ratio = ratio
-                            )
+            DetailPage(
+                userId = userId,
+                state = derivedState,
+                event = event,
+                engagement = engagement,
+                moderation = moderation,
+                connection = connection,
+                onLoading = {
+                    isPlaying.value = true
+                    viewModel.view(it)
+                },
+                audio = { post, expanded ->
+                    val path by remember { derivedStateOf { post.media.first().path } }
+                    component.audioPlayer().Thumbnail(
+                        path = path,
+                        hasControls = !expanded,
+                        position = current.intValue,
+                        enable = enabled,
+                        isActive = isPlaying,
+                        length = length,
+                        current = current,
+                        modifier = Modifier
+                    )
+                },
+                video = { post ->
+                    val videoPost = post.mapToVideo()
+                    val postThumbnail = remember { derivedStateOf { thumbnail.value[videoPost.media] } }
+                    DesignThumbnail(
+                        enable = enabled,
+                        thumbnail = videoPost.media,
+                        bitmap = postThumbnail,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .aspectRatio(post.aspectRatio)
+                            .background(MaterialTheme.colorScheme.background)
+                    ) {
+                        viewModel.videoBackground(
+                            media = it,
+                            aspectRatio = videoPost.aspectRatio,
+                            width = configuration.screenWidthDp,
+                            height = (configuration.screenWidthDp / videoPost.aspectRatio).toInt()
                         )
                     }
-                )
-            }
+                    component.videoThumbnail()(
+                        Modifier,
+                        spec = VideoThumbnail.Spec(
+                            url = videoPost.media,
+                            ratio = post.aspectRatio,
+                            isPlaying = isPlaying,
+                            resolution = videoPost.resolution
+                        )
+                    )
+                },
+                image = { path, ratio ->
+                    component.imageView()(
+                        modifier = Modifier,
+                        spec = ImageView.Spec(
+                            url = path,
+                            ratio = ratio,
+                            contentScale = ContentScale.Crop,
+                            blur = 500f,
+                        )
+                    )
+                    component.imageView()(
+                        modifier = Modifier,
+                        spec = ImageView.Spec(
+                            url = path,
+                            ratio = ratio
+                        )
+                    )
+                }
+            )
         }
     }
     LaunchedEffect(Unit) {

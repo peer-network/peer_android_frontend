@@ -1,4 +1,4 @@
-package eu.peernetwork.blog.ui.content.detail
+package eu.peernetwork.blog.ui.feed.detail
 
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.runtime.Composable

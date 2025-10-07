@@ -6,7 +6,7 @@ import eu.peernetwork.app.ui.profile.Profile
 import eu.peernetwork.app.ui.search.Search
 import eu.peernetwork.app.ui.settings.SettingsEvent
 import eu.peernetwork.app.ui.window.Window
-import eu.peernetwork.blog.ui.content.detail.Detail
+import eu.peernetwork.blog.ui.feed.detail.Detail
 import eu.peernetwork.blog.ui.feed.timeline.Post
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider

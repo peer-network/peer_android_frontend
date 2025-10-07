@@ -1,4 +1,4 @@
-package eu.peernetwork.blog.ui.content.detail
+package eu.peernetwork.blog.ui.feed.detail
 
 import androidx.lifecycle.viewModelScope
 import eu.peernetwork.blog.domain.usecase.ViewUsecase

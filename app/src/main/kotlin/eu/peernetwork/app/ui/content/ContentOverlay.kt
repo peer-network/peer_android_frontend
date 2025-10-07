@@ -11,7 +11,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import eu.peernetwork.app.extension.navigateToTagSearch
 import eu.peernetwork.app.extension.navigateToUsernameSearch
 import eu.peernetwork.app.ui.window.WindowTitle
-import eu.peernetwork.blog.ui.content.detail.DetailOverlay
+import eu.peernetwork.blog.ui.feed.detail.DetailOverlay
 import eu.peernetwork.blog.ui.event.UiPostListener
 import eu.peernetwork.core.ui.design.compose.DesignOverlay
 import eu.peernetwork.core.ui.extension.navigateIfNecessary

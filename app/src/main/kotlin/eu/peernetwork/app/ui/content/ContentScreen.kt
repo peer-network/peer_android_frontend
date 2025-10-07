@@ -1,11 +1,16 @@
 package eu.peernetwork.app.ui.content
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -13,7 +18,7 @@ import androidx.navigation.compose.rememberNavController
 import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.app.extension.navigateToTagSearch
 import eu.peernetwork.app.extension.navigateToUsernameSearch
-import eu.peernetwork.blog.ui.content.detail.DetailScreen
+import eu.peernetwork.blog.ui.feed.detail.DetailScreen
 import eu.peernetwork.blog.ui.event.UiPostListener
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.compose.DesignTitle
@@ -75,30 +80,36 @@ fun ContentScreen(
                 controller = controller,
                 overlay = overlay
             ) {
-                DetailScreen(
-                    id = postId,
-                    userId = userId,
-                    enabled = enabled,
-                    limit = BuildConfig.PAGING_LIMIT,
-                    event = event,
-                    provider = component,
-                    viewModelStoreOwner = viewModelStore.get(postId),
-                    connection = { relation ->
-                        ConnectionScreen(
-                            isFollowing = connection.getOrDefault(
-                                key = relation.first,
-                                defaultValue = relation.third
-                            ),
-                            isFollowed = relation.second,
-                            onClick = { follow ->
-                                connectionController.value(
-                                    id = relation.first,
-                                    value = !follow
-                                )
-                            },
-                        )
-                    }
-                )
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState())
+                ) {
+                    DetailScreen(
+                        id = postId,
+                        userId = userId,
+                        enabled = enabled,
+                        limit = BuildConfig.PAGING_LIMIT,
+                        event = event,
+                        provider = component,
+                        viewModelStoreOwner = viewModelStore.get(postId),
+                        connection = { relation ->
+                            ConnectionScreen(
+                                isFollowing = connection.getOrDefault(
+                                    key = relation.first,
+                                    defaultValue = relation.third
+                                ),
+                                isFollowed = relation.second,
+                                onClick = { follow ->
+                                    connectionController.value(
+                                        id = relation.first,
+                                        value = !follow
+                                    )
+                                },
+                            )
+                        }
+                    )
+                }
             }
         }
     }
