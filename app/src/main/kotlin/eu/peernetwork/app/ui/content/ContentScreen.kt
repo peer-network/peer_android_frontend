@@ -2,7 +2,9 @@ package eu.peernetwork.app.ui.content
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -33,6 +35,8 @@ fun ContentScreen(
         provider.builder(Content.Builder::class.java).build(context)
     }
     val controller = rememberNavController()
+    val overlay = remember { mutableStateOf<String?>(null) }
+    val enabled = remember { derivedStateOf { overlay.value == null } }
     val event = remember {
         object : UiPostListener {
             override fun invoke(event: UiPostListener.Event) {
@@ -43,7 +47,9 @@ fun ContentScreen(
                         controller.navigateToTagSearch(event.tag)
                     is UiPostListener.Event.Author ->
                         controller.navigateIfNecessary("profile/${event.id}")
-                    is UiPostListener.Event.Post -> {}
+                    is UiPostListener.Event.Post -> {
+                        overlay.value = event.id
+                    }
                 }
             }
         }
@@ -52,37 +58,48 @@ fun ContentScreen(
         provider = component,
         viewModelStoreOwner = viewModelStore.get(postId)
     ) { connectionController ->
-        val connection by connectionController.value.observe().collectAsStateWithLifecycle()
-        ContentNavigation(
+        ContentOverlay(
+            overlay = overlay,
             userId = userId,
             postLimit = BuildConfig.PAGING_LIMIT,
             component = component,
             viewModelStore = viewModelStore,
-            controller = controller
+            connectionController = connectionController
         ) {
-            DetailScreen(
-                id = postId,
+            val connection by connectionController.value.observe().collectAsStateWithLifecycle()
+            ContentNavigation(
                 userId = userId,
-                limit = BuildConfig.PAGING_LIMIT,
-                event = event,
-                provider = component,
-                viewModelStoreOwner = viewModelStore.get(postId),
-                connection = { relation ->
-                    ConnectionScreen(
-                        isFollowing = connection.getOrDefault(
-                            key = relation.first,
-                            defaultValue = relation.third
-                        ),
-                        isFollowed = relation.second,
-                        onClick = { follow ->
-                            connectionController.value(
-                                id = relation.first,
-                                value = !follow
-                            )
-                        },
-                    )
-                }
-            )
+                postLimit = BuildConfig.PAGING_LIMIT,
+                component = component,
+                viewModelStore = viewModelStore,
+                controller = controller,
+                overlay = overlay
+            ) {
+                DetailScreen(
+                    id = postId,
+                    userId = userId,
+                    enabled = enabled,
+                    limit = BuildConfig.PAGING_LIMIT,
+                    event = event,
+                    provider = component,
+                    viewModelStoreOwner = viewModelStore.get(postId),
+                    connection = { relation ->
+                        ConnectionScreen(
+                            isFollowing = connection.getOrDefault(
+                                key = relation.first,
+                                defaultValue = relation.third
+                            ),
+                            isFollowed = relation.second,
+                            onClick = { follow ->
+                                connectionController.value(
+                                    id = relation.first,
+                                    value = !follow
+                                )
+                            },
+                        )
+                    }
+                )
+            }
         }
     }
     DesignTitleBarHost("ContentScreen$postId") {

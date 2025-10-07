@@ -1,6 +1,7 @@
 package eu.peernetwork.blog.ui.content.detail
 
 import androidx.lifecycle.viewModelScope
+import eu.peernetwork.blog.domain.usecase.ViewUsecase
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.usecase.PostContentUsecase
 import eu.peernetwork.media.core.interactor.ThumbnailInteractor
@@ -13,7 +14,8 @@ import javax.inject.Inject
 
 class DetailViewModel @Inject constructor(
     interactor: ThumbnailInteractor,
-    private val usecase: PostContentUsecase
+    private val usecase: PostContentUsecase,
+    private val viewUsecase: ViewUsecase
 ) : MediaViewModel(interactor) {
 
     private val _state = MutableStateFlow<State>(State.Default)
@@ -27,6 +29,16 @@ class DetailViewModel @Inject constructor(
                 _state.tryEmit(State.Success(usecase(id)))
             } catch (error: Throwable) {
                 _state.tryEmit(State.Error(error))
+            }
+        }
+    }
+
+    fun view(id: String) {
+        viewModelScope.launch {
+            try {
+                viewUsecase(id)
+            } catch (error: Throwable) {
+                error.printStackTrace()
             }
         }
     }

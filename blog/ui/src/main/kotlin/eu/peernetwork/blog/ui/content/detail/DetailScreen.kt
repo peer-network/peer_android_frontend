@@ -11,6 +11,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -40,6 +41,7 @@ fun DetailScreen(
     id: String,
     userId: String,
     limit: Int,
+    enabled: State<Boolean>,
     event: UiPostListener,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
@@ -73,7 +75,7 @@ fun DetailScreen(
     } }
     val length = remember { mutableLongStateOf(0L) }
     val current = remember { mutableIntStateOf(0) }
-    val isPlaying = remember { mutableStateOf(true) }
+    val isPlaying = remember { mutableStateOf(false) }
     EngagementScreen(
         postLimit = limit,
         onAuthorClick = { event(UiPostListener.Event.Author(it)) },
@@ -98,13 +100,17 @@ fun DetailScreen(
                     engagement = engagement,
                     moderation = moderation,
                     connection = connection,
+                    onLoading = {
+                        isPlaying.value = true
+                        viewModel.view(it)
+                    },
                     audio = { post, expanded ->
                         val path by remember { derivedStateOf { post.media.first().path } }
                         component.audioPlayer().Thumbnail(
                             path = path,
                             hasControls = !expanded,
                             position = current.intValue,
-                            enable = isPlaying,
+                            enable = enabled,
                             isActive = isPlaying,
                             length = length,
                             current = current,
@@ -115,7 +121,7 @@ fun DetailScreen(
                         val videoPost = post.mapToVideo()
                         val postThumbnail = remember { derivedStateOf { thumbnail.value[videoPost.media] } }
                         DesignThumbnail(
-                            enable = isPlaying,
+                            enable = enabled,
                             thumbnail = videoPost.media,
                             bitmap = postThumbnail,
                             modifier = Modifier

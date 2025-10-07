@@ -2,6 +2,7 @@ package eu.peernetwork.blog.ui.content.detail
 
 import android.content.Context
 import androidx.lifecycle.ViewModelProvider
+import eu.peernetwork.blog.ui.content.overlay.Overlay
 import eu.peernetwork.blog.ui.engagement.Engagement
 import eu.peernetwork.blog.ui.engagement.EngagementDialog
 import eu.peernetwork.blog.ui.moderation.Moderation
@@ -23,7 +24,7 @@ interface Detail : BlogProvider {
         dependencies = [Detail::class],
         modules = [DetailModule::class]
     )
-    interface Component : Detail, UiComponentProvider, Engagement, Moderation {
+    interface Component : Detail, UiComponentProvider, Engagement, Moderation, Overlay {
         fun viewModelFactory(): ViewModelProvider.Factory
     }
 

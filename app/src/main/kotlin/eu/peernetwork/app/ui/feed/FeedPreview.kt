@@ -150,9 +150,9 @@ fun FeedPreview(
     ) {
         coroutine.launch {
             if (pageState.currentPage == 0) {
-                followerListState.animateScrollToItem(0)
-            } else {
                 followedListState.animateScrollToItem(0)
+            } else {
+                followerListState.animateScrollToItem(0)
             }
         }
     }

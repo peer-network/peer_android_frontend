@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
+import eu.peernetwork.blog.ui.content.overlay.Overlay
 import eu.peernetwork.blog.ui.engagement.Engagement
 import eu.peernetwork.blog.ui.moderation.Moderation
 import eu.peernetwork.core.ui.annotation.UiBuilder
@@ -50,5 +51,13 @@ object DetailModule {
     @UiBuilder(Moderation.Builder::class)
     fun provideModerationBuilder(component: Detail.Component): UiComponent.Builder {
         return Moderation.Builder(component)
+    }
+
+    @Provides
+    @IntoMap
+    @Detail.Scope
+    @UiBuilder(Overlay.Builder::class)
+    fun provideOverlayBuilder(post: Detail.Component): UiComponent.Builder {
+        return Overlay.Builder(post)
     }
 }

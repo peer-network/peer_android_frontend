@@ -1,7 +1,10 @@
 package eu.peernetwork.app.ui.content
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -10,6 +13,8 @@ import androidx.navigation.navArgument
 import eu.peernetwork.app.ui.profile.ProfileScreen
 import eu.peernetwork.app.ui.search.SearchScreen
 import eu.peernetwork.app.ui.search.SearchState
+import eu.peernetwork.app.ui.window.WindowScreen
+import eu.peernetwork.core.ui.design.compose.DesignPageWindowMode
 import eu.peernetwork.core.ui.design.compose.DesignRouter
 import eu.peernetwork.core.ui.factory.UiViewModelStore
 
@@ -17,13 +22,22 @@ import eu.peernetwork.core.ui.factory.UiViewModelStore
 fun ContentNavigation(
     userId: String,
     postLimit: Int,
+    overlay: MutableState<String?>,
     startDestination: String = "content",
     controller: NavHostController,
     component: Content.Component,
     viewModelStore: UiViewModelStore,
+    onCancel: () -> Unit = {},
     content: @Composable () -> Unit
 ) {
     val updatedContent by rememberUpdatedState(content)
+    val windowMode = remember { derivedStateOf {
+        if (overlay.value != null) {
+            DesignPageWindowMode.DOCKED
+        } else {
+            DesignPageWindowMode.HIDDEN
+        }
+    } }
     DesignRouter(
         navController = controller,
         startDestination = startDestination,
@@ -35,12 +49,20 @@ fun ContentNavigation(
                 type = NavType.StringType
             })
         ) { backStackEntry ->
-            ProfileScreen(
-                principal = userId,
-                userId = backStackEntry.arguments?.getString("id") ?: "",
+            WindowScreen(
+                id = userId,
                 provider = component,
                 viewModelStore = viewModelStore,
-            )
+                mode = windowMode.value,
+                onCancel = onCancel,
+            ) {
+                ProfileScreen(
+                    principal = userId,
+                    userId = backStackEntry.arguments?.getString("id") ?: "",
+                    provider = component,
+                    viewModelStore = viewModelStore,
+                )
+            }
         }
         composable(
             "search/{type}/{query}",
@@ -56,13 +78,21 @@ fun ContentNavigation(
                 "tag" -> SearchState.Active.Tag(query)
                 else -> SearchState.Default
             }
-            SearchScreen(
+            WindowScreen(
                 id = userId,
-                postLimit = postLimit,
                 provider = component,
                 viewModelStore = viewModelStore,
-                searchState = searchState,
-            )
+                mode = windowMode.value,
+                onCancel = onCancel,
+            ) {
+                SearchScreen(
+                    id = userId,
+                    postLimit = postLimit,
+                    provider = component,
+                    viewModelStore = viewModelStore,
+                    searchState = searchState,
+                )
+            }
         }
     }
 }
