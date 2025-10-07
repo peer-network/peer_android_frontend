@@ -37,7 +37,10 @@ import eu.peernetwork.wallet.ui.reward.RewardScreen
 import eu.peernetwork.social.ui.feedback.FeedbackPopup
 
 @Composable
-fun HomeScreen(provider: UiComponentProvider) {
+fun HomeScreen(
+    provider: UiComponentProvider,
+    route: String? = null
+) {
     val viewModelStore = remember { UiViewModelStore.Delegate() }
     val context = LocalContext.current
     val showOnboarding = remember { mutableStateOf(false) }
@@ -117,7 +120,7 @@ fun HomeScreen(provider: UiComponentProvider) {
         ) { state ->
             HomeNavigation(
                 id = data.userId,
-                startDestination = startDestination,
+                startDestination = route ?: startDestination,
                 navController = controller,
                 component = component,
                 viewModelStore = viewModelStore,

@@ -95,7 +95,7 @@ fun RegistrationScreen(
     val referralCode by rememberSaveable(stateSaver = TextFieldState.Saver) {
         mutableStateOf(referral?.let { TextFieldState(it) } ?: TextFieldState())
     }
-    var password = remember { TextFieldState() }
+    val password = remember { TextFieldState() }
     val validate by remember(email, username, password) {
         derivedStateOf {
             email.isValidEmail() &&

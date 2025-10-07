@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.lifecycle.ViewModelProvider
 import eu.peernetwork.app.provider.ApplicationProvider
 import eu.peernetwork.app.ui.composer.Composer
+import eu.peernetwork.app.ui.content.Content
 import eu.peernetwork.app.ui.profile.Profile
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
@@ -15,6 +16,7 @@ import eu.peernetwork.app.ui.settings.SettingsEvent
 import eu.peernetwork.app.ui.wallet.Wallet
 import eu.peernetwork.messaging.ui.chat.Chat
 import eu.peernetwork.social.ui.feedback.Feedback
+import eu.peernetwork.wallet.ui.confirmation.Confirmation
 import eu.peernetwork.wallet.ui.reward.Reward
 
 interface Home : ApplicationProvider {
@@ -35,9 +37,11 @@ interface Home : ApplicationProvider {
         UiComponentProvider,
         Reward,
         Composer,
+        Content,
         Wallet,
         Search,
         Chat,
+        Confirmation,
         Feedback {
         @dagger.Component.Builder
         interface Builder {
