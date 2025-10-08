@@ -19,6 +19,9 @@
     <string name="day_label">Yesterday</string>
     <string name="days_label">%d days ago</string>
 
+    <string name="likes_label">Comment liked by %d people</string>
+    <string name="like_by_label">Comment liked by a person</string>
+
     <string name="action_message">Action successfully completed</string>
     <string name="point_description">You have %d Free %s</string>
     <string name="description_label">Description</string>
@@ -27,4 +30,11 @@
     <string name="most_liked_label">Most liked</string>
     <string name="most_viewed_label">Most viewed</string>
     <string name="most_disliked_label">Most disliked</string>
+
+    <string name="wallet_label">Wallet</string>
+    <string name="profile_label">Profile</string>
+    <string name="chat_label">Chat</string>
+    <string name="like_label">Likes</string>
+    <string name="dislike_label">Dislikes</string>
+    <string name="view_label">Views</string>
 </resources>

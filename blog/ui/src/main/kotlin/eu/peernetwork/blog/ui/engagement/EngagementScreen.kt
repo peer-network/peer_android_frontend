@@ -162,7 +162,7 @@ fun EngagementScreen(
 fun EngagementScreen(
     model: UiContent,
     event: UiEngagementEvent,
-    size: Dp = 28.dp,
+    size: Dp = 20.dp,
     spacer: Dp = 0.dp,
     color: Color = MaterialTheme.colorScheme.tertiary,
     padding: PaddingValues = PaddingValues(2.dp),
@@ -174,12 +174,14 @@ fun EngagementScreen(
             PostIcon(
                 action = UiAction.Like,
                 value = engagement.likes.toString(),
+                isActive = engagement.isLiked,
                 color = if (engagement.isLiked) {
                     PeerAppRed
                 } else {
                     color
                 },
                 size = size,
+                spacer = 4.dp,
                 padding = padding,
                 orientation = orientation
             ) {
@@ -191,12 +193,14 @@ fun EngagementScreen(
             PostIcon(
                 action = UiAction.Dislike,
                 value = engagement.dislikes.toString(),
+                isActive = engagement.isDisliked,
                 color = if (engagement.isDisliked) {
                     LightAccentColor
                 } else {
                     color
                 },
                 size = size,
+                spacer = 4.dp,
                 padding = padding,
                 orientation = orientation
             ) {
@@ -209,6 +213,7 @@ fun EngagementScreen(
                 UiAction.Comment,
                 engagement.comment.toString(),
                 size = size,
+                spacer = 4.dp,
                 padding = padding,
                 orientation = orientation
             ) { event.onComment(model) }
@@ -218,6 +223,7 @@ fun EngagementScreen(
                 value = engagement.views.toString(),
                 color = color,
                 size = size,
+                spacer = 4.dp,
                 padding = padding,
                 orientation = orientation
             ) { event.onView(model) }
@@ -227,6 +233,7 @@ fun EngagementScreen(
             PostIcon(
                 action = UiAction.Like,
                 value = engagement.likes.toString(),
+                isActive = engagement.isLiked,
                 color = if (engagement.isLiked) {
                     PeerAppRed
                 } else {
@@ -244,6 +251,7 @@ fun EngagementScreen(
             PostIcon(
                 action = UiAction.Dislike,
                 value = engagement.dislikes.toString(),
+                isActive = engagement.isDisliked,
                 color = if (engagement.isDisliked) {
                     LightAccentColor
                 } else {

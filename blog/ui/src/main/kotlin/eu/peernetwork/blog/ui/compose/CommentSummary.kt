@@ -1,6 +1,7 @@
 package eu.peernetwork.blog.ui.compose
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,16 +13,20 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import eu.peernetwork.blog.ui.R
 import eu.peernetwork.blog.ui.model.UiAuthor
 import eu.peernetwork.blog.ui.model.UiContent
 import eu.peernetwork.core.ui.design.compose.DesignAsyncImage
@@ -34,6 +39,7 @@ import eu.peernetwork.core.ui.theme.PeerTheme
 @Composable
 fun CommentSummary(
     model: UiContent,
+    likes: Int,
     modifier: Modifier = Modifier,
     verticalArrangement: Arrangement.Vertical = Arrangement.Top,
     horizontalAlignment: Alignment.Horizontal = Alignment.Start,
@@ -42,6 +48,7 @@ fun CommentSummary(
     color: Color = MaterialTheme.colorScheme.onBackground,
     descriptionColor: Color = MaterialTheme.colorScheme.tertiary,
     titleOnClick: (() -> Unit)? = null,
+    onComment: () -> Unit = {},
     onMentionClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
     onAuthorClick: (String) -> Unit = {},
@@ -74,8 +81,26 @@ fun CommentSummary(
             Column(modifier = Modifier.weight(1f)
                 .heightIn(max = 128.dp)
                 .verticalScroll(rememberScrollState())) {
+                val annotated = buildAnnotatedString {
+                    val hashIndex = model.title.indexOf('#')
+                    if (hashIndex != -1) {
+                        append(model.title.substring(0, hashIndex))
+                        withStyle(
+                            style = SpanStyle(
+                                fontStyle = FontStyle.Italic,
+                                fontWeight = FontWeight.Normal,
+                                fontSize = MaterialTheme.typography.labelSmall.fontSize,
+                                color = descriptionColor
+                            )
+                        ) {
+                            append(model.title.substring(hashIndex))
+                        }
+                    } else {
+                        append(model.title)
+                    }
+                }
                 DesignRichText(
-                    title = model.title,
+                    title = annotated,
                     description = model.description,
                     verticalArrangement = Arrangement.Center,
                     spacer = {},
@@ -89,7 +114,10 @@ fun CommentSummary(
                             fontSize = MaterialTheme.typography.labelSmall.fontSize,
                             color = descriptionColor
                         ),
-                        style = MaterialTheme.typography.headlineMedium.copy(color = color),
+                        style = MaterialTheme.typography.bodySmall.copy(
+                            color = color,
+                            fontWeight = FontWeight.SemiBold
+                        ),
                         descriptionStyle = MaterialTheme.typography.bodySmall.copy(
                             color = descriptionColor
                         )
@@ -97,6 +125,26 @@ fun CommentSummary(
                     onMentionClick = onMentionClick,
                     onHashtagClick = onHashtagClick
                 )
+                if (likes > 0) {
+                    Text(
+                        text = stringResource(if (likes > 1) {
+                            R.string.likes_label
+                        } else {
+                            R.string.like_by_label
+                        }, likes),
+                        style = MaterialTheme.typography.labelSmall.copy(
+                            color = MaterialTheme.colorScheme.surfaceTint
+                        ),
+                        modifier = Modifier.clickable(
+                            onClick = onComment,
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null,
+                        ).padding(
+                            top = 2.dp,
+                            bottom = 4.dp
+                        )
+                    )
+                }
             }
             updatedContent()
         }
@@ -131,6 +179,7 @@ fun CommentSummaryPreview() {
                 comment = 5,
                 url = ""
             ),
+            likes = 2,
         ) { Text("Hello, world!") }
     }
 }

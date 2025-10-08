@@ -25,7 +25,7 @@ class MainViewModel @Inject constructor(
     val state: StateFlow<State> = tokenObserverUsecase()
         .mapLatest { token ->
             token?.let {
-                interactor.subscribe(usecase())
+                interactor.subscribe(usecase(false))
             } ?: interactor.unSubscribe()
             State(token)
         }.stateIn(

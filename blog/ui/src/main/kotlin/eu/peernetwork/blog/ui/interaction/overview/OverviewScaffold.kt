@@ -59,6 +59,8 @@ fun OverviewScaffold(
             PostIcon(
                 action = tabs[it],
                 value = updatedLabel(tabs[it]),
+                size = 20.dp,
+                spacer = 6.dp,
                 padding = PaddingValues(end = 8.dp),
                 color = MaterialTheme.colorScheme.tertiary,
             ) { action ->

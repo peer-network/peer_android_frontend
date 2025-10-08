@@ -81,8 +81,8 @@ fun VideoContent(
             EngagementScreen(
                 event = uiEngagementEvent,
                 model = uiContent,
-                size = 36.dp,
-                spacer = 6.dp,
+                size = 24.dp,
+                spacer = 8.dp,
                 color = MaterialTheme.colorScheme.onBackground,
                 padding = PaddingValues(0.dp),
                 orientation = Orientation.Vertical,

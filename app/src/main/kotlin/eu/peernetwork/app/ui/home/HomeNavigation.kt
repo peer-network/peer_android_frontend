@@ -9,6 +9,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.app.ui.composer.ComposerScreen
+import eu.peernetwork.app.ui.content.ContentScreen
 import eu.peernetwork.app.ui.feed.FeedExplorer
 import eu.peernetwork.app.ui.feed.FeedScreen
 import eu.peernetwork.app.ui.profile.ProfileScreen
@@ -82,6 +83,15 @@ fun HomeNavigation(
                 provider = component,
                 viewModelStore = viewModelStore,
                 hasUpdate = hasUpdate
+            )
+        }
+        composable("post/{id}") {
+            val postId = it.arguments?.getString("id") ?: ""
+            ContentScreen(
+                userId = id,
+                postId = postId,
+                provider = component,
+                viewModelStore = viewModelStore
             )
         }
     }

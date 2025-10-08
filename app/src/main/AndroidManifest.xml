@@ -32,6 +32,7 @@
 
                 <data android:scheme="peer" />
                 <data android:host="invite" />
+                <data android:host="post" />
             </intent-filter>
         </activity>
         <service

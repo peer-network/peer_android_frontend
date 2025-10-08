@@ -48,10 +48,22 @@ fun LauncherScreen(
             )
         }
         composable("home") { HomeScreen(component) }
+        composable("post/{id}") {
+            val id = it.arguments?.getString("id") ?: ""
+            HomeScreen(component, "post/$id")
+        }
     }
     LaunchedEffect(token.value) {
         if (token.value != null) {
-            controller.route("home")
+            if (id != null && route != "invite") {
+                try {
+                    controller.route("$route/${id}")
+                } catch (_: Throwable) {
+                    controller.route("home")
+                }
+            } else {
+                controller.route("home")
+            }
         } else {
             controller.route("setup")
         }
