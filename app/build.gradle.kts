@@ -20,9 +20,8 @@ android {
             isMinifyEnabled = false
             applicationIdSuffix = ".debug"
             versionNameSuffix = "-DEBUG"
-            buildConfigField("String", "BASE_URL", "\"https://getpeer.eu\"")
-            buildConfigField("String", "MEDIA_URL", "\"https://media.getpeer.eu\"")
-            buildConfigField("String", "INVITE_URL", "\"https://testing.getpeer.eu/invite.php?%s\"")
+            buildConfigField("String", "BASE_URL", "\"https://peernetwork.eu\"")
+            buildConfigField("String", "MEDIA_URL", "\"https://media.peernetwork.eu\"")
             buildConfigField("boolean", "USE_SYSTEM_THEME", "false")
             buildConfigField("String","PRIVACY_POLICY_URL","\"https://www.freeprivacypolicy.com/live/02865c3a-79db-4baf-9ca1-7d91e2cf1724\"")
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
@@ -32,7 +31,6 @@ android {
             isShrinkResources = true
             buildConfigField("String", "BASE_URL", "\"https://peernetwork.eu\"")
             buildConfigField("String", "MEDIA_URL", "\"https://media.peernetwork.eu\"")
-            buildConfigField("String", "INVITE_URL", "\"https://testing.getpeer.eu/invite.php?%s\"")
             buildConfigField("boolean", "USE_SYSTEM_THEME", "false")
             buildConfigField("String","PRIVACY_POLICY_URL","\"https://www.freeprivacypolicy.com/live/02865c3a-79db-4baf-9ca1-7d91e2cf1724\"")
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")

@@ -16,7 +16,7 @@ import eu.peernetwork.app.ui.profile.ProfileScreen
 import eu.peernetwork.app.ui.search.SearchScreen
 import eu.peernetwork.app.ui.wallet.WalletScreen
 import eu.peernetwork.core.ui.R
-import eu.peernetwork.core.ui.design.compose.DesignNavigation
+import eu.peernetwork.core.ui.design.material.DesignNavigation
 import eu.peernetwork.core.ui.factory.UiViewModelStore
 
 @Composable

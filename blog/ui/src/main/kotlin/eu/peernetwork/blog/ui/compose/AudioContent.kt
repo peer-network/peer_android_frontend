@@ -23,8 +23,8 @@ import eu.peernetwork.blog.ui.mapper.mapToContent
 import eu.peernetwork.blog.ui.event.UiModerationEvent
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.moderation.ModerationScreen
-import eu.peernetwork.core.ui.design.compose.DesignRichText
-import eu.peernetwork.core.ui.design.compose.DesignTitleStyle
+import eu.peernetwork.core.ui.design.material.DesignRichText
+import eu.peernetwork.core.ui.design.material.DesignTitleStyle
 
 @Composable
 fun AudioContent(

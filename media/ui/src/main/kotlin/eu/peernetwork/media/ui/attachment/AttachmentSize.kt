@@ -3,12 +3,10 @@ package eu.peernetwork.media.ui.attachment
 import android.content.ContentResolver
 import android.net.Uri
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
@@ -16,7 +14,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Warning
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -27,10 +24,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import eu.peernetwork.core.ui.design.compose.DesignBottomSheet
-import eu.peernetwork.core.ui.design.compose.DesignBottomSheetScaffold
-import eu.peernetwork.core.ui.design.compose.DesignButton
-import eu.peernetwork.core.ui.design.compose.DesignDialog
+import eu.peernetwork.core.ui.design.material.DesignBottomSheetScaffold
+import eu.peernetwork.core.ui.design.material.DesignButton
 import eu.peernetwork.media.core.model.UiAttachment
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

@@ -35,8 +35,8 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.core.ui.R
-import eu.peernetwork.core.ui.design.compose.DesignDetailLayout
-import eu.peernetwork.core.ui.design.compose.DesignLabel
+import eu.peernetwork.core.ui.design.material.DesignDetailLayout
+import eu.peernetwork.core.ui.design.material.DesignLabel
 import eu.peernetwork.core.ui.theme.PeerTheme
 
 @Composable

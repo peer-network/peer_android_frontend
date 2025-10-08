@@ -26,8 +26,8 @@ import eu.peernetwork.blog.ui.content.timeline.TimelineScreen
 import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.component.DesignError
-import eu.peernetwork.core.ui.design.compose.DesignSceneState
+import eu.peernetwork.core.ui.design.compose.DesignError
+import eu.peernetwork.core.ui.design.material.DesignSceneState
 import eu.peernetwork.core.ui.exception.NoContentException
 import eu.peernetwork.core.ui.extension.builder
 

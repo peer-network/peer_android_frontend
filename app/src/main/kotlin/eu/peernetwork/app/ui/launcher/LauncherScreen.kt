@@ -12,7 +12,7 @@ import androidx.navigation.compose.rememberNavController
 import eu.peernetwork.app.ui.home.HomeScreen
 import eu.peernetwork.app.ui.setup.SetupScreen
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.compose.DesignNavigation
+import eu.peernetwork.core.ui.design.material.DesignNavigation
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.extension.route
 

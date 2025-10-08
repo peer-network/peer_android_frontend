@@ -23,7 +23,7 @@ import eu.peernetwork.blog.ui.interaction.listing.ListingScreen
 import eu.peernetwork.blog.ui.model.UiAction
 import eu.peernetwork.blog.ui.model.UiContent
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.compose.DesignCollapsibleBottomSheet
+import eu.peernetwork.core.ui.design.material.DesignCollapsibleBottomSheet
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.factory.UiViewModelStore
 import eu.peernetwork.core.ui.theme.PeerTheme

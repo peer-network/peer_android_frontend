@@ -10,9 +10,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import eu.peernetwork.core.common.interactor.ResourceInteractor
-import eu.peernetwork.core.ui.design.component.DesignError
-import eu.peernetwork.core.ui.design.compose.DesignScene
-import eu.peernetwork.core.ui.design.compose.DesignSceneState
+import eu.peernetwork.core.ui.design.compose.DesignError
+import eu.peernetwork.core.ui.design.material.DesignScene
+import eu.peernetwork.core.ui.design.material.DesignSceneState
 
 @Composable
 fun HomeScaffold(

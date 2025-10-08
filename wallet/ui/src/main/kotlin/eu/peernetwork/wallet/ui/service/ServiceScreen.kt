@@ -30,11 +30,11 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.component.DesignStatefulScaffold
-import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
-import eu.peernetwork.core.ui.design.compose.DesignAvatar
-import eu.peernetwork.core.ui.design.compose.DesignCard
-import eu.peernetwork.core.ui.design.compose.DesignOutlinedButton
+import eu.peernetwork.core.ui.design.compose.DesignStatefulScaffold
+import eu.peernetwork.core.ui.design.compose.DesignStatefulScaffoldState
+import eu.peernetwork.core.ui.design.material.DesignAvatar
+import eu.peernetwork.core.ui.design.material.DesignCard
+import eu.peernetwork.core.ui.design.material.DesignOutlinedButton
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.wallet.ui.model.UiRecipient

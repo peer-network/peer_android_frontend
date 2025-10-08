@@ -12,7 +12,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.compose.DesignRouter
+import eu.peernetwork.core.ui.design.material.DesignRouter
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.core.ui.extension.route
 import eu.peernetwork.media.core.model.UiAttachment

@@ -16,8 +16,8 @@ import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.app.ui.about.AboutScreen
 import eu.peernetwork.app.ui.privacy.PrivacyScreen
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.compose.DesignRouter
-import eu.peernetwork.core.ui.design.compose.DesignTitleBar
+import eu.peernetwork.core.ui.design.material.DesignRouter
+import eu.peernetwork.core.ui.design.material.DesignTitleBar
 import eu.peernetwork.user.ui.password.request.PasswordRequestScreen
 
 @Composable

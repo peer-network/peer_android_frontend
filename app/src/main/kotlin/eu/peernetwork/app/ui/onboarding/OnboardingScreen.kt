@@ -18,9 +18,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import eu.peernetwork.app.model.Properties
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.component.DesignError
-import eu.peernetwork.core.ui.design.compose.DesignScene
-import eu.peernetwork.core.ui.design.compose.DesignSceneState
+import eu.peernetwork.core.ui.design.compose.DesignError
+import eu.peernetwork.core.ui.design.material.DesignScene
+import eu.peernetwork.core.ui.design.material.DesignSceneState
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.user.domain.model.Preference
 import kotlinx.collections.immutable.persistentListOf

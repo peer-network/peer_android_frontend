@@ -33,7 +33,7 @@ import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.event.UiModerationEvent
 import eu.peernetwork.blog.ui.event.UiPostListener
 import eu.peernetwork.blog.ui.moderation.ModerationScreen
-import eu.peernetwork.core.ui.design.compose.DesignLoader
+import eu.peernetwork.core.ui.design.material.DesignLoader
 
 @Composable
 fun TimelineList(

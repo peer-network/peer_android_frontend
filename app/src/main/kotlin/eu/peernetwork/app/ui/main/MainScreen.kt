@@ -12,7 +12,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navDeepLink
 import eu.peernetwork.app.ui.launcher.LauncherScreen
 import eu.peernetwork.app.ui.splash.SplashScreen
-import eu.peernetwork.core.ui.design.compose.DesignNavigation
+import eu.peernetwork.core.ui.design.material.DesignNavigation
 import eu.peernetwork.core.ui.extension.attachIfNecessary
 
 @Composable

@@ -39,11 +39,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import eu.peernetwork.core.ui.annotation.UiViewModel
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.component.DesignRefreshableScaffold
-import eu.peernetwork.core.ui.design.compose.DesignOutlinedButton
-import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
-import eu.peernetwork.core.ui.design.compose.DesignTitle
-import eu.peernetwork.core.ui.design.compose.DesignTitleBarHost
+import eu.peernetwork.core.ui.design.compose.DesignRefreshableScaffold
+import eu.peernetwork.core.ui.design.material.DesignOutlinedButton
+import eu.peernetwork.core.ui.design.compose.DesignStatefulScaffoldState
+import eu.peernetwork.core.ui.design.material.DesignTitle
+import eu.peernetwork.core.ui.design.material.DesignTitleBarHost
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.user.ui.R

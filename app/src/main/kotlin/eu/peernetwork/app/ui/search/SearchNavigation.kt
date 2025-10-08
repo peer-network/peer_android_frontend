@@ -12,12 +12,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.app.ui.feed.FeedExplorer
-import eu.peernetwork.app.ui.feed.FeedScreen
 import eu.peernetwork.app.ui.profile.ProfileScreen
 import eu.peernetwork.app.ui.window.WindowScreen
 import eu.peernetwork.blog.domain.model.Filter
-import eu.peernetwork.core.ui.design.compose.DesignPageWindowMode
-import eu.peernetwork.core.ui.design.compose.DesignRouter
+import eu.peernetwork.core.ui.design.material.DesignPageWindowMode
+import eu.peernetwork.core.ui.design.material.DesignRouter
 import eu.peernetwork.core.ui.factory.UiViewModelStore
 
 @Composable

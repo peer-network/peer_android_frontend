@@ -51,8 +51,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.app.R
-import eu.peernetwork.core.ui.design.compose.DesignButton
-import eu.peernetwork.core.ui.design.compose.DesignOutlinedButton
+import eu.peernetwork.core.ui.design.material.DesignButton
+import eu.peernetwork.core.ui.design.material.DesignOutlinedButton
 import eu.peernetwork.core.ui.theme.PeerTheme
 import kotlinx.coroutines.launch
 

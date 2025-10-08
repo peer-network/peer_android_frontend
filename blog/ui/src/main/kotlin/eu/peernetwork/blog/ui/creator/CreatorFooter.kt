@@ -20,7 +20,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.blog.ui.model.UiDraft
-import eu.peernetwork.core.ui.design.compose.DesignButton
+import eu.peernetwork.core.ui.design.material.DesignButton
 import eu.peernetwork.core.ui.extension.isValidInput
 
 @Composable

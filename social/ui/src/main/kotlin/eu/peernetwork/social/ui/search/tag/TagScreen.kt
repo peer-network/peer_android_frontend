@@ -26,9 +26,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.component.DesignErrorLabel
-import eu.peernetwork.core.ui.design.component.DesignPagingScaffold
-import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
+import eu.peernetwork.core.ui.design.compose.DesignErrorLabel
+import eu.peernetwork.core.ui.design.compose.DesignPagingScaffold
+import eu.peernetwork.core.ui.design.compose.DesignStatefulScaffoldState
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.social.ui.compose.SearchItemSkeleton
 import eu.peernetwork.social.ui.model.UiTag

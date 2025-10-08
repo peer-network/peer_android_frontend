@@ -39,10 +39,10 @@ import eu.peernetwork.blog.ui.interaction.listing.ListingScreen
 import eu.peernetwork.blog.ui.model.UiContent
 import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.component.DesignErrorLabel
-import eu.peernetwork.core.ui.design.component.DesignPagingScaffold
-import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
-import eu.peernetwork.core.ui.design.compose.DesignRouter
+import eu.peernetwork.core.ui.design.compose.DesignErrorLabel
+import eu.peernetwork.core.ui.design.compose.DesignPagingScaffold
+import eu.peernetwork.core.ui.design.compose.DesignStatefulScaffoldState
+import eu.peernetwork.core.ui.design.material.DesignRouter
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.core.ui.extension.route

@@ -1,12 +1,8 @@
 package eu.peernetwork.blog.ui.feed.detail
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
@@ -15,7 +11,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.snapshotFlow
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.blog.ui.compose.PhotoIndicator
 import eu.peernetwork.blog.ui.compose.PhotoPager
@@ -28,8 +23,8 @@ import eu.peernetwork.blog.ui.event.UiPostListener
 import eu.peernetwork.blog.ui.mapper.mapToContent
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.moderation.ModerationScreen
-import eu.peernetwork.core.ui.design.compose.DesignScene
-import eu.peernetwork.core.ui.design.compose.DesignSceneState
+import eu.peernetwork.core.ui.design.material.DesignScene
+import eu.peernetwork.core.ui.design.material.DesignSceneState
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.debounce
 

@@ -21,10 +21,6 @@ internal object NetworkModule {
     fun provideMediaUrl(): String = BuildConfig.MEDIA_URL
 
     @Provides
-    @Named("inviteUrl")
-    fun provideInviteUrl(): String = BuildConfig.INVITE_URL
-
-    @Provides
     fun provideOkHttpClient(): OkHttpClient = OkHttpClient.Builder()
         .connectTimeout(5, TimeUnit.SECONDS)
         .readTimeout(15, TimeUnit.SECONDS)

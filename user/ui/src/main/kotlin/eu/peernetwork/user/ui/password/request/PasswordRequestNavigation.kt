@@ -30,9 +30,9 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.compose.DesignRouter
-import eu.peernetwork.core.ui.design.compose.DesignScaffold
-import eu.peernetwork.core.ui.design.compose.DesignTitleBar
+import eu.peernetwork.core.ui.design.material.DesignRouter
+import eu.peernetwork.core.ui.design.material.DesignScaffold
+import eu.peernetwork.core.ui.design.material.DesignTitleBar
 import eu.peernetwork.user.ui.password.reset.PasswordResetScreen
 
 @Composable

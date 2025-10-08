@@ -24,11 +24,11 @@ import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.app.ui.onboarding.OnboardingScreen
 import eu.peernetwork.app.ui.settings.SettingsEvent
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.compose.DesignPage
-import eu.peernetwork.core.ui.design.compose.DesignPageHeader
+import eu.peernetwork.core.ui.design.material.DesignPage
+import eu.peernetwork.core.ui.design.material.DesignPageHeader
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.theme.PeerTheme
-import eu.peernetwork.core.ui.design.compose.DesignSceneState
+import eu.peernetwork.core.ui.design.material.DesignSceneState
 import eu.peernetwork.core.ui.extension.attach
 import eu.peernetwork.core.ui.extension.attachIfNecessary
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
@@ -142,7 +142,11 @@ fun HomeScreen(
         provider = component,
         viewModelStoreOwner = viewModelStore.get("FeedbackPopup")
     )
-    LaunchedEffect(Unit) { viewModel() }
+    LaunchedEffect(Unit) {
+        if (derivedState.value is DesignSceneState.Default) {
+            viewModel()
+        }
+    }
     DisposableEffect(Unit) { onDispose { viewModelStore.clear() } }
 }
 

@@ -33,8 +33,8 @@ import eu.peernetwork.blog.ui.mapper.query
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.moderation.ModerationScreen
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.compose.DesignSceneState
-import eu.peernetwork.core.ui.design.compose.DesignThumbnail
+import eu.peernetwork.core.ui.design.material.DesignSceneState
+import eu.peernetwork.core.ui.design.material.DesignThumbnail
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.media.core.model.UiMimeType
 import eu.peernetwork.media.core.renderer.AudioPlayer

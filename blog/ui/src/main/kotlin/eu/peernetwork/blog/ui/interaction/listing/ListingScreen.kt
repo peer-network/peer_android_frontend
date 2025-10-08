@@ -33,10 +33,10 @@ import eu.peernetwork.blog.ui.compose.ListItemSkeleton
 import eu.peernetwork.blog.ui.model.UiAuthor
 import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.component.DesignErrorLabel
-import eu.peernetwork.core.ui.design.component.DesignPagingScaffold
-import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
-import eu.peernetwork.core.ui.design.compose.DesignAsyncImage
+import eu.peernetwork.core.ui.design.compose.DesignErrorLabel
+import eu.peernetwork.core.ui.design.compose.DesignPagingScaffold
+import eu.peernetwork.core.ui.design.compose.DesignStatefulScaffoldState
+import eu.peernetwork.core.ui.design.material.DesignAsyncImage
 import eu.peernetwork.core.ui.extension.annotate
 import eu.peernetwork.core.ui.extension.builder
 

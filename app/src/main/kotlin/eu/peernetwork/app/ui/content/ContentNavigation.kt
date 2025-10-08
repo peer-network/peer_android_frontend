@@ -14,8 +14,8 @@ import eu.peernetwork.app.ui.profile.ProfileScreen
 import eu.peernetwork.app.ui.search.SearchScreen
 import eu.peernetwork.app.ui.search.SearchState
 import eu.peernetwork.app.ui.window.WindowScreen
-import eu.peernetwork.core.ui.design.compose.DesignPageWindowMode
-import eu.peernetwork.core.ui.design.compose.DesignRouter
+import eu.peernetwork.core.ui.design.material.DesignPageWindowMode
+import eu.peernetwork.core.ui.design.material.DesignRouter
 import eu.peernetwork.core.ui.factory.UiViewModelStore
 
 @Composable

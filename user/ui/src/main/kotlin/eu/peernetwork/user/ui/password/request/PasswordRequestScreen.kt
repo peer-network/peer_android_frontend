@@ -39,10 +39,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import eu.peernetwork.core.ui.annotation.UiViewModel
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.compose.DesignButton
-import eu.peernetwork.core.ui.design.compose.DesignTextField
-import eu.peernetwork.core.ui.design.compose.DesignTitle
-import eu.peernetwork.core.ui.design.compose.DesignTitleBarHost
+import eu.peernetwork.core.ui.design.material.DesignButton
+import eu.peernetwork.core.ui.design.material.DesignTextField
+import eu.peernetwork.core.ui.design.material.DesignTitle
+import eu.peernetwork.core.ui.design.material.DesignTitleBarHost
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.extension.isValidEmail
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
