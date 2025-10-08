@@ -1,6 +1,7 @@
 package eu.peernetwork.blog.ui.content.timeline
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.calculateZoom
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,15 +13,20 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.input.pointer.PointerEventPass
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.zIndex
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -40,6 +46,7 @@ import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.media.core.renderer.ImageView
 import eu.peernetwork.media.core.renderer.VideoThumbnail
 import kotlinx.coroutines.flow.Flow
+import kotlin.math.abs
 
 @Composable
 fun TimelineScreen(
@@ -81,6 +88,7 @@ fun TimelineScreen(
     val isActive = remember { derivedStateOf { status.value && !pause.value } }
     val thumbnail = viewModel.thumbnail.collectAsStateWithLifecycle()
     val handleOnLoad by rememberUpdatedState(onLoad)
+
     EngagementScreen(
         postLimit = limit,
         onAuthorClick = { event(UiPostListener.Event.Author(it)) },
@@ -157,6 +165,7 @@ fun TimelineScreen(
                         )
                     },
                     image = { path, aspectRatio ->
+                        // Background (blurred) image
                         component.imageView()(
                             modifier = Modifier,
                             spec = ImageView.Spec(
@@ -166,13 +175,42 @@ fun TimelineScreen(
                                 blur = 500f,
                             )
                         )
-                        component.imageView()(
-                            modifier = Modifier,
-                            spec = ImageView.Spec(
-                                url = path,
-                                ratio = aspectRatio
+
+                        val resetKey = remember(path) { mutableIntStateOf(0) }
+
+                        val observer = Modifier
+                            .clipToBounds()
+                            .zIndex(0f)
+                            .pointerInput(path) {
+                                awaitPointerEventScope {
+                                    var wasPressed = false
+                                    var didZoom = false
+                                    while (true) {
+                                        val event = awaitPointerEvent(PointerEventPass.Final)
+                                        val anyPressed = event.changes.any { it.pressed }
+                                        val zoomChange = event.calculateZoom()
+                                        if (abs(zoomChange - 1f) > 0.01f) didZoom = true
+                                        if (wasPressed && !anyPressed) {
+                                            if (didZoom) {
+                                                resetKey.intValue++
+                                            }
+                                            didZoom = false
+                                        }
+                                        wasPressed = anyPressed
+                                    }
+                                }
+                            }
+
+                        key(resetKey.intValue) {
+                            component.imageView()(
+                                modifier = observer,
+                                spec = ImageView.Spec(
+                                    url = path,
+                                    ratio = aspectRatio,
+                                    zoomable = true
+                                )
                             )
-                        )
+                        }
                     }
                 )
                 LaunchedEffect(Unit) {
