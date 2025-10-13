@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import eu.peernetwork.blog.domain.model.Draft
 import eu.peernetwork.blog.ui.model.UiDraft
 import eu.peernetwork.blog.ui.model.UiPost
+import eu.peernetwork.blog.ui.usecase.CreateMultipartUsecase
 import eu.peernetwork.blog.ui.usecase.CreateUsecase
 import eu.peernetwork.media.core.model.UiMimeType
 import eu.peernetwork.media.core.model.UiOffset
@@ -15,10 +16,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.io.File
 import javax.inject.Inject
 
 class CreatorViewModel @Inject constructor(
     private val usecase: CreateUsecase,
+    private val usecaseMultipart: CreateMultipartUsecase,
     private val videoEncoderUsecase: VideoEncoderUsecase,
     private val mediaEncoderUsecase: MediaEncoderUsecase,
     private val textEncoderUsecase: TextEncoderUsecase
@@ -34,6 +37,19 @@ class CreatorViewModel @Inject constructor(
                 val model = draft.mapToDomain()
                 val photo = usecase(model)
                 mutableState.tryEmit(State.Success(photo))
+            } catch (error: Throwable) {
+                mutableState.tryEmit(State.Error(error))
+            }
+        }
+    }
+
+    fun upload(draft: UiDraft) {
+        mutableState.tryEmit(State.Loading)
+        viewModelScope.launch {
+            try {
+                val model = draft.mapToDomain()
+                val post = usecaseMultipart(model)
+                mutableState.tryEmit(State.Success(post))
             } catch (error: Throwable) {
                 mutableState.tryEmit(State.Error(error))
             }

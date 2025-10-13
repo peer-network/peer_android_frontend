@@ -4,6 +4,7 @@ import eu.peernetwork.blog.domain.repository.CommentRepository
 import eu.peernetwork.blog.domain.repository.ContentRepository
 import eu.peernetwork.blog.domain.repository.EligibilityRepository
 import eu.peernetwork.blog.domain.repository.EngagementRepository
+import eu.peernetwork.blog.domain.repository.MultipartRepository
 
 interface RepositoryProvider {
     fun contentRepository(): ContentRepository
@@ -13,4 +14,6 @@ interface RepositoryProvider {
     fun engagementRepository(): EngagementRepository
 
     fun eligibilityRepository(): EligibilityRepository
+
+    fun multipartRepository(): MultipartRepository
 }
