@@ -4,9 +4,7 @@ import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.input.TextFieldState
@@ -197,12 +195,10 @@ fun CommentScreen(
                 viewModel.clear()
             }
         }
-        LaunchedEffect(state.value) {
+        LaunchedEffect(isCommentPosted.value) {
             if (state.value != null) {
                 state.value?.let {
-                    if (it.id != (viewModel.state.value as? CommentViewModel.State.Success)?.postId) {
                         viewModel.load(it.id, Pageable(0, postLimit))
-                    }
                 }
             } else {
                 viewModel.reset()
