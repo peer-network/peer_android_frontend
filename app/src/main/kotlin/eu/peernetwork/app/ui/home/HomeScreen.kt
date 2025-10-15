@@ -16,6 +16,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -38,8 +39,9 @@ import eu.peernetwork.social.ui.feedback.FeedbackPopup
 
 @Composable
 fun HomeScreen(
+    route: String? = null,
     provider: UiComponentProvider,
-    route: String? = null
+    viewModelStoreOwner: ViewModelStoreOwner,
 ) {
     val viewModelStore = remember { UiViewModelStore.Delegate() }
     val context = LocalContext.current
@@ -53,7 +55,7 @@ fun HomeScreen(
     }
     val viewModel = viewModel(
         modelClass = HomeViewModel::class.java,
-        viewModelStoreOwner = viewModelStore.get(Home.Builder::class.java.name),
+        viewModelStoreOwner = viewModelStoreOwner,
         factory = component.viewModelFactory()
     )
     val state by viewModel.state.collectAsStateWithLifecycle()

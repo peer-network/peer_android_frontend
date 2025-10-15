@@ -4,6 +4,7 @@ import android.content.res.Configuration
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -135,10 +136,15 @@ fun PreviewDesignPage() {
                 ) },
             footer = { }
         ) { state ->
-            Text(
-                text = "",
-                textAlign = TextAlign.Center
-            )
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier.fillMaxSize()
+            ) {
+                Text(
+                    text = "Hello, world!",
+                    textAlign = TextAlign.Center,
+                )
+            }
         }
     }
 }

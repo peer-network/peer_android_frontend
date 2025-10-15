@@ -18,8 +18,10 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
@@ -35,13 +37,43 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.theme.DesignTheme
+
+data class DesignButtonColors(
+    val containerColor: Color,
+    val contentColor: Color,
+    val disabledContainerColor: Color,
+    val disabledContentColor: Color
+)
+
+@Composable
+fun designPrimaryButtonColors(): DesignButtonColors {
+    return DesignButtonColors(
+        containerColor = MaterialTheme.colorScheme.primary,
+        contentColor = MaterialTheme.colorScheme.onPrimary,
+        disabledContainerColor = MaterialTheme.colorScheme.primaryContainer,
+        disabledContentColor = MaterialTheme.colorScheme.surfaceTint
+    )
+}
+
+@Composable
+fun designSecondaryButtonColors(): DesignButtonColors {
+    return DesignButtonColors(
+        containerColor = MaterialTheme.colorScheme.onBackground,
+        contentColor = MaterialTheme.colorScheme.background,
+        disabledContainerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+        disabledContentColor = MaterialTheme.colorScheme.outlineVariant
+    )
+}
 
 @Composable
 fun DesignButton(
@@ -53,12 +85,7 @@ fun DesignButton(
     style: TextStyle = MaterialTheme.typography.bodyMedium.copy(
         fontWeight = FontWeight.SemiBold
     ),
-    colors: ButtonColors = ButtonColors(
-        containerColor = MaterialTheme.colorScheme.primary,
-        contentColor = MaterialTheme.colorScheme.onPrimary,
-        disabledContainerColor = MaterialTheme.colorScheme.primaryContainer,
-        disabledContentColor = MaterialTheme.colorScheme.surfaceTint
-    ),
+    colors: DesignButtonColors = designPrimaryButtonColors(),
     elevation: Dp = 0.dp,
     border: BorderStroke? = null,
     minHeight: Dp = 48.dp,
@@ -69,7 +96,14 @@ fun DesignButton(
         vertical = 16.dp,
         horizontal = 24.dp
     ),
-    loading: @Composable () -> Unit = {},
+    loading: @Composable () -> Unit = {
+        Icon(
+            painter = painterResource(R.drawable.ic_more),
+            contentDescription = stringResource(R.string.loading_text),
+            tint = LocalContentColor.current,
+            modifier = Modifier.size(16.dp)
+        )
+    },
     content: @Composable () -> Unit
 ) {
     val clickHandler by rememberUpdatedState(onClick)
@@ -131,13 +165,6 @@ fun DesignButton(
     }
 }
 
-data class ButtonColors(
-    val containerColor: Color,
-    val contentColor: Color,
-    val disabledContainerColor: Color,
-    val disabledContentColor: Color
-)
-
 @Preview
 @Composable
 fun DarkPreviewDesignButton() {
@@ -159,6 +186,22 @@ fun DarkPreviewDesignButton() {
             DesignButton(
                 onClick = {},
                 enabled = false,
+                modifier = Modifier.sizeIn(minHeight = 56.dp, minWidth = 200.dp)
+            ) { Text("Large Button") }
+            DesignButton(
+                onClick = {},
+                colors = designSecondaryButtonColors(),
+            ) { Text("Hello, world!") }
+            DesignButton(
+                onClick = {},
+                isLoading = true,
+                colors = designSecondaryButtonColors(),
+                loading = { Text("Loading...") }
+            ) { Text("Hello, world!") }
+            DesignButton(
+                onClick = {},
+                enabled = false,
+                colors = designSecondaryButtonColors(),
                 modifier = Modifier.sizeIn(minHeight = 56.dp, minWidth = 200.dp)
             ) { Text("Large Button") }
         }
@@ -188,7 +231,22 @@ fun LightPreviewDesignButton() {
                 enabled = false,
                 modifier = Modifier.sizeIn(minHeight = 56.dp, minWidth = 200.dp)
             ) { Text("Large Button") }
+            DesignButton(
+                onClick = {},
+                colors = designSecondaryButtonColors(),
+            ) { Text("Hello, world!") }
+            DesignButton(
+                onClick = {},
+                isLoading = true,
+                colors = designSecondaryButtonColors(),
+                loading = { Text("Loading...") }
+            ) { Text("Hello, world!") }
+            DesignButton(
+                onClick = {},
+                enabled = false,
+                colors = designSecondaryButtonColors(),
+                modifier = Modifier.sizeIn(minHeight = 56.dp, minWidth = 200.dp)
+            ) { Text("Large Button") }
         }
     }
 }
-

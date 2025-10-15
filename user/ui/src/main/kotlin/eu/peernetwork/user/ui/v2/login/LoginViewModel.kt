@@ -1,4 +1,4 @@
-package eu.peernetwork.user.ui.login
+package eu.peernetwork.user.ui.v2.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -10,7 +10,6 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-@Login.Scope
 class LoginViewModel @Inject constructor(
     private val loginUsecase: LoginUsecase
 ) : ViewModel() {
@@ -18,7 +17,7 @@ class LoginViewModel @Inject constructor(
 
     val state: StateFlow<State> = mutableState.stateIn(
         scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5_000),
+        started = SharingStarted.Companion.WhileSubscribed(5_000),
         initialValue = State.Initial
     )
 

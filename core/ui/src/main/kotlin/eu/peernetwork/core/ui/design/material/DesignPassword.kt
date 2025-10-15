@@ -151,7 +151,7 @@ fun DesignPasswordIndicator(
                     activeColor = if (strength.value > index) {
                         strength.getColor(colors)
                     } else  { colors.bad },
-                    inActiveColor = PeerAppGray85,
+                    inActiveColor = colors.bad,
                     shape = shape,
                     durationMillis = durationMillis,
                     delayMillis = delayMillis,

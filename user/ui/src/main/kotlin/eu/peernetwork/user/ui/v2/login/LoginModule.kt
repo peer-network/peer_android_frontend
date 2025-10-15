@@ -1,4 +1,4 @@
-package eu.peernetwork.user.ui.login
+package eu.peernetwork.user.ui.v2.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -7,7 +7,6 @@ import dagger.Provides
 import dagger.multibindings.IntoMap
 import eu.peernetwork.core.ui.annotation.UiViewModel
 import eu.peernetwork.core.ui.factory.UiViewModelFactory
-import eu.peernetwork.user.ui.v2.login.LoginViewModel
 import javax.inject.Provider
 
 @Module

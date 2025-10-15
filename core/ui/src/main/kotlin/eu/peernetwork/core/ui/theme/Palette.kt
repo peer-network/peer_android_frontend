@@ -34,13 +34,18 @@ val White200 = Color(0xFFF5F5F7)
 val White300 = Color(0xFFF0F0F2)
 val White400 = Color(0xFFEBEBED)
 
-val Gray_50 = Color(0xFFe6e6e8)
 val Gray100 = Color(0xFFD2D2D5)
+val Gray125 = Color(0xFFD0D0D3)
+val Gray150 = Color(0xFFC8C8CC)
 val Gray200 = Color(0xFFbebec2)
+val Gray225 = Color(0xFFABABB0)
+val Gray250 = Color(0xFFA1A2A7)
 val Gray300 = Color(0xFF97989e)
 val Gray400 = Color(0xFF72737b)
 val Gray500 = Color(0xFF505057)
+val Gray550 = Color(0xFF48484F)
 val Gray600 = Color(0xFF303034)
+val Gray625 = Color(0xFF252629)
 val Gray650 = Color(0xFF212225)
 val Gray700 = Color(0xFF121315)
 
@@ -64,13 +69,15 @@ internal val LightPalette = lightColorScheme(
     surfaceVariant = Gray100,
     onSurfaceVariant = Gray600,
     outline = Gray300,
-    outlineVariant = Gray200,
+    outlineVariant = Gray225,
     inverseSurface = Gray700,
     inverseOnSurface = Gray100,
     inversePrimary = Primary100,
     surfaceTint = Primary300,
-    surfaceContainerLow = Gray200,
-    surfaceContainerLowest = Gray100,
+    surfaceContainerLow = Gray150,
+    surfaceContainerLowest = Gray125,
+    surfaceContainerHigh = Primary600,
+    scrim = Gray250
 )
 
 internal val DarkPalette = darkColorScheme(
@@ -98,6 +105,8 @@ internal val DarkPalette = darkColorScheme(
     inverseOnSurface = Gray700,
     inversePrimary = Primary600,
     surfaceTint = Primary200,
-    surfaceContainerLow = Gray600,
+    surfaceContainerLow = Gray625,
     surfaceContainerLowest = Gray650,
+    surfaceContainerHigh = Primary100,
+    scrim = Gray550
 )

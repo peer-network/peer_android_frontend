@@ -52,7 +52,7 @@ fun DesignOutlineButton(
     style: TextStyle = MaterialTheme.typography.bodyMedium.copy(
         fontWeight = FontWeight.SemiBold
     ),
-    colors: ButtonColors = ButtonColors(
+    colors: DesignButtonColors = DesignButtonColors(
         containerColor = MaterialTheme.colorScheme.onPrimary,
         contentColor = MaterialTheme.colorScheme.onPrimary,
         disabledContainerColor = MaterialTheme.colorScheme.surfaceContainerLowest,

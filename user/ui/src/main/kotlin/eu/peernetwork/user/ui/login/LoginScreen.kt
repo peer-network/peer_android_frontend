@@ -32,6 +32,7 @@ import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.user.ui.R
 import eu.peernetwork.core.ui.extension.isValidEmail
 import eu.peernetwork.core.ui.extension.isValidInput
+import eu.peernetwork.user.ui.v2.login.LoginViewModel
 
 @Composable
 fun LoginScreen(

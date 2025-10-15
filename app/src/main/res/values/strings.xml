@@ -18,6 +18,7 @@
 
     <string name="network_error_message">Error processing network request.</string>
 
+    <string name="version_label">Version %s</string>
     <string name="skip_label">Skip</string>
     <string name="proceed_label">Proceed</string>
     <string name="finish_label">Let\'s go!</string>
