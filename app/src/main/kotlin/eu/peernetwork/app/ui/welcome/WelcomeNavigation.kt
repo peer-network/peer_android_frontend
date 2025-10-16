@@ -23,7 +23,7 @@ fun WelcomeNavigation(
 ) {
     val controller = rememberNavController()
     val startDestination = if (referral != null) {
-        "register?referral=$referral"
+        "referral?code=$referral"
     } else {
         "login"
     }
