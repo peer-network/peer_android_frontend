@@ -145,7 +145,7 @@ fun RegistrationForm(
         )
         DesignPasswordIndicator(
             state = password,
-            space = 8.dp,
+            space = 4.dp,
             width = 24.dp,
             colors = DesignIndicatorColors(
                 bad = MaterialTheme.colorScheme.outline,

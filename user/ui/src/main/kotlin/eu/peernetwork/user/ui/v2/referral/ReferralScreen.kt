@@ -1,5 +1,6 @@
 package eu.peernetwork.user.ui.v2.referral
 
+import android.widget.Toast
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -31,6 +32,7 @@ import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.material.DesignDialog
 import eu.peernetwork.core.ui.extension.builder
+import eu.peernetwork.user.ui.R as UserUiR
 
 @Composable
 fun ReferralScreen(
@@ -72,6 +74,7 @@ fun ReferralScreen(
     val derivedStateError = remember {
         derivedStateOf { (state as? ReferralViewModel.State.Error?)?.error }
     }
+    val message = stringResource(UserUiR.string.referral_verification_success)
     ReferralPage(
         code = code,
         isLoading = isLoading,
@@ -118,7 +121,10 @@ fun ReferralScreen(
         }
     }
     LaunchedEffect(derivedState.value) {
-        derivedState.value?.let { onRegister(it) }
+        derivedState.value?.let {
+            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+            onRegister(it)
+        }
     }
     LaunchedEffect(derivedStatusError.value) {
         derivedStatusError.value?.message?.let {

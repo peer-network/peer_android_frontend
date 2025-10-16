@@ -93,13 +93,12 @@ fun LoginForm(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth()
-                .padding(bottom = 8.dp)
+                .padding(top = 10.dp, bottom = 8.dp)
         ) {
             LabelledCheckBox(
                 state = rememberMe,
                 label = stringResource(R.string.remember_me).annotate(),
-                modifier = Modifier.padding(top = 10.dp)
-                    .padding(horizontal = 18.dp)
+                modifier = Modifier.padding(horizontal = 18.dp)
             )
             Text(
                 text = stringResource(R.string.forgot_password_label),

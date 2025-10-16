@@ -1,5 +1,6 @@
 package eu.peernetwork.user.ui.v2.registration
 
+import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -7,10 +8,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.extension.builder
+import eu.peernetwork.user.ui.R
 
 @Composable
 fun RegistrationScreen(
@@ -41,6 +44,7 @@ fun RegistrationScreen(
         }
     } }
     val handleOnLogin by rememberUpdatedState(onLogin)
+    val message = stringResource(R.string.successful_message)
     RegistrationPage(
         isLoading = isLoading,
         error = error,
@@ -57,6 +61,7 @@ fun RegistrationScreen(
     }
     LaunchedEffect(isRegistered.value) {
         if (isRegistered.value) {
+            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
             handleOnLogin()
         }
     }

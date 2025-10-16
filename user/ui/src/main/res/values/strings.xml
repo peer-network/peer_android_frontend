@@ -57,7 +57,8 @@
     <string name="referral_label">Referral Code (Optional)</string>
     <string name="referral_code_label">Referral Code (Optional)</string>
     <string name="referral_copy_message">Referral link copied</string>
-  
+    <string name="referral_verification_success">Referral verified successfully!</string>
+
     <string name="age_confirmation_checkbox">I am 18 or older.</string>
     <string name="age_confirmation_title">Age Confirmation</string>
     <string name="age_confirmation_continue">Continue</string>
