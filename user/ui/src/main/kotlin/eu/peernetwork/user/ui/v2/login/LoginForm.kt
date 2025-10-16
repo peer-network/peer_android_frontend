@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import eu.peernetwork.core.ui.design.luna.DesignButton
 import eu.peernetwork.core.ui.design.luna.DesignTextField
 import eu.peernetwork.core.ui.design.luna.designSecondaryButtonColors
+import eu.peernetwork.core.ui.extension.annotate
 import eu.peernetwork.core.ui.extension.isValidEmail
 import eu.peernetwork.core.ui.extension.isValidInput
 import eu.peernetwork.core.ui.theme.DesignTheme
@@ -96,7 +97,7 @@ fun LoginForm(
         ) {
             LabelledCheckBox(
                 state = rememberMe,
-                label = stringResource(R.string.remember_me),
+                label = stringResource(R.string.remember_me).annotate(),
                 modifier = Modifier.padding(top = 10.dp)
                     .padding(horizontal = 18.dp)
             )

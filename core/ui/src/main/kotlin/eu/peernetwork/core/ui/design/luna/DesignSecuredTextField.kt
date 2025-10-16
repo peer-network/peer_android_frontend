@@ -62,7 +62,7 @@ fun DesignSecuredTextField(
     unFocusedColor: Color = MaterialTheme.colorScheme.surfaceContainerLowest,
     hintColor: Color = MaterialTheme.colorScheme.scrim,
     unFocusedHintColor: Color = MaterialTheme.colorScheme.outlineVariant,
-    contentColor: Color = MaterialTheme.colorScheme.surfaceContainerHigh,
+    contentColor: Color = MaterialTheme.colorScheme.onBackground,
     unFocusedContentColor: Color = MaterialTheme.colorScheme.outline,
     shape: Shape = CircleShape,
     contentPadding: PaddingValues = PaddingValues(

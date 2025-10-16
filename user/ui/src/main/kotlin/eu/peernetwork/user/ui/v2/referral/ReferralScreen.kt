@@ -1,6 +1,16 @@
 package eu.peernetwork.user.ui.v2.referral
 
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -8,10 +18,16 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.material.DesignDialog
 import eu.peernetwork.core.ui.extension.builder
@@ -62,18 +78,45 @@ fun ReferralScreen(
         error = error,
         onRequestReferral = {
             peerReferral.value?.let {
+                error.value = null
                 code.edit {
                     replace(0, length, it)
                 }
             } ?: viewModel.getDefaultReferral()
         },
-        onVerify = { viewModel.verify(it) }
+        onVerify = {
+            error.value = null
+            viewModel.verify(it)
+        }
     )
     DesignDialog(
         isLoadingReferral,
         dim = true,
         onDismiss = { }
-    ) { controller, anim, cancelable -> }
+    ) { controller, anim, cancelable ->
+        val infiniteTransition = rememberInfiniteTransition()
+        val alpha by infiniteTransition.animateFloat(
+            initialValue = 1f,
+            targetValue = 0.3f,
+            animationSpec = infiniteRepeatable(
+                animation = tween(1000, easing = FastOutSlowInEasing),
+                repeatMode = RepeatMode.Reverse
+            )
+        )
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier.fillMaxSize().graphicsLayer {
+                this.alpha = alpha
+            }
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.ic_more),
+                contentDescription = stringResource(R.string.loading_text),
+                tint = MaterialTheme.colorScheme.onPrimary,
+                modifier = Modifier
+            )
+        }
+    }
     LaunchedEffect(derivedState.value) {
         derivedState.value?.let { onRegister(it) }
     }

@@ -9,10 +9,12 @@ import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
@@ -30,14 +32,24 @@ import eu.peernetwork.user.ui.compose.FormHeader
 
 private const val tag = "LOGIN"
 
+data class RegistrationForm(
+    val email: String,
+    val username: String,
+    val password: String,
+)
+
 @Composable
 fun RegistrationPage(
+    isLoading: State<Boolean>,
+    error: State<String?>,
+    onPrivacy: () -> Unit,
+    onLicence: () -> Unit,
     onLogin: () -> Unit,
-    onRegister: () -> Unit
+    onRegister: (RegistrationForm) -> Unit
 ) {
-    val email = remember { TextFieldState() }
-    val username = remember { TextFieldState() }
-    val password = remember { TextFieldState() }
+    val email by rememberSaveable(stateSaver = TextFieldState.Saver) { mutableStateOf(TextFieldState()) }
+    val username by rememberSaveable(stateSaver = TextFieldState.Saver) { mutableStateOf(TextFieldState()) }
+    val password by rememberSaveable(stateSaver = TextFieldState.Saver) { mutableStateOf(TextFieldState()) }
     val policyAgreement = remember { mutableStateOf(false) }
     val licenceAgreement = remember { mutableStateOf(false) }
     val annotatedString = buildAnnotatedString {
@@ -53,6 +65,7 @@ fun RegistrationPage(
         ) { append(stringResource(R.string.login_action)) }
         pop()
     }
+    val handleOnPrivacy by rememberUpdatedState(onPrivacy)
     val handleOnLogin by rememberUpdatedState(onLogin)
     var layoutResult: TextLayoutResult? = null
     Column {
@@ -71,9 +84,21 @@ fun RegistrationPage(
                 email = email,
                 username = username,
                 password = password,
-                onRegister = onRegister,
+                onLicence = onLicence,
+                onRegister = {
+                    onRegister(
+                        RegistrationForm(
+                            email = email.text.toString(),
+                            username = username.text.toString(),
+                            password = password.text.toString()
+                        )
+                    )
+                },
+                onPrivacy = { handleOnPrivacy() },
                 policyAgreement = policyAgreement,
-                licenceAgreement = licenceAgreement
+                licenceAgreement = licenceAgreement,
+                isLoading = isLoading,
+                error = error
             )
             Text(
                 text = annotatedString,

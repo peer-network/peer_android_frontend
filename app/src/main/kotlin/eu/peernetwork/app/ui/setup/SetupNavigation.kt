@@ -14,7 +14,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.app.ui.about.AboutScreen
-import eu.peernetwork.app.ui.privacy.PrivacyScreen
+import eu.peernetwork.app.ui.browser.BrowserScreen
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.material.DesignRouter
 import eu.peernetwork.core.ui.design.material.DesignTitleBar
@@ -34,7 +34,7 @@ fun SetupNavigation(
         composable("setup") { updatedSetup(controller) }
         composable("privacy") {
             DesignTitleBar {
-                PrivacyScreen(BuildConfig.PRIVACY_POLICY_URL) { controller.popBackStack() }
+                BrowserScreen(BuildConfig.PRIVACY_POLICY_URL) { controller.popBackStack() }
             }
         }
         composable(

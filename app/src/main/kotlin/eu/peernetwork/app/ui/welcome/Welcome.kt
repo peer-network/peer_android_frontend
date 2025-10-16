@@ -2,6 +2,7 @@ package eu.peernetwork.app.ui.welcome
 
 import android.content.Context
 import eu.peernetwork.app.provider.ApplicationProvider
+import eu.peernetwork.app.ui.browser.Browser
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.user.ui.v2.login.Login

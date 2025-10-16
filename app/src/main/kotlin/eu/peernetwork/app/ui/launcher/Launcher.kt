@@ -2,6 +2,7 @@ package eu.peernetwork.app.ui.launcher
 
 import android.content.Context
 import eu.peernetwork.app.provider.ApplicationProvider
+import eu.peernetwork.app.ui.browser.Browser
 import eu.peernetwork.app.ui.home.Home
 import eu.peernetwork.app.ui.setup.Setup
 import eu.peernetwork.app.ui.welcome.Welcome
@@ -22,6 +23,7 @@ interface Launcher : ApplicationProvider {
         Home,
         Setup,
         Welcome,
+        Browser,
         UiComponentProvider
 
     class Builder(private val dependency: Launcher) : UiComponent.DefaultBuilder<Launcher, Component>() {

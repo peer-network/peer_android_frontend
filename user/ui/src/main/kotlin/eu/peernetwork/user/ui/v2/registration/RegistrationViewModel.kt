@@ -1,4 +1,4 @@
-package eu.peernetwork.user.ui.registeration
+package eu.peernetwork.user.ui.v2.registration
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-@Registration.Scope
 class RegistrationViewModel @Inject constructor(
     private val registrationUsecase: RegistrationUsecase,
     private val activationUsecase: ActivationUsecase,
@@ -20,7 +19,7 @@ class RegistrationViewModel @Inject constructor(
 
     val state: StateFlow<State> = mutableState.stateIn(
         scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5_000),
+        started = SharingStarted.Companion.WhileSubscribed(5_000),
         initialValue = State.Initial
     )
 

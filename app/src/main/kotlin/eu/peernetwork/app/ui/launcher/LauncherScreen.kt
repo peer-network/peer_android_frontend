@@ -9,6 +9,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import eu.peernetwork.app.ui.browser.BrowserScreen
 import eu.peernetwork.app.ui.home.HomeScreen
 import eu.peernetwork.app.ui.setup.SetupScreen
 import eu.peernetwork.app.ui.welcome.WelcomeScreen
@@ -57,6 +58,7 @@ fun LauncherScreen(
             WelcomeScreen(
                 referral = code,
                 provider = component,
+                onBrowse = { url -> controller.navigate("browser?link=$url") }
             )
         }
         composable("home") { HomeScreen(
@@ -70,6 +72,12 @@ fun LauncherScreen(
                 provider = component,
                 viewModelStoreOwner = viewModelStoreOwner
             )
+        }
+        composable("browser?link={link}") { backStackEntry ->
+            val link = backStackEntry.arguments?.getString("link") ?: ""
+            BrowserScreen(url = link) {
+                controller.popBackStack()
+            }
         }
     }
     LaunchedEffect(token.value) {

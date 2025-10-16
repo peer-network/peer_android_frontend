@@ -31,7 +31,7 @@ fun FormHeader(
             style = MaterialTheme.typography.displaySmall.copy(
                 fontWeight = FontWeight.Normal
             ),
-            color = MaterialTheme.colorScheme.onBackground
+            color = MaterialTheme.colorScheme.surfaceContainerHigh
         )
         Spacer(modifier = Modifier.height(4.dp))
         Text(

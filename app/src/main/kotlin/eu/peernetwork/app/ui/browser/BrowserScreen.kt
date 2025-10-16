@@ -1,4 +1,4 @@
-package eu.peernetwork.app.ui.privacy
+package eu.peernetwork.app.ui.browser
 
 import android.annotation.SuppressLint
 import android.webkit.WebView
@@ -14,7 +14,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 
 @Composable
 @SuppressLint("SetJavaScriptEnabled")
-fun PrivacyScreen(
+fun BrowserScreen(
     url: String,
     onBack: () -> Unit
 ) {

@@ -1,8 +1,11 @@
 package eu.peernetwork.app.ui.welcome
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.material.DesignNavigation
 import eu.peernetwork.core.ui.extension.route
@@ -15,7 +18,8 @@ import eu.peernetwork.user.ui.v2.registration.RegistrationScreen
 @Composable
 fun WelcomeNavigation(
     referral: String? = null,
-    provider: UiComponentProvider
+    provider: UiComponentProvider,
+    onBrowse: (String) -> Unit,
 ) {
     val controller = rememberNavController()
     val startDestination = if (referral != null) {
@@ -23,6 +27,7 @@ fun WelcomeNavigation(
     } else {
         "login"
     }
+    val handleOnBrowse by rememberUpdatedState(onBrowse)
     DesignNavigation(
         navController = controller,
         startDestination = startDestination,
@@ -32,7 +37,8 @@ fun WelcomeNavigation(
                 provider = provider,
                 viewModelStoreOwner = backStackEntry,
                 onRegister = { controller.navigate("referral?code=$referral") },
-                onPasswordReset = { controller.navigate("recovery?email=$it") }
+                onPasswordReset = { controller.navigate("recovery?email=$it") },
+                onPrivacy = { handleOnBrowse(BuildConfig.PRIVACY) }
             )
         }
         composable("register?code={code}") { backStackEntry ->
@@ -49,7 +55,9 @@ fun WelcomeNavigation(
                     referral = code,
                     provider = provider,
                     viewModelStoreOwner = backStackEntry,
-                    onLogin = { controller.route("login") }
+                    onLogin = { controller.route("login") },
+                    onPrivacy = { handleOnBrowse(BuildConfig.PRIVACY) },
+                    onLicence = { handleOnBrowse(BuildConfig.LICENCE) }
                 )
             }
         }

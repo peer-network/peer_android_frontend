@@ -2,6 +2,7 @@ package eu.peernetwork.user.ui.v2.login
 
 import android.content.res.Configuration
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,6 +17,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.luminance
@@ -36,14 +38,16 @@ fun LoginPage(
     error: State<String?>,
     onLogin: (String, String) -> Unit,
     onPasswordReset: (String) -> Unit,
+    onPrivacy: () -> Unit,
     onRegister: () -> Unit
 ) {
-    val email = remember { TextFieldState() }
-    val password = remember { TextFieldState() }
-    val rememberMe = remember { mutableStateOf(false) }
+    val email by rememberSaveable(stateSaver = TextFieldState.Saver) { mutableStateOf(TextFieldState()) }
+    val password by rememberSaveable(stateSaver = TextFieldState.Saver) { mutableStateOf(TextFieldState()) }
+    val rememberMe = rememberSaveable { mutableStateOf(false) }
     val isDarkTheme = MaterialTheme.colorScheme.background.luminance() < 0.5
     val handleOnLogin by rememberUpdatedState(onLogin)
     val handleOnPasswordReset by rememberUpdatedState(onPasswordReset)
+    val handleOnPrivacy by rememberUpdatedState(onPrivacy)
     Column {
         Column(
             verticalArrangement = Arrangement.Center,
@@ -97,8 +101,8 @@ fun LoginPage(
                 .padding(
                     top = 36.dp,
                     bottom = 12.dp
-                )
-                .align(Alignment.CenterHorizontally)
+                ).align(Alignment.CenterHorizontally)
+                .clickable { handleOnPrivacy() }
         )
     }
 }
@@ -114,6 +118,7 @@ fun PreviewLoginPage() {
             error = error,
             onLogin = { _, _ -> },
             onPasswordReset = {},
+            onPrivacy = {},
             onRegister = {}
         )
     }

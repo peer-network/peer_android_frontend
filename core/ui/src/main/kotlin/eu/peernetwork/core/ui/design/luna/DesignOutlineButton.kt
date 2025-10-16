@@ -115,7 +115,7 @@ fun DesignOutlineButton(
             val infiniteTransition = rememberInfiniteTransition()
             val alpha by infiniteTransition.animateFloat(
                 initialValue = 1f,
-                targetValue = 0.6f,
+                targetValue = 0.3f,
                 animationSpec = infiniteRepeatable(
                     animation = tween(durationMillis, easing = easing),
                     repeatMode = RepeatMode.Reverse

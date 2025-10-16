@@ -12,7 +12,8 @@ import eu.peernetwork.core.ui.theme.DesignTheme
 @Composable
 fun WelcomeScreen(
     referral: String? = null,
-    provider: UiComponentProvider
+    provider: UiComponentProvider,
+    onBrowse: (String) -> Unit,
 ) {
     val context = LocalContext.current
     val component = remember {
@@ -28,7 +29,8 @@ fun WelcomeScreen(
         WelcomeScaffold {
             WelcomeNavigation(
                 referral = referral,
-                provider = component
+                provider = component,
+                onBrowse = onBrowse
             )
         }
     }

@@ -17,6 +17,7 @@ fun LoginScreen(
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
     onPasswordReset: (String) -> Unit,
+    onPrivacy: () -> Unit,
     onRegister: () -> Unit
 ) {
     val context = LocalContext.current
@@ -40,7 +41,8 @@ fun LoginScreen(
         error = error,
         onLogin = { email, password -> viewModel.login(email, password) },
         onRegister = onRegister,
-        onPasswordReset = onPasswordReset
+        onPasswordReset = onPasswordReset,
+        onPrivacy = onPrivacy,
     )
     DisposableEffect(Unit) { onDispose { viewModel.reset() } }
 }

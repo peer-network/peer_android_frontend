@@ -36,6 +36,7 @@ import eu.peernetwork.core.ui.extension.isValidEmail
 import eu.peernetwork.core.ui.extension.isValidInput
 import eu.peernetwork.core.ui.extension.passwordStrength
 import eu.peernetwork.core.ui.theme.PeerTheme
+import eu.peernetwork.user.ui.v2.registration.RegistrationViewModel
 
 @Composable
 fun RegistrationScreen(
@@ -105,7 +106,7 @@ fun RegistrationScreen(
     }
     val handleReset by rememberUpdatedState(onReset)
     val handleSubmit by rememberUpdatedState(onSubmit)
-    var isChecked = remember { mutableStateOf(false) }
+    val isChecked = remember { mutableStateOf(false) }
     val showAgeConfirmDialog = remember { mutableStateOf(false) }
     Column(modifier = Modifier.fillMaxWidth()) {
         RegistrationForm(

@@ -88,6 +88,7 @@
     <string name="profile_deactivation_message">Account deactivated successfully!</string>
 
     <string name="privacy_text">Privacy Policy</string>
-    <string name="privacy_agreement">I agree to the Privacy Policy.</string>
-    <string name="licence_agreement">I agree to the End User License Agreement.</string>
+    <string name="agreement">I agree to the</string>
+    <string name="privacy_agreement">Privacy Policy.</string>
+    <string name="licence_agreement">End User License Agreement.</string>
 </resources>
