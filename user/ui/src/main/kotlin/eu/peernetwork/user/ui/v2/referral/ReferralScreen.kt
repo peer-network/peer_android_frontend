@@ -6,6 +6,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModelStoreOwner
@@ -48,9 +49,17 @@ fun ReferralScreen(
     } else {
         referral ?: peerReferral.value
     } ?: "") }
+    val error = remember { mutableStateOf<String?>(null) }
+    val derivedStatusError = remember {
+        derivedStateOf { (status as? ReferralViewModel.Status.Error?)?.error }
+    }
+    val derivedStateError = remember {
+        derivedStateOf { (state as? ReferralViewModel.State.Error?)?.error }
+    }
     ReferralPage(
         code = code,
         isLoading = isLoading,
+        error = error,
         onRequestReferral = {
             peerReferral.value?.let {
                 code.edit {
@@ -67,6 +76,16 @@ fun ReferralScreen(
     ) { controller, anim, cancelable -> }
     LaunchedEffect(derivedState.value) {
         derivedState.value?.let { onRegister(it) }
+    }
+    LaunchedEffect(derivedStatusError.value) {
+        derivedStatusError.value?.message?.let {
+            error.value = component.resource().string(it)
+        }
+    }
+    LaunchedEffect(derivedStateError.value) {
+        derivedStateError.value?.message?.let {
+            error.value = component.resource().string(it)
+        }
     }
     DisposableEffect(Unit) {
         onDispose { viewModel.reset() }

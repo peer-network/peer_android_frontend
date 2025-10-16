@@ -25,6 +25,7 @@ import eu.peernetwork.user.ui.compose.FormHeader
 fun ReferralPage(
     code: TextFieldState,
     isLoading: State<Boolean>,
+    error: State<String?>,
     onRequestReferral: () -> Unit,
     onVerify: (String) -> Unit
 ) {
@@ -49,6 +50,7 @@ fun ReferralPage(
         ReferralForm(
             code = code,
             isLoading = isLoading,
+            error = error,
             onVerify = { handleOnVerify(code.text.toString()) },
             onRequestReferral = onRequestReferral
         )

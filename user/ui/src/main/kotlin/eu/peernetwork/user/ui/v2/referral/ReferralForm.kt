@@ -40,6 +40,7 @@ import eu.peernetwork.core.ui.design.luna.DesignTextField
 import eu.peernetwork.core.ui.extension.isValidInput
 import eu.peernetwork.core.ui.theme.DesignTheme
 import eu.peernetwork.user.ui.R
+import eu.peernetwork.user.ui.compose.ErrorLabel
 import java.util.UUID
 
 private const val tag = "PEER_REFERRAL"
@@ -48,6 +49,7 @@ private const val tag = "PEER_REFERRAL"
 fun ReferralForm(
     code: TextFieldState,
     isLoading: State<Boolean>,
+    error: State<String?>,
     onVerify: (String) -> Unit,
     onRequestReferral: () -> Unit,
     modifier: Modifier = Modifier,
@@ -74,6 +76,7 @@ fun ReferralForm(
     Column(modifier = modifier) {
         DesignTextField(
             state = code,
+            enabled = !isLoading.value,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text,
                 imeAction = ImeAction.Next
@@ -89,14 +92,21 @@ fun ReferralForm(
                         .size(22.dp),
                     tint = LocalContentColor.current
                 )
-            }
+            },
+            modifier = Modifier.padding(bottom = 6.dp)
+        )
+        ErrorLabel(
+            error = error,
+            modifier = Modifier.padding(horizontal = 18.dp)
+                .padding(bottom = 4.dp)
         )
         DesignButton(
             onClick = { handleOnVerify(code.text.toString()) },
             enabled = !isLoading.value && isValidate.value,
+            isLoading = isLoading.value,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 12.dp),
+                .padding(top = 6.dp),
         ) { Text(stringResource(R.string.referral_verification)) }
         Text(
             text = annotatedString,
@@ -130,9 +140,11 @@ fun PreviewReferralForm() {
     DesignTheme {
         val code = remember { TextFieldState(UUID.randomUUID().toString()) }
         val isLoading = remember { mutableStateOf(false) }
+        val error = remember { mutableStateOf(null) }
         ReferralForm(
             code = code,
             isLoading = isLoading,
+            error = error,
             modifier = Modifier.padding(24.dp),
             onVerify = {},
             onRequestReferral = {},

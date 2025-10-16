@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import eu.peernetwork.user.domain.usecase.ReferralUsecase
 import eu.peernetwork.user.domain.usecase.ReferralVerificationUsecase
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -26,6 +27,7 @@ class ReferralViewModel @Inject constructor(
         viewModelScope.launch {
             _status.tryEmit(Status.Loading)
             try {
+                delay(2000)
                 _status.tryEmit(Status.Success(usecase()))
             } catch (error: Throwable) {
                 _status.tryEmit(Status.Error(error))
@@ -45,7 +47,6 @@ class ReferralViewModel @Inject constructor(
     }
 
     fun reset() {
-        _status.tryEmit(Status.Initial)
         _state.tryEmit(State.Initial)
     }
 
