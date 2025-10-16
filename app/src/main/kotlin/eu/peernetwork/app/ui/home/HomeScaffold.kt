@@ -29,6 +29,7 @@ fun HomeScaffold(
     DesignScene(
         state = state,
         modifier = Modifier.fillMaxSize(),
+        loading = { HomeSkeleton() },
         error = error
     ) {
         val isOnboarding = remember { derivedStateOf {
