@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -22,11 +23,11 @@ import eu.peernetwork.user.ui.compose.FormHeader
 
 @Composable
 fun ReferralPage(
+    code: TextFieldState,
+    isLoading: State<Boolean>,
     onRequestReferral: () -> Unit,
     onVerify: (String) -> Unit
 ) {
-    val code = remember { TextFieldState() }
-    val isValidated = remember { derivedStateOf { code.text.isNotEmpty() } }
     val handleOnVerify by rememberUpdatedState(onVerify)
     Column(
         verticalArrangement = Arrangement.Center,
@@ -47,7 +48,7 @@ fun ReferralPage(
         )
         ReferralForm(
             code = code,
-            enabled = isValidated.value,
+            isLoading = isLoading,
             onVerify = { handleOnVerify(code.text.toString()) },
             onRequestReferral = onRequestReferral
         )

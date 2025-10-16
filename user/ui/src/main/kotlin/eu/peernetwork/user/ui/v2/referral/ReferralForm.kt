@@ -14,7 +14,10 @@ import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
@@ -34,6 +37,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.core.ui.design.luna.DesignButton
 import eu.peernetwork.core.ui.design.luna.DesignTextField
+import eu.peernetwork.core.ui.extension.isValidInput
 import eu.peernetwork.core.ui.theme.DesignTheme
 import eu.peernetwork.user.ui.R
 import java.util.UUID
@@ -43,7 +47,7 @@ private const val tag = "PEER_REFERRAL"
 @Composable
 fun ReferralForm(
     code: TextFieldState,
-    enabled: Boolean,
+    isLoading: State<Boolean>,
     onVerify: (String) -> Unit,
     onRequestReferral: () -> Unit,
     modifier: Modifier = Modifier,
@@ -65,6 +69,7 @@ fun ReferralForm(
         append(stringResource(R.string.referral_request_intent))
         pop()
     }
+    val isValidate = remember(code.text) { derivedStateOf { code.isValidInput() } }
     var layoutResult: TextLayoutResult? = null
     Column(modifier = modifier) {
         DesignTextField(
@@ -88,7 +93,7 @@ fun ReferralForm(
         )
         DesignButton(
             onClick = { handleOnVerify(code.text.toString()) },
-            enabled = enabled,
+            enabled = !isLoading.value && isValidate.value,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 12.dp),
@@ -124,9 +129,10 @@ fun ReferralForm(
 fun PreviewReferralForm() {
     DesignTheme {
         val code = remember { TextFieldState(UUID.randomUUID().toString()) }
+        val isLoading = remember { mutableStateOf(false) }
         ReferralForm(
             code = code,
-            enabled = true,
+            isLoading = isLoading,
             modifier = Modifier.padding(24.dp),
             onVerify = {},
             onRequestReferral = {},
