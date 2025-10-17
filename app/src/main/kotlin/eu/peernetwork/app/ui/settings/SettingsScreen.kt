@@ -71,6 +71,7 @@ fun SettingsScreen(
     val preference = stringResource(R.string.preference_label)
     val feedback = stringResource(R.string.feedback_label)
     val introduction = stringResource(R.string.how_it_works_label)
+    val releaseNote = stringResource(R.string.release_notes)
     val aboutUsLabel = stringResource(R.string.about_us_label)
     val feedbackSession = remember { mutableLongStateOf(-1) }
     Column(modifier = Modifier
@@ -92,6 +93,9 @@ fun SettingsScreen(
             feedbackSession.longValue = System.currentTimeMillis()
         }
         SettingsItem(label = introduction, onTutorial)
+        SettingsItem(label = releaseNote) {
+            handleOnNavigate("version")
+        }
         SettingsItem(label = aboutUsLabel) {
             handleOnNavigate("about")
         }

@@ -1,5 +1,6 @@
-package eu.peernetwork.user.ui.v2.password.request
+package eu.peernetwork.user.ui.v2.password.verification
 
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,37 +15,32 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.core.ui.design.luna.DesignButton
 import eu.peernetwork.core.ui.design.luna.DesignTextField
 import eu.peernetwork.core.ui.extension.annotate
-import eu.peernetwork.core.ui.extension.isValidEmail
+import eu.peernetwork.core.ui.theme.DesignTheme
 import eu.peernetwork.user.ui.R
 import eu.peernetwork.user.ui.compose.ErrorLabel
 import eu.peernetwork.user.ui.compose.FormHeader
 
 @Composable
-fun RequestPage(
+fun VerificationPage(
     email: String,
     isLoading: State<Boolean>,
     error: State<String?>,
-    onReset: (String) -> Unit
+    onVerified: (String) -> Unit
 ) {
-    val email by rememberSaveable(stateSaver = TextFieldState.Saver) {
-        mutableStateOf(TextFieldState(email))
-    }
-    val isValidated = remember { derivedStateOf { email.isValidEmail() } }
-    val updatedOnReset by rememberUpdatedState(onReset)
+    val token = remember { TextFieldState() }
+    val isValidated = remember { derivedStateOf { token.text.isNotBlank() } }
     Column(
         verticalArrangement = Arrangement.Center,
         modifier = Modifier
@@ -53,21 +49,21 @@ fun RequestPage(
     ) {
         FormHeader(
             title = stringResource(R.string.forgot_password_text).annotate(),
-            description = stringResource(R.string.forgot_instruction),
+            description = stringResource(R.string.password_verification_instruction, email),
             modifier = Modifier.padding(bottom = 32.dp)
         )
         DesignTextField(
-            state = email,
+            state = token,
             enabled = !isLoading.value,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Email,
                 imeAction = ImeAction.Next
             ),
-            hint = stringResource(id = R.string.email_label),
+            hint = stringResource(id = R.string.password_verification_label),
             leading = {
                 Icon(
-                    painter = painterResource(R.drawable.ic_email),
-                    contentDescription = stringResource(id = R.string.email_label),
+                    painter = painterResource(R.drawable.ic_token),
+                    contentDescription = stringResource(id = R.string.password_verification_label),
                     modifier = Modifier
                         .padding(end = 8.dp)
                         .size(22.dp),
@@ -81,12 +77,26 @@ fun RequestPage(
             modifier = Modifier.padding(horizontal = 18.dp)
         )
         DesignButton(
-            onClick = { updatedOnReset(email.text.toString()) },
+            onClick = {  },
             enabled = !isLoading.value && isValidated.value,
             isLoading = isLoading.value,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 6.dp),
-        ) { Text(stringResource(R.string.send_text)) }
+        ) { Text(stringResource(R.string.verify_text)) }
+    }
+}
+
+@Composable
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
+fun PreviewVerificationPage() {
+    DesignTheme {
+        val isLoading = remember { mutableStateOf(false) }
+        val error = remember { mutableStateOf(null) }
+        VerificationPage(
+            email = "johnDoe@domain.com",
+            isLoading = isLoading,
+            error = error,
+        ) {}
     }
 }

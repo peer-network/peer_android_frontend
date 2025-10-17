@@ -36,7 +36,7 @@ class RegistrationViewModel @Inject constructor(
                     )
                 )
                 activationUsecase(code)
-                mutableState.tryEmit(State.Success(code))
+                mutableState.tryEmit(State.Success(code, email))
             } catch (error: Throwable) {
                 mutableState.tryEmit(State.Error(error))
             }
@@ -50,7 +50,10 @@ class RegistrationViewModel @Inject constructor(
     sealed interface State {
         data object Initial : State
         data object Loading : State
-        data class Success(val uuid: String) : State
+        data class Success(
+            val uuid: String,
+            val email: String
+        ) : State
         data class Error(val error: Throwable) : State
     }
 }

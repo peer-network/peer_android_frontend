@@ -1,16 +1,18 @@
-package eu.peernetwork.user.ui.password.request
+package eu.peernetwork.user.ui.v2.password.request
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import eu.peernetwork.user.domain.usecase.PasswordRequestUsecase
+import eu.peernetwork.user.ui.usecase.EmailMaskUsecase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class PasswordRequestViewModel @Inject constructor(
-    private val usecase: PasswordRequestUsecase
+class RequestViewModel @Inject constructor(
+    private val usecase: PasswordRequestUsecase,
+    private val emailMaskUsecase: EmailMaskUsecase,
 ) : ViewModel() {
     private val mutableState = MutableStateFlow<State>(State.Empty)
 
@@ -21,7 +23,7 @@ class PasswordRequestViewModel @Inject constructor(
             try {
                 mutableState.tryEmit(State.Loading)
                 usecase(email)
-                mutableState.tryEmit(State.Success(email))
+                mutableState.tryEmit(State.Success(emailMaskUsecase(email)))
             } catch (error: Throwable) {
                 mutableState.tryEmit(State.Error(error))
             }

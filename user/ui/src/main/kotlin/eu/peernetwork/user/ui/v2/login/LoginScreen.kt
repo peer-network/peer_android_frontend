@@ -14,6 +14,7 @@ import eu.peernetwork.core.ui.extension.builder
 
 @Composable
 fun LoginScreen(
+    email: String?,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
     onPasswordReset: (String) -> Unit,
@@ -37,6 +38,7 @@ fun LoginScreen(
         }
     } }
     LoginPage(
+        login = email,
         isLoading = isLoading,
         error = error,
         onLogin = { email, password -> viewModel.login(email, password) },

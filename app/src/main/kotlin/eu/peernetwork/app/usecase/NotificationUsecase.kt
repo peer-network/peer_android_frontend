@@ -8,12 +8,12 @@ import android.os.Build
 import androidx.core.app.NotificationCompat
 import com.google.firebase.messaging.RemoteMessage
 import eu.peernetwork.app.R
-import eu.peernetwork.core.common.usecase.ParameterizedImmediateUseCase
+import eu.peernetwork.core.common.usecase.ParameterizedBlockingUseCase
 import javax.inject.Inject
 
 class NotificationUsecase @Inject constructor(
     private val context: Context
-) : ParameterizedImmediateUseCase<RemoteMessage, Unit> {
+) : ParameterizedBlockingUseCase<RemoteMessage, Unit> {
     private val channel = this::class.java.name
 
     private val title: String by lazy {

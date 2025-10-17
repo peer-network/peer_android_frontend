@@ -1,5 +1,5 @@
 package eu.peernetwork.core.common.usecase
 
-interface ParameterizedImmediateUseCase<P, T> : Usecase {
+interface ParameterizedBlockingUseCase<P, T> : Usecase {
     operator fun invoke(param: P): T
 }

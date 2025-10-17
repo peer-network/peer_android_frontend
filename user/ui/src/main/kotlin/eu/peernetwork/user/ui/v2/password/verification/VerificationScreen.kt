@@ -1,7 +1,6 @@
-package eu.peernetwork.user.ui.v2.password.request
+package eu.peernetwork.user.ui.v2.password.verification
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -14,38 +13,35 @@ import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.extension.builder
 
 @Composable
-fun RequestScreen(
-    email: String?,
+fun VerificationScreen(
+    email: String,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
-    onReset: (String) -> Unit
+    onVerification: () -> Unit
 ) {
     val context = LocalContext.current
     val component = remember {
-        provider.builder(Request.Builder::class.java).build(context)
+        provider.builder(Verification.Builder::class.java).build(context)
     }
     val viewModel = viewModel(
-        modelClass = RequestViewModel::class.java,
+        modelClass = VerificationViewModel::class.java,
         viewModelStoreOwner = viewModelStoreOwner,
         factory = component.viewModelFactory()
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val response = remember { derivedStateOf { state as? RequestViewModel.State.Success? } }
+    val response = remember { derivedStateOf { state as? VerificationViewModel.State.Success? } }
     val isLoading = remember(state) { derivedStateOf {
-        state is RequestViewModel.State.Loading
+        state is VerificationViewModel.State.Loading
     } }
     val error = remember(state) { derivedStateOf {
-        (state as? RequestViewModel.State.Error?)?.error?.message?.let {
+        (state as? VerificationViewModel.State.Error?)?.error?.message?.let {
             component.resource().string(it)
         }
     } }
-    val handleOnReset by rememberUpdatedState(onReset)
-    RequestPage(
-        email = email ?: "",
+    val handleOnVerification by rememberUpdatedState(onVerification)
+    VerificationPage(
+        email = email,
         isLoading = isLoading,
         error = error
-    ) { viewModel.requestPassword(it) }
-    LaunchedEffect(response.value) {
-        response.value?.let { handleOnReset(it.email) }
-    }
+    ) { handleOnVerification() }
 }

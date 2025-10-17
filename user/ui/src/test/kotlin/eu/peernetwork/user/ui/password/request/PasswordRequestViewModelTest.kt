@@ -3,6 +3,7 @@ package eu.peernetwork.user.ui.password.request
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import app.cash.turbine.test
 import eu.peernetwork.user.domain.usecase.PasswordRequestUsecase
+import eu.peernetwork.user.ui.v2.password.request.RequestViewModel
 import io.mockk.coEvery
 import io.mockk.mockk
 import junit.framework.TestCase.assertEquals
@@ -25,12 +26,12 @@ internal class PasswordRequestViewModelTest {
 
     private val usecase = mockk<PasswordRequestUsecase>()
 
-    private lateinit var viewModel: PasswordRequestViewModel
+    private lateinit var viewModel: RequestViewModel
 
     @Before
     fun setup() {
         Dispatchers.setMain(dispatcher)
-        viewModel = PasswordRequestViewModel(usecase)
+        viewModel = RequestViewModel(usecase)
     }
 
     @Test
@@ -41,8 +42,8 @@ internal class PasswordRequestViewModelTest {
         }
         viewModel.requestPassword(email)
         viewModel.state.test {
-            assertEquals(PasswordRequestViewModel.State.Loading, awaitItem())
-            assertEquals(PasswordRequestViewModel.State.Success(email), awaitItem())
+            assertEquals(RequestViewModel.State.Loading, awaitItem())
+            assertEquals(RequestViewModel.State.Success(email), awaitItem())
         }
     }
 
@@ -52,7 +53,7 @@ internal class PasswordRequestViewModelTest {
         coEvery { usecase(any()) } throws error
         viewModel.requestPassword("<test-email>")
         viewModel.state.test {
-            assertEquals(PasswordRequestViewModel.State.Error(error), awaitItem())
+            assertEquals(RequestViewModel.State.Error(error), awaitItem())
         }
     }
 }

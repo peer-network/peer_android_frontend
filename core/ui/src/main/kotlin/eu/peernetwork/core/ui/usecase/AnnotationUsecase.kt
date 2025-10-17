@@ -4,11 +4,11 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
-import eu.peernetwork.core.common.usecase.ParameterizedImmediateUseCase
+import eu.peernetwork.core.common.usecase.ParameterizedBlockingUseCase
 import eu.peernetwork.core.ui.theme.PrimaryColor
 import javax.inject.Inject
 
-class AnnotationUsecase @Inject constructor() : ParameterizedImmediateUseCase<String, AnnotatedString> {
+class AnnotationUsecase @Inject constructor() : ParameterizedBlockingUseCase<String, AnnotatedString> {
     override fun invoke(param: String): AnnotatedString {
         val pattern = Regex("""(@\w+)|(#\w+)|((https?|ftp)://[^\s]+)|(www\.[^\s]+)""", RegexOption.IGNORE_CASE)
         return buildAnnotatedString {

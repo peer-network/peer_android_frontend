@@ -2,11 +2,11 @@ package eu.peernetwork.user.remote.usecase
 
 import android.util.Base64
 import eu.peernetwork.core.common.exception.BusinessException
-import eu.peernetwork.core.common.usecase.ParameterizedImmediateUseCase
+import eu.peernetwork.core.common.usecase.ParameterizedBlockingUseCase
 import org.json.JSONObject
 import javax.inject.Inject
 
-class JwtExpiryUsecase @Inject constructor() : ParameterizedImmediateUseCase<String, Long> {
+class JwtExpiryUsecase @Inject constructor() : ParameterizedBlockingUseCase<String, Long> {
     override fun invoke(param: String): Long {
         val parts = param.split(".")
         if (parts.size != 3) {

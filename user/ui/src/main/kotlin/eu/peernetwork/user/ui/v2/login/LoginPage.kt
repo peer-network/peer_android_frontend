@@ -34,6 +34,7 @@ import eu.peernetwork.user.ui.compose.FormHeader
 
 @Composable
 fun LoginPage(
+    login: String?,
     isLoading: State<Boolean>,
     error: State<String?>,
     onLogin: (String, String) -> Unit,
@@ -41,7 +42,9 @@ fun LoginPage(
     onPrivacy: () -> Unit,
     onRegister: () -> Unit
 ) {
-    val email by rememberSaveable(stateSaver = TextFieldState.Saver) { mutableStateOf(TextFieldState()) }
+    val email by rememberSaveable(stateSaver = TextFieldState.Saver) {
+        mutableStateOf(TextFieldState(login ?: ""))
+    }
     val password by rememberSaveable(stateSaver = TextFieldState.Saver) { mutableStateOf(TextFieldState()) }
     val rememberMe = rememberSaveable { mutableStateOf(false) }
     val isDarkTheme = MaterialTheme.colorScheme.background.luminance() < 0.5
@@ -114,6 +117,7 @@ fun PreviewLoginPage() {
         val isLoading = remember { mutableStateOf(false) }
         val error = remember { mutableStateOf(null) }
         LoginPage(
+            login = null,
             isLoading = isLoading,
             error = error,
             onLogin = { _, _ -> },

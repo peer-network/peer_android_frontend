@@ -4,12 +4,12 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
-import eu.peernetwork.core.common.usecase.ImmediateUseCase
+import eu.peernetwork.core.common.usecase.BlockingUseCase
 import javax.inject.Inject
 
 class PermissionUsecase @Inject constructor(
     private val context: Context
-) : ImmediateUseCase<Unit> {
+) : BlockingUseCase<Unit> {
     override fun invoke() {
         context.startActivity(
             Intent(

@@ -75,6 +75,14 @@ fun SettingsNavigation(
                 controller.popBackStack()
             }
         }
+        composable("version") {
+            AboutScreen(
+                BuildConfig.VERSION_NAME,
+                BuildConfig.VERSION_CODE,
+                provider,
+                stringResource(R.string.about_us_label),
+            )
+        }
         composable("about") {
             AboutScreen(
                 BuildConfig.VERSION_NAME,

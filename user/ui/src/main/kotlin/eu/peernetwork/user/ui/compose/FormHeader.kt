@@ -9,10 +9,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.core.ui.extension.annotate
@@ -23,21 +25,45 @@ import eu.peernetwork.user.ui.R
 fun FormHeader(
     title: AnnotatedString,
     description: String,
+    textAlign: TextAlign = TextAlign.Start,
     modifier: Modifier = Modifier,
+    horizontalAlignment: Alignment.Horizontal = Alignment.Start
 ) {
-    Column(modifier = modifier) {
+    FormHeader(
+        title = title,
+        description = description.annotate(),
+        textAlign = textAlign,
+        modifier = modifier,
+        horizontalAlignment = horizontalAlignment
+    )
+}
+
+@Composable
+fun FormHeader(
+    title: AnnotatedString,
+    description: AnnotatedString,
+    textAlign: TextAlign = TextAlign.Start,
+    modifier: Modifier = Modifier,
+    horizontalAlignment: Alignment.Horizontal = Alignment.Start
+) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = horizontalAlignment
+    ) {
         Text(
             text = title,
             style = MaterialTheme.typography.displaySmall.copy(
                 fontWeight = FontWeight.Normal
             ),
-            color = MaterialTheme.colorScheme.surfaceContainerHigh
+            color = MaterialTheme.colorScheme.surfaceContainerHigh,
+            textAlign = textAlign
         )
         Spacer(modifier = Modifier.height(4.dp))
         Text(
             text = description,
             style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.outline
+            color = MaterialTheme.colorScheme.outline,
+            textAlign = textAlign
         )
     }
 }

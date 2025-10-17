@@ -72,7 +72,7 @@ fun RegistrationDialog(
                     contentPadding = PaddingValues(horizontal = 24.dp, vertical = 8.dp)
                 ) {
                     Text(
-                        text = stringResource(id = R.string.age_confirmation_continue),
+                        text = stringResource(id = R.string.continue_text),
                         style = MaterialTheme.typography.bodySmall.copy(
                             fontWeight = FontWeight.SemiBold
                         )

@@ -1,4 +1,4 @@
-package eu.peernetwork.user.ui.v2.password.request
+package eu.peernetwork.user.ui.v2.password.verification
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -10,9 +10,9 @@ import eu.peernetwork.core.ui.factory.UiViewModelFactory
 import javax.inject.Provider
 
 @Module
-object RequestModule {
+object VerificationModule {
     @Provides
-    @Request.Scope
+    @Verification.Scope
     fun provideViewModelFactory(
         classToViewModel:
         @JvmSuppressWildcards Map<Class<out ViewModel>, Provider<ViewModel>>
@@ -22,7 +22,7 @@ object RequestModule {
 
     @Provides
     @IntoMap
-    @Request.Scope
-    @UiViewModel(RequestViewModel::class)
-    fun provideViewModel(viewModel: RequestViewModel): ViewModel = viewModel
+    @Verification.Scope
+    @UiViewModel(VerificationViewModel::class)
+    fun provideViewModel(viewModel: VerificationViewModel): ViewModel = viewModel
 }

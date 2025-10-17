@@ -13,7 +13,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
@@ -42,7 +41,6 @@ fun ResetPage(
     val isValidated = remember { derivedStateOf {
         password.text.isNotEmpty() && password.text == confirmPassword.text
     } }
-    val isPasswordVisible by remember { mutableStateOf(false) }
     val updatedOnFinish by rememberUpdatedState(onFinish)
     Column(
         verticalArrangement = Arrangement.Center,

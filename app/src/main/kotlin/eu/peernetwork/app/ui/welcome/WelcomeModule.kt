@@ -10,6 +10,7 @@ import eu.peernetwork.core.ui.factory.UiBuilderFactory
 import eu.peernetwork.user.ui.v2.login.Login
 import eu.peernetwork.user.ui.v2.password.request.Request
 import eu.peernetwork.user.ui.v2.password.reset.Reset
+import eu.peernetwork.user.ui.v2.password.verification.Verification
 import eu.peernetwork.user.ui.v2.referral.Referral
 import eu.peernetwork.user.ui.v2.registration.Registration
 
@@ -57,5 +58,13 @@ object WelcomeModule {
     @UiBuilder(Reset.Builder::class)
     fun provideResetBuilder(component: Welcome.Component): UiComponent.Builder {
         return Reset.Builder(component)
+    }
+
+    @Provides
+    @IntoMap
+    @Welcome.Scope
+    @UiBuilder(Verification.Builder::class)
+    fun provideVerificationBuilder(component: Welcome.Component): UiComponent.Builder {
+        return Verification.Builder(component)
     }
 }

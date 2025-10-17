@@ -6,6 +6,7 @@ import eu.peernetwork.core.ui.component.UiComponentProvider
 
 @Composable
 fun ResetScreen(
+    email: String?,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
 ) {

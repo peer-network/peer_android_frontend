@@ -2,7 +2,6 @@ package eu.peernetwork.app.ui.home
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -16,23 +15,36 @@ import eu.peernetwork.core.ui.theme.PeerTheme
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.ui.graphics.Color
-import eu.peernetwork.core.ui.design.material.DesignPage
+import eu.peernetwork.core.ui.design.material.DesignAvatar
 
 @Composable
 fun HomeSkeleton() {
-    DesignPage {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.surfaceVariant)
-                .padding(horizontal = 12.dp, vertical = 8.dp),
-            verticalArrangement = Arrangement.SpaceBetween
-        ) {
-            Column(verticalArrangement = Arrangement.spacedBy(24.dp)) {
-                HeaderSection()
-                PostCardSkeleton()
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.surfaceVariant)
+            .padding(24.dp),
+        verticalArrangement = Arrangement.SpaceBetween
+    ) {
+        Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+            HeaderSection()
+            Row(horizontalArrangement = Arrangement.SpaceBetween) {
+                Spacer(modifier = Modifier.weight(1f)
+                    .height(42.dp)
+                    .padding(end = 8.dp)
+                    .background(
+                        color = MaterialTheme.colorScheme.tertiaryContainer,
+                        shape = RoundedCornerShape(12.dp)
+                    ))
+                Spacer(modifier = Modifier.weight(1f)
+                    .height(42.dp)
+                    .padding(start = 8.dp)
+                    .background(
+                        color = MaterialTheme.colorScheme.tertiaryContainer,
+                        shape = RoundedCornerShape(12.dp)
+                    ))
             }
-            FooterSection()
+            PostCardSkeleton()
         }
     }
 }
@@ -46,8 +58,8 @@ private fun HeaderSection() {
             .statusBarsPadding(),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        PlaceholderBar(width = 64.dp, height = 16.dp)
-        PlaceholderBar(width = 120.dp, height = 16.dp)
+        PlaceholderBar(width = 64.dp, height = 18.dp)
+        PlaceholderBar(width = 120.dp, height = 18.dp)
     }
 }
 
@@ -59,48 +71,25 @@ private fun PostCardSkeleton() {
             .fillMaxWidth()
             .clip(RoundedCornerShape(24.dp))
             .background(MaterialTheme.colorScheme.tertiaryContainer)
-            .padding(12.dp),
+            .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(25.dp)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            CirclePlaceholder(size = 40.dp)
-            Column(
-                verticalArrangement = Arrangement.spacedBy(6.dp),
-                modifier = Modifier.weight(1f)
-            ) {
-                PlaceholderBar(
-                    widthFraction = 0.4f,
-                    height = 6.dp,
-                    color = MaterialTheme.colorScheme.surfaceContainerLow
-                )
-                PlaceholderBar(
-                    widthFraction = 0.6f,
-                    height = 6.dp,
-                    color = MaterialTheme.colorScheme.surfaceContainerLow
-                )
+            DesignAvatar(modifier = Modifier.size(48.dp)) {
+                Box(modifier = Modifier.fillMaxSize()
+                    .background(MaterialTheme.colorScheme.surfaceContainerLow))
             }
             PlaceholderBar(
-                width = 12.dp,
-                height = 6.dp,
+                widthFraction = 0.4f,
+                height = 12.dp,
                 color = MaterialTheme.colorScheme.surfaceContainerLow
             )
         }
         Spacer(modifier = Modifier.height(76.dp))
     }
-}
-
-@Composable
-private fun FooterSection() {
-    PlaceholderBar(
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight()
-            .windowInsetsPadding(WindowInsets.navigationBars),
-        height = 25.dp
-    )
 }
 
 @Composable
@@ -112,7 +101,7 @@ private fun PlaceholderBar(
     height: Dp,
 ) {
     val baseModifier = modifier
-        .clip(RoundedCornerShape(4.dp))
+        .clip(RoundedCornerShape(6.dp))
         .background(color)
         .then(
             when {
@@ -123,16 +112,6 @@ private fun PlaceholderBar(
         )
         .height(height)
     Spacer(modifier = baseModifier)
-}
-
-@Composable
-private fun CirclePlaceholder(size: Dp) {
-    Spacer(
-        modifier = Modifier
-            .size(size)
-            .clip(CircleShape)
-            .background(MaterialTheme.colorScheme.surfaceContainerLow)
-    )
 }
 
 @Preview(showBackground = true)

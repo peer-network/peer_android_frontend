@@ -12,6 +12,7 @@ import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.factory.UiBuilderFactory
 import eu.peernetwork.core.ui.factory.UiViewModelFactory
 import eu.peernetwork.user.ui.password.reset.PasswordReset
+import eu.peernetwork.user.ui.v2.password.request.RequestViewModel
 import javax.inject.Provider
 
 @Module
@@ -35,8 +36,8 @@ object PasswordRequestModule {
     @Provides
     @IntoMap
     @PasswordRequest.Scope
-    @UiViewModel(PasswordRequestViewModel::class)
-    fun provideViewModel(viewModel: PasswordRequestViewModel): ViewModel = viewModel
+    @UiViewModel(RequestViewModel::class)
+    fun provideViewModel(viewModel: RequestViewModel): ViewModel = viewModel
 
     @PasswordRequest.Scope
     @Provides

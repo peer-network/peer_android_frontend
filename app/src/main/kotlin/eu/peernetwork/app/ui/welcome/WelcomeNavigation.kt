@@ -12,8 +12,10 @@ import eu.peernetwork.core.ui.extension.route
 import eu.peernetwork.user.ui.v2.login.LoginScreen
 import eu.peernetwork.user.ui.v2.password.request.RequestScreen
 import eu.peernetwork.user.ui.v2.password.reset.ResetScreen
+import eu.peernetwork.user.ui.v2.password.verification.VerificationScreen
 import eu.peernetwork.user.ui.v2.referral.ReferralScreen
 import eu.peernetwork.user.ui.v2.registration.RegistrationScreen
+import eu.peernetwork.user.ui.v2.registration.RegistrationSuccess
 
 @Composable
 fun WelcomeNavigation(
@@ -32,8 +34,10 @@ fun WelcomeNavigation(
         navController = controller,
         startDestination = startDestination,
     ) {
-        composable("login") { backStackEntry ->
+        composable("login?email={email}") { backStackEntry ->
+            val email = backStackEntry.arguments?.getString("email")
             LoginScreen(
+                email = email,
                 provider = provider,
                 viewModelStoreOwner = backStackEntry,
                 onRegister = { controller.navigate("referral?code=$referral") },
@@ -56,9 +60,16 @@ fun WelcomeNavigation(
                     provider = provider,
                     viewModelStoreOwner = backStackEntry,
                     onLogin = { controller.route("login") },
+                    onRegistered = { controller.route("registered?email=$it") },
                     onPrivacy = { handleOnBrowse(BuildConfig.PRIVACY) },
                     onLicence = { handleOnBrowse(BuildConfig.LICENCE) }
                 )
+            }
+        }
+        composable("registered?email={email}") { backStackEntry ->
+            val email = backStackEntry.arguments?.getString("email")
+            RegistrationSuccess {
+                controller.route("login?email=$email")
             }
         }
         composable("referral?code={code}") { backStackEntry ->
@@ -76,11 +87,31 @@ fun WelcomeNavigation(
                 email = email,
                 provider = provider,
                 viewModelStoreOwner = backStackEntry,
-                onReset = { controller.navigate("reset") }
+                onReset = { controller.navigate("verification?email=$it") }
             )
         }
-        composable("reset") { backStackEntry ->
+        composable("verification?email={email}") { backStackEntry ->
+            val email = backStackEntry.arguments?.getString("email")
+            if (email == null) {
+                RequestScreen(
+                    email = email,
+                    provider = provider,
+                    viewModelStoreOwner = backStackEntry,
+                    onReset = { controller.navigate("verification?email=$it") }
+                )
+            } else {
+                VerificationScreen(
+                    email = email,
+                    provider = provider,
+                    viewModelStoreOwner = backStackEntry,
+                    onVerification = { controller.navigate("reset") }
+                )
+            }
+        }
+        composable("reset?email={email}") { backStackEntry ->
+            val email = backStackEntry.arguments?.getString("email")
             ResetScreen(
+                email = email,
                 provider = provider,
                 viewModelStoreOwner = backStackEntry,
             )
