@@ -1,6 +1,7 @@
 package eu.peernetwork.user.ui.v2.password.request
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -47,5 +48,8 @@ fun RequestScreen(
     ) { viewModel.requestPassword(it) }
     LaunchedEffect(response.value) {
         response.value?.let { handleOnReset(it.email) }
+    }
+    DisposableEffect(Unit) {
+        onDispose { viewModel.reset() }
     }
 }

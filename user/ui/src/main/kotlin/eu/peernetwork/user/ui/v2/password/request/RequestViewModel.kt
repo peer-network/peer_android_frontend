@@ -30,6 +30,10 @@ class RequestViewModel @Inject constructor(
         }
     }
 
+    fun reset() {
+        mutableState.tryEmit(State.Empty)
+    }
+
     sealed interface State {
         data object Empty : State
         data object Loading : State
