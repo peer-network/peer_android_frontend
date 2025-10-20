@@ -6,7 +6,6 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.ViewModelStoreOwner
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import eu.peernetwork.app.ui.browser.BrowserScreen
@@ -23,8 +22,7 @@ fun LauncherScreen(
     id: String?,
     route: String?,
     token: State<String?>,
-    provider: UiComponentProvider,
-    viewModelStoreOwner: ViewModelStoreOwner,
+    provider: UiComponentProvider
 ) {
     val context = LocalContext.current
     val clipboardManager = LocalClipboardManager.current
@@ -37,7 +35,7 @@ fun LauncherScreen(
         startDestination = "launcher"
     ) {
         composable("launcher") {  }
-        composable("setup") {
+        composable("setup") { backstack ->
             val code = try {
                 id ?: clipboardManager.getText()?.text
                     ?.takeIf { it.startsWith("peer://invite/") }
@@ -46,7 +44,7 @@ fun LauncherScreen(
             SetupScreen(
                 referral = code,
                 provider = component,
-                viewModelStoreOwner = viewModelStoreOwner
+                viewModelStoreOwner = backstack
             )
         }
         composable("welcome") {
@@ -61,16 +59,18 @@ fun LauncherScreen(
                 onBrowse = { url -> controller.navigate("browser?link=$url") }
             )
         }
-        composable("home") { HomeScreen(
-            provider = component,
-            viewModelStoreOwner = viewModelStoreOwner
-        ) }
-        composable("post/{id}") {
-            val id = it.arguments?.getString("id") ?: ""
+        composable("home") { backStackEntry ->
+            HomeScreen(
+                provider = component,
+                viewModelStoreOwner = backStackEntry
+            )
+        }
+        composable("post/{id}") { backStackEntry ->
+            val id = backStackEntry.arguments?.getString("id") ?: ""
             HomeScreen(
                 route = "post/$id",
                 provider = component,
-                viewModelStoreOwner = viewModelStoreOwner
+                viewModelStoreOwner = backStackEntry
             )
         }
         composable("browser?link={link}") { backStackEntry ->

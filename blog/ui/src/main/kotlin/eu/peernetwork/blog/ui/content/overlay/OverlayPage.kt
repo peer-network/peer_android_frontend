@@ -65,8 +65,16 @@ fun OverlayPage(
     val thumbnail = viewModel.thumbnail.collectAsStateWithLifecycle()
     val isActive = remember { mutableStateOf(true) }
     EngagementScreen(
+        userId = userId,
         postLimit = limit,
-        onAuthorClick = { event(UiPostListener.Event.Author(it)) },
+        onAuthorClick = {
+            if (it != userId) {
+                event(UiPostListener.Event.Author(it))
+                true
+            } else {
+                false
+            }
+        },
         onMentionClick = { event(UiPostListener.Event.Mention(it)) },
         onHashtagClick = { event(UiPostListener.Event.Hashtag(it)) },
         provider = component,

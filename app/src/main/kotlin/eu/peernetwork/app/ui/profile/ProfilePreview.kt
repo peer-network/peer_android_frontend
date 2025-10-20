@@ -17,7 +17,6 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -64,7 +63,8 @@ fun ProfilePreview(
     viewModelStore: UiViewModelStore,
     controller: NavHostController,
 ) {
-    val lastUpdated = rememberSaveable { mutableLongStateOf(System.currentTimeMillis()) }
+    val requireUpdate = rememberSaveable { mutableStateOf(false) }
+    val requirePostUpdate = rememberSaveable { mutableStateOf(false) }
     val connection = remember { mutableStateOf<ConnectionStatus?>(null) }
     val showSheet = remember { mutableStateOf(false) }
     val coroutine = rememberCoroutineScope()
@@ -104,11 +104,14 @@ fun ProfilePreview(
         }
         ProfilePreview(
             pageState = pageState,
-            onRefresh = { lastUpdated.longValue = System.currentTimeMillis() },
+            onRefresh = {
+                requireUpdate.value = true
+                requirePostUpdate.value = true
+            },
             header = { scrollState ->
                 UserScreen(
                     id = id,
-                    lastUpdated = lastUpdated,
+                    requireUpdate = requireUpdate,
                     onFollow = {
                         ConnectionScreen(
                             isFollowed = it.second,
@@ -148,7 +151,7 @@ fun ProfilePreview(
                 },
                 status = enable,
                 postLimit = limit,
-                lastUpdated = lastUpdated,
+                requireUpdate = requirePostUpdate,
                 provider = component,
                 viewModelStoreOwner = viewModelStore.get("$id$it"),
                 event = event,

@@ -1,5 +1,6 @@
 package eu.peernetwork.user.ui.v2.password.request
 
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,24 +21,29 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextLayoutResult
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.core.ui.design.luna.DesignButton
 import eu.peernetwork.core.ui.design.luna.DesignTextField
-import eu.peernetwork.core.ui.extension.annotate
 import eu.peernetwork.core.ui.extension.isValidEmail
 import eu.peernetwork.user.ui.R
 import eu.peernetwork.user.ui.compose.ErrorLabel
 import eu.peernetwork.user.ui.compose.FormHeader
+
+private const val tag = "REQUEST_PASSWORD_TAG"
 
 @Composable
 fun RequestPage(
     email: String,
     isLoading: State<Boolean>,
     error: State<String?>,
+    onVerify: () -> Unit,
     onReset: (String) -> Unit
 ) {
     val email by rememberSaveable(stateSaver = TextFieldState.Saver) {
@@ -45,17 +51,41 @@ fun RequestPage(
     }
     val isValidated = remember { derivedStateOf { email.isValidEmail() } }
     val updatedOnReset by rememberUpdatedState(onReset)
+    val updatedOnVerify by rememberUpdatedState(onVerify)
+    var layoutResult: TextLayoutResult? = null
     Column(
         verticalArrangement = Arrangement.Center,
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 24.dp)
     ) {
+        val description = buildAnnotatedString {
+            append(stringResource(R.string.forgot_instruction))
+        }
         FormHeader(
-            title = stringResource(R.string.forgot_password_text).annotate(),
-            description = stringResource(R.string.forgot_instruction),
-            modifier = Modifier.padding(bottom = 32.dp)
-        )
+            title = { Text(text = stringResource(R.string.forgot_password_text)) },
+            modifier = Modifier
+                .padding(bottom = 32.dp),
+        ) {
+            Text(
+                text = description,
+                modifier = Modifier.pointerInput(Unit) {
+                    detectTapGestures { offset ->
+                        layoutResult?.let { layout ->
+                            val position = layout.getOffsetForPosition(offset)
+                            description.getStringAnnotations(
+                                tag = tag,
+                                start = position,
+                                end = position
+                            ).firstOrNull()?.let { _ ->
+                                updatedOnVerify()
+                            }
+                        }
+                    }
+                },
+                onTextLayout = { layoutResult = it }
+            )
+        }
         DesignTextField(
             state = email,
             enabled = !isLoading.value,

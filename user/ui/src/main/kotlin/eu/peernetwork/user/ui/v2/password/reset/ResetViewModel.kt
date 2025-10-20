@@ -1,4 +1,4 @@
-package eu.peernetwork.user.ui.password.reset
+package eu.peernetwork.user.ui.v2.password.reset
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class PasswordResetViewModel @Inject constructor(
+class ResetViewModel @Inject constructor(
     private val usecase: PasswordResetUsecase
 ) : ViewModel() {
     private val mutableState = MutableStateFlow<State>(State.Empty)

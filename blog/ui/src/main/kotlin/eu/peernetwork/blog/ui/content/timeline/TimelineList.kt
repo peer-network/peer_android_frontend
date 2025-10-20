@@ -68,7 +68,11 @@ fun TimelineList(
             onClick = {
                 event(UiPostListener.Event.Post(post.id, index))
             },
-            onAuthorClick = { event(UiPostListener.Event.Author(post.author.id)) },
+            onAuthorClick = {
+                if (post.author.id != id) {
+                    event(UiPostListener.Event.Author(post.author.id))
+                }
+            },
             onMentionClick = { event(UiPostListener.Event.Mention(it)) },
             onHashtagClick = { event(UiPostListener.Event.Hashtag(it)) },
             engagements = {

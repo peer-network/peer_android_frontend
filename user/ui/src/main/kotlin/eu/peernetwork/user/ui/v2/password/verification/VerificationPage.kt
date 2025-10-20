@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
@@ -15,8 +16,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -41,6 +44,7 @@ fun VerificationPage(
 ) {
     val token = remember { TextFieldState() }
     val isValidated = remember { derivedStateOf { token.text.isNotBlank() } }
+    val handleOnVerified by rememberUpdatedState(onVerified)
     Column(
         verticalArrangement = Arrangement.Center,
         modifier = Modifier
@@ -60,6 +64,7 @@ fun VerificationPage(
                 imeAction = ImeAction.Next
             ),
             hint = stringResource(id = R.string.password_verification_label),
+            lineLimits = TextFieldLineLimits.SingleLine,
             leading = {
                 Icon(
                     painter = painterResource(R.drawable.ic_token),
@@ -77,7 +82,7 @@ fun VerificationPage(
             modifier = Modifier.padding(horizontal = 18.dp)
         )
         DesignButton(
-            onClick = {  },
+            onClick = { handleOnVerified(token.text.toString()) },
             enabled = !isLoading.value && isValidated.value,
             isLoading = isLoading.value,
             modifier = Modifier

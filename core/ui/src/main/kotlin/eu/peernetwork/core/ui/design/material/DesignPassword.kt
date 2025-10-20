@@ -139,7 +139,7 @@ fun DesignPasswordIndicator(
             Arrangement.Start
         }
     ) {
-        repeat(DesignPasswordStrength.STRONG.value) { index ->
+        repeat(DesignPasswordStrength.EXCELLENT.value) { index ->
             key(index) {
                 DesignIndicator(
                     modifier = if (width != null) {
@@ -157,7 +157,7 @@ fun DesignPasswordIndicator(
                     delayMillis = delayMillis,
                     easing = easing
                 )
-                if (index < DesignPasswordStrength.STRONG.value - 1) {
+                if (index < DesignPasswordStrength.EXCELLENT.value - 1) {
                     Spacer(modifier = if (space != null) {
                         Modifier.width(space)
                     } else {

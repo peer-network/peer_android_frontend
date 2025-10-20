@@ -19,6 +19,7 @@ fun RequestScreen(
     email: String?,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
+    onVerify: () -> Unit,
     onReset: (String) -> Unit
 ) {
     val context = LocalContext.current
@@ -44,7 +45,8 @@ fun RequestScreen(
     RequestPage(
         email = email ?: "",
         isLoading = isLoading,
-        error = error
+        error = error,
+        onVerify = onVerify
     ) { viewModel.requestPassword(it) }
     LaunchedEffect(response.value) {
         response.value?.let { handleOnReset(it.email) }

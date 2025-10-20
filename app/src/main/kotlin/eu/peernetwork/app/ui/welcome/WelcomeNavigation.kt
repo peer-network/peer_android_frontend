@@ -1,5 +1,9 @@
 package eu.peernetwork.app.ui.welcome
 
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
@@ -33,6 +37,38 @@ fun WelcomeNavigation(
     DesignNavigation(
         navController = controller,
         startDestination = startDestination,
+        enterTransition = {
+            fadeIn(animationSpec = tween(200)) +
+                    slideIntoContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Start,
+                        animationSpec = tween(300),
+                        initialOffset = { it / 4 }
+                    )
+        },
+        exitTransition = {
+            fadeOut(animationSpec = tween(200)) +
+                    slideOutOfContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.End,
+                        animationSpec = tween(300),
+                        targetOffset = { -it / 4 }
+                    )
+        },
+        popEnterTransition = {
+            fadeIn(animationSpec = tween(200)) +
+                    slideIntoContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.End,
+                        animationSpec = tween(300),
+                        initialOffset = { it / 4 }
+                    )
+        },
+        popExitTransition = {
+            fadeOut(animationSpec = tween(200)) +
+                    slideOutOfContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Start,
+                        animationSpec = tween(300),
+                        targetOffset = { -it / 4 }
+                    )
+        }
     ) {
         composable("login?email={email}") { backStackEntry ->
             val email = backStackEntry.arguments?.getString("email")
@@ -87,6 +123,7 @@ fun WelcomeNavigation(
                 email = email,
                 provider = provider,
                 viewModelStoreOwner = backStackEntry,
+                onVerify = {},
                 onReset = { controller.navigate("verification?email=$it") }
             )
         }
@@ -97,24 +134,25 @@ fun WelcomeNavigation(
                     email = email,
                     provider = provider,
                     viewModelStoreOwner = backStackEntry,
-                    onReset = { controller.navigate("verification?email=$it") }
+                    onReset = { controller.navigate("verification?email=$it") },
+                    onVerify = {}
                 )
             } else {
                 VerificationScreen(
                     email = email,
                     provider = provider,
                     viewModelStoreOwner = backStackEntry,
-                    onVerification = { controller.navigate("reset") }
+                    onVerification = { controller.navigate("reset?token=$it") }
                 )
             }
         }
-        composable("reset?email={email}") { backStackEntry ->
-            val email = backStackEntry.arguments?.getString("email")
+        composable("reset?token={token}") { backStackEntry ->
+            val token = backStackEntry.arguments?.getString("token")
             ResetScreen(
-                email = email,
+                token = token ?: "",
                 provider = provider,
                 viewModelStoreOwner = backStackEntry,
-            )
+            ) { controller.route("login") }
         }
     }
 }

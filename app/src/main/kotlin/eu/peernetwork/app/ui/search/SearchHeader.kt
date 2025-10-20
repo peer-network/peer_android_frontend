@@ -10,13 +10,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.clearText
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -27,7 +27,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -38,8 +40,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.core.ui.R
+import eu.peernetwork.core.ui.design.luna.DesignTextField
 import eu.peernetwork.core.ui.design.material.DesignCard
-import eu.peernetwork.core.ui.design.material.DesignTextField
 import eu.peernetwork.core.ui.theme.PeerTheme
 
 enum class SearchMode(
@@ -59,7 +61,7 @@ fun SearchHeader(
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val focus = remember { FocusRequester() }
-    var lastMode by remember { mutableStateOf<SearchMode>(mode.value ?: SearchMode.USERNAME) }
+    var lastMode by remember { mutableStateOf(mode.value ?: SearchMode.USERNAME) }
     DesignCard(
         color = MaterialTheme.colorScheme.surfaceContainerLow,
         contentPadding = PaddingValues(vertical = 0.dp),
@@ -90,32 +92,37 @@ fun SearchHeader(
                 }
             } else {
                 DesignTextField(
-                    state,
+                    state = state,
                     enabled = mode.value != null,
-                    focusRequester = focus,
                     keyboardOptions = KeyboardOptions(
                         capitalization = KeyboardCapitalization.Sentences,
                         keyboardType = KeyboardType.Text,
                         imeAction = ImeAction.Done
                     ),
-                    colors = TextFieldDefaults.colors(
-                        unfocusedContainerColor = Color.Transparent,
-                        focusedContainerColor = Color.Transparent,
-                        focusedTextColor = MaterialTheme.colorScheme.onBackground,
-                        unfocusedTextColor = MaterialTheme.colorScheme.tertiary,
-                        focusedPlaceholderColor = MaterialTheme.colorScheme.surfaceDim,
-                        unfocusedPlaceholderColor = MaterialTheme.colorScheme.surfaceTint,
-                    ),
+                    shape = RectangleShape,
+                    hint = stringResource(R.string.search_label),
+                    unFocusedColor = Color.Transparent,
+                    color = Color.Transparent,
+                    contentPadding = PaddingValues(vertical = 16.dp),
+                    contentColor = MaterialTheme.colorScheme.onBackground,
+                    unFocusedContentColor = MaterialTheme.colorScheme.tertiary,
+                    hintColor = MaterialTheme.colorScheme.surfaceDim,
+                    unFocusedHintColor = MaterialTheme.colorScheme.surfaceTint,
+                    lineLimits = TextFieldLineLimits.SingleLine,
                     leading = {
                         Text(
                             lastMode.symbol,
                             style = MaterialTheme.typography.bodyMedium.copy(
                                 color = MaterialTheme.colorScheme.tertiary
                             ),
-                            modifier = Modifier.padding(end = 8.dp)
+                            modifier = Modifier.padding(
+                                start = 14.dp,
+                                end = 8.dp
+                            )
                         )
                     },
-                ) { Text(stringResource(R.string.search_label)) }
+                    modifier = Modifier.focusRequester(focus)
+                )
                 LaunchedEffect(mode.value) {
                     if (mode.value != null) {
                         focus.requestFocus()
@@ -164,7 +171,7 @@ fun SearchBarItem(mode: SearchMode, onClick: (SearchMode) -> Unit) { Text(
 fun PreviewSearchHeader() {
     PeerTheme {
         val state = remember { TextFieldState() }
-        val mode = remember { mutableStateOf<SearchMode?>(null) }
+        val mode = remember { mutableStateOf<SearchMode?>(SearchMode.USERNAME) }
         SearchHeader(
             state,
             mode

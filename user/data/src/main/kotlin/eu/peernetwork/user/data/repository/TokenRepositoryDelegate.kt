@@ -40,6 +40,10 @@ class TokenRepositoryDelegate @Inject constructor(
         return token
     }
 
+    override suspend fun verify(token: String) {
+        return api.verify(token)
+    }
+
     override suspend fun clear() {
         onAuthenticationChanged(null)
     }

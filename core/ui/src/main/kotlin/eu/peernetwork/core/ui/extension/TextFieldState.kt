@@ -23,7 +23,7 @@ fun TextFieldState.passwordStrength(): DesignPasswordStrength {
             hasLowercase.toInt() +
             hasDigit.toInt()
     if (score == DesignPasswordStrength.STRONG.value) {
-        score += hasSpecialCharacter.toInt()
+        score += (hasSpecialCharacter || text.length >= 12).toInt()
     }
     return when (score) {
         DesignPasswordStrength.BAD.value -> DesignPasswordStrength.BAD

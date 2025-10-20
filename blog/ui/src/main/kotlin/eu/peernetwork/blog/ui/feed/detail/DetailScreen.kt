@@ -73,6 +73,7 @@ fun DetailScreen(
     val current = remember { mutableIntStateOf(0) }
     val isPlaying = remember { mutableStateOf(false) }
     EngagementScreen(
+        userId = id,
         postLimit = limit,
         onAuthorClick = { event(UiPostListener.Event.Author(it)) },
         onMentionClick = { event(UiPostListener.Event.Mention(it)) },

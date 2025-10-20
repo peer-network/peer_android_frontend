@@ -41,7 +41,7 @@ fun DesignScaffold(
     val minOffset = 0f
     val scroll = rememberScrollState()
     val coroutine = rememberCoroutineScope()
-    var normalizedOffset = remember { mutableFloatStateOf(0f) }
+    val normalizedOffset = remember { mutableFloatStateOf(0f) }
     val updatedHeader by rememberUpdatedState(header)
     val updatedOverlay by rememberUpdatedState(overlay)
     val updatedFooter by rememberUpdatedState(footer)

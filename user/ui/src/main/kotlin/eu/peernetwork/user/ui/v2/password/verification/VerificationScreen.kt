@@ -1,6 +1,8 @@
 package eu.peernetwork.user.ui.v2.password.verification
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -17,7 +19,7 @@ fun VerificationScreen(
     email: String,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
-    onVerification: () -> Unit
+    onVerification: (String) -> Unit
 ) {
     val context = LocalContext.current
     val component = remember {
@@ -42,6 +44,12 @@ fun VerificationScreen(
     VerificationPage(
         email = email,
         isLoading = isLoading,
-        error = error
-    ) { handleOnVerification() }
+        error = error,
+    ) { viewModel(it) }
+    LaunchedEffect(response.value) {
+        response.value?.let { handleOnVerification(it.token) }
+    }
+    DisposableEffect(Unit) {
+        onDispose { viewModel.reset() }
+    }
 }

@@ -82,8 +82,16 @@ fun TimelineScreen(
     val thumbnail = viewModel.thumbnail.collectAsStateWithLifecycle()
     val handleOnLoad by rememberUpdatedState(onLoad)
     EngagementScreen(
+        userId = id,
         postLimit = limit,
-        onAuthorClick = { event(UiPostListener.Event.Author(it)) },
+        onAuthorClick = {
+            if (it != id) {
+                event(UiPostListener.Event.Author(it))
+                true
+            } else {
+                false
+            }
+        },
         onMentionClick = { event(UiPostListener.Event.Mention(it)) },
         onHashtagClick = { event(UiPostListener.Event.Hashtag(it)) },
         provider = component,

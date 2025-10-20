@@ -41,6 +41,7 @@ import eu.peernetwork.core.ui.theme.PeerAppRed
 
 @Composable
 fun EngagementScreen(
+    userId: String,
     postLimit: Int,
     onMentionClick: (String) -> Unit = {},
     onHashtagClick: (String) -> Unit = {},
@@ -128,6 +129,7 @@ fun EngagementScreen(
     }
     CommentScreen(
         state = post,
+        userId = userId,
         postLimit = postLimit,
         provider = component,
         viewModelStoreOwner = viewModelStoreOwner,

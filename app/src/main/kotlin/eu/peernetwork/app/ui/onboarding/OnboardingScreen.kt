@@ -71,13 +71,21 @@ fun OnboardingScreen(
             error = it.value,
             resource = component.resource()) }
     ) { state -> OnboardingScreen(pagerState, properties = state.value.properties) {
-        viewModel.finish(it, preference.copy(
-            flags = state.value
+        if (preference.flags == state.value
                 .properties
                 .configuration
                 .onboarding
-                .availableOnboardings
-        ))
+                .availableOnboardings) {
+            handleOnFinished(preference)
+        } else {
+            viewModel.finish(it, preference.copy(
+                flags = state.value
+                    .properties
+                    .configuration
+                    .onboarding
+                    .availableOnboardings
+            ))
+        }
     } }
     LaunchedEffect(isFinished.value) {
         if (isFinished.value) {
@@ -87,7 +95,11 @@ fun OnboardingScreen(
             }
         }
     }
-    LaunchedEffect(Unit) { viewModel.initialize() }
+    LaunchedEffect(Unit) {
+        if (state !is OnboardingViewModel.State.Success) {
+            viewModel.initialize()
+        }
+    }
 }
 
 @Composable

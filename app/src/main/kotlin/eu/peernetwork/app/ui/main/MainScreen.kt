@@ -35,10 +35,10 @@ fun MainScreen(
                 navDeepLink { uriPattern = "peer://{route}" },
                 navDeepLink { uriPattern = "peer://{route}/{id}" }
             )
-        ) {
-            SplashScreen(component, viewModelStoreOwner) {
-                val id = it.arguments?.getString("id")
-                val route = it.arguments?.getString("route")
+        ) { backstack ->
+            SplashScreen(component, backstack) {
+                val id = backstack.arguments?.getString("id")
+                val route = backstack.arguments?.getString("route")
                 controller.attachIfNecessary("launcher?route=$route&id=$id")
             }
         }
@@ -50,11 +50,10 @@ fun MainScreen(
                 if (it.trim().lowercase() == "null") null else it
             }
             LauncherScreen(
-                id,
-                route,
-                derivedState,
-                component,
-                viewModelStoreOwner
+                id = id,
+                route = route,
+                token = derivedState,
+                provider = component,
             )
         }
     }

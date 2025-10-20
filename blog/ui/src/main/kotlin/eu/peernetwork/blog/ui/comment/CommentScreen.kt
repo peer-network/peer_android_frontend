@@ -50,6 +50,7 @@ import eu.peernetwork.core.ui.extension.route
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
 @Composable
 fun CommentScreen(
+    userId: String,
     state: MutableState<UiContent?>,
     postLimit: Int,
     provider: UiComponentProvider,
@@ -133,8 +134,10 @@ fun CommentScreen(
                 engagement = Engagement.Content.LikedComment,
                 provider = component,
                 onAuthorClick = {
-                    action.value = { handleOnAuthorClick(it) }
-                    state.value = null
+                    if (it != userId) {
+                        action.value = { handleOnAuthorClick(it) }
+                        state.value = null
+                    }
                 },
                 viewModelStoreOwner = entry,
                 connection = connection
@@ -156,6 +159,14 @@ fun CommentScreen(
                         contentPadding = PaddingValues(horizontal = 16.dp)
                     )
                 }
+                LaunchedEffect(isCommentPosted.value) {
+                    if (isCommentPosted.value) {
+                        field.clearText()
+                        state.value?.let {
+                            viewModel.load(it.id, Pageable(0, postLimit))
+                        }
+                    }
+                }
             }
         ) { pageState, items ->
             CommentListing(
@@ -174,11 +185,13 @@ fun CommentScreen(
                     state.value = null
                 },
                 onAuthorClick = {
-                    action.value = { handleOnAuthorClick(it) }
-                    state.value = null
+                    if (it != userId) {
+                        action.value = { handleOnAuthorClick(it) }
+                        state.value = null
+                    }
                 },
             )
-            LaunchedEffect(isLoading.value) {
+            LaunchedEffect(isCommentPosted.value) {
                 if (isCommentPosted.value) {
                     field.clearText()
                     items.refresh()
@@ -195,10 +208,10 @@ fun CommentScreen(
                 viewModel.clear()
             }
         }
-        LaunchedEffect(isCommentPosted.value) {
+        LaunchedEffect(state.value) {
             if (state.value != null) {
                 state.value?.let {
-                        viewModel.load(it.id, Pageable(0, postLimit))
+                    viewModel.load(it.id, Pageable(0, postLimit))
                 }
             } else {
                 viewModel.reset()

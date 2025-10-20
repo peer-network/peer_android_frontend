@@ -33,6 +33,7 @@ import eu.peernetwork.core.ui.design.material.DesignSceneState
 import eu.peernetwork.core.ui.extension.attach
 import eu.peernetwork.core.ui.extension.attachIfNecessary
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
+import eu.peernetwork.core.ui.extension.route
 import eu.peernetwork.core.ui.factory.UiViewModelStore
 import eu.peernetwork.wallet.ui.reward.RewardScreen
 import eu.peernetwork.social.ui.feedback.FeedbackPopup
@@ -45,11 +46,11 @@ fun HomeScreen(
 ) {
     val viewModelStore = remember { UiViewModelStore.Delegate() }
     val context = LocalContext.current
-    val showOnboarding = remember { mutableStateOf(false) }
+    val controller = rememberNavController()
     val component = remember {
         provider.builder(Home.Builder::class.java).build(context, object : SettingsEvent {
             override fun invoke(event: SettingsEvent.Event) {
-                showOnboarding.value = true
+                controller.navigate("onboarding")
             }
         })
     }
@@ -75,8 +76,8 @@ fun HomeScreen(
     HomeScaffold(
         state = derivedState,
         resource = component.resource(),
-        showOnboarding = showOnboarding,
         onRefresh = { viewModel() },
+        navController = controller,
         onboarding = {
             OnboardingScreen(
                 preference = it.preference,
@@ -85,8 +86,8 @@ fun HomeScreen(
             ) { preference ->
                 if (preference.flags.isEmpty()) {
                     viewModel(preference)
-                } else {
-                    showOnboarding.value = false
+                } else if (!controller.popBackStack()) {
+                    controller.route("home")
                 }
             }
         }

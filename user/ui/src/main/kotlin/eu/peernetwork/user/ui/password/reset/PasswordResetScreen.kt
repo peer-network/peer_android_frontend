@@ -45,6 +45,7 @@ import eu.peernetwork.core.ui.extension.isValidInput
 import eu.peernetwork.core.ui.extension.passwordStrength
 import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.user.ui.R
+import eu.peernetwork.user.ui.v2.password.reset.ResetViewModel
 
 @Composable
 fun PasswordResetScreen(
@@ -57,18 +58,18 @@ fun PasswordResetScreen(
         provider.builder(PasswordReset.Builder::class.java).build(context)
     }
     val viewModel = viewModel(
-        modelClass = PasswordResetViewModel::class.java,
+        modelClass = ResetViewModel::class.java,
         viewModelStoreOwner = UiViewModel.Owner(),
         factory = component.viewModelFactory()
     )
     val handleOnFinish by rememberUpdatedState(onFinish)
     val state by viewModel.state.collectAsStateWithLifecycle()
     val isLoading = remember(state) { derivedStateOf {
-        state is PasswordResetViewModel.State.Loading
+        state is ResetViewModel.State.Loading
     } }
-    val isFinished = remember(state) { derivedStateOf { state is PasswordResetViewModel.State.Success } }
+    val isFinished = remember(state) { derivedStateOf { state is ResetViewModel.State.Success } }
     val error = remember(state) { derivedStateOf {
-        (state as? PasswordResetViewModel.State.Error?)?.error?.message?.let {
+        (state as? ResetViewModel.State.Error?)?.error?.message?.let {
             component.resource().string(it)
         }
     } }

@@ -11,6 +11,7 @@ import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -24,22 +25,36 @@ import androidx.compose.ui.unit.dp
 import eu.peernetwork.core.ui.design.luna.DesignButton
 import eu.peernetwork.core.ui.design.material.DesignIndicatorColors
 import eu.peernetwork.core.ui.design.material.DesignPasswordIndicator
+import eu.peernetwork.core.ui.design.material.DesignPasswordStrength
+import eu.peernetwork.core.ui.extension.passwordStrength
 import eu.peernetwork.core.ui.theme.PeerAppGreen
 import eu.peernetwork.core.ui.theme.PeerAppLightGreen
 import eu.peernetwork.core.ui.theme.PeerAppRed
 import eu.peernetwork.core.ui.theme.PeerAppYellow
 import eu.peernetwork.user.ui.R
+import eu.peernetwork.user.ui.compose.ErrorLabel
 import eu.peernetwork.user.ui.compose.PasswordField
 
 @Composable
 fun ResetPage(
-    enabled: Boolean,
-    onFinish: () -> Unit
+    isLoading: State<Boolean>,
+    error: State<String?>,
+    onFinish: (String) -> Unit
 ) {
     val password = remember { TextFieldState() }
     val confirmPassword = remember { TextFieldState() }
     val isValidated = remember { derivedStateOf {
-        password.text.isNotEmpty() && password.text == confirmPassword.text
+        password.text == confirmPassword.text &&
+                password.passwordStrength().value >= DesignPasswordStrength.STRONG.value
+    } }
+    val mismatchError = stringResource(R.string.password_mismatch)
+    val derivedError = remember { derivedStateOf {
+        when {
+            confirmPassword.text.isNotEmpty() && password.text != confirmPassword.text ->
+                mismatchError
+            error.value != null -> error.value
+            else -> null
+        }
     } }
     val updatedOnFinish by rememberUpdatedState(onFinish)
     Column(
@@ -57,7 +72,7 @@ fun ResetPage(
         )
         PasswordField(
             state = password,
-            enabled = enabled,
+            enabled = !isLoading.value,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Password,
                 imeAction = ImeAction.Next
@@ -84,19 +99,24 @@ fun ResetPage(
         PasswordField(
             state = confirmPassword,
             hint = stringResource(id = R.string.confirm_password_label),
-            enabled = enabled,
+            enabled = !isLoading.value,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Password,
                 imeAction = ImeAction.Done
             ),
-            modifier = Modifier.padding(top = 12.dp),
+            modifier = Modifier.padding(top = 12.dp, bottom = 8.dp),
+        )
+        ErrorLabel(
+            error = derivedError,
+            modifier = Modifier.padding(horizontal = 18.dp)
         )
         DesignButton(
-            onClick = { updatedOnFinish() },
-            enabled = isValidated.value,
+            onClick = { updatedOnFinish(password.text.toString()) },
+            enabled = isValidated.value && !isLoading.value,
+            isLoading = isLoading.value,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 16.dp),
+                .padding(top = 8.dp),
         ) { Text(stringResource(R.string.password_update_action)) }
     }
 }

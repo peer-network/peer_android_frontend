@@ -7,6 +7,7 @@ import dagger.Provides
 import dagger.multibindings.IntoMap
 import eu.peernetwork.core.ui.annotation.UiViewModel
 import eu.peernetwork.core.ui.factory.UiViewModelFactory
+import eu.peernetwork.user.ui.v2.password.reset.ResetViewModel
 import javax.inject.Provider
 
 @Module
@@ -23,6 +24,6 @@ object PasswordResetModule {
     @Provides
     @IntoMap
     @PasswordReset.Scope
-    @UiViewModel(PasswordResetViewModel::class)
-    fun provideViewModel(viewModel: PasswordResetViewModel): ViewModel = viewModel
+    @UiViewModel(ResetViewModel::class)
+    fun provideViewModel(viewModel: ResetViewModel): ViewModel = viewModel
 }

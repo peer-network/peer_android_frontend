@@ -9,7 +9,7 @@
     <string name="register_now_text">Register now</string>
     <string name="deactivate_text">Deactivate</string>
 
-    <string name="login_title">Hey, there,\nWelcome back</string>
+    <string name="login_title">Hey there,\nWelcome back</string>
     <string name="login_description">It’s good to see you again! Log in to continue\nyour journey with us!</string>
     <string name="login_option">Already registered?</string>
     <string name="login_action">Login now</string>
@@ -78,6 +78,8 @@
     <string name="password_recovery_instruction">Set a new password</string>
     <string name="password_alternative_question">Already received the token?</string>
     <string name="password_verification_instruction">We sent a code to your email %s.\nPlease, enter the code to change your password.</string>
+    <string name="password_token_prompt">Already requested a token?</string>
+    <string name="password_mismatch">Passwords do not match.</string>
 
     <string name="app_information_label">App Information</string>
     <string name="about_us_label">About Us</string>
