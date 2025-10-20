@@ -1,0 +1,18 @@
+query PeerReferral {
+    hello {
+        companyAccountId
+    }
+}
+
+mutation VerifyReferralString($referralString: String!) {
+    verifyReferralString(referralString: $referralString) {
+        status
+        ResponseCode
+        affectedRows {
+            uid
+            username
+            slug
+            img
+        }
+    }
+}

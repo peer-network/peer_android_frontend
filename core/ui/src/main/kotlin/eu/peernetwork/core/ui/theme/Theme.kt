@@ -13,14 +13,29 @@ import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
 @Composable
-fun PeerTheme(
+fun DesignTheme(
     isDarkMode: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
-    val colorScheme = when {
+    PeerTheme(
+        isDarkMode = isDarkMode,
+        colorScheme = when {
+            isDarkMode -> DarkPalette
+            else -> LightPalette
+        },
+        content = content
+    )
+}
+
+@Composable
+fun PeerTheme(
+    isDarkMode: Boolean = isSystemInDarkTheme(),
+    colorScheme: ColorScheme = when {
         isDarkMode -> DarkScheme
         else -> LightScheme
-    }
+    },
+    content: @Composable () -> Unit
+) {
     val view = LocalView.current
     SideEffect {
         view.context as? Activity ?: return@SideEffect

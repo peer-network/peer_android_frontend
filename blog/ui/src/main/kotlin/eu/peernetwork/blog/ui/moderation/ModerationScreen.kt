@@ -26,7 +26,7 @@ import eu.peernetwork.blog.ui.event.UiModerationEvent
 import eu.peernetwork.blog.ui.model.UiContent
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.compose.DesignTextButton
+import eu.peernetwork.core.ui.design.material.DesignTextButton
 import eu.peernetwork.core.ui.extension.builder
 
 @Composable

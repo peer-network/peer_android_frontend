@@ -1,13 +1,9 @@
 package eu.peernetwork.app.ui.main
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -16,7 +12,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navDeepLink
 import eu.peernetwork.app.ui.launcher.LauncherScreen
 import eu.peernetwork.app.ui.splash.SplashScreen
-import eu.peernetwork.core.ui.design.compose.DesignNavigation
+import eu.peernetwork.core.ui.design.material.DesignNavigation
 import eu.peernetwork.core.ui.extension.attachIfNecessary
 
 @Composable
@@ -32,23 +28,30 @@ fun MainScreen(
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
     val derivedState = remember(state.token) { derivedStateOf { state.token?.access } }
-    var playSplash by rememberSaveable { mutableStateOf(false) }
-    LaunchedEffect(playSplash) {
-        if (!playSplash) return@LaunchedEffect
-        controller.attachIfNecessary("launcher")
-    }
     DesignNavigation(navController = controller, startDestination = "splash") {
-        composable("splash") { SplashScreen(component, viewModelStoreOwner) { playSplash = true } }
         composable(
-            "launcher",
+            "splash",
             deepLinks = listOf(
                 navDeepLink { uriPattern = "peer://{route}" },
                 navDeepLink { uriPattern = "peer://{route}/{id}" }
             )
         ) {
+            SplashScreen(component, viewModelStoreOwner) {
+                val id = it.arguments?.getString("id")
+                val route = it.arguments?.getString("route")
+                controller.attachIfNecessary("launcher?route=$route&id=$id")
+            }
+        }
+        composable("launcher?route={route}&id={id}") { backstack ->
+            val id = backstack.arguments?.getString("id")?.let {
+                if (it.trim().lowercase() == "null") null else it
+            }
+            val route = backstack.arguments?.getString("route")?.let {
+                if (it.trim().lowercase() == "null") null else it
+            }
             LauncherScreen(
-                it.arguments?.getString("id"),
-                it.arguments?.getString("route"),
+                id,
+                route,
                 derivedState,
                 component,
                 viewModelStoreOwner

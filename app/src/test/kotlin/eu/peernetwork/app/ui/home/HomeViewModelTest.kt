@@ -70,7 +70,7 @@ internal class HomeViewModelTest {
         val user = "<test-user>"
         every { retrievableString(any()) } returns null
         every { retrievableInteger(any()) } returns page
-        coEvery { principalUsecase() } coAnswers {
+        coEvery { principalUsecase(true) } coAnswers {
             delay(100)
             user
         }
@@ -88,7 +88,7 @@ internal class HomeViewModelTest {
         val error = RuntimeException("<test-error>")
         every { retrievableString(any()) } returns null
         every { retrievableInteger(any()) } returns null
-        coEvery { principalUsecase() } throws error
+        coEvery { principalUsecase(true) } throws error
         viewModel()
         viewModel.state.test {
             assertEquals(HomeViewModel.State.Error(error), awaitItem())

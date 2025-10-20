@@ -9,10 +9,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import eu.peernetwork.app.ui.browser.BrowserScreen
 import eu.peernetwork.app.ui.home.HomeScreen
 import eu.peernetwork.app.ui.setup.SetupScreen
+import eu.peernetwork.app.ui.welcome.WelcomeScreen
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.compose.DesignNavigation
+import eu.peernetwork.core.ui.design.material.DesignNavigation
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.extension.route
 
@@ -47,13 +49,50 @@ fun LauncherScreen(
                 viewModelStoreOwner = viewModelStoreOwner
             )
         }
-        composable("home") { HomeScreen(component) }
+        composable("welcome") {
+            val code = try {
+                id ?: clipboardManager.getText()?.text
+                    ?.takeIf { it.startsWith("peer://invite/") }
+                    ?.substringAfter("peer://invite/")
+            } catch (_: Throwable) { null }
+            WelcomeScreen(
+                referral = code,
+                provider = component,
+                onBrowse = { url -> controller.navigate("browser?link=$url") }
+            )
+        }
+        composable("home") { HomeScreen(
+            provider = component,
+            viewModelStoreOwner = viewModelStoreOwner
+        ) }
+        composable("post/{id}") {
+            val id = it.arguments?.getString("id") ?: ""
+            HomeScreen(
+                route = "post/$id",
+                provider = component,
+                viewModelStoreOwner = viewModelStoreOwner
+            )
+        }
+        composable("browser?link={link}") { backStackEntry ->
+            val link = backStackEntry.arguments?.getString("link") ?: ""
+            BrowserScreen(url = link) {
+                controller.popBackStack()
+            }
+        }
     }
     LaunchedEffect(token.value) {
         if (token.value != null) {
-            controller.route("home")
+            if (id != null && route != "invite") {
+                try {
+                    controller.route("$route/${id}")
+                } catch (_: Throwable) {
+                    controller.route("home")
+                }
+            } else {
+                controller.route("home")
+            }
         } else {
-            controller.route("setup")
+            controller.route("welcome")
         }
     }
 }

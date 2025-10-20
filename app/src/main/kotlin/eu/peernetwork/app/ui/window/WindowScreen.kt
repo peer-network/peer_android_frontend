@@ -15,10 +15,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.compose.DesignPage
-import eu.peernetwork.core.ui.design.compose.DesignPageHeader
-import eu.peernetwork.core.ui.design.compose.DesignPageWindowMode
-import eu.peernetwork.core.ui.design.compose.DesignTitleBar
+import eu.peernetwork.core.ui.design.material.DesignPage
+import eu.peernetwork.core.ui.design.material.DesignPageHeader
+import eu.peernetwork.core.ui.design.material.DesignPageWindowMode
+import eu.peernetwork.core.ui.design.material.DesignTitleBar
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.factory.UiViewModelStore
 import eu.peernetwork.core.ui.theme.LightScheme

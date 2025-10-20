@@ -6,6 +6,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
 val Typography = Typography(
+    displaySmall = TextStyle(
+        fontFamily = Poppins,
+        fontWeight = FontWeight.ExtraBold,
+        fontSize = 24.sp,
+        lineHeight = 36.sp
+    ),
     titleLarge = TextStyle(
         fontFamily = Poppins,
         fontWeight = FontWeight.ExtraBold,

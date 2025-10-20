@@ -22,7 +22,7 @@ import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.user.ui.R
 
 @Composable
-fun ColumnScope.SettingsItem(
+fun SettingsItem(
     label: String,
     onClick: () -> Unit,
 ) {

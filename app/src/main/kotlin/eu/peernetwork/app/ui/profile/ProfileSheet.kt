@@ -14,7 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.compose.DesignCollapsibleBottomSheet
+import eu.peernetwork.core.ui.design.material.DesignCollapsibleBottomSheet
 import eu.peernetwork.social.ui.connection.ConnectionStatus
 import eu.peernetwork.social.ui.followers.FollowersScreen
 import eu.peernetwork.social.ui.followings.FollowingsScreen

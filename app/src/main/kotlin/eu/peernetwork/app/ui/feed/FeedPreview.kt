@@ -29,7 +29,7 @@ import eu.peernetwork.blog.domain.model.Category
 import eu.peernetwork.blog.ui.event.UiPostListener
 import eu.peernetwork.blog.ui.feed.timeline.PostScreen
 import eu.peernetwork.blog.ui.model.UiFilter
-import eu.peernetwork.core.ui.design.compose.DesignTab
+import eu.peernetwork.core.ui.design.material.DesignTab
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.core.ui.factory.UiViewModelStore
 import eu.peernetwork.core.ui.theme.PeerTheme
@@ -90,9 +90,9 @@ fun FeedPreview(
                             position = event.position,
                             criteria = derivedCriteria.value,
                             category = if (pageState.currentPage == 0) {
-                                Category.FOLLOWER
-                            } else {
                                 Category.FOLLOWED
+                            } else {
+                                Category.FOLLOWER
                             }
                         )
                     }
@@ -150,9 +150,9 @@ fun FeedPreview(
     ) {
         coroutine.launch {
             if (pageState.currentPage == 0) {
-                followerListState.animateScrollToItem(0)
-            } else {
                 followedListState.animateScrollToItem(0)
+            } else {
+                followerListState.animateScrollToItem(0)
             }
         }
     }
@@ -176,7 +176,11 @@ fun FeedPreview(
     Column {
         DesignTab(pageState) { index ->
             Text(
-                text = stringResource(id = if (index == 0) R.string.followers_label else R.string.following_label),
+                text = stringResource(id = if (index == 0) {
+                    R.string.following_label
+                } else {
+                    R.string.followers_label
+                } ),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.tertiary,
                 modifier = Modifier
@@ -189,8 +193,8 @@ fun FeedPreview(
             verticalAlignment = Alignment.Top,
         ) { page ->
             when (page) {
-                0 -> handleContent(Category.FOLLOWER)
-                1 -> handleContent(Category.FOLLOWED)
+                0 -> handleContent(Category.FOLLOWED)
+                1 -> handleContent(Category.FOLLOWER)
             }
         }
     }

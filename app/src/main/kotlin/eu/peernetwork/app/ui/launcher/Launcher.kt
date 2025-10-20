@@ -2,8 +2,10 @@ package eu.peernetwork.app.ui.launcher
 
 import android.content.Context
 import eu.peernetwork.app.provider.ApplicationProvider
+import eu.peernetwork.app.ui.browser.Browser
 import eu.peernetwork.app.ui.home.Home
 import eu.peernetwork.app.ui.setup.Setup
+import eu.peernetwork.app.ui.welcome.Welcome
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
 
@@ -17,7 +19,12 @@ interface Launcher : ApplicationProvider {
         dependencies = [ Launcher::class ],
         modules = [ LauncherModule::class ]
     )
-    interface Component : Launcher, Home, Setup, UiComponentProvider
+    interface Component : Launcher,
+        Home,
+        Setup,
+        Welcome,
+        Browser,
+        UiComponentProvider
 
     class Builder(private val dependency: Launcher) : UiComponent.DefaultBuilder<Launcher, Component>() {
         override fun build(context: Context): Component {

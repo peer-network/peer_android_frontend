@@ -7,6 +7,7 @@ import dagger.Provides
 import dagger.multibindings.IntoMap
 import eu.peernetwork.core.ui.annotation.UiViewModel
 import eu.peernetwork.core.ui.factory.UiViewModelFactory
+import eu.peernetwork.user.ui.v2.login.LoginViewModel
 import javax.inject.Provider
 
 @Module

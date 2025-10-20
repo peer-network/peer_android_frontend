@@ -11,7 +11,7 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import eu.peernetwork.core.ui.design.compose.DesignCollapsibleText
+import eu.peernetwork.core.ui.design.material.DesignCollapsibleText
 
 @Composable
 fun PostTitle(

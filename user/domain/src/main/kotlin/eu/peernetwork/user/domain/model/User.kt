@@ -6,4 +6,11 @@ data class User(
     val username: String,
     val bio: String,
     val imageUrl: String
-)
+) {
+    data class Profile(
+        val id: String,
+        val slug: String,
+        val username: String,
+        val imageUrl: String
+    )
+}

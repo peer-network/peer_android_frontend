@@ -5,6 +5,10 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 
+fun String.annotate(): AnnotatedString {
+    return buildAnnotatedString { append(this@annotate) }
+}
+
 fun String.annotate(text: String, style: SpanStyle): AnnotatedString {
     return buildAnnotatedString {
         val regex = Regex.fromLiteral(text)

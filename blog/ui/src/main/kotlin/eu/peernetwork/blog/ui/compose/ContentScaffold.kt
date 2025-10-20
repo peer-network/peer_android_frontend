@@ -22,11 +22,11 @@ import androidx.compose.ui.unit.dp
 import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import eu.peernetwork.core.common.interactor.ResourceInteractor
-import eu.peernetwork.core.ui.design.component.DesignError
-import eu.peernetwork.core.ui.design.compose.DesignPager
-import eu.peernetwork.core.ui.design.compose.DesignPagerState
-import eu.peernetwork.core.ui.design.compose.DesignRefreshablePager
-import eu.peernetwork.core.ui.design.compose.DesignSceneState
+import eu.peernetwork.core.ui.design.compose.DesignError
+import eu.peernetwork.core.ui.design.material.DesignPager
+import eu.peernetwork.core.ui.design.material.DesignPagerState
+import eu.peernetwork.core.ui.design.material.DesignRefreshablePager
+import eu.peernetwork.core.ui.design.material.DesignSceneState
 import eu.peernetwork.core.ui.theme.PeerTheme
 import kotlinx.coroutines.flow.Flow
 

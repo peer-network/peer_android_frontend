@@ -27,9 +27,9 @@ import eu.peernetwork.blog.ui.event.UiPostListener
 import eu.peernetwork.blog.ui.feed.timeline.PostScreen
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.compose.DesignTitle
-import eu.peernetwork.core.ui.design.compose.DesignTitleBarHost
-import eu.peernetwork.core.ui.design.compose.DesignTab
+import eu.peernetwork.core.ui.design.material.DesignTitle
+import eu.peernetwork.core.ui.design.material.DesignTitleBarHost
+import eu.peernetwork.core.ui.design.material.DesignTab
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.core.ui.factory.UiViewModelStore
@@ -133,11 +133,15 @@ private fun FeedExplorerTabs(
     connectionController: State<ConnectionController>,
     onExplore: (() -> Unit)? = null
 ) {
-    val sortTypes = listOf(Sort.TREND, Sort.NEW)
+    val sortTypes = listOf(Sort.NEW, Sort.TREND)
     Column {
         DesignTab(pageState) { index ->
             Text(
-                text = stringResource(id = if (index == 0) R.string.trends_label else R.string.latest_label),
+                text = stringResource(id = if (index == 0) {
+                    R.string.latest_label
+                } else {
+                    R.string.trends_label
+                }),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.tertiary,
                 modifier = Modifier.padding(vertical = 10.dp)

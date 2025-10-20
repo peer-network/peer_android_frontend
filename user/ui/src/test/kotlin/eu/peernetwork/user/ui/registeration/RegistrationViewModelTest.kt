@@ -4,6 +4,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import app.cash.turbine.test
 import eu.peernetwork.user.domain.usecase.ActivationUsecase
 import eu.peernetwork.user.domain.usecase.RegistrationUsecase
+import eu.peernetwork.user.ui.v2.registration.RegistrationViewModel
 import io.mockk.coEvery
 import io.mockk.mockk
 import junit.framework.TestCase.assertEquals

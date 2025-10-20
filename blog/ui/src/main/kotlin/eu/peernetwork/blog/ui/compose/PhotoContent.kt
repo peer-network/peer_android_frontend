@@ -25,8 +25,8 @@ import eu.peernetwork.blog.ui.mapper.mapToContent
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.moderation.ModerationScreen
 import eu.peernetwork.blog.ui.event.UiModerationEvent
-import eu.peernetwork.core.ui.design.compose.DesignRichText
-import eu.peernetwork.core.ui.design.compose.DesignTitleStyle
+import eu.peernetwork.core.ui.design.material.DesignRichText
+import eu.peernetwork.core.ui.design.material.DesignTitleStyle
 
 @Composable
 fun PhotoContent(
@@ -83,8 +83,8 @@ fun PhotoContent(
             EngagementScreen(
                 event = uiEngagementEvent,
                 model = uiContent,
-                size = 36.dp,
-                spacer = 6.dp,
+                size = 24.dp,
+                spacer = 8.dp,
                 color = MaterialTheme.colorScheme.onBackground,
                 padding = PaddingValues(0.dp),
                 orientation = Orientation.Vertical,

@@ -5,10 +5,12 @@ import dagger.Module
 import eu.peernetwork.blog.data.interactor.AuthorInteractorDelegate
 import eu.peernetwork.blog.data.interactor.CommentInteractorDelegate
 import eu.peernetwork.blog.data.interactor.ContentInteractorDelegate
+import eu.peernetwork.blog.data.interactor.ContentMultipartInteractorDelegate
 import eu.peernetwork.blog.data.interactor.EngagementInteractorDelegate
 import eu.peernetwork.blog.domain.interactor.AuthorInteractor
 import eu.peernetwork.blog.domain.interactor.CommentInteractor
 import eu.peernetwork.blog.domain.interactor.ContentInteractor
+import eu.peernetwork.blog.domain.interactor.ContentMultipartInteractor
 import eu.peernetwork.blog.domain.interactor.EngagementInteractor
 import javax.inject.Singleton
 
@@ -31,4 +33,7 @@ interface BlogModule {
 
     @Binds
     fun bindCommentInteractor(delegate: CommentInteractorDelegate): CommentInteractor
+
+    @Binds
+    fun bindContentMultipartInteractor(delegate: ContentMultipartInteractorDelegate): ContentMultipartInteractor
 }

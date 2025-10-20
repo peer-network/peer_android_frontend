@@ -3,14 +3,11 @@ package eu.peernetwork.blog.ui.comment
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
@@ -19,7 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import eu.peernetwork.core.ui.R
+import eu.peernetwork.blog.ui.R
 import eu.peernetwork.core.ui.theme.PeerAppRed
 
 @Composable
@@ -58,17 +55,12 @@ fun CommentOptions(
                 Modifier
             }
         ) {
-            Column {
-                Icon(
-                    painter = painterResource(R.drawable.ic_like),
-                    contentDescription = null,
-                )
-                Spacer(modifier = Modifier.padding(bottom = 16.dp))
-            }
-            Text(
-                "$likes",
-                modifier = Modifier.padding(top = 12.dp),
-                style = MaterialTheme.typography.labelSmall
+            Icon(
+                painter = painterResource(if (likes < 1) {
+                    R.drawable.ic_love_outline
+                } else { R.drawable.ic_love }),
+                contentDescription = null,
+                modifier = Modifier.size(16.dp)
             )
         }
     }

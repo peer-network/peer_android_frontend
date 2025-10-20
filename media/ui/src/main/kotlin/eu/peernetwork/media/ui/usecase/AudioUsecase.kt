@@ -19,7 +19,7 @@ class AudioUsecase @Inject constructor(
         val projection = arrayOf(
             MediaStore.Audio.Media._ID,
             MediaStore.Audio.Media.DATA,
-            MediaStore.Audio.Media.DISPLAY_NAME,
+            MediaStore.Audio.Media.TITLE,
             MediaStore.Audio.Media.BUCKET_DISPLAY_NAME,
             MediaStore.Audio.Media.BUCKET_ID
         )
@@ -54,14 +54,14 @@ class AudioUsecase @Inject constructor(
         )
         cursor?.use {
             val idColumn = it.getColumnIndexOrThrow(MediaStore.Audio.Media._ID)
-            val nameColumn = it.getColumnIndexOrThrow(MediaStore.Audio.Media.DISPLAY_NAME)
+            val nameColumn = it.getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE)
             while (it.moveToNext()) {
                 val audioUri = ContentUris.withAppendedId(uri, it.getLong(idColumn))
                 val name = it.getString(nameColumn)
                 val props = Bundle().apply {
                     putString("name", name)
                 }
-                files.add(UiFile(uri = audioUri, props = props))
+                files.add(UiFile(uri = audioUri, props = props, name = name))
             }
         }
         files

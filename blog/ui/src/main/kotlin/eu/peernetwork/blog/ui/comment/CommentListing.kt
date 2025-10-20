@@ -47,6 +47,7 @@ fun CommentListing(
                 val interactionSource = remember { MutableInteractionSource() }
                 CommentSummary(
                     model = comment.mapToContent(),
+                    likes = likes.value[comment.id]?.likes ?: comment.likes,
                     modifier = Modifier.combinedClickable(
                         interactionSource = interactionSource,
                         indication = ripple(),
@@ -57,6 +58,7 @@ fun CommentListing(
                         }
                     ).padding(horizontal = 24.dp)
                         .padding(top = 12.dp),
+                    onComment = { handleOnComment(comment) },
                     titleOnClick = { handleTitleOnClick(comment.author.username) },
                     onMentionClick = onMentionClick,
                     onHashtagClick = onHashtagClick,

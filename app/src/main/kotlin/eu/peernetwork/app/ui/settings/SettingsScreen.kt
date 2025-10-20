@@ -19,8 +19,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.compose.DesignTitle
-import eu.peernetwork.core.ui.design.compose.DesignTitleBarHost
+import eu.peernetwork.core.ui.design.material.DesignTitle
+import eu.peernetwork.core.ui.design.material.DesignTitleBarHost
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.core.ui.factory.UiViewModelStore
@@ -41,7 +41,9 @@ fun SettingsScreen(
     }
     val account = stringResource(R.string.account_label)
     SettingsNavigation(userId, component, viewModelStore) { controller ->
-        SettingsScreen({ controller.navigateIfNecessary(it) }) {
+        SettingsScreen({
+            component.settingsEvent().invoke(SettingsEvent.Event.Tutorial)
+        }, { controller.navigateIfNecessary(it) }) {
             AccountPreview(component, viewModelStore.get(userId)) {
                 controller.navigateIfNecessary(account)
             }
@@ -58,6 +60,7 @@ fun SettingsScreen(
 
 @Composable
 fun SettingsScreen(
+    onTutorial: () -> Unit,
     onNavigate: (String) -> Unit,
     header: @Composable () -> Unit
 ) {
@@ -67,6 +70,7 @@ fun SettingsScreen(
     val password = stringResource(R.string.password_label)
     val preference = stringResource(R.string.preference_label)
     val feedback = stringResource(R.string.feedback_label)
+    val introduction = stringResource(R.string.how_it_works_label)
     val aboutUsLabel = stringResource(R.string.about_us_label)
     val feedbackSession = remember { mutableLongStateOf(-1) }
     Column(modifier = Modifier
@@ -85,23 +89,21 @@ fun SettingsScreen(
             handleOnNavigate(preference)
         }
         SettingsItem(label = feedback) {
-            feedbackSession.value = System.currentTimeMillis()
+            feedbackSession.longValue = System.currentTimeMillis()
         }
+        SettingsItem(label = introduction, onTutorial)
         SettingsItem(label = aboutUsLabel) {
             handleOnNavigate("about")
         }
     }
-    FeedbackScreen(
-        feedbackSession,
-        BuildConfig.APPLICATION_ID
-    )
+    FeedbackScreen(feedbackSession, BuildConfig.FEED_BACK)
 }
 
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun PreviewSettingsScreen() {
     PeerTheme {
-        SettingsScreen({}) {
+        SettingsScreen({}, {}) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()

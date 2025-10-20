@@ -17,4 +17,69 @@
     <string name="version_update_message">This version of the app is outdated. Please update to continue.</string>
 
     <string name="network_error_message">Error processing network request.</string>
+
+    <string name="version_label">Version %s</string>
+    <string name="skip_label">Skip</string>
+    <string name="proceed_label">Proceed</string>
+    <string name="finish_label">Let\'s go!</string>
+    <string name="back_label">Back</string>
+
+    <!-- Onboarding, Combined Pages-->
+    <string name="engage">Engage</string>
+    <string name="repeat">Repeat</string>
+    <string name="earn">Earn</string>
+    <string name="create">Create</string>
+
+    <string name="onboarding_how_title">How peer works?</string>
+    <string name="onboarding_about">Peer is the first social platform where your posts, likes, comments, and views help you earn real rewards.</string>
+    <string name="onboarding_about_Gems">Every interaction earns you Gems,\nyour path to Peer Tokens.</string>
+    <string name="onboarding_create_like_comment">Create, Like, Comment</string>
+    <string name="onboarding_smartly">- Smartly</string>
+    <string name="onboarding_daily_free_pass">Your daily free pass</string>
+    <string name="onboarding_post_count">1 post</string>
+    <string name="onboarding_like_count">3 likes</string>
+    <string name="onboarding_comment_count">4 comments</string>
+    <string name="onboarding_want_more">Want more?</string>
+    <string name="onboarding_option_extra_post">Extra post</string>
+    <string name="onboarding_option_extra_like">Extra like</string>
+    <string name="onboarding_option_extra_comments">Extra comments</string>
+    <string name="onboarding_option_dislike">Want to give a dislike?</string>
+    <string name="onboarding_invite_friends_prefix">But hey - you can also invite friends and earn 1%\nof their token income daily.</string>
+    <string name="onboarding_invite_friends_bold"> earn 1% </string>
+    <string name="onboarding_skip">Skip</string>
+    <string name="onboarding_back">Back</string>
+    <string name="onboarding_next">Next</string>
+    <string name="onboarding_engage_earn">Engage &amp; Earn</string>
+    <string name="peernetwork_label">PeerNetwork</string>
+    <string name="peertext_label">peer</string>
+    <string name="onboarding_created_something_love">Created something people love?</string>
+    <string name="onboarding_get_rewarded">Get rewarded!</string>
+    <string name="onboarding_how_it_works">Here\'s how it works:</string>
+    <string name="onboarding_got_like">Got a like</string>
+    <string name="onboarding_got_dislike">Got a dislike</string>
+    <string name="onboarding_got_comment">Got a comment</string>
+    <string name="onboarding_got_view">Got a view</string>
+    <string name="onboarding_gems_collect_explanation">The more Gems you collect, the bigger your\nshare of the %s daily minted Peer Tokens. Simple.</string>
+    <string name="onboarding_your_effort_reward">Your effort = Your reward</string>
+    <string name="onboarding_gems_slice_pool">The more Gems you earn, the bigger your slice of the daily pool.</string>
+    <string name="onboarding_pie_chart_distributed_daily">Distributed daily</string>
+    <string name="onboarding_pie_chart_100_percent_of">100% of</string>
+    <string name="onboarding_pie_chart_gems_label">Gems</string>
+    <string name="onboarding_user_a">User A</string>
+    <string name="onboarding_user_b">User B</string>
+    <string name="onboarding_user_c">User C</string>
+    <string name="onboarding_has_5">has 5</string>
+    <string name="onboarding_has_10">has 10</string>
+    <string name="onboarding_gems">Gems</string>
+    <string name="onboarding_will_get_1250">will get 1 250</string>
+    <string name="onboarding_will_get_2500">will get 2 500</string>
+    <string name="onboarding_how_to_use_tokens">How to use tokens?</string>
+    <string name="onboarding_lets_go">Let\'s go!</string>
+    <string name="onboarding_post_and_engage">Post and engage more</string>
+    <string name="onboarding_boost_your_content">Boost your content</string>
+    <string name="onboarding_shop_in_app">Shop in-app</string>
+    <string name="onboarding_cash_out">Cash-out</string>
+    <string name="onboarding_coming_soon">Coming soon…</string>
+    <string name="onboarding_cash_out_working_on_license">We\'re working on the license - stay tuned!</string>
+
 </resources>

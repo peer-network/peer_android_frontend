@@ -24,10 +24,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.core.common.interactor.ResourceInteractor
 import eu.peernetwork.core.ui.R
-import eu.peernetwork.core.ui.design.component.DesignErrorText
-import eu.peernetwork.core.ui.design.compose.DesignAvatar
-import eu.peernetwork.core.ui.design.compose.DesignCard
-import eu.peernetwork.core.ui.design.compose.DesignDetailLayout
+import eu.peernetwork.core.ui.design.compose.DesignErrorText
+import eu.peernetwork.core.ui.design.material.DesignAvatar
+import eu.peernetwork.core.ui.design.material.DesignCard
+import eu.peernetwork.core.ui.design.material.DesignDetailLayout
 import eu.peernetwork.core.ui.theme.PeerTheme
 
 @Composable

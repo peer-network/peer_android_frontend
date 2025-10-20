@@ -5,14 +5,17 @@ plugins {
 
 android {
     defaultConfig {
-        versionCode = 33
-        versionName = "1.8.3"
+        versionCode = 34
+        versionName = "1.8.4"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
         }
         buildConfigField("int", "PAGING_LIMIT", "20")
         buildConfigField("String", "PLAYSTORE_URL", "\"https://play.google.com/store/apps/details?id=eu.peernetwork.app\"")
+        buildConfigField("String","FEED_BACK","\"https://docs.google.com/forms/d/e/1FAIpQLSeTRecbfUTKmpYHSaE7bSawEagUpkOPagJtLqZdsec659HaGw/viewform\"")
+        buildConfigField("String","PRIVACY","\"https://peerapp.de/privacy.html\"")
+        buildConfigField("String","LICENCE","\"https://peerapp.de/EULA.html\"")
     }
     buildTypes {
         debug {
@@ -21,7 +24,6 @@ android {
             versionNameSuffix = "-DEBUG"
             buildConfigField("String", "BASE_URL", "\"https://getpeer.eu\"")
             buildConfigField("String", "MEDIA_URL", "\"https://media.getpeer.eu\"")
-            buildConfigField("String", "INVITE_URL", "\"https://testing.getpeer.eu/invite.php?%s\"")
             buildConfigField("boolean", "USE_SYSTEM_THEME", "false")
             buildConfigField("String","PRIVACY_POLICY_URL","\"https://www.freeprivacypolicy.com/live/02865c3a-79db-4baf-9ca1-7d91e2cf1724\"")
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
@@ -31,7 +33,6 @@ android {
             isShrinkResources = true
             buildConfigField("String", "BASE_URL", "\"https://peernetwork.eu\"")
             buildConfigField("String", "MEDIA_URL", "\"https://media.peernetwork.eu\"")
-            buildConfigField("String", "INVITE_URL", "\"https://testing.getpeer.eu/invite.php?%s\"")
             buildConfigField("boolean", "USE_SYSTEM_THEME", "false")
             buildConfigField("String","PRIVACY_POLICY_URL","\"https://www.freeprivacypolicy.com/live/02865c3a-79db-4baf-9ca1-7d91e2cf1724\"")
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
@@ -92,7 +93,6 @@ dependencies {
     implementation(libs.firebase.store)
 
     implementation(libs.lottie)
-
 
     implementation(libs.dagger)
     ksp(libs.dagger.compiler)

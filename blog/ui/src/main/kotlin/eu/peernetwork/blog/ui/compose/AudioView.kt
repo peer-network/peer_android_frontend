@@ -32,8 +32,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.blog.ui.model.UiAction
 import eu.peernetwork.blog.ui.model.UiAuthor
-import eu.peernetwork.core.ui.design.compose.DesignCard
-import eu.peernetwork.core.ui.design.compose.DesignTextButton
+import eu.peernetwork.core.ui.design.material.DesignCard
+import eu.peernetwork.core.ui.design.material.DesignTextButton
 import eu.peernetwork.core.ui.theme.PeerTheme
 
 @Composable

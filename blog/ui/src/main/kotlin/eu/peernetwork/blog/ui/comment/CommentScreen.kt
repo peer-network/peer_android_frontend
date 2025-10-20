@@ -1,10 +1,15 @@
 package eu.peernetwork.blog.ui.comment
 
 import android.widget.Toast
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.clearText
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -34,9 +39,10 @@ import eu.peernetwork.blog.ui.interaction.listing.ListingScreen
 import eu.peernetwork.blog.ui.model.UiContent
 import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.component.DesignPagingScaffold
-import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
-import eu.peernetwork.core.ui.design.compose.DesignRouter
+import eu.peernetwork.core.ui.design.compose.DesignErrorLabel
+import eu.peernetwork.core.ui.design.compose.DesignPagingScaffold
+import eu.peernetwork.core.ui.design.compose.DesignStatefulScaffoldState
+import eu.peernetwork.core.ui.design.material.DesignRouter
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.core.ui.extension.route
@@ -138,7 +144,19 @@ fun CommentScreen(
         DesignPagingScaffold(
             state = derivedState,
             onRefresh = { state.value?.let { viewModel.load(it.id, Pageable(0, postLimit)) } },
-            placeholder = { Placeholder(modifier = Modifier.padding(horizontal = 24.dp)) }
+            placeholder = { Placeholder(modifier = Modifier.padding(horizontal = 24.dp)) },
+            errorContent = { error, refresh ->
+                Column(modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())) {
+                    DesignErrorLabel(
+                        onRefresh = refresh,
+                        error = error,
+                        resource = component.resource(),
+                        contentPadding = PaddingValues(horizontal = 16.dp)
+                    )
+                }
+            }
         ) { pageState, items ->
             CommentListing(
                 likes = likesState,
@@ -177,12 +195,10 @@ fun CommentScreen(
                 viewModel.clear()
             }
         }
-        LaunchedEffect(state.value) {
+        LaunchedEffect(isCommentPosted.value) {
             if (state.value != null) {
                 state.value?.let {
-                    if (it.id != (viewModel.state.value as? CommentViewModel.State.Success)?.postId) {
                         viewModel.load(it.id, Pageable(0, postLimit))
-                    }
                 }
             } else {
                 viewModel.reset()

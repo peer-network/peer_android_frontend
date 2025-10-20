@@ -6,7 +6,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
 import eu.peernetwork.app.ui.about.About
-import eu.peernetwork.app.ui.privacy.Privacy
+import eu.peernetwork.app.ui.browser.Browser
 import eu.peernetwork.core.ui.annotation.UiBuilder
 import eu.peernetwork.core.ui.annotation.UiViewModel
 import eu.peernetwork.core.ui.component.UiComponent
@@ -66,9 +66,9 @@ object SetupModule {
     @Setup.Scope
     @Provides
     @IntoMap
-    @UiBuilder(Privacy.Builder::class)
+    @UiBuilder(Browser.Builder::class)
     fun providePrivacyBuilder(component: Setup.Component): UiComponent.Builder {
-        return Privacy.Builder(component)
+        return Browser.Builder(component)
     }
 
     @Setup.Scope

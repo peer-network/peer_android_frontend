@@ -44,8 +44,8 @@ import eu.peernetwork.blog.ui.R
 import eu.peernetwork.blog.ui.compose.PostSummary
 import eu.peernetwork.blog.ui.model.UiAuthor
 import eu.peernetwork.blog.ui.model.UiContent
-import eu.peernetwork.core.ui.design.compose.DesignOutlinedButton
-import eu.peernetwork.core.ui.design.compose.DesignRichTextField
+import eu.peernetwork.core.ui.design.material.DesignOutlinedButton
+import eu.peernetwork.core.ui.design.material.DesignRichTextField
 import eu.peernetwork.core.ui.extension.isValidInput
 import eu.peernetwork.core.ui.theme.PeerTheme
 

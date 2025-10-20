@@ -16,18 +16,20 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.app.ui.onboarding.OnboardingScreen
+import eu.peernetwork.app.ui.settings.SettingsEvent
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.compose.DesignPage
-import eu.peernetwork.core.ui.design.compose.DesignPageHeader
+import eu.peernetwork.core.ui.design.material.DesignPage
+import eu.peernetwork.core.ui.design.material.DesignPageHeader
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.theme.PeerTheme
-import eu.peernetwork.core.ui.design.compose.DesignSceneState
+import eu.peernetwork.core.ui.design.material.DesignSceneState
 import eu.peernetwork.core.ui.extension.attach
 import eu.peernetwork.core.ui.extension.attachIfNecessary
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
@@ -36,15 +38,24 @@ import eu.peernetwork.wallet.ui.reward.RewardScreen
 import eu.peernetwork.social.ui.feedback.FeedbackPopup
 
 @Composable
-fun HomeScreen(provider: UiComponentProvider) {
+fun HomeScreen(
+    route: String? = null,
+    provider: UiComponentProvider,
+    viewModelStoreOwner: ViewModelStoreOwner,
+) {
     val viewModelStore = remember { UiViewModelStore.Delegate() }
     val context = LocalContext.current
+    val showOnboarding = remember { mutableStateOf(false) }
     val component = remember {
-        provider.builder(Home.Builder::class.java).build(context)
+        provider.builder(Home.Builder::class.java).build(context, object : SettingsEvent {
+            override fun invoke(event: SettingsEvent.Event) {
+                showOnboarding.value = true
+            }
+        })
     }
     val viewModel = viewModel(
         modelClass = HomeViewModel::class.java,
-        viewModelStoreOwner = viewModelStore.get(Home.Builder::class.java.name),
+        viewModelStoreOwner = viewModelStoreOwner,
         factory = component.viewModelFactory()
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -64,13 +75,20 @@ fun HomeScreen(provider: UiComponentProvider) {
     HomeScaffold(
         state = derivedState,
         resource = component.resource(),
+        showOnboarding = showOnboarding,
         onRefresh = { viewModel() },
         onboarding = {
             OnboardingScreen(
                 preference = it.preference,
                 provider = component,
                 viewModelStoreOwner = viewModelStore.get(it.userId),
-            ) { preference -> viewModel(preference) }
+            ) { preference ->
+                if (preference.flags.isEmpty()) {
+                    viewModel(preference)
+                } else {
+                    showOnboarding.value = false
+                }
+            }
         }
     ) { data ->
         val controller = rememberNavController()
@@ -89,12 +107,22 @@ fun HomeScreen(provider: UiComponentProvider) {
                 navigationState.intValue = it
                 controller.attachIfNecessary(HomeRoute.get(it).path)
             },
-            onExplore = { controller.navigateIfNecessary(HomeRoute.Explore.path) },
+            onExplore = {
+                if (currentRoute == HomeRoute.Explore.path) {
+                    controller.navigateIfNecessary(HomeRoute.Home.path)
+                } else if (currentRoute == HomeRoute.Home.path) {
+                    controller.navigateIfNecessary(HomeRoute.Explore.path)
+                } else {
+                    viewModel.lastVisited(0)
+                    navigationState.intValue = 0
+                    controller.attach(HomeRoute.Home.path)
+                }
+            },
             isExploreActive = currentRoute == HomeRoute.Explore.path
         ) { state ->
             HomeNavigation(
                 id = data.userId,
-                startDestination = startDestination,
+                startDestination = route ?: startDestination,
                 navController = controller,
                 component = component,
                 viewModelStore = viewModelStore,
@@ -112,11 +140,15 @@ fun HomeScreen(provider: UiComponentProvider) {
         }
     }
     FeedbackPopup(
-        BuildConfig.APPLICATION_ID,
-        component,
-        viewModelStore.get("FeedbackPopup")
+        appPackage = BuildConfig.APPLICATION_ID,
+        provider = component,
+        viewModelStoreOwner = viewModelStore.get("FeedbackPopup")
     )
-    LaunchedEffect(Unit) { viewModel() }
+    LaunchedEffect(Unit) {
+        if (derivedState.value is DesignSceneState.Default) {
+            viewModel()
+        }
+    }
     DisposableEffect(Unit) { onDispose { viewModelStore.clear() } }
 }
 

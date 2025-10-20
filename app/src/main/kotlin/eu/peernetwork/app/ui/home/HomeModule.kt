@@ -6,6 +6,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
 import eu.peernetwork.app.ui.composer.Composer
+import eu.peernetwork.app.ui.content.Content
 import eu.peernetwork.core.ui.annotation.UiBuilder
 import eu.peernetwork.core.ui.annotation.UiViewModel
 import eu.peernetwork.core.ui.component.UiComponent
@@ -16,10 +17,13 @@ import eu.peernetwork.app.ui.feed.Feed
 import eu.peernetwork.app.ui.messaging.Messaging
 import eu.peernetwork.app.ui.onboarding.Onboarding
 import eu.peernetwork.app.ui.profile.Profile
+import eu.peernetwork.app.ui.renderer.EngagementRenderer
 import eu.peernetwork.app.ui.search.Search
 import eu.peernetwork.app.ui.wallet.Wallet
+import eu.peernetwork.blog.ui.engagement.EngagementDialog
 import eu.peernetwork.messaging.ui.chat.Chat
 import eu.peernetwork.social.ui.feedback.Feedback
+import eu.peernetwork.wallet.ui.confirmation.Confirmation
 import eu.peernetwork.wallet.ui.reward.Reward
 import javax.inject.Provider
 
@@ -122,5 +126,27 @@ object HomeModule {
     @UiBuilder(Feedback.Builder::class)
     fun provideFeedbackBuilder(component: Home.Component): UiComponent.Builder {
         return Feedback.Builder(component)
+    }
+
+    @Provides
+    @IntoMap
+    @Home.Scope
+    @UiBuilder(Content.Builder::class)
+    fun providePostBuilder(component: Home.Component): UiComponent.Builder {
+        return Content.Builder(component)
+    }
+
+    @Provides
+    @IntoMap
+    @Home.Scope
+    @UiBuilder(Confirmation.Builder::class)
+    fun provideConfirmationBuilder(component: Home.Component): UiComponent.Builder {
+        return Confirmation.Builder(component)
+    }
+
+    @Provides
+    @Home.Scope
+    fun provideEngagementRenderer(component: Home.Component): EngagementDialog {
+        return EngagementRenderer(component)
     }
 }

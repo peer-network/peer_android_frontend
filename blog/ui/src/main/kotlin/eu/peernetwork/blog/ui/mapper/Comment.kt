@@ -20,7 +20,11 @@ fun Comment.mapToComment(annotate: (String) -> AnnotatedString): UiComment {
 fun UiComment.mapToContent(): UiContent {
     return UiContent(
         id = id,
-        title = buildAnnotatedString { append(author.username) },
+        title = buildAnnotatedString {
+            append(author.username)
+            append(" #")
+            append(author.slug.toString())
+        },
         description = content,
         author = author,
         createdAt = createdAt,

@@ -4,6 +4,7 @@ import android.content.Context
 import eu.peernetwork.app.provider.ApplicationProvider
 import eu.peernetwork.app.ui.feed.Feed
 import eu.peernetwork.app.ui.profile.Profile
+import eu.peernetwork.app.ui.settings.SettingsEvent
 import eu.peernetwork.app.ui.window.Window
 import eu.peernetwork.blog.ui.explore.Explore
 import eu.peernetwork.core.ui.component.UiComponent
@@ -15,6 +16,8 @@ import eu.peernetwork.social.ui.search.title.Title
 import eu.peernetwork.wallet.ui.confirmation.Confirmation
 
 interface Search : ApplicationProvider {
+    fun settingsEvent(): SettingsEvent
+
     @javax.inject.Scope
     @Retention(AnnotationRetention.RUNTIME)
     annotation class Scope
