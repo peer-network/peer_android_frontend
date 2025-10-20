@@ -4,6 +4,7 @@ dependencies {
     implementation(project(":user:domain"))
     implementation(project(":wallet:domain"))
     implementation(project(":blog:domain"))
+    implementation(project(":persistence:domain"))
 
     testImplementation(libs.junit)
     testImplementation(libs.kotlin.test)
