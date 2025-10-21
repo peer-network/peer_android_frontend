@@ -133,11 +133,15 @@ private fun FeedExplorerTabs(
     connectionController: State<ConnectionController>,
     onExplore: (() -> Unit)? = null
 ) {
-    val sortTypes = listOf(Sort.TREND, Sort.NEW)
+    val sortTypes = listOf(Sort.NEW, Sort.TREND)
     Column {
         DesignTab(pageState) { index ->
             Text(
-                text = stringResource(id = if (index == 0) R.string.trends_label else R.string.latest_label),
+                text = stringResource(id = if (index == 0) {
+                    R.string.latest_label
+                } else {
+                    R.string.trends_label
+                }),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.tertiary,
                 modifier = Modifier.padding(vertical = 10.dp)
@@ -159,9 +163,12 @@ private fun FeedExplorerTabs(
                 object : UiPostListener {
                     override fun invoke(event: UiPostListener.Event) {
                         when (event) {
-                            is UiPostListener.Event.Mention -> controller.navigateToUsernameSearch(event.username)
-                            is UiPostListener.Event.Hashtag -> controller.navigateToTagSearch(event.tag)
-                            is UiPostListener.Event.Author -> controller.navigateIfNecessary("profile/${event.id}")
+                            is UiPostListener.Event.Mention ->
+                                controller.navigateToUsernameSearch(event.username)
+                            is UiPostListener.Event.Hashtag ->
+                                controller.navigateToTagSearch(event.tag)
+                            is UiPostListener.Event.Author ->
+                                controller.navigateIfNecessary("profile/${event.id}")
                             is UiPostListener.Event.Post -> selected.value = FeedOverlayState.Post(
                                 id = event.id,
                                 position = event.position,
@@ -172,7 +179,7 @@ private fun FeedExplorerTabs(
                     }
                 }
             }
-            val storeKey = "${Category.NONE};${derivedCriteria.value?.toString() ?: id}"
+            val storeKey = "${Category.NONE};${derivedCriteria.value}"
             PostScreen(
                 id = id,
                 status = enable,

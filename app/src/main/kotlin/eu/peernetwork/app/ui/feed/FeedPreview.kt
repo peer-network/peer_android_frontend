@@ -78,24 +78,21 @@ fun FeedPreview(
         object : UiPostListener {
             override fun invoke(event: UiPostListener.Event) {
                 when(event) {
-                    is UiPostListener.Event.Mention -> {
+                    is UiPostListener.Event.Mention ->
                         controller.navigateToUsernameSearch(event.username)
-                    }
-                    is UiPostListener.Event.Hashtag -> {
+                    is UiPostListener.Event.Hashtag ->
                         controller.navigateToTagSearch(event.tag)
-                    }
-                    is UiPostListener.Event.Author -> {
+                    is UiPostListener.Event.Author ->
                         controller.navigateIfNecessary("profile/${event.id}")
-                    }
                     is UiPostListener.Event.Post -> {
                         selected.value = FeedOverlayState.Post(
                             id = event.id,
                             position = event.position,
                             criteria = derivedCriteria.value,
                             category = if (pageState.currentPage == 0) {
-                                Category.FOLLOWER
-                            } else {
                                 Category.FOLLOWED
+                            } else {
+                                Category.FOLLOWER
                             }
                         )
                     }
@@ -109,7 +106,7 @@ fun FeedPreview(
         modifier = Modifier.fillMaxSize(),
         onNavigate = { handleOnNavigate(it) }
     ) {
-        val storeKey = "$it;${criteria?.toString() ?: id}"
+        val storeKey = "$it;${derivedCriteria.value?.toString() ?: id}"
         PostScreen(
             id = id,
             status = enable,
@@ -153,9 +150,9 @@ fun FeedPreview(
     ) {
         coroutine.launch {
             if (pageState.currentPage == 0) {
-                followerListState.animateScrollToItem(0)
-            } else {
                 followedListState.animateScrollToItem(0)
+            } else {
+                followerListState.animateScrollToItem(0)
             }
         }
     }
@@ -179,7 +176,11 @@ fun FeedPreview(
     Column {
         DesignTab(pageState) { index ->
             Text(
-                text = stringResource(id = if (index == 0) R.string.followers_label else R.string.following_label),
+                text = stringResource(id = if (index == 0) {
+                    R.string.following_label
+                } else {
+                    R.string.followers_label
+                } ),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.tertiary,
                 modifier = Modifier
@@ -192,8 +193,8 @@ fun FeedPreview(
             verticalAlignment = Alignment.Top,
         ) { page ->
             when (page) {
-                0 -> handleContent(Category.FOLLOWER)
-                1 -> handleContent(Category.FOLLOWED)
+                0 -> handleContent(Category.FOLLOWED)
+                1 -> handleContent(Category.FOLLOWER)
             }
         }
     }

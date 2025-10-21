@@ -4,7 +4,9 @@ import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import eu.peernetwork.core.common.interactor.ResourceInteractor
@@ -17,6 +19,7 @@ fun HomeScaffold(
     state: State<DesignSceneState<HomeViewModel.State.Success>>,
     onRefresh: () -> Unit = {},
     resource: ResourceInteractor,
+    showOnboarding: State<Boolean>,
     error: @Composable (error: State<Throwable>) -> Unit = { DesignError(onRefresh, it.value, resource) },
     onboarding: @Composable (HomeViewModel.State.Success) -> Unit,
     content: @Composable (HomeViewModel.State.Success) -> Unit
@@ -26,13 +29,16 @@ fun HomeScaffold(
     DesignScene(
         state = state,
         modifier = Modifier.fillMaxSize(),
+        loading = { HomeSkeleton() },
         error = error
     ) {
-        Crossfade(it.value) { target ->
-            if (target.preference.flags.isEmpty()) {
-                updatedOnBoarding(target)
-            } else {
-                updatedContent(target)
+        val isOnboarding = remember { derivedStateOf {
+            showOnboarding.value || it.value.preference.flags.isEmpty()
+        } }
+        updatedContent(it.value)
+        Crossfade(isOnboarding.value) { target ->
+            if (target) {
+                updatedOnBoarding(it.value)
             }
         }
     }

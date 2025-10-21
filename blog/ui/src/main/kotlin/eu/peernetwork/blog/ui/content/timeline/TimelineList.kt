@@ -75,6 +75,7 @@ fun TimelineList(
                 EngagementScreen(
                     model = uiContent,
                     event = engagement,
+                    spacer = 4.dp
                 )
             },
             moderation = {

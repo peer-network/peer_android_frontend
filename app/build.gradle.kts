@@ -5,14 +5,15 @@ plugins {
 
 android {
     defaultConfig {
-        versionCode = 32
-        versionName = "1.8.2"
+        versionCode = 34
+        versionName = "1.8.4"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
         }
         buildConfigField("int", "PAGING_LIMIT", "20")
         buildConfigField("String", "PLAYSTORE_URL", "\"https://play.google.com/store/apps/details?id=eu.peernetwork.app\"")
+        buildConfigField("String","FEED_BACK","\"https://docs.google.com/forms/d/e/1FAIpQLSeTRecbfUTKmpYHSaE7bSawEagUpkOPagJtLqZdsec659HaGw/viewform\"")
     }
     buildTypes {
         debug {

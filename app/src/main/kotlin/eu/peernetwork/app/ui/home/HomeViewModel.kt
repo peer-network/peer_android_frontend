@@ -30,11 +30,11 @@ class HomeViewModel @Inject constructor(
         mutableState.tryEmit(State.Loading)
         viewModelScope.launch {
             try {
-                val principal = usecase()
                 val preference = preferenceUsecase()
+                interactor.setMode(preference.mode.value)
+                val principal = usecase(true)
                 val lastVisitedPage = retrievableInteger(TAG) ?: 0
                 interactor.setUser(principal)
-                interactor.setMode(preference.mode.value)
                 mutableState.tryEmit(State.Success(
                     userId = principal,
                     lastVisitedPage = lastVisitedPage,
