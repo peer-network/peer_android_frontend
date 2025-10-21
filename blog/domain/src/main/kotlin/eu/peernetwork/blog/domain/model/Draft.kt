@@ -6,10 +6,15 @@ data class Draft(
     val tags: List<String>,
     val type: Type
 ) {
+    data class Media(
+        val url: String,
+        val cover: String? = null
+    )
+
     sealed interface Type {
         data class Text(val files: List<String>) : Type
         data class Image(val files: List<String>) : Type
-        data class Video(val files: List<String>) : Type
-        data class Audio(val files: List<String>, val cover: String? = null) : Type
+        data class Video(val media: List<Media>) : Type
+        data class Audio(val media: List<Media>) : Type
     }
 }

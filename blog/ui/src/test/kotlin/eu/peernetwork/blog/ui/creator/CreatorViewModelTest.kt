@@ -9,7 +9,7 @@ import eu.peernetwork.media.core.model.UiAttachment
 import eu.peernetwork.media.core.model.UiMimeType
 import eu.peernetwork.media.core.usecase.MediaEncoderUsecase
 import eu.peernetwork.media.core.usecase.TextEncoderUsecase
-import eu.peernetwork.media.core.usecase.VideoEncoderUsecase
+import eu.peernetwork.media.core.usecase.TrimUsecase
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -33,7 +33,7 @@ internal class CreatorViewModelTest {
 
     private val contentCreationUsecase = mockk<CreateUsecase>(relaxed = true)
 
-    private val videoEncoderUsecase = mockk<VideoEncoderUsecase>(relaxed = true)
+    private val trimUsecase = mockk<TrimUsecase>(relaxed = true)
 
     private val mediaEncoderUsecase = mockk<MediaEncoderUsecase>(relaxed = true)
 
@@ -46,9 +46,9 @@ internal class CreatorViewModelTest {
         Dispatchers.setMain(dispatcher)
         viewModel = CreatorViewModel(
             contentCreationUsecase,
-            videoEncoderUsecase,
-            mediaEncoderUsecase,
+            trimUsecase,
             textEncoderUsecase,
+            mediaEncoderUsecase
         )
     }
 

@@ -3,7 +3,7 @@ package eu.peernetwork.app.module.core
 import dagger.Module
 import dagger.Provides
 import eu.peernetwork.app.BuildConfig
-import eu.peernetwork.app.interceptor.JwtOkHttpInterceptor
+import eu.peernetwork.user.remote.interceptor.RestJwtInterceptor
 import eu.peernetwork.app.service.NetworkService
 import eu.peernetwork.core.remote.api.RequestClient
 import okhttp3.OkHttpClient
@@ -22,7 +22,9 @@ internal object NetworkModule {
     fun provideMediaUrl(): String = BuildConfig.MEDIA_URL
 
     @Provides
-    fun provideOkHttpClient(): OkHttpClient = OkHttpClient.Builder()
+    fun provideOkHttpClient(
+        jwtOkHttpInterceptor: RestJwtInterceptor,
+    ): OkHttpClient = OkHttpClient.Builder()
         .connectTimeout(5, TimeUnit.SECONDS)
         .readTimeout(15, TimeUnit.SECONDS)
         .writeTimeout(10, TimeUnit.SECONDS)

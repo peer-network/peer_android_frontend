@@ -1,8 +1,13 @@
 package eu.peernetwork.blog.remote.api
 
+import android.content.Context
+import android.net.Uri
+import android.webkit.MimeTypeMap
+import com.google.gson.Gson
+import com.google.gson.annotations.SerializedName
 import eu.peernetwork.blog.data.api.MultipartApi
-import eu.peernetwork.blog.domain.repository.EligibilityRepository
-import okhttp3.MediaType
+import eu.peernetwork.core.remote.exception.NetworkException
+import eu.peernetwork.core.remote.exception.UndefinedResponseException
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
@@ -13,46 +18,47 @@ import javax.inject.Inject
 import javax.inject.Named
 
 class MultipartApiDelegate @Inject constructor(
-    @Named("mediaUrl") private val url: String,
-    private val rest: OkHttpClient,
-    private val eligibilityRepository: EligibilityRepository
+    private val gson: Gson,
+    private val context: Context,
+    @Named("baseUrl") private val url: String,
+    private val rest: OkHttpClient
     ) : MultipartApi {
-        val testurl = "https://peer-network.eu"
-    override suspend fun upload(file: File): String {
-        val token = eligibilityRepository.get() ?: eligibilityRepository.refresh()
-        val mimeType = file.detectMediaType()
-        val fileBody = file.asRequestBody(mimeType)
+    override suspend fun upload(token: String, paths: List<String>): String {
+        val files = paths.map { File(it) }
         val requestBody = MultipartBody.Builder()
             .setType(MultipartBody.FORM)
             .addFormDataPart("eligibilityToken", token)
-            .addFormDataPart("file", file.name, fileBody)
-            .build()
+        files.forEach { file ->
+            requestBody.addFormDataPart(
+                "file",
+                file.name,
+                file.asRequestBody(file.getMimeType(context).toMediaType())
+            )
+        }
         val request = Request.Builder()
-            .url("$testurl/upload-post")
-            .post(requestBody)
+            .url("$url/upload-post")
+            .post(requestBody.build())
             .build()
         val response = rest.newCall(request).execute()
         if (!response.isSuccessful) {
-            throw RuntimeException("Upload failed: ${response.code} - ${response.message}")
+            throw NetworkException(response.message)
         }
-        val bodyString = response.body?.string()
-            ?: throw RuntimeException("Empty response body")
-
-        return bodyString
+        return response.body?.string()?.let {
+            val model = gson.fromJson(it, ResponseModel::class.java)
+            model.content ?: throw NetworkException(model.code)
+        } ?: throw UndefinedResponseException()
     }
 
-    private fun File.detectMediaType(): MediaType {
-        val ext = extension.lowercase()
-        val mimeType = when (ext) {
-            "jpg", "jpeg" -> "image/jpeg"
-            "png" -> "image/png"
-            "gif" -> "image/gif"
-            "webp" -> "image/webp"
-            "mp3" -> "audio/mpeg"
-            "wav" -> "audio/wav"
-            "ogg" -> "audio/ogg"
-            else -> "application/octet-stream"
-        }
-        return mimeType.toMediaType()
+    data class ResponseModel(
+        @SerializedName("ResponseCode") val code: String,
+        @SerializedName("uploadedFiles") val content: String?
+    )
+
+    fun File.getMimeType(context: Context): String {
+        val uri = Uri.fromFile(this)
+        context.contentResolver.getType(uri)?.let { return it }
+        val extension = extension.lowercase()
+        return MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)
+            ?: "application/octet-stream"
     }
 }

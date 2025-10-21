@@ -53,6 +53,7 @@ class VideoTrimUsecase @Inject constructor(
                     .build()
             ).build()
         val transformer = Transformer.Builder(this@VideoTrimUsecase.context)
+            .setMaxDelayBetweenMuxerSamplesMs(5000)
             .addListener(object : Transformer.Listener {
                 override fun onCompleted(
                     composition: Composition,
@@ -62,12 +63,12 @@ class VideoTrimUsecase @Inject constructor(
                         resumeWith(Result.success(outputFile))
                     }
                 }
-
                 override fun onError(
                     composition: Composition,
                     exportResult: ExportResult,
                     exportException: ExportException
                 ) {
+                    outputFile.deleteOnExit()
                     if (isActive) {
                         resumeWithException(exportException)
                     }
@@ -77,12 +78,16 @@ class VideoTrimUsecase @Inject constructor(
             try {
                 transformer.start(mediaItem, path)
             } catch (e: Exception) {
+                outputFile.deleteOnExit()
                 if (isActive) {
                     resumeWithException(e)
                 }
             }
         }
-        invokeOnCancellation { job.cancel() }
+        invokeOnCancellation {
+            job.cancel()
+            outputFile.deleteOnExit()
+        }
     }
 
     data class Parameter(

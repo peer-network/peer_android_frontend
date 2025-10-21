@@ -54,7 +54,7 @@ fun HomeNavigation(
                     )
                     is HomeRoute.Add -> ComposerScreen(
                         provider = component,
-                        viewModelStore = viewModelStore,
+                        viewModelStoreOwner = viewModelStore.get(id),
                         onPostSuccess = {
                             hasUpdate.value = true
                             handleOnHomeClick()

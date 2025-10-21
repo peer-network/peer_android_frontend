@@ -93,7 +93,6 @@ fun CreatorScreen(
     val handleOnClear by rememberUpdatedState(onClear)
     val handleOnSuccess by rememberUpdatedState(onSuccess)
     val successMessage = stringResource(R.string.post_success_message)
-
     CreatorScreen(
         title = title,
         description = description,
@@ -117,7 +116,7 @@ fun CreatorScreen(
         ) {
             when(it) {
                 is EngagementEvent.Post -> {
-                    viewModel.upload(it.draft)
+                    viewModel.create(it.draft)
                 }
                 else -> {}
             }

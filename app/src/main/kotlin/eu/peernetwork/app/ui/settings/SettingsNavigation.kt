@@ -12,6 +12,7 @@ import androidx.navigation.navArgument
 import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.app.ui.about.AboutScreen
 import eu.peernetwork.app.ui.profile.ProfileScreen
+import eu.peernetwork.app.ui.version.VersionScreen
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.material.DesignRouter
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
@@ -76,11 +77,11 @@ fun SettingsNavigation(
             }
         }
         composable("version") {
-            AboutScreen(
+            VersionScreen(
                 BuildConfig.VERSION_NAME,
                 BuildConfig.VERSION_CODE,
                 provider,
-                stringResource(R.string.about_us_label),
+                viewModelStore,
             )
         }
         composable("about") {

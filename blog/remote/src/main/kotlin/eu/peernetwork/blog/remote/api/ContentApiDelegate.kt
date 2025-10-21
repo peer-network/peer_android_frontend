@@ -96,13 +96,13 @@ class ContentApiDelegate @Inject constructor(
         )
     }
 
-    override suspend fun create(draft: Draft): Content {
+    override suspend fun create(draft: Draft, meta: String): Content {
         val mutation = CreatePostMutation(
             action = PostType.POST,
             title = draft.title,
             description = Optional.presentIfNotNull(draft.description),
             contentType = draft.type.mapFromDomain(),
-            media = draft.getMedia(),
+            uploadedFiles = Optional.present(meta),
             cover = draft.getCover(),
             tags = if (draft.tags.isEmpty()) {
                 Optional.absent()
@@ -120,22 +120,17 @@ class ContentApiDelegate @Inject constructor(
         return content ?: throw ContentException()
     }
 
-    private fun Draft.getMedia(): Optional<List<String>> {
-        return when (type) {
-            is Draft.Type.Text -> Optional.present((type as Draft.Type.Text).files)
-            is Draft.Type.Video -> Optional.present((type as Draft.Type.Video).files)
-            is Draft.Type.Audio -> Optional.present((type as Draft.Type.Audio).files)
-            is Draft.Type.Image -> Optional.present((type as Draft.Type.Image).files)
-        }
-    }
-
     private fun Draft.getCover(): Optional<List<String>> {
         return when (type) {
             is Draft.Type.Text -> Optional.absent()
             is Draft.Type.Video -> Optional.absent()
             is Draft.Type.Audio -> {
-                val cover = (type as Draft.Type.Audio).cover
-                if (cover != null) Optional.present(listOf(cover)) else Optional.absent()
+                val cover = (type as Draft.Type.Audio).media.mapNotNull { it.cover }
+                if (cover.isNotEmpty()) {
+                    Optional.present(cover)
+                } else {
+                    Optional.absent()
+                }
             }
             is Draft.Type.Image -> Optional.absent()
         }

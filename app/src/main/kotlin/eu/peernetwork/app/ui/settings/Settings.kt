@@ -4,6 +4,7 @@ import android.content.Context
 import eu.peernetwork.app.provider.ApplicationProvider
 import eu.peernetwork.app.ui.about.About
 import eu.peernetwork.app.ui.profile.Profile
+import eu.peernetwork.app.ui.version.Version
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.social.ui.referral.Referral
@@ -23,7 +24,15 @@ interface Settings : ApplicationProvider {
         dependencies = [ Settings::class ],
         modules = [ SettingsModule::class ]
     )
-    interface Component : Settings, Account, PasswordUpdate, Address, About, UiComponentProvider, Referral, Profile
+    interface Component : Settings,
+        Account,
+        PasswordUpdate,
+        Address,
+        About,
+        UiComponentProvider,
+        Referral,
+        Profile,
+        Version
 
     class Builder(private val dependency: Settings) : UiComponent.DefaultBuilder<Settings, Component>() {
         override fun build(context: Context): Component {
