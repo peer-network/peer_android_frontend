@@ -178,6 +178,7 @@ internal class ContentApiDelegateTest {
         every { mockData.createPost } returns content
         coEvery { client.mutation(any<CreatePostMutation>()).execute() } returns mockResponse
 
+        val meta = "<test-meta>"
         val type = Draft.Type.Text(listOf("<test-text>"))
         val draft = Draft(
             title = "<test-title>",
@@ -185,7 +186,7 @@ internal class ContentApiDelegateTest {
             tags = listOf("<test-tag>"),
             type = type,
         )
-        val result = api.create(draft)
+        val result = api.create(draft, meta)
 
         assertEquals(result.id, content.affectedRows?.id)
 
@@ -194,7 +195,7 @@ internal class ContentApiDelegateTest {
             title = draft.title,
             description = Optional.presentIfNotNull(draft.description),
             contentType = ContentType.text,
-            media = Optional.present(type.files),
+            uploadedFiles = Optional.present(meta),
             tags = Optional.present(draft.tags)
         )) }
     }
@@ -220,7 +221,7 @@ internal class ContentApiDelegateTest {
             type = Draft.Type.Text(listOf("<test-text>")),
         )
         val result = try {
-            api.create(draft)
+            api.create(draft, "<test-data>")
         } catch (_: Throwable) {
             null
         }
@@ -241,15 +242,16 @@ internal class ContentApiDelegateTest {
         every { mockData.createPost } returns content
         coEvery { client.mutation(any<CreatePostMutation>()).execute() } returns mockResponse
 
+        val meta = "<test-meta>"
         val media = "<test-media>"
         val cover = "<test-cover>"
         val draft = Draft(
             title = "<test-title>",
             description = "<test-description>",
             tags = listOf("<test-tag>"),
-            type = Draft.Type.Audio(listOf(media), cover),
+            type = Draft.Type.Audio(listOf(Draft.Media(media, cover))),
         )
-        val result = api.create(draft)
+        val result = api.create(draft, meta)
 
         assertEquals(result.id, content.affectedRows?.id)
 
@@ -258,7 +260,7 @@ internal class ContentApiDelegateTest {
             title = draft.title,
             description = Optional.presentIfNotNull(draft.description),
             contentType = ContentType.audio,
-            media = Optional.present(listOf(media)),
+            uploadedFiles = Optional.present(meta),
             cover = Optional.present(listOf(cover)),
             tags = Optional.present(draft.tags)
         )) }

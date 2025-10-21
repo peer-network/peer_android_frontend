@@ -1,7 +1,9 @@
 package eu.peernetwork.blog.remote.api
 
+import android.content.Context
 import com.google.gson.Gson
 import eu.peernetwork.blog.domain.repository.EligibilityRepository
+import eu.peernetwork.blog.remote.helper.RequestHelper
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -22,44 +24,35 @@ internal class MultipartApiDelegateTest {
     private val mockClient = mockk<OkHttpClient>(relaxed = true)
     private val mockEligibilityRepo = mockk<EligibilityRepository>()
 
+    private val requestHelper = mockk<RequestHelper>()
+
+    private val context = mockk<Context>()
+
     private lateinit var api: MultipartApiDelegate
 
     @Before
     fun setup() {
         api = MultipartApiDelegate(
             gson = gson,
+            helper = requestHelper,
             url = url,
             rest = mockClient,
-            eligibilityRepository = mockEligibilityRepo
         )
     }
 
     @Test
     fun `upload should return Content when successful`(): Unit = runBlocking {
         val token = "test-token"
+        val type = "application/octet-stream"
+        coEvery { requestHelper.getType(any()) } returns type
         coEvery { mockEligibilityRepo.get() } returns token
-
         val file = createTempFile().apply {
             writeText("dummy content")
             deleteOnExit()
         }
-
         val mockResponseBody = """{
-            "id": "123",
-            "title": "Test",
-            "description": "desc",
-            "media": [],
-            "author": {"id":"1","username":"user"},
-            "type": "TEXT",
-            "createdAt": 0,
-            "likes":0,
-            "dislikes":0,
-            "isLiked":false,
-            "isDisliked":false,
-            "isViewed":false,
-            "views":0,
-            "comment":0,
-            "url":"http://localhost/file"
+            "ResponseCode": "123",
+            "uploadedFiles": "${file.name}"
         }"""
         val mockResponse = mockk<Response>(relaxed = true) {
             every { isSuccessful } returns true
@@ -70,11 +63,9 @@ internal class MultipartApiDelegateTest {
         every { mockCall.execute() } returns mockResponse
         every { mockClient.newCall(any()) } returns mockCall
 
-        val content = api.upload(file)
+        val content = api.upload("<test-token>", listOf(file.path))
 
         assertNotNull(content)
-        assertEquals("123", content.id)
-        assertEquals("Test", content.title)
-        assertEquals("TEXT", content.type.name)
+        assertEquals(file.name, content)
     }
 }

@@ -3,8 +3,10 @@ package eu.peernetwork.user.ui.password.request
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import app.cash.turbine.test
 import eu.peernetwork.user.domain.usecase.PasswordRequestUsecase
+import eu.peernetwork.user.ui.usecase.EmailMaskUsecase
 import eu.peernetwork.user.ui.v2.password.request.RequestViewModel
 import io.mockk.coEvery
+import io.mockk.every
 import io.mockk.mockk
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.Dispatchers
@@ -26,17 +28,20 @@ internal class PasswordRequestViewModelTest {
 
     private val usecase = mockk<PasswordRequestUsecase>()
 
+    private val emailMaskUsecase = mockk<EmailMaskUsecase>()
+
     private lateinit var viewModel: RequestViewModel
 
     @Before
     fun setup() {
         Dispatchers.setMain(dispatcher)
-        viewModel = RequestViewModel(usecase)
+        viewModel = RequestViewModel(usecase, emailMaskUsecase)
     }
 
     @Test
     fun `test request password success`() = runTest {
         val email = "<test-email>"
+        every { emailMaskUsecase(any()) } returns email
         coEvery { usecase(any()) } coAnswers {
             delay(100)
         }

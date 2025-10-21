@@ -45,7 +45,7 @@ class EligibilityApiDelegateTest {
     fun `test fetch`(): Unit = runBlocking {
         val expectedToken = "fake-eligibility-token"
         val postEligibility = PostEligibilityQuery.PostEligibility(
-            status = "OK",
+            status = "success",
             ResponseCode = "",
             eligibilityToken = expectedToken
         )

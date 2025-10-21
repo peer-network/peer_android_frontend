@@ -12,6 +12,7 @@ import eu.peernetwork.blog.remote.api.ContentApiDelegate
 import eu.peernetwork.blog.remote.api.EligibilityApiDelegate
 import eu.peernetwork.blog.remote.api.EngagementApiDelegate
 import eu.peernetwork.blog.remote.api.MultipartApiDelegate
+import eu.peernetwork.blog.remote.helper.RequestHelper
 
 @Module
 interface ApiModule {
@@ -29,4 +30,7 @@ interface ApiModule {
 
     @Binds
     fun bindEligibilityApi(delegate: EligibilityApiDelegate): EligibilityApi
+
+    @Binds
+    fun bindRequestHelper(delegate: RequestHelper.Delegate): RequestHelper
 }

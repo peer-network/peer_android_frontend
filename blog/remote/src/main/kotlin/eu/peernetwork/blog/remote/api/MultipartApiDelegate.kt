@@ -1,11 +1,9 @@
 package eu.peernetwork.blog.remote.api
 
-import android.content.Context
-import android.net.Uri
-import android.webkit.MimeTypeMap
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
 import eu.peernetwork.blog.data.api.MultipartApi
+import eu.peernetwork.blog.remote.helper.RequestHelper
 import eu.peernetwork.core.remote.exception.NetworkException
 import eu.peernetwork.core.remote.exception.UndefinedResponseException
 import okhttp3.MediaType.Companion.toMediaType
@@ -19,7 +17,7 @@ import javax.inject.Named
 
 class MultipartApiDelegate @Inject constructor(
     private val gson: Gson,
-    private val context: Context,
+    private val helper: RequestHelper,
     @Named("baseUrl") private val url: String,
     private val rest: OkHttpClient
     ) : MultipartApi {
@@ -32,7 +30,7 @@ class MultipartApiDelegate @Inject constructor(
             requestBody.addFormDataPart(
                 "file",
                 file.name,
-                file.asRequestBody(file.getMimeType(context).toMediaType())
+                file.asRequestBody(helper.getType(file).toMediaType())
             )
         }
         val request = Request.Builder()
@@ -53,12 +51,4 @@ class MultipartApiDelegate @Inject constructor(
         @SerializedName("ResponseCode") val code: String,
         @SerializedName("uploadedFiles") val content: String?
     )
-
-    fun File.getMimeType(context: Context): String {
-        val uri = Uri.fromFile(this)
-        context.contentResolver.getType(uri)?.let { return it }
-        val extension = extension.lowercase()
-        return MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)
-            ?: "application/octet-stream"
-    }
 }
