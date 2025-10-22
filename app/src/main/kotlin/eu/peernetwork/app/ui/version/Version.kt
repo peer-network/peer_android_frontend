@@ -1,18 +1,17 @@
 package eu.peernetwork.app.ui.version
 
 import android.content.Context
-import eu.peernetwork.app.ui.composer.ComposerModule
+import eu.peernetwork.app.provider.ApplicationProvider
 import eu.peernetwork.core.ui.component.UiComponent
 
-interface Version {
+interface Version : ApplicationProvider {
     @javax.inject.Scope
     @Retention(AnnotationRetention.RUNTIME)
     annotation class Scope
 
     @Scope
     @dagger.Component(
-        dependencies = [ Version::class ],
-        modules = [ ComposerModule::class ]
+        dependencies = [ Version::class ]
     )
     interface Component : Version
 

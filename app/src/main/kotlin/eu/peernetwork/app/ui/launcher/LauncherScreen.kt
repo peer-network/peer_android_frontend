@@ -1,5 +1,6 @@
 package eu.peernetwork.app.ui.launcher
 
+import android.content.Intent
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
@@ -8,7 +9,6 @@ import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import eu.peernetwork.app.ui.browser.BrowserScreen
 import eu.peernetwork.app.ui.home.HomeScreen
 import eu.peernetwork.app.ui.setup.SetupScreen
 import eu.peernetwork.app.ui.welcome.WelcomeScreen
@@ -16,6 +16,7 @@ import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.material.DesignNavigation
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.extension.route
+import androidx.core.net.toUri
 
 @Composable
 fun LauncherScreen(
@@ -56,7 +57,10 @@ fun LauncherScreen(
             WelcomeScreen(
                 referral = code,
                 provider = component,
-                onBrowse = { url -> controller.navigate("browser?link=$url") }
+                onBrowse = { url ->
+                    val intent = Intent(Intent.ACTION_VIEW, url.toUri())
+                    context.startActivity(intent)
+                }
             )
         }
         composable("home") { backStackEntry ->
@@ -72,12 +76,6 @@ fun LauncherScreen(
                 provider = component,
                 viewModelStoreOwner = backStackEntry
             )
-        }
-        composable("browser?link={link}") { backStackEntry ->
-            val link = backStackEntry.arguments?.getString("link") ?: ""
-            BrowserScreen(url = link) {
-                controller.popBackStack()
-            }
         }
     }
     LaunchedEffect(token.value) {

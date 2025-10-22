@@ -16,6 +16,8 @@ android {
         buildConfigField("String","FEED_BACK","\"https://docs.google.com/forms/d/e/1FAIpQLSeTRecbfUTKmpYHSaE7bSawEagUpkOPagJtLqZdsec659HaGw/viewform\"")
         buildConfigField("String","PRIVACY","\"https://peerapp.de/privacy.html\"")
         buildConfigField("String","LICENCE","\"https://peerapp.de/EULA.html\"")
+        buildConfigField("String","APP_WIKI","\"https://github.com/peer-network/peer_backend/wiki/Android\"")
+        buildConfigField("String","BACKEND_WIKI","\"https://github.com/peer-network/peer_backend/wiki\"")
     }
     buildTypes {
         debug {
