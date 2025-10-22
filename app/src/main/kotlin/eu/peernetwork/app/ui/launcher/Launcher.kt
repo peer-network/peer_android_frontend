@@ -4,6 +4,7 @@ import android.content.Context
 import eu.peernetwork.app.provider.ApplicationProvider
 import eu.peernetwork.app.ui.browser.Browser
 import eu.peernetwork.app.ui.home.Home
+import eu.peernetwork.app.ui.onboarding.Onboarding
 import eu.peernetwork.app.ui.setup.Setup
 import eu.peernetwork.app.ui.welcome.Welcome
 import eu.peernetwork.core.ui.component.UiComponent
@@ -20,6 +21,7 @@ interface Launcher : ApplicationProvider {
         modules = [ LauncherModule::class ]
     )
     interface Component : Launcher,
+        Onboarding,
         Home,
         Setup,
         Welcome,

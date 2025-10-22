@@ -10,7 +10,6 @@ import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.app.ui.feed.Feed
 import eu.peernetwork.app.ui.messaging.Messaging
-import eu.peernetwork.app.ui.onboarding.Onboarding
 import eu.peernetwork.app.ui.search.Search
 import eu.peernetwork.app.ui.settings.SettingsEvent
 import eu.peernetwork.app.ui.wallet.Wallet
@@ -30,7 +29,6 @@ interface Home : ApplicationProvider {
         modules = [ HomeModule::class ]
     )
     interface Component : Home,
-        Onboarding,
         Feed,
         Profile,
         Messaging,

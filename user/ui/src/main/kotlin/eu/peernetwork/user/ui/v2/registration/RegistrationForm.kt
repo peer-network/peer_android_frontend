@@ -13,6 +13,7 @@ import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
@@ -96,6 +97,15 @@ fun RegistrationForm(
     val layoutResult = remember { mutableStateOf<TextLayoutResult?>(null) }
     val handleOnPrivacy by rememberUpdatedState(onPrivacy)
     val handleOnLicence by rememberUpdatedState(onLicence)
+    val passwordValidationError = stringResource(R.string.password_mismatch)
+    val validationError = remember { derivedStateOf {
+        if (password.text != confirmPassword.text) {
+            passwordValidationError
+        } else {
+            null
+        }
+    } }
+    val errorState = remember(error.value) { mutableStateOf(error.value) }
     Column(modifier = modifier) {
         DesignTextField(
             state = email,
@@ -212,7 +222,7 @@ fun RegistrationForm(
                 },
         )
         ErrorLabel(
-            error = error,
+            error = errorState,
             modifier = Modifier.padding(horizontal = 18.dp)
         )
         DesignButton(
@@ -221,6 +231,15 @@ fun RegistrationForm(
             enabled = isValidated.value && !isLoading.value,
             modifier = Modifier.fillMaxWidth()
                 .padding(top = 10.dp),
-        ) { Text(stringResource(R.string.register_text)) }
+        ) {
+            Text(stringResource(R.string.register_text))
+            LaunchedEffect(validationError.value) {
+                if (validationError.value != null) {
+                    errorState.value = validationError.value
+                } else {
+                    errorState.value = error.value
+                }
+            }
+        }
     }
 }

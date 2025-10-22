@@ -28,13 +28,13 @@ fun DesignNavigation(
     (@JvmSuppressWildcards
     AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition) =
         {
-            fadeIn(animationSpec = tween(350))
+            fadeIn(animationSpec = tween(250))
         },
     exitTransition:
     (@JvmSuppressWildcards
     AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition) =
         {
-            fadeOut(animationSpec = tween(350))
+            fadeOut(animationSpec = tween(250))
         },
     popEnterTransition:
     (@JvmSuppressWildcards

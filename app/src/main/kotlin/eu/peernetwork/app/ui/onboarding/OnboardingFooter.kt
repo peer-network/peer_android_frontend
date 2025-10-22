@@ -65,6 +65,7 @@ enum class OnboardingFooterState {
 @Composable
 fun OnboardingFooter(
     state: PagerState,
+    isLoading: State<Boolean>,
     modifier: Modifier = Modifier,
     onFinish: (Boolean) -> Unit
 ) {
@@ -88,6 +89,7 @@ fun OnboardingFooter(
             .padding(top = 18.dp))
         OnboardingFooter(
             state = derivedState,
+            isLoading = isLoading,
             onPreviousClick = {
                 if (derivedState.value != OnboardingFooterState.BEGIN) {
                     scope.launch {
@@ -110,6 +112,7 @@ fun OnboardingFooter(
 @Composable
 fun OnboardingFooter(
     state: State<OnboardingFooterState>,
+    isLoading: State<Boolean>,
     onPreviousClick: () -> Unit = {},
     onNextClick: () -> Unit = {},
     onFinish: (Boolean) -> Unit
@@ -128,6 +131,7 @@ fun OnboardingFooter(
             exit = fadeOut()
         ) {
             OnboardingFooter(
+                isLoading = isLoading,
                 onNextClick = onNextClick,
                 onSkipClick = { handleOnFinish(false) },
                 onPreviousClick = if (state.value != OnboardingFooterState.BEGIN) {
@@ -147,7 +151,8 @@ fun OnboardingFooter(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(CircleShape),
-                enabled = true,
+                enabled = !isLoading.value,
+                isLoading = isLoading.value,
                 shape = CircleShape,
                 minHeight = 42.dp,
             ) { Text(
@@ -162,6 +167,7 @@ fun OnboardingFooter(
 
 @Composable
 fun OnboardingFooter(
+    isLoading: State<Boolean>,
     onPreviousClick: (() -> Unit)? = null,
     onNextClick: () -> Unit = {},
     onSkipClick: () -> Unit
@@ -173,7 +179,8 @@ fun OnboardingFooter(
     ) {
         DesignOutlinedButton(
             onClick = onSkipClick,
-            enabled = true,
+            enabled = !isLoading.value,
+            isLoading = isLoading.value,
             shape = CircleShape,
             textStyle = MaterialTheme.typography.labelLarge,
             colors = ButtonDefaults.outlinedButtonColors(
@@ -283,9 +290,10 @@ fun OnboardingFooterPreview() {
             horizontal = 24.dp
         )) {
             val state = remember { mutableStateOf(OnboardingFooterState.COMPLETE) }
+            val isLoading = remember { mutableStateOf(false) }
             val pagerState = rememberPagerState(initialPage = 0, pageCount = { 6 })
-            OnboardingFooter(pagerState) {}
-            OnboardingFooter(state) {}
+            OnboardingFooter(pagerState, isLoading) {}
+            OnboardingFooter(state, isLoading) {}
         }
     }
 }

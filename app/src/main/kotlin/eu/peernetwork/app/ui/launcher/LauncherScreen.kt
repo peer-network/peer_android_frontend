@@ -1,6 +1,10 @@
 package eu.peernetwork.app.ui.launcher
 
 import android.content.Intent
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
@@ -17,6 +21,7 @@ import eu.peernetwork.core.ui.design.material.DesignNavigation
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.extension.route
 import androidx.core.net.toUri
+import eu.peernetwork.app.ui.onboarding.OnboardingScreen
 
 @Composable
 fun LauncherScreen(
@@ -63,19 +68,100 @@ fun LauncherScreen(
                 }
             )
         }
-        composable("home") { backStackEntry ->
+        composable(
+            route = "onboarding?initialized={initialized}",
+            exitTransition = {
+                fadeOut(animationSpec = tween(200)) +
+                        slideOutOfContainer(
+                            towards = AnimatedContentTransitionScope.SlideDirection.End,
+                            animationSpec = tween(300),
+                            targetOffset = { -it / 4 }
+                        )
+            },
+            popEnterTransition = {
+                fadeIn(animationSpec = tween(200)) +
+                        slideIntoContainer(
+                            towards = AnimatedContentTransitionScope.SlideDirection.End,
+                            animationSpec = tween(300),
+                            initialOffset = { it / 4 }
+                        )
+            },
+            popExitTransition = {
+                fadeOut(animationSpec = tween(200)) +
+                        slideOutOfContainer(
+                            towards = AnimatedContentTransitionScope.SlideDirection.Start,
+                            animationSpec = tween(300),
+                            targetOffset = { -it / 4 }
+                        )
+            }
+        ) { backStackEntry ->
+            val initialized = backStackEntry.arguments?.getString("initialized") == "true"
+            OnboardingScreen(
+                initialized = initialized,
+                provider = component,
+                viewModelStoreOwner = backStackEntry,
+            ) {
+                if (it) {
+                    controller.route("home?isOnboarded=true")
+                } else {
+                    controller.popBackStack()
+                }
+            }
+        }
+        composable(
+            route = "home?isOnboarded={isOnboarded}",
+            exitTransition = {
+                fadeOut(animationSpec = tween(200)) +
+                        slideOutOfContainer(
+                            towards = AnimatedContentTransitionScope.SlideDirection.End,
+                            animationSpec = tween(300),
+                            targetOffset = { -it / 4 }
+                        )
+            },
+            popEnterTransition = {
+                fadeIn(animationSpec = tween(200)) +
+                        slideIntoContainer(
+                            towards = AnimatedContentTransitionScope.SlideDirection.End,
+                            animationSpec = tween(300),
+                            initialOffset = { it / 4 }
+                        )
+            },
+            popExitTransition = {
+                fadeOut(animationSpec = tween(200)) +
+                        slideOutOfContainer(
+                            towards = AnimatedContentTransitionScope.SlideDirection.Start,
+                            animationSpec = tween(300),
+                            targetOffset = { -it / 4 }
+                        )
+            }
+        ) { backStackEntry ->
+            val initialized = backStackEntry.arguments?.getString("isOnboarded") == "true"
             HomeScreen(
+                isOnboarded = initialized,
                 provider = component,
                 viewModelStoreOwner = backStackEntry
-            )
+            ) {
+                if (it) {
+                    controller.route("onboarding?initialized=false")
+                } else {
+                    controller.navigate("onboarding?initialized=true")
+                }
+            }
         }
         composable("post/{id}") { backStackEntry ->
             val id = backStackEntry.arguments?.getString("id") ?: ""
             HomeScreen(
                 route = "post/$id",
+                isOnboarded = false,
                 provider = component,
                 viewModelStoreOwner = backStackEntry
-            )
+            ) {
+                if (it) {
+                    controller.route("onboarding?initialized=false")
+                } else {
+                    controller.navigate("onboarding?initialized=true")
+                }
+            }
         }
     }
     LaunchedEffect(token.value) {

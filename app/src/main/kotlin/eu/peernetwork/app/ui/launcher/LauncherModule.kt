@@ -6,6 +6,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
 import eu.peernetwork.app.ui.home.Home
+import eu.peernetwork.app.ui.onboarding.Onboarding
 import eu.peernetwork.app.ui.setup.Setup
 import eu.peernetwork.app.ui.welcome.Welcome
 import eu.peernetwork.core.ui.annotation.UiBuilder
@@ -28,6 +29,14 @@ object LauncherModule {
         @JvmSuppressWildcards Map<Class<out ViewModel>, Provider<ViewModel>>
     ): ViewModelProvider.Factory {
         return UiViewModelFactory(classToViewModel)
+    }
+
+    @Launcher.Scope
+    @Provides
+    @IntoMap
+    @UiBuilder(Onboarding.Builder::class)
+    fun provideOnboardingBuilder(component: Launcher.Component): UiComponent.Builder {
+        return Onboarding.Builder(component)
     }
 
     @Provides

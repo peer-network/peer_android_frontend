@@ -95,6 +95,7 @@ dependencies {
     implementation(libs.firebase.store)
 
     implementation(libs.lottie)
+    implementation(libs.markdown)
 
     implementation(libs.dagger)
     ksp(libs.dagger.compiler)

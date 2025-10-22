@@ -40,6 +40,7 @@ ffmpeg = "2025.08.21"
 lrucache = "2.0.2"
 lottie = "6.6.6"
 zoomable = "1.5.0"
+markdown = "0.5.7"
 media3-exoplayer = "1.7.1"
 
 [libraries]
@@ -95,6 +96,7 @@ permissions = { module = "com.google.accompanist:accompanist-permissions", versi
 blur = { module = "com.github.Commit451:NativeStackBlur", version.ref = "blur" }
 lottie = { module = "com.airbnb.android:lottie-compose", version.ref = "lottie" }
 zoomable = { module = "net.engawapg.lib:zoomable", version.ref = "zoomable" }
+markdown = { module = "com.github.jeziellago:compose-markdown", version.ref = "markdown" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

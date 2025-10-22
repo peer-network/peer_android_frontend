@@ -7,6 +7,7 @@ import eu.peernetwork.app.usecase.OnboardingUpdateUsecase
 import eu.peernetwork.app.usecase.OnboardingUsecase
 import eu.peernetwork.user.domain.model.Preference
 import eu.peernetwork.user.domain.usecase.PreferenceUpdateUsecase
+import eu.peernetwork.user.domain.usecase.PreferenceUsecase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,7 +15,8 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class OnboardingViewModel @Inject constructor(
-    private val preferenceUsecase: PreferenceUpdateUsecase,
+    private val preferenceUsecase: PreferenceUsecase,
+    private val preferenceUpdateUsecase: PreferenceUpdateUsecase,
     private val onboardingUsecase: OnboardingUsecase,
     private val onboardingUpdateUsecase: OnboardingUpdateUsecase
 ) : ViewModel() {
@@ -44,11 +46,15 @@ class OnboardingViewModel @Inject constructor(
         }
     }
 
-    fun finish(status: Boolean, preference: Preference) {
+    fun finish(status: Boolean) {
         viewModelScope.launch {
             try {
                 _status.tryEmit(Status.Loading)
-                preferenceUsecase(preference)
+                val preference = preferenceUsecase()
+                preferenceUpdateUsecase(preference.copy(
+                    flags = ((_state.value as? State.Success?)?.properties ?: onboardingUsecase())
+                        .configuration.onboarding.availableOnboardings
+                ))
                 onboardingUpdateUsecase(status)
                 _status.tryEmit(Status.Success(preference))
             } catch (error: Throwable) {

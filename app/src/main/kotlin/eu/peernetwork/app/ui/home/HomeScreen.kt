@@ -2,6 +2,7 @@ package eu.peernetwork.app.ui.home
 
 import android.content.res.Configuration
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
@@ -22,18 +23,18 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import eu.peernetwork.app.BuildConfig
-import eu.peernetwork.app.ui.onboarding.OnboardingScreen
 import eu.peernetwork.app.ui.settings.SettingsEvent
 import eu.peernetwork.core.ui.component.UiComponentProvider
+import eu.peernetwork.core.ui.design.compose.DesignError
 import eu.peernetwork.core.ui.design.material.DesignPage
 import eu.peernetwork.core.ui.design.material.DesignPageHeader
+import eu.peernetwork.core.ui.design.material.DesignScene
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.core.ui.design.material.DesignSceneState
 import eu.peernetwork.core.ui.extension.attach
 import eu.peernetwork.core.ui.extension.attachIfNecessary
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
-import eu.peernetwork.core.ui.extension.route
 import eu.peernetwork.core.ui.factory.UiViewModelStore
 import eu.peernetwork.wallet.ui.reward.RewardScreen
 import eu.peernetwork.social.ui.feedback.FeedbackPopup
@@ -41,16 +42,18 @@ import eu.peernetwork.social.ui.feedback.FeedbackPopup
 @Composable
 fun HomeScreen(
     route: String? = null,
+    isOnboarded: Boolean,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
+    onOnboard: (Boolean) -> Unit
 ) {
     val viewModelStore = remember { UiViewModelStore.Delegate() }
     val context = LocalContext.current
-    val controller = rememberNavController()
+    val handleOnOnboard by rememberUpdatedState(onOnboard)
     val component = remember {
         provider.builder(Home.Builder::class.java).build(context, object : SettingsEvent {
             override fun invoke(event: SettingsEvent.Event) {
-                controller.navigate("onboarding")
+                handleOnOnboard(false)
             }
         })
     }
@@ -73,27 +76,20 @@ fun HomeScreen(
             }
         }
     } }
-    HomeScaffold(
+    DesignScene(
         state = derivedState,
-        resource = component.resource(),
-        onRefresh = { viewModel() },
-        navController = controller,
-        onboarding = {
-            OnboardingScreen(
-                preference = it.preference,
-                provider = component,
-                viewModelStoreOwner = viewModelStore.get(it.userId),
-            ) { preference ->
-                if (preference.flags.isEmpty()) {
-                    viewModel(preference)
-                } else if (!controller.popBackStack()) {
-                    controller.route("home")
-                }
-            }
+        modifier = Modifier.fillMaxSize(),
+        loading = { HomeSkeleton() },
+        error = {
+            DesignError(
+                onRefresh = { viewModel() },
+                error = it.value,
+                resource = component.resource()
+            )
         }
     ) { data ->
         val controller = rememberNavController()
-        val navigationState = rememberSaveable { mutableIntStateOf(data.lastVisitedPage) }
+        val navigationState = rememberSaveable { mutableIntStateOf(data.value.lastVisitedPage) }
         val startDestination = remember { HomeRoute.get(navigationState.intValue).path }
         val navBackStackEntry by controller.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry?.destination?.route
@@ -101,7 +97,7 @@ fun HomeScreen(
             start = navigationState,
             options = { RewardScreen(
                 provider = component,
-                viewModelStoreOwner = viewModelStore.get(data.userId)
+                viewModelStoreOwner = viewModelStore.get(data.value.userId)
             ) },
             onClick = {
                 viewModel.lastVisited(it)
@@ -122,7 +118,7 @@ fun HomeScreen(
             isExploreActive = currentRoute == HomeRoute.Explore.path
         ) { state ->
             HomeNavigation(
-                id = data.userId,
+                id = data.value.userId,
                 startDestination = route ?: startDestination,
                 navController = controller,
                 component = component,
@@ -139,12 +135,17 @@ fun HomeScreen(
             navigationState.intValue = 0
             controller.attachIfNecessary(HomeRoute.Home.path)
         }
+        FeedbackPopup(
+            appPackage = BuildConfig.APPLICATION_ID,
+            provider = component,
+            viewModelStoreOwner = viewModelStore.get("FeedbackPopup")
+        )
+        LaunchedEffect(data.value) {
+            if (data.value.preference.flags.isEmpty() && !isOnboarded) {
+                handleOnOnboard(true)
+            }
+        }
     }
-    FeedbackPopup(
-        appPackage = BuildConfig.APPLICATION_ID,
-        provider = component,
-        viewModelStoreOwner = viewModelStore.get("FeedbackPopup")
-    )
     LaunchedEffect(Unit) {
         if (derivedState.value is DesignSceneState.Default) {
             viewModel()
