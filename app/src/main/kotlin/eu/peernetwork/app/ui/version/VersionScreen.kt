@@ -5,17 +5,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.net.toUri
-import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.extension.builder
-import eu.peernetwork.core.ui.factory.UiViewModelStore
 
 @Composable
 fun VersionScreen(
     version: String,
     versionCode: Int,
-    provider: UiComponentProvider,
-    viewModelStore: UiViewModelStore,
+    provider: UiComponentProvider
 ) {
     val context = LocalContext.current
     val component = remember {
@@ -25,11 +22,11 @@ fun VersionScreen(
         version = version,
         versionCode = versionCode,
         onAppWikiClicked = {
-            val intent = Intent(Intent.ACTION_VIEW, BuildConfig.APP_WIKI.toUri())
+            val intent = Intent(Intent.ACTION_VIEW, component.link().app.toUri())
             context.startActivity(intent)
         }
     ) {
-        val intent = Intent(Intent.ACTION_VIEW, BuildConfig.BACKEND_WIKI.toUri())
+        val intent = Intent(Intent.ACTION_VIEW, component.link().wiki.toUri())
         context.startActivity(intent)
     }
 }

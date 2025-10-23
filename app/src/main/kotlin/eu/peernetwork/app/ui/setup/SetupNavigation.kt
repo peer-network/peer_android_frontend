@@ -1,12 +1,15 @@
 package eu.peernetwork.app.ui.setup
 
+import android.content.Intent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
@@ -14,7 +17,6 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.app.ui.about.AboutScreen
-import eu.peernetwork.app.ui.browser.BrowserScreen
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.material.DesignRouter
 import eu.peernetwork.core.ui.design.material.DesignTitleBar
@@ -25,6 +27,7 @@ fun SetupNavigation(
     provider: UiComponentProvider,
     setup: @Composable (NavHostController) -> Unit
 ) {
+    val context = LocalContext.current
     val controller = rememberNavController()
     val updatedSetup by rememberUpdatedState(setup)
     DesignRouter(
@@ -34,7 +37,8 @@ fun SetupNavigation(
         composable("setup") { updatedSetup(controller) }
         composable("privacy") {
             DesignTitleBar {
-                BrowserScreen(BuildConfig.PRIVACY_POLICY_URL) { controller.popBackStack() }
+                val intent = Intent(Intent.ACTION_VIEW, BuildConfig.PRIVACY_POLICY_URL.toUri())
+                context.startActivity(intent)
             }
         }
         composable(

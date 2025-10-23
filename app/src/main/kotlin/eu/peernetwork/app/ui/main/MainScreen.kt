@@ -54,6 +54,7 @@ fun MainScreen(
                 route = route,
                 token = derivedState,
                 provider = component,
+                viewModelStoreOwner = viewModelStoreOwner
             )
         }
     }

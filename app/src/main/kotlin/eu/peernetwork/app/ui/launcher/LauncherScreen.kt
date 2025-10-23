@@ -21,6 +21,7 @@ import eu.peernetwork.core.ui.design.material.DesignNavigation
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.extension.route
 import androidx.core.net.toUri
+import androidx.lifecycle.ViewModelStoreOwner
 import eu.peernetwork.app.ui.onboarding.OnboardingScreen
 
 @Composable
@@ -28,7 +29,8 @@ fun LauncherScreen(
     id: String?,
     route: String?,
     token: State<String?>,
-    provider: UiComponentProvider
+    provider: UiComponentProvider,
+    viewModelStoreOwner: ViewModelStoreOwner
 ) {
     val context = LocalContext.current
     val clipboardManager = LocalClipboardManager.current
@@ -99,7 +101,7 @@ fun LauncherScreen(
             OnboardingScreen(
                 initialized = initialized,
                 provider = component,
-                viewModelStoreOwner = backStackEntry,
+                viewModelStoreOwner = viewModelStoreOwner,
             ) {
                 if (it) {
                     controller.route("home?isOnboarded=true")

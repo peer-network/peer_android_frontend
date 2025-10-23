@@ -80,8 +80,7 @@ fun SettingsNavigation(
             VersionScreen(
                 BuildConfig.VERSION_NAME,
                 BuildConfig.VERSION_CODE,
-                provider,
-                viewModelStore,
+                provider
             )
         }
         composable("about") {
