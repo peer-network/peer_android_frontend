@@ -81,6 +81,13 @@
     <string name="password_token_prompt">Already requested a token?</string>
     <string name="password_mismatch">Passwords do not match.</string>
 
+    <string name="password_separator">,\u00A0</string>
+    <string name="password_rule_label">Minimum of</string>
+    <string name="password_length_rule">8 characters</string>
+    <string name="password_uppercase_rule">1 uppercase</string>
+    <string name="password_lowercase_rule">1 lowercase</string>
+    <string name="password_number_rule">1 number</string>
+
     <string name="app_information_label">App Information</string>
     <string name="about_us_label">About Us</string>
     <string name="feedback_label">Feedback</string>
