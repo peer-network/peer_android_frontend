@@ -1,4 +1,4 @@
-package eu.peernetwork.user.ui.login
+package eu.peernetwork.user.ui.registration
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -10,9 +10,9 @@ import eu.peernetwork.core.ui.factory.UiViewModelFactory
 import javax.inject.Provider
 
 @Module
-object LoginModule {
+object RegistrationModule {
     @Provides
-    @Login.Scope
+    @Registration.Scope
     fun provideViewModelFactory(
         classToViewModel:
         @JvmSuppressWildcards Map<Class<out ViewModel>, Provider<ViewModel>>
@@ -22,7 +22,7 @@ object LoginModule {
 
     @Provides
     @IntoMap
-    @Login.Scope
-    @UiViewModel(LoginViewModel::class)
-    fun provideViewModel(viewModel: LoginViewModel): ViewModel = viewModel
+    @Registration.Scope
+    @UiViewModel(RegistrationViewModel::class)
+    fun provideViewModel(viewModel: RegistrationViewModel): ViewModel = viewModel
 }

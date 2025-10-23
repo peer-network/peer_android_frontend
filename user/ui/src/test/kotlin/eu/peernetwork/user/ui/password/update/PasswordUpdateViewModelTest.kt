@@ -25,12 +25,12 @@ internal class PasswordUpdateViewModelTest {
 
     private val usecase = mockk<PasswordChangeUsecase>()
 
-    private lateinit var viewModel: PasswordUpdateViewModel
+    private lateinit var viewModel: UpdateViewModel
 
     @Before
     fun setup() {
         Dispatchers.setMain(dispatcher)
-        viewModel = PasswordUpdateViewModel(usecase)
+        viewModel = UpdateViewModel(usecase)
     }
 
     @Test
@@ -42,8 +42,8 @@ internal class PasswordUpdateViewModelTest {
 
         viewModel.update(current, new)
         viewModel.state.test {
-            assertEquals(PasswordUpdateViewModel.State.Loading, awaitItem())
-            assertEquals(PasswordUpdateViewModel.State.Success, awaitItem())
+            assertEquals(UpdateViewModel.State.Loading, awaitItem())
+            assertEquals(UpdateViewModel.State.Success, awaitItem())
         }
     }
 
@@ -57,7 +57,7 @@ internal class PasswordUpdateViewModelTest {
 
         viewModel.update(current, new)
         viewModel.state.test {
-            assertEquals(PasswordUpdateViewModel.State.Error(error), awaitItem())
+            assertEquals(UpdateViewModel.State.Error(error), awaitItem())
         }
     }
 }

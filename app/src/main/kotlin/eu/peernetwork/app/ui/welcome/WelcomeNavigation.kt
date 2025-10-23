@@ -13,13 +13,13 @@ import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.material.DesignNavigation
 import eu.peernetwork.core.ui.extension.route
-import eu.peernetwork.user.ui.v2.login.LoginScreen
-import eu.peernetwork.user.ui.v2.password.request.RequestScreen
-import eu.peernetwork.user.ui.v2.password.reset.ResetScreen
-import eu.peernetwork.user.ui.v2.password.verification.VerificationScreen
-import eu.peernetwork.user.ui.v2.referral.ReferralScreen
-import eu.peernetwork.user.ui.v2.registration.RegistrationScreen
-import eu.peernetwork.user.ui.v2.registration.RegistrationSuccess
+import eu.peernetwork.user.ui.login.LoginScreen
+import eu.peernetwork.user.ui.password.request.RequestScreen
+import eu.peernetwork.user.ui.password.reset.ResetScreen
+import eu.peernetwork.user.ui.password.verification.VerificationScreen
+import eu.peernetwork.user.ui.referral.ReferralScreen
+import eu.peernetwork.user.ui.registration.RegistrationScreen
+import eu.peernetwork.user.ui.registration.RegistrationSuccess
 
 @Composable
 fun WelcomeNavigation(

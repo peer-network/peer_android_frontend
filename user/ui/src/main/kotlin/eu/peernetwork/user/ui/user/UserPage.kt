@@ -150,7 +150,7 @@ fun UserPage(
                 Metrics(
                     overview = account.overview,
                     modifier = Modifier.fillMaxWidth()
-                        .padding(top = 2.dp),
+                        .padding(top = 4.dp),
                     onClick = { if (it < (2 + showPeers.toInt())) clickHandler(it) }
                 )
             }
