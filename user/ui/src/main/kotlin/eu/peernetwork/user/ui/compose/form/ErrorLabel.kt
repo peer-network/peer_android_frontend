@@ -1,4 +1,4 @@
-package eu.peernetwork.user.ui.compose
+package eu.peernetwork.user.ui.compose.form
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.material3.MaterialTheme

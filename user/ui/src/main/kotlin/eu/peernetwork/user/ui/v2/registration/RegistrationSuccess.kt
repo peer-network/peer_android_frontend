@@ -24,7 +24,7 @@ import eu.peernetwork.core.ui.extension.annotate
 import eu.peernetwork.core.ui.theme.DesignTheme
 import eu.peernetwork.core.ui.theme.PeerAppGreen
 import eu.peernetwork.user.ui.R
-import eu.peernetwork.user.ui.compose.FormHeader
+import eu.peernetwork.user.ui.compose.form.FormHeader
 
 @Composable
 fun RegistrationSuccess(onLogin: () -> Unit) {

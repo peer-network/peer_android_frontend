@@ -1,4 +1,4 @@
-package eu.peernetwork.user.ui.compose
+package eu.peernetwork.user.ui.compose.password
 
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.clickable

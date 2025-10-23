@@ -40,7 +40,7 @@ import eu.peernetwork.core.ui.design.luna.DesignTextField
 import eu.peernetwork.core.ui.extension.isValidInput
 import eu.peernetwork.core.ui.theme.DesignTheme
 import eu.peernetwork.user.ui.R
-import eu.peernetwork.user.ui.compose.ErrorLabel
+import eu.peernetwork.user.ui.compose.form.ErrorLabel
 import java.util.UUID
 
 private const val tag = "PEER_REFERRAL"

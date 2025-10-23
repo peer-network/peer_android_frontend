@@ -140,10 +140,7 @@ fun CommentSummary(
                             onClick = onComment,
                             interactionSource = remember { MutableInteractionSource() },
                             indication = null,
-                        ).padding(
-                            top = 2.dp,
-                            bottom = 4.dp
-                        )
+                        ).padding(bottom = 4.dp)
                     )
                 }
             }

@@ -52,9 +52,9 @@ import eu.peernetwork.user.ui.mapper.mapToModels
 import eu.peernetwork.user.ui.model.UiAccount
 import eu.peernetwork.user.ui.model.UiOverview
 import eu.peernetwork.user.ui.model.UiSettings
-import eu.peernetwork.user.ui.compose.LogoutSheet
-import eu.peernetwork.user.ui.compose.PasswordSheet
-import eu.peernetwork.user.ui.compose.ProfileScaffold
+import eu.peernetwork.user.ui.compose.account.LogoutSheet
+import eu.peernetwork.user.ui.compose.password.PasswordSheet
+import eu.peernetwork.user.ui.compose.account.ProfileScaffold
 
 @Composable
 fun AccountScreen(

@@ -1,4 +1,4 @@
-package eu.peernetwork.user.ui.compose
+package eu.peernetwork.user.ui.compose.password
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer

@@ -11,7 +11,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -42,8 +41,8 @@ import eu.peernetwork.core.ui.design.material.DesignOverlay
 import eu.peernetwork.core.ui.extension.toInt
 import eu.peernetwork.media.core.renderer.ImageView
 import eu.peernetwork.user.ui.R
-import eu.peernetwork.user.ui.compose.Overview
-import eu.peernetwork.user.ui.compose.ProfileScaffold
+import eu.peernetwork.user.ui.compose.account.Metrics
+import eu.peernetwork.user.ui.compose.account.ProfileScaffold
 
 @Composable
 fun UserScreen(
@@ -174,7 +173,7 @@ fun UserScreen(
             }
         },
         options = {
-            Overview(
+            Metrics(
                 overview = account.overview,
                 modifier = Modifier.fillMaxWidth(),
                 onClick = { if (it < (2 + showPeers.toInt())) clickHandler(it) }
@@ -189,9 +188,7 @@ fun UserScreen(
     }
     DesignOverlay(
         visible,
-        onDismiss = {
-            selectedImage.value = null
-        }
+        onDismiss = { selectedImage.value = null }
     ) { updatedAvatar() }
 }
 
