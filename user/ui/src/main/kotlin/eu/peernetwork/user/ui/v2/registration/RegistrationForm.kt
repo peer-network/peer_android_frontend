@@ -47,6 +47,8 @@ import eu.peernetwork.user.ui.R
 import eu.peernetwork.user.ui.compose.ErrorLabel
 import eu.peernetwork.user.ui.compose.LabelledCheckBox
 import eu.peernetwork.user.ui.compose.PasswordField
+import eu.peernetwork.user.ui.extension.passwordRequirement
+import eu.peernetwork.user.ui.extension.policy
 
 private const val tag = "LINK"
 
@@ -97,15 +99,27 @@ fun RegistrationForm(
     val layoutResult = remember { mutableStateOf<TextLayoutResult?>(null) }
     val handleOnPrivacy by rememberUpdatedState(onPrivacy)
     val handleOnLicence by rememberUpdatedState(onLicence)
-    val passwordValidationError = stringResource(R.string.password_mismatch)
-    val validationError = remember { derivedStateOf {
+    val passwordMismatchError = stringResource(R.string.password_mismatch)
+    val confirmationError = remember { derivedStateOf {
         if (password.text != confirmPassword.text) {
-            passwordValidationError
+            passwordMismatchError
         } else {
             null
         }
     } }
+    val policy = password.policy()
+    val separator = stringResource(R.string.password_separator)
+    val minimumLabel = stringResource(R.string.password_rule_label)
     val errorState = remember(error.value) { mutableStateOf(error.value) }
+    val passwordValidationError = remember { derivedStateOf {
+        val requirements = password.passwordRequirement()
+        if (requirements.isEmpty() || password.text.isEmpty()) {
+            null
+        } else {
+            "$minimumLabel " + requirements
+                .joinToString(separator) { policy[it].toString() }
+        }
+    } }
     Column(modifier = modifier) {
         DesignTextField(
             state = email,
@@ -170,6 +184,11 @@ fun RegistrationForm(
                 .padding(horizontal = 18.dp)
                 .height(2.dp)
         )
+        ErrorLabel(
+            error = passwordValidationError,
+            modifier = Modifier.padding(horizontal = 18.dp)
+                .padding(top = 8.dp)
+        )
         PasswordField(
             state = confirmPassword,
             enabled = !isLoading.value,
@@ -233,9 +252,9 @@ fun RegistrationForm(
                 .padding(top = 10.dp),
         ) {
             Text(stringResource(R.string.register_text))
-            LaunchedEffect(validationError.value) {
-                if (validationError.value != null) {
-                    errorState.value = validationError.value
+            LaunchedEffect(confirmationError.value) {
+                if (confirmationError.value != null) {
+                    errorState.value = confirmationError.value
                 } else {
                     errorState.value = error.value
                 }

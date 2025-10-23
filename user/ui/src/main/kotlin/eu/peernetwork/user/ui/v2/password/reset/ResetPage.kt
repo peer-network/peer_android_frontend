@@ -34,6 +34,8 @@ import eu.peernetwork.core.ui.theme.PeerAppYellow
 import eu.peernetwork.user.ui.R
 import eu.peernetwork.user.ui.compose.ErrorLabel
 import eu.peernetwork.user.ui.compose.PasswordField
+import eu.peernetwork.user.ui.extension.passwordRequirement
+import eu.peernetwork.user.ui.extension.policy
 
 @Composable
 fun ResetPage(
@@ -57,6 +59,18 @@ fun ResetPage(
         }
     } }
     val updatedOnFinish by rememberUpdatedState(onFinish)
+    val policy = password.policy()
+    val separator = stringResource(R.string.password_separator)
+    val minimumLabel = stringResource(R.string.password_rule_label)
+    val passwordValidationError = remember { derivedStateOf {
+        val requirements = password.passwordRequirement()
+        if (requirements.isEmpty() || password.text.isEmpty()) {
+            null
+        } else {
+            "$minimumLabel " + requirements
+                .joinToString(separator) { policy[it].toString() }
+        }
+    } }
     Column(
         verticalArrangement = Arrangement.Center,
         modifier = Modifier
@@ -95,6 +109,11 @@ fun ResetPage(
                 .padding(top = 10.dp)
                 .padding(horizontal = 18.dp)
                 .height(2.dp)
+        )
+        ErrorLabel(
+            error = passwordValidationError,
+            modifier = Modifier.padding(horizontal = 18.dp)
+                .padding(top = 8.dp)
         )
         PasswordField(
             state = confirmPassword,

@@ -2,6 +2,10 @@ package eu.peernetwork.core.ui.extension
 
 import android.util.Patterns
 import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.buildAnnotatedString
 import eu.peernetwork.core.ui.design.material.DesignPasswordStrength
 
 fun TextFieldState.isValidEmail(): Boolean {
