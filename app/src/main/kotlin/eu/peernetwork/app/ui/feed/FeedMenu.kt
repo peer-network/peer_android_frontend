@@ -26,9 +26,9 @@ import eu.peernetwork.blog.ui.model.UiFilter
 import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.blog.domain.model.Sort
 import eu.peernetwork.core.ui.R
-import eu.peernetwork.core.ui.design.compose.DesignDropDown
-import eu.peernetwork.core.ui.design.compose.DesignTitle
-import eu.peernetwork.core.ui.design.compose.DesignTitleBarHost
+import eu.peernetwork.core.ui.design.material.DesignDropDown
+import eu.peernetwork.core.ui.design.material.DesignTitle
+import eu.peernetwork.core.ui.design.material.DesignTitleBarHost
 
 @Composable
 fun FeedMenu(

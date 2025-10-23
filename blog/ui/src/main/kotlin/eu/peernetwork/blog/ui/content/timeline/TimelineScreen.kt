@@ -34,8 +34,8 @@ import eu.peernetwork.blog.ui.mapper.mapToVideo
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.moderation.ModerationScreen
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.compose.DesignSceneState
-import eu.peernetwork.core.ui.design.compose.DesignThumbnail
+import eu.peernetwork.core.ui.design.material.DesignSceneState
+import eu.peernetwork.core.ui.design.material.DesignThumbnail
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.media.core.renderer.ImageView
 import eu.peernetwork.media.core.renderer.VideoThumbnail
@@ -82,8 +82,16 @@ fun TimelineScreen(
     val thumbnail = viewModel.thumbnail.collectAsStateWithLifecycle()
     val handleOnLoad by rememberUpdatedState(onLoad)
     EngagementScreen(
+        userId = id,
         postLimit = limit,
-        onAuthorClick = { event(UiPostListener.Event.Author(it)) },
+        onAuthorClick = {
+            if (it != id) {
+                event(UiPostListener.Event.Author(it))
+                true
+            } else {
+                false
+            }
+        },
         onMentionClick = { event(UiPostListener.Event.Mention(it)) },
         onHashtagClick = { event(UiPostListener.Event.Hashtag(it)) },
         provider = component,

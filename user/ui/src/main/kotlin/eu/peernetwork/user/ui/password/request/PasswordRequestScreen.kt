@@ -39,15 +39,16 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import eu.peernetwork.core.ui.annotation.UiViewModel
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.compose.DesignButton
-import eu.peernetwork.core.ui.design.compose.DesignTextField
-import eu.peernetwork.core.ui.design.compose.DesignTitle
-import eu.peernetwork.core.ui.design.compose.DesignTitleBarHost
+import eu.peernetwork.core.ui.design.material.DesignButton
+import eu.peernetwork.core.ui.design.material.DesignTextField
+import eu.peernetwork.core.ui.design.material.DesignTitle
+import eu.peernetwork.core.ui.design.material.DesignTitleBarHost
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.extension.isValidEmail
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.user.ui.R
+import eu.peernetwork.user.ui.v2.password.request.RequestViewModel
 
 @Composable
 fun PasswordRequestScreen(
@@ -60,17 +61,17 @@ fun PasswordRequestScreen(
         provider.builder(PasswordRequest.Builder::class.java).build(context)
     }
     val viewModel = viewModel(
-        modelClass = PasswordRequestViewModel::class.java,
+        modelClass = RequestViewModel::class.java,
         viewModelStoreOwner = UiViewModel.Owner(),
         factory = component.viewModelFactory()
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
     val isLoading = remember(state) { derivedStateOf {
-        state is PasswordRequestViewModel.State.Loading
+        state is RequestViewModel.State.Loading
     } }
-    val isFinished = remember(state) { derivedStateOf { state is PasswordRequestViewModel.State.Success } }
+    val isFinished = remember(state) { derivedStateOf { state is RequestViewModel.State.Success } }
     val error = remember(state) { derivedStateOf {
-        (state as? PasswordRequestViewModel.State.Error?)?.error?.message?.let {
+        (state as? RequestViewModel.State.Error?)?.error?.message?.let {
             component.resource().string(it)
         }
     } }

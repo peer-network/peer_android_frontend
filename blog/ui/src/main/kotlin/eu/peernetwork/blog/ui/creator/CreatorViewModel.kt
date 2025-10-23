@@ -1,5 +1,7 @@
 package eu.peernetwork.blog.ui.creator
 
+import androidx.core.net.toFile
+import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import eu.peernetwork.blog.domain.model.Draft
@@ -10,18 +12,19 @@ import eu.peernetwork.media.core.model.UiMimeType
 import eu.peernetwork.media.core.model.UiOffset
 import eu.peernetwork.media.core.usecase.MediaEncoderUsecase
 import eu.peernetwork.media.core.usecase.TextEncoderUsecase
-import eu.peernetwork.media.core.usecase.VideoEncoderUsecase
+import eu.peernetwork.media.core.usecase.TrimUsecase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.io.File
 import javax.inject.Inject
 
 class CreatorViewModel @Inject constructor(
     private val usecase: CreateUsecase,
-    private val videoEncoderUsecase: VideoEncoderUsecase,
+    private val trimUsecase: TrimUsecase,
+    private val textEncoderUsecase: TextEncoderUsecase,
     private val mediaEncoderUsecase: MediaEncoderUsecase,
-    private val textEncoderUsecase: TextEncoderUsecase
 ) : ViewModel() {
     private val mutableState = MutableStateFlow<State>(State.Empty)
 
@@ -32,8 +35,8 @@ class CreatorViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val model = draft.mapToDomain()
-                val photo = usecase(model)
-                mutableState.tryEmit(State.Success(photo))
+                val post = usecase(model)
+                mutableState.tryEmit(State.Success(post))
             } catch (error: Throwable) {
                 mutableState.tryEmit(State.Error(error))
             }
@@ -47,22 +50,18 @@ class CreatorViewModel @Inject constructor(
             attachment.media
         }
         val type = when(media) {
-            UiMimeType.Photo -> Draft.Type.Image(attachment.files.mapNotNull {
-                mediaEncoderUsecase(it.uri)
-            })
-            UiMimeType.Video -> Draft.Type.Video(attachment.files.mapNotNull {
+            UiMimeType.Photo -> Draft.Type.Image(attachment.files.map { it.path })
+            UiMimeType.Video -> Draft.Type.Video(attachment.files.map {
                 val offset = it.props.getParcelable<UiOffset?>(it.path) ?: UiOffset.None
-                videoEncoderUsecase(
-                    VideoEncoderUsecase.Parameter(
-                        uri = it.uri,
-                        offset = offset
-                    )
-                )
+                val url = trimUsecase(TrimUsecase.Parameter(it.uri, offset))
+                Draft.Media(url)
             })
             UiMimeType.Music -> Draft.Type.Audio(
-                files = attachment.files.mapNotNull { mediaEncoderUsecase(it.uri) },
-                cover = attachment.files.firstOrNull()?.cover?.let { uri ->
-                    mediaEncoderUsecase(uri)
+                media = attachment.files.map { media ->
+                    Draft.Media(
+                        url = media.path,
+                        cover = media.cover?.let { mediaEncoderUsecase(it) }
+                    )
                 }
             )
             else -> Draft.Type.Text(listOf(textEncoderUsecase(description)))

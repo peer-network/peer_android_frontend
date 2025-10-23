@@ -26,8 +26,8 @@ import eu.peernetwork.blog.ui.event.UiPostListener
 import eu.peernetwork.blog.ui.mapper.mapToVideo
 import eu.peernetwork.blog.ui.moderation.ModerationScreen
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.compose.DesignSceneState
-import eu.peernetwork.core.ui.design.compose.DesignThumbnail
+import eu.peernetwork.core.ui.design.material.DesignSceneState
+import eu.peernetwork.core.ui.design.material.DesignThumbnail
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.media.core.renderer.ImageView
 import eu.peernetwork.media.core.renderer.VideoThumbnail
@@ -73,6 +73,7 @@ fun DetailScreen(
     val current = remember { mutableIntStateOf(0) }
     val isPlaying = remember { mutableStateOf(false) }
     EngagementScreen(
+        userId = id,
         postLimit = limit,
         onAuthorClick = { event(UiPostListener.Event.Author(it)) },
         onMentionClick = { event(UiPostListener.Event.Mention(it)) },

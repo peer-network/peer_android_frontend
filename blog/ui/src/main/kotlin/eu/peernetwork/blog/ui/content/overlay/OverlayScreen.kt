@@ -33,8 +33,8 @@ import eu.peernetwork.blog.ui.mapper.query
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.moderation.ModerationScreen
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.compose.DesignSceneState
-import eu.peernetwork.core.ui.design.compose.DesignThumbnail
+import eu.peernetwork.core.ui.design.material.DesignSceneState
+import eu.peernetwork.core.ui.design.material.DesignThumbnail
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.media.core.model.UiMimeType
 import eu.peernetwork.media.core.renderer.AudioPlayer
@@ -72,8 +72,13 @@ fun OverlayScreen(
     val length = remember { mutableLongStateOf(0L) }
     val thumbnail = viewModel.thumbnail.collectAsStateWithLifecycle()
     EngagementScreen(
+        userId = id,
         postLimit = limit,
-        onAuthorClick = { event(UiPostListener.Event.Author(it)) },
+        onAuthorClick = {
+            if (it != id) {
+                event(UiPostListener.Event.Author(it))
+            }
+        },
         onMentionClick = { event(UiPostListener.Event.Mention(it)) },
         onHashtagClick = { event(UiPostListener.Event.Hashtag(it)) },
         provider = component,
@@ -116,7 +121,8 @@ fun OverlayScreen(
                         indicator = { state, items -> PhotoIndicator(state, items) },
                         progress = { type, progress ->
                             component.videoPlayer().Controller(
-                                modifier = Modifier.padding(horizontal = 24.dp)
+                                modifier = Modifier
+                                    .padding(horizontal = 24.dp)
                                     .padding(end = 8.dp)
                                     .navigationBarsPadding(),
                                 progress = progress,

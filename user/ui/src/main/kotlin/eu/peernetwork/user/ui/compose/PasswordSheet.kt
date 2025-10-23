@@ -27,9 +27,9 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import eu.peernetwork.core.ui.design.compose.DesignBottomSheetScaffold
-import eu.peernetwork.core.ui.design.compose.DesignButton
-import eu.peernetwork.core.ui.design.compose.DesignSecureTextField
+import eu.peernetwork.core.ui.design.material.DesignBottomSheetScaffold
+import eu.peernetwork.core.ui.design.material.DesignButton
+import eu.peernetwork.core.ui.design.material.DesignSecureTextField
 import eu.peernetwork.core.ui.extension.isValidInput
 import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.user.ui.R

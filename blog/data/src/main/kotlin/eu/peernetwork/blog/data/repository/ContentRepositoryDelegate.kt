@@ -20,7 +20,7 @@ class ContentRepositoryDelegate @Inject constructor(
         return api.get(filter, page)
     }
 
-    override suspend fun create(draft: Draft): Content {
-        return api.create(draft)
+    override suspend fun create(draft: Draft, meta: String): Content {
+        return api.create(draft, meta)
     }
 }

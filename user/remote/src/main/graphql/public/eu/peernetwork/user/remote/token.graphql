@@ -6,3 +6,12 @@ mutation RefreshToken($refreshToken: String!) {
         refreshToken
     }
 }
+
+mutation ResetPasswordTokenVerify($token: String!) {
+    resetPasswordTokenVerify(token: $token) {
+        status
+        RequestId
+        ResponseCode
+        ResponseMessage
+    }
+}

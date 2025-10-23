@@ -24,7 +24,7 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.compose.DesignLabeledIcon
+import eu.peernetwork.core.ui.design.material.DesignLabeledIcon
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.wallet.ui.model.UiReward
 

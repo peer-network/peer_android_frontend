@@ -46,14 +46,6 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    operator fun invoke(preference: Preference) {
-        viewModelScope.launch {
-            (mutableState.value as? State.Success?)?.let {
-                mutableState.tryEmit(it.copy(preference = preference))
-            }
-        }
-    }
-
     fun lastVisited(page: Int) {
         viewModelScope.launch { publishableInteger(TAG, page) }
     }

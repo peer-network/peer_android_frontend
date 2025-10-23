@@ -22,7 +22,7 @@ import eu.peernetwork.blog.ui.event.UiPostListener
 import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.blog.ui.content.timeline.TimelineScreen
 import eu.peernetwork.core.ui.R
-import eu.peernetwork.core.ui.design.compose.DesignSceneState
+import eu.peernetwork.core.ui.design.material.DesignSceneState
 import kotlinx.coroutines.launch
 
 @Composable

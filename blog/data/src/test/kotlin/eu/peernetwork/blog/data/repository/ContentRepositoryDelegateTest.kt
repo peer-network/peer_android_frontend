@@ -62,47 +62,51 @@ internal class ContentRepositoryDelegateTest {
     fun `test create text contents`(): Unit = runBlocking {
         val mock = mockk<Content>()
         val draft = mockk<Draft>()
+        val meta = "<test-meta>"
         coEvery { draft.type } returns Draft.Type.Text(listOf("<test-file>"))
-        coEvery { api.create(any()) } returns mock
-        val result = repository.create(draft)
+        coEvery { api.create(any(), any()) } returns mock
+        val result = repository.create(draft, meta)
         assertEquals(result, mock)
-        coVerify { api.create(draft) }
+        coVerify { api.create(draft, meta) }
     }
 
     @Test
     fun `test create video contents`(): Unit = runBlocking {
         val mock = mockk<Content>()
         val draft = mockk<Draft>()
+        val meta = "<test-meta>"
         val video = "http://localhost/test-video-url"
-        coEvery { draft.type } returns Draft.Type.Video(listOf(video))
-        coEvery { api.create(any()) } returns mock
-        val result = repository.create(draft)
+        coEvery { draft.type } returns Draft.Type.Video(listOf(Draft.Media(video)))
+        coEvery { api.create(any(), any()) } returns mock
+        val result = repository.create(draft, meta)
         assertEquals(result, mock)
-        coVerify { api.create(draft) }
+        coVerify { api.create(draft, meta) }
     }
 
     @Test
     fun `test create image contents`(): Unit = runBlocking {
         val mock = mockk<Content>()
         val draft = mockk<Draft>()
+        val meta = "<test-meta>"
         val image = "http://localhost/test-image-url"
         coEvery { draft.type } returns Draft.Type.Image(listOf(image))
-        coEvery { api.create(any()) } returns mock
-        val result = repository.create(draft)
+        coEvery { api.create(any(), any()) } returns mock
+        val result = repository.create(draft, meta)
         assertEquals(result, mock)
-        coVerify { api.create(draft) }
+        coVerify { api.create(draft, meta) }
     }
 
     @Test
     fun `test create audio contents`(): Unit = runBlocking {
         val mock = mockk<Content>()
         val draft = mockk<Draft>()
+        val meta = "<test-meta>"
         val audio = "http://localhost/test-audio-url"
         val cover = "http://localhost/test-audio-cover"
-        coEvery { draft.type } returns Draft.Type.Audio(listOf(audio), cover)
-        coEvery { api.create(any()) } returns mock
-        val result = repository.create(draft)
+        coEvery { draft.type } returns Draft.Type.Audio(listOf(Draft.Media(audio, cover)))
+        coEvery { api.create(any(), any()) } returns mock
+        val result = repository.create(draft, meta)
         assertEquals(result, mock)
-        coVerify { api.create(draft) }
+        coVerify { api.create(draft, meta) }
     }
 }

@@ -3,7 +3,7 @@ mutation CreatePost(
     $title: String!,
     $description: String,
     $contentType: ContentType!,
-    $media: [String!],
+    $uploadedFiles: String,
     $cover: [String!],
     $tags: [String!],
 ) {
@@ -11,7 +11,7 @@ mutation CreatePost(
         title: $title,
         mediadescription: $description,
         contenttype: $contentType,
-        media: $media,
+        uploadedFiles: $uploadedFiles,
         cover: $cover,
         tags: $tags },
     ) {

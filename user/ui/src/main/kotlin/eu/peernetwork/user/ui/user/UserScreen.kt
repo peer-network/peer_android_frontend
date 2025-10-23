@@ -10,10 +10,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
@@ -33,12 +33,12 @@ import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.user.ui.model.UiAccount
 import eu.peernetwork.user.ui.model.UiOverview
-import eu.peernetwork.core.ui.design.compose.DesignAsyncImage
-import eu.peernetwork.core.ui.design.component.DesignStatefulScaffold
-import eu.peernetwork.core.ui.design.component.DesignStatefulScaffoldState
-import eu.peernetwork.core.ui.design.compose.DesignZoom
-import eu.peernetwork.core.ui.design.compose.DesignLead
-import eu.peernetwork.core.ui.design.compose.DesignOverlay
+import eu.peernetwork.core.ui.design.material.DesignAsyncImage
+import eu.peernetwork.core.ui.design.compose.DesignStatefulScaffold
+import eu.peernetwork.core.ui.design.compose.DesignStatefulScaffoldState
+import eu.peernetwork.core.ui.design.material.DesignZoom
+import eu.peernetwork.core.ui.design.material.DesignLead
+import eu.peernetwork.core.ui.design.material.DesignOverlay
 import eu.peernetwork.core.ui.extension.toInt
 import eu.peernetwork.media.core.renderer.ImageView
 import eu.peernetwork.user.ui.R
@@ -48,7 +48,7 @@ import eu.peernetwork.user.ui.compose.ProfileScaffold
 @Composable
 fun UserScreen(
     id: String,
-    lastUpdated: State<Long>,
+    requireUpdate: MutableState<Boolean>,
     modifier: Modifier = Modifier,
     provider: UiComponentProvider,
     onFollow: @Composable (Pair<Boolean, Boolean>) -> Unit,
@@ -84,7 +84,6 @@ fun UserScreen(
             }
         }
     } }
-    val updatedAt = remember { mutableLongStateOf(lastUpdated.value) }
     DesignStatefulScaffold<Pair<UiAccount, Boolean>>(
         state = derivedState,
         onRefresh = { viewModel.getAccount(id) },
@@ -122,10 +121,10 @@ fun UserScreen(
             }
         )
     }
-    LaunchedEffect(lastUpdated.value) {
-        if (updatedAt.longValue != lastUpdated.value) {
+    LaunchedEffect(requireUpdate.value) {
+        if (requireUpdate.value) {
             viewModel.getAccount(id)
-            updatedAt.longValue = lastUpdated.value
+            requireUpdate.value = false
         }
     }
     LaunchedEffect(Unit) { viewModel.initialize() }

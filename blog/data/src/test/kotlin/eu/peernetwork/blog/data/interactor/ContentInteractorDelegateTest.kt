@@ -3,6 +3,8 @@ package eu.peernetwork.blog.data.interactor
 import eu.peernetwork.blog.domain.interactor.ContentInteractor
 import eu.peernetwork.blog.domain.model.Draft
 import eu.peernetwork.blog.domain.repository.ContentRepository
+import eu.peernetwork.blog.domain.repository.EligibilityRepository
+import eu.peernetwork.blog.domain.repository.MultipartRepository
 import eu.peernetwork.wallet.domain.repository.RewardRepository
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -26,12 +28,21 @@ internal class ContentInteractorDelegateTest {
 
     private val rewardRepository = mockk<RewardRepository>()
 
+    private val multipartRepository = mockk<MultipartRepository>()
+
+    private val eligibilityRepository = mockk<EligibilityRepository>()
+
     private lateinit var interactor: ContentInteractor
 
     @Before
     fun setup() {
         Dispatchers.setMain(dispatcher)
-        interactor = ContentInteractorDelegate(repository, rewardRepository)
+        interactor = ContentInteractorDelegate(
+            repository,
+            multipartRepository,
+            eligibilityRepository,
+            rewardRepository
+        )
     }
 
     @After
@@ -42,17 +53,25 @@ internal class ContentInteractorDelegateTest {
     @Test
     fun `test post content success`(): Unit = runBlocking {
         val draft = mockk<Draft>()
-        coEvery { repository.create(any()) } returns mockk()
+        val meta = "<test-meta>"
+        coEvery { draft.type } returns Draft.Type.Text(listOf())
+        coEvery { eligibilityRepository.get() } returns meta
+        coEvery { multipartRepository.upload(any(), any()) } returns meta
+        coEvery { repository.create(any(), any()) } returns mockk()
         coEvery { rewardRepository.get() } returns mockk()
         interactor.create(draft)
-        coVerify { repository.create(draft) }
+        coVerify { repository.create(draft, meta) }
         coVerify { rewardRepository.get() }
     }
 
     @Test
     fun `test post content error`(): Unit = runBlocking {
         val draft = mockk<Draft>()
-        coEvery { repository.create(any()) } throws RuntimeException()
+        val meta = "<test-meta>"
+        coEvery { draft.type } returns Draft.Type.Text(listOf())
+        coEvery { eligibilityRepository.get() } returns meta
+        coEvery { multipartRepository.upload(any(), any()) } returns meta
+        coEvery { repository.create(any(), any()) } throws RuntimeException()
         coEvery { rewardRepository.get() } returns mockk()
         val response = try {
             interactor.create(draft)
@@ -60,7 +79,7 @@ internal class ContentInteractorDelegateTest {
             null
         }
         assertEquals(response, null)
-        coVerify { repository.create(draft) }
+        coVerify { repository.create(draft, meta) }
         coVerify(exactly = 0) { rewardRepository.get() }
     }
 }

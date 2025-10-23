@@ -6,6 +6,7 @@ import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -18,21 +19,20 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import eu.peernetwork.app.model.Properties
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.component.DesignError
-import eu.peernetwork.core.ui.design.compose.DesignScene
-import eu.peernetwork.core.ui.design.compose.DesignSceneState
+import eu.peernetwork.core.ui.design.compose.DesignError
+import eu.peernetwork.core.ui.design.material.DesignScene
+import eu.peernetwork.core.ui.design.material.DesignSceneState
 import eu.peernetwork.core.ui.extension.builder
-import eu.peernetwork.user.domain.model.Preference
 import kotlinx.collections.immutable.persistentListOf
 import java.text.NumberFormat
 import java.util.Locale
 
 @Composable
 fun OnboardingScreen(
-    preference: Preference,
+    initialized: Boolean,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
-    onFinished: (Preference) -> Unit
+    onFinished: (Boolean) -> Unit
 ) {
     val context = LocalContext.current
     val component = remember { provider.builder(Onboarding.Builder::class.java).build(context) }
@@ -43,6 +43,7 @@ fun OnboardingScreen(
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
     val status by viewModel.status.collectAsStateWithLifecycle()
+    val isLoading = remember { derivedStateOf { status is OnboardingViewModel.Status.Loading } }
     val isFinished = remember {
         derivedStateOf { status is OnboardingViewModel.Status.Success }
     }
@@ -70,29 +71,34 @@ fun OnboardingScreen(
             onRefresh = { viewModel.initialize() },
             error = it.value,
             resource = component.resource()) }
-    ) { state -> OnboardingScreen(pagerState, properties = state.value.properties) {
-        viewModel.finish(it, preference.copy(
-            flags = state.value
-                .properties
-                .configuration
-                .onboarding
-                .availableOnboardings
-        ))
+    ) { state -> OnboardingScreen(pagerState, isLoading, properties = state.value.properties) {
+        if (initialized) {
+            handleOnFinished(false)
+        } else {
+            (status as? OnboardingViewModel.Status.Success?)?.preference?.let { pref ->
+                handleOnFinished(false)
+            } ?: viewModel.finish(it)
+        }
     } }
     LaunchedEffect(isFinished.value) {
         if (isFinished.value) {
             (status as? OnboardingViewModel.Status.Success?)?.preference?.let { pref ->
-                handleOnFinished(pref)
+                handleOnFinished(true)
                 viewModel.reset()
             }
         }
     }
-    LaunchedEffect(Unit) { viewModel.initialize() }
+    LaunchedEffect(Unit) {
+        if (state !is OnboardingViewModel.State.Success) {
+            viewModel.initialize()
+        }
+    }
 }
 
 @Composable
 fun OnboardingScreen(
     state: PagerState,
+    isLoading: State<Boolean>,
     properties: Properties,
     onFinished: (Boolean) -> Unit
 ) {
@@ -116,7 +122,7 @@ fun OnboardingScreen(
         ),
         OnboardingGuideState.Feature
     )
-    OnboardingScaffold(state, onFinish = onFinished) {
+    OnboardingScaffold(state, isLoading = isLoading, onFinish = onFinished) {
         OnboardingGuide(
             state = states[it],
             modifier = Modifier.padding(horizontal = 24.dp)

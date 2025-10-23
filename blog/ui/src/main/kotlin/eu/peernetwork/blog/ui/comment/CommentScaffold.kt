@@ -17,7 +17,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
 import eu.peernetwork.blog.ui.model.UiContent
-import eu.peernetwork.core.ui.design.compose.DesignBottomSheet
+import eu.peernetwork.core.ui.design.material.DesignBottomSheet
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

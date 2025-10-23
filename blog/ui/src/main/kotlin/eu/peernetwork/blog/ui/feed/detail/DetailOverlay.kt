@@ -12,8 +12,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import eu.peernetwork.blog.ui.content.overlay.OverlayPage
 import eu.peernetwork.blog.ui.event.UiPostListener
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.compose.DesignScene
-import eu.peernetwork.core.ui.design.compose.DesignSceneState
+import eu.peernetwork.core.ui.design.material.DesignScene
+import eu.peernetwork.core.ui.design.material.DesignSceneState
 import eu.peernetwork.core.ui.extension.builder
 
 @Composable

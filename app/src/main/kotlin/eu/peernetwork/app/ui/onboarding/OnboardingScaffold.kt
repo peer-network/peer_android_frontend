@@ -21,7 +21,10 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -45,6 +48,7 @@ import kotlin.math.absoluteValue
 @Composable
 fun OnboardingScaffold(
     state: PagerState,
+    isLoading: State<Boolean>,
     modifier: Modifier = Modifier,
     onFinish: (Boolean) -> Unit,
     content: @Composable (Int) -> Unit
@@ -89,6 +93,7 @@ fun OnboardingScaffold(
         }
         OnboardingFooter(
             state = state,
+            isLoading = isLoading,
             modifier = Modifier.padding(
                 horizontal = 24.dp
             ).padding(bottom = 8.dp),
@@ -147,7 +152,8 @@ fun OnboardingContentScaffold(
 fun OnboardingScaffoldPreview() {
     PeerTheme {
         val pagerState = rememberPagerState(initialPage = 0, pageCount = { 5 })
-        OnboardingScaffold(pagerState, onFinish = {}) {}
+        val isLoading = remember { mutableStateOf(false) }
+        OnboardingScaffold(pagerState, isLoading = isLoading, onFinish = {}) {}
     }
 }
 

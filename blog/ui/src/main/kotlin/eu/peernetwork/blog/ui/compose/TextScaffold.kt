@@ -39,10 +39,10 @@ import androidx.compose.ui.unit.sp
 import eu.peernetwork.blog.ui.R
 import eu.peernetwork.blog.ui.model.UiAuthor
 import eu.peernetwork.blog.ui.model.UiAction
-import eu.peernetwork.core.ui.design.compose.DesignCard
-import eu.peernetwork.core.ui.design.compose.DesignRichText
-import eu.peernetwork.core.ui.design.compose.DesignTextButton
-import eu.peernetwork.core.ui.design.compose.DesignTitleStyle
+import eu.peernetwork.core.ui.design.material.DesignCard
+import eu.peernetwork.core.ui.design.material.DesignRichText
+import eu.peernetwork.core.ui.design.material.DesignTextButton
+import eu.peernetwork.core.ui.design.material.DesignTitleStyle
 import eu.peernetwork.core.ui.theme.PeerTheme
 
 @Composable

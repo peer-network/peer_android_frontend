@@ -19,8 +19,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.compose.DesignTitle
-import eu.peernetwork.core.ui.design.compose.DesignTitleBarHost
+import eu.peernetwork.core.ui.design.material.DesignTitle
+import eu.peernetwork.core.ui.design.material.DesignTitleBarHost
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.core.ui.factory.UiViewModelStore
@@ -71,6 +71,7 @@ fun SettingsScreen(
     val preference = stringResource(R.string.preference_label)
     val feedback = stringResource(R.string.feedback_label)
     val introduction = stringResource(R.string.how_it_works_label)
+    val releaseNote = stringResource(R.string.release_notes)
     val aboutUsLabel = stringResource(R.string.about_us_label)
     val feedbackSession = remember { mutableLongStateOf(-1) }
     Column(modifier = Modifier
@@ -92,6 +93,9 @@ fun SettingsScreen(
             feedbackSession.longValue = System.currentTimeMillis()
         }
         SettingsItem(label = introduction, onTutorial)
+        SettingsItem(label = releaseNote) {
+            handleOnNavigate("version")
+        }
         SettingsItem(label = aboutUsLabel) {
             handleOnNavigate("about")
         }

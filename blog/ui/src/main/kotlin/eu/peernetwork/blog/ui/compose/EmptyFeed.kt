@@ -10,7 +10,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import eu.peernetwork.core.ui.design.component.DesignError
+import eu.peernetwork.core.ui.design.compose.DesignError
 import com.airbnb.lottie.compose.*
 import eu.peernetwork.blog.ui.R
 import androidx.compose.material3.Text

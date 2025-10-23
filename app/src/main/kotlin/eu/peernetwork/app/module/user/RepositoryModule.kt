@@ -5,12 +5,14 @@ import dagger.Module
 import eu.peernetwork.user.data.repository.AccountRepositoryDelegate
 import eu.peernetwork.user.data.repository.AuthenticationRepositoryDelegate
 import eu.peernetwork.user.data.repository.PreferenceRepositoryDelegate
+import eu.peernetwork.user.data.repository.ReferralRepositoryDelegate
 import eu.peernetwork.user.data.repository.ResourceRepositoryDelegate
 import eu.peernetwork.user.data.repository.SearchRepositoryDelegate
 import eu.peernetwork.user.data.repository.TokenRepositoryDelegate
 import eu.peernetwork.user.domain.repository.AccountRepository
 import eu.peernetwork.user.domain.repository.AuthenticationRepository
 import eu.peernetwork.user.domain.repository.PreferenceRepository
+import eu.peernetwork.user.domain.repository.ReferralRepository
 import eu.peernetwork.user.domain.repository.ResourceRepository
 import eu.peernetwork.user.domain.repository.SearchRepository
 import eu.peernetwork.user.domain.repository.TokenRepository
@@ -34,4 +36,7 @@ interface RepositoryModule {
 
     @Binds
     fun bindPreferenceRepository(delegate: PreferenceRepositoryDelegate): PreferenceRepository
+
+    @Binds
+    fun bindUserReferralRepository(delegate: ReferralRepositoryDelegate): ReferralRepository
 }

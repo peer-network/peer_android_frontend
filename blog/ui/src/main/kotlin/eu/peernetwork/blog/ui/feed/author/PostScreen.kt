@@ -7,6 +7,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -26,8 +27,8 @@ import eu.peernetwork.blog.ui.content.timeline.TimelineScreen
 import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.component.DesignError
-import eu.peernetwork.core.ui.design.compose.DesignSceneState
+import eu.peernetwork.core.ui.design.compose.DesignError
+import eu.peernetwork.core.ui.design.material.DesignSceneState
 import eu.peernetwork.core.ui.exception.NoContentException
 import eu.peernetwork.core.ui.extension.builder
 
@@ -38,7 +39,7 @@ fun PostScreen(
     types: Set<Content.Type>,
     postLimit: Int,
     status: State<Boolean>,
-    lastUpdated: State<Long>,
+    requireUpdate: MutableState<Boolean>,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
     event: UiPostListener,
@@ -101,29 +102,26 @@ fun PostScreen(
             viewModel.load(
                 author,
                 types,
-                Pageable(0, postLimit),
-                lastUpdated.value
+                Pageable(0, postLimit)
             )
         },
         empty = { DesignError({
             viewModel.load(
                 author,
                 types,
-                Pageable(0, postLimit),
-                lastUpdated.value
+                Pageable(0, postLimit)
             )
         }, NoContentException(), component.resource()) },
         status = status
     )
-    LaunchedEffect(lastUpdated.value) {
-        val currentState = state as? PostViewModel.State.Success?
-        if (currentState?.updatedAt != lastUpdated.value) {
+    LaunchedEffect(requireUpdate.value) {
+        if (requireUpdate.value || state is PostViewModel.State.Empty) {
             viewModel.load(
                 author,
                 types,
-                Pageable(0, postLimit),
-                lastUpdated.value
+                Pageable(0, postLimit)
             )
+            requireUpdate.value = false
         }
     }
     DisposableEffect(Unit) {

@@ -1,19 +1,43 @@
 <resources>
+    <string name="peer">Peer</string>
+
     <string name="login_text">Login</string>
     <string name="logout_text">Logout</string>
     <string name="save_text">Save</string>
+    <string name="send_text">Send</string>
     <string name="register_text">Register</string>
+    <string name="register_now_text">Register now</string>
     <string name="deactivate_text">Deactivate</string>
+
+    <string name="login_title">Hey there,\nWelcome back</string>
+    <string name="login_description">It’s good to see you again! Log in to continue\nyour journey with us!</string>
+    <string name="login_option">Already registered?</string>
+    <string name="login_action">Login now</string>
+    <string name="remember_me">Remember me</string>
+    <string name="verify_text">Verify code</string>
+
+    <string name="welcome">Welcome to peer!</string>
+    <string name="welcome_description">One quick step left! Enter your referral code to complete registration.</string>
+    <string name="referral_code">Referral code</string>
+    <string name="referral_verification">Verify code</string>
+    <string name="referral_request">Don\'t have a code?</string>
+    <string name="referral_request_intent">to get peer code.</string>
+
+    <string name="register_slug">Create your account in few seconds and start earning on your favorite content.</string>
+    <string name="register_message">Your account is ready! Start exploring and earn your first token today.</string>
 
     <string name="email_label">E-mail</string>
     <string name="email_update_label">Change e-mail</string>
     <string name="username_label">Username</string>
     <string name="password_label">Password</string>
+    <string name="confirm_password_label">Confirm password</string>
+    <string name="password_update_action">Update password</string>
     <string name="password_update_label">New password</string>
     <string name="current_password_label">Current password</string>
     <string name="password_reset_label">Password reset</string>
     <string name="password_recovery_label">Password recovery</string>
     <string name="password_reset_header">Reset your password</string>
+    <string name="password_verification_label">Enter code</string>
     <string name="description_label">Description</string>
     <string name="confirmation_label">Confirm</string>
     <string name="token_label">Token</string>
@@ -36,23 +60,32 @@
     <string name="referral_label">Referral Code (Optional)</string>
     <string name="referral_code_label">Referral Code (Optional)</string>
     <string name="referral_copy_message">Referral link copied</string>
-  
+    <string name="referral_verification_success">Referral verified successfully!</string>
+
     <string name="age_confirmation_checkbox">I am 18 or older.</string>
     <string name="age_confirmation_title">Age Confirmation</string>
-    <string name="age_confirmation_continue">Continue</string>
+    <string name="continue_text">Continue</string>
     <string name="age_confirmation_message">Please confirm that you are at least 18 years old by checking the box below.</string>
 
+    <string name="or">Or</string>
     <string name="click_here">Click here</string>
+    <string name="forgot_password_text">Forgot password</string>
     <string name="forgot_password_label">Forgot password?</string>
+    <string name="forgot_instruction">Please enter your email and we’ll send you a reset link.</string>
     <string name="new_password_label">Create new password</string>
     <string name="password_reset_instruction">Enter the email associated with your account and we\'ll send an email with instructions to reset your password.</string>
     <string name="password_instruction">We\'ve sent a password recovery token to your email. Please enter the token along with your new password to proceed.</string>
+    <string name="password_recovery_instruction">Set a new password</string>
     <string name="password_alternative_question">Already received the token?</string>
+    <string name="password_verification_instruction">We sent a code to your email %s.\nPlease, enter the code to change your password.</string>
+    <string name="password_token_prompt">Already requested a token?</string>
+    <string name="password_mismatch">Passwords do not match.</string>
 
     <string name="app_information_label">App Information</string>
     <string name="about_us_label">About Us</string>
     <string name="feedback_label">Feedback</string>
     <string name="how_it_works_label">How it works</string>
+    <string name="release_notes">Release notes</string>
     <string name="app_name_label">App Name: Peer</string>
     <string name="version_text_label">Version: %s %d</string>
     <string name="developed_by_label">Developed by: Peer Network Team</string>
@@ -61,4 +94,9 @@
 
     <string name="profile_update_message">Profile updated successfully!</string>
     <string name="profile_deactivation_message">Account deactivated successfully!</string>
+
+    <string name="privacy_text">Privacy Policy</string>
+    <string name="agreement">I agree to the</string>
+    <string name="privacy_agreement">Privacy Policy.</string>
+    <string name="licence_agreement">End User License Agreement.</string>
 </resources>

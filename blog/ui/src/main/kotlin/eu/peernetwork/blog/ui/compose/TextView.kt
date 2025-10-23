@@ -16,8 +16,8 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import eu.peernetwork.core.ui.design.compose.DesignRichText
-import eu.peernetwork.core.ui.design.compose.DesignTitleStyle
+import eu.peernetwork.core.ui.design.material.DesignRichText
+import eu.peernetwork.core.ui.design.material.DesignTitleStyle
 
 @Composable
 fun TextView(

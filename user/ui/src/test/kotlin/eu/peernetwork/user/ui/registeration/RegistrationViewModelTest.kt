@@ -4,6 +4,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import app.cash.turbine.test
 import eu.peernetwork.user.domain.usecase.ActivationUsecase
 import eu.peernetwork.user.domain.usecase.RegistrationUsecase
+import eu.peernetwork.user.ui.v2.registration.RegistrationViewModel
 import io.mockk.coEvery
 import io.mockk.mockk
 import junit.framework.TestCase.assertEquals
@@ -42,6 +43,7 @@ internal class RegistrationViewModelTest {
     @Test
     fun `test registration success`() = runTest {
         val uuid = "<test-uuid>"
+        val email = "<test-email>"
         coEvery { usecase(any()) } coAnswers {
             delay(100)
             uuid
@@ -49,7 +51,7 @@ internal class RegistrationViewModelTest {
         viewModel.register("<test-username>", "<test-email>", "<test-password>", "<test-referral>")
         viewModel.state.test {
             assertEquals(RegistrationViewModel.State.Loading, awaitItem())
-            assertEquals(RegistrationViewModel.State.Success(uuid), awaitItem())
+            assertEquals(RegistrationViewModel.State.Success(uuid, email), awaitItem())
         }
     }
 

@@ -25,14 +25,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModelStoreOwner
 import androidx.navigation.compose.rememberNavController
 import eu.peernetwork.blog.ui.creator.CreatorScreen
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.compose.DesignTitle
-import eu.peernetwork.core.ui.design.compose.DesignTitleBarHost
+import eu.peernetwork.core.ui.design.material.DesignTitle
+import eu.peernetwork.core.ui.design.material.DesignTitleBarHost
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
-import eu.peernetwork.core.ui.factory.UiViewModelStore
 import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.media.core.model.UiAttachment
 import eu.peernetwork.media.core.model.UiMimeType
@@ -43,7 +43,7 @@ import eu.peernetwork.wallet.ui.model.UiToken
 @Composable
 fun ComposerScreen(
     provider: UiComponentProvider,
-    viewModelStore: UiViewModelStore,
+    viewModelStoreOwner: ViewModelStoreOwner,
     onPostSuccess: () -> Unit
 ) {
     val context = LocalContext.current
@@ -62,7 +62,7 @@ fun ComposerScreen(
             attachment = attachment,
             controller = controller,
             provider = component,
-            viewModelStoreOwner = viewModelStore.get(key)
+            viewModelStoreOwner = viewModelStoreOwner
         ) {
             ComposerScreen(
                 footer = {
@@ -78,7 +78,7 @@ fun ComposerScreen(
                         },
                         onSelectCover = { controller.navigate("cover?audioUri=${it}") },
                         component,
-                        viewModelStore.get(key),
+                        viewModelStoreOwner
                     )
                 },
                 content = {
@@ -88,7 +88,7 @@ fun ComposerScreen(
                         attachment = attachment,
                         focus = focus,
                         provider = component,
-                        viewModelStoreOwner = viewModelStore.get(key),
+                        viewModelStoreOwner = viewModelStoreOwner,
                         modifier = Modifier
                             .padding(top = 8.dp)
                             .padding(horizontal = 16.dp),

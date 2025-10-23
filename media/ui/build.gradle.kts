@@ -18,7 +18,7 @@ dependencies {
 
     api(libs.media3)
     implementation(libs.media3.ui)
-    implementation(libs.media3.transformer)
+    implementation(libs.ffmpeg)
     implementation(libs.permissions)
     implementation(libs.ucrop)
 

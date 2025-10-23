@@ -23,7 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.blog.ui.compose.PostIcon
 import eu.peernetwork.blog.ui.model.UiAction
-import eu.peernetwork.core.ui.design.compose.DesignTabLayout
+import eu.peernetwork.core.ui.design.material.DesignTabLayout
 import eu.peernetwork.core.ui.theme.PeerAppRed
 import eu.peernetwork.core.ui.theme.PeerTheme
 import kotlinx.collections.immutable.persistentListOf

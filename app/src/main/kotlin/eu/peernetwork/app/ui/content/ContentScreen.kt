@@ -21,8 +21,8 @@ import eu.peernetwork.app.extension.navigateToUsernameSearch
 import eu.peernetwork.blog.ui.feed.detail.DetailScreen
 import eu.peernetwork.blog.ui.event.UiPostListener
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.compose.DesignTitle
-import eu.peernetwork.core.ui.design.compose.DesignTitleBarHost
+import eu.peernetwork.core.ui.design.material.DesignTitle
+import eu.peernetwork.core.ui.design.material.DesignTitleBarHost
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.core.ui.factory.UiViewModelStore

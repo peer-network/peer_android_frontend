@@ -12,8 +12,9 @@ import androidx.navigation.navArgument
 import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.app.ui.about.AboutScreen
 import eu.peernetwork.app.ui.profile.ProfileScreen
+import eu.peernetwork.app.ui.version.VersionScreen
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.compose.DesignRouter
+import eu.peernetwork.core.ui.design.material.DesignRouter
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.core.ui.factory.UiViewModelStore
 import eu.peernetwork.social.ui.referral.ReferralScreen
@@ -74,6 +75,13 @@ fun SettingsNavigation(
             AddressScreen(provider) {
                 controller.popBackStack()
             }
+        }
+        composable("version") {
+            VersionScreen(
+                BuildConfig.VERSION_NAME,
+                BuildConfig.VERSION_CODE,
+                provider
+            )
         }
         composable("about") {
             AboutScreen(

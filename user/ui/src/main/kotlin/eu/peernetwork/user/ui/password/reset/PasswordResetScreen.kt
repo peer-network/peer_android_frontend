@@ -33,18 +33,19 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import eu.peernetwork.core.ui.annotation.UiViewModel
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.compose.DesignButton
-import eu.peernetwork.core.ui.design.compose.DesignPassword
-import eu.peernetwork.core.ui.design.compose.DesignPasswordIndicator
-import eu.peernetwork.core.ui.design.compose.DesignPasswordStrength
-import eu.peernetwork.core.ui.design.compose.DesignTextField
-import eu.peernetwork.core.ui.design.compose.DesignTitle
-import eu.peernetwork.core.ui.design.compose.DesignTitleBarHost
+import eu.peernetwork.core.ui.design.material.DesignButton
+import eu.peernetwork.core.ui.design.material.DesignPassword
+import eu.peernetwork.core.ui.design.material.DesignPasswordIndicator
+import eu.peernetwork.core.ui.design.material.DesignPasswordStrength
+import eu.peernetwork.core.ui.design.material.DesignTextField
+import eu.peernetwork.core.ui.design.material.DesignTitle
+import eu.peernetwork.core.ui.design.material.DesignTitleBarHost
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.extension.isValidInput
 import eu.peernetwork.core.ui.extension.passwordStrength
 import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.user.ui.R
+import eu.peernetwork.user.ui.v2.password.reset.ResetViewModel
 
 @Composable
 fun PasswordResetScreen(
@@ -57,18 +58,18 @@ fun PasswordResetScreen(
         provider.builder(PasswordReset.Builder::class.java).build(context)
     }
     val viewModel = viewModel(
-        modelClass = PasswordResetViewModel::class.java,
+        modelClass = ResetViewModel::class.java,
         viewModelStoreOwner = UiViewModel.Owner(),
         factory = component.viewModelFactory()
     )
     val handleOnFinish by rememberUpdatedState(onFinish)
     val state by viewModel.state.collectAsStateWithLifecycle()
     val isLoading = remember(state) { derivedStateOf {
-        state is PasswordResetViewModel.State.Loading
+        state is ResetViewModel.State.Loading
     } }
-    val isFinished = remember(state) { derivedStateOf { state is PasswordResetViewModel.State.Success } }
+    val isFinished = remember(state) { derivedStateOf { state is ResetViewModel.State.Success } }
     val error = remember(state) { derivedStateOf {
-        (state as? PasswordResetViewModel.State.Error?)?.error?.message?.let {
+        (state as? ResetViewModel.State.Error?)?.error?.message?.let {
             component.resource().string(it)
         }
     } }

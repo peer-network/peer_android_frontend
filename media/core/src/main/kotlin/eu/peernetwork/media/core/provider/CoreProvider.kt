@@ -4,10 +4,10 @@ import eu.peernetwork.media.core.usecase.FileEncoderUsecase
 import eu.peernetwork.media.core.usecase.MetaDataUsecase
 import eu.peernetwork.media.core.usecase.MediaEncoderUsecase
 import eu.peernetwork.media.core.usecase.TextEncoderUsecase
-import eu.peernetwork.media.core.usecase.VideoEncoderUsecase
+import eu.peernetwork.media.core.usecase.TrimUsecase
 
 interface CoreProvider {
-    fun videoEncoderUsecase(): VideoEncoderUsecase
+    fun videoEncoderUsecase(): TrimUsecase
 
     fun mediaEncoderUsecase(): MediaEncoderUsecase
 

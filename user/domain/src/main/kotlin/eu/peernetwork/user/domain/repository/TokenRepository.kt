@@ -10,5 +10,7 @@ interface TokenRepository {
 
     suspend fun refresh(token: String): Token
 
+    suspend fun verify(token: String)
+
     suspend fun clear()
 }

@@ -26,8 +26,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.compose.DesignOverlay
-import eu.peernetwork.core.ui.design.compose.DesignTextField
+import eu.peernetwork.core.ui.design.material.DesignOverlay
+import eu.peernetwork.core.ui.design.material.DesignTextField
 import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.social.ui.model.UiMember
 

@@ -19,11 +19,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.blog.ui.model.UiAuthor
-import eu.peernetwork.core.ui.design.compose.DesignAsyncImage
-import eu.peernetwork.core.ui.design.compose.DesignAvatar
-import eu.peernetwork.core.ui.design.compose.DesignDetailLayout
-import eu.peernetwork.core.ui.design.compose.DesignLead
-import eu.peernetwork.core.ui.design.compose.DesignTitleStyle
+import eu.peernetwork.core.ui.design.material.DesignAsyncImage
+import eu.peernetwork.core.ui.design.material.DesignAvatar
+import eu.peernetwork.core.ui.design.material.DesignDetailLayout
+import eu.peernetwork.core.ui.design.material.DesignLead
+import eu.peernetwork.core.ui.design.material.DesignTitleStyle
 import eu.peernetwork.core.ui.theme.PeerTheme
 
 @Composable

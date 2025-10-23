@@ -1,23 +1,18 @@
 package eu.peernetwork.media.ui.usecase
 
+import ai.instavision.ffmpegkit.FFmpegKit
+import ai.instavision.ffmpegkit.ReturnCode
 import android.content.Context
 import android.net.Uri
 import androidx.annotation.OptIn
 import androidx.core.net.toFile
-import androidx.media3.common.MediaItem
 import androidx.media3.common.util.UnstableApi
-import androidx.media3.transformer.Composition
-import androidx.media3.transformer.ExportException
-import androidx.media3.transformer.ExportResult
-import androidx.media3.transformer.Transformer
+import eu.peernetwork.core.common.exception.BusinessException
 import eu.peernetwork.core.common.provider.Dispatcher
 import eu.peernetwork.core.common.usecase.ParameterizedSuspendableUseCase
 import eu.peernetwork.media.core.model.UiOffset
 import eu.peernetwork.media.ui.extension.toMd5
 import kotlinx.coroutines.CancellableContinuation
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -44,45 +39,24 @@ class VideoTrimUsecase @Inject constructor(
         val path = "${this@VideoTrimUsecase.context.cacheDir}/${source.path.toMd5()}_${source.name}"
         val outputFile = File(path)
         if (outputFile.exists()) outputFile.delete()
-        val mediaItem = MediaItem.Builder()
-            .setUri(param.uri)
-            .setClippingConfiguration(
-                MediaItem.ClippingConfiguration.Builder()
-                    .setStartPositionMs(param.offset.start)
-                    .setEndPositionMs(param.offset.stop)
-                    .build()
-            ).build()
-        val transformer = Transformer.Builder(this@VideoTrimUsecase.context)
-            .addListener(object : Transformer.Listener {
-                override fun onCompleted(
-                    composition: Composition,
-                    exportResult: ExportResult
-                ) {
-                    if (isActive) {
-                        resumeWith(Result.success(outputFile))
-                    }
-                }
-
-                override fun onError(
-                    composition: Composition,
-                    exportResult: ExportResult,
-                    exportException: ExportException
-                ) {
-                    if (isActive) {
-                        resumeWithException(exportException)
-                    }
-                }
-            }).build()
-        val job = CoroutineScope(Dispatchers.Main).launch {
-            try {
-                transformer.start(mediaItem, path)
-            } catch (e: Exception) {
-                if (isActive) {
-                    resumeWithException(e)
-                }
-            }
+        val command = arrayOf(
+            "-ss", (param.offset.start / 1000).toString(),
+            "-i", source.path,
+            "-to", (param.offset.stop / 1000).toString(),
+            "-avoid_negative_ts", "make_zero",
+            "-y",
+            outputFile.path
+        )
+        val session = FFmpegKit.executeWithArguments(command)
+        if (ReturnCode.isSuccess(session.returnCode)) {
+            resumeWith(Result.success(outputFile))
+        } else {
+            outputFile.deleteOnExit()
+            resumeWithException(BusinessException("${session.failStackTrace}", source.path))
         }
-        invokeOnCancellation { job.cancel() }
+        invokeOnCancellation {
+            outputFile.deleteOnExit()
+        }
     }
 
     data class Parameter(

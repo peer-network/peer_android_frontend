@@ -18,7 +18,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import eu.peernetwork.core.ui.design.compose.DesignButton
+import eu.peernetwork.core.ui.design.material.DesignButton
 import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.user.ui.R
 
@@ -72,7 +72,7 @@ fun RegistrationDialog(
                     contentPadding = PaddingValues(horizontal = 24.dp, vertical = 8.dp)
                 ) {
                     Text(
-                        text = stringResource(id = R.string.age_confirmation_continue),
+                        text = stringResource(id = R.string.continue_text),
                         style = MaterialTheme.typography.bodySmall.copy(
                             fontWeight = FontWeight.SemiBold
                         )

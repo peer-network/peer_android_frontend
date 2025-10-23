@@ -5,6 +5,7 @@ import dagger.Provides
 import dagger.multibindings.IntoMap
 import eu.peernetwork.app.ui.about.About
 import eu.peernetwork.app.ui.profile.Profile
+import eu.peernetwork.app.ui.version.Version
 import eu.peernetwork.core.ui.annotation.UiBuilder
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
@@ -66,5 +67,13 @@ object SettingsModule {
     @UiBuilder(Profile.Builder::class)
     fun provideProfileBuilder(component: Settings.Component): UiComponent.Builder {
         return Profile.Builder(component)
+    }
+
+    @Settings.Scope
+    @Provides
+    @IntoMap
+    @UiBuilder(Version.Builder::class)
+    fun provideVersionBuilder(component: Settings.Component): UiComponent.Builder {
+        return Version.Builder(component)
     }
 }

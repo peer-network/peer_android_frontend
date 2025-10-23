@@ -2,7 +2,7 @@ package eu.peernetwork.core.ui.extension
 
 import android.util.Patterns
 import androidx.compose.foundation.text.input.TextFieldState
-import eu.peernetwork.core.ui.design.compose.DesignPasswordStrength
+import eu.peernetwork.core.ui.design.material.DesignPasswordStrength
 
 fun TextFieldState.isValidEmail(): Boolean {
     return Patterns.EMAIL_ADDRESS.matcher(text).matches()
@@ -23,7 +23,7 @@ fun TextFieldState.passwordStrength(): DesignPasswordStrength {
             hasLowercase.toInt() +
             hasDigit.toInt()
     if (score == DesignPasswordStrength.STRONG.value) {
-        score += hasSpecialCharacter.toInt()
+        score += (hasSpecialCharacter || text.length >= 12).toInt()
     }
     return when (score) {
         DesignPasswordStrength.BAD.value -> DesignPasswordStrength.BAD

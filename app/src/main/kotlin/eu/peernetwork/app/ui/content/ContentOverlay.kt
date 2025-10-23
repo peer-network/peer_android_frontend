@@ -13,7 +13,7 @@ import eu.peernetwork.app.extension.navigateToUsernameSearch
 import eu.peernetwork.app.ui.window.WindowTitle
 import eu.peernetwork.blog.ui.feed.detail.DetailOverlay
 import eu.peernetwork.blog.ui.event.UiPostListener
-import eu.peernetwork.core.ui.design.compose.DesignOverlay
+import eu.peernetwork.core.ui.design.material.DesignOverlay
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.core.ui.factory.UiViewModelStore
 import eu.peernetwork.social.ui.connection.ConnectionController

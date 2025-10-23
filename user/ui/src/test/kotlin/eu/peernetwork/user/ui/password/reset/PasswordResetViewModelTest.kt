@@ -3,6 +3,7 @@ package eu.peernetwork.user.ui.password.reset
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import app.cash.turbine.test
 import eu.peernetwork.user.domain.usecase.PasswordResetUsecase
+import eu.peernetwork.user.ui.v2.password.reset.ResetViewModel
 import io.mockk.coEvery
 import io.mockk.mockk
 import junit.framework.TestCase.assertEquals
@@ -25,12 +26,12 @@ internal class PasswordResetViewModelTest {
 
     private val usecase = mockk<PasswordResetUsecase>()
 
-    private lateinit var viewModel: PasswordResetViewModel
+    private lateinit var viewModel: ResetViewModel
 
     @Before
     fun setup() {
         Dispatchers.setMain(dispatcher)
-        viewModel = PasswordResetViewModel(usecase)
+        viewModel = ResetViewModel(usecase)
     }
 
     @Test
@@ -42,8 +43,8 @@ internal class PasswordResetViewModelTest {
         }
         viewModel.reset(token, password)
         viewModel.state.test {
-            assertEquals(PasswordResetViewModel.State.Loading, awaitItem())
-            assertEquals(PasswordResetViewModel.State.Success, awaitItem())
+            assertEquals(ResetViewModel.State.Loading, awaitItem())
+            assertEquals(ResetViewModel.State.Success, awaitItem())
         }
     }
 
@@ -53,7 +54,7 @@ internal class PasswordResetViewModelTest {
         coEvery { usecase(any()) } throws error
         viewModel.reset("<test-token>", "<test-email>")
         viewModel.state.test {
-            assertEquals(PasswordResetViewModel.State.Error(error), awaitItem())
+            assertEquals(ResetViewModel.State.Error(error), awaitItem())
         }
     }
 }
