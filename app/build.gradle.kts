@@ -5,6 +5,7 @@ plugins {
 
 android {
     defaultConfig {
+
         versionCode = 35
         versionName = "1.9.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
