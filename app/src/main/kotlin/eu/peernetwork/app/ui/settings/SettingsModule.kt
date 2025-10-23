@@ -11,7 +11,7 @@ import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.factory.UiBuilderFactory
 import eu.peernetwork.social.ui.referral.Referral
-import eu.peernetwork.user.ui.password.update.PasswordUpdate
+import eu.peernetwork.user.ui.password.update.Update
 import eu.peernetwork.user.ui.settings.account.Account
 import eu.peernetwork.user.ui.settings.address.Address
 
@@ -40,9 +40,9 @@ object SettingsModule {
     @Settings.Scope
     @Provides
     @IntoMap
-    @UiBuilder(PasswordUpdate.Builder::class)
+    @UiBuilder(Update.Builder::class)
     fun providePasswordUpdateBuilder(component: Settings.Component): UiComponent.Builder {
-        return PasswordUpdate.Builder(component)
+        return Update.Builder(component)
     }
 
     @Settings.Scope

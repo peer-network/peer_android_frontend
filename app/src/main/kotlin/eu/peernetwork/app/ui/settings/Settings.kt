@@ -8,7 +8,7 @@ import eu.peernetwork.app.ui.version.Version
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.social.ui.referral.Referral
-import eu.peernetwork.user.ui.password.update.PasswordUpdate
+import eu.peernetwork.user.ui.password.update.Update
 import eu.peernetwork.user.ui.settings.account.Account
 import eu.peernetwork.user.ui.settings.address.Address
 
@@ -26,7 +26,7 @@ interface Settings : ApplicationProvider {
     )
     interface Component : Settings,
         Account,
-        PasswordUpdate,
+        Update,
         Address,
         About,
         UiComponentProvider,

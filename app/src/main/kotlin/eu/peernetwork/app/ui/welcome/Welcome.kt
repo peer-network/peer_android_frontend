@@ -4,12 +4,12 @@ import android.content.Context
 import eu.peernetwork.app.provider.ApplicationProvider
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.user.ui.v2.login.Login
-import eu.peernetwork.user.ui.v2.password.request.Request
-import eu.peernetwork.user.ui.v2.password.reset.Reset
-import eu.peernetwork.user.ui.v2.password.verification.Verification
-import eu.peernetwork.user.ui.v2.referral.Referral
-import eu.peernetwork.user.ui.v2.registration.Registration
+import eu.peernetwork.user.ui.login.Login
+import eu.peernetwork.user.ui.password.request.Request
+import eu.peernetwork.user.ui.password.reset.Reset
+import eu.peernetwork.user.ui.password.verification.Verification
+import eu.peernetwork.user.ui.referral.Referral
+import eu.peernetwork.user.ui.registration.Registration
 
 interface Welcome : ApplicationProvider {
     @javax.inject.Scope
