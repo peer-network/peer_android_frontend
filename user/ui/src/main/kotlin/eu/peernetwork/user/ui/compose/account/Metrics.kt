@@ -1,4 +1,4 @@
-package eu.peernetwork.user.ui.compose
+package eu.peernetwork.user.ui.compose.account
 
 import android.content.res.Configuration
 import androidx.compose.foundation.clickable
@@ -19,49 +19,51 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.user.ui.R
 import eu.peernetwork.user.ui.model.UiOverview
 
 @Composable
-fun Overview(
+fun Metrics(
     overview: UiOverview,
     modifier: Modifier = Modifier,
+    horizontalArrangement: Arrangement.Horizontal = Arrangement.spacedBy(24.dp),
     onClick: (Int) -> Unit
 ) {
     Row(
         modifier = modifier,
-        horizontalArrangement = Arrangement.SpaceBetween
+        horizontalArrangement = horizontalArrangement
     ) {
-        Overview(
+        Metrics(
             title = { Text("${overview.followers}") },
-            subTitle = { Text(stringResource(R.string.follower_label)) },
-            modifier = Modifier.padding(horizontal = 8.dp).clickable { onClick(0) },
+            subTitle = { Text(stringResource(R.string.follower_label).lowercase()) },
+            modifier = Modifier.clickable { onClick(0) },
             horizontalAlignment = Alignment.Start
         )
-        Overview(
+        Metrics(
             title = { Text("${overview.followed}") },
-            subTitle = { Text(stringResource(R.string.following_label)) },
-            modifier = Modifier.padding(horizontal = 8.dp).clickable { onClick(1) },
+            subTitle = { Text(stringResource(R.string.following_label).lowercase()) },
+            modifier = Modifier.clickable { onClick(1) },
             horizontalAlignment = Alignment.Start
         )
-        Overview(
+        Metrics(
             title = { Text("${overview.peers}") },
-            subTitle = { Text(stringResource(R.string.peers_label)) },
-            modifier = Modifier.padding(horizontal = 8.dp).clickable { onClick(2) },
+            subTitle = { Text(stringResource(R.string.peers_label).lowercase()) },
+            modifier = Modifier.clickable { onClick(2) },
             horizontalAlignment = Alignment.Start
         )
-        Overview(
+        Metrics(
             title = { Text("${overview.posts}") },
-            subTitle = { Text(stringResource(R.string.posts_label)) },
-            modifier = Modifier.padding(horizontal = 8.dp).clickable { onClick(3) },
+            subTitle = { Text(stringResource(R.string.posts_label).lowercase()) },
+            modifier = Modifier.clickable { onClick(3) },
             horizontalAlignment = Alignment.Start
         )
     }
 }
 
 @Composable
-fun Overview(
+fun Metrics(
     title: @Composable () -> Unit,
     subTitle: @Composable () -> Unit,
     modifier: Modifier = Modifier,
@@ -87,9 +89,9 @@ fun Overview(
 
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
-fun PreviewUserOverview() {
+fun PreviewMetrics() {
     PeerTheme {
-        Overview(
+        Metrics(
             modifier = Modifier.fillMaxWidth(),
             overview = UiOverview(
                 posts = 0,

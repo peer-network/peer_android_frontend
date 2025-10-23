@@ -76,6 +76,16 @@ fun designSecondaryButtonColors(): DesignButtonColors {
 }
 
 @Composable
+fun designTertiaryButtonColors(): DesignButtonColors {
+    return DesignButtonColors(
+        containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+        contentColor = MaterialTheme.colorScheme.onBackground,
+        disabledContainerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
+        disabledContentColor = MaterialTheme.colorScheme.outlineVariant
+    )
+}
+
+@Composable
 fun DesignButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -204,6 +214,17 @@ fun DarkPreviewDesignButton() {
                 colors = designSecondaryButtonColors(),
                 modifier = Modifier.sizeIn(minHeight = 56.dp, minWidth = 200.dp)
             ) { Text("Large Button") }
+            DesignButton(
+                onClick = {},
+                colors = designTertiaryButtonColors(),
+                modifier = Modifier.sizeIn(minHeight = 56.dp, minWidth = 200.dp)
+            ) { Text("Large Button") }
+            DesignButton(
+                onClick = {},
+                enabled = false,
+                colors = designTertiaryButtonColors(),
+                modifier = Modifier.sizeIn(minHeight = 56.dp, minWidth = 200.dp)
+            ) { Text("Large Button") }
         }
     }
 }
@@ -245,6 +266,17 @@ fun LightPreviewDesignButton() {
                 onClick = {},
                 enabled = false,
                 colors = designSecondaryButtonColors(),
+                modifier = Modifier.sizeIn(minHeight = 56.dp, minWidth = 200.dp)
+            ) { Text("Large Button") }
+            DesignButton(
+                onClick = {},
+                colors = designTertiaryButtonColors(),
+                modifier = Modifier.sizeIn(minHeight = 56.dp, minWidth = 200.dp)
+            ) { Text("Large Button") }
+            DesignButton(
+                onClick = {},
+                enabled = false,
+                colors = designTertiaryButtonColors(),
                 modifier = Modifier.sizeIn(minHeight = 56.dp, minWidth = 200.dp)
             ) { Text("Large Button") }
         }

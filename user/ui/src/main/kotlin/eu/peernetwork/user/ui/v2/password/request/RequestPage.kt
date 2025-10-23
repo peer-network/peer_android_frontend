@@ -33,8 +33,8 @@ import eu.peernetwork.core.ui.design.luna.DesignButton
 import eu.peernetwork.core.ui.design.luna.DesignTextField
 import eu.peernetwork.core.ui.extension.isValidEmail
 import eu.peernetwork.user.ui.R
-import eu.peernetwork.user.ui.compose.ErrorLabel
-import eu.peernetwork.user.ui.compose.FormHeader
+import eu.peernetwork.user.ui.compose.form.ErrorLabel
+import eu.peernetwork.user.ui.compose.form.FormHeader
 
 private const val tag = "REQUEST_PASSWORD_TAG"
 

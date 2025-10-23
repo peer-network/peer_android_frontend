@@ -42,9 +42,9 @@ import eu.peernetwork.core.ui.extension.isValidEmail
 import eu.peernetwork.core.ui.extension.isValidInput
 import eu.peernetwork.core.ui.theme.DesignTheme
 import eu.peernetwork.user.ui.R
-import eu.peernetwork.user.ui.compose.ErrorLabel
-import eu.peernetwork.user.ui.compose.LabelledCheckBox
-import eu.peernetwork.user.ui.compose.PasswordField
+import eu.peernetwork.user.ui.compose.form.ErrorLabel
+import eu.peernetwork.user.ui.compose.form.LabelledCheckBox
+import eu.peernetwork.user.ui.compose.password.PasswordField
 
 @Composable
 fun LoginForm(
