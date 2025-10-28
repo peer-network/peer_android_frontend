@@ -84,7 +84,7 @@ jobs:
         run: ./gradlew koverHtmlReport
 
       - name: Upload coverage report as artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: kover-coverage-report
           path: build/reports/kover/html/
@@ -95,7 +95,7 @@ jobs:
 
       - name: Upload Debug apk as artifact
         if: github.ref != 'refs/heads/main'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: app-debug
           path: app/build/outputs/apk/debug/app-debug.apk
@@ -106,7 +106,7 @@ jobs:
 
       - name: Upload Release apk as artifact
         if: github.ref == 'refs/heads/main'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: app-release
           path: app/build/outputs/apk/release/app-release.apk
