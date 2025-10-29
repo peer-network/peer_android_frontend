@@ -32,7 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.ViewModelStoreOwner
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.material.DesignAsyncImage
+import eu.peernetwork.core.ui.design.luna.DesignImage
 import eu.peernetwork.core.ui.design.material.DesignAvatar
 import eu.peernetwork.core.ui.design.material.DesignDetailLayout
 import eu.peernetwork.core.ui.extension.builder
@@ -88,7 +88,7 @@ fun TransferScreen(
         DesignDetailLayout(
             lead = {
                 DesignAvatar {
-                    DesignAsyncImage(
+                    DesignImage(
                         label = recipient.username,
                         imageUrl = recipient.imageUrl,
                         size = 36.dp,

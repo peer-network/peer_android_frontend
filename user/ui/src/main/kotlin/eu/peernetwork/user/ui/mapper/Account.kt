@@ -2,7 +2,7 @@ package eu.peernetwork.user.ui.mapper
 
 import eu.peernetwork.user.domain.model.Account
 import eu.peernetwork.user.ui.model.UiAccount
-import eu.peernetwork.user.ui.model.UiOverview
+import eu.peernetwork.user.ui.model.UiMetric
 
 fun Account.mapFromDomain(): UiAccount {
     return UiAccount(
@@ -11,13 +11,13 @@ fun Account.mapFromDomain(): UiAccount {
         username = username,
         bio = bio,
         imageUrl = imageUrl,
-        overview = UiOverview(
+        metric = UiMetric(
             posts = overview.posts,
             followers = overview.followers,
             followed = overview.followed,
             peers = overview.peers
         ),
-        isfollowing = isfollowing,
-        isfollowed = isfollowed
+        isFollowing = isfollowing,
+        isFollowed = isfollowed
     )
 }

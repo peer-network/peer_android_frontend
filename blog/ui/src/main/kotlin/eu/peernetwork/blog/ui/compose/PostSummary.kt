@@ -24,7 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.blog.ui.model.UiAuthor
 import eu.peernetwork.blog.ui.model.UiContent
-import eu.peernetwork.core.ui.design.material.DesignAsyncImage
+import eu.peernetwork.core.ui.design.luna.DesignImage
 import eu.peernetwork.core.ui.design.material.DesignAvatar
 import eu.peernetwork.core.ui.design.material.DesignDetailLayout
 import eu.peernetwork.core.ui.design.material.DesignRichText
@@ -56,7 +56,7 @@ fun PostSummary(
         verticalAlignment = verticalAlignment,
         lead = {
             DesignAvatar {
-                DesignAsyncImage(
+                DesignImage(
                     label = model.author.username,
                     imageUrl = model.author.imageUrl,
                     size = 36.dp,

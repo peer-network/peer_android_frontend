@@ -176,7 +176,7 @@ fun ExplorerScreen(
             ) {
                 val items = mapOf(
                     photo to eu.peernetwork.core.ui.R.drawable.ic_photo,
-                    video to eu.peernetwork.core.ui.R.drawable.ic_video,
+                    video to eu.peernetwork.core.ui.R.drawable.ic_movie,
                     audio to eu.peernetwork.core.ui.R.drawable.ic_music,
                     files to eu.peernetwork.core.ui.R.drawable.ic_wallet
                 )

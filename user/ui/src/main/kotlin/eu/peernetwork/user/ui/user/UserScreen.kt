@@ -1,13 +1,7 @@
 package eu.peernetwork.user.ui.user
 
-import android.content.res.Configuration
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -19,29 +13,18 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.extension.builder
-import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.user.ui.model.UiAccount
-import eu.peernetwork.user.ui.model.UiOverview
-import eu.peernetwork.core.ui.design.material.DesignAsyncImage
 import eu.peernetwork.core.ui.design.compose.DesignStatefulScaffold
 import eu.peernetwork.core.ui.design.compose.DesignStatefulScaffoldState
-import eu.peernetwork.core.ui.design.material.DesignZoom
-import eu.peernetwork.core.ui.design.material.DesignLead
 import eu.peernetwork.core.ui.design.material.DesignOverlay
-import eu.peernetwork.core.ui.extension.toInt
+import eu.peernetwork.core.ui.design.material.DesignZoom
 import eu.peernetwork.media.core.renderer.ImageView
-import eu.peernetwork.user.ui.R
-import eu.peernetwork.user.ui.compose.account.Metrics
 import eu.peernetwork.user.ui.compose.account.ProfileScaffold
 
 @Composable
@@ -50,7 +33,7 @@ fun UserScreen(
     requireUpdate: MutableState<Boolean>,
     modifier: Modifier = Modifier,
     provider: UiComponentProvider,
-    onFollow: @Composable (Pair<Boolean, Boolean>) -> Unit,
+    connection: @Composable (Pair<Boolean, Boolean>) -> Unit,
     onClick: (Int) -> Unit,
     onSettings: () -> Unit,
     viewModelStoreOwner: ViewModelStoreOwner,
@@ -83,42 +66,49 @@ fun UserScreen(
             }
         }
     } }
+    val updatedConnection by rememberUpdatedState(connection)
+    val selectedImage = remember { mutableStateOf<String?>(null) }
+    val visible = remember(selectedImage.value) {
+        mutableStateOf(selectedImage.value != null)
+    }
     DesignStatefulScaffold<Pair<UiAccount, Boolean>>(
         state = derivedState,
         onRefresh = { viewModel.getAccount(id) },
         placeholder = { ProfileScaffold(modifier = modifier.padding(end = 8.dp)) },
         errorContent = { ProfileScaffold(modifier = modifier.padding(end = 8.dp)) }
-    ) {
-        UserScreen(
-            modifier = modifier,
-            account = it.first,
-            connection = onFollow,
-            showPeers = it.second,
-            onSettings = if (it.second) {
-                onSettings
-            } else {
-                null
-            },
-            onClick = onClick,
-            avatar = {
-                DesignZoom({
-                    component.imageView()(
-                        Modifier,
-                        ImageView.Spec(
-                            it.first.imageUrl,
-                            null,
-                            ContentScale.Crop,
-                            500f,
-                        )
+    ) { data ->
+        UserPage(
+            account = data.first,
+            isAdmin = data.second,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 24.dp)
+                .padding(top = 10.dp),
+            onInvite = {},
+            onSettings = onSettings,
+            onClick = {  }
+        ) { updatedConnection(data.first.isFollowing to data.first.isFollowed) }
+        DesignOverlay(
+            state = visible,
+            onDismiss = { selectedImage.value = null }
+        ) {
+            DesignZoom(background = {
+                component.imageView()(
+                    modifier = Modifier,
+                    spec = ImageView.Spec(
+                        url = data.first.imageUrl,
+                        ratio = null,
+                        blur = 500f,
+                        contentScale = ContentScale.Crop,
                     )
-                }) {
-                    component.imageView()(
-                        Modifier,
-                        ImageView.Spec(it.first.imageUrl, null)
-                    )
-                }
+                )
+            }) {
+                component.imageView()(
+                    modifier = Modifier,
+                    spec = ImageView.Spec(data.first.imageUrl, null)
+                )
             }
-        )
+        }
     }
     LaunchedEffect(requireUpdate.value) {
         if (requireUpdate.value) {
@@ -127,90 +117,4 @@ fun UserScreen(
         }
     }
     LaunchedEffect(Unit) { viewModel.initialize() }
-}
-
-@Composable
-fun UserScreen(
-    account: UiAccount,
-    modifier: Modifier = Modifier,
-    showPeers: Boolean,
-    avatar: @Composable () -> Unit = {},
-    connection: @Composable (Pair<Boolean, Boolean>) -> Unit,
-    onSettings: (() -> Unit)? = null,
-    onClick: (Int) -> Unit,
-) {
-    val clickHandler by rememberUpdatedState(onClick)
-    val settingsHandler by rememberUpdatedState(onSettings)
-    val selectedImage = remember { mutableStateOf<String?>(null) }
-    val updatedAvatar by rememberUpdatedState(avatar)
-    val updatedConnection by rememberUpdatedState(connection)
-    val emptyDescription = stringResource(R.string.empty_description_message)
-    val visible = remember(selectedImage.value) { mutableStateOf(selectedImage.value != null) }
-    ProfileScaffold(
-        modifier = modifier,
-        avatar = {
-            DesignAsyncImage(
-                account.username,
-                account.imageUrl,
-                modifier = Modifier.clickable(role = Role.Button, enabled = true) {
-                    selectedImage.value = account.imageUrl
-                }) },
-        actions = {
-            if (settingsHandler != null) {
-                IconButton(onClick = { settingsHandler?.invoke() }) {
-                    Icon(
-                        painter = painterResource(id = eu.peernetwork.core.ui.R.drawable.ic_settings),
-                        contentDescription = stringResource(eu.peernetwork.core.ui.R.string.settings_label),
-                        modifier = Modifier.size(18.dp)
-                    )
-                }
-            } else {
-                Box(
-                    modifier = Modifier
-                        .padding(vertical = 8.dp)
-                        .padding(bottom = 4.dp)
-                ) { updatedConnection(account.isfollowing to account.isfollowed) }
-            }
-        },
-        options = {
-            Metrics(
-                overview = account.overview,
-                modifier = Modifier.fillMaxWidth(),
-                onClick = { if (it < (2 + showPeers.toInt())) clickHandler(it) }
-            )
-        }
-    ) {
-        DesignLead(
-            account.username,
-            account.slug.toString(),
-            account.bio ?: emptyDescription
-        )
-    }
-    DesignOverlay(
-        visible,
-        onDismiss = { selectedImage.value = null }
-    ) { updatedAvatar() }
-}
-
-@Composable
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
-fun PreviewUserScreen() {
-    PeerTheme {
-        val model = UiAccount(
-            id = System.currentTimeMillis().toString(),
-            username = "John Doe",
-            slug = 0,
-            bio = "Description....",
-            imageUrl = "",
-            overview = UiOverview(
-                posts = 0,
-                peers = 0,
-                followers = 0,
-                followed = 0
-            ),
-            isfollowing = false,
-            isfollowed = false
-        )
-        UserScreen(connection = { }, account = model, showPeers = true) {}
-    }
 }

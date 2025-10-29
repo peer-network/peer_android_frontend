@@ -19,7 +19,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.blog.ui.model.UiAuthor
-import eu.peernetwork.core.ui.design.material.DesignAsyncImage
+import eu.peernetwork.core.ui.design.luna.DesignImage
 import eu.peernetwork.core.ui.design.material.DesignAvatar
 import eu.peernetwork.core.ui.design.material.DesignDetailLayout
 import eu.peernetwork.core.ui.design.material.DesignLead
@@ -56,7 +56,7 @@ fun AuthorView(
     DesignDetailLayout(
         lead = {
             DesignAvatar {
-                DesignAsyncImage(
+                DesignImage(
                     label = author.username,
                     imageUrl = author.imageUrl,
                     size = size,

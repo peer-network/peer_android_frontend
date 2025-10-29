@@ -11,7 +11,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import eu.peernetwork.core.ui.design.material.DesignAsyncImage
+import eu.peernetwork.core.ui.design.luna.DesignImage
 import eu.peernetwork.core.ui.extension.annotate
 import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.social.ui.compose.SearchItem
@@ -31,7 +31,7 @@ fun MemberItem(
             .clickable { handleOnClick(model.id) }
             .padding(vertical = 8.dp),
         lead = {
-            DesignAsyncImage(
+            DesignImage(
                 label = model.username,
                 imageUrl = model.imageUrl,
                 size = 42.dp,

@@ -112,7 +112,7 @@ fun ProfilePreview(
                 UserScreen(
                     id = id,
                     requireUpdate = requireUpdate,
-                    onFollow = {
+                    connection = {
                         ConnectionScreen(
                             isFollowed = it.second,
                             isFollowing = connectionState.getOrDefault(
@@ -211,13 +211,16 @@ fun ProfilePreview(
             modifier = modifier.fillMaxSize(),
             header = updatedHeader,
         ) {
-            DesignTab(pageState) { index ->
+            DesignTab(
+                pageState,
+                modifier = Modifier.padding(top = 2.dp)
+            ) { index ->
                 UiMimeType.get(index)?.let {
                     Icon(
                         painter = painterResource(id = it.id),
                         contentDescription = it.label?.let { stringResource(it) },
                         tint = MaterialTheme.colorScheme.tertiary,
-                        modifier = Modifier.padding(vertical = 8.dp).size(28.dp)
+                        modifier = Modifier.padding(vertical = 6.dp).size(18.dp)
                     )
                 }
             }

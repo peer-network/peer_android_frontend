@@ -36,7 +36,7 @@ import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.compose.DesignErrorLabel
 import eu.peernetwork.core.ui.design.compose.DesignPagingScaffold
 import eu.peernetwork.core.ui.design.compose.DesignStatefulScaffoldState
-import eu.peernetwork.core.ui.design.material.DesignAsyncImage
+import eu.peernetwork.core.ui.design.luna.DesignImage
 import eu.peernetwork.core.ui.extension.annotate
 import eu.peernetwork.core.ui.extension.builder
 
@@ -139,7 +139,7 @@ fun ListingScreen(
             .clickable { handleOnClick(author) }
             .padding(vertical = 8.dp, horizontal = 16.dp),
         lead = {
-            DesignAsyncImage(
+            DesignImage(
                 label = author.username,
                 imageUrl = author.imageUrl,
                 size = 42.dp,

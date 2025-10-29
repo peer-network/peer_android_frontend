@@ -34,7 +34,7 @@ import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.compose.DesignStatefulScaffold
 import eu.peernetwork.core.ui.design.compose.DesignStatefulScaffoldState
-import eu.peernetwork.core.ui.design.material.DesignAsyncImage
+import eu.peernetwork.core.ui.design.luna.DesignImage
 import eu.peernetwork.core.ui.design.material.DesignAvatar
 import eu.peernetwork.core.ui.design.material.DesignCard
 import eu.peernetwork.core.ui.design.material.DesignDetail
@@ -90,7 +90,7 @@ fun AccountPreview(
     ) {
         AccountPreview(it.username, onClick = onClick) {
             DesignAvatar {
-                DesignAsyncImage(it.username, it.imageUrl, size = 48.dp)
+                DesignImage(it.username, it.imageUrl, size = 48.dp)
             }
         }
     }

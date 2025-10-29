@@ -23,7 +23,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import eu.peernetwork.core.ui.design.material.DesignAsyncImage
+import eu.peernetwork.core.ui.design.luna.DesignImage
 import eu.peernetwork.core.ui.design.material.DesignAvatar
 import eu.peernetwork.core.ui.design.material.DesignCard
 import eu.peernetwork.core.ui.design.material.DesignDetailLayout
@@ -49,7 +49,7 @@ fun TransferRecipient(
         DesignDetailLayout(
             lead = {
                 DesignAvatar {
-                    DesignAsyncImage(
+                    DesignImage(
                         label = recipient.username,
                         imageUrl = recipient.imageUrl,
                         size = 36.dp,

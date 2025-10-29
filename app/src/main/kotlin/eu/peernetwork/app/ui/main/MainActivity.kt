@@ -10,7 +10,7 @@ import androidx.lifecycle.ViewModelProvider
 import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.extension.findBuilder
-import eu.peernetwork.core.ui.theme.PeerTheme
+import eu.peernetwork.core.ui.theme.DesignTheme
 import javax.inject.Inject
 
 class MainActivity : ComponentActivity(), UiComponent.Provider<Main.Component> {
@@ -31,7 +31,7 @@ class MainActivity : ComponentActivity(), UiComponent.Provider<Main.Component> {
         installSplashScreen()
         WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
-            PeerTheme(
+            DesignTheme(
                 isDarkMode = if (BuildConfig.USE_SYSTEM_THEME) {
                     isSystemInDarkTheme()
                 } else {

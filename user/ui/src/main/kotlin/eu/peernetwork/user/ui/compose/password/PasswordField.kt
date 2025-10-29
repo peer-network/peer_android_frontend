@@ -56,7 +56,7 @@ fun PasswordField(
             Crossfade(obfuscationMode.value) { target ->
                 Icon(
                     painter = painterResource(if (target == TextObfuscationMode.Hidden) {
-                        R.drawable.ic_eyes_opened
+                        R.drawable.ic_eye_opened
                     } else {
                         R.drawable.ic_eye_closed
                     }),
