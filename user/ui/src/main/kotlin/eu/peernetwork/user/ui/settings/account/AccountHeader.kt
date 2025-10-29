@@ -44,8 +44,8 @@ import eu.peernetwork.core.ui.theme.PeerAppGreen
 import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.user.ui.R
 import eu.peernetwork.user.ui.model.UiAccount
-import eu.peernetwork.user.ui.model.UiOverview
-import eu.peernetwork.core.ui.design.material.DesignAsyncImage
+import eu.peernetwork.user.ui.model.UiMetric
+import eu.peernetwork.core.ui.design.luna.DesignImage
 import eu.peernetwork.user.ui.activity.CropActivity
 import java.io.File
 
@@ -141,7 +141,7 @@ fun UserSettingsAvatar(
                 modifier = Modifier.size(64.dp),
                 contentDescription = null
             )
-        } ?: DesignAsyncImage(name, imageUrl)
+        } ?: DesignImage(name, imageUrl)
     }
 }
 
@@ -155,14 +155,14 @@ fun PreviewSettingsAvatar() {
             slug = 0,
             bio = "Description....",
             imageUrl = "",
-            overview = UiOverview(
+            metric = UiMetric(
                 posts = 0,
                 peers = 0,
                 followers = 0,
                 followed = 0
             ),
-            isfollowing = false,
-            isfollowed = false
+            isFollowing = false,
+            isFollowed = false
         )
         AccountHeader(
             account = model,

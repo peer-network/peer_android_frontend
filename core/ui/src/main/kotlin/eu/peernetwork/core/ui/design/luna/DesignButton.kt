@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -106,6 +107,8 @@ fun DesignButton(
         vertical = 16.dp,
         horizontal = 24.dp
     ),
+    leading: @Composable () -> Unit = {},
+    trailing: @Composable () -> Unit = {},
     loading: @Composable () -> Unit = {
         Icon(
             painter = painterResource(R.drawable.ic_more),
@@ -117,6 +120,8 @@ fun DesignButton(
     content: @Composable () -> Unit
 ) {
     val clickHandler by rememberUpdatedState(onClick)
+    val updatedLeading by rememberUpdatedState(leading)
+    val updatedTrailing by rememberUpdatedState(trailing)
     val updatedLoading by rememberUpdatedState(loading)
     val updatedContent by rememberUpdatedState(content)
     val contentColor = if (enabled) colors.contentColor else colors.disabledContentColor
@@ -153,23 +158,29 @@ fun DesignButton(
                     repeatMode = RepeatMode.Reverse
                 )
             )
-            Box(
-                modifier = Modifier.graphicsLayer {
-                    this.alpha = if (isLoading) alpha else 0f },
-            ) {
-                CompositionLocalProvider(
-                    LocalContentColor provides contentColor,
-                    LocalTextStyle provides style.copy(
-                        color = contentColor
-                    )
-                ) { updatedLoading() }
-            }
-            Box(modifier = Modifier.graphicsLayer {
-                this.alpha = if (!isLoading) 1f else 0f }) {
-                CompositionLocalProvider(
-                    LocalContentColor provides contentColor,
-                    LocalTextStyle provides style
-                ) { updatedContent() }
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                updatedLeading()
+                Box(contentAlignment = Alignment.Center) {
+                    Box(
+                        modifier = Modifier.graphicsLayer {
+                            this.alpha = if (isLoading) alpha else 0f },
+                    ) {
+                        CompositionLocalProvider(
+                            LocalContentColor provides contentColor,
+                            LocalTextStyle provides style.copy(
+                                color = contentColor
+                            )
+                        ) { updatedLoading() }
+                    }
+                    Box(modifier = Modifier.graphicsLayer {
+                        this.alpha = if (!isLoading) 1f else 0f }) {
+                        CompositionLocalProvider(
+                            LocalContentColor provides contentColor,
+                            LocalTextStyle provides style
+                        ) { updatedContent() }
+                    }
+                }
+                updatedTrailing()
             }
         }
     }

@@ -50,7 +50,7 @@ import eu.peernetwork.user.ui.R
 import eu.peernetwork.user.ui.mapper.isPasswordRequired
 import eu.peernetwork.user.ui.mapper.mapToModels
 import eu.peernetwork.user.ui.model.UiAccount
-import eu.peernetwork.user.ui.model.UiOverview
+import eu.peernetwork.user.ui.model.UiMetric
 import eu.peernetwork.user.ui.model.UiSettings
 import eu.peernetwork.user.ui.compose.account.LogoutSheet
 import eu.peernetwork.user.ui.compose.password.PasswordSheet
@@ -241,14 +241,14 @@ fun PreviewAccountScreen() {
             slug = 0,
             bio = "Description....",
             imageUrl = "",
-            overview = UiOverview(
+            metric = UiMetric(
                 posts = 0,
                 peers = 0,
                 followers = 0,
                 followed = 0
             ),
-            isfollowing = false,
-            isfollowed = false
+            isFollowing = false,
+            isFollowed = false
         )
         AccountScreen(
             account = model,

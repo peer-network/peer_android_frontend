@@ -3,7 +3,7 @@ package eu.peernetwork.user.ui.model
 import androidx.compose.runtime.Immutable
 
 @Immutable
-data class UiOverview(
+data class UiMetric(
     val posts: Int,
     val peers: Int,
     val followers: Int,

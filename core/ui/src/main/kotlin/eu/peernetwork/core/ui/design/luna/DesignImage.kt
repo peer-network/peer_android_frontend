@@ -1,4 +1,4 @@
-package eu.peernetwork.core.ui.design.material
+package eu.peernetwork.core.ui.design.luna
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background
@@ -21,17 +21,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import eu.peernetwork.core.ui.theme.PeerTheme
+import eu.peernetwork.core.ui.theme.DesignTheme
 
 @Composable
-fun DesignAsyncImage(
+fun DesignImage(
     label: String,
     imageUrl: String,
     modifier: Modifier = Modifier,
     size: Dp = 64.dp,
-    color: Color = MaterialTheme.colorScheme.tertiaryContainer,
+    color: Color = MaterialTheme.colorScheme.surfaceContainerLow,
     style: TextStyle = MaterialTheme.typography.titleLarge.copy(
-        color = MaterialTheme.colorScheme.tertiary,
+        color = MaterialTheme.colorScheme.outline,
         fontWeight = FontWeight.Normal
     )
 ) {
@@ -51,7 +51,11 @@ fun DesignAsyncImage(
             modifier = Modifier
                 .align(Alignment.Center)
                 .graphicsLayer {
-                    if (isAvatarLoaded.value) alpha = 0f else 1f
+                    if (isAvatarLoaded.value) {
+                        alpha = 0f
+                    } else {
+                        1f
+                    }
                 }
         )
     }
@@ -60,8 +64,8 @@ fun DesignAsyncImage(
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun PreviewDesignAsyncImage() {
-    PeerTheme {
-        DesignAsyncImage(
+    DesignTheme {
+        DesignImage(
             label = "John Doe",
             imageUrl = "http://localhost"
         )
