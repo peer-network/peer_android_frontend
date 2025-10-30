@@ -23,17 +23,17 @@ class UserViewModel @Inject constructor(
     private val authUserUsecase: AuthRefreshUsecase,
     private val observerUsecase: ObserveAuthUserUsecase
 ) : ViewModel() {
-    private val mutableState = MutableStateFlow<State>(State.Empty)
+    private val _state = MutableStateFlow<State>(State.Empty)
 
-    val state: StateFlow<State> = mutableState.asStateFlow()
+    val state: StateFlow<State> = _state.asStateFlow()
 
     fun initialize() {
         viewModelScope.launch {
             observerUsecase().collectLatest {
-                (mutableState.value as? State.Success?)?.let { state ->
+                (_state.value as? State.Success?)?.let { state ->
                     val isConfigurable = it?.id == state.account.id
                     if (isConfigurable) {
-                        mutableState.tryEmit(State.Success(state.account, true))
+                        _state.tryEmit(State.Success(state.account, true))
                     }
                 }
             }
@@ -41,7 +41,7 @@ class UserViewModel @Inject constructor(
     }
 
     fun getAccount(id: String) {
-        mutableState.tryEmit(State.Loading)
+        _state.tryEmit(State.Loading)
         viewModelScope.launch {
             try {
                 val user = observerUsecase().firstOrNull()
@@ -51,9 +51,9 @@ class UserViewModel @Inject constructor(
                     user.id
                 }
                 val account = userUsecase(usecase(id))
-                mutableState.tryEmit(State.Success(account, principal == account.id))
+                _state.tryEmit(State.Success(account, principal == account.id))
             } catch (error: Throwable) {
-                mutableState.tryEmit(State.Error(error))
+                _state.tryEmit(State.Error(error))
             }
         }
     }

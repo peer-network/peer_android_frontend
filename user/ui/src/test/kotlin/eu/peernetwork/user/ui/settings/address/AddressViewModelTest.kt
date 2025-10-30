@@ -3,6 +3,7 @@ package eu.peernetwork.user.ui.settings.address
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import app.cash.turbine.test
 import eu.peernetwork.user.domain.usecase.ProtectedSettingsUsecase
+import eu.peernetwork.user.ui.email.EmailViewModel
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
@@ -25,12 +26,12 @@ internal class AddressViewModelTest {
 
     private val usecase = mockk<ProtectedSettingsUsecase>()
 
-    private lateinit var viewModel: AddressViewModel
+    private lateinit var viewModel: EmailViewModel
 
     @Before
     fun setup() {
         Dispatchers.setMain(dispatcher)
-        viewModel = AddressViewModel(usecase)
+        viewModel = EmailViewModel(usecase)
     }
 
     @Test
@@ -42,8 +43,8 @@ internal class AddressViewModelTest {
 
         viewModel.update(email, password)
         viewModel.state.test {
-            assertEquals(AddressViewModel.State.Loading, awaitItem())
-            assertEquals(AddressViewModel.State.Success(email), awaitItem())
+            assertEquals(EmailViewModel.State.Loading, awaitItem())
+            assertEquals(EmailViewModel.State.Success(email), awaitItem())
         }
     }
 
@@ -57,7 +58,7 @@ internal class AddressViewModelTest {
 
         viewModel.update(email, password)
         viewModel.state.test {
-            assertEquals(AddressViewModel.State.Error(error), awaitItem())
+            assertEquals(EmailViewModel.State.Error(error), awaitItem())
         }
     }
 }

@@ -12,8 +12,8 @@ import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.factory.UiBuilderFactory
 import eu.peernetwork.social.ui.referral.Referral
 import eu.peernetwork.user.ui.password.update.Update
-import eu.peernetwork.user.ui.settings.account.Account
-import eu.peernetwork.user.ui.settings.address.Address
+import eu.peernetwork.user.ui.account.Account
+import eu.peernetwork.user.ui.email.Email
 
 @Module
 object SettingsModule {
@@ -32,9 +32,9 @@ object SettingsModule {
     @Settings.Scope
     @Provides
     @IntoMap
-    @UiBuilder(Address.Builder::class)
+    @UiBuilder(Email.Builder::class)
     fun provideAddressBuilder(component: Settings.Component): UiComponent.Builder {
-        return Address.Builder(component)
+        return Email.Builder(component)
     }
 
     @Settings.Scope

@@ -1,4 +1,4 @@
-package eu.peernetwork.user.ui.settings.account
+package eu.peernetwork.user.ui.account
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

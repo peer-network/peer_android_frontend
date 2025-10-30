@@ -6,7 +6,9 @@ import eu.peernetwork.core.remote.extension.executeOrThrow
 import eu.peernetwork.core.remote.extension.getOrThrow
 import eu.peernetwork.user.data.api.ReferralApi
 import eu.peernetwork.user.domain.exception.ResourceNotFoundException
+import eu.peernetwork.user.domain.model.Invite
 import eu.peernetwork.user.domain.model.User
+import protected.eu.peernetwork.user.remote.GetReferralInfoQuery
 import public.eu.peernetwork.user.remote.PeerReferralQuery
 import public.eu.peernetwork.user.remote.VerifyReferralStringMutation
 import javax.inject.Inject
@@ -34,5 +36,16 @@ class ReferralApiDelegate @Inject constructor(
                 imageUrl = it.img!!
             )
         } ?: throw ResourceNotFoundException()
+    }
+
+    override suspend fun invitation(): Invite {
+        val query = GetReferralInfoQuery()
+        val response = client().query(query).executeOrThrow()
+        val data = response.getOrThrow().getReferralInfo
+        response.assertOrThrow(data.status, data.ResponseCode)
+        return Invite(
+            id = data.referralUuid!!,
+            link = data.referralLink!!
+        )
     }
 }

@@ -1,4 +1,4 @@
-package eu.peernetwork.user.ui.settings.address
+package eu.peernetwork.user.ui.email
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class AddressViewModel @Inject constructor(
+class EmailViewModel @Inject constructor(
     private val usecase: ProtectedSettingsUsecase,
 ) : ViewModel() {
     private val mutableState = MutableStateFlow<State>(State.Empty)

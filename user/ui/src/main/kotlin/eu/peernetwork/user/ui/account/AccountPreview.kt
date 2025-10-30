@@ -1,4 +1,4 @@
-package eu.peernetwork.user.ui.settings.account
+package eu.peernetwork.user.ui.account
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background
@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -39,7 +39,7 @@ import eu.peernetwork.core.ui.design.material.DesignAvatar
 import eu.peernetwork.core.ui.design.material.DesignCard
 import eu.peernetwork.core.ui.design.material.DesignDetail
 import eu.peernetwork.core.ui.extension.builder
-import eu.peernetwork.core.ui.theme.PeerTheme
+import eu.peernetwork.core.ui.theme.DesignTheme
 import eu.peernetwork.user.ui.model.UiAccount
 
 @Composable
@@ -90,7 +90,12 @@ fun AccountPreview(
     ) {
         AccountPreview(it.username, onClick = onClick) {
             DesignAvatar {
-                DesignImage(it.username, it.imageUrl, size = 48.dp)
+                DesignImage(
+                    label = it.username,
+                    imageUrl = it.imageUrl,
+                    size = 48.dp,
+                    color = MaterialTheme.colorScheme.surfaceContainerLow
+                )
             }
         }
     }
@@ -105,9 +110,9 @@ fun AccountPreview(
     val updatedAvatar by rememberUpdatedState(avatar)
     val handleOnClick by rememberUpdatedState(onClick)
     DesignCard(
-        color = MaterialTheme.colorScheme.surfaceVariant,
+        color = MaterialTheme.colorScheme.surfaceContainerLowest,
         contentPadding = PaddingValues(12.dp),
-        shape = RoundedCornerShape(24.dp),
+        shape = CircleShape,
         modifier = Modifier
             .fillMaxWidth()
             .clickable(role = Role.Button) {
@@ -122,7 +127,7 @@ fun AccountPreview(
                     Icon(
                         painterResource(R.drawable.ic_next),
                         contentDescription = stringResource(R.string.settings_label),
-                        tint = MaterialTheme.colorScheme.surfaceDim.copy(alpha = .5f),
+                        tint = MaterialTheme.colorScheme.outlineVariant,
                         modifier = Modifier.padding(horizontal = 8.dp)
                             .size(16.dp)
                     )
@@ -146,7 +151,7 @@ fun AccountPreview(
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun PreviewAccountPreview() {
-    PeerTheme {
+    DesignTheme {
         Column(
             Modifier
                 .fillMaxWidth()

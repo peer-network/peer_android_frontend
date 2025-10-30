@@ -18,7 +18,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import eu.peernetwork.core.ui.theme.PeerTheme
+import eu.peernetwork.core.ui.theme.DesignTheme
 import eu.peernetwork.user.ui.R
 
 @Composable
@@ -26,7 +26,7 @@ fun SettingsItem(
     label: String,
     onClick: () -> Unit,
 ) {
-    val border = MaterialTheme.colorScheme.tertiaryContainer
+    val border = MaterialTheme.colorScheme.surfaceContainerLowest
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
@@ -53,7 +53,7 @@ fun SettingsItem(
         Icon(
             painterResource(eu.peernetwork.core.ui.R.drawable.ic_next),
             contentDescription = stringResource(R.string.referral_label),
-            tint = MaterialTheme.colorScheme.surfaceDim.copy(alpha = .6f),
+            tint = MaterialTheme.colorScheme.surfaceContainerLow,
             modifier = Modifier
                 .size(28.dp)
                 .padding(8.dp)
@@ -64,7 +64,7 @@ fun SettingsItem(
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun PreviewSettingsItem() {
-    PeerTheme {
+    DesignTheme {
         Column(modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())) {

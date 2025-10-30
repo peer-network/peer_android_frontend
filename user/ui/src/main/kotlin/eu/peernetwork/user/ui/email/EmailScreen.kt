@@ -1,4 +1,4 @@
-package eu.peernetwork.user.ui.settings.address
+package eu.peernetwork.user.ui.email
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Column
@@ -43,31 +43,31 @@ import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.user.ui.R
 
 @Composable
-fun AddressScreen(
+fun EmailScreen(
     provider: UiComponentProvider,
     onFinish: () -> Unit,
 ) {
     val context = LocalContext.current
     val component = remember {
-        provider.builder(Address.Builder::class.java).build(context)
+        provider.builder(Email.Builder::class.java).build(context)
     }
     val viewModel = viewModel(
-        modelClass = AddressViewModel::class.java,
+        modelClass = EmailViewModel::class.java,
         viewModelStoreOwner = UiViewModel.Owner(),
         factory = component.viewModelFactory()
     )
     val handleOnFinish by rememberUpdatedState(onFinish)
     val state by viewModel.state.collectAsStateWithLifecycle()
     val isLoading = remember(state) { derivedStateOf {
-        state is AddressViewModel.State.Loading
+        state is EmailViewModel.State.Loading
     } }
-    val isFinished = remember(state) { derivedStateOf { state is AddressViewModel.State.Success } }
+    val isFinished = remember(state) { derivedStateOf { state is EmailViewModel.State.Success } }
     val error = remember(state) { derivedStateOf {
-        (state as? AddressViewModel.State.Error?)?.error?.message?.let {
+        (state as? EmailViewModel.State.Error?)?.error?.message?.let {
             component.resource().string(it)
         }
     } }
-    AddressScreen(isLoading, error) { email, password ->
+    EmailScreen(isLoading, error) { email, password ->
         viewModel.update(email, password)
     }
     DesignTitleBarHost("PasswordResetScreen") {
@@ -85,7 +85,7 @@ fun AddressScreen(
 }
 
 @Composable
-fun AddressScreen(
+fun EmailScreen(
     loading: State<Boolean>,
     error: State<String?>,
     onSubmit: (String, String) -> Unit
@@ -166,7 +166,7 @@ fun AddressScreen(
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun PreviewAddressScreen() {
     PeerTheme {
-        AddressScreen(
+        EmailScreen(
             remember { mutableStateOf(false) },
             remember { mutableStateOf(null) },
         ) { token, password -> }

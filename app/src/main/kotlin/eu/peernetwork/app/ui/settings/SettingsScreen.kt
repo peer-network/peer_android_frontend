@@ -24,10 +24,10 @@ import eu.peernetwork.core.ui.design.material.DesignTitleBarHost
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.core.ui.factory.UiViewModelStore
-import eu.peernetwork.core.ui.theme.PeerTheme
+import eu.peernetwork.core.ui.theme.DesignTheme
 import eu.peernetwork.social.ui.feedback.FeedbackScreen
 import eu.peernetwork.user.ui.R
-import eu.peernetwork.user.ui.settings.account.AccountPreview
+import eu.peernetwork.user.ui.account.AccountPreview
 
 @Composable
 fun SettingsScreen(
@@ -106,13 +106,13 @@ fun SettingsScreen(
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun PreviewSettingsScreen() {
-    PeerTheme {
+    DesignTheme {
         SettingsScreen({}, {}) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(96.dp)
-                    .background(MaterialTheme.colorScheme.tertiaryContainer)
+                    .background(MaterialTheme.colorScheme.surfaceContainerLowest)
             )
         }
     }

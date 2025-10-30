@@ -1,4 +1,4 @@
-package eu.peernetwork.core.ui.design.material
+package eu.peernetwork.core.ui.design.luna
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background
@@ -34,7 +34,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import eu.peernetwork.core.ui.theme.PeerTheme
+import eu.peernetwork.core.ui.theme.DesignTheme
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
@@ -42,8 +42,8 @@ import kotlin.math.roundToInt
 fun DesignTab(
     state: PagerState,
     modifier: Modifier = Modifier,
-    background: Color = MaterialTheme.colorScheme.tertiaryContainer,
-    foreground: Color = MaterialTheme.colorScheme.tertiary,
+    background: Color = MaterialTheme.colorScheme.surfaceContainerLow,
+    foreground: Color = MaterialTheme.colorScheme.outline,
     shape: Shape = RoundedCornerShape(2.dp),
     content: @Composable (Int) -> Unit
 ) {
@@ -58,8 +58,7 @@ fun DesignTab(
                         .padding(vertical = 4.dp)
                         .graphicsLayer {
                             alpha = if (it == state.currentPage) 1f else .6f
-                        }
-                        .clickable(role = Role.Button) {
+                        }.clickable(role = Role.Button) {
                             coroutine.launch {
                                 state.animateScrollToPage(it)
                             }
@@ -68,25 +67,27 @@ fun DesignTab(
             }
         }
         Box(
-            modifier = Modifier
-                .fillMaxWidth()
+            modifier = Modifier.fillMaxWidth()
                 .height(1.dp)
                 .background(background)
         ) {
             val indicatorWidth = with(LocalDensity.current) {
                 (LocalConfiguration.current.screenWidthDp.dp / state.pageCount).toPx()
             }
-            val offsetX by remember {
-                derivedStateOf {
+            val offsetX by remember { derivedStateOf {
                     (state.currentPage + state.currentPageOffsetFraction) * indicatorWidth
                 }
             }
             Box(
                 modifier = Modifier
                     .offset { IntOffset(offsetX.roundToInt(), 0) }
-                    .width(with(LocalDensity.current) { indicatorWidth.toDp() })
-                    .fillMaxHeight()
-                    .background(foreground, shape = shape)
+                    .width(with(LocalDensity.current) {
+                        indicatorWidth.toDp()
+                    }).fillMaxHeight()
+                    .background(
+                        color = foreground,
+                        shape = shape
+                    )
             )
         }
     }
@@ -95,7 +96,7 @@ fun DesignTab(
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun PreviewDesignTab() {
-    PeerTheme {
+    DesignTheme {
         DesignTab(
             rememberPagerState { 3 }
         ) { Text("$it") }

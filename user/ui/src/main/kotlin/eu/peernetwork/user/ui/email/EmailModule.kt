@@ -1,4 +1,4 @@
-package eu.peernetwork.user.ui.settings.address
+package eu.peernetwork.user.ui.email
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -10,9 +10,9 @@ import eu.peernetwork.core.ui.factory.UiViewModelFactory
 import javax.inject.Provider
 
 @Module
-object AddressModule {
+object EmailModule {
     @Provides
-    @Address.Scope
+    @Email.Scope
     fun provideViewModelFactory(
         classToViewModel:
         @JvmSuppressWildcards Map<Class<out ViewModel>, Provider<ViewModel>>
@@ -22,7 +22,7 @@ object AddressModule {
 
     @Provides
     @IntoMap
-    @Address.Scope
-    @UiViewModel(AddressViewModel::class)
-    fun provideViewModel(viewModel: AddressViewModel): ViewModel = viewModel
+    @Email.Scope
+    @UiViewModel(EmailViewModel::class)
+    fun provideViewModel(viewModel: EmailViewModel): ViewModel = viewModel
 }

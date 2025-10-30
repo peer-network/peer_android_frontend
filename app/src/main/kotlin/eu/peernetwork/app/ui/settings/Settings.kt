@@ -9,8 +9,8 @@ import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.social.ui.referral.Referral
 import eu.peernetwork.user.ui.password.update.Update
-import eu.peernetwork.user.ui.settings.account.Account
-import eu.peernetwork.user.ui.settings.address.Address
+import eu.peernetwork.user.ui.account.Account
+import eu.peernetwork.user.ui.email.Email
 
 interface Settings : ApplicationProvider {
     fun settingsEvent(): SettingsEvent
@@ -27,7 +27,7 @@ interface Settings : ApplicationProvider {
     interface Component : Settings,
         Account,
         Update,
-        Address,
+        Email,
         About,
         UiComponentProvider,
         Referral,
