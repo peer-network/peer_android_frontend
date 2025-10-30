@@ -1,6 +1,5 @@
-package eu.peernetwork.user.ui.settings.account
+package eu.peernetwork.user.ui.option
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import dagger.Module
@@ -11,13 +10,9 @@ import eu.peernetwork.core.ui.factory.UiViewModelFactory
 import javax.inject.Provider
 
 @Module
-class AccountModule(private val context: Context) {
+object OptionModule {
     @Provides
-    @Account.Scope
-    fun provideContext(): Context = context
-
-    @Provides
-    @Account.Scope
+    @Option.Scope
     fun provideViewModelFactory(
         classToViewModel:
         @JvmSuppressWildcards Map<Class<out ViewModel>, Provider<ViewModel>>
@@ -27,7 +22,7 @@ class AccountModule(private val context: Context) {
 
     @Provides
     @IntoMap
-    @Account.Scope
-    @UiViewModel(AccountViewModel::class)
-    fun provideViewModel(viewModel: AccountViewModel): ViewModel = viewModel
+    @Option.Scope
+    @UiViewModel(OptionViewModel::class)
+    fun provideViewModel(viewModel: OptionViewModel): ViewModel = viewModel
 }

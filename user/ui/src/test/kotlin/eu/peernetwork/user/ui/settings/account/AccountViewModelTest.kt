@@ -6,6 +6,7 @@ import eu.peernetwork.user.domain.usecase.DeactivationUsecase
 import eu.peernetwork.user.domain.usecase.LogoutUsecase
 import eu.peernetwork.user.domain.usecase.ProtectedSettingsUsecase
 import eu.peernetwork.user.domain.usecase.SettingsUsecase
+import eu.peernetwork.user.ui.account.AccountViewModel
 import eu.peernetwork.user.ui.model.UiAccount
 import eu.peernetwork.user.ui.model.UiSettings
 import eu.peernetwork.user.ui.usecase.ObserveAuthUserUsecase

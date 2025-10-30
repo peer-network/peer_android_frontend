@@ -2,6 +2,7 @@ package eu.peernetwork.user.ui.user
 
 import android.content.res.Configuration
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -94,8 +96,11 @@ fun UserMetric(
     horizontalAlignment: Alignment.Horizontal = Alignment.CenterHorizontally,
     onClick: () -> Unit
 ) {
+    val source = remember { MutableInteractionSource() }
     Column(
         modifier = modifier.clickable(
+            indication = null,
+            interactionSource = source,
             onClick = onClick
         ),
         verticalArrangement = verticalArrangement,

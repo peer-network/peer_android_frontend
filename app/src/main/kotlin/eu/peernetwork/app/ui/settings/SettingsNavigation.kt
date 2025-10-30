@@ -20,8 +20,8 @@ import eu.peernetwork.core.ui.factory.UiViewModelStore
 import eu.peernetwork.social.ui.referral.ReferralScreen
 import eu.peernetwork.user.ui.R
 import eu.peernetwork.user.ui.password.update.PasswordUpdateScreen
-import eu.peernetwork.user.ui.settings.account.AccountScreen
-import eu.peernetwork.user.ui.settings.address.AddressScreen
+import eu.peernetwork.user.ui.account.AccountScreen
+import eu.peernetwork.user.ui.email.EmailScreen
 
 @Composable
 fun SettingsNavigation(
@@ -72,7 +72,7 @@ fun SettingsNavigation(
             }
         }
         composable(preference) {
-            AddressScreen(provider) {
+            EmailScreen(provider) {
                 controller.popBackStack()
             }
         }

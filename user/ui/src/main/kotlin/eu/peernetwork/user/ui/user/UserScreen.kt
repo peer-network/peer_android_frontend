@@ -26,6 +26,7 @@ import eu.peernetwork.core.ui.design.material.DesignOverlay
 import eu.peernetwork.core.ui.design.material.DesignZoom
 import eu.peernetwork.media.core.renderer.ImageView
 import eu.peernetwork.user.ui.compose.account.ProfileScaffold
+import eu.peernetwork.user.ui.option.OptionScreen
 
 @Composable
 fun UserScreen(
@@ -34,7 +35,7 @@ fun UserScreen(
     modifier: Modifier = Modifier,
     provider: UiComponentProvider,
     connection: @Composable (Pair<Boolean, Boolean>) -> Unit,
-    onClick: (Int) -> Unit,
+    onClick: (UserMetric) -> Unit,
     onSettings: () -> Unit,
     viewModelStoreOwner: ViewModelStoreOwner,
 ) {
@@ -84,10 +85,15 @@ fun UserScreen(
                 .fillMaxWidth()
                 .padding(horizontal = 24.dp)
                 .padding(top = 10.dp),
-            onInvite = {},
-            onSettings = onSettings,
-            onClick = {  }
-        ) { updatedConnection(data.first.isFollowing to data.first.isFollowed) }
+            onClick = onClick
+        ) {
+            OptionScreen(
+                isAdmin = data.second,
+                provider = component,
+                viewModelStoreOwner = viewModelStoreOwner,
+                onSettings = onSettings
+            ) { updatedConnection(data.first.isFollowing to data.first.isFollowed) }
+        }
         DesignOverlay(
             state = visible,
             onDismiss = { selectedImage.value = null }

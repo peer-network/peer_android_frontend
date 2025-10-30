@@ -1,6 +1,7 @@
 package eu.peernetwork.app.ui.profile
 
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyListState
@@ -38,14 +39,16 @@ import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.design.compose.DesignRefreshableScaffold
 import eu.peernetwork.core.ui.design.compose.DesignStatefulScaffoldState
 import eu.peernetwork.core.ui.design.material.DesignScaffold
-import eu.peernetwork.core.ui.design.material.DesignTab
+import eu.peernetwork.core.ui.design.luna.DesignTab
 import eu.peernetwork.core.ui.design.material.DesignTitle
 import eu.peernetwork.core.ui.design.material.DesignTitleBarHost
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.core.ui.factory.UiViewModelStore
 import eu.peernetwork.media.core.model.UiMimeType
+import eu.peernetwork.social.ui.connection.ConnectionButton
 import eu.peernetwork.social.ui.connection.ConnectionScreen
 import eu.peernetwork.social.ui.connection.ConnectionStatus
+import eu.peernetwork.user.ui.user.UserMetric
 import eu.peernetwork.user.ui.user.UserScreen
 import kotlinx.coroutines.launch
 
@@ -113,7 +116,7 @@ fun ProfilePreview(
                     id = id,
                     requireUpdate = requireUpdate,
                     connection = {
-                        ConnectionScreen(
+                        ConnectionButton(
                             isFollowed = it.second,
                             isFollowing = connectionState.getOrDefault(
                                 key = id,
@@ -121,14 +124,15 @@ fun ProfilePreview(
                             ),
                             onClick = { follow ->
                                 connectionController.value.invoke(id, !follow)
-                            }
+                            },
+                            modifier = Modifier.fillMaxWidth()
                         )
                     },
                     onClick = { sheetType ->
                         connection.value = when (sheetType) {
-                            0 -> ConnectionStatus.FOLLOWER
-                            1 -> ConnectionStatus.FOLLOWING
-                            2 -> ConnectionStatus.PEER
+                            UserMetric.FOLLOWER -> ConnectionStatus.FOLLOWER
+                            UserMetric.FOLLOWING -> ConnectionStatus.FOLLOWING
+                            UserMetric.PEER -> ConnectionStatus.PEER
                             else -> null
                         }
                         showSheet.value = connection.value != null
@@ -219,7 +223,7 @@ fun ProfilePreview(
                     Icon(
                         painter = painterResource(id = it.id),
                         contentDescription = it.label?.let { stringResource(it) },
-                        tint = MaterialTheme.colorScheme.tertiary,
+                        tint = MaterialTheme.colorScheme.outline,
                         modifier = Modifier.padding(vertical = 6.dp).size(18.dp)
                     )
                 }

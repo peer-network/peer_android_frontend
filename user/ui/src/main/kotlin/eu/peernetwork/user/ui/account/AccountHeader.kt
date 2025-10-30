@@ -1,4 +1,4 @@
-package eu.peernetwork.user.ui.settings.account
+package eu.peernetwork.user.ui.account
 
 import android.app.Activity
 import android.content.Context

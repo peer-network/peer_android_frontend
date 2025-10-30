@@ -9,8 +9,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -34,11 +36,11 @@ fun UserPage(
     account: UiAccount,
     isAdmin: Boolean,
     modifier: Modifier = Modifier,
-    onInvite: () -> Unit,
-    onSettings: () -> Unit,
     onClick: (UserMetric) -> Unit,
-    follow: @Composable () -> Unit,
+    content: @Composable () -> Unit,
 ) {
+    val handleOnClick by rememberUpdatedState(onClick)
+    val updatedContent by rememberUpdatedState(content)
     val selectedImage = remember { mutableStateOf<String?>(null) }
     val emptyDescription = stringResource(R.string.empty_description_message)
     Column(modifier = modifier) {
@@ -76,9 +78,14 @@ fun UserPage(
                 UserMetric(
                     overview = account.metric,
                     labelColor = MaterialTheme.colorScheme.outline,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
                         .padding(top = 6.dp),
-                    onClick = onClick
+                    onClick = {
+                        if (!(!isAdmin && it == UserMetric.PEER)) {
+                            handleOnClick(it)
+                        }
+                    }
                 )
             }
         }
@@ -89,17 +96,7 @@ fun UserPage(
             style = MaterialTheme.typography.bodySmall,
             modifier = Modifier.padding(top = 14.dp)
         )
-        if (isAdmin) {
-            UserMenu(
-                onInvite = onInvite,
-                onSettings = onSettings
-            )
-        } else {
-            UserOption(
-                onShare = onInvite,
-                content = follow
-            )
-        }
+        updatedContent()
     }
 }
 
@@ -125,11 +122,10 @@ fun PreviewUserPage() {
         UserPage(
             account = model,
             isAdmin = true,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
                 .padding(horizontal = 24.dp)
                 .padding(vertical = 16.dp),
-            onInvite = {},
-            onSettings = {},
             onClick = {}
         ) {}
     }
