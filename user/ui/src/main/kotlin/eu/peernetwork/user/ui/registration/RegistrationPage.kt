@@ -28,7 +28,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.core.ui.extension.annotate
 import eu.peernetwork.user.ui.R
-import eu.peernetwork.user.ui.compose.form.FormHeader
+import eu.peernetwork.user.ui.form.FormHeader
 
 private const val tag = "LOGIN"
 

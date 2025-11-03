@@ -32,8 +32,8 @@ import eu.peernetwork.core.ui.design.luna.DesignTextField
 import eu.peernetwork.core.ui.extension.annotate
 import eu.peernetwork.core.ui.theme.DesignTheme
 import eu.peernetwork.user.ui.R
-import eu.peernetwork.user.ui.compose.form.ErrorLabel
-import eu.peernetwork.user.ui.compose.form.FormHeader
+import eu.peernetwork.user.ui.form.ErrorLabel
+import eu.peernetwork.user.ui.form.FormHeader
 
 @Composable
 fun VerificationPage(

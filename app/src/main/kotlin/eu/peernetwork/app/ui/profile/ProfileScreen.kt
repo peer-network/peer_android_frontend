@@ -5,12 +5,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.ViewModelStoreOwner
 import androidx.navigation.compose.rememberNavController
 import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
-import eu.peernetwork.core.ui.factory.UiViewModelStore
 import eu.peernetwork.social.ui.connection.ConnectionScreen
 
 @Composable
@@ -18,7 +18,7 @@ fun ProfileScreen(
     principal: String,
     userId: String,
     provider: UiComponentProvider,
-    viewModelStore: UiViewModelStore,
+    viewModelStoreOwner: ViewModelStoreOwner,
     title: String? = null,
 ) {
     val context = LocalContext.current
@@ -29,7 +29,7 @@ fun ProfileScreen(
     val overlay = remember { mutableStateOf<ProfileOverlayState>(ProfileOverlayState.Empty) }
     ConnectionScreen(
         provider = component,
-        viewModelStoreOwner = viewModelStore.get(userId)
+        viewModelStoreOwner = viewModelStoreOwner
     ) { connection ->
         ProfileOverlay(
             overlay = overlay,
@@ -39,15 +39,14 @@ fun ProfileScreen(
             connectionController = connection,
             provider = provider,
             component = component,
-            viewModelStore = viewModelStore
+            viewModelStoreOwner = viewModelStoreOwner
         ) {
             ProfileNavigation(
                 principal = principal,
                 userId = userId,
                 controller = controller,
                 provider = provider,
-                component = component,
-                viewModelStore = viewModelStore,
+                component = component
             ) {
                 val postState = rememberLazyListState()
                 val mediaState = rememberLazyListState()
@@ -58,7 +57,7 @@ fun ProfileScreen(
                     limit = BuildConfig.PAGING_LIMIT,
                     onSettings = { controller.navigateIfNecessary("settings") },
                     component = component,
-                    viewModelStore = viewModelStore,
+                    viewModelStoreOwner = it,
                     postState = postState,
                     mediaState = mediaState,
                     controller = controller

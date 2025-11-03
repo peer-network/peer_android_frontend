@@ -12,8 +12,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import eu.peernetwork.blog.ui.content.overlay.OverlayPage
 import eu.peernetwork.blog.ui.event.UiPostListener
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.material.DesignScene
-import eu.peernetwork.core.ui.design.material.DesignSceneState
+import eu.peernetwork.core.ui.design.luna.DesignStream
+import eu.peernetwork.core.ui.design.luna.DesignStreamState
 import eu.peernetwork.core.ui.extension.builder
 
 @Composable
@@ -40,18 +40,18 @@ fun DetailOverlay(
     val derivedState = remember { derivedStateOf {
         when (state) {
             is DetailViewModel.State.Default -> {
-                DesignSceneState.Default
+                DesignStreamState.Default
             }
-            is DetailViewModel.State.Loading -> DesignSceneState.Loading
+            is DetailViewModel.State.Loading -> DesignStreamState.Loading
             is DetailViewModel.State.Success -> {
-                DesignSceneState.Success((state as DetailViewModel.State.Success).post)
+                DesignStreamState.Success((state as DetailViewModel.State.Success).post)
             }
             is DetailViewModel.State.Error -> {
-                DesignSceneState.Error((state as DetailViewModel.State.Error).error)
+                DesignStreamState.Error((state as DetailViewModel.State.Error).error)
             }
         }
     } }
-    DesignScene(derivedState) { post ->
+    DesignStream(derivedState) { post ->
         OverlayPage(
             userId = userId,
             limit = limit,

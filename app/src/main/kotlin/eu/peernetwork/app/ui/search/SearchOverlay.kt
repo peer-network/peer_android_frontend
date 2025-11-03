@@ -74,7 +74,7 @@ fun SearchOverlay(
             viewModelStore = viewModelStore,
             controller = controller,
             onCancel = { visible.value = false }
-        ) {
+        ) { backStackEntry, controller ->
             val state = (overlayState.value as SearchOverlayState.Photo)
             ExploreOverlay(
                 author = id,
@@ -86,9 +86,8 @@ fun SearchOverlay(
                 event = event,
                 header = {
                     WindowTitle(
-                        id = id,
                         provider = component,
-                        viewModelStore = viewModelStore,
+                        viewModelStoreOwner = backStackEntry,
                         onCancel = { visible.value = false },
                     )
                 }

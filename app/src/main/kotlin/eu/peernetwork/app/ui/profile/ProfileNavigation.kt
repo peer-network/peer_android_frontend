@@ -3,6 +3,7 @@ package eu.peernetwork.app.ui.profile
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
@@ -25,9 +26,8 @@ fun ProfileNavigation(
     controller: NavHostController,
     provider: UiComponentProvider,
     component: Profile.Component,
-    viewModelStore: UiViewModelStore,
     onCancel: () -> Unit = {},
-    content: @Composable () -> Unit = {},
+    content: @Composable (NavBackStackEntry) -> Unit = {},
 ) {
     val updatedContent by rememberUpdatedState(content)
     val windowMode = if (startDestination == "overlay") {
@@ -39,36 +39,34 @@ fun ProfileNavigation(
         navController = controller,
         startDestination = startDestination
     ) {
-        composable("content") { updatedContent() }
-        composable("overlay") { updatedContent() }
+        composable("content") { updatedContent(it) }
+        composable("overlay") { updatedContent(it) }
         composable(
             "profile/{id}",
             arguments = listOf(navArgument("id") { this.type = NavType.StringType })
         ) { backStackEntry ->
             val id = backStackEntry.arguments?.getString("id") ?: ""
             WindowScreen(
-                id = userId,
                 provider = component,
-                viewModelStore = viewModelStore,
                 mode = windowMode,
                 onCancel = onCancel,
+                viewModelStoreOwner = backStackEntry,
             ) {
                 ProfileScreen(
                     principal = principal,
                     userId = id,
                     provider = provider,
-                    viewModelStore = viewModelStore,
+                    viewModelStoreOwner = backStackEntry,
                 )
             }
         }
-        composable("settings") {
+        composable("settings") { backStackEntry ->
             WindowScreen(
-                id = userId,
                 provider = component,
-                viewModelStore = viewModelStore,
                 mode = windowMode,
                 onCancel = onCancel,
-            ) { SettingsScreen(userId, component, viewModelStore) }
+                viewModelStoreOwner = backStackEntry,
+            ) { SettingsScreen(userId, component) }
         }
         composable(
             route = "search/{type}/{query}",
@@ -85,17 +83,16 @@ fun ProfileNavigation(
                 else -> SearchState.Default
             }
             WindowScreen(
-                id = userId,
                 provider = component,
-                viewModelStore = viewModelStore,
                 mode = windowMode,
                 onCancel = onCancel,
+                viewModelStoreOwner = backStackEntry,
             ) {
                 SearchScreen(
                     id = userId,
                     postLimit = BuildConfig.PAGING_LIMIT,
                     provider = component,
-                    viewModelStore = viewModelStore,
+                    viewModelStore = UiViewModelStore.Delegate(),
                     searchState = searchState,
                 )
             }

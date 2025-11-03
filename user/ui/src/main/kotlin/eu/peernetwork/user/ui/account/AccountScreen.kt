@@ -14,6 +14,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -32,15 +33,14 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.compose.DesignStatefulScaffold
-import eu.peernetwork.core.ui.design.compose.DesignStatefulScaffoldState
 import eu.peernetwork.core.ui.design.luna.DesignImage
+import eu.peernetwork.core.ui.design.luna.DesignStream
+import eu.peernetwork.core.ui.design.luna.DesignStreamState
 import eu.peernetwork.core.ui.design.material.DesignAvatar
 import eu.peernetwork.core.ui.design.material.DesignCard
 import eu.peernetwork.core.ui.design.material.DesignDetail
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.theme.DesignTheme
-import eu.peernetwork.user.ui.model.UiAccount
 
 @Composable
 fun AccountScreen(
@@ -62,23 +62,22 @@ fun AccountScreen(
     val derivedState = remember {
         derivedStateOf {
             when (state) {
-                AccountViewModel.State.Default -> DesignStatefulScaffoldState.Empty
-                AccountViewModel.State.Loading -> DesignStatefulScaffoldState.Loading
-                is AccountViewModel.State.Content -> {
-                    val content = (state as AccountViewModel.State.Content)
-                    DesignStatefulScaffoldState.Success(content.account)
+                AccountViewModel.State.Default -> DesignStreamState.Default
+                AccountViewModel.State.Loading -> DesignStreamState.Loading
+                is AccountViewModel.State.Success -> {
+                    val content = (state as AccountViewModel.State.Success)
+                    DesignStreamState.Success(content.account)
                 }
                 is AccountViewModel.State.Error -> {
-                    DesignStatefulScaffoldState.Error((state as AccountViewModel.State.Error).error)
+                    DesignStreamState.Error((state as AccountViewModel.State.Error).error)
                 }
             }
         }
     }
-    DesignStatefulScaffold<UiAccount>(
+    DesignStream(
         modifier = modifier,
         state = derivedState,
-        onRefresh = { viewModel.get() },
-        placeholder = {
+        loading = {
             AccountScreen("", onClick = null) {
                 DesignAvatar {
                     Box(modifier = Modifier
@@ -88,15 +87,20 @@ fun AccountScreen(
             }
         }
     ) {
-        AccountScreen(it.username, onClick = onClick) {
+        AccountScreen(it.value.username, onClick = onClick) {
             DesignAvatar {
                 DesignImage(
-                    label = it.username,
-                    imageUrl = it.imageUrl,
+                    label = it.value.username,
+                    imageUrl = it.value.imageUrl,
                     size = 42.dp,
                     color = MaterialTheme.colorScheme.surfaceContainerLow
                 )
             }
+        }
+    }
+    LaunchedEffect(Unit) {
+        if (state !is AccountViewModel.State.Success) {
+            viewModel.get()
         }
     }
 }

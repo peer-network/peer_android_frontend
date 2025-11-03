@@ -3,6 +3,7 @@ package eu.peernetwork.app.ui.feed
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
@@ -24,7 +25,7 @@ fun FeedNavigation(
     component: Feed.Component,
     viewModelStore: UiViewModelStore,
     onCancel: () -> Unit = {},
-    content: @Composable () -> Unit = {}
+    content: @Composable (NavBackStackEntry) -> Unit = {}
 ) {
     val updatedContent by rememberUpdatedState(content)
     val windowMode = if (startDestination == "overlay") {
@@ -36,8 +37,8 @@ fun FeedNavigation(
         navController = controller,
         startDestination = startDestination,
     ) {
-        composable("content") { updatedContent() }
-        composable("overlay") { updatedContent() }
+        composable("content") { updatedContent(it) }
+        composable("overlay") { updatedContent(it) }
         composable(
             "profile/{id}",
             arguments = listOf(navArgument("id") {
@@ -45,9 +46,8 @@ fun FeedNavigation(
             })
         ) { backStackEntry ->
             WindowScreen(
-                id = userId,
                 provider = component,
-                viewModelStore = viewModelStore,
+                viewModelStoreOwner = backStackEntry,
                 mode = windowMode,
                 onCancel = onCancel,
             ) {
@@ -55,7 +55,7 @@ fun FeedNavigation(
                     principal = userId,
                     userId = backStackEntry.arguments?.getString("id") ?: "",
                     provider = component,
-                    viewModelStore = viewModelStore,
+                    viewModelStoreOwner = backStackEntry,
                 )
             }
         }
@@ -74,9 +74,8 @@ fun FeedNavigation(
                 else -> SearchState.Default
             }
             WindowScreen(
-                id = userId,
                 provider = component,
-                viewModelStore = viewModelStore,
+                viewModelStoreOwner = backStackEntry,
                 mode = windowMode,
                 onCancel = onCancel,
             ) {

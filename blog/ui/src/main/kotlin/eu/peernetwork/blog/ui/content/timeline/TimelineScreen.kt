@@ -34,7 +34,7 @@ import eu.peernetwork.blog.ui.mapper.mapToVideo
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.moderation.ModerationScreen
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.material.DesignSceneState
+import eu.peernetwork.core.ui.design.luna.DesignStreamState
 import eu.peernetwork.core.ui.design.material.DesignThumbnail
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.media.core.renderer.ImageView
@@ -44,7 +44,7 @@ import kotlinx.coroutines.flow.Flow
 @Composable
 fun TimelineScreen(
     id: String,
-    state: State<DesignSceneState<Flow<PagingData<UiPost>>>>,
+    state: State<DesignStreamState<Flow<PagingData<UiPost>>>>,
     status: State<Boolean>,
     limit: Int,
     event: UiPostListener,

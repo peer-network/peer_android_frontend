@@ -6,6 +6,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
@@ -28,7 +29,7 @@ fun ContentNavigation(
     component: Content.Component,
     viewModelStore: UiViewModelStore,
     onCancel: () -> Unit = {},
-    content: @Composable () -> Unit
+    content: @Composable (NavBackStackEntry) -> Unit
 ) {
     val updatedContent by rememberUpdatedState(content)
     val windowMode = remember { derivedStateOf {
@@ -42,7 +43,7 @@ fun ContentNavigation(
         navController = controller,
         startDestination = startDestination,
     ) {
-        composable("content") { updatedContent() }
+        composable("content") { updatedContent(it) }
         composable(
             "profile/{id}",
             arguments = listOf(navArgument("id") {
@@ -50,9 +51,8 @@ fun ContentNavigation(
             })
         ) { backStackEntry ->
             WindowScreen(
-                id = userId,
                 provider = component,
-                viewModelStore = viewModelStore,
+                viewModelStoreOwner = backStackEntry,
                 mode = windowMode.value,
                 onCancel = onCancel,
             ) {
@@ -60,7 +60,7 @@ fun ContentNavigation(
                     principal = userId,
                     userId = backStackEntry.arguments?.getString("id") ?: "",
                     provider = component,
-                    viewModelStore = viewModelStore,
+                    viewModelStoreOwner = backStackEntry,
                 )
             }
         }
@@ -79,9 +79,8 @@ fun ContentNavigation(
                 else -> SearchState.Default
             }
             WindowScreen(
-                id = userId,
                 provider = component,
-                viewModelStore = viewModelStore,
+                viewModelStoreOwner = backStackEntry,
                 mode = windowMode.value,
                 onCancel = onCancel,
             ) {

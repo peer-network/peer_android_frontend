@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.res.stringResource
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
@@ -16,7 +17,6 @@ import eu.peernetwork.app.ui.version.VersionScreen
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.material.DesignRouter
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
-import eu.peernetwork.core.ui.factory.UiViewModelStore
 import eu.peernetwork.social.ui.referral.ReferralScreen
 import eu.peernetwork.user.ui.R
 import eu.peernetwork.user.ui.password.update.PasswordUpdateScreen
@@ -27,8 +27,7 @@ import eu.peernetwork.user.ui.email.EmailScreen
 fun SettingsNavigation(
     userId: String,
     provider: UiComponentProvider,
-    viewModelStore: UiViewModelStore,
-    settings: @Composable (NavHostController) -> Unit
+    settings: @Composable (NavBackStackEntry, NavHostController) -> Unit
 ) {
     val controller = rememberNavController()
     val updatedSettings by rememberUpdatedState(settings)
@@ -40,8 +39,8 @@ fun SettingsNavigation(
         navController = controller,
         startDestination = "settings",
     ) {
-        composable("settings") { updatedSettings(controller) }
-        composable(account) { AccountSettings(provider, viewModelStore.get(userId)) }
+        composable("settings") { updatedSettings(it, controller) }
+        composable(account) { AccountSettings(provider, it) }
         composable(
             "profile/{id}",
             arguments = listOf(navArgument("id") {
@@ -53,15 +52,15 @@ fun SettingsNavigation(
                 principal = userId,
                 userId = id,
                 provider = provider,
-                viewModelStore = viewModelStore,
+                viewModelStoreOwner = backStackEntry,
             )
         }
-        composable(referral) {
+        composable(referral) { backStackEntry ->
             ReferralScreen(
                 userId = userId,
                 postLimit = BuildConfig.PAGING_LIMIT,
                 provider = provider,
-                viewModelStoreOwner = viewModelStore.get(userId)
+                viewModelStoreOwner = backStackEntry
             ) {
                 controller.navigateIfNecessary("profile/${it.id}")
             }

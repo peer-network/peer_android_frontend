@@ -32,8 +32,8 @@ import eu.peernetwork.core.ui.theme.PeerAppLightGreen
 import eu.peernetwork.core.ui.theme.PeerAppRed
 import eu.peernetwork.core.ui.theme.PeerAppYellow
 import eu.peernetwork.user.ui.R
-import eu.peernetwork.user.ui.compose.form.ErrorLabel
-import eu.peernetwork.user.ui.compose.password.PasswordField
+import eu.peernetwork.user.ui.form.ErrorLabel
+import eu.peernetwork.user.ui.form.PasswordTextField
 import eu.peernetwork.user.ui.extension.passwordRequirement
 import eu.peernetwork.user.ui.extension.policy
 
@@ -84,7 +84,7 @@ fun ResetPage(
             ),
             color = MaterialTheme.colorScheme.onBackground
         )
-        PasswordField(
+        PasswordTextField(
             state = password,
             enabled = !isLoading.value,
             keyboardOptions = KeyboardOptions(
@@ -115,7 +115,7 @@ fun ResetPage(
             modifier = Modifier.padding(horizontal = 18.dp)
                 .padding(top = 8.dp)
         )
-        PasswordField(
+        PasswordTextField(
             state = confirmPassword,
             hint = stringResource(id = R.string.confirm_password_label),
             enabled = !isLoading.value,

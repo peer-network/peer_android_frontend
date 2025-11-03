@@ -16,6 +16,8 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import dev.materii.pullrefresh.DragRefreshLayout
 import dev.materii.pullrefresh.rememberPullRefreshState
+import eu.peernetwork.core.ui.design.luna.DesignStream
+import eu.peernetwork.core.ui.design.luna.DesignStreamState
 import eu.peernetwork.core.ui.exception.NoContentException
 import kotlinx.coroutines.flow.Flow
 
@@ -27,7 +29,7 @@ sealed interface DesignPagerState {
 
 @Composable
 fun<T : Any> DesignPager(
-    state: State<DesignSceneState<Flow<PagingData<T>>>>,
+    state: State<DesignStreamState<Flow<PagingData<T>>>>,
     modifier: Modifier = Modifier,
     animationSpec: FiniteAnimationSpec<Float> = tween(),
     label: String = "DesignPager",
@@ -37,7 +39,7 @@ fun<T : Any> DesignPager(
     content: @Composable (State<DesignPagerState>, data: State<LazyPagingItems<T>>) -> Unit
 ) {
     val updatedContent by rememberUpdatedState(content)
-    DesignScene(
+    DesignStream(
         state = state,
         modifier = modifier,
         animationSpec = animationSpec,
@@ -48,21 +50,25 @@ fun<T : Any> DesignPager(
     ) {
         val lazyPagingItems = it.value.collectAsLazyPagingItems()
         val listState = remember { derivedStateOf { lazyPagingItems } }
-        val pageState = remember { derivedStateOf {
-            when (lazyPagingItems.loadState.refresh) {
-                is LoadState.Error -> DesignPagerState.Error(
-                    (lazyPagingItems.loadState.refresh as LoadState.Error).error)
-                is LoadState.Loading -> DesignPagerState.Loading
-                else -> DesignPagerState.Default
+        val pageState = remember {
+            derivedStateOf {
+                when (lazyPagingItems.loadState.refresh) {
+                    is LoadState.Error -> DesignPagerState.Error(
+                        (lazyPagingItems.loadState.refresh as LoadState.Error).error
+                    )
+
+                    is LoadState.Loading -> DesignPagerState.Loading
+                    else -> DesignPagerState.Default
+                }
             }
-        } }
+        }
         updatedContent(pageState, listState)
     }
 }
 
 @Composable
 fun<T : Any> DesignRefreshablePager(
-    state: State<DesignSceneState<Flow<PagingData<T>>>>,
+    state: State<DesignStreamState<Flow<PagingData<T>>>>,
     modifier: Modifier = Modifier,
     animationSpec: FiniteAnimationSpec<Float> = tween(),
     label: String = "DesignRefreshablePager",
@@ -91,14 +97,14 @@ fun<T : Any> DesignRefreshablePager(
         } }
         val derivedState = remember { derivedStateOf {
             if (lazyPagingItems.value.itemCount > 0) {
-                DesignSceneState.Success(lazyPagingItems.value)
+                DesignStreamState.Success(lazyPagingItems.value)
             } else {
                 when (lazyPagingItems.value.loadState.refresh) {
-                    is LoadState.Error -> DesignSceneState.Error(
+                    is LoadState.Error -> DesignStreamState.Error(
                         error = (lazyPagingItems.value.loadState.refresh as LoadState.Error).error
                     )
-                    is LoadState.Loading -> DesignSceneState.Loading
-                    else -> DesignSceneState.Success(lazyPagingItems.value)
+                    is LoadState.Loading -> DesignStreamState.Loading
+                    else -> DesignStreamState.Success(lazyPagingItems.value)
                 }
             }
         } }
@@ -107,8 +113,8 @@ fun<T : Any> DesignRefreshablePager(
         val updatedError by rememberUpdatedState(error)
         Crossfade(derivedState.value) { target ->
             when (target) {
-                is DesignSceneState.Loading -> DesignLoader { updatedLoading() }
-                is DesignSceneState.Error -> {
+                is DesignStreamState.Loading -> DesignLoader { updatedLoading() }
+                is DesignStreamState.Error -> {
                     if (target.error is NoContentException) {
                         updatedEmpty()
                     } else {

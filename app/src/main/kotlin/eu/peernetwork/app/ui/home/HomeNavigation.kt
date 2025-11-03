@@ -36,7 +36,7 @@ fun HomeNavigation(
         startDestination = startDestination
     ) {
         HomeRoute.ROUTES.forEach { route ->
-            composable(route.path) {
+            composable(route.path) { backStackEntry ->
                 when (route) {
                     is HomeRoute.Home -> FeedScreen(
                         id = id,
@@ -50,7 +50,7 @@ fun HomeNavigation(
                         principal = id,
                         userId = id,
                         provider = component,
-                        viewModelStore = viewModelStore,
+                        viewModelStoreOwner = backStackEntry,
                     )
                     is HomeRoute.Add -> ComposerScreen(
                         provider = component,

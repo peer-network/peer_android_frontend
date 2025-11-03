@@ -60,8 +60,7 @@ fun WalletScreen(
     val lastUpdated = remember { mutableLongStateOf(System.currentTimeMillis()) }
     WalletNavigation(
         id = id,
-        provider = component,
-        viewModelStore = viewModelState
+        provider = component
     ) { controller ->
         WalletScreen(
             onRefresh = { lastUpdated.longValue = System.currentTimeMillis() },

@@ -83,7 +83,7 @@ internal class AccountViewModelTest {
         viewModel.update(account, listOf(model), password)
         viewModel.state.test {
             assertEquals(AccountViewModel.State.Loading, awaitItem())
-            assertEquals(AccountViewModel.State.Content(account, false), awaitItem())
+            assertEquals(AccountViewModel.State.Success(account, false), awaitItem())
         }
     }
 
@@ -103,7 +103,7 @@ internal class AccountViewModelTest {
         viewModel.state.test {
             assertEquals(AccountViewModel.State.Loading, awaitItem())
             assertEquals(
-                AccountViewModel.State.Content(account, false, error),
+                AccountViewModel.State.Success(account, false, error),
                 awaitItem()
             )
         }
@@ -125,7 +125,7 @@ internal class AccountViewModelTest {
         viewModel.update(account, listOf(model), password)
         viewModel.state.test {
             assertEquals(AccountViewModel.State.Loading, awaitItem())
-            assertEquals(AccountViewModel.State.Content(account, false), awaitItem())
+            assertEquals(AccountViewModel.State.Success(account, false), awaitItem())
         }
     }
 

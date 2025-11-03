@@ -1,4 +1,4 @@
-package eu.peernetwork.user.ui.compose.password
+package eu.peernetwork.user.ui.form
 
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.clickable
@@ -25,7 +25,7 @@ import eu.peernetwork.core.ui.design.luna.DesignSecuredTextField
 import eu.peernetwork.user.ui.R
 
 @Composable
-fun PasswordField(
+fun PasswordTextField(
     state: TextFieldState,
     modifier: Modifier = Modifier,
     hint: String = stringResource(id = R.string.password_label),

@@ -73,7 +73,7 @@ fun SearchScreen(
                 component = component,
                 viewModelStore = viewModelStore,
                 controller = controller
-            ) { controller ->
+            ) { backStackEntry, controller ->
                 val listState = rememberLazyGridState()
                 SearchScreen(state = searchState) { mode, query ->
                     if (mode == SearchMode.USERNAME) {
