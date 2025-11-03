@@ -13,7 +13,9 @@ import eu.peernetwork.core.ui.factory.UiBuilderFactory
 import eu.peernetwork.social.ui.referral.Referral
 import eu.peernetwork.user.ui.password.update.Update
 import eu.peernetwork.user.ui.account.Account
+import eu.peernetwork.user.ui.deactivate.Deactivate
 import eu.peernetwork.user.ui.email.Email
+import eu.peernetwork.user.ui.logout.Logout
 
 @Module
 object SettingsModule {
@@ -75,5 +77,21 @@ object SettingsModule {
     @UiBuilder(Version.Builder::class)
     fun provideVersionBuilder(component: Settings.Component): UiComponent.Builder {
         return Version.Builder(component)
+    }
+
+    @Settings.Scope
+    @Provides
+    @IntoMap
+    @UiBuilder(Logout.Builder::class)
+    fun provideLogoutBuilder(component: Settings.Component): UiComponent.Builder {
+        return Logout.Builder(component)
+    }
+
+    @Settings.Scope
+    @Provides
+    @IntoMap
+    @UiBuilder(Deactivate.Builder::class)
+    fun provideDeactivateBuilder(component: Settings.Component): UiComponent.Builder {
+        return Deactivate.Builder(component)
     }
 }

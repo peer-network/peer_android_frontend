@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -89,8 +90,8 @@ fun DesignTextField(
     delayMillis: Int = 0,
     easing: Easing = FastOutSlowInEasing,
     scrollState: ScrollState = rememberScrollState(),
-    leading: @Composable () -> Unit = {},
-    trailing: @Composable () -> Unit = {},
+    leading: @Composable RowScope.() -> Unit = {},
+    trailing: @Composable RowScope.() -> Unit = {},
 ) {
     var isFocused by remember { mutableStateOf(false) }
     val updatedLeading by rememberUpdatedState(leading)

@@ -138,7 +138,7 @@ internal class AccountViewModelTest {
         viewModel.logout()
         viewModel.state.test {
             assertEquals(AccountViewModel.State.Loading, awaitItem())
-            assertEquals(AccountViewModel.State.Empty, awaitItem())
+            assertEquals(AccountViewModel.State.Default, awaitItem())
         }
         coVerify { logoutUsecase() }
     }
@@ -154,7 +154,7 @@ internal class AccountViewModelTest {
         viewModel.deactivate(password)
         viewModel.state.test {
             assertEquals(AccountViewModel.State.Loading, awaitItem())
-            assertEquals(AccountViewModel.State.Empty, awaitItem())
+            assertEquals(AccountViewModel.State.Default, awaitItem())
         }
         coVerify { deactivationUsecase(password) }
     }

@@ -20,7 +20,7 @@ import eu.peernetwork.core.ui.factory.UiViewModelStore
 import eu.peernetwork.social.ui.referral.ReferralScreen
 import eu.peernetwork.user.ui.R
 import eu.peernetwork.user.ui.password.update.PasswordUpdateScreen
-import eu.peernetwork.user.ui.account.AccountScreen
+import eu.peernetwork.user.ui.account.AccountSettings
 import eu.peernetwork.user.ui.email.EmailScreen
 
 @Composable
@@ -41,7 +41,7 @@ fun SettingsNavigation(
         startDestination = "settings",
     ) {
         composable("settings") { updatedSettings(controller) }
-        composable(account) { AccountScreen(provider, viewModelStore.get(userId)) }
+        composable(account) { AccountSettings(provider, viewModelStore.get(userId)) }
         composable(
             "profile/{id}",
             arguments = listOf(navArgument("id") {
