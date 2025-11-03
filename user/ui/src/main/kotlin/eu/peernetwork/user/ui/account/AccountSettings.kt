@@ -34,8 +34,8 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.compose.DesignRefreshableScaffold
-import eu.peernetwork.core.ui.design.compose.DesignStatefulScaffoldState
+import eu.peernetwork.core.ui.design.luna.DesignStream
+import eu.peernetwork.core.ui.design.luna.DesignStreamState
 import eu.peernetwork.core.ui.design.material.DesignTitle
 import eu.peernetwork.core.ui.design.material.DesignTitleBarHost
 import eu.peernetwork.core.ui.extension.builder
@@ -45,8 +45,7 @@ import eu.peernetwork.user.ui.mapper.isPasswordRequired
 import eu.peernetwork.user.ui.model.UiAccount
 import eu.peernetwork.user.ui.model.UiMetric
 import eu.peernetwork.user.ui.model.UiSettings
-import eu.peernetwork.user.ui.compose.password.PasswordSheet
-import eu.peernetwork.user.ui.compose.account.ProfileScaffold
+import eu.peernetwork.user.ui.compose.ProfileScaffold
 import eu.peernetwork.user.ui.mapper.mapToModels
 
 @Composable
@@ -64,32 +63,33 @@ fun AccountSettings(
         factory = component.viewModelFactory()
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val status by viewModel.status.collectAsStateWithLifecycle()
     val derivedState = remember {
         derivedStateOf {
             when (state) {
-                AccountViewModel.State.Default -> DesignStatefulScaffoldState.Empty
-                AccountViewModel.State.Loading -> DesignStatefulScaffoldState.Loading
-                is AccountViewModel.State.Content -> {
-                    val content = (state as AccountViewModel.State.Content)
-                    DesignStatefulScaffoldState.Success(content.account)
+                AccountViewModel.State.Default -> DesignStreamState.Default
+                AccountViewModel.State.Loading -> DesignStreamState.Loading
+                is AccountViewModel.State.Success -> {
+                    val content = (state as AccountViewModel.State.Success)
+                    DesignStreamState.Success(content.account)
                 }
                 is AccountViewModel.State.Error -> {
-                    DesignStatefulScaffoldState.Error((state as AccountViewModel.State.Error).error)
+                    DesignStreamState.Error((state as AccountViewModel.State.Error).error)
                 }
             }
         }
     }
-    val content = remember { derivedStateOf { state as? AccountViewModel.State.Content? } }
+    val content = remember { derivedStateOf { state as? AccountViewModel.State.Success? } }
     val error = remember { derivedStateOf {
-        content.value?.error?.message?.let { component.resource().string(it) }
+        (status as? AccountViewModel.Status.Error?)?.error
+            ?.message?.let { component.resource().string(it) }
     } }
-    val isLoading = remember { derivedStateOf { content.value?.processing == true } }
-    var status by remember { mutableStateOf(false) }
+    val isLoading = remember { derivedStateOf { status is AccountViewModel.Status.Loading } }
+    var submitted by remember { mutableStateOf(false) }
     val message = stringResource(R.string.profile_update_message)
-    DesignRefreshableScaffold<UiAccount>(
+    DesignStream(
         state = derivedState,
-        onRefresh = { viewModel.get() },
-        placeholder = {
+        loading = {
             ProfileScaffold(
                 modifier = Modifier
                     .fillMaxSize()
@@ -98,17 +98,17 @@ fun AccountSettings(
         }
     ) {
         AccountSettings(
-            account = it,
+            account = it.value,
             isLoading = isLoading,
             error = error,
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = 24.dp),
-            requiresPassword = { models -> it.isPasswordRequired(models) }
+            requiresPassword = { models -> it.value.isPasswordRequired(models) }
         ) { model, password ->
-            status = true
-            viewModel.update(it, model, password ?: "")
+            submitted = true
+            viewModel.update(it.value, model, password ?: "")
         }
     }
     DesignTitleBarHost("AccountScreen") {
@@ -122,8 +122,8 @@ fun AccountSettings(
         if (content.value == null) {
             viewModel.initialize()
         }
-        if (!isLoading.value && status && error.value == null) {
-            status = false
+        if (!isLoading.value && submitted && error.value == null) {
+            submitted = false
             Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
         }
     }
@@ -174,7 +174,9 @@ fun AccountSettings(
             bio = bio,
             enable = isEnabled,
             isLoading = isLoading,
-            error = error
+            showPassword = showPassword,
+            error = error,
+            onVerify = { submitHandler(fields.value, it) }
         ) {
             if (!passwordValidatorHandler(fields.value)) {
                 submitHandler(fields.value, null)
@@ -182,10 +184,6 @@ fun AccountSettings(
                 showPassword.value = true
             }
             image.value = null
-        }
-        PasswordSheet(showPassword, label = stringResource(R.string.confirmation_label)) {
-            showPassword.value = false
-            submitHandler(fields.value, it)
         }
     }
 }

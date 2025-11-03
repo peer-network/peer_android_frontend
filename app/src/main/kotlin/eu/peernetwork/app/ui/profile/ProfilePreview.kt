@@ -28,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import eu.peernetwork.app.extension.navigateToTagSearch
@@ -63,7 +64,7 @@ fun ProfilePreview(
     postState: LazyListState = rememberLazyListState(),
     mediaState: LazyListState = rememberLazyListState(),
     component: Profile.Component,
-    viewModelStore: UiViewModelStore,
+    viewModelStoreOwner: ViewModelStoreOwner,
     controller: NavHostController,
 ) {
     val requireUpdate = rememberSaveable { mutableStateOf(false) }
@@ -78,7 +79,7 @@ fun ProfilePreview(
     )
     ConnectionScreen(
         provider = component,
-        viewModelStoreOwner = viewModelStore.get(id)
+        viewModelStoreOwner = viewModelStoreOwner
     ) { connectionController ->
         val connectionState by connectionController.value.observe().collectAsStateWithLifecycle()
         val event = remember {
@@ -139,7 +140,7 @@ fun ProfilePreview(
                     },
                     onSettings = onSettings,
                     provider = component,
-                    viewModelStoreOwner = viewModelStore.get(id),
+                    viewModelStoreOwner = viewModelStoreOwner,
                     modifier = Modifier.Companion
                         .padding(bottom = 8.dp)
                         .padding(end = 16.dp, start = 24.dp)
@@ -157,7 +158,7 @@ fun ProfilePreview(
                 postLimit = limit,
                 requireUpdate = requirePostUpdate,
                 provider = component,
-                viewModelStoreOwner = viewModelStore.get("$id$it"),
+                viewModelStoreOwner = viewModelStoreOwner,
                 event = event,
                 listState =  if (it == 0) {
                     postState
@@ -172,7 +173,7 @@ fun ProfilePreview(
             limit = limit,
             status = connection,
             provider = component,
-            viewModelStoreOwner = viewModelStore.get(id)
+            viewModelStoreOwner = viewModelStoreOwner
         ) { controller.navigateIfNecessary("profile/${it.id}") }
     }
     DesignTitleBarHost("ProfileScreen$id", {

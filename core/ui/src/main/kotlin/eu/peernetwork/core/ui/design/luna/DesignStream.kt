@@ -1,4 +1,4 @@
-package eu.peernetwork.core.ui.design.material
+package eu.peernetwork.core.ui.design.luna
 
 import android.content.res.Configuration
 import androidx.compose.animation.Crossfade
@@ -33,17 +33,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.core.ui.theme.PeerTheme
 
-sealed interface DesignSceneState<out T> {
-    data object Default : DesignSceneState<Nothing>
-    data object Loading : DesignSceneState<Nothing>
-    data class Success<T>(val data: T) : DesignSceneState<T>
-    data class Error(val error: Throwable) : DesignSceneState<Nothing>
+sealed interface DesignStreamState<out T> {
+    data object Default : DesignStreamState<Nothing>
+    data object Loading : DesignStreamState<Nothing>
+    data class Success<T>(val data: T) : DesignStreamState<T>
+    data class Error(val error: Throwable) : DesignStreamState<Nothing>
 }
 
 @Composable
 @Suppress("UNCHECKED_CAST")
-fun<T> DesignScene(
-    state: State<DesignSceneState<T>>,
+fun<T> DesignStream(
+    state: State<DesignStreamState<T>>,
     modifier: Modifier = Modifier,
     animationSpec: FiniteAnimationSpec<Float> = tween(),
     label: String = "Crossfade",
@@ -74,15 +74,15 @@ fun<T> DesignScene(
         label = label
     ) { target ->
         when (target) {
-            is DesignSceneState.Default -> updatedDefault()
-            is DesignSceneState.Loading -> Box(modifier = Modifier.graphicsLayer {
+            is DesignStreamState.Default -> updatedDefault()
+            is DesignStreamState.Loading -> Box(modifier = Modifier.graphicsLayer {
                 this.alpha = alpha
             }) { updatedLoading() }
-            is DesignSceneState.Success<*> -> {
-                val data = remember { derivedStateOf { (target as DesignSceneState.Success).data } }
+            is DesignStreamState.Success<*> -> {
+                val data = remember { derivedStateOf { (target as DesignStreamState.Success).data } }
                 updatedContent(data)
             }
-            is DesignSceneState.Error -> {
+            is DesignStreamState.Error -> {
                 val exception = remember { derivedStateOf { target.error } }
                 updatedError(exception)
             }
@@ -92,7 +92,7 @@ fun<T> DesignScene(
 
 @Composable
 @Suppress("UNCHECKED_CAST")
-fun<T> DesignScene(
+fun<T> DesignStream(
     state: State<T>,
     modifier: Modifier = Modifier,
     isLoading: State<Boolean>,
@@ -117,11 +117,11 @@ fun<T> DesignScene(
     )
     val derivedState = remember { derivedStateOf {
         if (isLoading.value) {
-            DesignSceneState.Loading
+            DesignStreamState.Loading
         } else if (exception.value != null) {
-            DesignSceneState.Error(exception.value!!)
+            DesignStreamState.Error(exception.value!!)
         } else {
-            DesignSceneState.Success(state.value)
+            DesignStreamState.Success(state.value)
         }
     } }
     val updatedDefault by rememberUpdatedState(default)
@@ -135,12 +135,12 @@ fun<T> DesignScene(
         label = label
     ) { target ->
         when (target) {
-            is DesignSceneState.Default -> updatedDefault()
-            is DesignSceneState.Loading -> Box(modifier = Modifier.graphicsLayer {
+            is DesignStreamState.Default -> updatedDefault()
+            is DesignStreamState.Loading -> Box(modifier = Modifier.graphicsLayer {
                 this.alpha = alpha
             }) { updatedLoading() }
-            is DesignSceneState.Success<*> -> updatedContent(state)
-            is DesignSceneState.Error -> updatedError(exception)
+            is DesignStreamState.Success<*> -> updatedContent(state)
+            is DesignStreamState.Error -> updatedError(exception)
         }
     }
 }
@@ -157,12 +157,12 @@ fun DesignScenePreview() {
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             @Composable
-            fun <T> PreviewBox(state: DesignSceneState<T>) {
+            fun <T> PreviewBox(state: DesignStreamState<T>) {
                 val rememberedState = remember { mutableStateOf(state) }
                 CompositionLocalProvider(LocalTextStyle provides MaterialTheme.typography.bodyMedium.copy(
                     color = MaterialTheme.colorScheme.onPrimary
                 )) {
-                    DesignScene(
+                    DesignStream(
                         state = rememberedState,
                         default = { Text("Default State") },
                         loading = { Text("Loading...") },
@@ -171,10 +171,10 @@ fun DesignScenePreview() {
                     )
                 }
             }
-            PreviewBox(DesignSceneState.Default)
-            PreviewBox(DesignSceneState.Loading)
-            PreviewBox(DesignSceneState.Success("Hello Compose"))
-            PreviewBox(DesignSceneState.Error(Throwable("Something went wrong")))
+            PreviewBox(DesignStreamState.Default)
+            PreviewBox(DesignStreamState.Loading)
+            PreviewBox(DesignStreamState.Success("Hello Compose"))
+            PreviewBox(DesignStreamState.Error(Throwable("Something went wrong")))
         }
     }
 }

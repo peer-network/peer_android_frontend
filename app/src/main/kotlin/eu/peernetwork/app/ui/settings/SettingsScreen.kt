@@ -25,7 +25,6 @@ import eu.peernetwork.core.ui.design.material.DesignTitle
 import eu.peernetwork.core.ui.design.material.DesignTitleBarHost
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
-import eu.peernetwork.core.ui.factory.UiViewModelStore
 import eu.peernetwork.core.ui.theme.DesignTheme
 import eu.peernetwork.core.ui.theme.PeerAppRed
 import eu.peernetwork.social.ui.feedback.FeedbackScreen
@@ -37,8 +36,7 @@ import eu.peernetwork.user.ui.logout.LogoutScreen
 @Composable
 fun SettingsScreen(
     userId: String,
-    provider: UiComponentProvider,
-    viewModelStore: UiViewModelStore,
+    provider: UiComponentProvider
 ) {
     val context = LocalContext.current
     val component = remember {
@@ -47,14 +45,14 @@ fun SettingsScreen(
     val account = stringResource(R.string.account_label)
     val showLogout = remember { mutableStateOf(false) }
     val showDeactivation = remember { mutableStateOf(false) }
-    SettingsNavigation(userId, component, viewModelStore) { controller ->
+    SettingsNavigation(userId, component) { backstack, controller ->
         SettingsScreen(
             showLogout = showLogout,
             showDeactivate = showDeactivation,
             onTutorial = { component.settingsEvent().invoke(SettingsEvent.Event.Tutorial) },
             onNavigate = { controller.navigateIfNecessary(it) }
         ) {
-            AccountScreen(component, viewModelStore.get(userId)) {
+            AccountScreen(component, backstack) {
                 controller.navigateIfNecessary(account)
             }
         }
@@ -65,17 +63,17 @@ fun SettingsScreen(
                 }
             }
         }
+        LogoutScreen(
+            show = showLogout,
+            provider = component,
+            viewModelStoreOwner = backstack
+        )
+        DeactivateScreen(
+            show = showDeactivation,
+            provider = component,
+            viewModelStoreOwner = backstack
+        )
     }
-    LogoutScreen(
-        show = showLogout,
-        provider = component,
-        viewModelStoreOwner = viewModelStore.get(userId)
-    )
-    DeactivateScreen(
-        show = showDeactivation,
-        provider = component,
-        viewModelStoreOwner = viewModelStore.get(userId)
-    )
 }
 
 @Composable

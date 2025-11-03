@@ -67,7 +67,7 @@ fun ContentOverlay(
             viewModelStore = viewModelStore,
             controller = controller,
             onCancel = { visible.value = false },
-        ) {
+        ) { backStackEntry ->
             DetailOverlay(
                 id = overlayState.value!!,
                 userId = userId,
@@ -77,9 +77,8 @@ fun ContentOverlay(
                 viewModelStoreOwner = viewModelStore.get(overlayState.value!!),
                 header = {
                     WindowTitle(
-                        id = userId,
                         provider = component,
-                        viewModelStore = viewModelStore,
+                        viewModelStoreOwner = backStackEntry,
                         onCancel = { visible.value = false },
                     )
                 }

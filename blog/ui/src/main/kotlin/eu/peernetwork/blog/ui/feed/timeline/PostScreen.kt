@@ -22,7 +22,7 @@ import eu.peernetwork.blog.ui.event.UiPostListener
 import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.blog.ui.content.timeline.TimelineScreen
 import eu.peernetwork.core.ui.R
-import eu.peernetwork.core.ui.design.material.DesignSceneState
+import eu.peernetwork.core.ui.design.luna.DesignStreamState
 import kotlinx.coroutines.launch
 
 @Composable
@@ -57,12 +57,12 @@ fun PostScreen(
     val derivedState = remember {
         derivedStateOf {
             when (state) {
-                PostViewModel.State.Empty -> DesignSceneState.Default
-                PostViewModel.State.Loading -> DesignSceneState.Loading
-                is PostViewModel.State.Success -> DesignSceneState.Success(
+                PostViewModel.State.Empty -> DesignStreamState.Default
+                PostViewModel.State.Loading -> DesignStreamState.Loading
+                is PostViewModel.State.Success -> DesignStreamState.Success(
                     (state as PostViewModel.State.Success).content
                 )
-                is PostViewModel.State.Error -> DesignSceneState.Error(
+                is PostViewModel.State.Error -> DesignStreamState.Error(
                     (state as PostViewModel.State.Error).error.let {
                         Throwable(component.resource()
                             .string(it.message ?: errorMessage), it)

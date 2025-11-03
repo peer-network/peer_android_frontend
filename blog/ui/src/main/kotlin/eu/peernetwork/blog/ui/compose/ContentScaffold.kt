@@ -26,13 +26,13 @@ import eu.peernetwork.core.ui.design.compose.DesignError
 import eu.peernetwork.core.ui.design.material.DesignPager
 import eu.peernetwork.core.ui.design.material.DesignPagerState
 import eu.peernetwork.core.ui.design.material.DesignRefreshablePager
-import eu.peernetwork.core.ui.design.material.DesignSceneState
+import eu.peernetwork.core.ui.design.luna.DesignStreamState
 import eu.peernetwork.core.ui.theme.PeerTheme
 import kotlinx.coroutines.flow.Flow
 
 @Composable
 fun<T : Any> ContentScaffold(
-    state: State<DesignSceneState<Flow<PagingData<T>>>>,
+    state: State<DesignStreamState<Flow<PagingData<T>>>>,
     modifier: Modifier = Modifier,
     resource: ResourceInteractor,
     onRefresh: () -> Unit = {},
@@ -60,7 +60,7 @@ fun<T : Any> ContentScaffold(
 
 @Composable
 fun<T : Any> RefreshableContentScaffold(
-    state: State<DesignSceneState<Flow<PagingData<T>>>>,
+    state: State<DesignStreamState<Flow<PagingData<T>>>>,
     modifier: Modifier = Modifier,
     enable: Boolean = true,
     onRefresh: () -> Unit = {},
@@ -97,7 +97,7 @@ fun<T : Any> RefreshableContentScaffold(
 fun ContentScaffoldPreview() {
     PeerTheme {
         PreviewBox<Nothing>(
-            state = DesignSceneState.Default,
+            state = DesignStreamState.Default,
             modifier = Modifier
                 .background(MaterialTheme.colorScheme.background)
                 .padding(16.dp)
@@ -110,7 +110,7 @@ fun ContentScaffoldPreview() {
 fun ContentScaffoldLoadingPreview() {
     PeerTheme {
         PreviewBox<Nothing>(
-            state = DesignSceneState.Loading,
+            state = DesignStreamState.Loading,
             modifier = Modifier
                 .background(MaterialTheme.colorScheme.background)
                 .padding(16.dp)
@@ -123,7 +123,7 @@ fun ContentScaffoldLoadingPreview() {
 fun ContentScaffoldErrorPreview() {
     PeerTheme {
         PreviewBox<Nothing>(
-            state = DesignSceneState.Error(Throwable("Something went wrong")),
+            state = DesignStreamState.Error(Throwable("Something went wrong")),
             modifier = Modifier
                 .background(MaterialTheme.colorScheme.background)
                 .padding(16.dp)
@@ -133,7 +133,7 @@ fun ContentScaffoldErrorPreview() {
 
 @Composable
 private fun <T : Any> PreviewBox(
-    state: DesignSceneState<Flow<PagingData<T>>>,
+    state: DesignStreamState<Flow<PagingData<T>>>,
     modifier: Modifier = Modifier
 ) {
     val rememberedState = remember { mutableStateOf(state) }

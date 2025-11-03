@@ -13,7 +13,7 @@ import eu.peernetwork.blog.ui.event.UiPostListener
 import eu.peernetwork.blog.ui.content.overlay.OverlayScreen
 import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.material.DesignSceneState
+import eu.peernetwork.core.ui.design.luna.DesignStreamState
 import eu.peernetwork.core.ui.extension.builder
 
 @Composable
@@ -41,14 +41,14 @@ fun ExploreOverlay(
     val derivedState = remember {
         derivedStateOf {
             when (state) {
-                ExploreViewModel.State.Empty -> DesignSceneState.Default
-                ExploreViewModel.State.Loading -> DesignSceneState.Loading
+                ExploreViewModel.State.Empty -> DesignStreamState.Default
+                ExploreViewModel.State.Loading -> DesignStreamState.Loading
                 is ExploreViewModel.State.Success -> {
-                    DesignSceneState.Success(
+                    DesignStreamState.Success(
                         (state as ExploreViewModel.State.Success).content
                     )
                 }
-                is ExploreViewModel.State.Error -> DesignSceneState.Error(
+                is ExploreViewModel.State.Error -> DesignStreamState.Error(
                     (state as ExploreViewModel.State.Error).error
                 )
             }

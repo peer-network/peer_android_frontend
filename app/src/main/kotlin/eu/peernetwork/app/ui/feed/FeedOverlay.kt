@@ -81,7 +81,7 @@ fun FeedOverlay(
             component = component,
             viewModelStore = viewModelStore,
             onCancel = { visible.value = false }
-        ) {
+        ) { backStackEntry ->
             val state = (overlayState.value as FeedOverlayState.Post)
             val storeKey = "${state.category};${state.criteria?.toString() ?: userId}"
             PostOverlay(
@@ -96,9 +96,8 @@ fun FeedOverlay(
                 event = event,
                 header = {
                     WindowTitle(
-                        id = userId,
                         provider = component,
-                        viewModelStore = viewModelStore,
+                        viewModelStoreOwner = backStackEntry,
                         onCancel = { visible.value = false },
                     )
                 }

@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModelStoreOwner
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.material.DesignPage
@@ -20,16 +21,14 @@ import eu.peernetwork.core.ui.design.material.DesignPageHeader
 import eu.peernetwork.core.ui.design.material.DesignPageWindowMode
 import eu.peernetwork.core.ui.design.material.DesignTitleBar
 import eu.peernetwork.core.ui.extension.builder
-import eu.peernetwork.core.ui.factory.UiViewModelStore
 import eu.peernetwork.core.ui.theme.LightScheme
 import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.wallet.ui.reward.RewardScreen
 
 @Composable
 fun WindowScreen(
-    id: String,
     provider: UiComponentProvider,
-    viewModelStore: UiViewModelStore,
+    viewModelStoreOwner: ViewModelStoreOwner,
     mode: DesignPageWindowMode = DesignPageWindowMode.HIDDEN,
     onCancel: () -> Unit = {},
     content: @Composable () -> Unit,
@@ -43,7 +42,7 @@ fun WindowScreen(
         mode,
         header = {
             DesignPageHeader(
-                options = { RewardScreen(component, viewModelStore.get(id)) },
+                options = { RewardScreen(component, viewModelStoreOwner) },
                 action = {
                     if (mode != DesignPageWindowMode.HIDDEN) {
                         IconButton(onClick = onCancel) {
@@ -63,9 +62,8 @@ fun WindowScreen(
 
 @Composable
 fun WindowTitle(
-    id: String,
     provider: UiComponentProvider,
-    viewModelStore: UiViewModelStore,
+    viewModelStoreOwner: ViewModelStoreOwner,
     onCancel: () -> Unit = {}
 ) {
     val context = LocalContext.current
@@ -75,7 +73,7 @@ fun WindowTitle(
     PeerTheme(colorScheme = LightScheme) {
         DesignTitleBar {
             DesignPageHeader(
-                options = { RewardScreen(component, viewModelStore.get(id)) },
+                options = { RewardScreen(component, viewModelStoreOwner) },
                 action = {
                     IconButton(onClick = onCancel) {
                         Icon(

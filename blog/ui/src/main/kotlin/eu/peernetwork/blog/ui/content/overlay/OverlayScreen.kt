@@ -33,7 +33,7 @@ import eu.peernetwork.blog.ui.mapper.query
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.moderation.ModerationScreen
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.material.DesignSceneState
+import eu.peernetwork.core.ui.design.luna.DesignStreamState
 import eu.peernetwork.core.ui.design.material.DesignThumbnail
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.media.core.model.UiMimeType
@@ -49,7 +49,7 @@ fun OverlayScreen(
     position: Int,
     status: Boolean,
     event: UiPostListener,
-    state: State<DesignSceneState<Flow<PagingData<UiPost>>>>,
+    state: State<DesignStreamState<Flow<PagingData<UiPost>>>>,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
     onView: (String) -> Unit,

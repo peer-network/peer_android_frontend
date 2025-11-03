@@ -28,10 +28,10 @@ import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.compose.DesignError
 import eu.peernetwork.core.ui.design.material.DesignPage
 import eu.peernetwork.core.ui.design.material.DesignPageHeader
-import eu.peernetwork.core.ui.design.material.DesignScene
+import eu.peernetwork.core.ui.design.luna.DesignStream
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.theme.PeerTheme
-import eu.peernetwork.core.ui.design.material.DesignSceneState
+import eu.peernetwork.core.ui.design.luna.DesignStreamState
 import eu.peernetwork.core.ui.extension.attach
 import eu.peernetwork.core.ui.extension.attachIfNecessary
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
@@ -65,18 +65,18 @@ fun HomeScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
     val derivedState = remember { derivedStateOf {
         when(state) {
-            HomeViewModel.State.Empty -> DesignSceneState.Default
-            HomeViewModel.State.Loading -> DesignSceneState.Loading
+            HomeViewModel.State.Empty -> DesignStreamState.Default
+            HomeViewModel.State.Loading -> DesignStreamState.Loading
             is HomeViewModel.State.Success -> {
                 val data = (state as HomeViewModel.State.Success)
-                DesignSceneState.Success(data)
+                DesignStreamState.Success(data)
             }
             is HomeViewModel.State.Error -> {
-                DesignSceneState.Error((state as HomeViewModel.State.Error).error)
+                DesignStreamState.Error((state as HomeViewModel.State.Error).error)
             }
         }
     } }
-    DesignScene(
+    DesignStream(
         state = derivedState,
         modifier = Modifier.fillMaxSize(),
         loading = { HomeSkeleton() },
@@ -147,7 +147,7 @@ fun HomeScreen(
         }
     }
     LaunchedEffect(Unit) {
-        if (derivedState.value is DesignSceneState.Default) {
+        if (derivedState.value is DesignStreamState.Default) {
             viewModel()
         }
     }

@@ -25,7 +25,7 @@ import eu.peernetwork.core.ui.design.compose.DesignStatefulScaffoldState
 import eu.peernetwork.core.ui.design.material.DesignOverlay
 import eu.peernetwork.core.ui.design.material.DesignZoom
 import eu.peernetwork.media.core.renderer.ImageView
-import eu.peernetwork.user.ui.compose.account.ProfileScaffold
+import eu.peernetwork.user.ui.compose.ProfileScaffold
 import eu.peernetwork.user.ui.option.OptionScreen
 
 @Composable

@@ -1,4 +1,4 @@
-package eu.peernetwork.user.ui.compose.form
+package eu.peernetwork.user.ui.form
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Column

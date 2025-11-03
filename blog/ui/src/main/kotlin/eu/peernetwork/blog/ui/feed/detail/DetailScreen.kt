@@ -26,7 +26,7 @@ import eu.peernetwork.blog.ui.event.UiPostListener
 import eu.peernetwork.blog.ui.mapper.mapToVideo
 import eu.peernetwork.blog.ui.moderation.ModerationScreen
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.material.DesignSceneState
+import eu.peernetwork.core.ui.design.luna.DesignStreamState
 import eu.peernetwork.core.ui.design.material.DesignThumbnail
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.media.core.renderer.ImageView
@@ -58,14 +58,14 @@ fun DetailScreen(
     val derivedState = remember { derivedStateOf {
         when (state) {
             is DetailViewModel.State.Default -> {
-                DesignSceneState.Default
+                DesignStreamState.Default
             }
-            is DetailViewModel.State.Loading -> DesignSceneState.Loading
+            is DetailViewModel.State.Loading -> DesignStreamState.Loading
             is DetailViewModel.State.Success -> {
-                DesignSceneState.Success((state as DetailViewModel.State.Success).post)
+                DesignStreamState.Success((state as DetailViewModel.State.Success).post)
             }
             is DetailViewModel.State.Error -> {
-                DesignSceneState.Error((state as DetailViewModel.State.Error).error)
+                DesignStreamState.Error((state as DetailViewModel.State.Error).error)
             }
         }
     } }

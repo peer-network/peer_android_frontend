@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
@@ -27,7 +28,7 @@ fun SearchNavigation(
     controller: NavHostController,
     startDestination: String = "search",
     onCancel: () -> Unit = {},
-    content: @Composable (NavHostController) -> Unit
+    content: @Composable (NavBackStackEntry, NavHostController) -> Unit
 ) {
     val updatedContent by rememberUpdatedState(content)
     var id by remember { mutableStateOf("") }
@@ -41,8 +42,8 @@ fun SearchNavigation(
         navController = controller,
         startDestination = startDestination,
     ) {
-        composable("search") { updatedContent(controller) }
-        composable("overlay") { updatedContent(controller) }
+        composable("search") { updatedContent(it, controller) }
+        composable("overlay") { updatedContent(it, controller) }
         composable(
             "profile/{id}",
             arguments = listOf(navArgument("id") {
@@ -51,9 +52,8 @@ fun SearchNavigation(
         ) { backStackEntry ->
             id = backStackEntry.arguments?.getString("id") ?: ""
             WindowScreen(
-                id = userId,
                 provider = component,
-                viewModelStore = viewModelStore,
+                viewModelStoreOwner = backStackEntry,
                 mode = windowMode,
                 onCancel = onCancel,
             ) {
@@ -61,7 +61,7 @@ fun SearchNavigation(
                     principal = userId,
                     userId = id,
                     provider = component,
-                    viewModelStore = viewModelStore,
+                    viewModelStoreOwner = backStackEntry,
                 )
             }
         }
@@ -73,9 +73,8 @@ fun SearchNavigation(
         ) { backStackEntry ->
             val tag = backStackEntry.arguments?.getString("tag")
             WindowScreen(
-                id = userId,
                 provider = component,
-                viewModelStore = viewModelStore,
+                viewModelStoreOwner = backStackEntry,
                 mode = windowMode,
                 onCancel = onCancel,
             ) {
@@ -100,9 +99,8 @@ fun SearchNavigation(
         ) { backStackEntry ->
             val query = backStackEntry.arguments?.getString("query")
             WindowScreen(
-                id = userId,
                 provider = component,
-                viewModelStore = viewModelStore,
+                viewModelStoreOwner = backStackEntry,
                 mode = windowMode,
                 onCancel = onCancel,
             ) {
@@ -132,9 +130,8 @@ fun SearchNavigation(
                 else -> SearchState.Default
             }
             WindowScreen(
-                id = userId,
                 provider = component,
-                viewModelStore = viewModelStore,
+                viewModelStoreOwner = backStackEntry,
                 mode = windowMode,
                 onCancel = onCancel,
             ) {
@@ -149,4 +146,3 @@ fun SearchNavigation(
         }
     }
 }
-

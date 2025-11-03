@@ -11,13 +11,11 @@ import androidx.navigation.navArgument
 import eu.peernetwork.app.ui.profile.ProfileScreen
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.material.DesignRouter
-import eu.peernetwork.core.ui.factory.UiViewModelStore
 
 @Composable
 fun WalletNavigation(
     id: String,
     provider: UiComponentProvider,
-    viewModelStore: UiViewModelStore,
     content: @Composable (NavHostController) -> Unit,
 ) {
     val controller = rememberNavController()
@@ -37,7 +35,7 @@ fun WalletNavigation(
                 principal = id,
                 userId = backStackEntry.arguments?.getString("id") ?: "",
                 provider = provider,
-                viewModelStore = viewModelStore,
+                viewModelStoreOwner = backStackEntry,
             )
         }
     }

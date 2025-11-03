@@ -11,6 +11,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import eu.peernetwork.app.extension.navigateToTagSearch
 import eu.peernetwork.app.extension.navigateToUsernameSearch
@@ -22,7 +23,6 @@ import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.material.DesignOverlay
 import eu.peernetwork.core.ui.design.material.DesignOverlayPage
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
-import eu.peernetwork.core.ui.factory.UiViewModelStore
 import eu.peernetwork.social.ui.connection.ConnectionController
 import eu.peernetwork.social.ui.connection.ConnectionScreen
 
@@ -45,7 +45,7 @@ fun ProfileOverlay(
     connectionController: State<ConnectionController>,
     provider: UiComponentProvider,
     component: Profile.Component,
-    viewModelStore: UiViewModelStore,
+    viewModelStoreOwner: ViewModelStoreOwner,
     content: @Composable () -> Unit
 ) {
     val updatedContent by rememberUpdatedState(content)
@@ -90,9 +90,8 @@ fun ProfileOverlay(
                 controller = controller,
                 provider = provider,
                 component = component,
-                viewModelStore = viewModelStore,
                 onCancel = { visible.value = false }
-            ) {
+            ) { backStackEntry ->
                 val state = (overlayState.value as ProfileOverlayState.Photo)
                 PostOverlay(
                     author = userId,
@@ -101,13 +100,12 @@ fun ProfileOverlay(
                     limit = limit,
                     position = state.position,
                     provider = component,
-                    viewModelStoreOwner = viewModelStore.get("$userId${state.page}"),
+                    viewModelStoreOwner = viewModelStoreOwner,
                     event = event,
                     header = {
                         WindowTitle(
-                            id = userId,
                             provider = component,
-                            viewModelStore = viewModelStore,
+                            viewModelStoreOwner = backStackEntry,
                             onCancel = { visible.value = false },
                         )
                     }

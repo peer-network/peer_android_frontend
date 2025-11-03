@@ -23,8 +23,8 @@ import eu.peernetwork.blog.ui.event.UiPostListener
 import eu.peernetwork.blog.ui.mapper.mapToContent
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.moderation.ModerationScreen
-import eu.peernetwork.core.ui.design.material.DesignScene
-import eu.peernetwork.core.ui.design.material.DesignSceneState
+import eu.peernetwork.core.ui.design.luna.DesignStream
+import eu.peernetwork.core.ui.design.luna.DesignStreamState
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.debounce
 
@@ -32,7 +32,7 @@ import kotlinx.coroutines.flow.debounce
 @Composable
 fun DetailPage(
     userId: String,
-    state: State<DesignSceneState<UiPost>>,
+    state: State<DesignStreamState<UiPost>>,
     event: UiPostListener,
     engagement: UiEngagementEvent,
     moderation: UiModerationEvent,
@@ -47,7 +47,7 @@ fun DetailPage(
     val updatedImage by rememberUpdatedState(image)
     val updatedConnection by rememberUpdatedState(connection)
     val handleOnLoading by rememberUpdatedState(onLoading)
-    DesignScene(
+    DesignStream(
         state,
         loading = { PostPlaceholder(contentPaddingValues = PaddingValues(16.dp)) },
     ) { post ->
