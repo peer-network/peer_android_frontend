@@ -1,4 +1,4 @@
-package eu.peernetwork.user.ui.compose.account
+package eu.peernetwork.user.ui.logout
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -11,6 +11,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,6 +30,7 @@ import eu.peernetwork.user.ui.R
 @Composable
 fun LogoutSheet(
     state: MutableState<Boolean>,
+    isLoading: State<Boolean>,
     onLogout: () -> Unit = {}
 ) {
     val handleLogout by rememberUpdatedState(onLogout)
@@ -44,6 +46,7 @@ fun LogoutSheet(
     ) {
         LogoutSheet(
             state = state,
+            isLoading = isLoading,
             onLogout = {
                 action.value = handleLogout
                 state.value = false
@@ -57,6 +60,7 @@ fun LogoutSheet(
 @OptIn(ExperimentalMaterial3Api::class)
 fun LogoutSheet(
     state: MutableState<Boolean>,
+    isLoading: State<Boolean>,
     modifier: Modifier,
     onLogout: () -> Unit = {},
 ) {
@@ -77,9 +81,10 @@ fun LogoutSheet(
         )
         Spacer(modifier = Modifier.height(16.dp))
         DesignButton(
-            enabled = state.value,
+            enabled = state.value && !isLoading.value,
             onClick = onLogout,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            isLoading = isLoading.value
         ) {
             Text(
                 text = stringResource(R.string.logout_text),
@@ -97,8 +102,10 @@ fun LogoutSheet(
 @OptIn(ExperimentalMaterial3Api::class)
 fun PreviewLogoutSheet() {
     PeerTheme {
+        val isLoading = remember { mutableStateOf(false) }
         LogoutSheet(
             state = remember { mutableStateOf(true) },
+            isLoading = isLoading,
         )
     }
 }

@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -24,6 +25,7 @@ import eu.peernetwork.user.ui.R
 @Composable
 fun SettingsItem(
     label: String,
+    color: Color = MaterialTheme.colorScheme.onBackground,
     onClick: () -> Unit,
 ) {
     val border = MaterialTheme.colorScheme.surfaceContainerLowest
@@ -44,10 +46,9 @@ fun SettingsItem(
     ) {
         Text(
             label,
+            color = color,
             modifier = Modifier.padding(start = 4.dp),
-            style = MaterialTheme.typography.bodyMedium.copy(
-                color = MaterialTheme.colorScheme.onBackground
-            )
+            style = MaterialTheme.typography.bodyMedium
         )
         Spacer(modifier = Modifier.weight(1f))
         Icon(

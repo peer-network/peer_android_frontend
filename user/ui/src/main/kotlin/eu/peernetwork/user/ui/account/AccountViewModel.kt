@@ -2,8 +2,6 @@ package eu.peernetwork.user.ui.account
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import eu.peernetwork.user.domain.usecase.DeactivationUsecase
-import eu.peernetwork.user.domain.usecase.LogoutUsecase
 import eu.peernetwork.user.domain.usecase.ProtectedSettingsUsecase
 import eu.peernetwork.user.domain.usecase.SettingsUsecase
 import eu.peernetwork.user.ui.mapper.mapToModels
@@ -25,61 +23,57 @@ class AccountViewModel @Inject constructor(
     private val refreshUsecase: ProfileRefreshUsecase,
     private val settingsUsecase: SettingsUsecase,
     private val protectedSettingsUsecase: ProtectedSettingsUsecase,
-    private val observerUsecase: ObserveAuthUserUsecase,
-    private val logoutUsecase: LogoutUsecase,
-    private val deactivationUsecase: DeactivationUsecase
+    private val observerUsecase: ObserveAuthUserUsecase
 ) : ViewModel() {
-    private val mutableState = MutableStateFlow<State>(State.Empty)
+    private val _state = MutableStateFlow<State>(State.Default)
 
-    val state: StateFlow<State> = mutableState
+    val state: StateFlow<State> = _state
         .combine(observerUsecase()) { state, account ->
             account?.let {
                 State.Content(
                     account = account,
                     processing = state is State.Loading,
-                    error = (state as? State.Failure?)?.error
+                    error = (state as? State.Error?)?.error
                 )
             } ?: state
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = State.Empty
+        initialValue = State.Default
     )
 
     fun initialize() {
         viewModelScope.launch {
             if (observerUsecase().firstOrNull() == null) {
-                getAccount()
+                get()
             }
         }
     }
 
-    fun getAccount() {
-        mutableState.tryEmit(State.Loading)
+    fun get() {
+        _state.tryEmit(State.Loading)
         viewModelScope.launch {
             try {
                 val account = refreshUsecase()
-                mutableState.tryEmit(State.Content(account))
+                _state.tryEmit(State.Content(account))
             } catch (error: Throwable) {
-                mutableState.tryEmit(State.Failure(error))
+                _state.tryEmit(State.Error(error))
             }
         }
     }
 
     fun update(account: UiAccount, update: List<UiSettings>, password: String) {
-        mutableState.tryEmit(State.Loading)
+        _state.tryEmit(State.Loading)
         viewModelScope.launch {
             try {
                 handleUpdate(account, update, password)
                 val account = refreshUsecase()
-                mutableState.tryEmit(State.Content(account))
+                _state.tryEmit(State.Content(account))
             } catch (error: Throwable) {
-                mutableState.tryEmit(State.Failure(error))
+                _state.tryEmit(State.Error(error))
             }
         }
     }
-
-    fun reset() { mutableState.tryEmit(State.Empty) }
 
     private suspend fun handleUpdate(
         account: UiAccount,
@@ -101,39 +95,16 @@ class AccountViewModel @Inject constructor(
         }
     }
 
-    fun logout() {
-        mutableState.tryEmit(State.Loading)
-        viewModelScope.launch {
-            try {
-                logoutUsecase()
-                mutableState.tryEmit(State.Empty)
-            } catch (error: Throwable) {
-                mutableState.tryEmit(State.Failure(error))
-            }
-        }
-    }
-
-    fun deactivate(password: String) {
-        mutableState.tryEmit(State.Loading)
-        viewModelScope.launch {
-            try {
-                deactivationUsecase(password)
-                logoutUsecase()
-                mutableState.tryEmit(State.Empty)
-            } catch (error: Throwable) {
-                mutableState.tryEmit(State.Failure(error))
-            }
-        }
-    }
+    fun reset() { _state.tryEmit(State.Default) }
 
     sealed interface State {
-        data object Empty : State
+        data object Default : State
         data object Loading : State
         data class Content(
             val account: UiAccount,
             val processing: Boolean = false,
             val error: Throwable? = null
         ) : State
-        data class Failure(val error: Throwable) : State
+        data class Error(val error: Throwable) : State
     }
 }

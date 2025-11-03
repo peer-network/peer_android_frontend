@@ -58,6 +58,7 @@
 
     <string name="logout_message">Do you really want to log out?</string>
     <string name="empty_description_message">Biography unavailable</string>
+    <string name="profile_image">Profile image</string>
 
     <string name="referral_name_label">Referral</string>
     <string name="referral_label">Referral Code (Optional)</string>
