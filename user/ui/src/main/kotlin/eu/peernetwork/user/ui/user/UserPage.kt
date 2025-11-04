@@ -24,7 +24,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.core.ui.design.luna.DesignImage
-import eu.peernetwork.core.ui.design.material.DesignAvatar
+import eu.peernetwork.core.ui.design.luna.DesignAvatar
 import eu.peernetwork.core.ui.extension.annotate
 import eu.peernetwork.core.ui.theme.DesignTheme
 import eu.peernetwork.user.ui.R

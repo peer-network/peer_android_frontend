@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.blog.ui.model.UiAuthor
 import eu.peernetwork.core.ui.design.luna.DesignImage
-import eu.peernetwork.core.ui.design.material.DesignAvatar
+import eu.peernetwork.core.ui.design.luna.DesignAvatar
 import eu.peernetwork.core.ui.design.material.DesignDetailLayout
 import eu.peernetwork.core.ui.design.material.DesignLead
 import eu.peernetwork.core.ui.design.material.DesignTitleStyle

@@ -35,8 +35,10 @@ import eu.peernetwork.user.ui.R
 fun OptionMenu(
     isLoading: State<Boolean>,
     onInvite: () -> Unit,
+    onBoost: () -> Unit,
     onSettings: () -> Unit,
 ) {
+    val updatedOnBoost by rememberUpdatedState(onBoost)
     val style =  MaterialTheme.typography.bodySmall
         .copy(fontWeight = FontWeight.Bold)
     Row(
@@ -72,7 +74,7 @@ fun OptionMenu(
                 )
             }
         ) { Text(stringResource(R.string.settings_label)) }
-        IconButton({}) {
+        IconButton({ updatedOnBoost() }) {
             Icon(
                 painter = painterResource(R.drawable.ic_menu),
                 contentDescription = null,
@@ -135,6 +137,7 @@ fun PreviewUserMenu() {
             OptionMenu(
                 isLoading = isLoading,
                 onInvite = {},
+                onBoost = {},
                 onSettings = {}
             )
         }

@@ -44,7 +44,6 @@ import eu.peernetwork.core.ui.design.luna.DesignTab
 import eu.peernetwork.core.ui.design.material.DesignTitle
 import eu.peernetwork.core.ui.design.material.DesignTitleBarHost
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
-import eu.peernetwork.core.ui.factory.UiViewModelStore
 import eu.peernetwork.media.core.model.UiMimeType
 import eu.peernetwork.social.ui.connection.ConnectionButton
 import eu.peernetwork.social.ui.connection.ConnectionScreen
@@ -139,6 +138,7 @@ fun ProfilePreview(
                         showSheet.value = connection.value != null
                     },
                     onSettings = onSettings,
+                    onBoost = {},
                     provider = component,
                     viewModelStoreOwner = viewModelStoreOwner,
                     modifier = Modifier.Companion

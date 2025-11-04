@@ -15,7 +15,7 @@ import eu.peernetwork.core.ui.theme.PeerTheme
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.ui.graphics.Color
-import eu.peernetwork.core.ui.design.material.DesignAvatar
+import eu.peernetwork.core.ui.design.luna.DesignAvatar
 
 @Composable
 fun HomeSkeleton() {

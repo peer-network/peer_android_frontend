@@ -36,7 +36,7 @@ import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.luna.DesignImage
 import eu.peernetwork.core.ui.design.luna.DesignStream
 import eu.peernetwork.core.ui.design.luna.DesignStreamState
-import eu.peernetwork.core.ui.design.material.DesignAvatar
+import eu.peernetwork.core.ui.design.luna.DesignAvatar
 import eu.peernetwork.core.ui.design.material.DesignCard
 import eu.peernetwork.core.ui.design.material.DesignDetail
 import eu.peernetwork.core.ui.extension.builder

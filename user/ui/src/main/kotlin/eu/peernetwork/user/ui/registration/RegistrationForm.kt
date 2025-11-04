@@ -44,9 +44,9 @@ import eu.peernetwork.core.ui.theme.PeerAppLightGreen
 import eu.peernetwork.core.ui.theme.PeerAppRed
 import eu.peernetwork.core.ui.theme.PeerAppYellow
 import eu.peernetwork.user.ui.R
-import eu.peernetwork.user.ui.form.ErrorLabel
-import eu.peernetwork.user.ui.form.LabelledCheckBox
-import eu.peernetwork.user.ui.form.PasswordTextField
+import eu.peernetwork.user.ui.form.FormErrorLabel
+import eu.peernetwork.user.ui.form.FormCheckBox
+import eu.peernetwork.user.ui.form.FormPassword
 import eu.peernetwork.user.ui.extension.passwordRequirement
 import eu.peernetwork.user.ui.extension.policy
 
@@ -158,7 +158,7 @@ fun RegistrationForm(
                 )
             }
         )
-        PasswordTextField(
+        FormPassword(
             state = password,
             enabled = !isLoading.value,
             keyboardOptions = KeyboardOptions(
@@ -184,12 +184,12 @@ fun RegistrationForm(
                 .padding(horizontal = 18.dp)
                 .height(2.dp)
         )
-        ErrorLabel(
+        FormErrorLabel(
             error = passwordValidationError,
             modifier = Modifier.padding(horizontal = 18.dp)
                 .padding(top = 8.dp)
         )
-        PasswordTextField(
+        FormPassword(
             state = confirmPassword,
             enabled = !isLoading.value,
             hint = stringResource(id = R.string.confirm_password_label),
@@ -199,7 +199,7 @@ fun RegistrationForm(
             ),
             modifier = Modifier.padding(top = 12.dp)
         )
-        LabelledCheckBox(
+        FormCheckBox(
             state = policyAgreement,
             label = privacy,
             modifier = Modifier.padding(top = 12.dp)
@@ -219,7 +219,7 @@ fun RegistrationForm(
                     }
                 },
         )
-        LabelledCheckBox(
+        FormCheckBox(
             state = licenceAgreement,
             label = licence,
             textLayoutResult = layoutResult,
@@ -240,7 +240,7 @@ fun RegistrationForm(
                     }
                 },
         )
-        ErrorLabel(
+        FormErrorLabel(
             error = errorState,
             modifier = Modifier.padding(horizontal = 18.dp)
         )

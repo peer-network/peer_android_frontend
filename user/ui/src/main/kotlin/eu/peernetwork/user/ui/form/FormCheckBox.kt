@@ -20,7 +20,7 @@ import eu.peernetwork.core.ui.design.luna.DesignCheckbox
 import eu.peernetwork.user.ui.R
 
 @Composable
-fun LabelledCheckBox(
+fun FormCheckBox(
     state: MutableState<Boolean>,
     label: AnnotatedString,
     modifier: Modifier = Modifier,

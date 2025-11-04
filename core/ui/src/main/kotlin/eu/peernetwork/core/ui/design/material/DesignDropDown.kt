@@ -131,7 +131,7 @@ fun DesignDropDown(
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun PreviewDesignDropDown() {
     PeerTheme {
-        var expanded = remember { mutableStateOf(false) }
+        val expanded = remember { mutableStateOf(false) }
         DesignDropDown(
             expanded,
             default = "tag",
