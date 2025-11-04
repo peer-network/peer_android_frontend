@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import eu.peernetwork.core.ui.design.luna.DesignAvatar
 import eu.peernetwork.core.ui.theme.PeerTheme
 
 @Composable
@@ -92,9 +93,13 @@ fun PreviewDesignLayout() {
         Column {
             DesignDetailLayout(
                 lead = {
-                    DesignAvatar{ Box(modifier = Modifier.size(64.dp)
-                        .background(MaterialTheme.colorScheme.background))
-                    } },
+                    DesignAvatar {
+                        Box(
+                            modifier = Modifier.size(64.dp)
+                                .background(MaterialTheme.colorScheme.background)
+                        )
+                    }
+                },
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text("Content", modifier = Modifier.padding(start = 16.dp))

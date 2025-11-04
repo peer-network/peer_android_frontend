@@ -42,9 +42,9 @@ import eu.peernetwork.core.ui.extension.isValidEmail
 import eu.peernetwork.core.ui.extension.isValidInput
 import eu.peernetwork.core.ui.theme.DesignTheme
 import eu.peernetwork.user.ui.R
-import eu.peernetwork.user.ui.form.ErrorLabel
-import eu.peernetwork.user.ui.form.LabelledCheckBox
-import eu.peernetwork.user.ui.form.PasswordTextField
+import eu.peernetwork.user.ui.form.FormErrorLabel
+import eu.peernetwork.user.ui.form.FormCheckBox
+import eu.peernetwork.user.ui.form.FormPassword
 
 @Composable
 fun LoginForm(
@@ -80,7 +80,7 @@ fun LoginForm(
                 )
             }
         )
-        PasswordTextField(
+        FormPassword(
             state = password,
             enabled = !isLoading.value,
             keyboardOptions = KeyboardOptions(
@@ -95,7 +95,7 @@ fun LoginForm(
             modifier = Modifier.fillMaxWidth()
                 .padding(top = 10.dp, bottom = 8.dp)
         ) {
-            LabelledCheckBox(
+            FormCheckBox(
                 state = rememberMe,
                 label = stringResource(R.string.remember_me).annotate(),
                 modifier = Modifier.padding(horizontal = 18.dp)
@@ -112,7 +112,7 @@ fun LoginForm(
                 )
             )
         }
-        ErrorLabel(
+        FormErrorLabel(
             error = error,
             modifier = Modifier.padding(horizontal = 18.dp)
         )

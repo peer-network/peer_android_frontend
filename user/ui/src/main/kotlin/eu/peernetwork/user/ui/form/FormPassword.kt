@@ -25,7 +25,7 @@ import eu.peernetwork.core.ui.design.luna.DesignSecuredTextField
 import eu.peernetwork.user.ui.R
 
 @Composable
-fun PasswordTextField(
+fun FormPassword(
     state: TextFieldState,
     modifier: Modifier = Modifier,
     hint: String = stringResource(id = R.string.password_label),

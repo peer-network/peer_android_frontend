@@ -32,7 +32,7 @@ import eu.peernetwork.core.ui.design.luna.DesignTextField
 import eu.peernetwork.core.ui.extension.annotate
 import eu.peernetwork.core.ui.theme.DesignTheme
 import eu.peernetwork.user.ui.R
-import eu.peernetwork.user.ui.form.ErrorLabel
+import eu.peernetwork.user.ui.form.FormErrorLabel
 import eu.peernetwork.user.ui.form.FormHeader
 
 @Composable
@@ -77,7 +77,7 @@ fun VerificationPage(
             },
             modifier = Modifier.padding(bottom = 6.dp)
         )
-        ErrorLabel(
+        FormErrorLabel(
             error = error,
             modifier = Modifier.padding(horizontal = 18.dp)
         )

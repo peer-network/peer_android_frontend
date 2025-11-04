@@ -23,6 +23,7 @@ fun OptionScreen(
     isAdmin: Boolean,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
+    onBoost: () -> Unit,
     onSettings: () -> Unit,
     content: @Composable () -> Unit
 ) {
@@ -43,6 +44,7 @@ fun OptionScreen(
     if (isAdmin) {
         OptionMenu(
             isLoading = isLoading,
+            onBoost = onBoost,
             onInvite = {
                 inviteLink.value?.let {
                     context.sendInvitation(inviteLabel, it)

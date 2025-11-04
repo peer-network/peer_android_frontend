@@ -1,4 +1,4 @@
-package eu.peernetwork.core.ui.design.material
+package eu.peernetwork.core.ui.design.luna
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background

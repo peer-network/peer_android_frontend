@@ -37,6 +37,7 @@ fun UserScreen(
     connection: @Composable (Pair<Boolean, Boolean>) -> Unit,
     onClick: (UserMetric) -> Unit,
     onSettings: () -> Unit,
+    onBoost: () -> Unit,
     viewModelStoreOwner: ViewModelStoreOwner,
 ) {
     val context = LocalContext.current
@@ -91,7 +92,8 @@ fun UserScreen(
                 isAdmin = data.second,
                 provider = component,
                 viewModelStoreOwner = viewModelStoreOwner,
-                onSettings = onSettings
+                onSettings = onSettings,
+                onBoost = onBoost
             ) { updatedConnection(data.first.isFollowing to data.first.isFollowed) }
         }
         DesignOverlay(

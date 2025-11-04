@@ -31,7 +31,7 @@ import eu.peernetwork.app.R
 import eu.peernetwork.blog.ui.compose.PostIcon
 import eu.peernetwork.blog.ui.compose.PostScaffold
 import eu.peernetwork.blog.ui.model.UiAction
-import eu.peernetwork.core.ui.design.material.DesignAvatar
+import eu.peernetwork.core.ui.design.luna.DesignAvatar
 import eu.peernetwork.core.ui.theme.PeerTheme
 
 @Composable
