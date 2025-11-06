@@ -5,9 +5,11 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonColors
@@ -18,6 +20,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
@@ -29,6 +32,7 @@ import eu.peernetwork.core.ui.design.luna.DesignAvatar
 import eu.peernetwork.core.ui.design.luna.DesignButton
 import eu.peernetwork.core.ui.design.luna.DesignImage
 import eu.peernetwork.core.ui.theme.DesignTheme
+import eu.peernetwork.core.ui.theme.Secondary400
 
 @Composable
 fun PostHeader(
@@ -36,7 +40,9 @@ fun PostHeader(
     username: String,
     imageUrl: String,
     modifier: Modifier = Modifier,
+    color: Color = MaterialTheme.colorScheme.surfaceContainerLowest,
     onAuthorClick: () -> Unit,
+    onPin: (() -> Unit)? = null,
     connection: @Composable () -> Unit
 ) {
     val updatedConnection by rememberUpdatedState(connection)
@@ -51,6 +57,7 @@ fun PostHeader(
                 label = username,
                 imageUrl = imageUrl,
                 size = 32.dp,
+                color = color,
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.clickable(
                     role = Role.Button,
@@ -61,7 +68,7 @@ fun PostHeader(
         Column(
             modifier = Modifier
                 .weight(1f)
-                .padding(horizontal = 8.dp)
+                .padding(horizontal = 10.dp)
         ) {
             Text(
                 text = username,
@@ -80,33 +87,40 @@ fun PostHeader(
             )
         }
         updatedConnection()
-        PostHeaderOption()
+        PostHeaderOption(onPin)
     }
 }
 
 @Composable
-private fun PostHeaderOption() {
-    IconButton(
-        onClick = {},
-        modifier = Modifier.padding(horizontal = 8.dp)
-            .size(28.dp),
-        colors = IconButtonColors(
-            containerColor = MaterialTheme.colorScheme.surfaceTint,
-            contentColor = MaterialTheme.colorScheme.onPrimary,
-            disabledContentColor = MaterialTheme.colorScheme.outlineVariant,
-            disabledContainerColor = MaterialTheme.colorScheme.surfaceContainerLow
-        )
-    ) {
-        Icon(
-            painter = painterResource(R.drawable.ic_pin),
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.onPrimary,
-            modifier = Modifier.size(18.dp)
-        )
+private fun PostHeaderOption(
+    onPin: (() -> Unit)? = null,
+) {
+    val handleOnPin by rememberUpdatedState(onPin)
+    if (handleOnPin != null) {
+        IconButton(
+            onClick = {},
+            modifier = Modifier.padding(horizontal = 8.dp)
+                .size(32.dp),
+            colors = IconButtonColors(
+                containerColor = Secondary400,
+                contentColor = MaterialTheme.colorScheme.onPrimary,
+                disabledContentColor = MaterialTheme.colorScheme.outlineVariant,
+                disabledContainerColor = MaterialTheme.colorScheme.surfaceContainerLow
+            )
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.ic_pin),
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onPrimary,
+                modifier = Modifier.size(18.dp)
+            )
+        }
+    } else {
+        Spacer(modifier = Modifier.width(8.dp))
     }
     IconButton(
         onClick = {},
-        modifier = Modifier.size(28.dp),
+        modifier = Modifier.size(32.dp),
     ) {
         Icon(
             painter = painterResource(R.drawable.ic_option),
@@ -131,7 +145,7 @@ fun PreviewPostHeader() {
             onAuthorClick = {}
         ) {
             DesignButton(
-                minHeight = 28.dp,
+                minHeight = 32.dp,
                 onClick = {  },
                 style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
                 contentPadding = PaddingValues(horizontal = 16.dp)

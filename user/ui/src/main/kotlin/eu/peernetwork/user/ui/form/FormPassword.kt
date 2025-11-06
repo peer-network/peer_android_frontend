@@ -21,7 +21,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import eu.peernetwork.core.ui.design.luna.DesignSecuredTextField
+import eu.peernetwork.core.ui.design.luna.DesignPassword
 import eu.peernetwork.user.ui.R
 
 @Composable
@@ -36,7 +36,7 @@ fun FormPassword(
     ),
 ) {
     val obfuscationMode = remember { mutableStateOf(TextObfuscationMode.Hidden) }
-    DesignSecuredTextField(
+    DesignPassword(
         state = state,
         enabled = enabled,
         hint = hint,
