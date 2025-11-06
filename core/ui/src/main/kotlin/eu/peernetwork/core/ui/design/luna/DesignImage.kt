@@ -29,7 +29,7 @@ fun DesignImage(
     imageUrl: String,
     modifier: Modifier = Modifier,
     size: Dp = 64.dp,
-    color: Color = MaterialTheme.colorScheme.surfaceContainerLow,
+    color: Color = MaterialTheme.colorScheme.surfaceContainerLowest,
     style: TextStyle = MaterialTheme.typography.titleLarge.copy(
         color = MaterialTheme.colorScheme.outline,
         fontWeight = FontWeight.Normal

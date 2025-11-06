@@ -37,4 +37,6 @@
     <string name="like_label">Likes</string>
     <string name="dislike_label">Dislikes</string>
     <string name="view_label">Views</string>
+
+    <string name="pin_label">Pin by</string>
 </resources>

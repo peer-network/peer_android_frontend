@@ -34,7 +34,7 @@
     <string name="explore_message"> Looks quiet for now. </string>
     <string name="explore_message_continuation"> Discover what people are up to! </string>
 
-    <string name="show_less">more</string>
-    <string name="show_more">less</string>
+    <string name="show_less">…less</string>
+    <string name="show_more">…more</string>
 
 </resources>

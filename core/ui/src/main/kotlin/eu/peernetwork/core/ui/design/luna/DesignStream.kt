@@ -31,7 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import eu.peernetwork.core.ui.theme.PeerTheme
+import eu.peernetwork.core.ui.theme.DesignTheme
 
 sealed interface DesignStreamState<out T> {
     data object Default : DesignStreamState<Nothing>
@@ -148,7 +148,7 @@ fun<T> DesignStream(
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun DesignScenePreview() {
-    PeerTheme {
+    DesignTheme {
         Column(
             modifier = Modifier
                 .fillMaxSize()

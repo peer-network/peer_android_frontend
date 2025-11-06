@@ -23,6 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import eu.peernetwork.core.ui.design.luna.DesignAnnotatedText
 import eu.peernetwork.core.ui.design.luna.DesignImage
 import eu.peernetwork.core.ui.design.luna.DesignAvatar
 import eu.peernetwork.core.ui.extension.annotate
@@ -89,9 +90,10 @@ fun UserPage(
                 )
             }
         }
-        Text(
-            text = account.bio ?: emptyDescription,
+        DesignAnnotatedText(
+            text = (account.bio ?: emptyDescription).annotate(),
             overflow = TextOverflow.Ellipsis,
+            maxLines = 1,
             color = MaterialTheme.colorScheme.outline,
             style = MaterialTheme.typography.bodySmall,
             modifier = Modifier.padding(top = 14.dp)

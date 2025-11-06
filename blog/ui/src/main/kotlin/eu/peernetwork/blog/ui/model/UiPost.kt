@@ -30,4 +30,23 @@ data class UiPost(
         TEXT,
         VIDEO
     }
+
+    data class Detail(
+        val slug: String,
+        val username: String,
+        val title: AnnotatedString,
+        val description: AnnotatedString,
+        val imageUrl: String,
+        val time: String,
+    )
+
+    data class Engagement(
+        val id: String,
+        val likes: String,
+        val dislikes: String,
+        val isLiked: Boolean,
+        val isDisliked: Boolean,
+        val views: String,
+        val comment: String
+    )
 }

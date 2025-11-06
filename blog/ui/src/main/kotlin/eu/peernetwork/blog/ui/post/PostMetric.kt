@@ -1,0 +1,146 @@
+package eu.peernetwork.blog.ui.post
+
+import android.content.res.Configuration
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import eu.peernetwork.blog.ui.R
+import eu.peernetwork.core.ui.theme.DesignTheme
+
+@Composable
+fun PostMetric(
+    text: String,
+    painter: Painter,
+    modifier: Modifier = Modifier,
+    color: Color = MaterialTheme.colorScheme.onBackground,
+    tint: Color = LocalContentColor.current,
+    contentDescription: String? = null,
+    size: Dp = 18.dp,
+    style: TextStyle = MaterialTheme.typography.labelLarge,
+    orientation: Orientation = Orientation.Horizontal
+) {
+    if (orientation == Orientation.Vertical) {
+        PostMetric(
+            text = text,
+            painter = painter,
+            modifier = modifier,
+            color = color,
+            tint = tint,
+            contentDescription = contentDescription,
+            size = size,
+            style = style,
+            horizontalAlignment = Alignment.CenterHorizontally
+        )
+    } else {
+        PostMetric(
+            text = text,
+            painter = painter,
+            modifier = modifier,
+            color = color,
+            tint = tint,
+            contentDescription = contentDescription,
+            size = size,
+            style = style,
+            verticalAlignment = Alignment.CenterVertically
+        )
+    }
+}
+
+@Composable
+fun PostMetric(
+    text: String,
+    painter: Painter,
+    modifier: Modifier = Modifier,
+    color: Color = MaterialTheme.colorScheme.onBackground,
+    tint: Color = LocalContentColor.current,
+    contentDescription: String? = null,
+    size: Dp = 18.dp,
+    style: TextStyle = MaterialTheme.typography.labelLarge,
+    horizontalAlignment: Alignment.Horizontal = Alignment.CenterHorizontally,
+) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = horizontalAlignment
+    ) {
+        Icon(
+            painter = painter,
+            contentDescription = contentDescription,
+            tint = tint,
+            modifier = Modifier.size(size)
+        )
+        Text(
+            text = text,
+            style = style,
+            color = color
+        )
+    }
+}
+
+@Composable
+fun PostMetric(
+    text: String,
+    painter: Painter,
+    modifier: Modifier = Modifier,
+    color: Color = MaterialTheme.colorScheme.onBackground,
+    tint: Color = LocalContentColor.current,
+    contentDescription: String? = null,
+    size: Dp = 18.dp,
+    style: TextStyle = MaterialTheme.typography.labelLarge,
+    horizontalArrangement: Arrangement.Horizontal = Arrangement.spacedBy(4.dp),
+    verticalAlignment: Alignment.Vertical = Alignment.CenterVertically,
+) {
+    Row(
+        modifier = modifier,
+        horizontalArrangement = horizontalArrangement,
+        verticalAlignment = verticalAlignment
+    ) {
+        Icon(
+            painter = painter,
+            contentDescription = contentDescription,
+            tint = tint,
+            modifier = Modifier.size(size)
+        )
+        Text(
+            text = text,
+            style = style,
+            color = color
+        )
+    }
+}
+
+@Composable
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, showBackground = true)
+fun PreviewPostMetric() {
+    DesignTheme(isDarkMode = false) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            PostMetric(
+                text = "5k",
+                painter = painterResource(R.drawable.ic_love_outline),
+                orientation = Orientation.Vertical,
+                modifier = Modifier.align(Alignment.End)
+            )
+            PostMetric(
+                text = "5k",
+                painter = painterResource(R.drawable.ic_love_outline),
+                orientation = Orientation.Horizontal
+            )
+        }
+    }
+}

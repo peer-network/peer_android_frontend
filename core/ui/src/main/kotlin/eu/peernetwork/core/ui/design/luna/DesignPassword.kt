@@ -53,7 +53,7 @@ import androidx.compose.ui.unit.dp
 import eu.peernetwork.core.ui.theme.DesignTheme
 
 @Composable
-fun DesignSecuredTextField(
+fun DesignPassword(
     modifier: Modifier = Modifier,
     state: TextFieldState = remember { TextFieldState() },
     hint: String? = null,
@@ -188,7 +188,7 @@ fun DesignSecuredTextField(
 
 @Preview
 @Composable
-fun DarkDesignSecuredTextFieldPreview() {
+fun DarkDesignPasswordPreview() {
     DesignTheme(isDarkMode = true) {
         Column(
             modifier = Modifier
@@ -197,20 +197,20 @@ fun DarkDesignSecuredTextFieldPreview() {
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            DesignSecuredTextField(
+            DesignPassword(
                 state = remember { TextFieldState("Hello, World!") },
                 modifier = Modifier.fillMaxWidth()
             )
-            DesignSecuredTextField(
+            DesignPassword(
                 state = remember { TextFieldState("Hello, world!") },
                 modifier = Modifier.fillMaxWidth()
             )
-            DesignSecuredTextField(
+            DesignPassword(
                 state = remember { TextFieldState("Read-only") },
                 modifier = Modifier.fillMaxWidth(),
                 enabled = false
             )
-            DesignSecuredTextField(
+            DesignPassword(
                 state = remember { TextFieldState() },
                 modifier = Modifier.fillMaxWidth(),
                 hint = "Password"
@@ -221,7 +221,7 @@ fun DarkDesignSecuredTextFieldPreview() {
 
 @Preview
 @Composable
-fun LightDesignSecuredTextFieldPreview() {
+fun LightDesignPasswordPreview() {
     DesignTheme(isDarkMode = false) {
         Column(
             modifier = Modifier
@@ -230,20 +230,20 @@ fun LightDesignSecuredTextFieldPreview() {
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            DesignSecuredTextField(
+            DesignPassword(
                 state = remember { TextFieldState("Hello, World!") },
                 modifier = Modifier.fillMaxWidth()
             )
-            DesignSecuredTextField(
+            DesignPassword(
                 state = remember { TextFieldState("Hello, world!") },
                 modifier = Modifier.fillMaxWidth()
             )
-            DesignSecuredTextField(
+            DesignPassword(
                 state = remember { TextFieldState("Read-only") },
                 modifier = Modifier.fillMaxWidth(),
                 enabled = false
             )
-            DesignSecuredTextField(
+            DesignPassword(
                 state = remember { TextFieldState() },
                 modifier = Modifier.fillMaxWidth(),
                 hint = "Password"
