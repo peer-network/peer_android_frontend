@@ -44,60 +44,62 @@ fun UserPage(
     val updatedContent by rememberUpdatedState(content)
     val selectedImage = remember { mutableStateOf<String?>(null) }
     val emptyDescription = stringResource(R.string.empty_description_message)
-    Column(modifier = modifier) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            DesignAvatar {
-                DesignImage(
-                    label = account.username,
-                    imageUrl = account.imageUrl,
-                    size = 56.dp,
-                    color = MaterialTheme.colorScheme.surfaceContainerLow,
-                    modifier = Modifier.clickable(
-                        role = Role.Button,
-                        enabled = true
-                    ) { selectedImage.value = account.imageUrl }
-                )
-            }
-            Column(modifier = Modifier.padding(start = 16.dp)) {
-                Text(
-                    text = "${account.username} #${account.slug}"
-                        .annotate(
-                            text = "#${account.slug}",
-                            style = SpanStyle(
-                                fontStyle = FontStyle.Italic,
-                                fontWeight = FontWeight.Normal,
-                                fontSize = MaterialTheme.typography.bodySmall.fontSize,
-                                color = MaterialTheme.colorScheme.outline
-                            )
+    Column {
+        Column(modifier = modifier) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                DesignAvatar {
+                    DesignImage(
+                        label = account.username,
+                        imageUrl = account.imageUrl,
+                        size = 56.dp,
+                        color = MaterialTheme.colorScheme.surfaceContainerLow,
+                        modifier = Modifier.clickable(
+                            role = Role.Button,
+                            enabled = true
+                        ) { selectedImage.value = account.imageUrl }
+                    )
+                }
+                Column(modifier = Modifier.padding(start = 16.dp)) {
+                    Text(
+                        text = "${account.username} #${account.slug}"
+                            .annotate(
+                                text = "#${account.slug}",
+                                style = SpanStyle(
+                                    fontStyle = FontStyle.Italic,
+                                    fontWeight = FontWeight.Normal,
+                                    fontSize = MaterialTheme.typography.bodySmall.fontSize,
+                                    color = MaterialTheme.colorScheme.outline
+                                )
+                            ),
+                        style = MaterialTheme.typography.bodyMedium.copy(
+                            fontWeight = FontWeight.Bold,
                         ),
-                    style = MaterialTheme.typography.bodyMedium.copy(
-                        fontWeight = FontWeight.Bold,
-                    ),
-                    color = MaterialTheme.colorScheme.onBackground,
-                    overflow = TextOverflow.Ellipsis,
-                )
-                UserMetric(
-                    overview = account.metric,
-                    labelColor = MaterialTheme.colorScheme.outline,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 6.dp),
-                    onClick = {
-                        if (!(!isAdmin && it == UserMetric.PEER)) {
-                            handleOnClick(it)
+                        color = MaterialTheme.colorScheme.onBackground,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                    UserMetric(
+                        overview = account.metric,
+                        labelColor = MaterialTheme.colorScheme.outline,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 6.dp),
+                        onClick = {
+                            if (!(!isAdmin && it == UserMetric.PEER)) {
+                                handleOnClick(it)
+                            }
                         }
-                    }
-                )
+                    )
+                }
             }
+            DesignAnnotatedText(
+                text = (account.bio ?: emptyDescription).annotate(),
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 1,
+                color = MaterialTheme.colorScheme.outline,
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.padding(top = 14.dp)
+            )
         }
-        DesignAnnotatedText(
-            text = (account.bio ?: emptyDescription).annotate(),
-            overflow = TextOverflow.Ellipsis,
-            maxLines = 1,
-            color = MaterialTheme.colorScheme.outline,
-            style = MaterialTheme.typography.bodySmall,
-            modifier = Modifier.padding(top = 14.dp)
-        )
         updatedContent()
     }
 }

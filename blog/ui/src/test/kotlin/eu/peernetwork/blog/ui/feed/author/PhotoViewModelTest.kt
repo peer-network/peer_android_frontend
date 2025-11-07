@@ -33,12 +33,12 @@ internal class PhotoViewModelTest {
 
     private val viewUsecase = mockk<ViewUsecase>()
 
-    private lateinit var viewModel: PostViewModel
+    private lateinit var viewModel: AuthorPostViewModel
 
     @Before
     fun setup() {
         Dispatchers.setMain(dispatcher)
-        viewModel = PostViewModel(usecase, viewUsecase)
+        viewModel = AuthorPostViewModel(usecase, viewUsecase)
     }
 
     @Test
@@ -52,8 +52,8 @@ internal class PhotoViewModelTest {
         }
         viewModel.load(author, setOf(), Pageable(0, 1))
         viewModel.state.test {
-            assertTrue(awaitItem() is PostViewModel.State.Loading)
-            assertTrue(awaitItem() is PostViewModel.State.Success)
+            assertTrue(awaitItem() is AuthorPostViewModel.State.Loading)
+            assertTrue(awaitItem() is AuthorPostViewModel.State.Success)
         }
     }
 
@@ -68,7 +68,7 @@ internal class PhotoViewModelTest {
 
         viewModel.load(author, setOf(), Pageable(0, 1))
         viewModel.state.test {
-            assertEquals(PostViewModel.State.Error(error), awaitItem())
+            assertEquals(AuthorPostViewModel.State.Error(error), awaitItem())
         }
     }
 }

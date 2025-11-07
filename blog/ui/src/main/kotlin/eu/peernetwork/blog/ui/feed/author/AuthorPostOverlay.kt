@@ -20,7 +20,7 @@ import eu.peernetwork.core.ui.design.luna.DesignStreamState
 import eu.peernetwork.core.ui.extension.builder
 
 @Composable
-fun PostOverlay(
+fun AuthorPostOverlay(
     author: String,
     types: Set<Content.Type>,
     limit: Int,
@@ -34,10 +34,10 @@ fun PostOverlay(
 ) {
     val context = LocalContext.current
     val component = remember {
-        provider.builder(Post.Builder::class.java).build(context)
+        provider.builder(AuthorPost.Builder::class.java).build(context)
     }
     val viewModel = viewModel(
-        modelClass = PostViewModel::class.java,
+        modelClass = AuthorPostViewModel::class.java,
         viewModelStoreOwner = viewModelStoreOwner,
         factory = component.viewModelFactory()
     )
@@ -46,13 +46,13 @@ fun PostOverlay(
     val derivedState = remember {
         derivedStateOf {
             when (state) {
-                PostViewModel.State.Empty -> DesignStreamState.Default
-                PostViewModel.State.Loading -> DesignStreamState.Loading
-                is PostViewModel.State.Success -> DesignStreamState.Success(
-                    (state as PostViewModel.State.Success).content
+                AuthorPostViewModel.State.Empty -> DesignStreamState.Default
+                AuthorPostViewModel.State.Loading -> DesignStreamState.Loading
+                is AuthorPostViewModel.State.Success -> DesignStreamState.Success(
+                    (state as AuthorPostViewModel.State.Success).content
                 )
-                is PostViewModel.State.Error -> DesignStreamState.Error(
-                    (state as PostViewModel.State.Error).error.let {
+                is AuthorPostViewModel.State.Error -> DesignStreamState.Error(
+                    (state as AuthorPostViewModel.State.Error).error.let {
                         Throwable(component.resource()
                             .string(it.message ?: errorMessage), it)
                     }

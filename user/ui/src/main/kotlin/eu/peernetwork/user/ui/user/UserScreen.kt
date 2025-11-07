@@ -1,5 +1,6 @@
 package eu.peernetwork.user.ui.user
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -88,13 +89,16 @@ fun UserScreen(
                 .padding(top = 10.dp),
             onClick = onClick
         ) {
-            OptionScreen(
-                isAdmin = data.second,
-                provider = component,
-                viewModelStoreOwner = viewModelStoreOwner,
-                onSettings = onSettings,
-                onBoost = onBoost
-            ) { updatedConnection(data.first.isFollowing to data.first.isFollowed) }
+            Box(modifier = Modifier.padding(start = 24.dp)
+                .padding(end = 16.dp)) {
+                OptionScreen(
+                    isAdmin = data.second,
+                    provider = component,
+                    viewModelStoreOwner = viewModelStoreOwner,
+                    onSettings = onSettings,
+                    onBoost = onBoost
+                ) { updatedConnection(data.first.isFollowing to data.first.isFollowed) }
+            }
         }
         DesignOverlay(
             state = visible,

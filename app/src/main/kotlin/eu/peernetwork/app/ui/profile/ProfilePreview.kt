@@ -35,7 +35,7 @@ import eu.peernetwork.app.extension.navigateToTagSearch
 import eu.peernetwork.app.extension.navigateToUsernameSearch
 import eu.peernetwork.blog.domain.usecase.PostUsecase
 import eu.peernetwork.blog.ui.event.UiPostListener
-import eu.peernetwork.blog.ui.feed.author.PostScreen
+import eu.peernetwork.blog.ui.feed.author.AuthorPostScreen
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.design.compose.DesignRefreshableScaffold
 import eu.peernetwork.core.ui.design.compose.DesignStatefulScaffoldState
@@ -147,7 +147,7 @@ fun ProfilePreview(
                 )
             },
         ) {
-            PostScreen(
+            AuthorPostScreen(
                 author = id,
                 types = if (it == 0) {
                     PostUsecase.POST

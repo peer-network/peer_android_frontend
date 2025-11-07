@@ -5,11 +5,12 @@ import androidx.lifecycle.ViewModelProvider
 import eu.peernetwork.blog.ui.engagement.EngagementDialog
 import eu.peernetwork.blog.ui.content.overlay.Overlay
 import eu.peernetwork.blog.ui.content.timeline.Timeline
+import eu.peernetwork.blog.ui.post.Post
 import eu.peernetwork.blog.ui.provider.BlogProvider
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
 
-interface Post : BlogProvider {
+interface AuthorPost : BlogProvider {
     fun engagementConfirmation(): EngagementDialog
 
     @javax.inject.Scope
@@ -18,18 +19,18 @@ interface Post : BlogProvider {
 
     @Scope
     @dagger.Component(
-        dependencies = [Post::class ],
-        modules = [ PostModule::class ]
+        dependencies = [AuthorPost::class ],
+        modules = [ AuthorPostModule::class ]
     )
-    interface Component : Post, UiComponentProvider, Overlay, Timeline {
+    interface Component : AuthorPost, UiComponentProvider, Overlay, Timeline, Post {
         fun viewModelFactory(): ViewModelProvider.Factory
     }
 
-    class Builder(private val dependency: Post) : UiComponent.DefaultBuilder<Post, Component>() {
+    class Builder(private val dependency: AuthorPost) : UiComponent.DefaultBuilder<AuthorPost, Component>() {
         override fun build(context: Context): Component {
-            return DaggerPost_Component.builder()
-                .post(dependency)
-                .postModule(PostModule(context))
+            return DaggerAuthorPost_Component.builder()
+                .authorPost(dependency)
+                .authorPostModule(AuthorPostModule(context))
                 .build()
         }
     }

@@ -117,7 +117,6 @@ fun PostFooter(
                 text = username,
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.SemiBold,
-                fontStyle = FontStyle.Italic,
                 color = MaterialTheme.colorScheme.onBackground
             )
             Column(
@@ -127,16 +126,19 @@ fun PostFooter(
             ) {
                 DesignAnnotatedText(
                     text = title,
-                    maxLines = 2,
+                    maxLines = 1,
                     style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onBackground,
                 )
-                DesignAnnotatedText(
-                    text = description,
-                    maxLines = 6,
-                    style = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.outline,
-                    lineHeight = 18.sp
-                )
+                if (description.isNotEmpty()) {
+                    DesignAnnotatedText(
+                        text = description,
+                        maxLines = 3,
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.outline,
+                        lineHeight = 18.sp
+                    )
+                }
                 pinnedBy?.let {
                     Text(
                         text = pinnedText,

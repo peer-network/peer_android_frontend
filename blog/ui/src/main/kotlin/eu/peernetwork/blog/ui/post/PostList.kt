@@ -1,4 +1,4 @@
-package eu.peernetwork.blog.ui.compose
+package eu.peernetwork.blog.ui.post
 
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.onEach
 
 @Composable
 @OptIn(FlowPreview::class)
-fun ListView(
+fun PostList(
     listState: LazyListState,
     onClear: () -> Unit = {},
     onFocused: (Int) -> Unit = {},
