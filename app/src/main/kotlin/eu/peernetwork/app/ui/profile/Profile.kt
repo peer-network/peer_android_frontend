@@ -6,7 +6,7 @@ import eu.peernetwork.app.ui.search.Search
 import eu.peernetwork.app.ui.settings.Settings
 import eu.peernetwork.app.ui.settings.SettingsEvent
 import eu.peernetwork.app.ui.window.Window
-import eu.peernetwork.blog.ui.feed.author.Post
+import eu.peernetwork.blog.ui.feed.author.AuthorPost
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.social.ui.connection.Connection
@@ -31,7 +31,7 @@ interface Profile : ApplicationProvider {
     interface Component : Profile,
         UiComponentProvider,
         User,
-        Post,
+        AuthorPost,
         Search,
         Settings,
         Followers,

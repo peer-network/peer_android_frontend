@@ -18,7 +18,7 @@ import eu.peernetwork.app.extension.navigateToUsernameSearch
 import eu.peernetwork.app.ui.window.WindowTitle
 import eu.peernetwork.blog.domain.usecase.PostUsecase
 import eu.peernetwork.blog.ui.event.UiPostListener
-import eu.peernetwork.blog.ui.feed.author.PostOverlay
+import eu.peernetwork.blog.ui.feed.author.AuthorPostOverlay
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.material.DesignOverlay
 import eu.peernetwork.core.ui.design.material.DesignOverlayPage
@@ -93,7 +93,7 @@ fun ProfileOverlay(
                 onCancel = { visible.value = false }
             ) { backStackEntry ->
                 val state = (overlayState.value as ProfileOverlayState.Photo)
-                PostOverlay(
+                AuthorPostOverlay(
                     author = userId,
                     types = PostUsecase.POST,
                     enabled = visible.value,

@@ -48,11 +48,11 @@ fun PostScaffold(
         connection = connection
     ) {
         Column(modifier = Modifier.padding(horizontal = 12.dp)
-            .padding(bottom = 16.dp)
-            .padding(top = 6.dp)) {
+            .padding(bottom = 16.dp)) {
             DesignAnnotatedText(
                 text = model.title,
                 maxLines = 2,
+                color = MaterialTheme.colorScheme.onBackground,
                 style = MaterialTheme.typography.bodyMedium,
             )
             DesignAnnotatedText(
@@ -82,16 +82,14 @@ fun PostScaffold(
     DesignBox(background = background) {
         Column(
             modifier = Modifier.padding(horizontal = 12.dp)
-                .padding(vertical = 6.dp)
+                .padding(vertical = 7.dp)
         ) {
             PostHeader(
                 slug = model.slug,
                 username = model.username,
                 imageUrl = model.imageUrl,
                 color = MaterialTheme.colorScheme.surfaceContainerLow,
-                modifier = Modifier
-                    .padding(horizontal = 12.dp)
-                    .padding(vertical = 10.dp),
+                modifier = Modifier.padding(12.dp),
                 onAuthorClick = {},
                 onPin = onPin,
                 connection = connection
@@ -119,7 +117,7 @@ fun PostScaffold(
 @Composable
 fun BoxScope.PostScaffoldBackground(color: Color = MaterialTheme.colorScheme.surfaceContainerLowest) {
     Box(modifier = Modifier.fillMaxSize()
-        .padding(vertical = 6.dp)
+        .padding(vertical = 7.dp)
         .padding(horizontal = 12.dp)
         .clip(shape = RoundedCornerShape(size = 24.dp))
         .background(color)
@@ -142,7 +140,7 @@ fun PostScaffold(
             imageUrl = model.imageUrl,
             modifier = Modifier
                 .padding(horizontal = 24.dp)
-                .padding(vertical = 8.dp),
+                .padding(vertical = 12.dp),
             onAuthorClick = {},
             connection = connection
         )

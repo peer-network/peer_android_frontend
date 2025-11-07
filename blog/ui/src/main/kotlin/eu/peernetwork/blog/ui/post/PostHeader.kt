@@ -56,7 +56,7 @@ fun PostHeader(
             DesignImage(
                 label = username,
                 imageUrl = imageUrl,
-                size = 32.dp,
+                size = 34.dp,
                 color = color,
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.clickable(
@@ -80,7 +80,7 @@ fun PostHeader(
             )
             Text(
                 text = slug,
-                style = MaterialTheme.typography.labelSmall,
+                style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.outline,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1,

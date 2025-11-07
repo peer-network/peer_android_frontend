@@ -21,7 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
-import eu.peernetwork.blog.ui.compose.ListView
+import eu.peernetwork.blog.ui.post.PostList
 import eu.peernetwork.blog.ui.compose.PhotoIndicator
 import eu.peernetwork.blog.ui.compose.PhotoPager
 import eu.peernetwork.blog.ui.compose.PostItem
@@ -130,7 +130,7 @@ fun TimelineList(
 ) {
     val handleOnView by rememberUpdatedState(onView)
     val updatedContent by rememberUpdatedState(content)
-    ListView(
+    PostList(
         listState = listState,
         onFocused = { current.value = it },
         onFocus = { position ->

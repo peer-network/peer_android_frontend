@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,7 +29,7 @@ fun PostMetric(
     painter: Painter,
     modifier: Modifier = Modifier,
     color: Color = MaterialTheme.colorScheme.onBackground,
-    tint: Color = LocalContentColor.current,
+    tint: Color = color,
     contentDescription: String? = null,
     size: Dp = 18.dp,
     style: TextStyle = MaterialTheme.typography.labelLarge,
@@ -69,7 +68,7 @@ fun PostMetric(
     painter: Painter,
     modifier: Modifier = Modifier,
     color: Color = MaterialTheme.colorScheme.onBackground,
-    tint: Color = LocalContentColor.current,
+    tint: Color = color,
     contentDescription: String? = null,
     size: Dp = 18.dp,
     style: TextStyle = MaterialTheme.typography.labelLarge,
@@ -99,7 +98,7 @@ fun PostMetric(
     painter: Painter,
     modifier: Modifier = Modifier,
     color: Color = MaterialTheme.colorScheme.onBackground,
-    tint: Color = LocalContentColor.current,
+    tint: Color = color,
     contentDescription: String? = null,
     size: Dp = 18.dp,
     style: TextStyle = MaterialTheme.typography.labelLarge,

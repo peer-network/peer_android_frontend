@@ -19,7 +19,7 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class PostViewModel @Inject constructor(
+class AuthorPostViewModel @Inject constructor(
     private val usecase: AuthorPostUsecase,
     private val viewUsecase: ViewUsecase
 ) : ViewModel() {
