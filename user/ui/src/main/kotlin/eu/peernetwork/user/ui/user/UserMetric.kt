@@ -41,7 +41,7 @@ fun UserMetric(
     modifier: Modifier = Modifier,
     color: Color = MaterialTheme.colorScheme.onBackground,
     labelColor: Color = MaterialTheme.colorScheme.tertiary,
-    horizontalArrangement: Arrangement.Horizontal = Arrangement.spacedBy(24.dp),
+    horizontalArrangement: Arrangement.Horizontal = Arrangement.spacedBy(16.dp),
     onClick: (UserMetric) -> Unit
 ) {
     val handleOnClick by rememberUpdatedState(onClick)

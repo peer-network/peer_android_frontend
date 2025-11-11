@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -32,18 +33,18 @@ import eu.peernetwork.core.ui.design.luna.DesignAvatar
 import eu.peernetwork.core.ui.design.luna.DesignButton
 import eu.peernetwork.core.ui.design.luna.DesignImage
 import eu.peernetwork.core.ui.theme.DesignTheme
-import eu.peernetwork.core.ui.theme.Secondary400
 
 @Composable
-fun PostHeader(
+fun PostToolbar(
     slug: String,
     username: String,
     imageUrl: String,
     modifier: Modifier = Modifier,
-    color: Color = MaterialTheme.colorScheme.surfaceContainerLowest,
+    color: Color = MaterialTheme.colorScheme.surfaceContainerLow,
+    accent: Color = MaterialTheme.colorScheme.surfaceVariant,
     onAuthorClick: () -> Unit,
     onPin: (() -> Unit)? = null,
-    connection: @Composable () -> Unit
+    connection: @Composable RowScope.() -> Unit
 ) {
     val updatedConnection by rememberUpdatedState(connection)
     Row(
@@ -58,7 +59,9 @@ fun PostHeader(
                 imageUrl = imageUrl,
                 size = 34.dp,
                 color = color,
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    color = MaterialTheme.colorScheme.onBackground
+                ),
                 modifier = Modifier.clickable(
                     role = Role.Button,
                     onClick = onAuthorClick
@@ -87,12 +90,13 @@ fun PostHeader(
             )
         }
         updatedConnection()
-        PostHeaderOption(onPin)
+        PostHeaderOption(accent, onPin)
     }
 }
 
 @Composable
 private fun PostHeaderOption(
+    color: Color = MaterialTheme.colorScheme.surfaceVariant,
     onPin: (() -> Unit)? = null,
 ) {
     val handleOnPin by rememberUpdatedState(onPin)
@@ -102,7 +106,7 @@ private fun PostHeaderOption(
             modifier = Modifier.padding(horizontal = 8.dp)
                 .size(32.dp),
             colors = IconButtonColors(
-                containerColor = Secondary400,
+                containerColor = color,
                 contentColor = MaterialTheme.colorScheme.onPrimary,
                 disabledContentColor = MaterialTheme.colorScheme.outlineVariant,
                 disabledContainerColor = MaterialTheme.colorScheme.surfaceContainerLow
@@ -135,7 +139,7 @@ private fun PostHeaderOption(
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, showBackground = true)
 fun PreviewPostHeader() {
     DesignTheme(isDarkMode = false) {
-        PostHeader(
+        PostToolbar(
             slug = "#239100",
             username = "John",
             imageUrl = "http://localhost",

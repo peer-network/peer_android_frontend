@@ -8,9 +8,11 @@ import eu.peernetwork.blog.domain.exception.ContentException
 import eu.peernetwork.blog.domain.model.Content
 import eu.peernetwork.blog.domain.model.Draft
 import eu.peernetwork.blog.domain.model.Filter
+import eu.peernetwork.blog.remote.advert.ListAdvertisementPostsQuery
 import eu.peernetwork.blog.remote.content.CreatePostMutation
 import eu.peernetwork.blog.remote.content.GetallpostsQuery
 import eu.peernetwork.blog.remote.mapper.mapFromDomain
+import eu.peernetwork.blog.remote.mapper.mapToContentType
 import eu.peernetwork.blog.remote.mapper.mapToDomain
 import eu.peernetwork.blog.remote.mapper.mapToFilter
 import eu.peernetwork.blog.remote.mapper.mapToMode
@@ -45,8 +47,8 @@ class ContentApiDelegate @Inject constructor(
             Optional.present(filter.type.map { it.mapToFilter() } +
                     (filter.category?.mapToFilter()?.let { listOf(it) } ?: listOf()))
         }
-        val tag = (filter.criteria as? Filter.Criteria.Content?)?.let {
-            it.tag?.let {
+        val tag = (filter.criteria as? Filter.Criteria.Content?)?.let { criteria ->
+            criteria.tag?.let {
                 Optional.present(it)
             } ?: Optional.absent()
         } ?: Optional.absent()
@@ -75,11 +77,62 @@ class ContentApiDelegate @Inject constructor(
             } catch (_: Exception) {
                 null
             }?.let { "$url$it" }
-
             content.mapToDomain(
                 url,
                 gson.fromJson<List<MediaModel>>(
                     content.media,
+                    object : TypeToken<List<MediaModel>>() {}.type
+                ).map {
+                    it.copy(
+                        options = it.options?.copy(cover = coverPath)
+                    ).mapFromDomain().copy(path = "$url${it.path}")
+                }
+            )
+        }
+        response.assertOrThrow(data.status, data.ResponseCode)
+        return Page(
+            count = data.counter,
+            offset = page.offset,
+            items = contents ?: emptyList()
+        )
+    }
+
+    override suspend fun getAdverts(filter: Filter, page: Pageable): Page<Content> {
+        val post = filter.postId?.let { Optional.present(it) } ?: Optional.absent()
+        val author = filter.author?.let { Optional.present(it) } ?: Optional.absent()
+        val tag = (filter.criteria as? Filter.Criteria.Content?)?.let { criteria ->
+            criteria.tag?.let {
+                Optional.present(it)
+            } ?: Optional.absent()
+        } ?: Optional.absent()
+        val filterBy = if (filter.type.isEmpty()) {
+            Optional.absent()
+        } else {
+            Optional.present(filter.type.map { it.mapToContentType() })
+        }
+        val query = ListAdvertisementPostsQuery(
+            tag = tag,
+            postid = post,
+            userid = author,
+            filterBy = filterBy,
+            offset = Optional.present(page.offset),
+            limit = Optional.present(page.limit)
+        )
+        val response = client().query(query).executeOrThrow()
+        val data = response.getOrThrow().listAdvertisementPosts
+        val contents = data.affectedRows?.map { content ->
+            val coverPath = try {
+                gson.fromJson<List<Map<String, Any>>>(
+                    content.post.cover,
+                    object : TypeToken<List<Map<String, Any>>>() {}.type
+                ).firstOrNull()?.get("path") as? String
+            } catch (_: Exception) {
+                null
+            }?.let { "$url$it" }
+            content.post.mapToDomain(
+                url,
+                gson.fromJson<List<MediaModel>>(
+                    content.post.media,
                     object : TypeToken<List<MediaModel>>() {}.type
                 ).map {
                     it.copy(

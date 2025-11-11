@@ -53,8 +53,8 @@ fun DesignOutlineButton(
         fontWeight = FontWeight.SemiBold
     ),
     colors: DesignButtonColors = DesignButtonColors(
-        containerColor = MaterialTheme.colorScheme.onPrimary,
-        contentColor = MaterialTheme.colorScheme.onPrimary,
+        containerColor = MaterialTheme.colorScheme.onBackground,
+        contentColor = MaterialTheme.colorScheme.onBackground,
         disabledContainerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
         disabledContentColor = MaterialTheme.colorScheme.outlineVariant
     ),

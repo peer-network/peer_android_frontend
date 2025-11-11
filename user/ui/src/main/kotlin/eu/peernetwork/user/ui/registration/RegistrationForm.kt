@@ -44,7 +44,7 @@ import eu.peernetwork.core.ui.theme.PeerAppLightGreen
 import eu.peernetwork.core.ui.theme.PeerAppRed
 import eu.peernetwork.core.ui.theme.PeerAppYellow
 import eu.peernetwork.user.ui.R
-import eu.peernetwork.user.ui.form.FormErrorLabel
+import eu.peernetwork.user.ui.form.FormError
 import eu.peernetwork.user.ui.form.FormCheckBox
 import eu.peernetwork.user.ui.form.FormPassword
 import eu.peernetwork.user.ui.extension.passwordRequirement
@@ -184,7 +184,7 @@ fun RegistrationForm(
                 .padding(horizontal = 18.dp)
                 .height(2.dp)
         )
-        FormErrorLabel(
+        FormError(
             error = passwordValidationError,
             modifier = Modifier.padding(horizontal = 18.dp)
                 .padding(top = 8.dp)
@@ -240,7 +240,7 @@ fun RegistrationForm(
                     }
                 },
         )
-        FormErrorLabel(
+        FormError(
             error = errorState,
             modifier = Modifier.padding(horizontal = 18.dp)
         )

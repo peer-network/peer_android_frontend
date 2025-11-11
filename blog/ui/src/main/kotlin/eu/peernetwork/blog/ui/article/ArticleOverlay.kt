@@ -1,4 +1,4 @@
-package eu.peernetwork.blog.ui.feed.author
+package eu.peernetwork.blog.ui.article
 
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.runtime.Composable
@@ -20,7 +20,7 @@ import eu.peernetwork.core.ui.design.luna.DesignStreamState
 import eu.peernetwork.core.ui.extension.builder
 
 @Composable
-fun AuthorPostOverlay(
+fun ArticleOverlay(
     author: String,
     types: Set<Content.Type>,
     limit: Int,
@@ -34,25 +34,29 @@ fun AuthorPostOverlay(
 ) {
     val context = LocalContext.current
     val component = remember {
-        provider.builder(AuthorPost.Builder::class.java).build(context)
+        provider.builder(Article.Builder::class.java).build(context)
     }
     val viewModel = viewModel(
-        modelClass = AuthorPostViewModel::class.java,
+        modelClass = ArticleViewModel::class.java,
         viewModelStoreOwner = viewModelStoreOwner,
         factory = component.viewModelFactory()
     )
-    val state by viewModel.state.collectAsStateWithLifecycle()
+    val state by viewModel.states.collectAsStateWithLifecycle()
+    val localState = remember { derivedStateOf {
+        state[types.hashCode()] ?: ArticleViewModel.State.Empty
+    } }
     val errorMessage = stringResource(R.string.unknown_error_message)
     val derivedState = remember {
         derivedStateOf {
-            when (state) {
-                AuthorPostViewModel.State.Empty -> DesignStreamState.Default
-                AuthorPostViewModel.State.Loading -> DesignStreamState.Loading
-                is AuthorPostViewModel.State.Success -> DesignStreamState.Success(
-                    (state as AuthorPostViewModel.State.Success).content
+            val currentState = localState.value
+            when (currentState) {
+                ArticleViewModel.State.Empty -> DesignStreamState.Default
+                ArticleViewModel.State.Loading -> DesignStreamState.Loading
+                is ArticleViewModel.State.Success -> DesignStreamState.Success(
+                    currentState.content
                 )
-                is AuthorPostViewModel.State.Error -> DesignStreamState.Error(
-                    (state as AuthorPostViewModel.State.Error).error.let {
+                is ArticleViewModel.State.Error -> DesignStreamState.Error(
+                    currentState.error.let {
                         Throwable(component.resource()
                             .string(it.message ?: errorMessage), it)
                     }

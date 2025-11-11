@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -26,6 +27,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import eu.peernetwork.blog.ui.engagement.v2.EngagementOption
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.core.ui.design.luna.DesignAnnotatedText
 import eu.peernetwork.core.ui.design.luna.DesignBox
@@ -35,10 +37,10 @@ import eu.peernetwork.core.ui.theme.DesignTheme
 @Composable
 fun PostScaffold(
     model: UiPost.Detail,
-    engagement: UiPost.Engagement,
     onPin: (() -> Unit)? = null,
     pinnedBy: String? = null,
-    connection: @Composable () -> Unit,
+    engagement: @Composable () -> Unit,
+    connection: @Composable RowScope.() -> Unit,
 ) {
     PostScaffold(
         model = model,
@@ -70,12 +72,11 @@ fun PostScaffold(
 @Composable
 fun PostScaffold(
     model: UiPost.Detail,
-    engagement: UiPost.Engagement,
     pinnedBy: String? = null,
-    color: Color = MaterialTheme.colorScheme.surfaceContainerLowest,
     onPin: (() -> Unit)? = null,
-    connection: @Composable () -> Unit = {},
-    background: @Composable BoxScope.() -> Unit = { PostScaffoldBackground(color) },
+    engagement: @Composable () -> Unit,
+    connection: @Composable RowScope.() -> Unit,
+    background: @Composable BoxScope.() -> Unit = { PostScaffoldBackground() },
     content: @Composable () -> Unit
 ) {
     val updatedContent by rememberUpdatedState(content)
@@ -84,7 +85,7 @@ fun PostScaffold(
             modifier = Modifier.padding(horizontal = 12.dp)
                 .padding(vertical = 7.dp)
         ) {
-            PostHeader(
+            PostToolbar(
                 slug = model.slug,
                 username = model.username,
                 imageUrl = model.imageUrl,
@@ -96,14 +97,14 @@ fun PostScaffold(
             )
             updatedContent()
             if (pinnedBy == null) {
-                PostFooter(
+                PostStatus(
                     time = model.time,
                     engagement = engagement,
                     modifier = Modifier.padding(horizontal = 12.dp)
                         .padding(bottom = 12.dp)
                 )
             } else {
-                PostFooter(
+                PostStatus(
                     time = model.time,
                     engagement = engagement,
                     pinnedBy = pinnedBy,
@@ -115,7 +116,9 @@ fun PostScaffold(
 }
 
 @Composable
-fun BoxScope.PostScaffoldBackground(color: Color = MaterialTheme.colorScheme.surfaceContainerLowest) {
+fun BoxScope.PostScaffoldBackground(
+    color: Color = MaterialTheme.colorScheme.surfaceContainerLowest
+) {
     Box(modifier = Modifier.fillMaxSize()
         .padding(vertical = 7.dp)
         .padding(horizontal = 12.dp)
@@ -125,27 +128,32 @@ fun BoxScope.PostScaffoldBackground(color: Color = MaterialTheme.colorScheme.sur
 }
 
 @Composable
-fun PostScaffold(
+fun PostMediaScaffold(
     model: UiPost.Detail,
-    engagement: UiPost.Engagement,
     pinnedBy: String? = null,
-    connection: @Composable () -> Unit,
+    onPin: (() -> Unit)? = null,
+    engagement: @Composable () -> Unit,
+    connection: @Composable RowScope.() -> Unit,
     content: @Composable () -> Unit
 ) {
     val updatedContent by rememberUpdatedState(content)
     Column {
-        PostHeader(
+        PostToolbar(
             slug = model.slug,
             username = model.username,
             imageUrl = model.imageUrl,
+            accent = MaterialTheme.colorScheme.surfaceContainerLow,
             modifier = Modifier
                 .padding(horizontal = 24.dp)
                 .padding(vertical = 12.dp),
             onAuthorClick = {},
+            onPin = onPin,
             connection = connection
         )
-        updatedContent()
-        PostFooter(
+        Box(
+            modifier = Modifier.background(MaterialTheme.colorScheme.surfaceContainerLowest)
+        ) { updatedContent() }
+        PostStatus(
             username = model.username,
             pinnedBy = pinnedBy,
             title = model.title,
@@ -185,26 +193,27 @@ fun PreviewUserOption() {
             Spacer(modifier = Modifier.height(8.dp))
             PostScaffold(
                 model = model,
-                engagement = engagement,
+                engagement = { EngagementOption(engagement) {} }
             ) {
                 DesignButton(
                     minHeight = 32.dp,
                     onClick = { },
-                    style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
+                    style = MaterialTheme.typography.labelMedium
+                        .copy(fontWeight = FontWeight.Bold),
                     contentPadding = PaddingValues(horizontal = 16.dp)
                 ) { Text("peer") }
             }
             PostScaffold(
                 model = model,
-                engagement = engagement,
-                color = MaterialTheme.colorScheme.surfaceContainerLowest,
+                engagement = { EngagementOption(engagement) {} },
                 onPin = {},
                 pinnedBy = "Thomas",
                 connection = {
                     DesignButton(
                         minHeight = 32.dp,
                         onClick = {  },
-                        style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
+                        style = MaterialTheme.typography.labelMedium
+                            .copy(fontWeight = FontWeight.Bold),
                         contentPadding = PaddingValues(horizontal = 16.dp)
                     ) { Text("peer") }
                 }
@@ -212,22 +221,22 @@ fun PreviewUserOption() {
                 Box(modifier = Modifier.fillMaxWidth()
                     .height(64.dp))
             }
-            PostScaffold(
+            PostMediaScaffold(
                 model = model,
-                engagement = engagement,
                 pinnedBy = "Thomas",
+                engagement = { EngagementOption(engagement) {} },
                 connection = {
                     DesignButton(
                         minHeight = 32.dp,
                         onClick = {  },
-                        style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
+                        style = MaterialTheme.typography.labelMedium
+                            .copy(fontWeight = FontWeight.Bold),
                         contentPadding = PaddingValues(horizontal = 16.dp)
                     ) { Text("peer") }
                 }
             ) {
                 Box(modifier = Modifier.fillMaxWidth()
-                    .height(260.dp)
-                    .background(MaterialTheme.colorScheme.surfaceContainerLowest))
+                    .height(260.dp))
             }
         }
     }

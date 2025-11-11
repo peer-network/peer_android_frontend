@@ -96,7 +96,7 @@ fun DesignTitleBarRegistry.DesignPageHeader(
     val updatedAction by rememberUpdatedState(action)
     val updatedOption by rememberUpdatedState(options)
     CompositionLocalProvider(
-        LocalContentColor provides MaterialTheme.colorScheme.onSurface,
+        LocalContentColor provides MaterialTheme.colorScheme.onBackground,
         LocalTextStyle provides textStyle.copy(
             color = MaterialTheme.colorScheme.onSurface
         )

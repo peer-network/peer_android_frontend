@@ -57,7 +57,7 @@ fun FeedMenu(
             } else {
                 DesignDropDown(
                     expanded,
-                    color = MaterialTheme.colorScheme.tertiaryContainer,
+                    color = MaterialTheme.colorScheme.surfaceContainerLowest,
                     contentPadding = PaddingValues(vertical = 4.dp),
                     default = (UiFilter.entries.getOrNull(default) ?: UiFilter.NONE).name,
                     modifier = Modifier

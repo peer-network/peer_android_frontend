@@ -1,18 +1,10 @@
 package eu.peernetwork.blog.ui.compose
 
-import androidx.compose.animation.Crossfade
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.media.core.renderer.AudioPlayer
 import eu.peernetwork.media.core.renderer.ImageView

@@ -8,7 +8,7 @@ import androidx.compose.runtime.State
 import androidx.compose.ui.Modifier
 
 @Composable
-fun FormErrorLabel(
+fun FormError(
     error: State<String?>,
     modifier: Modifier = Modifier
 ) {

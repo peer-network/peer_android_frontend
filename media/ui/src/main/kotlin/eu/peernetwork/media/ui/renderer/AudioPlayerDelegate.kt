@@ -45,17 +45,19 @@ class AudioPlayerDelegate @Inject constructor(
         current: MutableState<Int>,
         modifier: Modifier
     ) {
-        AudioPlayerThumbnail(
-            path = path,
-            position = position,
-            hasControls = hasControls,
-            isActive = isActive,
-            enabled = enable,
-            length = length,
-            current = current,
-            session = session,
-            source = { timelinePlayer }
-        )
+        Box(modifier = modifier) {
+            AudioPlayerThumbnail(
+                path = path,
+                position = position,
+                hasControls = hasControls,
+                isActive = isActive,
+                enabled = enable,
+                length = length,
+                current = current,
+                session = session,
+                source = { timelinePlayer }
+            )
+        }
     }
 
     @Composable

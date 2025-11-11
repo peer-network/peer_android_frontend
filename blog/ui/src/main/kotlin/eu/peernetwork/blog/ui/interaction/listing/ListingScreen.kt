@@ -62,14 +62,15 @@ fun ListingScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
     val derivedState = remember {
         derivedStateOf {
-            when (state) {
+            val currentState = state["$id/$engagement"] ?: ListingViewModel.State.Empty
+            when (currentState) {
                 ListingViewModel.State.Empty -> DesignStatefulScaffoldState.Empty
                 ListingViewModel.State.Loading -> DesignStatefulScaffoldState.Loading
                 is ListingViewModel.State.Success -> DesignStatefulScaffoldState.Success(
-                    (state as ListingViewModel.State.Success).content
+                    currentState.content
                 )
                 is ListingViewModel.State.Error -> DesignStatefulScaffoldState.Error(
-                    (state as ListingViewModel.State.Error).error
+                    currentState.error
                 )
             }
         }

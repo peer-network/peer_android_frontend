@@ -1,6 +1,7 @@
-package eu.peernetwork.blog.ui.post
+package eu.peernetwork.blog.ui.engagement.v2
 
 import android.content.res.Configuration
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -24,7 +25,7 @@ import eu.peernetwork.blog.ui.R
 import eu.peernetwork.core.ui.theme.DesignTheme
 
 @Composable
-fun PostMetric(
+fun EngagementMetric(
     text: String,
     painter: Painter,
     modifier: Modifier = Modifier,
@@ -33,10 +34,11 @@ fun PostMetric(
     contentDescription: String? = null,
     size: Dp = 18.dp,
     style: TextStyle = MaterialTheme.typography.labelLarge,
-    orientation: Orientation = Orientation.Horizontal
+    orientation: Orientation = Orientation.Horizontal,
+    onClick: () -> Unit
 ) {
     if (orientation == Orientation.Vertical) {
-        PostMetric(
+        EngagementMetric(
             text = text,
             painter = painter,
             modifier = modifier,
@@ -45,10 +47,11 @@ fun PostMetric(
             contentDescription = contentDescription,
             size = size,
             style = style,
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
+            onClick = onClick
         )
     } else {
-        PostMetric(
+        EngagementMetric(
             text = text,
             painter = painter,
             modifier = modifier,
@@ -57,13 +60,14 @@ fun PostMetric(
             contentDescription = contentDescription,
             size = size,
             style = style,
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
+            onClick = onClick
         )
     }
 }
 
 @Composable
-fun PostMetric(
+fun EngagementMetric(
     text: String,
     painter: Painter,
     modifier: Modifier = Modifier,
@@ -73,9 +77,12 @@ fun PostMetric(
     size: Dp = 18.dp,
     style: TextStyle = MaterialTheme.typography.labelLarge,
     horizontalAlignment: Alignment.Horizontal = Alignment.CenterHorizontally,
+    onClick: () -> Unit
 ) {
     Column(
-        modifier = modifier,
+        modifier = modifier.clickable(
+            onClick = onClick
+        ),
         horizontalAlignment = horizontalAlignment
     ) {
         Icon(
@@ -93,7 +100,7 @@ fun PostMetric(
 }
 
 @Composable
-fun PostMetric(
+fun EngagementMetric(
     text: String,
     painter: Painter,
     modifier: Modifier = Modifier,
@@ -104,9 +111,12 @@ fun PostMetric(
     style: TextStyle = MaterialTheme.typography.labelLarge,
     horizontalArrangement: Arrangement.Horizontal = Arrangement.spacedBy(4.dp),
     verticalAlignment: Alignment.Vertical = Alignment.CenterVertically,
+    onClick: () -> Unit
 ) {
     Row(
-        modifier = modifier,
+        modifier = modifier.clickable(
+            onClick = onClick
+        ),
         horizontalArrangement = horizontalArrangement,
         verticalAlignment = verticalAlignment
     ) {
@@ -126,20 +136,20 @@ fun PostMetric(
 
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, showBackground = true)
-fun PreviewPostMetric() {
+fun PreviewEngagementMetric() {
     DesignTheme(isDarkMode = false) {
         Column(modifier = Modifier.padding(16.dp)) {
-            PostMetric(
+            EngagementMetric(
                 text = "5k",
                 painter = painterResource(R.drawable.ic_love_outline),
                 orientation = Orientation.Vertical,
                 modifier = Modifier.align(Alignment.End)
-            )
-            PostMetric(
+            ) {}
+            EngagementMetric(
                 text = "5k",
                 painter = painterResource(R.drawable.ic_love_outline),
                 orientation = Orientation.Horizontal
-            )
+            ) {}
         }
     }
 }

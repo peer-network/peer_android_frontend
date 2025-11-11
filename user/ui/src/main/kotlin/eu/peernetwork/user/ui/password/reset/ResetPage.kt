@@ -32,7 +32,7 @@ import eu.peernetwork.core.ui.theme.PeerAppLightGreen
 import eu.peernetwork.core.ui.theme.PeerAppRed
 import eu.peernetwork.core.ui.theme.PeerAppYellow
 import eu.peernetwork.user.ui.R
-import eu.peernetwork.user.ui.form.FormErrorLabel
+import eu.peernetwork.user.ui.form.FormError
 import eu.peernetwork.user.ui.form.FormPassword
 import eu.peernetwork.user.ui.extension.passwordRequirement
 import eu.peernetwork.user.ui.extension.policy
@@ -110,7 +110,7 @@ fun ResetPage(
                 .padding(horizontal = 18.dp)
                 .height(2.dp)
         )
-        FormErrorLabel(
+        FormError(
             error = passwordValidationError,
             modifier = Modifier.padding(horizontal = 18.dp)
                 .padding(top = 8.dp)
@@ -125,7 +125,7 @@ fun ResetPage(
             ),
             modifier = Modifier.padding(top = 12.dp, bottom = 8.dp),
         )
-        FormErrorLabel(
+        FormError(
             error = derivedError,
             modifier = Modifier.padding(horizontal = 18.dp)
         )

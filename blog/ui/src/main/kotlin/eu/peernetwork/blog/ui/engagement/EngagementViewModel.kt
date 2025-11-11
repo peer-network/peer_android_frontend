@@ -38,14 +38,14 @@ class EngagementViewModel @Inject constructor(
         }
     }
 
-    fun like(content: UiContent) {
+    fun like(id: String, author: String, message: String) {
         viewModelScope.launch {
-            handleLike(content.id) {
+            handleLike(id) {
                 try {
                     interactor.send(
-                        to = content.author.id,
+                        to = author,
                         action = "like",
-                        message = content.title.text
+                        message = message
                     )
                 } catch (_: Throwable) {}
             }

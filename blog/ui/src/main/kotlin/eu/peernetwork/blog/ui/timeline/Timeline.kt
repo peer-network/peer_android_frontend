@@ -1,16 +1,16 @@
-package eu.peernetwork.blog.ui.feed.author
+package eu.peernetwork.blog.ui.timeline
 
 import android.content.Context
 import androidx.lifecycle.ViewModelProvider
+import eu.peernetwork.blog.ui.advert.Advert
 import eu.peernetwork.blog.ui.engagement.EngagementDialog
 import eu.peernetwork.blog.ui.content.overlay.Overlay
-import eu.peernetwork.blog.ui.content.timeline.Timeline
 import eu.peernetwork.blog.ui.post.Post
 import eu.peernetwork.blog.ui.provider.BlogProvider
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
 
-interface AuthorPost : BlogProvider {
+interface Timeline : BlogProvider {
     fun engagementConfirmation(): EngagementDialog
 
     @javax.inject.Scope
@@ -19,18 +19,18 @@ interface AuthorPost : BlogProvider {
 
     @Scope
     @dagger.Component(
-        dependencies = [AuthorPost::class ],
-        modules = [ AuthorPostModule::class ]
+        dependencies = [Timeline::class],
+        modules = [TimelineModule::class]
     )
-    interface Component : AuthorPost, UiComponentProvider, Overlay, Timeline, Post {
+    interface Component : Timeline, UiComponentProvider, Overlay, Post, Advert {
         fun viewModelFactory(): ViewModelProvider.Factory
     }
 
-    class Builder(private val dependency: AuthorPost) : UiComponent.DefaultBuilder<AuthorPost, Component>() {
+    class Builder(private val dependency: Timeline) : UiComponent.DefaultBuilder<Timeline, Component>() {
         override fun build(context: Context): Component {
-            return DaggerAuthorPost_Component.builder()
-                .authorPost(dependency)
-                .authorPostModule(AuthorPostModule(context))
+            return DaggerTimeline_Component.builder()
+                .timeline(dependency)
+                .timelineModule(TimelineModule(context))
                 .build()
         }
     }

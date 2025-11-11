@@ -2,6 +2,7 @@ package eu.peernetwork.app.ui.feed
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -27,15 +28,15 @@ import eu.peernetwork.app.mapper.mapToCriteria
 import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.blog.domain.model.Category
 import eu.peernetwork.blog.ui.event.UiPostListener
-import eu.peernetwork.blog.ui.feed.timeline.PostScreen
 import eu.peernetwork.blog.ui.model.UiFilter
+import eu.peernetwork.blog.ui.timeline.TimelineScreen
 import eu.peernetwork.core.ui.design.luna.DesignTab
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.core.ui.factory.UiViewModelStore
 import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.media.core.model.UiMimeType
+import eu.peernetwork.social.ui.connection.ConnectionButton
 import eu.peernetwork.social.ui.connection.ConnectionController
-import eu.peernetwork.social.ui.connection.ConnectionScreen
 import kotlinx.coroutines.launch
 
 @Composable
@@ -107,7 +108,7 @@ fun FeedPreview(
         onNavigate = { handleOnNavigate(it) }
     ) {
         val storeKey = "$it;${derivedCriteria.value?.toString() ?: id}"
-        PostScreen(
+        TimelineScreen(
             id = id,
             status = enable,
             postLimit = BuildConfig.PAGING_LIMIT,
@@ -124,7 +125,9 @@ fun FeedPreview(
             },
             onExplore = onExplore
         ) { relation ->
-            ConnectionScreen(
+            ConnectionButton(
+                minHeight = 32.dp,
+                contentPadding = PaddingValues(horizontal = 20.dp),
                 isFollowing = connection.getOrDefault(
                     key = relation.first,
                     defaultValue = relation.third
@@ -182,7 +185,7 @@ fun FeedPreview(
                     R.string.followers_label
                 } ),
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.tertiary,
+                color = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier
                     .padding(vertical = 10.dp)
             )

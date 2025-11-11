@@ -33,7 +33,7 @@ import eu.peernetwork.core.ui.design.luna.DesignButton
 import eu.peernetwork.core.ui.design.luna.DesignTextField
 import eu.peernetwork.core.ui.extension.isValidEmail
 import eu.peernetwork.user.ui.R
-import eu.peernetwork.user.ui.form.FormErrorLabel
+import eu.peernetwork.user.ui.form.FormError
 import eu.peernetwork.user.ui.form.FormHeader
 
 private const val tag = "REQUEST_PASSWORD_TAG"
@@ -106,7 +106,7 @@ fun RequestPage(
             },
             modifier = Modifier.padding(bottom = 6.dp)
         )
-        FormErrorLabel(
+        FormError(
             error = error,
             modifier = Modifier.padding(horizontal = 18.dp)
         )

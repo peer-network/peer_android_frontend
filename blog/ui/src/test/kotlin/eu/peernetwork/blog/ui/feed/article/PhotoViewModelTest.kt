@@ -1,9 +1,10 @@
-package eu.peernetwork.blog.ui.feed.author
+package eu.peernetwork.blog.ui.feed.article
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.paging.PagingData
 import app.cash.turbine.test
 import eu.peernetwork.blog.domain.usecase.ViewUsecase
+import eu.peernetwork.blog.ui.article.ArticleViewModel
 import eu.peernetwork.blog.ui.mock.MockContent
 import eu.peernetwork.blog.ui.usecase.AuthorPostUsecase
 import eu.peernetwork.core.common.paging.Pageable
@@ -33,12 +34,12 @@ internal class PhotoViewModelTest {
 
     private val viewUsecase = mockk<ViewUsecase>()
 
-    private lateinit var viewModel: AuthorPostViewModel
+    private lateinit var viewModel: ArticleViewModel
 
     @Before
     fun setup() {
         Dispatchers.setMain(dispatcher)
-        viewModel = AuthorPostViewModel(usecase, viewUsecase)
+        viewModel = ArticleViewModel(usecase, viewUsecase)
     }
 
     @Test
@@ -52,8 +53,8 @@ internal class PhotoViewModelTest {
         }
         viewModel.load(author, setOf(), Pageable(0, 1))
         viewModel.state.test {
-            assertTrue(awaitItem() is AuthorPostViewModel.State.Loading)
-            assertTrue(awaitItem() is AuthorPostViewModel.State.Success)
+            assertTrue(awaitItem() is ArticleViewModel.State.Loading)
+            assertTrue(awaitItem() is ArticleViewModel.State.Success)
         }
     }
 
@@ -68,7 +69,7 @@ internal class PhotoViewModelTest {
 
         viewModel.load(author, setOf(), Pageable(0, 1))
         viewModel.state.test {
-            assertEquals(AuthorPostViewModel.State.Error(error), awaitItem())
+            assertEquals(ArticleViewModel.State.Error(error), awaitItem())
         }
     }
 }

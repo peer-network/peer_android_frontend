@@ -42,7 +42,7 @@ import eu.peernetwork.core.ui.extension.isValidEmail
 import eu.peernetwork.core.ui.extension.isValidInput
 import eu.peernetwork.core.ui.theme.DesignTheme
 import eu.peernetwork.user.ui.R
-import eu.peernetwork.user.ui.form.FormErrorLabel
+import eu.peernetwork.user.ui.form.FormError
 import eu.peernetwork.user.ui.form.FormCheckBox
 import eu.peernetwork.user.ui.form.FormPassword
 
@@ -112,7 +112,7 @@ fun LoginForm(
                 )
             )
         }
-        FormErrorLabel(
+        FormError(
             error = error,
             modifier = Modifier.padding(horizontal = 18.dp)
         )
