@@ -9,5 +9,7 @@ import eu.peernetwork.core.common.paging.Pageable
 interface ContentApi {
     suspend fun get(filter: Filter = Filter(), page: Pageable): Page<Content>
 
+    suspend fun getAdverts(filter: Filter = Filter(), page: Pageable): Page<Content>
+
     suspend fun create(draft: Draft, meta: String): Content
 }

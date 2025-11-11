@@ -82,7 +82,7 @@ fun UserPage(
                         labelColor = MaterialTheme.colorScheme.outline,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(top = 6.dp),
+                            .padding(top = 4.dp),
                         onClick = {
                             if (!(!isAdmin && it == UserMetric.PEER)) {
                                 handleOnClick(it)

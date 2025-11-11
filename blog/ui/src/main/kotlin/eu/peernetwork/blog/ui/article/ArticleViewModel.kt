@@ -1,4 +1,4 @@
-package eu.peernetwork.blog.ui.feed.author
+package eu.peernetwork.blog.ui.article
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -16,22 +16,24 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class AuthorPostViewModel @Inject constructor(
+class ArticleViewModel @Inject constructor(
     private val usecase: AuthorPostUsecase,
     private val viewUsecase: ViewUsecase
 ) : ViewModel() {
-    private val mutableState = MutableStateFlow<State>(State.Empty)
+    private val mutableState = MutableStateFlow<Map<Int, State>>(emptyMap())
 
-    val state: StateFlow<State> = mutableState.asStateFlow()
+    val states: StateFlow<Map<Int, State>> = mutableState.asStateFlow()
 
     fun load(
         author: String,
         types: Set<Content.Type>,
         page: Pageable
     ) {
+        val key = types.hashCode()
         viewModelScope.launch {
             usecase(
                 AuthorPostUsecase.Parameter(
@@ -39,13 +41,17 @@ class AuthorPostViewModel @Inject constructor(
                     types = types,
                     page = page
                 )
-            ).catch { mutableState.tryEmit(State.Error(it)) }
-                .onStart { mutableState.tryEmit(State.Loading) }
+            ).catch { updateState(key, State.Error(it)) }
+                .onStart { updateState(key, State.Loading) }
                 .cachedIn(viewModelScope)
                 .apply {
-                    collectLatest { mutableState.tryEmit(State.Success(this)) }
+                    collectLatest { updateState(key, State.Success(this)) }
                 }
         }
+    }
+
+    private fun updateState(tab: Int, state: State) {
+        mutableState.update { it + (tab to state) }
     }
 
     fun view(id: String) {

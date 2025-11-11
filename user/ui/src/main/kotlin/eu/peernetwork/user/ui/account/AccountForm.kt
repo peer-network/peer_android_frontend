@@ -27,7 +27,7 @@ import eu.peernetwork.core.ui.design.material.DesignSecureTextField
 import eu.peernetwork.core.ui.extension.isValidInput
 import eu.peernetwork.core.ui.theme.DesignTheme
 import eu.peernetwork.user.ui.R
-import eu.peernetwork.user.ui.form.FormErrorLabel
+import eu.peernetwork.user.ui.form.FormError
 
 @Composable
 fun AccountForm(
@@ -97,7 +97,7 @@ fun AccountForm(
             )
         )
     }
-    FormErrorLabel(
+    FormError(
         error = error,
         modifier = Modifier
             .fillMaxWidth()

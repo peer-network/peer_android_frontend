@@ -62,7 +62,7 @@ fun RewardScreen(points: List<UiReward> = listOf()) {
         Row (
             modifier = Modifier
                 .clip(RoundedCornerShape(4.dp))
-                .background(MaterialTheme.colorScheme.surfaceContainerLow)
+                .background(MaterialTheme.colorScheme.surfaceContainerLowest)
         ) {
             points.forEach { point ->
                 RewardType.MAP[point.name]?.let { model ->

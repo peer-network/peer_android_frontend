@@ -6,7 +6,7 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import eu.peernetwork.blog.domain.model.Engagement
 import eu.peernetwork.blog.ui.model.UiAuthor
-import eu.peernetwork.blog.ui.usecase.InteractorUsecase
+import eu.peernetwork.blog.ui.usecase.InteractionUsecase
 import eu.peernetwork.core.common.paging.Pageable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,35 +15,41 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class ListingViewModel @Inject constructor(
-    private val usecase: InteractorUsecase
+    private val usecase: InteractionUsecase
 ) : ViewModel() {
-    private val mutableState = MutableStateFlow<State>(State.Empty)
+    private val mutableState = MutableStateFlow<Map<String, State>>(emptyMap())
 
-    val state: StateFlow<State> = mutableState.asStateFlow()
+    val state: StateFlow<Map<String, State>> = mutableState.asStateFlow()
 
     fun load(
         id: String,
         engagement: Engagement.Content,
         page: Pageable
     ) {
+        val key = "$id/$engagement"
         viewModelScope.launch {
             usecase(
-                InteractorUsecase.Parameter(
+                InteractionUsecase.Parameter(
                     id = id,
                     engagement = engagement,
                     page = page,
                 )
-            ).catch { mutableState.tryEmit(State.Error(it)) }
-                .onStart { mutableState.tryEmit(State.Loading) }
+            ).catch { updateState(key, State.Error(it)) }
+                .onStart { updateState(key, State.Loading) }
                 .cachedIn(viewModelScope)
                 .apply {
-                    collectLatest { mutableState.tryEmit(State.Success(this)) }
+                    collectLatest { updateState(key, State.Success(this)) }
                 }
         }
+    }
+
+    private fun updateState(key: String, state: State) {
+        mutableState.update { it + (key to state) }
     }
 
     sealed interface State {

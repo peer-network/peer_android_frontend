@@ -17,10 +17,10 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-class InteractorUsecase @Inject constructor(
+class InteractionUsecase @Inject constructor(
     private val dispatcher: Dispatcher,
     private val usecase: ContentInteractorUsecase
-) : PagingUsecase<InteractorUsecase.Parameter, UiAuthor>() {
+) : PagingUsecase<InteractionUsecase.Parameter, UiAuthor>() {
     private lateinit var param: Parameter
 
     override fun invoke(param: Parameter): Flow<PagingData<UiAuthor>> {

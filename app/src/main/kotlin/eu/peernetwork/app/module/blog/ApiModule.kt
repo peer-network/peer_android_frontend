@@ -2,13 +2,11 @@ package eu.peernetwork.app.module.blog
 
 import dagger.Binds
 import dagger.Module
-import eu.peernetwork.blog.data.api.AdvertiserApi
 import eu.peernetwork.blog.data.api.CommentApi
 import eu.peernetwork.blog.data.api.ContentApi
 import eu.peernetwork.blog.data.api.EligibilityApi
 import eu.peernetwork.blog.data.api.EngagementApi
 import eu.peernetwork.blog.data.api.MultipartApi
-import eu.peernetwork.blog.remote.api.AdvertiserApiDelegate
 import eu.peernetwork.blog.remote.api.CommentApiDelegate
 import eu.peernetwork.blog.remote.api.ContentApiDelegate
 import eu.peernetwork.blog.remote.api.EligibilityApiDelegate
@@ -32,9 +30,6 @@ interface ApiModule {
 
     @Binds
     fun bindEligibilityApi(delegate: EligibilityApiDelegate): EligibilityApi
-
-    @Binds
-    fun bindAdvertiserApi(delegate: AdvertiserApiDelegate): AdvertiserApi
 
     @Binds
     fun bindRequestHelper(delegate: RequestHelper.Delegate): RequestHelper

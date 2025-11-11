@@ -1,0 +1,61 @@
+query ListAdvertisementPosts(
+    $filterBy: [ContentType!],
+    $userid: ID,
+    $postid: ID,
+    $tag: String,
+    $offset: Int,
+    $limit: Int,
+) {
+    listAdvertisementPosts(
+        filterBy: $filterBy
+        userid: $userid
+        postid: $postid
+        tag: $tag
+        offset: $offset
+        limit: $limit
+    ) {
+        status
+        ResponseCode
+        counter
+        affectedRows {
+            post {
+                id
+                contenttype
+                title
+                media
+                cover
+                mediadescription
+                createdat
+                amountlikes
+                amountviews
+                amountcomments
+                amountdislikes
+                amounttrending
+                isliked
+                isviewed
+                isreported
+                isdisliked
+                issaved
+                tags
+                url
+                user {
+                    id
+                    username
+                    slug
+                    img
+                    isfollowed
+                    isfollowing
+                    isfriend
+                }
+            }
+            advertisement {
+                advertisementid
+                postid
+                advertisementtype
+                startdate
+                enddate
+                createdat
+            }
+        }
+    }
+}

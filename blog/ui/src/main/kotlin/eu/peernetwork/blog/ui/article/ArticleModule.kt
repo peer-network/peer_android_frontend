@@ -1,4 +1,4 @@
-package eu.peernetwork.blog.ui.feed.author
+package eu.peernetwork.blog.ui.article
 
 import android.content.Context
 import androidx.lifecycle.ViewModel
@@ -7,7 +7,6 @@ import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
 import eu.peernetwork.blog.ui.content.overlay.Overlay
-import eu.peernetwork.blog.ui.content.timeline.Timeline
 import eu.peernetwork.blog.ui.post.Post
 import eu.peernetwork.core.ui.annotation.UiBuilder
 import eu.peernetwork.core.ui.annotation.UiViewModel
@@ -18,17 +17,17 @@ import eu.peernetwork.core.ui.factory.UiViewModelFactory
 import javax.inject.Provider
 
 @Module
-class AuthorPostModule(private val context: Context) {
+class ArticleModule(private val context: Context) {
     @Provides
-    @AuthorPost.Scope
+    @Article.Scope
     fun provideContext(): Context = context
 
     @Provides
-    @AuthorPost.Scope
+    @Article.Scope
     fun provideBuilderFactory(factory: UiBuilderFactory): UiComponentProvider.Factory = factory
 
     @Provides
-    @AuthorPost.Scope
+    @Article.Scope
     fun provideViewModelFactory(
         classToViewModel:
         @JvmSuppressWildcards Map<Class<out ViewModel>, Provider<ViewModel>>
@@ -38,31 +37,23 @@ class AuthorPostModule(private val context: Context) {
 
     @Provides
     @IntoMap
-    @AuthorPost.Scope
-    @UiViewModel(AuthorPostViewModel::class)
-    fun viewModel(viewModel: AuthorPostViewModel): ViewModel = viewModel
+    @Article.Scope
+    @UiViewModel(ArticleViewModel::class)
+    fun viewModel(viewModel: ArticleViewModel): ViewModel = viewModel
 
     @Provides
     @IntoMap
-    @AuthorPost.Scope
+    @Article.Scope
     @UiBuilder(Overlay.Builder::class)
-    fun provideOverlayBuilder(post: AuthorPost.Component): UiComponent.Builder {
+    fun provideOverlayBuilder(post: Article.Component): UiComponent.Builder {
         return Overlay.Builder(post)
     }
 
     @Provides
     @IntoMap
-    @AuthorPost.Scope
-    @UiBuilder(Timeline.Builder::class)
-    fun provideTimelineBuilder(post: AuthorPost.Component): UiComponent.Builder {
-        return Timeline.Builder(post)
-    }
-
-    @Provides
-    @IntoMap
-    @AuthorPost.Scope
+    @Article.Scope
     @UiBuilder(Post.Builder::class)
-    fun providePostBuilder(post: AuthorPost.Component): UiComponent.Builder {
+    fun providePostBuilder(post: Article.Component): UiComponent.Builder {
         return Post.Builder(post)
     }
 }

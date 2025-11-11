@@ -20,6 +20,10 @@ class ContentRepositoryDelegate @Inject constructor(
         return api.get(filter, page)
     }
 
+    override suspend fun getAdverts(filter: Filter, page: Pageable): Page<Content> {
+        return api.getAdverts(filter, page)
+    }
+
     override suspend fun create(draft: Draft, meta: String): Content {
         return api.create(draft, meta)
     }

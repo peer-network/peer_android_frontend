@@ -4,6 +4,7 @@ import android.content.res.Configuration
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -65,12 +66,14 @@ fun VersionPage(
                 DesignOutlineButton(
                     onClick = onAppWikiClicked,
                     minHeight = 42.dp,
+                    contentPadding = PaddingValues(horizontal = 16.dp),
                     modifier = Modifier.weight(1f),
                     border = borderStroke
                 ) { Text(stringResource(R.string.app_wiki)) }
                 DesignOutlineButton(
                     onClick = onBackendWikiClicked,
                     minHeight = 42.dp,
+                    contentPadding = PaddingValues(horizontal = 16.dp),
                     modifier = Modifier.weight(1f),
                     border = borderStroke
                 ) { Text(stringResource(R.string.backend_wiki)) }

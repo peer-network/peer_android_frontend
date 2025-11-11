@@ -77,6 +77,7 @@ internal val LightPalette = lightColorScheme(
     surfaceContainerLow = Gray150,
     surfaceContainerLowest = Gray125,
     surfaceContainerHigh = Primary600,
+    surfaceContainerHighest = Gray650,
     scrim = Gray250
 )
 
@@ -108,5 +109,6 @@ internal val DarkPalette = darkColorScheme(
     surfaceContainerLow = Gray625,
     surfaceContainerLowest = Gray650,
     surfaceContainerHigh = Primary100,
+    surfaceContainerHighest = White50,
     scrim = Gray550
 )

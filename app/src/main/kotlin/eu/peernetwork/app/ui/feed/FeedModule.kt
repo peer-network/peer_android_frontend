@@ -11,6 +11,7 @@ import eu.peernetwork.app.ui.search.Search
 import eu.peernetwork.app.ui.window.Window
 import eu.peernetwork.blog.ui.engagement.EngagementDialog
 import eu.peernetwork.blog.ui.feed.timeline.Post
+import eu.peernetwork.blog.ui.timeline.Timeline
 import eu.peernetwork.core.ui.annotation.UiBuilder
 import eu.peernetwork.core.ui.annotation.UiViewModel
 import eu.peernetwork.core.ui.component.UiComponent
@@ -80,6 +81,14 @@ object FeedModule {
     @UiBuilder(Confirmation.Builder::class)
     fun provideConfirmationBuilder(component: Feed.Component): UiComponent.Builder {
         return Confirmation.Builder(component)
+    }
+
+    @Feed.Scope
+    @Provides
+    @IntoMap
+    @UiBuilder(Timeline.Builder::class)
+    fun provideTimelineBuilder(component: Feed.Component): UiComponent.Builder {
+        return Timeline.Builder(component)
     }
 
     @Feed.Scope

@@ -11,6 +11,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.core.ui.design.luna.DesignButton
 import eu.peernetwork.core.ui.design.luna.DesignOutlineButton
@@ -22,7 +23,10 @@ fun ConnectionButton(
     isFollowing: Boolean,
     isFollowed: Boolean,
     onClick: (Boolean) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    minWidth: Dp = 64.dp,
+    minHeight: Dp = 42.dp,
+    contentPadding: PaddingValues = PaddingValues(horizontal = 16.dp)
 ) {
     val clickHandler by rememberUpdatedState {
         onClick(isFollowing)
@@ -34,32 +38,35 @@ fun ConnectionButton(
             ConnectionStatus.PEER -> {
                 DesignButton(
                     style = style,
-                    minHeight = 42.dp,
+                    minWidth = minWidth,
+                    minHeight = minHeight,
                     onClick = clickHandler,
-                    contentPadding = PaddingValues(horizontal = 16.dp),
+                    contentPadding = contentPadding,
                     modifier = modifier,
                 ) { Text(stringResource(R.string.peer_label)) }
             }
             ConnectionStatus.FOLLOWING -> {
                 DesignButton(
                     style = style,
-                    minHeight = 42.dp,
+                    minWidth = minWidth,
+                    minHeight = minHeight,
                     onClick = clickHandler,
                     modifier = modifier,
-                    contentPadding = PaddingValues(horizontal = 16.dp),
+                    contentPadding = contentPadding,
                     colors = designSecondaryButtonColors(),
                 ) { Text(stringResource(R.string.following_label)) }
             }
             ConnectionStatus.FOLLOWER -> {
                 DesignOutlineButton(
                     style = style,
-                    minHeight = 42.dp,
+                    minWidth = minWidth,
+                    minHeight = minHeight,
                     onClick = clickHandler,
                     border = BorderStroke(
                         width = 1.dp,
                         color = MaterialTheme.colorScheme.outline
                     ),
-                    contentPadding = PaddingValues(horizontal = 16.dp),
+                    contentPadding = contentPadding,
                     modifier = modifier,
                 ) { Text(stringResource(R.string.follow_label)) }
             }

@@ -40,7 +40,7 @@ import eu.peernetwork.core.ui.design.luna.DesignTextField
 import eu.peernetwork.core.ui.extension.isValidInput
 import eu.peernetwork.core.ui.theme.DesignTheme
 import eu.peernetwork.user.ui.R
-import eu.peernetwork.user.ui.form.FormErrorLabel
+import eu.peernetwork.user.ui.form.FormError
 import java.util.UUID
 
 private const val tag = "PEER_REFERRAL"
@@ -95,7 +95,7 @@ fun ReferralForm(
             },
             modifier = Modifier.padding(bottom = 6.dp)
         )
-        FormErrorLabel(
+        FormError(
             error = error,
             modifier = Modifier.padding(horizontal = 18.dp)
                 .padding(bottom = 4.dp)

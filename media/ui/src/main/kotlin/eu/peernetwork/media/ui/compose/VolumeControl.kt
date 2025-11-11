@@ -24,7 +24,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import eu.peernetwork.core.ui.theme.PeerTheme
+import eu.peernetwork.core.ui.theme.DesignTheme
 import eu.peernetwork.media.core.R
 
 @Composable
@@ -39,7 +39,7 @@ fun VolumeControl(
             .padding(2.dp)
             .size(18.dp)
             .clip(RoundedCornerShape(12.dp))
-            .background(MaterialTheme.colorScheme.onBackground)
+            .background(MaterialTheme.colorScheme.surfaceContainerHighest)
             .clickable(role = Role.Button, enabled = true) {
                 handleOnMute(!mute.value)
             }.padding(4.dp)
@@ -68,7 +68,7 @@ fun VolumeControl(
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun PreviewVolumeControl() {
-    PeerTheme {
+    DesignTheme {
         VolumeControl(
             remember { mutableStateOf(false) },
             modifier = Modifier.padding(16.dp)

@@ -35,7 +35,7 @@ import eu.peernetwork.app.extension.navigateToTagSearch
 import eu.peernetwork.app.extension.navigateToUsernameSearch
 import eu.peernetwork.blog.domain.usecase.PostUsecase
 import eu.peernetwork.blog.ui.event.UiPostListener
-import eu.peernetwork.blog.ui.feed.author.AuthorPostScreen
+import eu.peernetwork.blog.ui.article.ArticleScreen
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.design.compose.DesignRefreshableScaffold
 import eu.peernetwork.core.ui.design.compose.DesignStatefulScaffoldState
@@ -141,13 +141,12 @@ fun ProfilePreview(
                     onBoost = {},
                     provider = component,
                     viewModelStoreOwner = viewModelStoreOwner,
-                    modifier = Modifier.Companion
-                        .padding(bottom = 8.dp)
+                    modifier = Modifier.padding(bottom = 8.dp)
                         .padding(end = 16.dp, start = 24.dp)
                 )
             },
         ) {
-            AuthorPostScreen(
+            ArticleScreen(
                 author = id,
                 types = if (it == 0) {
                     PostUsecase.POST

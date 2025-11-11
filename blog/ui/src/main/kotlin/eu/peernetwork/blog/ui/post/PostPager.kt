@@ -36,7 +36,7 @@ fun PostPager(
     val updatedContent by rememberUpdatedState(content)
     Box(contentAlignment = Alignment.BottomEnd) {
         HorizontalPager(state = state) {
-            content(media[it].path)
+            Box { updatedContent(media[it].path) }
         }
         Box(modifier = Modifier.padding(horizontal = 24.dp)
             .padding(vertical = 16.dp)) {

@@ -95,7 +95,12 @@ fun EngagementScreen(
                     views = viewCount
                 )
             },
-            onLike = { type.value = EngagementEvent.Like(it) },
+            onLike = {
+                type.value = EngagementEvent.Like(
+                    post = it.id,
+                    author = it.author.id,
+                    message = it.title.text
+                ) },
             onDisLike = { type.value = EngagementEvent.DisLike(it.id) },
             onComment = { post.value = it },
             onView = {
@@ -152,7 +157,11 @@ fun EngagementScreen(
             viewModelStoreOwner,
         ) {
             when(it) {
-                is EngagementEvent.Like -> viewModel.like(it.content)
+                is EngagementEvent.Like -> viewModel.like(
+                    it.id,
+                    it.author,
+                    it.message
+                )
                 is EngagementEvent.DisLike -> viewModel.dislike(it.id)
                 else -> {}
             }

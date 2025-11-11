@@ -1,6 +1,7 @@
 package eu.peernetwork.blog.ui.post
 
 import android.content.Context
+import androidx.lifecycle.ViewModelProvider
 import eu.peernetwork.blog.ui.engagement.Engagement
 import eu.peernetwork.blog.ui.engagement.EngagementDialog
 import eu.peernetwork.blog.ui.moderation.Moderation
@@ -20,7 +21,9 @@ interface Post : BlogProvider {
         dependencies = [Post::class],
         modules = [PostModule::class]
     )
-    interface Component : Post, UiComponentProvider, Engagement, Moderation
+    interface Component : Post, UiComponentProvider, Engagement, Moderation {
+        fun viewModelFactory(): ViewModelProvider.Factory
+    }
 
     class Builder(private val dependency: Post) : UiComponent.DefaultBuilder<Post, Component>() {
         override fun build(context: Context): Component {
