@@ -1,0 +1,78 @@
+package eu.peernetwork.ads.ui.adverts
+
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModelStoreOwner
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.paging.compose.collectAsLazyPagingItems
+import eu.peernetwork.core.common.paging.Pageable
+import eu.peernetwork.core.ui.component.UiComponentProvider
+import eu.peernetwork.core.ui.design.luna.DesignStream
+import eu.peernetwork.core.ui.design.luna.DesignStreamState
+import eu.peernetwork.core.ui.extension.builder
+
+@Composable
+fun AdvertsScreen(
+    limit: Int,
+    provider: UiComponentProvider,
+    viewModelStoreOwner: ViewModelStoreOwner,
+    onSelect: () -> Unit
+) {
+    val context = LocalContext.current
+    val component = remember {
+        provider.builder(Adverts.Builder::class.java).build(context)
+    }
+    val viewModel = viewModel(
+        modelClass = AdvertsViewModel::class.java,
+        viewModelStoreOwner = viewModelStoreOwner,
+        factory = component.viewModelFactory()
+    )
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    val derivedState = remember { derivedStateOf {
+        when(state) {
+            is AdvertsViewModel.State.Default -> DesignStreamState.Default
+            is AdvertsViewModel.State.Loading -> DesignStreamState.Loading
+            is AdvertsViewModel.State.Success -> {
+                DesignStreamState.Success(
+                    (state as AdvertsViewModel.State.Success).content
+                )
+            }
+            is AdvertsViewModel.State.Error -> {
+                DesignStreamState.Error(
+                    (state as AdvertsViewModel.State.Error).error
+                )
+            }
+        }
+    } }
+    DesignStream(state = derivedState) { result ->
+        val lazyPagingItems = result.value.collectAsLazyPagingItems()
+        LazyColumn(modifier = Modifier.fillMaxSize()) {
+            items(
+                count = lazyPagingItems.itemCount,
+                key = { index -> lazyPagingItems[index]?.content?.id?.let { "$it;$index" } ?: index }
+            ) { index ->
+                lazyPagingItems[index]?.let { post ->
+                    Text(post.content.title, modifier = Modifier.padding(horizontal = 24.dp)
+                        .padding(vertical = 16.dp), color = MaterialTheme.colorScheme.onBackground)
+                }
+            }
+        }
+    }
+    LaunchedEffect(Unit) {
+        if (state is AdvertsViewModel.State.Default) {
+            viewModel(page = Pageable(0, limit))
+        }
+    }
+}

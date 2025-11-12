@@ -4,7 +4,7 @@ import com.apollographql.apollo3.api.Optional
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import eu.peernetwork.blog.data.api.ContentApi
-import eu.peernetwork.blog.domain.exception.ContentException
+import eu.peernetwork.core.common.exception.ContentException
 import eu.peernetwork.blog.domain.model.Content
 import eu.peernetwork.blog.domain.model.Draft
 import eu.peernetwork.blog.domain.model.Filter

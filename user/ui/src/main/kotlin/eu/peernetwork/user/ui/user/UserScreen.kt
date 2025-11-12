@@ -38,7 +38,7 @@ fun UserScreen(
     connection: @Composable (Pair<Boolean, Boolean>) -> Unit,
     onClick: (UserMetric) -> Unit,
     onSettings: () -> Unit,
-    onBoost: () -> Unit,
+    onMenuClicked: () -> Unit,
     viewModelStoreOwner: ViewModelStoreOwner,
 ) {
     val context = LocalContext.current
@@ -96,7 +96,7 @@ fun UserScreen(
                     provider = component,
                     viewModelStoreOwner = viewModelStoreOwner,
                     onSettings = onSettings,
-                    onBoost = onBoost
+                    onMenuClicked = onMenuClicked
                 ) { updatedConnection(data.first.isFollowing to data.first.isFollowed) }
             }
         }

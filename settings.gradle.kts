@@ -47,6 +47,11 @@ include(":wallet:data")
 include(":wallet:remote")
 include(":wallet:ui")
 
+include(":ads:domain")
+include(":ads:data")
+include(":ads:remote")
+include(":ads:ui")
+
 include(":social:domain")
 include(":social:data")
 include(":social:remote")

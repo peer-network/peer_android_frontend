@@ -1,0 +1,74 @@
+query AdvertisementHistory(
+    $filter: AdvertisementHistoryFilter,
+    $sort: AdvertisementSort,
+    $offset: Int,
+    $limit: Int
+) {
+    advertisementHistory(
+        filter: $filter,
+        sort: $sort,
+        offset: $offset,
+        limit: $limit
+    ) {
+        affectedRows {
+            stats {
+                tokenSpent
+                euroSpent
+                amountAds
+                gemsEarned
+                amountLikes
+                amountViews
+                amountComments
+                amountDislikes
+                amountReports
+            }
+            advertisements {
+                id
+                createdAt
+                type
+                timeframeStart
+                timeframeEnd
+                totalTokenCost
+                totalEuroCost
+                gemsEarned
+                amountLikes
+                amountViews
+                amountComments
+                amountDislikes
+                amountReports
+                user {
+                    id
+                    username
+                    slug
+                    img
+                    isfollowed
+                    isfollowing
+                    isfriend
+                }
+                post {
+                    id
+                    contenttype
+                    title
+                    media
+                    cover
+                    mediadescription
+                    createdat
+                    amountlikes
+                    amountviews
+                    amountcomments
+                    amountdislikes
+                    amounttrending
+                    isliked
+                    isviewed
+                    isreported
+                    isdisliked
+                    issaved
+                    tags
+                    url
+                }
+            }
+        }
+        status
+        ResponseCode
+    }
+}

@@ -78,6 +78,11 @@ dependencies {
     implementation(project(":social:remote"))
     implementation(project(":social:ui"))
 
+    implementation(project(":ads:domain"))
+    implementation(project(":ads:data"))
+    implementation(project(":ads:remote"))
+    implementation(project(":ads:ui"))
+
     implementation(project(":wallet:domain"))
     implementation(project(":wallet:data"))
     implementation(project(":wallet:remote"))

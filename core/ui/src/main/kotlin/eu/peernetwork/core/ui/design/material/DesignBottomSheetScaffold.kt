@@ -43,7 +43,7 @@ import eu.peernetwork.core.ui.theme.PeerTheme
 fun DesignBottomSheetScaffold(
     state: State<Boolean>,
     behind: Boolean = true,
-    color: Color = MaterialTheme.colorScheme.tertiaryContainer,
+    color: Color = MaterialTheme.colorScheme.surfaceContainerLow,
     orientation: Orientation = Orientation.Vertical,
     confirmValueChange: (DesignBottomSheetState) -> Boolean = { true },
     onStateChanged: (DesignBottomSheetState) -> Unit = {},
