@@ -5,12 +5,6 @@ import dagger.BindsInstance
 import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.app.provider.ApplicationProvider
 import eu.peernetwork.core.ui.component.UiComponent
-import javax.inject.Named
-
-data class VersionLink(
-    val wiki: String,
-    val app: String
-)
 
 interface Version : ApplicationProvider {
     @javax.inject.Scope

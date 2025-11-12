@@ -138,7 +138,7 @@ fun ProfilePreview(
                         showSheet.value = connection.value != null
                     },
                     onSettings = onSettings,
-                    onBoost = {},
+                    onMenuClicked = { controller.navigate("adverts") },
                     provider = component,
                     viewModelStoreOwner = viewModelStoreOwner,
                     modifier = Modifier.padding(bottom = 8.dp)

@@ -37,7 +37,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.extension.isLightTheme
-import eu.peernetwork.core.ui.theme.PeerTheme
+import eu.peernetwork.core.ui.theme.DesignTheme
 
 @Composable
 fun  DesignDialog(
@@ -134,7 +134,7 @@ fun  DesignDialog(
                     setViewTreeViewModelStoreOwner(viewModelStoreOwner)
                     setViewTreeSavedStateRegistryOwner(savedStateRegistryOwner)
                     setContent {
-                        PeerTheme(isDarkMode = isDarkMode) {
+                        DesignTheme(isDarkMode = isDarkMode) {
                             val controller = rememberNavController()
                             val navBackStackEntry by controller.currentBackStackEntryAsState()
                             val currentStack = remember(navBackStackEntry?.id) {

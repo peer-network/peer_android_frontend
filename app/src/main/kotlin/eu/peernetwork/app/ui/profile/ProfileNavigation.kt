@@ -8,6 +8,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import eu.peernetwork.ads.ui.dashboard.DashboardScreen
 import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.app.ui.search.SearchScreen
 import eu.peernetwork.app.ui.search.SearchState
@@ -96,6 +97,19 @@ fun ProfileNavigation(
                     searchState = searchState,
                 )
             }
+        }
+        composable("adverts") { backStackEntry ->
+            WindowScreen(
+                provider = component,
+                mode = windowMode,
+                onCancel = onCancel,
+                viewModelStoreOwner = backStackEntry,
+            ) { DashboardScreen(
+                id = principal,
+                limit = BuildConfig.PAGING_LIMIT,
+                provider = component,
+                viewModelStoreOwner = backStackEntry
+            ) }
         }
     }
 }

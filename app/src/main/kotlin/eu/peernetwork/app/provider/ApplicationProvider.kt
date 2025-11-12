@@ -4,6 +4,7 @@ import android.content.Context
 import eu.peernetwork.core.common.provider.CoreProvider
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.gson.Gson
+import eu.peernetwork.ads.ui.provider.AdsProvider
 import eu.peernetwork.app.interactor.RemoteInteractor
 import eu.peernetwork.app.interactor.SettingsInteractor
 import eu.peernetwork.app.interceptor.SubscriptionInteractor
@@ -14,7 +15,12 @@ import eu.peernetwork.persistence.domain.provider.PreferenceProvider
 import eu.peernetwork.user.ui.provider.UserProvider
 import eu.peernetwork.wallet.ui.provider.WalletProvider
 
-interface ApplicationProvider : UserProvider, PreferenceProvider, ContentProvider, WalletProvider, CoreProvider {
+interface ApplicationProvider : UserProvider,
+    PreferenceProvider,
+    ContentProvider,
+    WalletProvider,
+    CoreProvider,
+    AdsProvider {
     fun context(): Context
 
     fun gson(): Gson

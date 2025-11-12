@@ -8,6 +8,7 @@
     <string name="register_text">Register</string>
     <string name="register_now_text">Register now</string>
     <string name="deactivate_text">Deactivate</string>
+    <string name="cancel_text">Cancel</string>
 
     <string name="login_title">Hey there,\nWelcome back</string>
     <string name="login_description">It’s good to see you again! Log in to continue\nyour journey with us!</string>
@@ -91,6 +92,8 @@
     <string name="password_uppercase_rule">1 uppercase</string>
     <string name="password_lowercase_rule">1 lowercase</string>
     <string name="password_number_rule">1 number</string>
+
+    <string name="ads_label">My ads</string>
 
     <string name="app_information_label">App Information</string>
     <string name="about_us_label">About Us</string>

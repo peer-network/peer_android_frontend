@@ -2,12 +2,12 @@ package eu.peernetwork.blog.remote.api
 
 import com.apollographql.apollo3.api.Optional
 import eu.peernetwork.blog.data.api.CommentApi
-import eu.peernetwork.blog.domain.exception.CommentException
 import eu.peernetwork.blog.domain.model.Comment
 import eu.peernetwork.blog.remote.comment.CreateCommentMutation
 import eu.peernetwork.blog.remote.comment.GetCommentsQuery
 import eu.peernetwork.blog.remote.mapper.mapToDomain
 import eu.peernetwork.blog.remote.mapper.mapToMode
+import eu.peernetwork.core.common.exception.ContentException
 import eu.peernetwork.core.common.interactor.SessionInteractor
 import eu.peernetwork.core.common.paging.Page
 import eu.peernetwork.core.common.paging.Pageable
@@ -56,6 +56,6 @@ class CommentApiDelegate @Inject constructor(
         val data = response.getOrThrow().createComment
         val content = data.affectedRows?.map { it?.mapToDomain() }
         response.assertOrThrow(data.status, data.ResponseCode)
-        return content?.firstOrNull() ?: throw CommentException()
+        return content?.firstOrNull() ?: throw ContentException()
     }
 }

@@ -6,6 +6,4 @@ import eu.peernetwork.media.core.provider.MediaProvider
 interface BlogProvider : CoreProvider,
     MediaProvider,
     InteractorProvider,
-    RepositoryProvider {
-
-}
+    RepositoryProvider

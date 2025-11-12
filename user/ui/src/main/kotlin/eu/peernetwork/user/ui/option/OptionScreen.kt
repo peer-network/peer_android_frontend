@@ -23,7 +23,7 @@ fun OptionScreen(
     isAdmin: Boolean,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
-    onBoost: () -> Unit,
+    onMenuClicked: () -> Unit,
     onSettings: () -> Unit,
     content: @Composable () -> Unit
 ) {
@@ -41,10 +41,11 @@ fun OptionScreen(
     val isLoading = remember { derivedStateOf { state is OptionViewModel.State.Loading } }
     val inviteLink = remember { mutableStateOf<String?>(null) }
     val inviteLabel = stringResource(R.string.invite_label)
+    val showOption = remember { mutableStateOf(false) }
     if (isAdmin) {
         OptionMenu(
             isLoading = isLoading,
-            onBoost = onBoost,
+            onBoost = { showOption.value = !showOption.value },
             onInvite = {
                 inviteLink.value?.let {
                     context.sendInvitation(inviteLabel, it)
@@ -58,6 +59,7 @@ fun OptionScreen(
             content = content
         )
     }
+    OptionSheet(showOption, onMenuClicked)
     LaunchedEffect(isInvited.value) {
         if (isInvited.value != null) {
             isInvited.value?.invite?.link?.let {

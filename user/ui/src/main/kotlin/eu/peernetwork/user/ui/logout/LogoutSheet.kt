@@ -45,7 +45,6 @@ fun LogoutSheet(
         }
     ) {
         LogoutSheet(
-            state = state,
             isLoading = isLoading,
             onLogout = {
                 action.value = handleLogout
@@ -59,7 +58,6 @@ fun LogoutSheet(
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 fun LogoutSheet(
-    state: MutableState<Boolean>,
     isLoading: State<Boolean>,
     modifier: Modifier,
     onLogout: () -> Unit = {},
@@ -81,7 +79,7 @@ fun LogoutSheet(
         )
         Spacer(modifier = Modifier.height(16.dp))
         DesignButton(
-            enabled = state.value && !isLoading.value,
+            enabled = !isLoading.value,
             onClick = onLogout,
             modifier = Modifier.fillMaxWidth(),
             isLoading = isLoading.value

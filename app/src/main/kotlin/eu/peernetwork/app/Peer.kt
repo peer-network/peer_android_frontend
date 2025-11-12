@@ -2,6 +2,7 @@ package eu.peernetwork.app
 
 import android.content.Context
 import dagger.android.AndroidInjector
+import eu.peernetwork.app.module.ads.AdsModule
 import eu.peernetwork.app.module.blog.BlogModule
 import eu.peernetwork.app.module.core.CoreModule
 import eu.peernetwork.app.module.core.UiModule
@@ -27,6 +28,7 @@ interface Peer {
             UserModule::class,
             WalletModule::class,
             BlogModule::class,
+            AdsModule::class,
             SocialModule::class
         ]
     )

@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.lifecycle.ViewModelProvider
 import eu.peernetwork.blog.ui.engagement.EngagementDialog
 import eu.peernetwork.blog.ui.content.overlay.Overlay
-import eu.peernetwork.blog.ui.content.timeline.Timeline
 import eu.peernetwork.blog.ui.post.Post
 import eu.peernetwork.blog.ui.provider.BlogProvider
 import eu.peernetwork.core.ui.component.UiComponent
