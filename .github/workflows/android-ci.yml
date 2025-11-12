@@ -40,9 +40,17 @@ jobs:
     with:
       config: gitleaks.toml
 
+  trivy_scan:
+    name: Run Trivy Security Scan
+    needs: [gitleaks]
+    if: needs.gitleaks.result == 'success'
+    uses: peer-network/.github/.github/workflows/trivy-scan.yml@main
+    with:
+      scan_target: .
+
   build:
     runs-on: ubuntu-latest
-    needs: [check_branch_sync, gitleaks]
+    needs: [check_branch_sync, gitleaks, trivy_scan]
     if: needs.check_branch_sync.outputs.is_behind == 'false' && needs.gitleaks.result == 'success'
     steps:
       - name: Set environment variable
@@ -132,12 +140,6 @@ jobs:
             jakobPeer)
               echo "discord_mention=<@1334087880833892392>" >> $GITHUB_OUTPUT
               ;;
-            Novachrono-Ryhze)
-              echo "discord_mention=<@1228316710264897596>" >> $GITHUB_OUTPUT
-              ;;
-            SandrZeus)
-              echo "discord_mention=<@273771478242295809>" >> $GITHUB_OUTPUT
-              ;;
             conxtantyn)
               echo "discord_mention=<@1354048093376610366>" >> $GITHUB_OUTPUT
               ;;
@@ -152,7 +154,7 @@ jobs:
   send_discord_notification:
     name: Unified Discord Notification
     runs-on: ubuntu-latest
-    needs: [check_branch_sync, gitleaks, build, map_pr_to_discord]
+    needs: [check_branch_sync, gitleaks, trivy_scan, build, map_pr_to_discord]
     if: always()
     steps:
       - name: Determine message type
@@ -160,6 +162,7 @@ jobs:
         run: |
           is_behind="${{ needs.check_branch_sync.outputs.is_behind }}"
           gitleaks_result="${{ needs.gitleaks.result }}"
+          trivy_findings="${{ needs.trivy_scan.outputs.has_findings }}"
           build_result="${{ needs.build.result }}"
           
           type="none"
@@ -167,6 +170,8 @@ jobs:
             type="behind"
           elif [ "$gitleaks_result" == "failure" ]; then
             type="gitleaks_failed"
+          elif [ "$trivy_findings" == "true" ]; then
+            type="trivy_vulnerabilities"
           elif [ "$build_result" == "failure" ]; then
             type="build_failed"
           elif [ "$build_result" == "success" ]; then
@@ -204,6 +209,13 @@ jobs:
               MESSAGE+=":no_entry: **Reminder:** Do NOT bypass with \`git commit --no-verify\`. CI will still block your PR.\n"
               MESSAGE+="If this secret is actually required (false positive or approved usage), please contact **CTO / Team Lead / DevOps** for approval and whitelisting."
               ;;
+            trivy_vulnerabilities)
+              MESSAGE="**Trivy found HIGH or CRITICAL vulnerabilities in Android Frontend!**\n"
+              MESSAGE+="**Do NOT ignore this finding — inform your Team Lead or CTO immediately.**\n"
+              MESSAGE+="View the **Trivy report artifact** in the Actions run for full details.\n"
+              MESSAGE+="**PR:** $PR_TITLE\nLink: <$PR_URL>\nRun: <$RUN_URL>\nAuthor: $DISCORD_MENTION\n\n"
+              MESSAGE+="<@1354048093376610366> <@1334087880833892392> <@1362087975906967736>"
+              ;;
             build_failed)
               MESSAGE=":x: **Android Build or Tests Failed**\n"
               MESSAGE+="**PR:** $PR_TITLE\n"
@@ -230,7 +242,7 @@ jobs:
   final_check:
     name: Final Check — Block Merge if Any Critical Job Failed
     runs-on: ubuntu-latest
-    needs: [check_branch_sync, gitleaks, build]
+    needs: [check_branch_sync, gitleaks, trivy_scan, build]
     if: always()
     steps:
       - run: |
