@@ -28,14 +28,14 @@ import androidx.compose.ui.unit.TextUnit
 import eu.peernetwork.core.ui.mapper.annotate
 import eu.peernetwork.core.ui.theme.DesignTheme
 
-enum class DesignAnnotatedTextType(val value: String) {
+enum class DesignStyledTextType(val value: String) {
     LINK("*"),
     MENTION("@"),
     TAG("#")
 }
 
 @Composable
-fun DesignAnnotatedText(
+fun DesignStyledText(
     text: AnnotatedString,
     modifier: Modifier = Modifier,
     color: Color = Color.Unspecified,
@@ -52,7 +52,7 @@ fun DesignAnnotatedText(
     maxLines: Int = Int.MAX_VALUE,
     minLines: Int = 1,
     inlineContent: Map<String, InlineTextContent> = mapOf(),
-    onClick: (DesignAnnotatedTextType) -> Unit = {},
+    onClick: (DesignStyledTextType) -> Unit = {},
     onTextLayout: (TextLayoutResult) -> Unit = {},
     style: TextStyle = LocalTextStyle.current
 ) {
@@ -98,12 +98,12 @@ fun DesignAnnotatedText(
 fun AnnotatedString.getStringAnnotations(
     start: Int,
     end: Int,
-    onClick: (DesignAnnotatedTextType) -> Unit
+    onClick: (DesignStyledTextType) -> Unit
 ) {
     listOf(
-        DesignAnnotatedTextType.LINK,
-        DesignAnnotatedTextType.MENTION,
-        DesignAnnotatedTextType.TAG,
+        DesignStyledTextType.LINK,
+        DesignStyledTextType.MENTION,
+        DesignStyledTextType.TAG,
     ).forEach {
         getStringAnnotations(
             tag = it.value,
@@ -117,7 +117,7 @@ fun AnnotatedString.getStringAnnotations(
 
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
-fun DesignAnnotatedTextPreview() {
+fun DesignStyledTextPreview() {
     DesignTheme {
         val count = remember { mutableLongStateOf(System.currentTimeMillis()) }
         val annotatedString = """
@@ -126,17 +126,17 @@ fun DesignAnnotatedTextPreview() {
             .annotate()
         Column {
             Text(text = count.longValue.toString())
-            DesignAnnotatedText(
+            DesignStyledText(
                 text = annotatedString,
                 onClick = {
                     when (it) {
-                        DesignAnnotatedTextType.TAG -> {
+                        DesignStyledTextType.TAG -> {
                             count.longValue = System.currentTimeMillis()
                         }
-                        DesignAnnotatedTextType.MENTION -> {
+                        DesignStyledTextType.MENTION -> {
                             count.longValue = System.currentTimeMillis() / 10000
                         }
-                        DesignAnnotatedTextType.LINK -> {
+                        DesignStyledTextType.LINK -> {
                             count.longValue = -System.currentTimeMillis()
                         }
                     }

@@ -29,7 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import eu.peernetwork.blog.ui.engagement.v2.EngagementOption
 import eu.peernetwork.blog.ui.model.UiPost
-import eu.peernetwork.core.ui.design.luna.DesignAnnotatedText
+import eu.peernetwork.core.ui.design.luna.DesignStyledText
 import eu.peernetwork.core.ui.design.luna.DesignBox
 import eu.peernetwork.core.ui.design.luna.DesignButton
 import eu.peernetwork.core.ui.theme.DesignTheme
@@ -51,13 +51,13 @@ fun PostScaffold(
     ) {
         Column(modifier = Modifier.padding(horizontal = 12.dp)
             .padding(bottom = 16.dp)) {
-            DesignAnnotatedText(
+            DesignStyledText(
                 text = model.title,
                 maxLines = 2,
                 color = MaterialTheme.colorScheme.onBackground,
                 style = MaterialTheme.typography.bodyMedium,
             )
-            DesignAnnotatedText(
+            DesignStyledText(
                 text = model.description,
                 maxLines = 6,
                 lineHeight = 18.sp,

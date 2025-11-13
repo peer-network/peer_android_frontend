@@ -3,8 +3,6 @@ package eu.peernetwork.ads.ui.adverts
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -21,6 +19,7 @@ import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.luna.DesignStream
 import eu.peernetwork.core.ui.design.luna.DesignStreamState
+import eu.peernetwork.core.ui.extension.annotate
 import eu.peernetwork.core.ui.extension.builder
 
 @Composable
@@ -56,7 +55,13 @@ fun AdvertsScreen(
             }
         }
     } }
-    DesignStream(state = derivedState) { result ->
+    DesignStream(
+        state = derivedState,
+        loading = {
+            AdvertsSkeleton(modifier = Modifier.padding(horizontal = 16.dp)
+                .padding(vertical = 5.dp))
+        }
+    ) { result ->
         val lazyPagingItems = result.value.collectAsLazyPagingItems()
         LazyColumn(modifier = Modifier.fillMaxSize()) {
             items(
@@ -64,8 +69,15 @@ fun AdvertsScreen(
                 key = { index -> lazyPagingItems[index]?.content?.id?.let { "$it;$index" } ?: index }
             ) { index ->
                 lazyPagingItems[index]?.let { post ->
-                    Text(post.content.title, modifier = Modifier.padding(horizontal = 24.dp)
-                        .padding(vertical = 16.dp), color = MaterialTheme.colorScheme.onBackground)
+                    AdvertsItem(
+                        title = post.content.title.annotate(),
+                        description = post.content.description.annotate(),
+                        from = post.from.toString(),
+                        to = post.to.toString(),
+                        status = true,
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                            .padding(vertical = 5.dp)
+                    ) {}
                 }
             }
         }
