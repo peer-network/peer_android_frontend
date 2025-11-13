@@ -27,17 +27,15 @@ class AdvertsViewModel @Inject constructor(
 
     operator fun invoke(filter: Filter = Filter(), page: Pageable) {
         viewModelScope.launch {
-            viewModelScope.launch {
-                usecase(AdvertListingUsecase.Parameter(
-                    filter = filter,
-                    page = page
-                )).catch { _state.tryEmit(State.Error(it)) }
-                    .onStart { _state.tryEmit(State.Loading) }
-                    .cachedIn(viewModelScope)
-                    .apply {
-                        collectLatest { _state.tryEmit(State.Success(this)) }
-                    }
-            }
+            usecase(AdvertListingUsecase.Parameter(
+                filter = filter,
+                page = page
+            )).catch { _state.tryEmit(State.Error(it)) }
+                .onStart { _state.tryEmit(State.Loading) }
+                .cachedIn(viewModelScope)
+                .apply {
+                    collectLatest { _state.tryEmit(State.Success(this)) }
+                }
         }
     }
 

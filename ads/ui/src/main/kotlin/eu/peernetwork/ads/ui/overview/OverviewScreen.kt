@@ -1,16 +1,11 @@
 package eu.peernetwork.ads.ui.overview
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.height
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -51,11 +46,10 @@ fun OverviewScreen(
             }
         }
     } }
-    DesignStream(state = derivedState) {
-        Box(modifier = Modifier.height(100.dp)) {
-            Text(it.value.toString())
-        }
-    }
+    DesignStream(
+        state = derivedState,
+        loading = { OverviewSkeleton() }
+    ) { OverviewPage() }
     LaunchedEffect(Unit) {
         if (state is OverviewViewModel.State.Default) {
             viewModel(id)
