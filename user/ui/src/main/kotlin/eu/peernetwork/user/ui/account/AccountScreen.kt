@@ -45,7 +45,6 @@ import eu.peernetwork.user.ui.mapper.isPasswordRequired
 import eu.peernetwork.user.ui.model.UiAccount
 import eu.peernetwork.user.ui.model.UiMetric
 import eu.peernetwork.user.ui.model.UiSettings
-import eu.peernetwork.user.ui.compose.ProfileScaffold
 import eu.peernetwork.user.ui.mapper.mapToModels
 
 @Composable
@@ -87,16 +86,7 @@ fun AccountScreen(
     val isLoading = remember { derivedStateOf { status is AccountViewModel.Status.Loading } }
     var submitted by remember { mutableStateOf(false) }
     val message = stringResource(R.string.profile_update_message)
-    DesignStream(
-        state = derivedState,
-        loading = {
-            ProfileScaffold(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(vertical = 16.dp, horizontal = 24.dp)
-            )
-        }
-    ) {
+    DesignStream(state = derivedState) {
         AccountScreen(
             account = it.value,
             isLoading = isLoading,
