@@ -1,6 +1,5 @@
 package eu.peernetwork.user.ui.user
 
-import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,15 +10,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.core.ui.design.luna.DesignAvatar
+import eu.peernetwork.core.ui.design.luna.DesignSkeleton
 import eu.peernetwork.core.ui.theme.DesignTheme
 
 @Composable
@@ -28,46 +26,55 @@ fun UserSkeleton(modifier: Modifier = Modifier) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             DesignAvatar {
                 Box(modifier = Modifier.size(56.dp)
-                    .background(MaterialTheme.colorScheme.surfaceContainerLowest))
+                    .background(MaterialTheme.colorScheme.surfaceDim))
             }
-            Box(modifier = Modifier.padding(start = 12.dp)
-                .fillMaxWidth(fraction = .75f)
+            DesignSkeleton(modifier = Modifier.padding(start = 12.dp)
                 .height(42.dp)
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.surfaceContainerLowest))
+                .fillMaxWidth(fraction = .75f))
         }
-        Box(modifier = Modifier.padding(top = 14.dp)
+        DesignSkeleton(modifier = Modifier.padding(top = 14.dp)
             .fillMaxWidth(fraction = .6f)
-            .height(16.dp)
-            .clip(CircleShape)
-            .background(MaterialTheme.colorScheme.surfaceContainerLowest))
+            .height(16.dp))
         Row(modifier = Modifier.padding(top = 16.dp)) {
-            Box(modifier = Modifier.weight(1f)
-                .height(42.dp)
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.surfaceContainerLowest))
+            DesignSkeleton(modifier = Modifier.weight(1f)
+                .height(42.dp))
             Spacer(modifier = Modifier.width(12.dp))
-            Box(modifier = Modifier.weight(1f)
-                .height(42.dp)
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.surfaceContainerLowest))
-            Spacer(modifier = Modifier.width(16.dp))
-            Box(modifier = Modifier.size(42.dp)
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.surfaceContainerLowest))
+            DesignSkeleton(modifier = Modifier.weight(1f)
+                .height(42.dp))
+            Spacer(modifier = Modifier.width(12.dp))
+            DesignSkeleton(modifier = Modifier.size(42.dp))
         }
     }
 }
 
+@Preview
 @Composable
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, showBackground = true)
-fun PreviewUserSkeleton() {
+fun DarkPreviewUserSkeleton() {
+    DesignTheme(isDarkMode = true) {
+        Box(modifier = Modifier.fillMaxWidth()
+            .background(MaterialTheme.colorScheme.background)) {
+            UserSkeleton(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp)
+                    .padding(vertical = 16.dp),
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+fun LightPreviewUserSkeleton() {
     DesignTheme(isDarkMode = false) {
-        UserSkeleton(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 24.dp)
-                .padding(vertical = 16.dp),
-        )
+        Box(modifier = Modifier.fillMaxWidth()
+            .background(MaterialTheme.colorScheme.background)) {
+            UserSkeleton(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp)
+                    .padding(vertical = 16.dp),
+            )
+        }
     }
 }

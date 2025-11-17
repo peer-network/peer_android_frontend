@@ -28,7 +28,7 @@ class UserViewModel @Inject constructor(
 
     val state: StateFlow<Map<String, State>> = _state.asStateFlow()
 
-    fun getAccount(id: String) {
+    fun getAccount(id: String, timestamp: Long = System.currentTimeMillis()) {
         updateState(id, State.Loading)
         viewModelScope.launch {
             try {
@@ -39,7 +39,11 @@ class UserViewModel @Inject constructor(
                     user.id
                 }
                 val account = userUsecase(usecase(id))
-                updateState(id, State.Success(account, principal == account.id))
+                updateState(id, State.Success(
+                    account = account,
+                    configurable = principal == account.id,
+                    timestamp = timestamp
+                ))
             } catch (error: Throwable) {
                 updateState(id, State.Error(error))
             }
@@ -55,7 +59,8 @@ class UserViewModel @Inject constructor(
         data object Loading : State
         data class Success(
             val account: UiAccount,
-            val configurable: Boolean
+            val configurable: Boolean,
+            val timestamp: Long
         ) : State
         data class Error(val error: Throwable) : State
     }

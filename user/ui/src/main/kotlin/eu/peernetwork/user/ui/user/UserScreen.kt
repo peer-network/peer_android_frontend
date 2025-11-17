@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,7 +31,7 @@ import eu.peernetwork.user.ui.option.OptionScreen
 @Composable
 fun UserScreen(
     id: String,
-    requireUpdate: MutableState<Boolean>,
+    timestamp: State<Long>,
     modifier: Modifier = Modifier,
     provider: UiComponentProvider,
     connection: @Composable (Pair<Boolean, Boolean>) -> Unit,
@@ -75,6 +75,9 @@ fun UserScreen(
     val visible = remember(selectedImage.value) {
         mutableStateOf(selectedImage.value != null)
     }
+    val currentTimestamp = remember { derivedStateOf {
+        (localState.value as? UserViewModel.State.Success?)?.timestamp
+    } }
     val error = remember { derivedStateOf {
         (localState.value as? UserViewModel.State.Error?)?.error?.message?.let {
             component.resource().string(it)
@@ -94,7 +97,8 @@ fun UserScreen(
         loading = { UserSkeleton(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 24.dp)
+                .padding(start = 24.dp)
+                .padding(end = 16.dp)
                 .padding(top = 10.dp)
         ) }
     ) { data ->
@@ -143,15 +147,9 @@ fun UserScreen(
             }
         }
     }
-    LaunchedEffect(requireUpdate.value) {
-        if (requireUpdate.value) {
-            viewModel.getAccount(id)
-            requireUpdate.value = false
-        }
-    }
-    LaunchedEffect(Unit) {
-        if (localState.value is UserViewModel.State.Empty) {
-            viewModel.getAccount(id)
+    LaunchedEffect(timestamp.value) {
+        if (timestamp.value != currentTimestamp.value) {
+            viewModel.getAccount(id, timestamp.value)
         }
     }
 }

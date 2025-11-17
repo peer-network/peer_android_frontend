@@ -2,8 +2,6 @@ package eu.peernetwork.user.ui.settings.account
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import app.cash.turbine.test
-import eu.peernetwork.user.domain.usecase.DeactivationUsecase
-import eu.peernetwork.user.domain.usecase.LogoutUsecase
 import eu.peernetwork.user.domain.usecase.ProtectedSettingsUsecase
 import eu.peernetwork.user.domain.usecase.SettingsUsecase
 import eu.peernetwork.user.ui.account.AccountViewModel
@@ -12,7 +10,6 @@ import eu.peernetwork.user.ui.model.UiSettings
 import eu.peernetwork.user.ui.usecase.ObserveAuthUserUsecase
 import eu.peernetwork.user.ui.usecase.ProfileRefreshUsecase
 import io.mockk.coEvery
-import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
@@ -44,10 +41,6 @@ internal class AccountViewModelTest {
 
     private val observeAuthUserUsecase = mockk<ObserveAuthUserUsecase>()
 
-    private val logoutUsecase = mockk<LogoutUsecase>()
-
-    private val deactivationUsecase = mockk<DeactivationUsecase>()
-
     private lateinit var viewModel: AccountViewModel
 
     @Before
@@ -60,9 +53,7 @@ internal class AccountViewModelTest {
             profileRefreshUsecase,
             settingsUsecase,
             protectedSettingsUsecase,
-            observeAuthUserUsecase,
-            logoutUsecase,
-            deactivationUsecase
+            observeAuthUserUsecase
         )
     }
 
@@ -81,9 +72,9 @@ internal class AccountViewModelTest {
         }
 
         viewModel.update(account, listOf(model), password)
-        viewModel.state.test {
-            assertEquals(AccountViewModel.State.Loading, awaitItem())
-            assertEquals(AccountViewModel.State.Success(account, false), awaitItem())
+        viewModel.status.test {
+            assertEquals(AccountViewModel.Status.Loading, awaitItem())
+            assertEquals(AccountViewModel.Status.Success(account), awaitItem())
         }
     }
 
@@ -100,10 +91,10 @@ internal class AccountViewModelTest {
             throw error
         }
         viewModel.update(account, listOf(model), password)
-        viewModel.state.test {
-            assertEquals(AccountViewModel.State.Loading, awaitItem())
+        viewModel.status.test {
+            assertEquals(AccountViewModel.Status.Loading, awaitItem())
             assertEquals(
-                AccountViewModel.State.Success(account, false, error),
+                AccountViewModel.Status.Error(error),
                 awaitItem()
             )
         }
@@ -123,39 +114,9 @@ internal class AccountViewModelTest {
         }
 
         viewModel.update(account, listOf(model), password)
-        viewModel.state.test {
-            assertEquals(AccountViewModel.State.Loading, awaitItem())
-            assertEquals(AccountViewModel.State.Success(account, false), awaitItem())
+        viewModel.status.test {
+            assertEquals(AccountViewModel.Status.Loading, awaitItem())
+            assertEquals(AccountViewModel.Status.Success(account), awaitItem())
         }
-    }
-
-    @Test
-    fun `test logout user success`() = runTest {
-        coEvery { logoutUsecase() } coAnswers {
-            delay(100)
-            user.tryEmit(null)
-        }
-        viewModel.logout()
-        viewModel.state.test {
-            assertEquals(AccountViewModel.State.Loading, awaitItem())
-            assertEquals(AccountViewModel.State.Default, awaitItem())
-        }
-        coVerify { logoutUsecase() }
-    }
-
-    @Test
-    fun `test deactivate user success`() = runTest {
-        val password = "<test-password>"
-        coEvery { deactivationUsecase(any()) } returns Unit
-        coEvery { logoutUsecase() } coAnswers {
-            delay(100)
-            user.tryEmit(null)
-        }
-        viewModel.deactivate(password)
-        viewModel.state.test {
-            assertEquals(AccountViewModel.State.Loading, awaitItem())
-            assertEquals(AccountViewModel.State.Default, awaitItem())
-        }
-        coVerify { deactivationUsecase(password) }
     }
 }

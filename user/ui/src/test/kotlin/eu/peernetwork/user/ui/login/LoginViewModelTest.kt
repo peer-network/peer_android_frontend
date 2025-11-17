@@ -3,7 +3,6 @@ package eu.peernetwork.user.ui.login
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import app.cash.turbine.test
 import eu.peernetwork.user.domain.usecase.LoginUsecase
-import eu.peernetwork.user.ui.v2.login.LoginViewModel
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk

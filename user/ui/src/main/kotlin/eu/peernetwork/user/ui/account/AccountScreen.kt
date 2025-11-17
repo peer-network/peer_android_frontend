@@ -86,7 +86,10 @@ fun AccountScreen(
     val isLoading = remember { derivedStateOf { status is AccountViewModel.Status.Loading } }
     var submitted by remember { mutableStateOf(false) }
     val message = stringResource(R.string.profile_update_message)
-    DesignStream(state = derivedState) {
+    DesignStream(
+        state = derivedState,
+        loading = { AccountSkeleton() }
+    ) {
         AccountScreen(
             account = it.value,
             isLoading = isLoading,

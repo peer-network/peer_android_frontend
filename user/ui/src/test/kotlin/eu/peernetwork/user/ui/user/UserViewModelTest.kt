@@ -49,45 +49,50 @@ internal class UserViewModelTest {
 
     @Test
     fun `test get user success`() = runTest {
+        val id = "<test-id>"
         val mockData = mockk<UiAccount>(relaxed = true)
+        val timestamp = System.currentTimeMillis()
         coEvery { usecase(any()) } returns mockk(relaxed = true)
         coEvery { observeAuthUserUsecase() } returns flowOf(mockData)
         coEvery { userUsecase(any()) } coAnswers {
             delay(100)
             mockData
         }
-        viewModel.getAccount("<test-id>")
+        viewModel.getAccount(id, timestamp)
         viewModel.state.test {
-            assertEquals(UserViewModel.State.Loading, awaitItem())
-            assertEquals(UserViewModel.State.Success(mockData, true), awaitItem())
+            assertEquals(UserViewModel.State.Loading, awaitItem()[id])
+            assertEquals(UserViewModel.State.Success(mockData, true, timestamp), awaitItem()[id])
         }
     }
 
     @Test
     fun `test get guest user success`() = runTest {
+        val id = "<test-id>"
         val guest = mockk<UiAccount>(relaxed = true)
         val mockUser = mockk<Account>(relaxed = true)
         val mockData = mockk<UiAccount>(relaxed = true)
+        val timestamp = System.currentTimeMillis()
         every { guest.id } returns "<test-guest-id>"
         every { mockUser.id } returns "<test-user-id>"
         coEvery { usecase(any()) } returns mockk(relaxed = true)
         coEvery { authUserUsecase() } returns mockUser
         coEvery { userUsecase(any()) } returns mockData
         coEvery { observeAuthUserUsecase() } returns flowOf(mockUser.mapFromDomain())
-        viewModel.getAccount("<test-id>")
+        viewModel.getAccount(id, timestamp)
         viewModel.state.test {
-            assertEquals(UserViewModel.State.Success(mockData, false), awaitItem())
+            assertEquals(UserViewModel.State.Success(mockData, false, timestamp), awaitItem()[id])
         }
     }
 
     @Test
     fun `test get user error`() = runTest {
+        val id = "<test-id>"
         val error = RuntimeException()
         coEvery { usecase(any()) } returns mockk(relaxed = true)
         coEvery { userUsecase(any()) } throws error
-        viewModel.getAccount("<test-id>")
+        viewModel.getAccount(id)
         viewModel.state.test {
-            assertEquals(UserViewModel.State.Error(error), awaitItem())
+            assertEquals(UserViewModel.State.Error(error), awaitItem()[id])
         }
     }
 }
