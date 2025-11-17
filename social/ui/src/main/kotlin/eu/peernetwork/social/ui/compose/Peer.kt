@@ -51,7 +51,7 @@ fun Peer(
                 text = "@${member.username} $slug".annotate(
                     slug,
                     style = MaterialTheme.typography.bodySmall.toSpanStyle().copy(
-                        color = MaterialTheme.colorScheme.tertiary
+                        color = MaterialTheme.colorScheme.outline
                     )
                 ),
                 style = MaterialTheme.typography.bodyMedium,

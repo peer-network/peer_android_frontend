@@ -36,7 +36,7 @@ import eu.peernetwork.core.ui.design.material.DesignScaffold
 import eu.peernetwork.core.ui.design.material.DesignTitle
 import eu.peernetwork.core.ui.design.material.DesignTitleBarHost
 import eu.peernetwork.core.ui.extension.builder
-import eu.peernetwork.core.ui.theme.PeerTheme
+import eu.peernetwork.core.ui.theme.DesignTheme
 import eu.peernetwork.social.ui.R
 import eu.peernetwork.social.ui.compose.Peer
 import eu.peernetwork.social.ui.compose.SearchItemSkeleton
@@ -156,9 +156,8 @@ fun ReferralScreen(
             header = {
                 Text(
                     text = stringResource(R.string.referrals_title),
-                    style = MaterialTheme.typography.headlineMedium.copy(
-                        color = MaterialTheme.colorScheme.tertiary
-                    ),
+                    color = MaterialTheme.colorScheme.onBackground,
+                    style = MaterialTheme.typography.headlineMedium,
                     modifier = Modifier.padding(
                         vertical = 16.dp,
                         horizontal = 24.dp
@@ -176,11 +175,9 @@ fun ReferralScreen(
 @Preview
 @Composable
 fun PreviewReferralScreen() {
-    PeerTheme {
+    DesignTheme {
         ReferralScreen({
             ReferralHeader(remember { mutableStateOf(false) }) {}
-        }) {
-
-        }
+        }) {}
     }
 }
