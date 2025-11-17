@@ -43,7 +43,6 @@
     <string name="confirmation_label">Confirm</string>
     <string name="token_label">Token</string>
     <string name="address_label">Address</string>
-    <string name="preference_label">Preferences</string>
     <string name="account_label">Account</string>
 
     <string name="posts_label">Publications</string>

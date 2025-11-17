@@ -32,8 +32,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import eu.peernetwork.core.ui.annotation.UiViewModel
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.material.DesignButton
-import eu.peernetwork.core.ui.design.material.DesignPassword
+import eu.peernetwork.core.ui.design.luna.DesignButton
+import eu.peernetwork.core.ui.design.material.DesignIndicatorColors
 import eu.peernetwork.core.ui.design.material.DesignPasswordIndicator
 import eu.peernetwork.core.ui.design.material.DesignPasswordStrength
 import eu.peernetwork.core.ui.design.material.DesignTitle
@@ -41,8 +41,14 @@ import eu.peernetwork.core.ui.design.material.DesignTitleBarHost
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.extension.isValidInput
 import eu.peernetwork.core.ui.extension.passwordStrength
-import eu.peernetwork.core.ui.theme.PeerTheme
+import eu.peernetwork.core.ui.theme.DesignTheme
+import eu.peernetwork.core.ui.theme.PeerAppGreen
+import eu.peernetwork.core.ui.theme.PeerAppLightGreen
+import eu.peernetwork.core.ui.theme.PeerAppRed
+import eu.peernetwork.core.ui.theme.PeerAppYellow
 import eu.peernetwork.user.ui.R
+import eu.peernetwork.user.ui.form.FormError
+import eu.peernetwork.user.ui.form.FormPassword
 
 @Composable
 fun PasswordUpdateScreen(
@@ -92,8 +98,8 @@ fun PasswordUpdateScreen(
     error: State<String?>,
     onSubmit: (String, String) -> Unit
 ) {
-    var currentPassword = remember { TextFieldState() }
-    var password = remember { TextFieldState() }
+    val currentPassword = remember { TextFieldState() }
+    val password = remember { TextFieldState() }
     val validate by remember(currentPassword, password) {
         derivedStateOf {
             currentPassword.isValidInput() &&
@@ -103,7 +109,7 @@ fun PasswordUpdateScreen(
     val handleOnSubmit by rememberUpdatedState(onSubmit)
     Column(
         modifier = Modifier.fillMaxSize()
-            .padding(vertical = 16.dp, horizontal = 24.dp)
+            .padding(16.dp)
             .verticalScroll(rememberScrollState())
     ) {
         Text(
@@ -112,51 +118,49 @@ fun PasswordUpdateScreen(
                 color = MaterialTheme.colorScheme.onBackground,
                 fontWeight = FontWeight.SemiBold
             ),
-            modifier = Modifier.padding(horizontal = 16.dp)
+            modifier = Modifier.padding(horizontal = 8.dp)
         )
-        DesignPassword(
+        FormPassword(
             state = currentPassword,
             enabled = !loading.value,
-            showLabel = error.value != null,
+            hint = stringResource(id = R.string.current_password_label),
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Password,
                 imeAction = ImeAction.Next
             ),
-            placeholder = { Text(stringResource(id = R.string.current_password_label)) },
-            modifier = Modifier.padding(top = 16.dp)
+            modifier = Modifier.padding(top = 12.dp)
         )
-        DesignPassword(
+        FormPassword(
             state = password,
             enabled = !loading.value,
-            showLabel = error.value != null,
+            hint = stringResource(id = R.string.password_update_label),
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Password,
                 imeAction = ImeAction.Next
             ),
-            label = {
-                error.value?.run {
-                    Text(
-                        text = this,
-                        fontSize = MaterialTheme.typography.bodySmall.fontSize,
-                        color = MaterialTheme.colorScheme.error,
-                        modifier = Modifier.padding(horizontal = 16.dp)
-                            .padding(top = 8.dp)
-                    )
-                }
-            },
-            indicator = {
-                DesignPasswordIndicator(
-                    state = password,
-                    space = 8.dp,
-                    width = 24.dp,
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp)
-                        .padding(top = 12.dp)
-                        .height(2.dp)
-                )
-            },
-            placeholder = { Text(stringResource(id = R.string.password_update_label)) },
             modifier = Modifier.padding(top = 12.dp)
+        )
+        DesignPasswordIndicator(
+            state = password,
+            space = 4.dp,
+            width = 24.dp,
+            colors = DesignIndicatorColors(
+                bad = MaterialTheme.colorScheme.outline,
+                weak = PeerAppRed,
+                medium = PeerAppYellow,
+                good = PeerAppYellow,
+                strong = PeerAppLightGreen,
+                excellent = PeerAppGreen,
+            ),
+            modifier = Modifier
+                .padding(top = 10.dp)
+                .padding(horizontal = 18.dp)
+                .height(2.dp)
+        )
+        FormError(
+            error = error,
+            modifier = Modifier.padding(horizontal = 18.dp)
+                .padding(top = 8.dp)
         )
         DesignButton(
             isLoading = loading.value,
@@ -166,7 +170,7 @@ fun PasswordUpdateScreen(
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 16.dp)
+                .padding(vertical = 18.dp)
         ) {
             Text(
                 text = stringResource(R.string.confirmation_label),
@@ -181,7 +185,7 @@ fun PasswordUpdateScreen(
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun PreviewPasswordUpdateScreen() {
-    PeerTheme {
+    DesignTheme {
         PasswordUpdateScreen(
             remember { mutableStateOf(false) },
             remember { mutableStateOf(null) },

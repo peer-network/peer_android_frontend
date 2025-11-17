@@ -97,7 +97,7 @@ fun AccountScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = 24.dp),
+                .padding(horizontal = 16.dp),
             requiresPassword = { models -> it.value.isPasswordRequired(models) }
         ) { model, password ->
             submitted = true

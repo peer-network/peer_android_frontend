@@ -5,10 +5,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,6 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -31,16 +35,17 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import eu.peernetwork.core.ui.annotation.UiViewModel
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.material.DesignButton
-import eu.peernetwork.core.ui.design.material.DesignPassword
-import eu.peernetwork.core.ui.design.material.DesignTextField
+import eu.peernetwork.core.ui.design.luna.DesignButton
+import eu.peernetwork.core.ui.design.luna.DesignTextField
 import eu.peernetwork.core.ui.design.material.DesignTitle
 import eu.peernetwork.core.ui.design.material.DesignTitleBarHost
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.extension.isValidEmail
 import eu.peernetwork.core.ui.extension.isValidInput
-import eu.peernetwork.core.ui.theme.PeerTheme
+import eu.peernetwork.core.ui.theme.DesignTheme
 import eu.peernetwork.user.ui.R
+import eu.peernetwork.user.ui.form.FormError
+import eu.peernetwork.user.ui.form.FormPassword
 
 @Composable
 fun EmailScreen(
@@ -73,7 +78,7 @@ fun EmailScreen(
     DesignTitleBarHost("PasswordResetScreen") {
         titleBar {
             DesignTitle {
-                Text(stringResource(R.string.preference_label))
+                Text(stringResource(R.string.email_label))
             }
         }
     }
@@ -90,8 +95,8 @@ fun EmailScreen(
     error: State<String?>,
     onSubmit: (String, String) -> Unit
 ) {
-    var email = remember { TextFieldState() }
-    var password = remember { TextFieldState() }
+    val email = remember { TextFieldState() }
+    val password = remember { TextFieldState() }
     val handleOnSubmit by rememberUpdatedState(onSubmit)
     val validate by remember(email, password) {
         derivedStateOf {
@@ -99,7 +104,7 @@ fun EmailScreen(
         }
     }
     Column(modifier = Modifier.fillMaxSize()
-        .padding(horizontal = 24.dp, vertical = 16.dp)
+        .padding(horizontal = 16.dp, vertical = 16.dp)
         .verticalScroll(rememberScrollState())
     ) {
         Text(
@@ -108,39 +113,42 @@ fun EmailScreen(
                 color = MaterialTheme.colorScheme.onBackground,
                 fontWeight = FontWeight.SemiBold
             ),
-            modifier = Modifier.padding(horizontal = 16.dp)
+            modifier = Modifier.padding(horizontal = 8.dp)
         )
         DesignTextField(
             state = email,
             enabled = !loading.value,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Email,
-                imeAction = ImeAction.Send
-            ),
-            placeholder = { Text(stringResource(id = R.string.email_label)) },
-            modifier = Modifier.padding(top = 16.dp)
-        )
-        DesignPassword(
-            state = password,
-            enabled = !loading.value,
-            showLabel = error.value != null,
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Password,
                 imeAction = ImeAction.Next
             ),
-            label = {
-                error.value?.run {
-                    Text(
-                        text = this,
-                        fontSize = MaterialTheme.typography.bodySmall.fontSize,
-                        color = MaterialTheme.colorScheme.error,
-                        modifier = Modifier.padding(horizontal = 16.dp)
-                            .padding(top = 8.dp)
-                    )
-                }
+            hint = stringResource(id = R.string.email_label),
+            leading = {
+                Icon(
+                    painter = painterResource(R.drawable.ic_email),
+                    contentDescription = stringResource(id = R.string.email_label),
+                    modifier = Modifier.padding(end = 8.dp)
+                        .size(22.dp),
+                    tint = LocalContentColor.current
+                )
             },
-            placeholder = { Text(stringResource(id = R.string.password_label)) },
+            modifier = Modifier.padding(top = 16.dp)
+        )
+        FormPassword(
+            state = password,
+            enabled = !loading.value,
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Password,
+                imeAction = ImeAction.Done
+            ),
             modifier = Modifier.padding(top = 12.dp)
+                .padding(bottom = 8.dp)
+        )
+        FormError(
+            error = error,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 18.dp)
         )
         DesignButton(
             isLoading = loading.value,
@@ -150,7 +158,7 @@ fun EmailScreen(
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 16.dp)
+                .padding(vertical = 8.dp)
         ) {
             Text(
                 text = stringResource(R.string.confirmation_label),
@@ -165,7 +173,7 @@ fun EmailScreen(
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun PreviewAddressScreen() {
-    PeerTheme {
+    DesignTheme {
         EmailScreen(
             remember { mutableStateOf(false) },
             remember { mutableStateOf(null) },

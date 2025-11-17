@@ -65,14 +65,14 @@ fun VersionPage(
             ) {
                 DesignOutlineButton(
                     onClick = onAppWikiClicked,
-                    minHeight = 42.dp,
+                    minHeight = 48.dp,
                     contentPadding = PaddingValues(horizontal = 16.dp),
                     modifier = Modifier.weight(1f),
                     border = borderStroke
                 ) { Text(stringResource(R.string.app_wiki)) }
                 DesignOutlineButton(
                     onClick = onBackendWikiClicked,
-                    minHeight = 42.dp,
+                    minHeight = 48.dp,
                     contentPadding = PaddingValues(horizontal = 16.dp),
                     modifier = Modifier.weight(1f),
                     border = borderStroke

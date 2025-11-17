@@ -92,7 +92,7 @@ fun SettingsScreen(
     val handleOnNavigate by rememberUpdatedState(onNavigate)
     val referral = stringResource(R.string.referral_name_label)
     val password = stringResource(R.string.password_label)
-    val preference = stringResource(R.string.preference_label)
+    val email = stringResource(R.string.email_label)
     val feedback = stringResource(R.string.feedback_label)
     val introduction = stringResource(R.string.how_it_works_label)
     val releaseNote = stringResource(R.string.release_notes)
@@ -110,8 +110,8 @@ fun SettingsScreen(
         SettingsItem(label = password) {
             handleOnNavigate(password)
         }
-        SettingsItem(label = preference) {
-            handleOnNavigate(preference)
+        SettingsItem(label = email) {
+            handleOnNavigate(email)
         }
         SettingsItem(label = feedback) {
             feedbackSession.longValue = System.currentTimeMillis()

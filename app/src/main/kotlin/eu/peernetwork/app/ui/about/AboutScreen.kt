@@ -27,7 +27,7 @@ import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.material.DesignTitle
 import eu.peernetwork.core.ui.design.material.DesignTitleBarHost
 import eu.peernetwork.core.ui.extension.builder
-import eu.peernetwork.core.ui.theme.PeerTheme
+import eu.peernetwork.core.ui.theme.DesignTheme
 import eu.peernetwork.user.ui.R
 
 @Composable
@@ -78,8 +78,8 @@ fun AboutScreen(
         ) {
             Text(
                 text = stringResource(R.string.about_us_description_label),
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.tertiary
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.outline
             )
             Spacer(modifier = Modifier.height(16.dp))
             Text(
@@ -109,7 +109,7 @@ fun AboutScreen(
             Text(
                 text =  stringResource(R.string.copyright_label),
                 style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.tertiary
+                color = MaterialTheme.colorScheme.outline
             )
             Spacer(modifier = Modifier.height(56.dp))
         }
@@ -119,7 +119,7 @@ fun AboutScreen(
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun PreviewAboutScreen() {
-    PeerTheme {
+    DesignTheme {
         AboutScreen("1.0.0", 0)
     }
 }

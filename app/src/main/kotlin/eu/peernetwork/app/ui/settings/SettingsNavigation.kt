@@ -33,7 +33,7 @@ fun SettingsNavigation(
     val updatedSettings by rememberUpdatedState(settings)
     val referral = stringResource(R.string.referral_name_label)
     val password = stringResource(R.string.password_label)
-    val preference = stringResource(R.string.preference_label)
+    val email = stringResource(R.string.email_label)
     val account = stringResource(R.string.account_label)
     DesignRouter(
         navController = controller,
@@ -70,7 +70,7 @@ fun SettingsNavigation(
                 controller.popBackStack()
             }
         }
-        composable(preference) {
+        composable(email) {
             EmailScreen(provider) {
                 controller.popBackStack()
             }
