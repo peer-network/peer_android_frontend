@@ -139,7 +139,7 @@ fun ProfilePreview(
                 onEvent = {
                     when(it) {
                         is ArticleScreenEvent.Boost -> {
-                            controller.navigate("boost")
+                            controller.navigate("boost/${it.id}")
                         }
                     }
                 },

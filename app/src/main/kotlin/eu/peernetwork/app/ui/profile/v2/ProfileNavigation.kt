@@ -116,7 +116,8 @@ fun ProfileNavigation(
                 viewModelStoreOwner = backStackEntry
             ) }
         }
-        composable("boost") { backStackEntry ->
+        composable("boost/{id}") { backStackEntry ->
+            val id = backStackEntry.arguments?.getString("id") ?: ""
             WindowScreen(
                 provider = component,
                 mode = windowMode,
@@ -124,6 +125,7 @@ fun ProfileNavigation(
                 viewModelStoreOwner = backStackEntry,
             ) {
                 BoostScreen(
+                    id = id,
                     provider = component,
                     viewModelStoreOwner = backStackEntry
                 )
