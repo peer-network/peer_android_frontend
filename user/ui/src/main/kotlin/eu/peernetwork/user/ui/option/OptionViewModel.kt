@@ -23,8 +23,7 @@ class OptionViewModel @Inject constructor(
         viewModelScope.launch {
             _state.tryEmit(State.Loading)
             try {
-                val result = referralUsecase()
-                _state.tryEmit(State.Success(result.mapFromDomain()))
+                _state.tryEmit(State.Success(referralUsecase().mapFromDomain()))
             } catch (error: Throwable) {
                 _state.tryEmit(State.Error(error))
             }

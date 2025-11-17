@@ -142,7 +142,6 @@ fun ProfilePreview(
                     provider = component,
                     viewModelStoreOwner = viewModelStoreOwner,
                     modifier = Modifier.padding(bottom = 8.dp)
-                        .padding(end = 16.dp, start = 24.dp)
                 )
             },
         ) {

@@ -13,6 +13,7 @@ import eu.peernetwork.user.ui.account.Account
 import eu.peernetwork.user.ui.deactivate.Deactivate
 import eu.peernetwork.user.ui.email.Email
 import eu.peernetwork.user.ui.logout.Logout
+import eu.peernetwork.user.ui.user.User
 
 interface Settings : ApplicationProvider {
     fun settingsEvent(): SettingsEvent
@@ -27,6 +28,7 @@ interface Settings : ApplicationProvider {
         modules = [ SettingsModule::class ]
     )
     interface Component : Settings,
+        User,
         Account,
         Update,
         Email,

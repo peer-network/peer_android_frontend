@@ -19,6 +19,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModelStoreOwner
 import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.material.DesignTitle
@@ -29,14 +30,15 @@ import eu.peernetwork.core.ui.theme.DesignTheme
 import eu.peernetwork.core.ui.theme.PeerAppRed
 import eu.peernetwork.social.ui.feedback.FeedbackScreen
 import eu.peernetwork.user.ui.R
-import eu.peernetwork.user.ui.account.AccountScreen
 import eu.peernetwork.user.ui.deactivate.DeactivateScreen
 import eu.peernetwork.user.ui.logout.LogoutScreen
+import eu.peernetwork.user.ui.user.UserBadge
 
 @Composable
 fun SettingsScreen(
     userId: String,
-    provider: UiComponentProvider
+    provider: UiComponentProvider,
+    viewModelStoreOwner: ViewModelStoreOwner
 ) {
     val context = LocalContext.current
     val component = remember {
@@ -52,9 +54,11 @@ fun SettingsScreen(
             onTutorial = { component.settingsEvent().invoke(SettingsEvent.Event.Tutorial) },
             onNavigate = { controller.navigateIfNecessary(it) }
         ) {
-            AccountScreen(component, backstack) {
-                controller.navigateIfNecessary(account)
-            }
+            UserBadge(
+                id = userId,
+                provider = component,
+                viewModelStoreOwner = viewModelStoreOwner
+            ) { controller.navigateIfNecessary(account) }
         }
         DesignTitleBarHost("SettingsScreen") {
             titleBar {

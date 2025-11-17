@@ -11,10 +11,11 @@ import eu.peernetwork.user.ui.usecase.UserUsecase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.collections.plus
 
 @User.Scope
 class UserViewModel @Inject constructor(
@@ -23,25 +24,12 @@ class UserViewModel @Inject constructor(
     private val authUserUsecase: AuthRefreshUsecase,
     private val observerUsecase: ObserveAuthUserUsecase
 ) : ViewModel() {
-    private val _state = MutableStateFlow<State>(State.Empty)
+    private val _state = MutableStateFlow<Map<String, State>>(emptyMap())
 
-    val state: StateFlow<State> = _state.asStateFlow()
-
-    fun initialize() {
-        viewModelScope.launch {
-            observerUsecase().collectLatest {
-                (_state.value as? State.Success?)?.let { state ->
-                    val isConfigurable = it?.id == state.account.id
-                    if (isConfigurable) {
-                        _state.tryEmit(State.Success(state.account, true))
-                    }
-                }
-            }
-        }
-    }
+    val state: StateFlow<Map<String, State>> = _state.asStateFlow()
 
     fun getAccount(id: String) {
-        _state.tryEmit(State.Loading)
+        updateState(id, State.Loading)
         viewModelScope.launch {
             try {
                 val user = observerUsecase().firstOrNull()
@@ -51,11 +39,15 @@ class UserViewModel @Inject constructor(
                     user.id
                 }
                 val account = userUsecase(usecase(id))
-                _state.tryEmit(State.Success(account, principal == account.id))
+                updateState(id, State.Success(account, principal == account.id))
             } catch (error: Throwable) {
-                _state.tryEmit(State.Error(error))
+                updateState(id, State.Error(error))
             }
         }
+    }
+
+    private fun updateState(id: String, state: State) {
+        _state.update { it + (id to state) }
     }
 
     sealed interface State {

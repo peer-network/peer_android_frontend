@@ -20,13 +20,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.extension.builder
-import eu.peernetwork.user.ui.model.UiAccount
-import eu.peernetwork.core.ui.design.compose.DesignStatefulScaffold
-import eu.peernetwork.core.ui.design.compose.DesignStatefulScaffoldState
+import eu.peernetwork.core.ui.design.luna.DesignStream
+import eu.peernetwork.core.ui.design.luna.DesignStreamState
 import eu.peernetwork.core.ui.design.material.DesignOverlay
 import eu.peernetwork.core.ui.design.material.DesignZoom
 import eu.peernetwork.media.core.renderer.ImageView
-import eu.peernetwork.user.ui.compose.ProfileScaffold
 import eu.peernetwork.user.ui.option.OptionScreen
 
 @Composable
@@ -51,21 +49,23 @@ fun UserScreen(
         factory = component.viewModelFactory()
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val localState = remember { derivedStateOf {
+        state[id] ?: UserViewModel.State.Empty
+    } }
     val derivedState = remember(state) { derivedStateOf {
-        when(state) {
-            UserViewModel.State.Empty -> DesignStatefulScaffoldState.Empty
-            UserViewModel.State.Loading -> DesignStatefulScaffoldState.Loading
+        val currentState = localState.value
+        when(currentState) {
+            UserViewModel.State.Empty -> DesignStreamState.Default
+            UserViewModel.State.Loading -> DesignStreamState.Loading
             is UserViewModel.State.Success -> {
-                DesignStatefulScaffoldState.Success(
-                    (state as UserViewModel.State.Success).let {
+                DesignStreamState.Success(
+                    currentState.let {
                         Pair(it.account, it.configurable)
                     }
                 )
             }
             is UserViewModel.State.Error -> {
-                DesignStatefulScaffoldState.Error(
-                    (state as UserViewModel.State.Error).error
-                )
+                DesignStreamState.Error(currentState.error)
             }
         }
     } }
@@ -74,15 +74,19 @@ fun UserScreen(
     val visible = remember(selectedImage.value) {
         mutableStateOf(selectedImage.value != null)
     }
-    DesignStatefulScaffold<Pair<UiAccount, Boolean>>(
+    DesignStream(
         state = derivedState,
-        onRefresh = { viewModel.getAccount(id) },
-        placeholder = { ProfileScaffold(modifier = modifier.padding(end = 8.dp)) },
-        errorContent = { ProfileScaffold(modifier = modifier.padding(end = 8.dp)) }
+        modifier = modifier,
+        loading = { UserSkeleton(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 24.dp)
+                .padding(top = 10.dp)
+        ) }
     ) { data ->
         UserPage(
-            account = data.first,
-            isAdmin = data.second,
+            account = data.value.first,
+            isAdmin = data.value.second,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 24.dp)
@@ -92,12 +96,15 @@ fun UserScreen(
             Box(modifier = Modifier.padding(start = 24.dp)
                 .padding(end = 16.dp)) {
                 OptionScreen(
-                    isAdmin = data.second,
+                    isAdmin = data.value.second,
                     provider = component,
                     viewModelStoreOwner = viewModelStoreOwner,
                     onSettings = onSettings,
                     onMenuClicked = onMenuClicked
-                ) { updatedConnection(data.first.isFollowing to data.first.isFollowed) }
+                ) {
+                    updatedConnection(data.value.first.isFollowing
+                            to data.value.first.isFollowed)
+                }
             }
         }
         DesignOverlay(
@@ -108,7 +115,7 @@ fun UserScreen(
                 component.imageView()(
                     modifier = Modifier,
                     spec = ImageView.Spec(
-                        url = data.first.imageUrl,
+                        url = data.value.first.imageUrl,
                         ratio = null,
                         blur = 500f,
                         contentScale = ContentScale.Crop,
@@ -117,7 +124,7 @@ fun UserScreen(
             }) {
                 component.imageView()(
                     modifier = Modifier,
-                    spec = ImageView.Spec(data.first.imageUrl, null)
+                    spec = ImageView.Spec(data.value.first.imageUrl, null)
                 )
             }
         }
@@ -128,5 +135,9 @@ fun UserScreen(
             requireUpdate.value = false
         }
     }
-    LaunchedEffect(Unit) { viewModel.initialize() }
+    LaunchedEffect(Unit) {
+        if (localState.value is UserViewModel.State.Empty) {
+            viewModel.getAccount(id)
+        }
+    }
 }

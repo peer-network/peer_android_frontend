@@ -24,9 +24,9 @@ class ArticleViewModel @Inject constructor(
     private val usecase: AuthorPostUsecase,
     private val viewUsecase: ViewUsecase
 ) : ViewModel() {
-    private val mutableState = MutableStateFlow<Map<Int, State>>(emptyMap())
+    private val _state = MutableStateFlow<Map<Int, State>>(emptyMap())
 
-    val states: StateFlow<Map<Int, State>> = mutableState.asStateFlow()
+    val states: StateFlow<Map<Int, State>> = _state.asStateFlow()
 
     fun load(
         author: String,
@@ -51,7 +51,7 @@ class ArticleViewModel @Inject constructor(
     }
 
     private fun updateState(tab: Int, state: State) {
-        mutableState.update { it + (tab to state) }
+        _state.update { it + (tab to state) }
     }
 
     fun view(id: String) {

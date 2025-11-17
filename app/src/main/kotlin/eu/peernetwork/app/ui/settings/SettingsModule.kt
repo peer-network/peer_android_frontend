@@ -16,12 +16,21 @@ import eu.peernetwork.user.ui.account.Account
 import eu.peernetwork.user.ui.deactivate.Deactivate
 import eu.peernetwork.user.ui.email.Email
 import eu.peernetwork.user.ui.logout.Logout
+import eu.peernetwork.user.ui.user.User
 
 @Module
 object SettingsModule {
     @Provides
     @Settings.Scope
     fun provideBuilderFactory(factory: UiBuilderFactory): UiComponentProvider.Factory = factory
+
+    @Settings.Scope
+    @Provides
+    @IntoMap
+    @UiBuilder(User.Builder::class)
+    fun provideUserBuilder(component: Settings.Component): UiComponent.Builder {
+        return User.Builder(component)
+    }
 
     @Settings.Scope
     @Provides

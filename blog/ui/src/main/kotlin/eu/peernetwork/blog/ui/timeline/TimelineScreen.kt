@@ -244,18 +244,20 @@ fun TimelineScreen(
                     )
                 }
             }
-            item(key = author) {
-                Column(modifier = Modifier.fillMaxWidth()) {
-                    if (lazyPagingItems.loadState.append is LoadState.Loading) {
-                        DesignLoader {
-                            PostPlaceholder(
-                                contentPaddingValues = PaddingValues(16.dp)
-                            )
+            if (lazyPagingItems.loadState.refresh !is LoadState.Loading) {
+                item(key = author) {
+                    Column(modifier = Modifier.fillMaxWidth()) {
+                        if (lazyPagingItems.loadState.append is LoadState.Loading) {
+                            DesignLoader {
+                                PostPlaceholder(
+                                    contentPaddingValues = PaddingValues(16.dp)
+                                )
+                            }
                         }
+                        Box(modifier = Modifier
+                            .fillMaxWidth()
+                            .height(48.dp))
                     }
-                    Box(modifier = Modifier
-                        .fillMaxWidth()
-                        .height(48.dp))
                 }
             }
         }

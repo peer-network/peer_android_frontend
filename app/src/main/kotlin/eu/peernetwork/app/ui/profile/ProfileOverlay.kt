@@ -90,6 +90,7 @@ fun ProfileOverlay(
                 controller = controller,
                 provider = provider,
                 component = component,
+                viewModelStoreOwner = viewModelStoreOwner,
                 onCancel = { visible.value = false }
             ) { backStackEntry ->
                 val state = (overlayState.value as ProfileOverlayState.Photo)

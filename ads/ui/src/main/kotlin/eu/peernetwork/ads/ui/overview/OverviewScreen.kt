@@ -1,5 +1,6 @@
 package eu.peernetwork.ads.ui.overview
 
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -46,9 +47,17 @@ fun OverviewScreen(
             }
         }
     } }
+    val error = remember { derivedStateOf {
+        (state as? OverviewViewModel.State.Error?)?.error?.message?.let {
+            component.resource().string(it)
+        }
+    } }
     DesignStream(
         state = derivedState,
-        loading = { OverviewSkeleton() }
+        loading = { OverviewSkeleton() },
+        error = { OverviewError {
+            error.value?.let { Text(it) }
+        } }
     ) { OverviewPage() }
     LaunchedEffect(Unit) {
         if (state is OverviewViewModel.State.Default) {

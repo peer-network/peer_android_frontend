@@ -3,6 +3,7 @@ package eu.peernetwork.app.ui.profile
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.lifecycle.ViewModelStoreOwner
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -27,6 +28,7 @@ fun ProfileNavigation(
     controller: NavHostController,
     provider: UiComponentProvider,
     component: Profile.Component,
+    viewModelStoreOwner: ViewModelStoreOwner,
     onCancel: () -> Unit = {},
     content: @Composable (NavBackStackEntry) -> Unit = {},
 ) {
@@ -43,7 +45,7 @@ fun ProfileNavigation(
         composable("content") { updatedContent(it) }
         composable("overlay") { updatedContent(it) }
         composable(
-            "profile/{id}",
+            route = "profile/{id}",
             arguments = listOf(navArgument("id") { this.type = NavType.StringType })
         ) { backStackEntry ->
             val id = backStackEntry.arguments?.getString("id") ?: ""
@@ -67,7 +69,7 @@ fun ProfileNavigation(
                 mode = windowMode,
                 onCancel = onCancel,
                 viewModelStoreOwner = backStackEntry,
-            ) { SettingsScreen(userId, component) }
+            ) { SettingsScreen(userId, component, viewModelStoreOwner) }
         }
         composable(
             route = "search/{type}/{query}",

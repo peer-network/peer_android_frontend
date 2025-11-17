@@ -50,7 +50,8 @@ fun AdvertsItem(
                 .clip(RoundedCornerShape(16.dp))
                 .background(MaterialTheme.colorScheme.surfaceDim)
         ) { updatedContent() }
-        Column(modifier = Modifier.padding(horizontal = 12.dp)) {
+        Column(modifier = Modifier.padding(start = 12.dp)
+            .padding(end = 6.dp)) {
             Box(
                 contentAlignment = Alignment.BottomStart,
                 modifier = Modifier.fillMaxWidth()
