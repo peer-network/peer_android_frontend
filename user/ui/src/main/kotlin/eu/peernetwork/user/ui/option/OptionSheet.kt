@@ -17,6 +17,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import eu.peernetwork.core.ui.design.luna.DesignItem
 import eu.peernetwork.core.ui.design.material.DesignBottomSheetScaffold
 import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.user.ui.R
@@ -59,14 +60,16 @@ fun OptionSheet(
             .padding(bottom = 24.dp)
             .navigationBarsPadding()
     ) {
-        OptionItem(
+        DesignItem(
             label = stringResource(R.string.ads_label),
             painter = painterResource(R.drawable.ic_ads),
             onClick = onMenuClicked
         )
-        OptionItem(
+        DesignItem(
             label = stringResource(R.string.cancel_text),
+            painter = painterResource(R.drawable.ic_cancel),
             color = MaterialTheme.colorScheme.error,
+            tint = MaterialTheme.colorScheme.error,
             onClick = onCancel
         )
     }

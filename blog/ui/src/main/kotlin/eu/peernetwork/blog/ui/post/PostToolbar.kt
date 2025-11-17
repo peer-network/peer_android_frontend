@@ -44,6 +44,7 @@ fun PostToolbar(
     accent: Color = MaterialTheme.colorScheme.surfaceVariant,
     onAuthorClick: () -> Unit,
     onPin: (() -> Unit)? = null,
+    onMenu: () -> Unit,
     connection: @Composable RowScope.() -> Unit
 ) {
     val updatedConnection by rememberUpdatedState(connection)
@@ -57,7 +58,7 @@ fun PostToolbar(
             DesignImage(
                 label = username,
                 imageUrl = imageUrl,
-                size = 34.dp,
+                size = 36.dp,
                 color = color,
                 style = MaterialTheme.typography.bodyMedium.copy(
                     color = MaterialTheme.colorScheme.onBackground
@@ -90,7 +91,11 @@ fun PostToolbar(
             )
         }
         updatedConnection()
-        PostHeaderOption(accent, onPin)
+        PostHeaderOption(
+            color = accent,
+            onPin = onPin,
+            onMenu = onMenu
+        )
     }
 }
 
@@ -98,11 +103,12 @@ fun PostToolbar(
 private fun PostHeaderOption(
     color: Color = MaterialTheme.colorScheme.surfaceVariant,
     onPin: (() -> Unit)? = null,
+    onMenu: () -> Unit
 ) {
     val handleOnPin by rememberUpdatedState(onPin)
     if (handleOnPin != null) {
         IconButton(
-            onClick = {},
+            onClick = { handleOnPin?.invoke() },
             modifier = Modifier.padding(horizontal = 8.dp)
                 .size(32.dp),
             colors = IconButtonColors(
@@ -123,7 +129,7 @@ private fun PostHeaderOption(
         Spacer(modifier = Modifier.width(8.dp))
     }
     IconButton(
-        onClick = {},
+        onClick = onMenu,
         modifier = Modifier.size(32.dp),
     ) {
         Icon(
@@ -145,8 +151,9 @@ fun PreviewPostHeader() {
             imageUrl = "http://localhost",
             modifier = Modifier
                 .padding(horizontal = 16.dp)
-                .padding(vertical = 10.dp),
-            onAuthorClick = {}
+                .padding(vertical = 8.dp),
+            onAuthorClick = {},
+            onMenu = {}
         ) {
             DesignButton(
                 minHeight = 32.dp,

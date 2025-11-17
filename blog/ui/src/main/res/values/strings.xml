@@ -12,6 +12,11 @@
     <string name="follow_label">Follow</string>
     <string name="following_label">Following</string>
     <string name="follower_label">Followers</string>
+    <string name="report_label">Report</string>
+    <string name="share_label">Share</string>
+    <string name="share_option_label">Share via</string>
+    <string name="boost_label">Boost post</string>
+    <string name="cancel_label">Cancel</string>
 
     <string name="now_label">Just now</string>
     <string name="minute_label">%d minutes ago</string>

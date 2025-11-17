@@ -3,6 +3,7 @@ package eu.peernetwork.app.ui.profile
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
+import eu.peernetwork.ads.ui.boost.Boost
 import eu.peernetwork.ads.ui.dashboard.Dashboard
 import eu.peernetwork.app.ui.renderer.EngagementRenderer
 import eu.peernetwork.app.ui.search.Search
@@ -117,7 +118,15 @@ object ProfileModule {
     @Provides
     @IntoMap
     @UiBuilder(Dashboard.Builder::class)
-    fun provideBoostBuilder(component: Profile.Component): UiComponent.Builder {
+    fun provideDashboardBuilder(component: Profile.Component): UiComponent.Builder {
         return Dashboard.Builder(component)
+    }
+
+    @Profile.Scope
+    @Provides
+    @IntoMap
+    @UiBuilder(Boost.Builder::class)
+    fun provideBoostBuilder(component: Profile.Component): UiComponent.Builder {
+        return Boost.Builder(component)
     }
 }

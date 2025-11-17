@@ -1,6 +1,7 @@
 package eu.peernetwork.app.ui.profile
 
 import android.content.Context
+import eu.peernetwork.ads.ui.boost.Boost
 import eu.peernetwork.ads.ui.dashboard.Dashboard
 import eu.peernetwork.app.provider.ApplicationProvider
 import eu.peernetwork.app.ui.search.Search
@@ -41,6 +42,7 @@ interface Profile : ApplicationProvider {
         Connection,
         Confirmation,
         Dashboard,
+        Boost,
         Window
 
     class Builder(private val dependency: Profile) : UiComponent.DefaultBuilder<Profile, Component>() {

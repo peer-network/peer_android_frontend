@@ -39,11 +39,13 @@ fun PostScaffold(
     model: UiPost.Detail,
     onPin: (() -> Unit)? = null,
     pinnedBy: String? = null,
+    onMenu: () -> Unit,
     engagement: @Composable () -> Unit,
     connection: @Composable RowScope.() -> Unit,
 ) {
     PostScaffold(
         model = model,
+        onMenu = onMenu,
         engagement = engagement,
         pinnedBy = pinnedBy,
         onPin = onPin,
@@ -74,6 +76,7 @@ fun PostScaffold(
     model: UiPost.Detail,
     pinnedBy: String? = null,
     onPin: (() -> Unit)? = null,
+    onMenu: () -> Unit,
     engagement: @Composable () -> Unit,
     connection: @Composable RowScope.() -> Unit,
     background: @Composable BoxScope.() -> Unit = { PostScaffoldBackground() },
@@ -92,6 +95,7 @@ fun PostScaffold(
                 color = MaterialTheme.colorScheme.surfaceContainerLow,
                 modifier = Modifier.padding(12.dp),
                 onAuthorClick = {},
+                onMenu = onMenu,
                 onPin = onPin,
                 connection = connection
             )
@@ -117,7 +121,7 @@ fun PostScaffold(
 
 @Composable
 fun BoxScope.PostScaffoldBackground(
-    color: Color = MaterialTheme.colorScheme.surfaceContainerLowest
+    color: Color = MaterialTheme.colorScheme.surfaceDim
 ) {
     Box(modifier = Modifier.fillMaxSize()
         .padding(vertical = 7.dp)
@@ -132,6 +136,7 @@ fun PostMediaScaffold(
     model: UiPost.Detail,
     pinnedBy: String? = null,
     onPin: (() -> Unit)? = null,
+    onMenu: () -> Unit,
     engagement: @Composable () -> Unit,
     connection: @Composable RowScope.() -> Unit,
     content: @Composable () -> Unit
@@ -145,13 +150,14 @@ fun PostMediaScaffold(
             accent = MaterialTheme.colorScheme.surfaceContainerLow,
             modifier = Modifier
                 .padding(horizontal = 24.dp)
-                .padding(vertical = 12.dp),
+                .padding(vertical = 10.dp),
             onAuthorClick = {},
+            onMenu = onMenu,
             onPin = onPin,
             connection = connection
         )
         Box(
-            modifier = Modifier.background(MaterialTheme.colorScheme.surfaceContainerLowest)
+            modifier = Modifier.background(MaterialTheme.colorScheme.surfaceDim)
         ) { updatedContent() }
         PostStatus(
             username = model.username,
@@ -193,6 +199,7 @@ fun PreviewUserOption() {
             Spacer(modifier = Modifier.height(8.dp))
             PostScaffold(
                 model = model,
+                onMenu = {},
                 engagement = { EngagementOption(engagement) {} }
             ) {
                 DesignButton(
@@ -205,8 +212,9 @@ fun PreviewUserOption() {
             }
             PostScaffold(
                 model = model,
-                engagement = { EngagementOption(engagement) {} },
                 onPin = {},
+                onMenu = {},
+                engagement = { EngagementOption(engagement) {} },
                 pinnedBy = "Thomas",
                 connection = {
                     DesignButton(
@@ -224,6 +232,7 @@ fun PreviewUserOption() {
             PostMediaScaffold(
                 model = model,
                 pinnedBy = "Thomas",
+                onMenu = {},
                 engagement = { EngagementOption(engagement) {} },
                 connection = {
                     DesignButton(

@@ -134,6 +134,7 @@ fun TimelineScreen(
                             state = event.observe()
                         ) { event(post, it) }
                     },
+                    onMenu = {},
                     connection = {
                         updatedConnection(
                             Triple(
@@ -238,6 +239,7 @@ fun TimelineScreen(
                         pinnedBy = null,
                         model = post.mapToDetail(),
                         media = post.media,
+                        onMenu = {},
                         engagement = { updatedEngagement(post) },
                         connection = { updatedConnection(post) },
                         content = { path -> updatedContent(post, path, index) }

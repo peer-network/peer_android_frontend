@@ -26,7 +26,11 @@ class ArticleViewModel @Inject constructor(
 ) : ViewModel() {
     private val _state = MutableStateFlow<Map<Int, State>>(emptyMap())
 
+    private val _status = MutableStateFlow<Map<String, Status>>(emptyMap())
+
     val states: StateFlow<Map<Int, State>> = _state.asStateFlow()
+
+    val status: StateFlow<Map<String, Status>> = _status.asStateFlow()
 
     fun load(
         author: String,
@@ -57,11 +61,24 @@ class ArticleViewModel @Inject constructor(
     fun view(id: String) {
         viewModelScope.launch {
             try {
+                updateStatus(id, Status.Loading)
                 viewUsecase(id)
+                updateStatus(id, Status.Success(id))
             } catch (error: Throwable) {
-                error.printStackTrace()
+                updateStatus(id, Status.Error(error))
             }
         }
+    }
+
+    private fun updateStatus(id: String, status: Status) {
+        _status.update { it + (id to status) }
+    }
+
+    sealed interface Status {
+        data object Empty : Status
+        data object Loading : Status
+        data class Success<T>(val data: T) : Status
+        data class Error(val error: Throwable) : Status
     }
 
     sealed interface State {

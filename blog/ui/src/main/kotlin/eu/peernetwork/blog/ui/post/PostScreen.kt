@@ -22,7 +22,8 @@ import eu.peernetwork.blog.ui.model.UiMedia
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.model.UiPost.Type
 import eu.peernetwork.blog.ui.model.UiReaction
-import eu.peernetwork.blog.ui.moderation.ModerationScreen
+import eu.peernetwork.blog.ui.moderation.v2.ModerationScreen
+import eu.peernetwork.blog.ui.moderation.v2.ModerationScreenEvent
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.extension.builder
 import kotlinx.collections.immutable.ImmutableList
@@ -35,7 +36,7 @@ fun PostScreen(
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
     connection: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit,
-    content: @Composable (Post.Component, EngagementOption, State<Int>) -> Unit
+    content: @Composable (Post.Component, EngagementOption, ModerationScreenEvent, State<Int>) -> Unit
 ) {
     val context = LocalContext.current
     val component = remember {
@@ -57,19 +58,16 @@ fun PostScreen(
             override fun observe(): State<Map<String, UiReaction>> = engagement.observe()
             override fun invoke(post: UiPost, state: EngagementOption.State) {
                 when (state) {
-                    EngagementOption.State.Like -> {
-                        engagement(EngagementObserver.State.Like(
+                    EngagementOption.State.Like -> engagement(
+                        EngagementObserver.State.Like(
                             id = post.id,
                             author = post.author.id,
                             message = post.title.text
-                        ))
-                    }
-                    EngagementOption.State.Dislike -> {
-                        engagement(EngagementObserver.State.Dislike(post.id))
-                    }
-                    EngagementOption.State.Comment -> {
-                        engagement(EngagementObserver.State.Comment(post.id))
-                    }
+                    ))
+                    EngagementOption.State.Dislike -> engagement(
+                        EngagementObserver.State.Dislike(post.id))
+                    EngagementOption.State.Comment ->engagement(
+                        EngagementObserver.State.Comment(post.id))
                     EngagementOption.State.View -> {
                         engagement(EngagementObserver.State.View(post.id))
                     }
@@ -84,7 +82,7 @@ fun PostScreen(
                 listState = listState,
                 onFocused = { current.intValue = it },
                 onFocus = { position -> }
-            ) { updatedContent(component, event, it) }
+            ) { updatedContent(component, event, moderation, it) }
         }
     }
 }
@@ -96,6 +94,7 @@ fun PostScreen(
     model: UiPost.Detail,
     media: ImmutableList<UiMedia>,
     onPin: (() -> Unit)? = null,
+    onMenu: () -> Unit,
     engagement: @Composable () -> Unit,
     connection: @Composable RowScope.() -> Unit,
     content: @Composable (String) -> Unit
@@ -106,6 +105,7 @@ fun PostScreen(
             model = model,
             pinnedBy = pinnedBy,
             onPin = onPin,
+            onMenu = onMenu,
             engagement = engagement,
             connection = connection,
         )
@@ -114,6 +114,7 @@ fun PostScreen(
             model = model,
             pinnedBy = pinnedBy,
             onPin = onPin,
+            onMenu = onMenu,
             connection = connection,
             engagement = engagement
         ) {

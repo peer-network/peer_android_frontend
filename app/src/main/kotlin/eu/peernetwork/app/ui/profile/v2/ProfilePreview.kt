@@ -1,4 +1,4 @@
-package eu.peernetwork.app.ui.profile
+package eu.peernetwork.app.ui.profile.v2
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -32,14 +32,14 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
-import eu.peernetwork.app.extension.navigateToTagSearch
-import eu.peernetwork.app.extension.navigateToUsernameSearch
+import eu.peernetwork.app.ui.profile.Profile
+import eu.peernetwork.app.ui.profile.ProfileOverlayState
+import eu.peernetwork.app.ui.profile.ProfileSheet
 import eu.peernetwork.blog.domain.usecase.PostUsecase
-import eu.peernetwork.blog.ui.event.UiPostListener
 import eu.peernetwork.blog.ui.article.ArticleScreen
+import eu.peernetwork.blog.ui.article.ArticleScreenEvent
 import eu.peernetwork.core.ui.R
-import eu.peernetwork.core.ui.design.compose.DesignRefreshableScaffold
-import eu.peernetwork.core.ui.design.compose.DesignStatefulScaffoldState
+import eu.peernetwork.core.ui.design.luna.DesignRefreshScaffold
 import eu.peernetwork.core.ui.design.material.DesignScaffold
 import eu.peernetwork.core.ui.design.luna.DesignTab
 import eu.peernetwork.core.ui.design.material.DesignTitle
@@ -83,30 +83,6 @@ fun ProfilePreview(
         viewModelStoreOwner = viewModelStoreOwner
     ) { connectionController ->
         val connectionState by connectionController.value.observe().collectAsStateWithLifecycle()
-        val event = remember {
-            object : UiPostListener {
-                override fun invoke(event: UiPostListener.Event) {
-                    when(event) {
-                        is UiPostListener.Event.Mention -> {
-                            controller.navigateToUsernameSearch(event.username)
-                        }
-                        is UiPostListener.Event.Hashtag -> {
-                            controller.navigateToTagSearch(event.tag)
-                        }
-                        is UiPostListener.Event.Author -> {
-                            controller.navigateIfNecessary("profile/${event.id}")
-                        }
-                        is UiPostListener.Event.Post -> {
-                            state.value = ProfileOverlayState.Photo(
-                                id = event.id,
-                                position = event.position,
-                                page = pageState.currentPage
-                            )
-                        }
-                    }
-                }
-            }
-        }
         ProfilePreview(
             pageState = pageState,
             onRefresh = {
@@ -160,7 +136,13 @@ fun ProfilePreview(
                 requireUpdate = requirePostUpdate,
                 provider = component,
                 viewModelStoreOwner = viewModelStoreOwner,
-                onEvent = { },
+                onEvent = {
+                    when(it) {
+                        is ArticleScreenEvent.Boost -> {
+                            controller.navigate("boost")
+                        }
+                    }
+                },
                 listState =  if (it == 0) {
                     postState
                 } else {
@@ -203,14 +185,11 @@ fun ProfilePreview(
     header: @Composable (State<Float>) -> Unit,
     content: @Composable (Int) -> Unit
 ) {
-    val state = remember {
-        mutableStateOf(DesignStatefulScaffoldState.Success(Unit))
-    }
+    val isRefreshing = remember { mutableStateOf(false) }
     val updatedHeader by rememberUpdatedState(header)
     val updatedContent by rememberUpdatedState(content)
-    DesignRefreshableScaffold<Unit>(
-        state = state,
-        modifier = Modifier.fillMaxSize(),
+    DesignRefreshScaffold(
+        isRefreshing = isRefreshing,
         onRefresh = onRefresh
     ) {
         DesignScaffold(

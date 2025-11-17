@@ -53,14 +53,16 @@ fun PostList(
                 val mostVisible = visibleItems
                     .maxByOrNull { item ->
                         val visibleHeight = (minOf(item.offset + item.size,
-                            listState.layoutInfo.viewportEndOffset) - maxOf(item.offset, 0))
+                            listState.layoutInfo.viewportEndOffset
+                        ) - maxOf(item.offset, 0))
                         visibleHeight.toFloat() / item.size
                     }
                 val newPosition = when {
                     mostVisible == null -> listState.firstVisibleItemIndex
                     (mostVisible.let { item ->
                         val visibleHeight = (minOf(item.offset + item.size,
-                            listState.layoutInfo.viewportEndOffset) - maxOf(item.offset, 0))
+                            listState.layoutInfo.viewportEndOffset
+                        ) - maxOf(item.offset, 0))
                         visibleHeight.toFloat() / item.size > 0.65f
                     }) -> mostVisible.index
                     else -> listState.firstVisibleItemIndex

@@ -82,7 +82,7 @@ fun AdvertScreen(
         provider = component,
         viewModelStoreOwner = viewModelStoreOwner,
         connection = connection
-    ) { postComponent, event, position ->
+    ) { postComponent, event, moderation, position ->
         updatedContent(postComponent, event, position, derivedState)
     }
     LaunchedEffect(Unit) {
@@ -92,6 +92,7 @@ fun AdvertScreen(
 
 fun LazyListScope.advert(
     state: LazyPagingItems<UiPost>,
+    onMenu: () -> Unit,
     engagement: @Composable (UiPost) -> Unit,
     connection: @Composable RowScope.(UiPost) -> Unit,
     content: @Composable (UiPost, String, Int) -> Unit,
@@ -109,6 +110,7 @@ fun LazyListScope.advert(
                 pinnedBy = null,
                 model = post.mapToDetail(),
                 media = post.media,
+                onMenu = onMenu,
                 engagement = { updatedEngagement(post) },
                 connection = { updatedConnection(post) },
                 content = { path -> updatedContent(post, path, index) }
