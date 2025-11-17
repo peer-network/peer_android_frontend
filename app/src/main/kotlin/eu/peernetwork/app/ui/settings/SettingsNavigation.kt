@@ -20,7 +20,7 @@ import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.social.ui.referral.ReferralScreen
 import eu.peernetwork.user.ui.R
 import eu.peernetwork.user.ui.password.update.PasswordUpdateScreen
-import eu.peernetwork.user.ui.account.AccountSettings
+import eu.peernetwork.user.ui.account.AccountScreen
 import eu.peernetwork.user.ui.email.EmailScreen
 
 @Composable
@@ -40,7 +40,7 @@ fun SettingsNavigation(
         startDestination = "settings",
     ) {
         composable("settings") { updatedSettings(it, controller) }
-        composable(account) { AccountSettings(provider, it) }
+        composable(account) { AccountScreen(provider, it) }
         composable(
             "profile/{id}",
             arguments = listOf(navArgument("id") {

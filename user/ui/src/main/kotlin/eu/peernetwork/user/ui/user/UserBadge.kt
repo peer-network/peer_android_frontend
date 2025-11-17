@@ -41,7 +41,6 @@ import eu.peernetwork.core.ui.design.luna.DesignStreamState
 import eu.peernetwork.core.ui.design.material.DesignCard
 import eu.peernetwork.core.ui.design.material.DesignDetail
 import eu.peernetwork.core.ui.theme.DesignTheme
-import eu.peernetwork.user.ui.account.AccountScreen
 
 @Composable
 fun UserBadge(
@@ -91,7 +90,7 @@ fun UserBadge(
                 .padding(top = 10.dp)
         ) }
     ) { data ->
-        AccountScreen(data.value.first.username, onClick = onClick) {
+        UserBadge(data.value.first.username, onClick = onClick) {
             DesignAvatar {
                 DesignImage(
                     label = data.value.first.username,

@@ -3,6 +3,7 @@ package eu.peernetwork.user.ui.user
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -74,9 +75,22 @@ fun UserScreen(
     val visible = remember(selectedImage.value) {
         mutableStateOf(selectedImage.value != null)
     }
+    val error = remember { derivedStateOf {
+        (localState.value as? UserViewModel.State.Error?)?.error?.message?.let {
+            component.resource().string(it)
+        }
+    } }
     DesignStream(
         state = derivedState,
         modifier = modifier,
+        error = { UserError(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 24.dp)
+                .padding(top = 10.dp)
+        ) {
+            error.value?.let { Text(it) }
+        } },
         loading = { UserSkeleton(
             modifier = Modifier
                 .fillMaxWidth()
