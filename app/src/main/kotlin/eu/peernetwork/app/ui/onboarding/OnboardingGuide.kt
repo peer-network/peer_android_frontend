@@ -22,7 +22,7 @@ import eu.peernetwork.app.ui.compose.InteractionCycle
 import eu.peernetwork.app.ui.compose.PostSnapshot
 import eu.peernetwork.app.ui.compose.RewardDiagram
 import eu.peernetwork.core.ui.extension.annotate
-import eu.peernetwork.core.ui.theme.PeerTheme
+import eu.peernetwork.core.ui.theme.DesignTheme
 
 sealed interface OnboardingGuideState {
     data object Introduction : OnboardingGuideState
@@ -116,7 +116,7 @@ private fun OnboardingActionGuide(
             .verticalScroll(rememberScrollState())) {
             Text(
                 text = stringResource(R.string.onboarding_daily_free_pass),
-                color = MaterialTheme.colorScheme.tertiary,
+                color = MaterialTheme.colorScheme.outline,
                 style = MaterialTheme.typography.labelLarge
             )
             Spacer(modifier = Modifier.height(12.dp))
@@ -124,7 +124,7 @@ private fun OnboardingActionGuide(
             Spacer(modifier = Modifier.height(20.dp))
             Text(
                 text = stringResource(R.string.onboarding_want_more),
-                color = MaterialTheme.colorScheme.tertiary,
+                color = MaterialTheme.colorScheme.outline,
                 style = MaterialTheme.typography.labelLarge
             )
             Spacer(modifier = Modifier.height(12.dp))
@@ -141,7 +141,7 @@ private fun OnboardingDiagramGuide(
     val title = stringResource(R.string.onboarding_your_effort_reward)
         .annotate(
             text = "=",
-            style = SpanStyle(color = MaterialTheme.colorScheme.tertiary)
+            style = SpanStyle(color = MaterialTheme.colorScheme.outline)
         )
     val description = stringResource(R.string.onboarding_about)
     OnboardingContentScaffold(
@@ -178,7 +178,7 @@ private fun OnboardingEngagementGuide(
             Spacer(modifier = Modifier.height(16.dp))
             Text(
                 text = stringResource(R.string.onboarding_want_more),
-                color = MaterialTheme.colorScheme.tertiary,
+                color = MaterialTheme.colorScheme.outline,
                 style = MaterialTheme.typography.labelLarge
             )
             Spacer(modifier = Modifier.height(12.dp))
@@ -199,7 +199,7 @@ fun OnboardingFeatureGuide(modifier: Modifier = Modifier) {
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 private fun OnboardingGuidePreview() {
-    PeerTheme {
+    DesignTheme {
         OnboardingIntroductionGuide(
             modifier = Modifier.padding(24.dp)
         )
@@ -209,7 +209,7 @@ private fun OnboardingGuidePreview() {
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 private fun HowOnboardingGuidePreview() {
-    PeerTheme {
+    DesignTheme {
         OnboardingActionGuide(
             actionTokenPrices = mapOf(
                 "post" to 20,
@@ -225,7 +225,7 @@ private fun HowOnboardingGuidePreview() {
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 private fun DiagramOnboardingGuidePreview() {
-    PeerTheme {
+    DesignTheme {
         OnboardingDiagramGuide(
             formatted = "5 000",
             modifier = Modifier.padding(24.dp)
@@ -236,7 +236,7 @@ private fun DiagramOnboardingGuidePreview() {
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 private fun EngageOnboardingGuidePreview() {
-    PeerTheme {
+    DesignTheme {
         OnboardingEngagementGuide(
             formatted = "5,000",
             actionGemsReturns = mapOf(
@@ -253,7 +253,7 @@ private fun EngageOnboardingGuidePreview() {
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 private fun FeatureOnboardingGuidePreview() {
-    PeerTheme {
+    DesignTheme {
         OnboardingFeatureGuide(
             modifier = Modifier.padding(24.dp)
         )

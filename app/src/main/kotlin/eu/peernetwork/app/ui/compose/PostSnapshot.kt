@@ -32,7 +32,7 @@ import eu.peernetwork.blog.ui.compose.PostIcon
 import eu.peernetwork.blog.ui.compose.PostScaffold
 import eu.peernetwork.blog.ui.model.UiAction
 import eu.peernetwork.core.ui.design.luna.DesignAvatar
-import eu.peernetwork.core.ui.theme.PeerTheme
+import eu.peernetwork.core.ui.theme.DesignTheme
 
 @Composable
 fun PostSnapshot(
@@ -90,7 +90,7 @@ fun PostSnapshot(
             Box(
                 modifier = Modifier.fillMaxSize()
                     .background(
-                        MaterialTheme.colorScheme.tertiaryContainer,
+                        MaterialTheme.colorScheme.surfaceDim,
                         RoundedCornerShape(24.dp)
                     )
             ) },
@@ -112,7 +112,7 @@ fun PostSnapshot(
                 style = MaterialTheme.typography.labelLarge.copy(
                     fontWeight = FontWeight.Normal,
                 ),
-                color = MaterialTheme.colorScheme.tertiary,
+                color = MaterialTheme.colorScheme.outline,
                 modifier = Modifier.padding(top = 4.dp)
             )
             Spacer(modifier = Modifier.height(16.dp))
@@ -149,7 +149,7 @@ fun PostSnapshot(
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun PostSnapshotPreview() {
-    PeerTheme {
+    DesignTheme {
         PostSnapshot(Modifier.padding(16.dp))
     }
 }

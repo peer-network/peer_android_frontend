@@ -20,6 +20,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.app.R
+import eu.peernetwork.core.ui.theme.DesignTheme
 import eu.peernetwork.core.ui.theme.PeerAppRed
 import eu.peernetwork.blog.ui.R as BlogRes
 import eu.peernetwork.core.ui.theme.PeerTheme
@@ -29,7 +30,7 @@ fun DailyFreebies() {
     Row(
         modifier = Modifier.fillMaxWidth()
             .clip(RoundedCornerShape(16.dp))
-            .background(MaterialTheme.colorScheme.tertiaryContainer)
+            .background(MaterialTheme.colorScheme.surfaceDim)
             .padding(8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -43,7 +44,7 @@ fun DailyFreebies() {
         )
         Spacer(modifier = Modifier.width(1.dp)
             .height(64.dp)
-            .background(MaterialTheme.colorScheme.onTertiaryContainer))
+            .background(MaterialTheme.colorScheme.surfaceContainerLowest))
         IconLabel(
             size = 24.dp,
             space = 4.dp,
@@ -55,7 +56,7 @@ fun DailyFreebies() {
         )
         Spacer(modifier = Modifier.width(1.dp)
             .height(64.dp)
-            .background(MaterialTheme.colorScheme.onTertiaryContainer))
+            .background(MaterialTheme.colorScheme.surfaceContainerLowest))
         IconLabel(
             size = 24.dp,
             space = 4.dp,
@@ -70,7 +71,7 @@ fun DailyFreebies() {
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun DailyFreebiesPreview() {
-    PeerTheme {
+    DesignTheme {
         Box(modifier = Modifier.fillMaxWidth()
             .padding(24.dp)) {
             DailyFreebies()

@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -24,7 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.app.R
-import eu.peernetwork.core.ui.theme.PeerTheme
+import eu.peernetwork.core.ui.theme.DesignTheme
 
 @Composable
 fun FeatureLabel(
@@ -38,7 +37,7 @@ fun FeatureLabel(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.padding(bottom = spacer)
             .clip(RoundedCornerShape(16.dp))
-            .background(MaterialTheme.colorScheme.tertiaryContainer)
+            .background(MaterialTheme.colorScheme.surfaceDim)
             .padding(
                 vertical = 42.dp,
                 horizontal = 16.dp
@@ -60,7 +59,7 @@ fun FeatureLabel(
             Text(
                 text = it,
                 style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.tertiary,
+                color = MaterialTheme.colorScheme.outline,
                 textAlign = TextAlign.Center
             )
         }
@@ -70,7 +69,7 @@ fun FeatureLabel(
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun FeatureLabelPreview() {
-    PeerTheme {
+    DesignTheme {
         Column(modifier = Modifier.fillMaxSize()
             .padding(24.dp)) {
             Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {

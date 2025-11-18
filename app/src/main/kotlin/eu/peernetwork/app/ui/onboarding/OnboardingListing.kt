@@ -23,6 +23,7 @@ import eu.peernetwork.app.ui.compose.FeatureLabel
 import eu.peernetwork.app.ui.compose.PricingLabel
 import eu.peernetwork.app.R as AppRes
 import eu.peernetwork.blog.ui.R
+import eu.peernetwork.core.ui.theme.DesignTheme
 import eu.peernetwork.core.ui.theme.PeerTheme
 import kotlinx.collections.immutable.persistentListOf
 import kotlin.math.absoluteValue
@@ -167,7 +168,7 @@ fun BoxScope.OnboardingFeatureListing() {
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun OnboardingActionListingPreview() {
-    PeerTheme {
+    DesignTheme {
         OnboardingActionListing(
             actionTokenPrices = mapOf(
                 "post" to 20,
@@ -182,7 +183,7 @@ fun OnboardingActionListingPreview() {
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun OnboardingEngagementListingPreview() {
-    PeerTheme {
+    DesignTheme {
         OnboardingEngagementListing(
             actionGemsReturns = mapOf(
                 "like" to 5.0,
@@ -197,7 +198,7 @@ fun OnboardingEngagementListingPreview() {
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun OnboardingFeatureListingPreview() {
-    PeerTheme {
+    DesignTheme {
         Box { OnboardingFeatureListing() }
     }
 }

@@ -82,7 +82,7 @@ fun PostIcon(
     spacer: Dp = 0.dp,
     padding: PaddingValues = PaddingValues(4.dp),
     orientation: Orientation = Orientation.Horizontal,
-    color: Color = MaterialTheme.colorScheme.tertiary,
+    color: Color = MaterialTheme.colorScheme.outline,
 ) {
     Box(modifier = modifier.padding(padding)) {
         if (orientation == Orientation.Horizontal) {

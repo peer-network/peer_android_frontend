@@ -130,5 +130,6 @@ fun OnboardingScreen(
     }
 }
 
-private fun Int.formatThousands(): String =
-    NumberFormat.getIntegerInstance(Locale.getDefault()).format(this)
+private fun Int.formatThousands(): String {
+    return NumberFormat.getIntegerInstance(Locale.getDefault()).format(this)
+}

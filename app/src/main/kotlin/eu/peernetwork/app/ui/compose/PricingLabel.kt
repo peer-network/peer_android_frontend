@@ -25,7 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.blog.ui.R
-import eu.peernetwork.core.ui.theme.PeerTheme
+import eu.peernetwork.core.ui.theme.DesignTheme
 
 @Composable
 fun PricingLabel(
@@ -41,7 +41,7 @@ fun PricingLabel(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.fillMaxWidth()
             .clip(RoundedCornerShape(32.dp))
-            .background(MaterialTheme.colorScheme.tertiaryContainer)
+            .background(MaterialTheme.colorScheme.surfaceDim)
             .padding(12.dp)
             .padding(vertical = 2.dp)
             .padding(start = 4.dp)
@@ -104,7 +104,7 @@ fun PricingLabel(
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun PricingLabelPreview() {
-    PeerTheme {
+    DesignTheme {
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             PricingLabel(
                 lead = painterResource(R.drawable.ic_like),
