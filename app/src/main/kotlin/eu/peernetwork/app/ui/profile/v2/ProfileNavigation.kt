@@ -10,6 +10,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import eu.peernetwork.ads.ui.boost.BoostScreen
+import eu.peernetwork.ads.ui.checkout.CheckoutScreen
 import eu.peernetwork.ads.ui.dashboard.DashboardScreen
 import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.app.ui.profile.Profile
@@ -21,6 +22,7 @@ import eu.peernetwork.app.ui.window.WindowScreen
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.material.DesignPageWindowMode
 import eu.peernetwork.core.ui.design.material.DesignRouter
+import eu.peernetwork.core.ui.extension.route
 import eu.peernetwork.core.ui.factory.UiViewModelStore
 
 @Composable
@@ -127,9 +129,18 @@ fun ProfileNavigation(
                 BoostScreen(
                     id = id,
                     provider = component,
-                    viewModelStoreOwner = backStackEntry
-                )
+                    viewModelStoreOwner = backStackEntry,
+                    onBack = { controller.popBackStack() }
+                ) { controller.navigate("checkout/${id}") }
             }
+        }
+        composable("checkout/{id}") { backStackEntry ->
+            val id = backStackEntry.arguments?.getString("id") ?: ""
+            CheckoutScreen(
+                id = id,
+                provider = component,
+                viewModelStoreOwner = backStackEntry,
+            ) { controller.route("content") }
         }
     }
 }

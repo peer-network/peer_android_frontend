@@ -4,6 +4,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
 import eu.peernetwork.ads.ui.boost.Boost
+import eu.peernetwork.ads.ui.checkout.Checkout
 import eu.peernetwork.ads.ui.dashboard.Dashboard
 import eu.peernetwork.app.ui.renderer.EngagementRenderer
 import eu.peernetwork.app.ui.search.Search
@@ -128,5 +129,13 @@ object ProfileModule {
     @UiBuilder(Boost.Builder::class)
     fun provideBoostBuilder(component: Profile.Component): UiComponent.Builder {
         return Boost.Builder(component)
+    }
+
+    @Profile.Scope
+    @Provides
+    @IntoMap
+    @UiBuilder(Checkout.Builder::class)
+    fun provideCheckoutBuilder(component: Profile.Component): UiComponent.Builder {
+        return Checkout.Builder(component)
     }
 }

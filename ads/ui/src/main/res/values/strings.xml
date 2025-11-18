@@ -1,3 +1,9 @@
 <resources>
+    <string name="pay_label">Pay</string>
     <string name="boost_label">Boost post</string>
+    <string name="article_configuration_label">Post ads configuration</string>
+    <string name="period_label">Ad period</string>
+
+    <string name="next_label">Next</string>
+    <string name="back_label">Back</string>
 </resources>

@@ -1,4 +1,4 @@
-package eu.peernetwork.ads.ui.checkout
+package eu.peernetwork.ads.ui.article
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -10,9 +10,9 @@ import eu.peernetwork.core.ui.factory.UiViewModelFactory
 import javax.inject.Provider
 
 @Module
-object CheckoutModule {
+object ArticleModule {
     @Provides
-    @Checkout.Scope
+    @Article.Scope
     fun provideViewModelFactory(
         classToViewModel:
         @JvmSuppressWildcards Map<Class<out ViewModel>, Provider<ViewModel>>
@@ -22,7 +22,7 @@ object CheckoutModule {
 
     @Provides
     @IntoMap
-    @Checkout.Scope
-    @UiViewModel(CheckoutViewModel::class)
-    fun provideViewModel(viewModel: CheckoutViewModel): ViewModel = viewModel
+    @Article.Scope
+    @UiViewModel(ArticleViewModel::class)
+    fun provideViewModel(viewModel: ArticleViewModel): ViewModel = viewModel
 }

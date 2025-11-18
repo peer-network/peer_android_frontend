@@ -6,7 +6,7 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import eu.peernetwork.ads.domain.model.Ads
 import eu.peernetwork.ads.domain.model.Filter
-import eu.peernetwork.ads.ui.usecase.AdvertListingUsecase
+import eu.peernetwork.ads.ui.usecase.AdsPagingUsecase
 import eu.peernetwork.core.common.paging.Pageable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,7 +19,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class AdvertsViewModel @Inject constructor(
-    private val usecase: AdvertListingUsecase
+    private val usecase: AdsPagingUsecase
 ) : ViewModel() {
     private val _state = MutableStateFlow<State>(State.Default)
 
@@ -27,7 +27,7 @@ class AdvertsViewModel @Inject constructor(
 
     operator fun invoke(filter: Filter = Filter(), page: Pageable) {
         viewModelScope.launch {
-            usecase(AdvertListingUsecase.Parameter(
+            usecase(AdsPagingUsecase.Parameter(
                 filter = filter,
                 page = page
             )).catch { _state.tryEmit(State.Error(it)) }

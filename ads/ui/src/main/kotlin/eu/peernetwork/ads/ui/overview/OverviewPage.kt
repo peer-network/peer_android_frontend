@@ -17,12 +17,12 @@ fun OverviewPage() {
     Column(modifier = Modifier.fillMaxSize()
         .padding(horizontal = 16.dp)
         .padding(vertical = 12.dp)) {
-        OverviewItem(
+        OverviewLabel(
             label = "Earnings",
             modifier = Modifier.fillMaxWidth()
                 .padding(bottom = 10.dp)
         ) { Text("12") }
-        OverviewItem(
+        OverviewLabel(
             label = "Spendings",
             value = "12",
             modifier = Modifier.fillMaxWidth()

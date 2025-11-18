@@ -8,9 +8,9 @@ import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.core.common.usecase.ParameterizedSuspendableUseCase
 import javax.inject.Inject
 
-class AdvertisementUsecase @Inject constructor(
+class AdsListingUsecase @Inject constructor(
     private val repository: AdvertiserRepository
-) : ParameterizedSuspendableUseCase<AdvertisementUsecase.Parameter, Page<Ads>> {
+) : ParameterizedSuspendableUseCase<AdsListingUsecase.Parameter, Page<Ads>> {
     override suspend fun invoke(param: Parameter): Page<Ads> {
         return repository.getAll(param.filter, param.page)
     }

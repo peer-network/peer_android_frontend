@@ -23,4 +23,8 @@ class AdvertiserRepositoryDelegate @Inject constructor(
     override suspend fun getMetrics(author: String): Metrics {
         return api.getMetrics(author)
     }
+
+    override suspend fun create(id: String) {
+        return api.create(id)
+    }
 }

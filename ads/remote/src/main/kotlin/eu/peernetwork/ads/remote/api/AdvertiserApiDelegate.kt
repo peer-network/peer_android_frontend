@@ -1,7 +1,9 @@
 package eu.peernetwork.ads.remote.api
 
+import ads.ads.eu.peernetwork.ads.remote.AdvertisePostPinnedMutation
 import ads.ads.eu.peernetwork.ads.remote.AdvertisementHistoryQuery
 import ads.type.AdvertisementHistoryFilter
+import ads.type.AdvertisementPinnedPlan
 import com.apollographql.apollo3.api.Optional
 import com.google.gson.Gson
 import eu.peernetwork.ads.data.api.AdvertiserApi
@@ -95,5 +97,14 @@ class AdvertiserApiDelegate @Inject constructor(
         val response = client().query(query).executeOrThrow()
         val data = response.getOrThrow().advertisementHistory
         return data.affectedRows?.stats?.mapToDomain() ?: throw ContentException()
+    }
+
+    override suspend fun create(id: String) {
+        val mutation = AdvertisePostPinnedMutation(
+            postId = id,
+            advertisePlan = AdvertisementPinnedPlan.PINNED
+        )
+        val response = client().mutation(mutation).executeOrThrow()
+        response.getOrThrow().advertisePostPinned
     }
 }

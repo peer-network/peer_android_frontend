@@ -7,16 +7,16 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingSource.LoadResult
 import eu.peernetwork.ads.domain.model.Ads
 import eu.peernetwork.ads.domain.model.Filter
-import eu.peernetwork.ads.domain.usecase.AdvertisementUsecase
+import eu.peernetwork.ads.domain.usecase.AdsListingUsecase
 import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.core.ui.exception.NoContentException
 import eu.peernetwork.core.ui.usecase.PagingUsecase
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class AdvertListingUsecase @Inject constructor(
-    private val usecase: AdvertisementUsecase
-) : PagingUsecase<AdvertListingUsecase.Parameter, Ads>() {
+class AdsPagingUsecase @Inject constructor(
+    private val usecase: AdsListingUsecase
+) : PagingUsecase<AdsPagingUsecase.Parameter, Ads>() {
     private lateinit var param: Parameter
 
     override fun invoke(param: Parameter): Flow<PagingData<Ads>> {
@@ -39,7 +39,7 @@ class AdvertListingUsecase @Inject constructor(
             limit = param.page.limit
         )
         val response = usecase(
-            AdvertisementUsecase.Parameter(
+            AdsListingUsecase.Parameter(
                 filter = param.filter,
                 page = currentPage
             )
