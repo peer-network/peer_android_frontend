@@ -84,7 +84,10 @@ class AdvertiserApiDelegate @Inject constructor(
                     userId = author
                 )
             }
-        }
+        } ?: AdvertisementHistoryFilter(
+            postId = post,
+            userId = author
+        )
         return AdvertisementHistoryQuery(
             filter = Optional.presentIfNotNull(filterBy),
             sort = sortBy,

@@ -52,7 +52,7 @@ fun<T> DesignStream(
     default: @Composable () -> Unit = {},
     loading: @Composable () -> Unit = {},
     error: @Composable (error: State<Throwable>) -> Unit = {},
-    content: @Composable (data: State<T>) -> Unit,
+    content: @Composable (data: State<T>) -> Unit
 ) {
     val infiniteTransition = rememberInfiniteTransition()
     val alpha by infiniteTransition.animateFloat(
