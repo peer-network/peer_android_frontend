@@ -6,8 +6,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModelStoreOwner
+import androidx.navigation.compose.rememberNavController
 import eu.peernetwork.ads.ui.R
-import eu.peernetwork.ads.ui.article.ArticleScreen
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.material.DesignTitle
 import eu.peernetwork.core.ui.design.material.DesignTitleBarHost
@@ -18,21 +18,18 @@ fun BoostScreen(
     id: String,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
-    onBack: () -> Unit,
-    onNext: () -> Unit
+    onDismiss: () -> Unit
 ) {
     val context = LocalContext.current
     val component = remember { provider.builder(Boost.Builder::class.java).build(context) }
-    ArticleScreen(
+    val controller = rememberNavController()
+    BoostNavigation(
         id = id,
-        provider = component,
-        viewModelStoreOwner = viewModelStoreOwner
-    ) {
-        BoostPage(
-            onNext = onNext,
-            onBack = onBack,
-        )
-    }
+        controller = controller,
+        component = component,
+        viewModelStoreOwner = viewModelStoreOwner,
+        onDismiss = onDismiss
+    )
     DesignTitleBarHost("BoostScreen$id", {}) {
         titleBar {
             DesignTitle {

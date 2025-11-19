@@ -1,4 +1,4 @@
-package eu.peernetwork.ads.ui.boost
+package eu.peernetwork.ads.ui.quote
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -27,7 +27,7 @@ import eu.peernetwork.ads.ui.R
 import eu.peernetwork.core.ui.theme.DesignTheme
 
 @Composable
-fun BoostLabel(
+fun QuoteLabel(
     modifier: Modifier = Modifier,
     lead: @Composable () -> Unit,
     trailing: @Composable () -> Unit
@@ -45,7 +45,7 @@ fun BoostLabel(
 }
 
 @Composable
-fun BoostLabel(
+fun QuoteLabel(
     label: String,
     value: String,
     modifier: Modifier = Modifier,
@@ -55,7 +55,7 @@ fun BoostLabel(
         vertical = 14.dp
     )
 ) {
-    BoostLabel(
+    QuoteLabel(
         modifier = Modifier
             .then(modifier)
             .clip(CircleShape)
@@ -92,7 +92,7 @@ fun BoostLabel(
 fun PreviewBoostLabel() {
     DesignTheme(isDarkMode = true) {
         Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            BoostLabel(
+            QuoteLabel(
                 label = "Spendings",
                 value = "12",
                 modifier = Modifier.fillMaxWidth()

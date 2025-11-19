@@ -18,6 +18,7 @@ fun CheckoutScreen(
     id: String,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
+    onBack: () -> Unit,
     onFinish: () -> Unit
 ) {
     val context = LocalContext.current
@@ -33,7 +34,7 @@ fun CheckoutScreen(
     val handleFinish by rememberUpdatedState(onFinish)
     CheckoutPage(
         isLoading = isLoading,
-        onBack = {}
+        onBack = onBack
     ) {
         viewModel.invoke(id)
     }

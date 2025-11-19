@@ -1,8 +1,9 @@
 package eu.peernetwork.ads.ui.boost
 
 import android.content.Context
-import eu.peernetwork.ads.ui.article.Article
+import eu.peernetwork.ads.ui.checkout.Checkout
 import eu.peernetwork.ads.ui.provider.AdsProvider
+import eu.peernetwork.ads.ui.quote.Quote
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
 
@@ -16,7 +17,7 @@ interface Boost : AdsProvider {
         dependencies = [ Boost::class ],
         modules = [ BoostModule::class ]
     )
-    interface Component : Boost, UiComponentProvider, Article
+    interface Component : Boost, UiComponentProvider, Quote, Checkout
 
     class Builder(private val dependency: Boost) : UiComponent.DefaultBuilder<Boost, Component>() {
         override fun build(context: Context): Component {

@@ -1,4 +1,4 @@
-package eu.peernetwork.ads.ui.boost
+package eu.peernetwork.ads.ui.quote
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
@@ -21,7 +21,7 @@ import eu.peernetwork.core.ui.design.luna.DesignOutlineButton
 import eu.peernetwork.core.ui.theme.DesignTheme
 
 @Composable
-fun BoostPage(
+fun QuotePage(
     modifier: Modifier = Modifier,
     onBack: () -> Unit,
     onNext: () -> Unit
@@ -39,21 +39,21 @@ fun BoostPage(
             style = MaterialTheme.typography.labelLarge,
             modifier = Modifier.padding(horizontal = 8.dp)
         )
-        BoostLabel(
+        QuoteLabel(
             label = "Start",
             value = "12",
             modifier = Modifier
                 .padding(top = 12.dp)
                 .fillMaxWidth()
         )
-        BoostLabel(
+        QuoteLabel(
             label = "Duration",
             value = "12",
             modifier = Modifier
                 .padding(top = 12.dp)
                 .fillMaxWidth()
         )
-        BoostLabel(
+        QuoteLabel(
             label = "Shown",
             value = "12",
             modifier = Modifier
@@ -69,7 +69,7 @@ fun BoostPage(
                 .padding(horizontal = 8.dp)
                 .padding(top = 16.dp)
         )
-        BoostLabel(
+        QuoteLabel(
             label = "Total ad cost",
             value = "12",
             modifier = Modifier
@@ -104,7 +104,7 @@ fun BoostPage(
 @Composable
 fun PreviewArticlePage() {
     DesignTheme(isDarkMode = true) {
-        BoostPage(
+        QuotePage(
             modifier = Modifier.padding(vertical = 16.dp),
             onBack = {}
         ) {}
