@@ -4,6 +4,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
 import eu.peernetwork.ads.ui.checkout.Checkout
+import eu.peernetwork.ads.ui.descriptor.Descriptor
 import eu.peernetwork.ads.ui.quote.Quote
 import eu.peernetwork.core.ui.annotation.UiBuilder
 import eu.peernetwork.core.ui.component.UiComponent
@@ -34,5 +35,13 @@ object BoostModule {
     @UiBuilder(Checkout.Builder::class)
     fun provideCheckoutBuilder(component: Boost.Component): UiComponent.Builder {
         return Checkout.Builder(component)
+    }
+
+    @Boost.Scope
+    @Provides
+    @IntoMap
+    @UiBuilder(Descriptor.Builder::class)
+    fun provideDescriptorBuilder(component: Boost.Component): UiComponent.Builder {
+        return Descriptor.Builder(component)
     }
 }

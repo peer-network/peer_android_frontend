@@ -1,6 +1,7 @@
 package eu.peernetwork.ads.domain.repository
 
 import eu.peernetwork.ads.domain.model.Ads
+import eu.peernetwork.ads.domain.model.Description
 import eu.peernetwork.ads.domain.model.Filter
 import eu.peernetwork.ads.domain.model.Metrics
 import eu.peernetwork.core.common.paging.Page
@@ -14,4 +15,6 @@ interface AdvertiserRepository {
     suspend fun getMetrics(author: String): Metrics
 
     suspend fun create(id: String)
+
+    suspend fun description(): Description
 }

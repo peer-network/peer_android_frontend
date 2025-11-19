@@ -2,6 +2,7 @@ package eu.peernetwork.ads.data.repository
 
 import eu.peernetwork.ads.data.api.AdvertiserApi
 import eu.peernetwork.ads.domain.model.Ads
+import eu.peernetwork.ads.domain.model.Description
 import eu.peernetwork.ads.domain.model.Filter
 import eu.peernetwork.ads.domain.model.Metrics
 import eu.peernetwork.ads.domain.repository.AdvertiserRepository
@@ -26,5 +27,9 @@ class AdvertiserRepositoryDelegate @Inject constructor(
 
     override suspend fun create(id: String) {
         return api.create(id)
+    }
+
+    override suspend fun description(): Description {
+        return api.description()
     }
 }

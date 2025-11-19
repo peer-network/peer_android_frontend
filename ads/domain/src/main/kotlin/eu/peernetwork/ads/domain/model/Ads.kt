@@ -9,4 +9,9 @@ data class Ads(
     val cost: BigDecimal,
     val earning: BigDecimal,
     val content: Content
-)
+) {
+    sealed interface Plan {
+        data class Basic(val price: BigDecimal): Plan
+        data class Pinned(val price: BigDecimal): Plan
+    }
+}

@@ -19,9 +19,11 @@ import eu.peernetwork.ads.ui.R
 import eu.peernetwork.core.ui.design.luna.DesignButton
 import eu.peernetwork.core.ui.design.luna.DesignOutlineButton
 import eu.peernetwork.core.ui.theme.DesignTheme
+import java.math.BigDecimal
 
 @Composable
 fun QuotePage(
+    price: BigDecimal,
     modifier: Modifier = Modifier,
     onBack: () -> Unit,
     onNext: () -> Unit
@@ -71,7 +73,7 @@ fun QuotePage(
         )
         QuoteLabel(
             label = "Total ad cost",
-            value = "12",
+            value = "$price",
             modifier = Modifier
                 .padding(top = 12.dp)
                 .fillMaxWidth()
@@ -105,6 +107,7 @@ fun QuotePage(
 fun PreviewArticlePage() {
     DesignTheme(isDarkMode = true) {
         QuotePage(
+            price = BigDecimal(200),
             modifier = Modifier.padding(vertical = 16.dp),
             onBack = {}
         ) {}

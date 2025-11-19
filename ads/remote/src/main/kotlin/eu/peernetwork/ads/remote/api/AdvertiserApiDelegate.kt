@@ -8,26 +8,32 @@ import com.apollographql.apollo3.api.Optional
 import com.google.gson.Gson
 import eu.peernetwork.ads.data.api.AdvertiserApi
 import eu.peernetwork.ads.domain.model.Ads
+import eu.peernetwork.ads.domain.model.Description
 import eu.peernetwork.ads.domain.model.Filter
 import eu.peernetwork.ads.domain.model.Metrics
 import eu.peernetwork.ads.remote.mapper.mapToAds
 import eu.peernetwork.ads.remote.mapper.mapToContent
 import eu.peernetwork.ads.remote.mapper.mapToDomain
 import eu.peernetwork.ads.remote.mapper.sortType
+import eu.peernetwork.ads.remote.model.DescriptionModel
 import eu.peernetwork.core.common.exception.ContentException
 import eu.peernetwork.core.common.paging.Page
 import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.core.remote.api.RequestClient
+import eu.peernetwork.core.remote.exception.NetworkException
 import eu.peernetwork.core.remote.extension.assertOrThrow
 import eu.peernetwork.core.remote.extension.executeOrThrow
 import eu.peernetwork.core.remote.extension.getOrThrow
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import javax.inject.Inject
 import javax.inject.Named
 
 class AdvertiserApiDelegate @Inject constructor(
     private val gson: Gson,
     @Named("mediaUrl") private val url: String,
-    private val client: RequestClient
+    private val client: RequestClient,
+    private val http: OkHttpClient
 ) : AdvertiserApi {
     override suspend fun get(id: String): Ads {
         val filter = Filter(postId = id)
@@ -106,5 +112,16 @@ class AdvertiserApiDelegate @Inject constructor(
         )
         val response = client().mutation(mutation).executeOrThrow()
         response.getOrThrow().advertisePostPinned
+    }
+
+    override suspend fun description(): Description {
+        val request = Request.Builder().url("$url/assets/constants.json").build()
+        val response = http.newCall(request).execute()
+        if (!response.isSuccessful) {
+            throw NetworkException(response.message)
+        }
+        return response.body?.string()?.let {
+            gson.fromJson(it, DescriptionModel::class.java).mapToDomain()
+        } ?: throw ContentException()
     }
 }

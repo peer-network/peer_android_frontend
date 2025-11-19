@@ -8,6 +8,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.navigation.compose.rememberNavController
 import eu.peernetwork.ads.ui.R
+import eu.peernetwork.ads.ui.descriptor.DescriptorScreen
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.material.DesignTitle
 import eu.peernetwork.core.ui.design.material.DesignTitleBarHost
@@ -23,13 +24,19 @@ fun BoostScreen(
     val context = LocalContext.current
     val component = remember { provider.builder(Boost.Builder::class.java).build(context) }
     val controller = rememberNavController()
-    BoostNavigation(
-        id = id,
-        controller = controller,
-        component = component,
-        viewModelStoreOwner = viewModelStoreOwner,
-        onDismiss = onDismiss
-    )
+    DescriptorScreen(
+        provider = component,
+        viewModelStoreOwner = viewModelStoreOwner
+    ) {
+        BoostNavigation(
+            id = id,
+            description = it.value,
+            controller = controller,
+            component = component,
+            viewModelStoreOwner = viewModelStoreOwner,
+            onDismiss = onDismiss
+        )
+    }
     DesignTitleBarHost("BoostScreen$id", {}) {
         titleBar {
             DesignTitle {
