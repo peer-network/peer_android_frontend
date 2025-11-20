@@ -61,14 +61,17 @@ fun ArticleScreen(
         }
     }
     DesignScaffold {
-        DesignStream(derivedState) { targetState ->
+        DesignStream(
+            state = derivedState,
+            loading = { ArticleSkeleton() }
+        ) { targetState ->
             DesignScaffold(
                 modifier = Modifier.statusBarsPadding(),
                 header = {
                     ArticlePage(
                         title = targetState.value.title.annotate(),
                         description = targetState.value.description.annotate(),
-                    ) {}
+                    ) { ArticleMedia(targetState.value.path, component) }
                 }
             ) { updatedContent(targetState.value) }
         }

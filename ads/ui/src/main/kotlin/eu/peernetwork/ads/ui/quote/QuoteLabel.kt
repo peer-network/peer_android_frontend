@@ -47,14 +47,15 @@ fun QuoteLabel(
 @Composable
 fun QuoteLabel(
     label: String,
-    value: String,
     modifier: Modifier = Modifier,
-    color: Color = MaterialTheme.colorScheme.surfaceContainerLowest,
+    color: Color = MaterialTheme.colorScheme.surfaceDim,
     padding: PaddingValues = PaddingValues(
         horizontal = 24.dp,
-        vertical = 14.dp
-    )
+        vertical = 16.dp
+    ),
+    trailing: @Composable () -> Unit
 ) {
+    val updatedTrailing by rememberUpdatedState(trailing)
     QuoteLabel(
         modifier = Modifier
             .then(modifier)
@@ -68,6 +69,25 @@ fun QuoteLabel(
                 color = MaterialTheme.colorScheme.onBackground
             )
         },
+    ) { updatedTrailing() }
+}
+
+@Composable
+fun QuoteLabel(
+    label: String,
+    value: String,
+    modifier: Modifier = Modifier,
+    color: Color = MaterialTheme.colorScheme.surfaceDim,
+    padding: PaddingValues = PaddingValues(
+        horizontal = 24.dp,
+        vertical = 14.dp
+    )
+) {
+    QuoteLabel(
+        label = label,
+        color = color,
+        modifier = modifier,
+        padding = padding
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(

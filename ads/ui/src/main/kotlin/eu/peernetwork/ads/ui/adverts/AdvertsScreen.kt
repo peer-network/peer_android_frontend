@@ -111,7 +111,7 @@ fun AdvertsScreen(
                                 .padding(vertical = 5.dp)
                                 .clickable { handleSelect(post.content.id) }
                         ) {
-                            AdvertsThumbnail(post.content.path, component)
+                            AdvertsMedia(post.content.path, component)
                         }
                     }
                 }

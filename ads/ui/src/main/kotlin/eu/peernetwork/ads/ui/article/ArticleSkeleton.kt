@@ -1,4 +1,4 @@
-package eu.peernetwork.ads.ui.adverts
+package eu.peernetwork.ads.ui.article
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -16,14 +16,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import eu.peernetwork.ads.ui.overview.OverviewSkeleton
 import eu.peernetwork.core.ui.design.luna.DesignSkeleton
 import eu.peernetwork.core.ui.theme.DesignTheme
 
 @Composable
-fun AdvertsSkeleton(modifier: Modifier = Modifier) {
+fun ArticleSkeleton(modifier: Modifier = Modifier) {
     Column {
-        OverviewSkeleton()
         DesignSkeleton(modifier = Modifier.padding(top = 8.dp)
             .padding(horizontal = 16.dp)
             .padding(bottom = 16.dp)
@@ -46,13 +44,33 @@ fun AdvertsSkeleton(modifier: Modifier = Modifier) {
                     .background(MaterialTheme.colorScheme.background)
             )
         }
+        DesignSkeleton(modifier = Modifier.padding(top = 4.dp)
+            .padding(horizontal = 16.dp)
+            .padding(bottom = 16.dp)
+            .padding(horizontal = 8.dp)
+            .fillMaxWidth(fraction = .4f)
+            .height(18.dp)
+            .clip(CircleShape)
+            .background(MaterialTheme.colorScheme.surfaceDim))
+        DesignSkeleton(modifier = Modifier.padding(bottom = 10.dp)
+            .padding(horizontal = 16.dp)
+            .fillMaxWidth()
+            .height(48.dp)
+            .clip(CircleShape)
+            .background(MaterialTheme.colorScheme.surfaceDim))
+        DesignSkeleton(modifier = Modifier.padding(bottom = 10.dp)
+            .padding(horizontal = 16.dp)
+            .fillMaxWidth()
+            .height(48.dp)
+            .clip(CircleShape)
+            .background(MaterialTheme.colorScheme.surfaceDim))
     }
 }
 
 @Preview
 @Composable
-fun PreviewAdvertsSkeleton() {
+fun PreviewArticleSkeleton() {
     DesignTheme(isDarkMode = true) {
-        AdvertsSkeleton()
+        ArticleSkeleton()
     }
 }

@@ -42,28 +42,46 @@ fun QuotePage(
             modifier = Modifier.padding(horizontal = 8.dp)
         )
         QuoteLabel(
-            label = "Start",
-            value = "12",
+            label = stringResource(R.string.start_label),
             modifier = Modifier
                 .padding(top = 12.dp)
                 .fillMaxWidth()
-        )
+        ) {
+            Text(
+                text = stringResource(R.string.advert_start),
+                style = MaterialTheme.typography.labelLarge,
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+        }
         QuoteLabel(
-            label = "Duration",
-            value = "12",
+            label = stringResource(R.string.duration_label),
             modifier = Modifier
                 .padding(top = 12.dp)
                 .fillMaxWidth()
-        )
+        ) {
+            Text(
+                text = stringResource(R.string.advert_duration),
+                style = MaterialTheme.typography.labelLarge,
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+        }
         QuoteLabel(
-            label = "Shown",
-            value = "12",
+            label = stringResource(R.string.adverts_position_label),
             modifier = Modifier
                 .padding(top = 12.dp)
                 .fillMaxWidth()
-        )
+        ) {
+            Text(
+                text = stringResource(R.string.advert_position),
+                style = MaterialTheme.typography.labelLarge,
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+        }
         Text(
-            text = "Billing summary",
+            text = stringResource(R.string.billing_label),
             fontWeight = FontWeight.SemiBold,
             color = MaterialTheme.colorScheme.onBackground,
             style = MaterialTheme.typography.labelLarge,
@@ -72,14 +90,14 @@ fun QuotePage(
                 .padding(top = 16.dp)
         )
         QuoteLabel(
-            label = "Total ad cost",
+            label = stringResource(R.string.advert_total_label),
             value = "$price",
             modifier = Modifier
                 .padding(top = 12.dp)
                 .fillMaxWidth()
         )
         Row(
-            modifier = Modifier.padding(top = 16.dp),
+            modifier = Modifier.padding(top = 18.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             DesignOutlineButton(

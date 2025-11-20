@@ -10,7 +10,7 @@ import eu.peernetwork.media.core.renderer.ImageView
 
 @Composable
 @SuppressLint("UnusedBoxWithConstraintsScope")
-fun AdvertsThumbnail(
+fun AdvertsMedia(
     url: String,
     component: Adverts.Component
 ) {
