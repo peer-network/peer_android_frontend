@@ -1,5 +1,6 @@
 package eu.peernetwork.ads.ui.adverts
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,11 +19,13 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import eu.peernetwork.ads.domain.model.Filter
+import eu.peernetwork.ads.ui.R
 import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.luna.DesignPagingStream
@@ -39,7 +42,7 @@ fun AdvertsScreen(
     limit: Int,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
-    onSelect: () -> Unit,
+    onSelect: (String) -> Unit,
     onBack: () -> Unit,
     content: @Composable () -> Unit
 ) {
@@ -68,6 +71,7 @@ fun AdvertsScreen(
             }
         }
     } }
+    val handleSelect by rememberUpdatedState(onSelect)
     DesignPagingStream(
         state = derivedState,
         error = { error ->
@@ -79,12 +83,10 @@ fun AdvertsScreen(
                 }
             }
         },
-        loading = {
-            AdvertsSkeleton(modifier = Modifier.padding(horizontal = 16.dp)
-                .padding(vertical = 5.dp))
-        }
+        loading = { AdvertsSkeleton() }
     ) { lazyPagingItems ->
         AdvertScreen(
+            total = lazyPagingItems.itemCount,
             header = content,
             onRefresh = {
                 val filter = Filter().copy(author = id)
@@ -104,10 +106,13 @@ fun AdvertsScreen(
                             description = post.content.description.annotate(),
                             from = post.from.toString(),
                             to = post.to.toString(),
-                            status = true,
+                            status = post.status,
                             modifier = Modifier.padding(horizontal = 16.dp)
                                 .padding(vertical = 5.dp)
-                        ) {}
+                                .clickable { handleSelect(post.content.id) }
+                        ) {
+                            AdvertsThumbnail(post.content.path, component)
+                        }
                     }
                 }
             }
@@ -123,6 +128,7 @@ fun AdvertsScreen(
 
 @Composable
 fun AdvertScreen(
+    total: Int,
     onRefresh: () -> Unit,
     header: @Composable () -> Unit,
     content: @Composable () -> Unit
@@ -152,12 +158,12 @@ fun AdvertScreen(
                             .padding(bottom = 10.dp)
                     ) {
                         Text(
-                            "All advertisements",
+                            text = stringResource(R.string.adverts_label),
                             color = MaterialTheme.colorScheme.onBackground,
                             style = MaterialTheme.typography.labelLarge
                         )
                         Text(
-                            "total: 40",
+                            text = stringResource(R.string.advert_total, total),
                             color = MaterialTheme.colorScheme.outline,
                             style = MaterialTheme.typography.labelLarge
                         )

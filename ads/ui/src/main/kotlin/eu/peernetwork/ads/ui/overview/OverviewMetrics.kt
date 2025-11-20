@@ -26,52 +26,54 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import eu.peernetwork.ads.domain.model.Metrics
 import eu.peernetwork.ads.ui.R
 import eu.peernetwork.core.ui.theme.DesignTheme
 
 @Composable
 fun OverviewMetrics(
+    metrics: Metrics,
     modifier: Modifier = Modifier
 ) {
     Row(
         modifier = Modifier.fillMaxWidth()
             .then(modifier)
             .clip(RoundedCornerShape(24.dp))
-            .background(MaterialTheme.colorScheme.surfaceContainerLowest)
+            .background(MaterialTheme.colorScheme.surfaceDim)
             .padding(vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         OverviewMetricsLabel(
-            painter = painterResource(R.drawable.ic_love_outline),
-            label = "300K",
+            painter = painterResource(R.drawable.ic_likes),
+            label = metrics.likes.toString(),
             modifier = Modifier.padding(vertical = 8.dp)
                 .weight(1f)
         )
         OverviewDivider()
         OverviewMetricsLabel(
-            painter = painterResource(R.drawable.ic_love_outline),
-            label = "300K",
+            painter = painterResource(R.drawable.ic_dislikes),
+            label = metrics.dislikes.toString(),
             modifier = Modifier.padding(vertical = 8.dp)
                 .weight(1f)
         )
         OverviewDivider()
         OverviewMetricsLabel(
-            painter = painterResource(R.drawable.ic_love_outline),
-            label = "300K",
+            painter = painterResource(R.drawable.ic_comments),
+            label = metrics.comments.toString(),
             modifier = Modifier.padding(vertical = 8.dp)
                 .weight(1f)
         )
         OverviewDivider()
         OverviewMetricsLabel(
-            painter = painterResource(R.drawable.ic_love_outline),
-            label = "300K",
+            painter = painterResource(R.drawable.ic_views),
+            label = metrics.views.toString(),
             modifier = Modifier.padding(vertical = 8.dp)
                 .weight(1f)
         )
         OverviewDivider()
         OverviewMetricsLabel(
-            painter = painterResource(R.drawable.ic_love_outline),
-            label = "300K",
+            painter = painterResource(R.drawable.ic_reports),
+            label = metrics.report.toString(),
             modifier = Modifier.padding(vertical = 8.dp)
                 .weight(1f)
         )
@@ -114,13 +116,22 @@ private fun OverviewMetricsLabel(
 private fun OverviewDivider() {
     Spacer(modifier = Modifier.width(1.dp)
         .height(48.dp)
-        .background(MaterialTheme.colorScheme.surfaceContainerLow))
+        .background(MaterialTheme.colorScheme.surfaceContainerLowest))
 }
 
 @Preview
 @Composable
 fun PreviewOverviewMetrics() {
     DesignTheme(isDarkMode = true) {
-        OverviewMetrics()
+        val metrics = Metrics(
+            token = 0f,
+            euro = 0f,
+            likes = 1,
+            dislikes = 1,
+            views = 1,
+            comments = 1,
+            report = 1
+        )
+        OverviewMetrics(metrics)
     }
 }

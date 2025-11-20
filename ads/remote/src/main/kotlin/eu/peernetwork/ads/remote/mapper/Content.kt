@@ -10,7 +10,7 @@ fun ContentModel.mapToDomain(): Content {
         id = id,
         title = this.title,
         description = this.description,
-        image = this.image
+        path = this.path
     )
 }
 
@@ -19,7 +19,7 @@ fun AdvertisementHistoryQuery.Advertisement.mapToContent(): ContentModel {
         id = post.id,
         title = post.title,
         description = post.mediadescription,
-        image = post.media
+        path = post.media
     )
 }
 
@@ -28,6 +28,6 @@ fun ContentQuery.AffectedRow.mapToDomain(): Content {
         id = id,
         title = this.title,
         description = this.mediadescription,
-        image = this.media
+        path = this.media
     )
 }

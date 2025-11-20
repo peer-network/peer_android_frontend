@@ -7,4 +7,5 @@ data class Metrics(
     val dislikes: Int,
     val views: Int,
     val comments: Int,
+    val report: Int,
 )

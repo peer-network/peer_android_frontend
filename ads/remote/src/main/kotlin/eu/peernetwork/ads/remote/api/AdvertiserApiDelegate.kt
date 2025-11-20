@@ -6,6 +6,7 @@ import ads.type.AdvertisementHistoryFilter
 import ads.type.AdvertisementPinnedPlan
 import com.apollographql.apollo3.api.Optional
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import eu.peernetwork.ads.data.api.AdvertiserApi
 import eu.peernetwork.ads.domain.model.Ads
 import eu.peernetwork.ads.domain.model.Description
@@ -16,6 +17,7 @@ import eu.peernetwork.ads.remote.mapper.mapToContent
 import eu.peernetwork.ads.remote.mapper.mapToDomain
 import eu.peernetwork.ads.remote.mapper.sortType
 import eu.peernetwork.ads.remote.model.DescriptionModel
+import eu.peernetwork.ads.remote.model.MediaModel
 import eu.peernetwork.core.common.exception.ContentException
 import eu.peernetwork.core.common.paging.Page
 import eu.peernetwork.core.common.paging.Pageable
@@ -57,7 +59,14 @@ class AdvertiserApiDelegate @Inject constructor(
                 status = adds.status,
                 cost = adds.cost,
                 earning = adds.earning,
-                content = content.mapToDomain()
+                content = content.mapToDomain().copy(
+                    path = gson.fromJson<List<MediaModel>>(
+                        content.path,
+                        object : TypeToken<List<MediaModel>>() {}.type
+                    ).map { media ->
+                        media.copy(path = "$url${media.path}")
+                    }.first().path
+                )
             )
         }
         response.assertOrThrow(data.status, data.ResponseCode)

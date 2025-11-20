@@ -42,13 +42,13 @@ fun AdvertsItem(
     Row(modifier = Modifier.fillMaxWidth()
         .then(modifier)
         .clip(RoundedCornerShape(24.dp))
-        .background(MaterialTheme.colorScheme.surfaceContainerLowest)
+        .background(MaterialTheme.colorScheme.surfaceDim)
         .padding(10.dp)) {
         Box(
             modifier = Modifier.height(86.dp)
                 .aspectRatio(1.2f)
                 .clip(RoundedCornerShape(16.dp))
-                .background(MaterialTheme.colorScheme.surfaceDim)
+                .background(MaterialTheme.colorScheme.surfaceContainerLowest)
         ) { updatedContent() }
         Column(modifier = Modifier.padding(start = 12.dp)
             .padding(end = 6.dp)) {
@@ -88,18 +88,20 @@ fun AdvertsItem(
                     color = MaterialTheme.colorScheme.outline,
                     style = MaterialTheme.typography.labelMedium
                 )
-                Box(
-                    modifier = Modifier.padding(start = 6.dp)
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.surfaceDim)
-                        .padding(2.dp)
-                        .padding(horizontal = 6.dp)
-                ) {
-                    Text(
-                        text = "active",
-                        color = PeerAppGreen,
-                        style = MaterialTheme.typography.labelSmall
-                    )
+                if (status) {
+                    Box(
+                        modifier = Modifier.padding(start = 6.dp)
+                            .clip(CircleShape)
+                            .background(MaterialTheme.colorScheme.background)
+                            .padding(2.dp)
+                            .padding(horizontal = 6.dp)
+                    ) {
+                        Text(
+                            text = "active",
+                            color = PeerAppGreen,
+                            style = MaterialTheme.typography.labelSmall
+                        )
+                    }
                 }
             }
         }
@@ -115,7 +117,7 @@ fun PreviewAdvertsItem() {
             description = buildAnnotatedString { append("There’s something about hiking that resets everything. ") },
             from = "8 Jun 2025",
             to = "10 Jun 2025",
-            status = false,
+            status = true,
             modifier = Modifier.padding(12.dp)
         ) {}
     }

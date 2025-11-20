@@ -3,10 +3,15 @@
     <string name="boost_label">Boost post</string>
     <string name="article_configuration_label">Post ads configuration</string>
     <string name="period_label">Ad period</string>
+    <string name="earning_label">Earnings</string>
+    <string name="spending_label">Spendings</string>
+    <string name="interactions_label">Interactions</string>
 
     <string name="next_label">Next</string>
     <string name="back_label">Back</string>
+    <string name="adverts_label">All advertisements</string>
 
     <string name="view_posts">Take me to my posts</string>
+    <string name="advert_total">total: %d</string>
     <string name="promotion_text">You haven’t promoted any posts yet. Start your first promotion to see statistics</string>
 </resources>

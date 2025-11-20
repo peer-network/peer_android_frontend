@@ -105,7 +105,7 @@ fun OverviewLabel(
     label: String,
     value: String,
     modifier: Modifier = Modifier,
-    color: Color = MaterialTheme.colorScheme.surfaceContainerLowest,
+    color: Color = MaterialTheme.colorScheme.surfaceDim,
     padding: PaddingValues = PaddingValues(
         horizontal = 24.dp,
         vertical = 12.dp

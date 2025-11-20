@@ -58,7 +58,7 @@ fun OverviewScreen(
         error = { OverviewError {
             error.value?.let { Text(it) }
         } }
-    ) { OverviewPage() }
+    ) { OverviewPage(it.value) }
     LaunchedEffect(Unit) {
         if (state is OverviewViewModel.State.Default) {
             viewModel(id)

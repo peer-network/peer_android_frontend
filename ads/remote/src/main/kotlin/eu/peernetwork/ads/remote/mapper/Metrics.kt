@@ -6,10 +6,11 @@ import eu.peernetwork.ads.domain.model.Metrics
 fun AdvertisementHistoryQuery.Stats.mapToDomain(): Metrics {
     return Metrics(
         token = tokenSpent.toFloat(),
-        euro = euroSpent.toFloat(),
+        euro = gemsEarned.toFloat(),
         likes = amountLikes,
         dislikes = amountDislikes,
         views = amountViews,
-        comments = amountComments
+        comments = amountComments,
+        report = amountReports
     )
 }

@@ -8,33 +8,39 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import eu.peernetwork.ads.domain.model.Metrics
+import eu.peernetwork.ads.ui.R
 import eu.peernetwork.core.ui.theme.DesignTheme
 
 @Composable
-fun OverviewPage() {
+fun OverviewPage(metrics: Metrics) {
     Column(modifier = Modifier.fillMaxSize()
         .padding(horizontal = 16.dp)
         .padding(vertical = 12.dp)) {
         OverviewLabel(
-            label = "Earnings",
+            label = stringResource(R.string.earning_label),
             modifier = Modifier.fillMaxWidth()
                 .padding(bottom = 10.dp)
-        ) { Text("12") }
+        ) { Text(metrics.euro.toString()) }
         OverviewLabel(
-            label = "Spendings",
-            value = "12",
+            label = stringResource(R.string.spending_label),
+            value = metrics.token.toString(),
             modifier = Modifier.fillMaxWidth()
         )
         Text(
-            text = "Interactions",
+            text = stringResource(R.string.interactions_label),
             color = MaterialTheme.colorScheme.onBackground,
             style = MaterialTheme.typography.labelLarge,
             modifier = Modifier.padding(top = 18.dp)
                 .padding(horizontal = 8.dp)
         )
-        OverviewMetrics(Modifier.padding(top = 14.dp))
+        OverviewMetrics(
+            metrics = metrics,
+            modifier = Modifier.padding(top = 14.dp)
+        )
     }
 }
 
@@ -42,6 +48,15 @@ fun OverviewPage() {
 @Composable
 fun PreviewOverviewPage() {
     DesignTheme(isDarkMode = true) {
-        OverviewPage()
+        val metrics = Metrics(
+            token = 0f,
+            euro = 0f,
+            likes = 1,
+            dislikes = 1,
+            views = 1,
+            comments = 1,
+            report = 1
+        )
+        OverviewPage(metrics)
     }
 }
