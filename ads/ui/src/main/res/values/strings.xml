@@ -6,4 +6,7 @@
 
     <string name="next_label">Next</string>
     <string name="back_label">Back</string>
+
+    <string name="view_posts">Take me to my posts</string>
+    <string name="promotion_text">You haven’t promoted any posts yet. Start your first promotion to see statistics</string>
 </resources>

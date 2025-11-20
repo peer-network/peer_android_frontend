@@ -110,7 +110,8 @@ fun ProfileNavigation(
                 id = principal,
                 limit = BuildConfig.PAGING_LIMIT,
                 provider = component,
-                viewModelStoreOwner = backStackEntry
+                viewModelStoreOwner = backStackEntry,
+                onBack = { controller.popBackStack() }
             ) }
         }
     }

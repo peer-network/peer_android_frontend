@@ -29,6 +29,7 @@ import eu.peernetwork.core.ui.design.luna.DesignPagingStream
 import eu.peernetwork.core.ui.design.luna.DesignRefreshScaffold
 import eu.peernetwork.core.ui.design.luna.DesignStreamState
 import eu.peernetwork.core.ui.design.material.DesignScaffold
+import eu.peernetwork.core.ui.exception.NoContentException
 import eu.peernetwork.core.ui.extension.annotate
 import eu.peernetwork.core.ui.extension.builder
 
@@ -39,6 +40,7 @@ fun AdvertsScreen(
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
     onSelect: () -> Unit,
+    onBack: () -> Unit,
     content: @Composable () -> Unit
 ) {
     val context = LocalContext.current
@@ -69,8 +71,12 @@ fun AdvertsScreen(
     DesignPagingStream(
         state = derivedState,
         error = { error ->
-            error.value.message?.let {
-                Text(component.resource().string(it))
+            if (error.value is NoContentException) {
+                AdvertsEmpty(onClick = onBack)
+            } else {
+                error.value.message?.let {
+                    Text(component.resource().string(it))
+                }
             }
         },
         loading = {
@@ -88,7 +94,9 @@ fun AdvertsScreen(
             LazyColumn(modifier = Modifier.fillMaxSize()) {
                 items(
                     count = lazyPagingItems.itemCount,
-                    key = { index -> lazyPagingItems[index]?.content?.id?.let { "$it;$index" } ?: index }
+                    key = { index ->
+                        lazyPagingItems[index]?.content?.id?.let { "$it;$index" } ?: index
+                    }
                 ) { index ->
                     lazyPagingItems[index]?.let { post ->
                         AdvertsItem(

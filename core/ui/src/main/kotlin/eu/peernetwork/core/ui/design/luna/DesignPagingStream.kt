@@ -49,7 +49,8 @@ fun<T : Any> DesignPagingStream(
             } else if (lazyPagingItems.loadState.refresh is LoadState.Loading) {
                 DesignStreamState.Loading
             } else if (lazyPagingItems.loadState.refresh is LoadState.Error) {
-                DesignStreamState.Error((lazyPagingItems.loadState.refresh as LoadState.Error).error)
+                val error = (lazyPagingItems.loadState.refresh as LoadState.Error).error
+                DesignStreamState.Error(error)
             } else {
                 DesignStreamState.Default
             }

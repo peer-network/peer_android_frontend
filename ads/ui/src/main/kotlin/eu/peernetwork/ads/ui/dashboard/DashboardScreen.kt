@@ -16,7 +16,8 @@ fun DashboardScreen(
     id: String,
     limit: Int,
     provider: UiComponentProvider,
-    viewModelStoreOwner: ViewModelStoreOwner
+    viewModelStoreOwner: ViewModelStoreOwner,
+    onBack: () -> Unit
 ) {
     val context = LocalContext.current
     val component = remember {
@@ -29,7 +30,8 @@ fun DashboardScreen(
             limit = limit,
             navController = controller,
             component = component,
-            viewModelStoreOwner = viewModelStoreOwner
+            viewModelStoreOwner = viewModelStoreOwner,
+            onBack = onBack
         )
     }
 }
@@ -40,14 +42,16 @@ fun DashboardScreen(
     limit: Int,
     navController: NavHostController,
     component: Dashboard.Component,
-    viewModelStoreOwner: ViewModelStoreOwner
+    viewModelStoreOwner: ViewModelStoreOwner,
+    onBack: () -> Unit
 ) {
     AdvertsScreen(
         id = id,
         limit = limit,
         provider = component,
         viewModelStoreOwner = viewModelStoreOwner,
-        onSelect = { navController.navigate("analytics") }
+        onSelect = { navController.navigate("analytics") },
+        onBack = onBack
     ) {
         OverviewScreen(
             id = id,
