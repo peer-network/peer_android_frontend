@@ -119,8 +119,7 @@ fun PreviewAdvertsPost() {
             description = buildAnnotatedString { append("There’s something about hiking that resets everything. ") },
             from = "8 Jun 2025",
             to = "10 Jun 2025",
-            status = true,
-            modifier = Modifier.padding(12.dp)
+            status = true
         ) {}
     }
 }

@@ -1,5 +1,6 @@
 package eu.peernetwork.ads.ui.analytics
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,13 +20,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.ads.ui.R
-import eu.peernetwork.ads.ui.quote.QuoteLabel
 import eu.peernetwork.core.ui.theme.DesignTheme
 
 @Composable
 fun AnalyticsPage(
     title: AnnotatedString,
     description: AnnotatedString,
+    status: Boolean,
     modifier: Modifier = Modifier,
     media: @Composable () -> Unit,
     content: @Composable () -> Unit
@@ -46,14 +47,15 @@ fun AnalyticsPage(
             style = MaterialTheme.typography.labelLarge,
             modifier = Modifier.padding(horizontal = 8.dp)
         )
-        AnalyticsSummery(
+        AnalyticsPost(
             title = title,
             description = description,
+            status = status,
             modifier = Modifier.padding(vertical = 12.dp),
             content = media
         )
         updatedContent()
-        QuoteLabel(
+        AnalyticsLabel(
             label = stringResource(R.string.start_label),
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -64,7 +66,7 @@ fun AnalyticsPage(
                 color = MaterialTheme.colorScheme.onBackground
             )
         }
-        QuoteLabel(
+        AnalyticsLabel(
             label = stringResource(R.string.start_label),
             modifier = Modifier.padding(top = 10.dp)
                 .fillMaxWidth()
@@ -92,7 +94,9 @@ fun PreviewAnalyticsPage() {
         AnalyticsPage(
             title = buildAnnotatedString { append("Title") },
             description = buildAnnotatedString { append("There’s something about hiking that resets everything. ") },
-            modifier = Modifier.padding(12.dp),
+            status = true,
+            modifier = Modifier.background(MaterialTheme.colorScheme.background)
+                .padding(12.dp),
             media = {}
         ) {}
     }

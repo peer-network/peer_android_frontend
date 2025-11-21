@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -15,6 +16,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import eu.peernetwork.ads.ui.overview.OverviewScreen
 import eu.peernetwork.core.ui.component.UiComponentProvider
+import eu.peernetwork.core.ui.design.luna.DesignRefreshScaffold
 import eu.peernetwork.core.ui.design.luna.DesignStream
 import eu.peernetwork.core.ui.design.luna.DesignStreamState
 import eu.peernetwork.core.ui.extension.builder
@@ -48,24 +50,41 @@ fun AnalyticsScreen(
             }
         }
     }
-    DesignStream(derivedState) { target ->
-        AnalyticsPage(
-            title = target.value.ads.content.title.annotate(),
-            description = target.value.ads.content.description.annotate(),
-            media = {
-                AnalyticsMedia(
-                    url = target.value.ads.content.path,
-                    component = component
+    DesignStream(
+        state = derivedState,
+        loading = { AnalyticsSkeleton() },
+        error = {
+            AnalyticsError(
+                error = it,
+                component = component,
+                onRefresh = { viewModel(id) }
+            )
+        }
+    ) { target ->
+        val isRefreshing = remember { mutableStateOf(false) }
+        DesignRefreshScaffold(
+            isRefreshing = isRefreshing,
+            onRefresh = { viewModel(id) }
+        ) {
+            AnalyticsPage(
+                title = target.value.ads.content.title.annotate(),
+                description = target.value.ads.content.description.annotate(),
+                status = target.value.ads.status,
+                media = {
+                    AnalyticsMedia(
+                        url = target.value.ads.content.path,
+                        component = component
+                    )
+                }
+            ) {
+                OverviewScreen(
+                    id = id,
+                    provider = component,
+                    viewModelStoreOwner = viewModelStoreOwner,
+                    modifier = Modifier.fillMaxSize()
+                        .padding(bottom = 12.dp)
                 )
             }
-        ) {
-            OverviewScreen(
-                id = id,
-                provider = component,
-                viewModelStoreOwner = viewModelStoreOwner,
-                modifier = Modifier.fillMaxSize()
-                    .padding(bottom = 16.dp)
-            )
         }
     }
     LaunchedEffect(Unit) {

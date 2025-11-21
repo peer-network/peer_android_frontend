@@ -1,5 +1,6 @@
 package eu.peernetwork.ads.ui.overview
 
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -10,6 +11,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -51,6 +53,7 @@ fun OverviewScreen(
         provider = provider,
         mode = OverviewScreenMode.Article,
         viewModelStoreOwner = viewModelStoreOwner,
+        loading = { OverviewStatisticsSkeleton(modifier = Modifier.padding(bottom = 12.dp)) }
     ) {
         OverviewStatistics(
             metrics = it.value,
