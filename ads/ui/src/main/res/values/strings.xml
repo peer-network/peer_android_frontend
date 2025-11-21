@@ -12,12 +12,14 @@
     <string name="promotion_cost_label">Promotion cost</string>
     <string name="promotion_fee_label">Fees included</string>
 
+    <string name="pin_label">Pin</string>
+    <string name="active_label">active</string>
     <string name="start_label">Start</string>
     <string name="next_label">Next</string>
     <string name="duration_label">Duration</string>
     <string name="back_label">Back</string>
     <string name="adverts_position_label">Shown</string>
-    <string name="adverts_label">All advertisements</string>
+    <string name="adverts_label">All advertisements [%d]</string>
 
     <string name="advert_start">Immediately</string>
     <string name="advert_duration">24 hours</string>
@@ -31,4 +33,6 @@
     <string name="advert_total">total: %d</string>
     <string name="advert_total_label">Total ad cost</string>
     <string name="promotion_text">You haven’t promoted any posts yet. Start your first promotion to see statistics</string>
+
+    <string name="retry_label">Try again</string>
 </resources>

@@ -19,6 +19,11 @@ import eu.peernetwork.core.ui.design.luna.DesignStream
 import eu.peernetwork.core.ui.design.luna.DesignStreamState
 import eu.peernetwork.core.ui.extension.builder
 
+sealed interface OverviewScreenMode {
+    data object Author : OverviewScreenMode
+    data object Article : OverviewScreenMode
+}
+
 @Composable
 fun OverviewScreen(
     id: String,
@@ -27,8 +32,8 @@ fun OverviewScreen(
 ) {
     OverviewScreen(
         id = id,
-        isAuthor = true,
         provider = provider,
+        mode = OverviewScreenMode.Author,
         viewModelStoreOwner = viewModelStoreOwner,
         loading = { OverviewSkeleton() },
     ) { OverviewPage(it.value) }
@@ -43,8 +48,8 @@ fun OverviewScreen(
 ) {
     OverviewScreen(
         id = id,
-        isAuthor = false,
         provider = provider,
+        mode = OverviewScreenMode.Article,
         viewModelStoreOwner = viewModelStoreOwner,
     ) {
         OverviewStatistics(
@@ -57,7 +62,7 @@ fun OverviewScreen(
 @Composable
 fun OverviewScreen(
     id: String,
-    isAuthor: Boolean,
+    mode: OverviewScreenMode,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
     loading: @Composable () -> Unit = {},
@@ -104,7 +109,7 @@ fun OverviewScreen(
     ) { updateContent(it) }
     LaunchedEffect(Unit) {
         if (state is OverviewViewModel.State.Default) {
-            if (isAuthor) {
+            if (mode is OverviewScreenMode.Author) {
                 viewModel.getMetricsByAuthor(id)
             } else {
                 viewModel.getMetricsByAds(id)

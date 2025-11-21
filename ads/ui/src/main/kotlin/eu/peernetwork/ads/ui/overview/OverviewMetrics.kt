@@ -39,7 +39,7 @@ fun OverviewMetrics(
         modifier = Modifier.fillMaxWidth()
             .then(modifier)
             .clip(RoundedCornerShape(24.dp))
-            .background(MaterialTheme.colorScheme.surfaceDim)
+            .background(MaterialTheme.colorScheme.surfaceVariant)
             .padding(vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -90,7 +90,7 @@ private fun OverviewMetricsLabel(
     space: Dp = 8.dp,
     style: TextStyle = MaterialTheme.typography.bodyMedium,
     color: Color = MaterialTheme.colorScheme.onBackground,
-    tint: Color = MaterialTheme.colorScheme.onBackground,
+    tint: Color = MaterialTheme.colorScheme.outline,
 ) {
     Column(
         modifier = modifier,
@@ -116,7 +116,7 @@ private fun OverviewMetricsLabel(
 private fun OverviewDivider() {
     Spacer(modifier = Modifier.width(1.dp)
         .height(48.dp)
-        .background(MaterialTheme.colorScheme.surfaceContainerLowest))
+        .background(MaterialTheme.colorScheme.surfaceContainerLow))
 }
 
 @Preview

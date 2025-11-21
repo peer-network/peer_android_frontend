@@ -20,16 +20,18 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import eu.peernetwork.ads.ui.R
 import eu.peernetwork.core.ui.theme.DesignTheme
 import eu.peernetwork.core.ui.theme.PeerAppGreen
 
 @Composable
-fun AdvertsItem(
+fun AdvertsPost(
     title: AnnotatedString,
     description: AnnotatedString,
     from: String,
@@ -42,15 +44,15 @@ fun AdvertsItem(
     Row(modifier = Modifier.fillMaxWidth()
         .then(modifier)
         .clip(RoundedCornerShape(24.dp))
-        .background(MaterialTheme.colorScheme.surfaceDim)
-        .padding(10.dp)) {
+        .background(MaterialTheme.colorScheme.surfaceVariant)
+        .padding(8.dp)) {
         Box(
             modifier = Modifier.height(86.dp)
                 .aspectRatio(1.2f)
                 .clip(RoundedCornerShape(16.dp))
                 .background(MaterialTheme.colorScheme.surfaceContainerLowest)
         ) { updatedContent() }
-        Column(modifier = Modifier.padding(start = 12.dp)
+        Column(modifier = Modifier.padding(start = 8.dp)
             .padding(end = 6.dp)) {
             Box(
                 contentAlignment = Alignment.BottomStart,
@@ -92,12 +94,12 @@ fun AdvertsItem(
                     Box(
                         modifier = Modifier.padding(start = 6.dp)
                             .clip(CircleShape)
-                            .background(MaterialTheme.colorScheme.background)
-                            .padding(2.dp)
-                            .padding(horizontal = 6.dp)
+                            .background(MaterialTheme.colorScheme.surfaceDim)
+                            .padding(vertical = 2.dp)
+                            .padding(horizontal = 8.dp)
                     ) {
                         Text(
-                            text = "active",
+                            text = stringResource(R.string.active_label),
                             color = PeerAppGreen,
                             style = MaterialTheme.typography.labelSmall
                         )
@@ -110,9 +112,9 @@ fun AdvertsItem(
 
 @Preview
 @Composable
-fun PreviewAdvertsItem() {
+fun PreviewAdvertsPost() {
     DesignTheme(isDarkMode = true) {
-        AdvertsItem(
+        AdvertsPost(
             title = buildAnnotatedString { append("Title") },
             description = buildAnnotatedString { append("There’s something about hiking that resets everything. ") },
             from = "8 Jun 2025",

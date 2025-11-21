@@ -34,12 +34,12 @@ fun OverviewPage(metrics: Metrics) {
             text = stringResource(R.string.interactions_label),
             color = MaterialTheme.colorScheme.onBackground,
             style = MaterialTheme.typography.labelLarge,
-            modifier = Modifier.padding(top = 18.dp)
+            modifier = Modifier.padding(top = 16.dp)
                 .padding(horizontal = 8.dp)
         )
         OverviewMetrics(
             metrics = metrics,
-            modifier = Modifier.padding(top = 14.dp)
+            modifier = Modifier.padding(top = 12.dp)
         )
     }
 }

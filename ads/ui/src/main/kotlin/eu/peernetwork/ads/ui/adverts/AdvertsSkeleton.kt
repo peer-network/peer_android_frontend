@@ -26,9 +26,9 @@ fun AdvertsSkeleton(modifier: Modifier = Modifier) {
         OverviewSkeleton()
         DesignSkeleton(modifier = Modifier.padding(top = 8.dp)
             .padding(horizontal = 16.dp)
-            .padding(bottom = 16.dp)
+            .padding(bottom = 12.dp)
             .padding(horizontal = 8.dp)
-            .fillMaxWidth(fraction = .4f)
+            .fillMaxWidth(fraction = .3f)
             .height(18.dp)
             .clip(CircleShape)
             .background(MaterialTheme.colorScheme.surfaceDim))
@@ -38,7 +38,7 @@ fun AdvertsSkeleton(modifier: Modifier = Modifier) {
             .then(modifier)
             .clip(RoundedCornerShape(24.dp))
             .background(MaterialTheme.colorScheme.surfaceDim)
-            .padding(10.dp)) {
+            .padding(8.dp)) {
             Box(
                 modifier = Modifier.height(86.dp)
                     .aspectRatio(1.2f)

@@ -1,8 +1,7 @@
 package eu.peernetwork.ads.ui.adverts
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -16,10 +15,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -32,7 +31,6 @@ import eu.peernetwork.core.ui.design.luna.DesignPagingStream
 import eu.peernetwork.core.ui.design.luna.DesignRefreshScaffold
 import eu.peernetwork.core.ui.design.luna.DesignStreamState
 import eu.peernetwork.core.ui.design.material.DesignScaffold
-import eu.peernetwork.core.ui.exception.NoContentException
 import eu.peernetwork.core.ui.extension.annotate
 import eu.peernetwork.core.ui.extension.builder
 
@@ -75,12 +73,13 @@ fun AdvertsScreen(
     DesignPagingStream(
         state = derivedState,
         error = { error ->
-            if (error.value is NoContentException) {
-                AdvertsEmpty(onClick = onBack)
-            } else {
-                error.value.message?.let {
-                    Text(component.resource().string(it))
-                }
+            AdvertsError(
+                error = error,
+                component = component,
+                onBack = onBack
+            ) {
+                val filter = Filter().copy(author = id)
+                viewModel(filter, page = Pageable(0, limit))
             }
         },
         loading = { AdvertsSkeleton() }
@@ -93,7 +92,10 @@ fun AdvertsScreen(
                 viewModel(filter, page = Pageable(0, limit))
             }
         ) {
-            LazyColumn(modifier = Modifier.fillMaxSize()) {
+            LazyColumn(
+                contentPadding = PaddingValues(bottom = 36.dp),
+                modifier = Modifier.fillMaxSize()
+            ) {
                 items(
                     count = lazyPagingItems.itemCount,
                     key = { index ->
@@ -101,7 +103,7 @@ fun AdvertsScreen(
                     }
                 ) { index ->
                     lazyPagingItems[index]?.let { post ->
-                        AdvertsItem(
+                        AdvertsPost(
                             title = post.content.title.annotate(),
                             description = post.content.description.annotate(),
                             from = post.from.toString(),
@@ -149,25 +151,22 @@ fun AdvertScreen(
                 alwaysReturn = true,
                 modifier = Modifier.fillMaxSize(),
                 header = {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween,
+                    Text(
+                        text = stringResource(R.string.adverts_label, total)
+                            .annotate(
+                                text = "[$total]",
+                                style = SpanStyle(
+                                    color = MaterialTheme.colorScheme.outline,
+                                    fontSize = MaterialTheme.typography.labelMedium.fontSize
+                                )
+                            ),
+                        color = MaterialTheme.colorScheme.onBackground,
+                        style = MaterialTheme.typography.labelLarge,
                         modifier = Modifier.fillMaxWidth()
                             .padding(horizontal = 24.dp)
-                            .padding(top = 8.dp)
-                            .padding(bottom = 10.dp)
-                    ) {
-                        Text(
-                            text = stringResource(R.string.adverts_label),
-                            color = MaterialTheme.colorScheme.onBackground,
-                            style = MaterialTheme.typography.labelLarge
-                        )
-                        Text(
-                            text = stringResource(R.string.advert_total, total),
-                            color = MaterialTheme.colorScheme.outline,
-                            style = MaterialTheme.typography.labelLarge
-                        )
-                    }
+                            .padding(top = 6.dp)
+                            .padding(bottom = 8.dp)
+                    )
                 }
             ) {  updatedContent() }
         }
