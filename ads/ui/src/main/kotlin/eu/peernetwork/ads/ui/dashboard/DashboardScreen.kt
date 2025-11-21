@@ -50,7 +50,7 @@ fun DashboardScreen(
         limit = limit,
         provider = component,
         viewModelStoreOwner = viewModelStoreOwner,
-        onSelect = { navController.navigate("analytics") },
+        onSelect = { navController.navigate("analytics/$it") },
         onBack = onBack
     ) {
         OverviewScreen(

@@ -5,8 +5,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,20 +34,21 @@ fun CheckoutPage(
 ) {
     Column(
         modifier = Modifier
-            .fillMaxWidth()
+            .fillMaxSize()
             .padding(horizontal = 16.dp)
+            .padding(top = 12.dp)
+            .padding(bottom = 4.dp)
             .then(modifier)
+            .verticalScroll(rememberScrollState())
     ) {
         Text(
-            text = stringResource(R.string.period_label),
+            text = stringResource(R.string.boost_confirmation_label),
             fontWeight = FontWeight.SemiBold,
             color = MaterialTheme.colorScheme.onBackground,
             style = MaterialTheme.typography.labelLarge,
-            modifier = Modifier
-                .padding(horizontal = 8.dp)
-                .padding(bottom = 10.dp)
+            modifier = Modifier.padding(horizontal = 8.dp)
         )
-        CheckoutSummery()
+        CheckoutSummery(modifier = Modifier.padding(vertical = 12.dp))
         Row(
             modifier = Modifier.padding(top = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp)

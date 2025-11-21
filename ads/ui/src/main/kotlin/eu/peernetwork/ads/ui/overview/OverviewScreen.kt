@@ -3,13 +3,17 @@ package eu.peernetwork.ads.ui.overview
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import eu.peernetwork.ads.domain.model.Metrics
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.luna.DesignStream
 import eu.peernetwork.core.ui.design.luna.DesignStreamState
@@ -20,6 +24,44 @@ fun OverviewScreen(
     id: String,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner
+) {
+    OverviewScreen(
+        id = id,
+        isAuthor = true,
+        provider = provider,
+        viewModelStoreOwner = viewModelStoreOwner,
+        loading = { OverviewSkeleton() },
+    ) { OverviewPage(it.value) }
+}
+
+@Composable
+fun OverviewScreen(
+    id: String,
+    provider: UiComponentProvider,
+    viewModelStoreOwner: ViewModelStoreOwner,
+    modifier: Modifier = Modifier
+) {
+    OverviewScreen(
+        id = id,
+        isAuthor = false,
+        provider = provider,
+        viewModelStoreOwner = viewModelStoreOwner,
+    ) {
+        OverviewStatistics(
+            metrics = it.value,
+            modifier = modifier
+        )
+    }
+}
+
+@Composable
+fun OverviewScreen(
+    id: String,
+    isAuthor: Boolean,
+    provider: UiComponentProvider,
+    viewModelStoreOwner: ViewModelStoreOwner,
+    loading: @Composable () -> Unit = {},
+    content: @Composable (State<Metrics>) -> Unit
 ) {
     val context = LocalContext.current
     val component = remember {
@@ -52,16 +94,21 @@ fun OverviewScreen(
             component.resource().string(it)
         }
     } }
+    val updateContent by rememberUpdatedState(content)
     DesignStream(
         state = derivedState,
-        loading = { OverviewSkeleton() },
+        loading = loading,
         error = { OverviewError {
             error.value?.let { Text(it) }
         } }
-    ) { OverviewPage(it.value) }
+    ) { updateContent(it) }
     LaunchedEffect(Unit) {
         if (state is OverviewViewModel.State.Default) {
-            viewModel(id)
+            if (isAuthor) {
+                viewModel.getMetricsByAuthor(id)
+            } else {
+                viewModel.getMetricsByAds(id)
+            }
         }
     }
 }

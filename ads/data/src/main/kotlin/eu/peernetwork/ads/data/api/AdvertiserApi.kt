@@ -12,7 +12,7 @@ interface AdvertiserApi {
 
     suspend fun getAll(filter: Filter, page: Pageable): Page<Ads>
 
-    suspend fun getMetrics(author: String): Metrics
+    suspend fun getMetrics(filter: Filter): Metrics
 
     suspend fun create(id: String)
 

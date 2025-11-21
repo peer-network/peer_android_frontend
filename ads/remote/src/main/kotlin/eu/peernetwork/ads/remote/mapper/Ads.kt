@@ -7,6 +7,7 @@ import java.math.BigDecimal
 fun AdvertisementHistoryQuery.Advertisement.mapToAds(): AdsModel {
     val to = timeframeEnd.mapToTimestamp()
     return AdsModel(
+        id = id,
         from = timeframeStart.mapToTimestamp(),
         to = to,
         status = System.currentTimeMillis() < to,

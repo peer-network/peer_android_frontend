@@ -4,7 +4,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import eu.peernetwork.ads.ui.analytics.AnalyticsScreen
 import eu.peernetwork.core.ui.design.material.DesignRouter
 
@@ -20,10 +22,15 @@ fun DashboardNavigation(
         startDestination = "content"
     ) {
         composable("content") { updatedContent() }
-        composable("analytics") {
+        composable(
+            route = "analytics/{id}",
+            arguments = listOf(navArgument("id") { this.type = NavType.StringType })
+        ) { backStackEntry ->
+            val id = backStackEntry.arguments?.getString("id") ?: ""
             AnalyticsScreen(
+                id = id,
                 provider = component,
-                viewModelStoreOwner = it
+                viewModelStoreOwner = backStackEntry
             )
         }
     }

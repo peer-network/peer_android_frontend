@@ -2,6 +2,7 @@ package eu.peernetwork.ads.ui.overview
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import eu.peernetwork.ads.domain.model.Filter
 import eu.peernetwork.ads.domain.model.Metrics
 import eu.peernetwork.ads.domain.usecase.MetricsUsecase
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,11 +18,26 @@ class OverviewViewModel @Inject constructor(
 
     val state: StateFlow<State> = _state.asStateFlow()
 
-    operator fun invoke(author: String) {
+    fun getMetricsByAuthor(author: String) {
         viewModelScope.launch {
             try {
                 _state.tryEmit(State.Loading)
-                _state.tryEmit(State.Success(metricsUsecase(author)))
+                _state.tryEmit(State.Success(
+                    metrics = metricsUsecase(Filter(author = author))
+                ))
+            } catch (error: Throwable) {
+                _state.tryEmit(State.Error(error))
+            }
+        }
+    }
+
+    fun getMetricsByAds(id: String) {
+        viewModelScope.launch {
+            try {
+                _state.tryEmit(State.Loading)
+                _state.tryEmit(State.Success(
+                    metrics = metricsUsecase(Filter(adsId = id))
+                ))
             } catch (error: Throwable) {
                 _state.tryEmit(State.Error(error))
             }

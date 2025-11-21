@@ -1,3 +1,5 @@
 package eu.peernetwork.ads.ui.checkout
 
-interface CheckoutBalance
+import eu.peernetwork.core.ui.renderer.Renderer
+
+interface CheckoutBalance : Renderer.Stateless

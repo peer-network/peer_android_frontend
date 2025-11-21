@@ -3,11 +3,14 @@
     <string name="boost_label">Boost post</string>
     <string name="boost_confirmation_label">Promote your post</string>
     <string name="article_configuration_label">Post ads configuration</string>
+    <string name="article_statistics_label">Post statistics</string>
     <string name="period_label">Ad period</string>
     <string name="earning_label">Earnings</string>
     <string name="spending_label">Spendings</string>
     <string name="interactions_label">Interactions</string>
     <string name="billing_label">Billing</string>
+    <string name="promotion_cost_label">Promotion cost</string>
+    <string name="promotion_fee_label">Fees included</string>
 
     <string name="start_label">Start</string>
     <string name="next_label">Next</string>
@@ -17,8 +20,12 @@
     <string name="adverts_label">All advertisements</string>
 
     <string name="advert_start">Immediately</string>
-    <string name="advert_duration">Immediately</string>
+    <string name="advert_duration">24 hours</string>
     <string name="advert_position">Top of the feed</string>
+
+    <string name="peer_fee_label">Peer Bank (2%)</string>
+    <string name="commission_label">To the inviter (1%)</string>
+    <string name="burn_label">Burn (1%)</string>
 
     <string name="view_posts">Take me to my posts</string>
     <string name="advert_total">total: %d</string>

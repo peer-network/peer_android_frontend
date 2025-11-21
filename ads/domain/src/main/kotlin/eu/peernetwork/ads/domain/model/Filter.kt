@@ -1,7 +1,7 @@
 package eu.peernetwork.ads.domain.model
 
 data class Filter(
-    val postId: String? = null,
+    val adsId: String? = null,
     val author: String? = null,
     val sort: Sort = Sort.NEWEST,
     val criteria: Criteria? = null

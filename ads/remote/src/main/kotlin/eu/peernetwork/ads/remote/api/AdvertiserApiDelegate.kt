@@ -38,7 +38,7 @@ class AdvertiserApiDelegate @Inject constructor(
     private val http: OkHttpClient
 ) : AdvertiserApi {
     override suspend fun get(id: String): Ads {
-        val filter = Filter(postId = id)
+        val filter = Filter(adsId = id)
         val page = Pageable(
             offset = 0,
             limit = 1
@@ -51,14 +51,15 @@ class AdvertiserApiDelegate @Inject constructor(
         val response = client().query(query).executeOrThrow()
         val data = response.getOrThrow().advertisementHistory
         val contents = data.affectedRows?.advertisements?.filterNotNull()?.map {
-            val adds = it.mapToAds()
+            val ads = it.mapToAds()
             val content = it.mapToContent()
             Ads(
-                from = adds.from,
-                to = adds.to,
-                status = adds.status,
-                cost = adds.cost,
-                earning = adds.earning,
+                id = ads.id,
+                from = ads.from,
+                to = ads.to,
+                status = ads.status,
+                cost = ads.cost,
+                earning = ads.earning,
                 content = content.mapToDomain().copy(
                     path = gson.fromJson<List<MediaModel>>(
                         content.path,
@@ -78,7 +79,7 @@ class AdvertiserApiDelegate @Inject constructor(
     }
 
     fun getQuery(filter: Filter, page: Pageable): AdvertisementHistoryQuery {
-        val post = filter.postId?.let { Optional.present(it) } ?: Optional.absent()
+        val post = filter.adsId?.let { Optional.present(it) } ?: Optional.absent()
         val author = filter.author?.let { Optional.present(it) } ?: Optional.absent()
         val sortBy = filter.sortType()?.let {
             Optional.present(it)
@@ -88,13 +89,12 @@ class AdvertiserApiDelegate @Inject constructor(
                 AdvertisementHistoryFilter(
                     from = Optional.presentIfNotNull(it.from),
                     to = Optional.presentIfNotNull(it.to),
-                    advertisementId = Optional.presentIfNotNull(it.to),
-                    postId = post,
+                    advertisementId = post,
                     userId = author
                 )
             }
         } ?: AdvertisementHistoryFilter(
-            postId = post,
+            advertisementId = post,
             userId = author
         )
         return AdvertisementHistoryQuery(
@@ -105,8 +105,7 @@ class AdvertiserApiDelegate @Inject constructor(
         )
     }
 
-    override suspend fun getMetrics(author: String): Metrics {
-        val filter = Filter(author = author)
+    override suspend fun getMetrics(filter: Filter): Metrics {
         val page = Pageable(
             offset = 0,
             limit = 1

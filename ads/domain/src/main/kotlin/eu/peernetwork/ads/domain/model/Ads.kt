@@ -3,6 +3,7 @@ package eu.peernetwork.ads.domain.model
 import java.math.BigDecimal
 
 data class Ads(
+    val id: String,
     val from: Long,
     val to: Long,
     val status: Boolean,

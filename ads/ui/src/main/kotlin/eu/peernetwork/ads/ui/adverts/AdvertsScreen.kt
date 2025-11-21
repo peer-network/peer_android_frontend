@@ -109,7 +109,7 @@ fun AdvertsScreen(
                             status = post.status,
                             modifier = Modifier.padding(horizontal = 16.dp)
                                 .padding(vertical = 5.dp)
-                                .clickable { handleSelect(post.content.id) }
+                                .clickable { handleSelect(post.id) }
                         ) {
                             AdvertsMedia(post.content.path, component)
                         }
