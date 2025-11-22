@@ -6,6 +6,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -34,10 +35,9 @@ fun CheckoutScreen(
     val handleFinish by rememberUpdatedState(onFinish)
     CheckoutPage(
         isLoading = isLoading,
-        onBack = onBack
-    ) {
-        viewModel.invoke(id)
-    }
+        onBack = onBack,
+        onPay = { viewModel.invoke(id) }
+    ) { component.checkoutBalance()(modifier = Modifier) }
     LaunchedEffect(isSuccess.value) {
         if (isSuccess.value) {
             handleFinish()

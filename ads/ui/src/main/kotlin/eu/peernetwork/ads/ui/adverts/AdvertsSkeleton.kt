@@ -24,8 +24,7 @@ import eu.peernetwork.core.ui.theme.DesignTheme
 fun AdvertsSkeleton(modifier: Modifier = Modifier) {
     Column {
         OverviewSkeleton()
-        DesignSkeleton(modifier = Modifier.padding(top = 8.dp)
-            .padding(horizontal = 16.dp)
+        DesignSkeleton(modifier = Modifier.padding(horizontal = 16.dp)
             .padding(bottom = 12.dp)
             .padding(horizontal = 8.dp)
             .fillMaxWidth(fraction = .3f)

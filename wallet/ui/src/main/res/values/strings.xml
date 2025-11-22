@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="wallet_title">Your account</string>
+    <string name="balance_title">Your balance</string>
     <string name="transfer_label">Transfer</string>
     <string name="transfer_disclaimer">A fee of %s applies</string>
     <string name="amount_text">Amount</string>

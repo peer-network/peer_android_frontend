@@ -27,12 +27,12 @@ import eu.peernetwork.core.ui.theme.DesignTheme
 
 @Composable
 fun CheckoutSummery(modifier: Modifier = Modifier) {
-    val border = MaterialTheme.colorScheme.surfaceContainerLowest
+    val border = MaterialTheme.colorScheme.surfaceContainerLow
     Column(
         modifier = Modifier.fillMaxWidth()
             .then(modifier)
             .clip(RoundedCornerShape(24.dp))
-            .background(MaterialTheme.colorScheme.surfaceDim)
+            .background(MaterialTheme.colorScheme.surfaceVariant)
             .padding(horizontal = 8.dp)
     ) {
         Row(
@@ -87,7 +87,8 @@ fun CheckoutSummery(modifier: Modifier = Modifier) {
         CheckoutFees(
             charges = 2,
             commission = 5,
-            burn = 3
+            burn = 3,
+            modifier = Modifier.padding(bottom = 8.dp)
         )
     }
 }

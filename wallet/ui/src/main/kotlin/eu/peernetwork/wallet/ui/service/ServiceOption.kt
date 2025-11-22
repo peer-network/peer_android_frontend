@@ -26,8 +26,8 @@ fun ServiceTransfer(
     onClick: () -> Unit,
 ) {
     val lastState = remember(state.value) { mutableStateOf(state.value) }
-    var showTransfer = rememberSaveable { mutableStateOf(false) }
-    var transaction = remember { mutableStateOf<UiTransfer?>(null) }
+    val showTransfer = rememberSaveable { mutableStateOf(false) }
+    val transaction = remember { mutableStateOf<UiTransfer?>(null) }
     val handleOnClear by rememberUpdatedState(onClear)
     val handleOnAccountClicked by rememberUpdatedState(onAccountClicked)
     ExpandableLabel(

@@ -17,6 +17,7 @@ import eu.peernetwork.social.ui.followers.Followers
 import eu.peernetwork.social.ui.followings.Followings
 import eu.peernetwork.social.ui.peers.Peers
 import eu.peernetwork.user.ui.user.User
+import eu.peernetwork.wallet.ui.balance.Balance
 import eu.peernetwork.wallet.ui.confirmation.Confirmation
 
 interface Profile : ApplicationProvider {
@@ -44,6 +45,7 @@ interface Profile : ApplicationProvider {
         Confirmation,
         Dashboard,
         Boost,
+        Balance,
         Checkout,
         Window
 

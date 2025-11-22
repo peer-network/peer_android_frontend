@@ -8,6 +8,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.navigation.compose.rememberNavController
 import eu.peernetwork.ads.ui.R
+import eu.peernetwork.ads.ui.article.ArticleSkeleton
 import eu.peernetwork.ads.ui.descriptor.DescriptorScreen
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.material.DesignTitle
@@ -26,7 +27,8 @@ fun BoostScreen(
     val controller = rememberNavController()
     DescriptorScreen(
         provider = component,
-        viewModelStoreOwner = viewModelStoreOwner
+        viewModelStoreOwner = viewModelStoreOwner,
+        loading = { ArticleSkeleton() }
     ) {
         BoostNavigation(
             id = id,

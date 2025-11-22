@@ -13,8 +13,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -30,8 +32,10 @@ fun CheckoutPage(
     isLoading: State<Boolean>,
     modifier: Modifier = Modifier,
     onBack: () -> Unit,
-    onPay: () -> Unit
+    onPay: () -> Unit,
+    content: @Composable () -> Unit
 ) {
+    val updatedContent by rememberUpdatedState(content)
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -48,9 +52,10 @@ fun CheckoutPage(
             style = MaterialTheme.typography.labelLarge,
             modifier = Modifier.padding(horizontal = 8.dp)
         )
+        updatedContent()
         CheckoutSummery(modifier = Modifier.padding(vertical = 12.dp))
         Row(
-            modifier = Modifier.padding(top = 16.dp),
+            modifier = Modifier.padding(top = 4.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             DesignOutlineButton(
@@ -83,7 +88,8 @@ fun PreviewCheckoutPage() {
         CheckoutPage(
             isLoading = isLoading,
             modifier = Modifier.padding(vertical = 16.dp),
-            onBack = {  }
+            onBack = {  },
+            onPay = {}
         ) {}
     }
 }

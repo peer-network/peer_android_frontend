@@ -57,7 +57,7 @@ fun QuotePage(
         QuoteLabel(
             label = stringResource(R.string.duration_label),
             modifier = Modifier
-                .padding(top = 12.dp)
+                .padding(top = 10.dp)
                 .fillMaxWidth()
         ) {
             Text(
@@ -70,7 +70,7 @@ fun QuotePage(
         QuoteLabel(
             label = stringResource(R.string.adverts_position_label),
             modifier = Modifier
-                .padding(top = 12.dp)
+                .padding(top = 10.dp)
                 .fillMaxWidth()
         ) {
             Text(
@@ -80,20 +80,11 @@ fun QuotePage(
                 color = MaterialTheme.colorScheme.onBackground
             )
         }
-        Text(
-            text = stringResource(R.string.billing_label),
-            fontWeight = FontWeight.SemiBold,
-            color = MaterialTheme.colorScheme.onBackground,
-            style = MaterialTheme.typography.labelLarge,
-            modifier = Modifier
-                .padding(horizontal = 8.dp)
-                .padding(top = 16.dp)
-        )
         QuoteLabel(
             label = stringResource(R.string.advert_total_label),
             value = "$price",
             modifier = Modifier
-                .padding(top = 12.dp)
+                .padding(top = 10.dp)
                 .fillMaxWidth()
         )
         Row(

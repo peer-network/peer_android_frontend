@@ -164,7 +164,6 @@ fun AdvertScreen(
                         style = MaterialTheme.typography.labelLarge,
                         modifier = Modifier.fillMaxWidth()
                             .padding(horizontal = 24.dp)
-                            .padding(top = 6.dp)
                             .padding(bottom = 8.dp)
                     )
                 }

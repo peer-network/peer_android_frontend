@@ -36,15 +36,15 @@ fun ArticleSummery(
     Row(modifier = Modifier.fillMaxWidth()
         .then(modifier)
         .clip(RoundedCornerShape(24.dp))
-        .background(MaterialTheme.colorScheme.surfaceDim)
-        .padding(10.dp)) {
+        .background(MaterialTheme.colorScheme.surfaceVariant)
+        .padding(8.dp)) {
         Box(
             modifier = Modifier.height(86.dp)
                 .aspectRatio(1.2f)
                 .clip(RoundedCornerShape(16.dp))
                 .background(MaterialTheme.colorScheme.background)
         ) { updatedContent() }
-        Column(modifier = Modifier.padding(start = 12.dp)
+        Column(modifier = Modifier.padding(start = 8.dp)
             .padding(end = 6.dp)) {
             Box(
                 contentAlignment = Alignment.BottomStart,
@@ -81,8 +81,7 @@ fun PreviewArticleSummery() {
     DesignTheme(isDarkMode = true) {
         ArticleSummery(
             title = buildAnnotatedString { append("Title") },
-            description = buildAnnotatedString { append("There’s something about hiking that resets everything. ") },
-            modifier = Modifier.padding(12.dp)
+            description = buildAnnotatedString { append("There’s something about hiking that resets everything. ") }
         ) {}
     }
 }

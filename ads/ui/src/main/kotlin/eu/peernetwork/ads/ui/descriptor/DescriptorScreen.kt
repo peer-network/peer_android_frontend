@@ -23,6 +23,7 @@ import eu.peernetwork.core.ui.extension.builder
 fun DescriptorScreen(
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
+    loading: @Composable () -> Unit = {},
     content: @Composable (State<Description>) -> Unit
 ) {
     val context = LocalContext.current
@@ -52,7 +53,16 @@ fun DescriptorScreen(
             }
         }
     }
-    DesignStream(derivedState) { targetState -> updatedContent(targetState) }
+    DesignStream(
+        state = derivedState,
+        loading = loading,
+        error = {
+            DescriptorError(
+                error = it,
+                component = component
+            ) { viewModel() }
+        }
+    ) { targetState -> updatedContent(targetState) }
     LaunchedEffect(Unit) {
         if (state is DescriptorViewModel.State.Default) {
             viewModel()

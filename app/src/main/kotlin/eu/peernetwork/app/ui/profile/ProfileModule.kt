@@ -5,7 +5,9 @@ import dagger.Provides
 import dagger.multibindings.IntoMap
 import eu.peernetwork.ads.ui.boost.Boost
 import eu.peernetwork.ads.ui.checkout.Checkout
+import eu.peernetwork.ads.ui.checkout.CheckoutBalance
 import eu.peernetwork.ads.ui.dashboard.Dashboard
+import eu.peernetwork.app.ui.renderer.CheckoutBalanceRenderer
 import eu.peernetwork.app.ui.renderer.EngagementRenderer
 import eu.peernetwork.app.ui.search.Search
 import eu.peernetwork.app.ui.settings.Settings
@@ -21,6 +23,7 @@ import eu.peernetwork.social.ui.followers.Followers
 import eu.peernetwork.social.ui.followings.Followings
 import eu.peernetwork.social.ui.peers.Peers
 import eu.peernetwork.user.ui.user.User
+import eu.peernetwork.wallet.ui.balance.Balance
 import eu.peernetwork.wallet.ui.confirmation.Confirmation
 
 @Module
@@ -137,5 +140,19 @@ object ProfileModule {
     @UiBuilder(Checkout.Builder::class)
     fun provideCheckoutBuilder(component: Profile.Component): UiComponent.Builder {
         return Checkout.Builder(component)
+    }
+
+    @Profile.Scope
+    @Provides
+    @IntoMap
+    @UiBuilder(Balance.Builder::class)
+    fun provideBalanceBuilder(component: Profile.Component): UiComponent.Builder {
+        return Balance.Builder(component)
+    }
+
+    @Provides
+    @Profile.Scope
+    fun provideCheckoutBalance(component: Profile.Component): CheckoutBalance {
+        return CheckoutBalanceRenderer(component)
     }
 }

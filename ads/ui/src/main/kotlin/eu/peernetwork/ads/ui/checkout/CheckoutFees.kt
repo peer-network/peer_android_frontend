@@ -25,8 +25,9 @@ fun CheckoutFees(
     charges: Int,
     commission: Int,
     burn: Int,
+    modifier: Modifier = Modifier
 ) {
-    Column {
+    Column(modifier = modifier) {
         CheckoutFees(
             label = stringResource(R.string.peer_fee_label),
             value = charges.toString()

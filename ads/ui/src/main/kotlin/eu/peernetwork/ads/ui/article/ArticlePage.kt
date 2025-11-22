@@ -27,7 +27,6 @@ fun ArticlePage(
         modifier = Modifier.fillMaxWidth()
             .padding(horizontal = 16.dp)
             .padding(top = 12.dp)
-            .padding(bottom = 4.dp)
             .then(modifier)
     ) {
         Text(
@@ -52,8 +51,7 @@ fun PreviewArticlePage() {
     DesignTheme(isDarkMode = true) {
         ArticlePage(
             title = buildAnnotatedString { append("Title") },
-            description = buildAnnotatedString { append("There’s something about hiking that resets everything. ") },
-            modifier = Modifier.padding(12.dp)
+            description = buildAnnotatedString { append("There’s something about hiking that resets everything. ") }
         ) {}
     }
 }

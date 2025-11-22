@@ -63,7 +63,13 @@ fun ArticleScreen(
     DesignScaffold {
         DesignStream(
             state = derivedState,
-            loading = { ArticleSkeleton() }
+            loading = { ArticleSkeleton() },
+            error = {
+                ArticleError(
+                    error = it,
+                    component = component
+                ) { viewModel(id) }
+            }
         ) { targetState ->
             DesignScaffold(
                 modifier = Modifier.statusBarsPadding(),

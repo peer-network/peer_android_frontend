@@ -48,7 +48,7 @@ fun QuoteLabel(
 fun QuoteLabel(
     label: String,
     modifier: Modifier = Modifier,
-    color: Color = MaterialTheme.colorScheme.surfaceDim,
+    color: Color = MaterialTheme.colorScheme.surfaceVariant,
     padding: PaddingValues = PaddingValues(
         horizontal = 24.dp,
         vertical = 16.dp
@@ -77,7 +77,7 @@ fun QuoteLabel(
     label: String,
     value: String,
     modifier: Modifier = Modifier,
-    color: Color = MaterialTheme.colorScheme.surfaceDim,
+    color: Color = MaterialTheme.colorScheme.surfaceVariant,
     padding: PaddingValues = PaddingValues(
         horizontal = 24.dp,
         vertical = 14.dp

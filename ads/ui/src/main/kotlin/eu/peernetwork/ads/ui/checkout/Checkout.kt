@@ -6,6 +6,8 @@ import eu.peernetwork.ads.ui.provider.AdsProvider
 import eu.peernetwork.core.ui.component.UiComponent
 
 interface Checkout : AdsProvider {
+    fun checkoutBalance(): CheckoutBalance
+
     @javax.inject.Scope
     @Retention(AnnotationRetention.RUNTIME)
     annotation class Scope

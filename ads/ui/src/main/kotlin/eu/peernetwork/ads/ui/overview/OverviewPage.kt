@@ -34,7 +34,7 @@ fun OverviewPage(metrics: Metrics) {
             text = stringResource(R.string.interactions_label),
             color = MaterialTheme.colorScheme.onBackground,
             style = MaterialTheme.typography.labelLarge,
-            modifier = Modifier.padding(top = 16.dp)
+            modifier = Modifier.padding(top = 12.dp)
                 .padding(horizontal = 8.dp)
         )
         OverviewMetrics(
