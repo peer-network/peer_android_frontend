@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import eu.peernetwork.ads.domain.model.Ads
 import eu.peernetwork.ads.domain.model.Filter
+import eu.peernetwork.ads.ui.model.UiCampaign
 import eu.peernetwork.ads.ui.usecase.AdsPagingUsecase
 import eu.peernetwork.core.common.paging.Pageable
 import kotlinx.coroutines.flow.Flow
@@ -43,7 +43,7 @@ class AdvertsViewModel @Inject constructor(
         data object Default : State
         data object Loading : State
 
-        data class Success(val content: Flow<PagingData<Ads>>) : State
+        data class Success(val content: Flow<PagingData<UiCampaign>>) : State
         data class Error(val error: Throwable) : State
     }
 }

@@ -5,9 +5,10 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
 import androidx.paging.PagingSource.LoadResult
-import eu.peernetwork.ads.domain.model.Ads
 import eu.peernetwork.ads.domain.model.Filter
 import eu.peernetwork.ads.domain.usecase.AdsListingUsecase
+import eu.peernetwork.ads.ui.mapper.mapToDomain
+import eu.peernetwork.ads.ui.model.UiCampaign
 import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.core.ui.exception.NoContentException
 import eu.peernetwork.core.ui.usecase.PagingUsecase
@@ -16,10 +17,10 @@ import javax.inject.Inject
 
 class AdsPagingUsecase @Inject constructor(
     private val usecase: AdsListingUsecase
-) : PagingUsecase<AdsPagingUsecase.Parameter, Ads>() {
+) : PagingUsecase<AdsPagingUsecase.Parameter, UiCampaign>() {
     private lateinit var param: Parameter
 
-    override fun invoke(param: Parameter): Flow<PagingData<Ads>> {
+    override fun invoke(param: Parameter): Flow<PagingData<UiCampaign>> {
         this.param = param
         return Pager(
             config = PagingConfig(
@@ -32,7 +33,7 @@ class AdsPagingUsecase @Inject constructor(
         ).flow
     }
 
-    override suspend fun getData(params: PagingSource.LoadParams<Int>): LoadResult<Int, Ads> {
+    override suspend fun getData(params: PagingSource.LoadParams<Int>): LoadResult<Int, UiCampaign> {
         val currentOffset = params.key ?: param.page.offset
         val currentPage = Pageable(
             offset = currentOffset,
@@ -48,7 +49,12 @@ class AdsPagingUsecase @Inject constructor(
             return LoadResult.Error(NoContentException())
         }
         return LoadResult.Page(
-            data = response.items,
+            data = response.items.map {
+                UiCampaign(
+                    ads = it.mapToDomain(),
+                    metrics = response.metrics.mapToDomain()
+                )
+            },
             prevKey = if (currentOffset != param.page.offset) {
                 (currentOffset - params.loadSize).coerceAtLeast(0)
             } else {

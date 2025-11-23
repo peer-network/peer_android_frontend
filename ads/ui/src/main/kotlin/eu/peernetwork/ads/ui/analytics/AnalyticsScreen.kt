@@ -1,26 +1,20 @@
 package eu.peernetwork.ads.ui.analytics
 
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import eu.peernetwork.ads.ui.overview.OverviewScreen
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.luna.DesignRefreshScaffold
 import eu.peernetwork.core.ui.design.luna.DesignStream
 import eu.peernetwork.core.ui.design.luna.DesignStreamState
 import eu.peernetwork.core.ui.extension.builder
-import eu.peernetwork.core.ui.mapper.annotate
 
 @Composable
 fun AnalyticsScreen(
@@ -67,22 +61,14 @@ fun AnalyticsScreen(
             onRefresh = { viewModel(id) }
         ) {
             AnalyticsPage(
-                title = target.value.ads.content.title.annotate(),
-                description = target.value.ads.content.description.annotate(),
-                status = target.value.ads.status,
-                media = {
-                    AnalyticsMedia(
-                        url = target.value.ads.content.path,
-                        component = component
-                    )
-                }
+                title = target.value.ads.ads.content.title,
+                description = target.value.ads.ads.content.description,
+                status = target.value.ads.ads.status,
+                metrics = target.value.ads.metrics
             ) {
-                OverviewScreen(
-                    id = id,
-                    provider = component,
-                    viewModelStoreOwner = viewModelStoreOwner,
-                    modifier = Modifier.fillMaxSize()
-                        .padding(bottom = 12.dp)
+                AnalyticsMedia(
+                    url = target.value.ads.ads.content.path,
+                    component = component
                 )
             }
         }

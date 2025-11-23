@@ -50,7 +50,7 @@ fun AdvertsPost(
             modifier = Modifier.height(86.dp)
                 .aspectRatio(1.2f)
                 .clip(RoundedCornerShape(16.dp))
-                .background(MaterialTheme.colorScheme.surfaceContainerLowest)
+                .background(MaterialTheme.colorScheme.background)
         ) { updatedContent() }
         Column(modifier = Modifier.padding(start = 8.dp)
             .padding(end = 6.dp)) {

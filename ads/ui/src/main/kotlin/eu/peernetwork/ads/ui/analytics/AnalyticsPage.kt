@@ -10,8 +10,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
@@ -20,6 +18,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.ads.ui.R
+import eu.peernetwork.ads.ui.model.UiMetrics
+import eu.peernetwork.ads.ui.overview.OverviewStatistics
 import eu.peernetwork.core.ui.theme.DesignTheme
 
 @Composable
@@ -27,11 +27,10 @@ fun AnalyticsPage(
     title: AnnotatedString,
     description: AnnotatedString,
     status: Boolean,
+    metrics: UiMetrics,
     modifier: Modifier = Modifier,
-    media: @Composable () -> Unit,
     content: @Composable () -> Unit
 ) {
-    val updatedContent by rememberUpdatedState(content)
     Column(
         modifier = Modifier.fillMaxSize()
             .padding(horizontal = 16.dp)
@@ -52,9 +51,13 @@ fun AnalyticsPage(
             description = description,
             status = status,
             modifier = Modifier.padding(vertical = 12.dp),
-            content = media
+            content = content
         )
-        updatedContent()
+        OverviewStatistics(
+            metrics = metrics,
+            modifier = Modifier.fillMaxSize()
+                .padding(bottom = 12.dp)
+        )
         AnalyticsLabel(
             label = stringResource(R.string.start_label),
             modifier = Modifier.fillMaxWidth()
@@ -91,13 +94,22 @@ fun AnalyticsPage(
 @Composable
 fun PreviewAnalyticsPage() {
     DesignTheme(isDarkMode = true) {
+        val metrics = UiMetrics(
+            token = 0f,
+            euro = 0f,
+            likes = 1,
+            dislikes = 1,
+            views = 1,
+            comments = 1,
+            report = 1
+        )
         AnalyticsPage(
             title = buildAnnotatedString { append("Title") },
             description = buildAnnotatedString { append("There’s something about hiking that resets everything. ") },
             status = true,
+            metrics = metrics,
             modifier = Modifier.background(MaterialTheme.colorScheme.background)
                 .padding(12.dp),
-            media = {}
         ) {}
     }
 }

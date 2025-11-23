@@ -25,6 +25,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import eu.peernetwork.ads.domain.model.Filter
 import eu.peernetwork.ads.ui.R
+import eu.peernetwork.ads.ui.overview.OverviewPage
 import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.luna.DesignPagingStream
@@ -41,8 +42,7 @@ fun AdvertsScreen(
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
     onSelect: (String) -> Unit,
-    onBack: () -> Unit,
-    content: @Composable () -> Unit
+    onBack: () -> Unit
 ) {
     val context = LocalContext.current
     val component = remember {
@@ -86,7 +86,11 @@ fun AdvertsScreen(
     ) { lazyPagingItems ->
         AdvertScreen(
             total = lazyPagingItems.itemCount,
-            header = content,
+            header = {
+                lazyPagingItems.itemSnapshotList.firstOrNull()?.let {
+                    OverviewPage(it.metrics)
+                }
+            },
             onRefresh = {
                 val filter = Filter().copy(author = id)
                 viewModel(filter, page = Pageable(0, limit))
@@ -99,21 +103,22 @@ fun AdvertsScreen(
                 items(
                     count = lazyPagingItems.itemCount,
                     key = { index ->
-                        lazyPagingItems[index]?.content?.id?.let { "$it;$index" } ?: index
+                        lazyPagingItems[index]?.ads?.id?.let { "$it;$index" } ?: index
                     }
                 ) { index ->
                     lazyPagingItems[index]?.let { post ->
                         AdvertsPost(
-                            title = post.content.title.annotate(),
-                            description = post.content.description.annotate(),
-                            from = post.from.toString(),
-                            to = post.to.toString(),
-                            status = post.status,
-                            modifier = Modifier.padding(horizontal = 16.dp)
+                            title = post.ads.content.title,
+                            description = post.ads.content.description,
+                            from = post.ads.from.toString(),
+                            to = post.ads.to.toString(),
+                            status = post.ads.status,
+                            modifier = Modifier
+                                .padding(horizontal = 16.dp)
                                 .padding(vertical = 5.dp)
-                                .clickable { handleSelect(post.id) }
+                                .clickable { handleSelect(post.ads.id) }
                         ) {
-                            AdvertsMedia(post.content.path, component)
+                            AdvertsMedia(post.ads.content.path, component)
                         }
                     }
                 }
@@ -162,7 +167,8 @@ fun AdvertScreen(
                             ),
                         color = MaterialTheme.colorScheme.onBackground,
                         style = MaterialTheme.typography.labelLarge,
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier
+                            .fillMaxWidth()
                             .padding(horizontal = 24.dp)
                             .padding(bottom = 8.dp)
                     )

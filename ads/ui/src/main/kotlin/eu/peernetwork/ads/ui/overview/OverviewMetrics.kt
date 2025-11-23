@@ -28,11 +28,12 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.ads.domain.model.Metrics
 import eu.peernetwork.ads.ui.R
+import eu.peernetwork.ads.ui.model.UiMetrics
 import eu.peernetwork.core.ui.theme.DesignTheme
 
 @Composable
 fun OverviewMetrics(
-    metrics: Metrics,
+    metrics: UiMetrics,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -123,7 +124,7 @@ private fun OverviewDivider() {
 @Composable
 fun PreviewOverviewMetrics() {
     DesignTheme(isDarkMode = true) {
-        val metrics = Metrics(
+        val metrics = UiMetrics(
             token = 0f,
             euro = 0f,
             likes = 1,

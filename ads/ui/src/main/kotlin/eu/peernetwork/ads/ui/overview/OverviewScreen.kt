@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import eu.peernetwork.ads.domain.model.Metrics
+import eu.peernetwork.ads.ui.model.UiMetrics
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.luna.DesignStream
 import eu.peernetwork.core.ui.design.luna.DesignStreamState
@@ -69,7 +69,7 @@ fun OverviewScreen(
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
     loading: @Composable () -> Unit = {},
-    content: @Composable (State<Metrics>) -> Unit
+    content: @Composable (State<UiMetrics>) -> Unit
 ) {
     val context = LocalContext.current
     val component = remember {

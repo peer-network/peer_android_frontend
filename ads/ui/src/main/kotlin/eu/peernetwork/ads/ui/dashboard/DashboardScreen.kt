@@ -7,7 +7,6 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import eu.peernetwork.ads.ui.adverts.AdvertsScreen
-import eu.peernetwork.ads.ui.overview.OverviewScreen
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.extension.builder
 
@@ -52,11 +51,5 @@ fun DashboardScreen(
         viewModelStoreOwner = viewModelStoreOwner,
         onSelect = { navController.navigate("analytics/$it") },
         onBack = onBack
-    ) {
-        OverviewScreen(
-            id = id,
-            provider = component,
-            viewModelStoreOwner = viewModelStoreOwner
-        )
-    }
+    )
 }

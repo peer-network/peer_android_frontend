@@ -9,6 +9,8 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import eu.peernetwork.ads.data.api.AdvertiserApi
 import eu.peernetwork.ads.domain.model.Ads
+import eu.peernetwork.ads.domain.model.Campaign
+import eu.peernetwork.ads.domain.model.AdsList
 import eu.peernetwork.ads.domain.model.Description
 import eu.peernetwork.ads.domain.model.Filter
 import eu.peernetwork.ads.domain.model.Metrics
@@ -19,7 +21,6 @@ import eu.peernetwork.ads.remote.mapper.sortType
 import eu.peernetwork.ads.remote.model.DescriptionModel
 import eu.peernetwork.ads.remote.model.MediaModel
 import eu.peernetwork.core.common.exception.ContentException
-import eu.peernetwork.core.common.paging.Page
 import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.core.remote.api.RequestClient
 import eu.peernetwork.core.remote.exception.NetworkException
@@ -37,20 +38,30 @@ class AdvertiserApiDelegate @Inject constructor(
     private val client: RequestClient,
     private val http: OkHttpClient
 ) : AdvertiserApi {
-    override suspend fun get(id: String): Ads {
+    override suspend fun get(id: String): Campaign {
         val filter = Filter(adsId = id)
         val page = Pageable(
             offset = 0,
             limit = 1
         )
-        return getAll(filter, page).items.first()
+        val response = getAll(filter, page)
+        Campaign(
+            ads = response.items.first(),
+            metrics = response.metrics
+        )
+        return Campaign(
+            ads = response.items.first(),
+            metrics = response.metrics
+        )
     }
 
-    override suspend fun getAll(filter: Filter, page: Pageable): Page<Ads> {
+    override suspend fun getAll(filter: Filter, page: Pageable): AdsList {
         val query = getQuery(filter, page)
         val response = client().query(query).executeOrThrow()
         val data = response.getOrThrow().advertisementHistory
-        val contents = data.affectedRows?.advertisements?.filterNotNull()?.map {
+        val rows = data.affectedRows
+        val metrics = rows?.stats?.mapToDomain() ?: throw ContentException()
+        val contents = rows.advertisements?.filterNotNull()?.map {
             val ads = it.mapToAds()
             val content = it.mapToContent()
             Ads(
@@ -71,9 +82,10 @@ class AdvertiserApiDelegate @Inject constructor(
             )
         }
         response.assertOrThrow(data.status, data.ResponseCode)
-        return Page(
+        return AdsList(
             count = page.limit,
             offset = page.offset,
+            metrics = metrics,
             items = contents ?: emptyList()
         )
     }

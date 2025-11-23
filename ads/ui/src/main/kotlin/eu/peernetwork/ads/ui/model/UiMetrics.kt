@@ -1,6 +1,6 @@
-package eu.peernetwork.ads.domain.model
+package eu.peernetwork.ads.ui.model
 
-data class Metrics(
+data class UiMetrics(
     val token: Float,
     val euro: Float,
     val likes: Int,
