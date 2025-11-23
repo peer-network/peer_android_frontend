@@ -97,11 +97,11 @@ fun PreviewAnalyticsPage() {
         val metrics = UiMetrics(
             token = 0f,
             euro = 0f,
-            likes = 1,
-            dislikes = 1,
-            views = 1,
-            comments = 1,
-            report = 1
+            likes = "1",
+            dislikes = "1",
+            views = "1",
+            comments = "1",
+            report = "1"
         )
         AnalyticsPage(
             title = buildAnnotatedString { append("Title") },

@@ -110,8 +110,8 @@ fun AdvertsScreen(
                         AdvertsPost(
                             title = post.ads.content.title,
                             description = post.ads.content.description,
-                            from = post.ads.from.toString(),
-                            to = post.ads.to.toString(),
+                            from = post.ads.from,
+                            to = post.ads.to,
                             status = post.ads.status,
                             modifier = Modifier
                                 .padding(horizontal = 16.dp)

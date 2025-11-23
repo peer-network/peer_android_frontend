@@ -26,7 +26,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import eu.peernetwork.ads.domain.model.Metrics
 import eu.peernetwork.ads.ui.R
 import eu.peernetwork.ads.ui.model.UiMetrics
 import eu.peernetwork.core.ui.theme.DesignTheme
@@ -46,35 +45,35 @@ fun OverviewMetrics(
     ) {
         OverviewMetricsLabel(
             painter = painterResource(R.drawable.ic_likes),
-            label = metrics.likes.toString(),
+            label = metrics.likes,
             modifier = Modifier.padding(vertical = 8.dp)
                 .weight(1f)
         )
         OverviewDivider()
         OverviewMetricsLabel(
             painter = painterResource(R.drawable.ic_dislikes),
-            label = metrics.dislikes.toString(),
+            label = metrics.dislikes,
             modifier = Modifier.padding(vertical = 8.dp)
                 .weight(1f)
         )
         OverviewDivider()
         OverviewMetricsLabel(
             painter = painterResource(R.drawable.ic_comments),
-            label = metrics.comments.toString(),
+            label = metrics.comments,
             modifier = Modifier.padding(vertical = 8.dp)
                 .weight(1f)
         )
         OverviewDivider()
         OverviewMetricsLabel(
             painter = painterResource(R.drawable.ic_views),
-            label = metrics.views.toString(),
+            label = metrics.views,
             modifier = Modifier.padding(vertical = 8.dp)
                 .weight(1f)
         )
         OverviewDivider()
         OverviewMetricsLabel(
             painter = painterResource(R.drawable.ic_reports),
-            label = metrics.report.toString(),
+            label = metrics.report,
             modifier = Modifier.padding(vertical = 8.dp)
                 .weight(1f)
         )
@@ -127,11 +126,11 @@ fun PreviewOverviewMetrics() {
         val metrics = UiMetrics(
             token = 0f,
             euro = 0f,
-            likes = 1,
-            dislikes = 1,
-            views = 1,
-            comments = 1,
-            report = 1
+            likes = "1",
+            dislikes = "1",
+            views = "1",
+            comments = "1",
+            report = "1"
         )
         OverviewMetrics(metrics)
     }
