@@ -1,8 +1,8 @@
 package eu.peernetwork.ads.ui.article
 
 import androidx.lifecycle.viewModelScope
-import eu.peernetwork.ads.domain.model.Content
-import eu.peernetwork.ads.domain.usecase.ContentUsecase
+import eu.peernetwork.ads.ui.model.UiContent
+import eu.peernetwork.ads.ui.usecase.ArticleUsecase
 import eu.peernetwork.media.core.interactor.ThumbnailInteractor
 import eu.peernetwork.media.core.viewmodel.MediaViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,7 +15,7 @@ import kotlin.collections.plus
 
 class ArticleViewModel @Inject constructor(
     interactor: ThumbnailInteractor,
-    private val usecase: ContentUsecase
+    private val usecase: ArticleUsecase
 ) : MediaViewModel(interactor) {
     private val _states = MutableStateFlow<Map<String, State>>(emptyMap())
 
@@ -39,7 +39,7 @@ class ArticleViewModel @Inject constructor(
     sealed interface State {
         data object Default: State
         data object Loading: State
-        data class Success(val content: Content): State
+        data class Success(val content: UiContent): State
         data class Error(val error: Throwable): State
     }
 }

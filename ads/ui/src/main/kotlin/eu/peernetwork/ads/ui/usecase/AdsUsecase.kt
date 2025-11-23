@@ -6,7 +6,7 @@ import eu.peernetwork.ads.ui.model.UiCampaign
 import eu.peernetwork.core.common.usecase.ParameterizedSuspendableUseCase
 import javax.inject.Inject
 
-class AdsItemUsecase @Inject constructor(
+class AdsUsecase @Inject constructor(
     private val usecase: AdsUsecase
 ) : ParameterizedSuspendableUseCase<String, UiCampaign> {
     override suspend fun invoke(param: String): UiCampaign {

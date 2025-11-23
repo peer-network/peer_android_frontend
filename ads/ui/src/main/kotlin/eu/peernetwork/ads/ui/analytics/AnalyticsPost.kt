@@ -27,6 +27,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.ads.ui.R
+import eu.peernetwork.core.ui.design.luna.DesignStyledText
 import eu.peernetwork.core.ui.theme.DesignTheme
 import eu.peernetwork.core.ui.theme.PeerAppGreen
 
@@ -57,7 +58,7 @@ fun AnalyticsPost(
                 modifier = Modifier.fillMaxWidth()
                     .heightIn(min = 24.dp)
             ) {
-                Text(
+                DesignStyledText(
                     text = title,
                     color = MaterialTheme.colorScheme.onBackground,
                     style = MaterialTheme.typography.labelLarge,
@@ -69,7 +70,7 @@ fun AnalyticsPost(
                 modifier = Modifier.fillMaxWidth()
                     .heightIn(min = 32.dp)
             ) {
-                Text(
+                DesignStyledText(
                     text = description,
                     color = MaterialTheme.colorScheme.onBackground,
                     style = MaterialTheme.typography.labelMedium,

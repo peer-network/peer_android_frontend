@@ -13,13 +13,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import eu.peernetwork.ads.domain.model.Content
+import eu.peernetwork.ads.ui.model.UiContent
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.luna.DesignStream
 import eu.peernetwork.core.ui.design.luna.DesignStreamState
 import eu.peernetwork.core.ui.design.material.DesignScaffold
-import eu.peernetwork.core.ui.extension.annotate
 import eu.peernetwork.core.ui.extension.builder
 
 @Composable
@@ -27,7 +26,7 @@ fun ArticleScreen(
     id: String,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
-    content: @Composable (Content) -> Unit
+    content: @Composable (UiContent) -> Unit
 ) {
     val context = LocalContext.current
     val component = remember { provider.builder(Article.Builder::class.java).build(context) }
@@ -75,8 +74,8 @@ fun ArticleScreen(
                 modifier = Modifier.statusBarsPadding(),
                 header = {
                     ArticlePage(
-                        title = targetState.value.title.annotate(),
-                        description = targetState.value.description.annotate(),
+                        title = targetState.value.title,
+                        description = targetState.value.description,
                     ) { ArticleMedia(targetState.value.path, component) }
                 }
             ) { updatedContent(targetState.value) }

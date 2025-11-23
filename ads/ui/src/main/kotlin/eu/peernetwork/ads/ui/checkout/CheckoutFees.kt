@@ -23,7 +23,6 @@ import eu.peernetwork.core.ui.theme.DesignTheme
 @Composable
 fun CheckoutFees(
     charges: Int,
-    commission: Int,
     burn: Int,
     modifier: Modifier = Modifier
 ) {
@@ -31,10 +30,6 @@ fun CheckoutFees(
         CheckoutFees(
             label = stringResource(R.string.peer_fee_label),
             value = charges.toString()
-        )
-        CheckoutFees(
-            label = stringResource(R.string.commission_label),
-            value = commission.toString()
         )
         CheckoutFees(
             label = stringResource(R.string.burn_label),
@@ -84,7 +79,6 @@ fun PreviewCheckoutFees() {
     DesignTheme(isDarkMode = true) {
         CheckoutFees(
             charges = 2,
-            commission = 5,
             burn = 3
         )
     }

@@ -85,9 +85,8 @@ fun CheckoutSummery(modifier: Modifier = Modifier) {
             )
         }
         CheckoutFees(
-            charges = 2,
-            commission = 5,
-            burn = 3,
+            charges = 4,
+            burn = 2,
             modifier = Modifier.padding(bottom = 8.dp)
         )
     }

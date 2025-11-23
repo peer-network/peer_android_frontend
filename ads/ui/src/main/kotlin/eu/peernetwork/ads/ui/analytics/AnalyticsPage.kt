@@ -26,6 +26,8 @@ import eu.peernetwork.core.ui.theme.DesignTheme
 fun AnalyticsPage(
     title: AnnotatedString,
     description: AnnotatedString,
+    start: String,
+    end: String,
     status: Boolean,
     metrics: UiMetrics,
     modifier: Modifier = Modifier,
@@ -59,31 +61,31 @@ fun AnalyticsPage(
                 .padding(bottom = 12.dp)
         )
         AnalyticsLabel(
-            label = stringResource(R.string.start_label),
+            label = stringResource(R.string.start_at_label),
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(
-                text = stringResource(R.string.advert_start),
+                text = start,
                 style = MaterialTheme.typography.labelLarge,
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.onBackground
             )
         }
         AnalyticsLabel(
-            label = stringResource(R.string.start_label),
+            label = stringResource(R.string.stop_at_label),
             modifier = Modifier.padding(top = 10.dp)
                 .fillMaxWidth()
         ) {
             Text(
-                text = stringResource(R.string.advert_start),
+                text = end,
                 style = MaterialTheme.typography.labelLarge,
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.onBackground
             )
         }
         AnalyticsLabel(
-            label = "Spendings",
-            value = "12",
+            label = stringResource(R.string.advert_total_label),
+            value = metrics.token.toString(),
             modifier = Modifier.padding(top = 10.dp)
                 .fillMaxWidth()
         )
@@ -107,6 +109,8 @@ fun PreviewAnalyticsPage() {
             title = buildAnnotatedString { append("Title") },
             description = buildAnnotatedString { append("There’s something about hiking that resets everything. ") },
             status = true,
+            start = "8 Jun 2025",
+            end = "10 Jun 2025",
             metrics = metrics,
             modifier = Modifier.background(MaterialTheme.colorScheme.background)
                 .padding(12.dp),

@@ -64,7 +64,9 @@ fun AnalyticsScreen(
                 title = target.value.ads.ads.content.title,
                 description = target.value.ads.ads.content.description,
                 status = target.value.ads.ads.status,
-                metrics = target.value.ads.metrics
+                metrics = target.value.ads.metrics,
+                start = target.value.ads.ads.from,
+                end = target.value.ads.ads.to
             ) {
                 AnalyticsMedia(
                     url = target.value.ads.ads.content.path,

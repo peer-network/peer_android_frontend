@@ -3,7 +3,7 @@ package eu.peernetwork.ads.ui.analytics
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import eu.peernetwork.ads.ui.model.UiCampaign
-import eu.peernetwork.ads.ui.usecase.AdsItemUsecase
+import eu.peernetwork.ads.ui.usecase.AdsUsecase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -11,7 +11,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class AnalyticsViewModel @Inject constructor(
-    private val usecase: AdsItemUsecase
+    private val usecase: AdsUsecase
 ) : ViewModel() {
     private val _state = MutableStateFlow<State>(State.Default)
 
