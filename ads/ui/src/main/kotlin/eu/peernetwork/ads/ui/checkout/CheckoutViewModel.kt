@@ -27,6 +27,13 @@ class CheckoutViewModel @Inject constructor(
             }
         }
     }
+
+    fun reset() {
+        viewModelScope.launch {
+            _state.tryEmit(State.Default)
+        }
+    }
+
     sealed interface State {
         data object Default: State
         data object Loading: State

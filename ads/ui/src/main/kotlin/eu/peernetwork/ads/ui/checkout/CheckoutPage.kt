@@ -1,5 +1,6 @@
 package eu.peernetwork.ads.ui.checkout
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -30,6 +31,7 @@ import eu.peernetwork.core.ui.theme.DesignTheme
 @Composable
 fun CheckoutPage(
     isLoading: State<Boolean>,
+    error: State<String?>,
     modifier: Modifier = Modifier,
     onBack: () -> Unit,
     onPay: () -> Unit,
@@ -54,6 +56,17 @@ fun CheckoutPage(
         )
         updatedContent()
         CheckoutSummery(modifier = Modifier.padding(vertical = 12.dp))
+        AnimatedContent(targetState = error.value) { message ->
+            if (message != null) {
+                Text(
+                    text = message,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.padding(horizontal = 8.dp)
+                        .padding(bottom = 12.dp)
+                )
+            }
+        }
         Row(
             modifier = Modifier.padding(top = 4.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
@@ -85,8 +98,10 @@ fun CheckoutPage(
 fun PreviewCheckoutPage() {
     DesignTheme(isDarkMode = true) {
         val isLoading = remember { mutableStateOf(false) }
+        val error = remember { mutableStateOf<String?>(null) }
         CheckoutPage(
             isLoading = isLoading,
+            error = error,
             modifier = Modifier.padding(vertical = 16.dp),
             onBack = {  },
             onPay = {}

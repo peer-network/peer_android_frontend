@@ -19,6 +19,7 @@ import eu.peernetwork.wallet.ui.model.UiWallet
 
 @Composable
 fun BalanceScreen(
+    lastUpdated: State<Long>,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
     loading: @Composable () -> Unit = {},
@@ -57,8 +58,8 @@ fun BalanceScreen(
         loading = loading,
         error = error
     ) { updatedContent(it) }
-    LaunchedEffect(Unit) {
-        if (state is BalanceViewModel.State.Empty) {
+    LaunchedEffect(lastUpdated.value) {
+        if (state !is BalanceViewModel.State.Success) {
             viewModel()
         }
     }

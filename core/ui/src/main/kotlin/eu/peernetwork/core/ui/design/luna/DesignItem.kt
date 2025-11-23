@@ -1,6 +1,5 @@
 package eu.peernetwork.core.ui.design.luna
 
-import android.content.res.Configuration
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -28,6 +27,7 @@ fun DesignItem(
     label: String,
     painter: Painter? = null,
     size: Dp = 28.dp,
+    divider: Dp = 6.dp,
     color: Color = MaterialTheme.colorScheme.onBackground,
     tint: Color = MaterialTheme.colorScheme.outline,
     horizontalArrangement: Arrangement.Horizontal = Arrangement.Start,
@@ -64,26 +64,30 @@ fun DesignItem(
         Text(
             label,
             color = color,
-            modifier = Modifier.padding(start = 6.dp),
+            modifier = Modifier.padding(start = divider),
             style = MaterialTheme.typography.bodyMedium
         )
     }
 }
 
+@Preview
 @Composable
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, showBackground = true)
 fun PreviewDesignItem() {
-    DesignTheme {
+    DesignTheme(isDarkMode = true) {
         Column(modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())) {
             DesignItem(
-                "Copy",
-                painterResource(R.drawable.ic_copy)
+                label = "Copy",
+                painter = painterResource(R.drawable.ic_copy),
+                size = 20.dp,
+                divider = 8.dp
             ) {}
             DesignItem(
-                "Close",
-                color = MaterialTheme.colorScheme.error
+                label = "Close",
+                color = MaterialTheme.colorScheme.error,
+                size = 20.dp,
+                divider = 8.dp
             ) {}
         }
     }
