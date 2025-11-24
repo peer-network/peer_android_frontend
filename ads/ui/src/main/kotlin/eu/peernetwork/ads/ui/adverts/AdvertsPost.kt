@@ -39,6 +39,7 @@ fun AdvertsPost(
     to: String,
     status: Boolean,
     modifier: Modifier = Modifier,
+    onClick: (DesignStyledText) -> Unit,
     content: @Composable () -> Unit
 ) {
     val updatedContent by rememberUpdatedState(content)
@@ -65,7 +66,8 @@ fun AdvertsPost(
                     color = MaterialTheme.colorScheme.onBackground,
                     style = MaterialTheme.typography.labelLarge,
                     fontWeight = FontWeight.SemiBold,
-                    maxLines = 1
+                    maxLines = 1,
+                    onClick = onClick
                 )
             }
             Box(
@@ -77,7 +79,8 @@ fun AdvertsPost(
                     color = MaterialTheme.colorScheme.onBackground,
                     style = MaterialTheme.typography.labelMedium,
                     maxLines = 2,
-                    modifier = Modifier.padding(top = 2.dp)
+                    modifier = Modifier.padding(top = 2.dp),
+                    onClick = onClick
                 )
             }
             Row(
@@ -120,7 +123,8 @@ fun PreviewAdvertsPost() {
             description = buildAnnotatedString { append("There’s something about hiking that resets everything. ") },
             from = "8 Jun 2025",
             to = "10 Jun 2025",
-            status = true
+            status = true,
+            onClick = {}
         ) {}
     }
 }

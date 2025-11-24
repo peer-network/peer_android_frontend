@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import eu.peernetwork.ads.ui.R
 import eu.peernetwork.ads.ui.model.UiMetrics
 import eu.peernetwork.ads.ui.overview.OverviewStatistics
+import eu.peernetwork.core.ui.design.luna.DesignStyledText
 import eu.peernetwork.core.ui.theme.DesignTheme
 
 @Composable
@@ -31,6 +32,7 @@ fun AnalyticsPage(
     status: Boolean,
     metrics: UiMetrics,
     modifier: Modifier = Modifier,
+    onClick: (DesignStyledText) -> Unit,
     content: @Composable () -> Unit
 ) {
     Column(
@@ -53,6 +55,7 @@ fun AnalyticsPage(
             description = description,
             status = status,
             modifier = Modifier.padding(vertical = 12.dp),
+            onClick = onClick,
             content = content
         )
         OverviewStatistics(
@@ -112,6 +115,7 @@ fun PreviewAnalyticsPage() {
             start = "8 Jun 2025",
             end = "10 Jun 2025",
             metrics = metrics,
+            onClick = {},
             modifier = Modifier.background(MaterialTheme.colorScheme.background)
                 .padding(12.dp),
         ) {}

@@ -9,8 +9,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
@@ -28,10 +30,10 @@ import androidx.compose.ui.unit.TextUnit
 import eu.peernetwork.core.ui.mapper.annotate
 import eu.peernetwork.core.ui.theme.DesignTheme
 
-enum class DesignStyledTextType(val value: String) {
-    LINK("*"),
-    MENTION("@"),
-    TAG("#")
+sealed class DesignStyledText(val value: String) {
+    object Link : DesignStyledText("*")
+    object Mention : DesignStyledText("@")
+    object Tag : DesignStyledText("#")
 }
 
 @Composable
@@ -52,11 +54,11 @@ fun DesignStyledText(
     maxLines: Int = Int.MAX_VALUE,
     minLines: Int = 1,
     inlineContent: Map<String, InlineTextContent> = mapOf(),
-    onClick: (DesignStyledTextType) -> Unit = {},
+    onClick: (DesignStyledText) -> Unit = {},
     onTextLayout: (TextLayoutResult) -> Unit = {},
     style: TextStyle = LocalTextStyle.current
 ) {
-    var layoutResult: TextLayoutResult? = null
+    var layoutResult by remember { mutableStateOf<TextLayoutResult?>(null) }
     val handleOnTextLayout by rememberUpdatedState(onTextLayout)
     DesignText(
         text = text,
@@ -98,12 +100,12 @@ fun DesignStyledText(
 fun AnnotatedString.getStringAnnotations(
     start: Int,
     end: Int,
-    onClick: (DesignStyledTextType) -> Unit
+    onClick: (DesignStyledText) -> Unit
 ) {
     listOf(
-        DesignStyledTextType.LINK,
-        DesignStyledTextType.MENTION,
-        DesignStyledTextType.TAG,
+        DesignStyledText.Link,
+        DesignStyledText.Mention,
+        DesignStyledText.Tag,
     ).forEach {
         getStringAnnotations(
             tag = it.value,
@@ -130,13 +132,13 @@ fun DesignStyledTextPreview() {
                 text = annotatedString,
                 onClick = {
                     when (it) {
-                        DesignStyledTextType.TAG -> {
+                        DesignStyledText.Tag -> {
                             count.longValue = System.currentTimeMillis()
                         }
-                        DesignStyledTextType.MENTION -> {
+                        DesignStyledText.Mention -> {
                             count.longValue = System.currentTimeMillis() / 10000
                         }
-                        DesignStyledTextType.LINK -> {
+                        DesignStyledText.Link -> {
                             count.longValue = -System.currentTimeMillis()
                         }
                     }

@@ -31,7 +31,7 @@ class AnalyticsViewModel @Inject constructor(
     sealed interface State {
         data object Default: State
         data object Loading: State
-        data class Success(val ads: UiCampaign): State
+        data class Success(val campaign: UiCampaign): State
         data class Error(val error: Throwable): State
     }
 }

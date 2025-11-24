@@ -14,9 +14,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -33,7 +31,6 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import eu.peernetwork.app.ui.profile.Profile
-import eu.peernetwork.app.ui.profile.ProfileOverlayState
 import eu.peernetwork.app.ui.profile.ProfileSheet
 import eu.peernetwork.blog.domain.usecase.PostUsecase
 import eu.peernetwork.blog.ui.article.ArticleScreen
@@ -58,9 +55,9 @@ import kotlinx.coroutines.launch
 fun ProfilePreview(
     id: String,
     title: String?,
-    state: MutableState<ProfileOverlayState>,
     limit: Int,
     onSettings: () -> Unit = {},
+    onClick: () -> Unit = {},
     postState: LazyListState = rememberLazyListState(),
     mediaState: LazyListState = rememberLazyListState(),
     component: Profile.Component,
@@ -73,11 +70,12 @@ fun ProfilePreview(
     val connection = remember { mutableStateOf<ConnectionStatus?>(null) }
     val showSheet = remember { mutableStateOf(false) }
     val coroutine = rememberCoroutineScope()
-    val enable =  remember { derivedStateOf { state.value == ProfileOverlayState.Empty } }
+    val enable =  remember { mutableStateOf(false) }
     val pageState = rememberPagerState(
         pageCount = { UiMimeType.TYPES.size },
         initialPage = 0
     )
+    val handleClick by rememberUpdatedState(onClick)
     ConnectionScreen(
         provider = component,
         viewModelStoreOwner = viewModelStoreOwner
@@ -136,10 +134,13 @@ fun ProfilePreview(
                 requireUpdate = requirePostUpdate,
                 provider = component,
                 viewModelStoreOwner = viewModelStoreOwner,
-                onEvent = {
-                    when(it) {
+                onEvent = { event ->
+                    when(event) {
                         is ArticleScreenEvent.Boost -> {
-                            controller.navigate("boost/${it.id}")
+                            controller.navigate("boost/${event.id}")
+                        }
+                        is ArticleScreenEvent.Post -> {
+                            handleClick()
                         }
                     }
                 },

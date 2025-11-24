@@ -31,6 +31,7 @@ import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.luna.DesignPagingStream
 import eu.peernetwork.core.ui.design.luna.DesignRefreshScaffold
 import eu.peernetwork.core.ui.design.luna.DesignStreamState
+import eu.peernetwork.core.ui.design.luna.DesignStyledText
 import eu.peernetwork.core.ui.design.material.DesignScaffold
 import eu.peernetwork.core.ui.extension.annotate
 import eu.peernetwork.core.ui.extension.builder
@@ -42,6 +43,7 @@ fun AdvertsScreen(
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
     onSelect: (String) -> Unit,
+    onClick: (DesignStyledText) -> Unit,
     onBack: () -> Unit
 ) {
     val context = LocalContext.current
@@ -113,6 +115,7 @@ fun AdvertsScreen(
                             from = post.ads.from,
                             to = post.ads.to,
                             status = post.ads.status,
+                            onClick = onClick,
                             modifier = Modifier
                                 .padding(horizontal = 16.dp)
                                 .padding(vertical = 5.dp)

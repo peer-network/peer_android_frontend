@@ -17,9 +17,7 @@ import eu.peernetwork.app.ui.profile.ProfileScreen
 import eu.peernetwork.app.ui.search.SearchScreen
 import eu.peernetwork.app.ui.search.SearchState
 import eu.peernetwork.app.ui.settings.SettingsScreen
-import eu.peernetwork.app.ui.window.WindowScreen
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.material.DesignPageWindowMode
 import eu.peernetwork.core.ui.design.material.DesignRouter
 import eu.peernetwork.core.ui.factory.UiViewModelStore
 
@@ -32,47 +30,32 @@ fun ProfileNavigation(
     provider: UiComponentProvider,
     component: Profile.Component,
     viewModelStoreOwner: ViewModelStoreOwner,
-    onCancel: () -> Unit = {},
     content: @Composable (NavBackStackEntry) -> Unit = {},
 ) {
     val updatedContent by rememberUpdatedState(content)
-    val windowMode = if (startDestination == "overlay") {
-        DesignPageWindowMode.DOCKED
-    } else {
-        DesignPageWindowMode.HIDDEN
-    }
     DesignRouter(
         navController = controller,
         startDestination = startDestination
     ) {
         composable("content") { updatedContent(it) }
-        composable("overlay") { updatedContent(it) }
         composable(
             route = "profile/{id}",
             arguments = listOf(navArgument("id") { this.type = NavType.StringType })
         ) { backStackEntry ->
             val id = backStackEntry.arguments?.getString("id") ?: ""
-            WindowScreen(
-                provider = component,
-                mode = windowMode,
-                onCancel = onCancel,
+            ProfileScreen(
+                principal = principal,
+                userId = id,
+                provider = provider,
                 viewModelStoreOwner = backStackEntry,
-            ) {
-                ProfileScreen(
-                    principal = principal,
-                    userId = id,
-                    provider = provider,
-                    viewModelStoreOwner = backStackEntry,
-                )
-            }
+            )
         }
-        composable("settings") { backStackEntry ->
-            WindowScreen(
+        composable("settings") {
+            SettingsScreen(
+                userId = userId,
                 provider = component,
-                mode = windowMode,
-                onCancel = onCancel,
-                viewModelStoreOwner = backStackEntry,
-            ) { SettingsScreen(userId, component, viewModelStoreOwner) }
+                viewModelStoreOwner = viewModelStoreOwner
+            )
         }
         composable(
             route = "search/{type}/{query}",
@@ -88,49 +71,30 @@ fun ProfileNavigation(
                 "tag" -> SearchState.Active.Tag(query)
                 else -> SearchState.Default
             }
-            WindowScreen(
+            SearchScreen(
+                id = userId,
+                postLimit = BuildConfig.PAGING_LIMIT,
                 provider = component,
-                mode = windowMode,
-                onCancel = onCancel,
-                viewModelStoreOwner = backStackEntry,
-            ) {
-                SearchScreen(
-                    id = userId,
-                    postLimit = BuildConfig.PAGING_LIMIT,
-                    provider = component,
-                    viewModelStore = UiViewModelStore.Delegate(),
-                    searchState = searchState,
-                )
-            }
+                viewModelStore = UiViewModelStore.Delegate(),
+                searchState = searchState,
+            )
         }
         composable("adverts") { backStackEntry ->
-            WindowScreen(
-                provider = component,
-                mode = windowMode,
-                onCancel = onCancel,
-                viewModelStoreOwner = backStackEntry,
-            ) { DashboardScreen(
+            DashboardScreen(
                 id = principal,
                 limit = BuildConfig.PAGING_LIMIT,
                 provider = component,
                 viewModelStoreOwner = backStackEntry,
                 onBack = { controller.popBackStack() }
-            ) }
+            ) {}
         }
         composable("boost/{id}") { backStackEntry ->
             val id = backStackEntry.arguments?.getString("id") ?: ""
-            WindowScreen(
+            BoostScreen(
+                id = id,
                 provider = component,
-                mode = windowMode,
-                onCancel = onCancel,
-                viewModelStoreOwner = backStackEntry,
-            ) {
-                BoostScreen(
-                    id = id,
-                    provider = component,
-                    viewModelStoreOwner = backStackEntry
-                ) { controller.popBackStack() }
-            }
+                viewModelStoreOwner = backStackEntry
+            ) { controller.popBackStack() }
         }
     }
 }

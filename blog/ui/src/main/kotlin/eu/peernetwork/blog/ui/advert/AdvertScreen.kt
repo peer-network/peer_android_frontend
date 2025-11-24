@@ -111,6 +111,7 @@ fun LazyListScope.advert(
                 model = post.mapToDetail(),
                 media = post.media,
                 onMenu = onMenu,
+                onClick = onMenu,
                 engagement = { updatedEngagement(post) },
                 connection = { updatedConnection(post) },
                 content = { path -> updatedContent(post, path, index) }

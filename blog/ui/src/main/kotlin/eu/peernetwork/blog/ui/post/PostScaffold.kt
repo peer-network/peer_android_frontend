@@ -2,6 +2,7 @@ package eu.peernetwork.blog.ui.post
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
@@ -40,12 +41,14 @@ fun PostScaffold(
     onPin: (() -> Unit)? = null,
     pinnedBy: String? = null,
     onMenu: () -> Unit,
+    onClick: () -> Unit,
     engagement: @Composable () -> Unit,
     connection: @Composable RowScope.() -> Unit,
 ) {
     PostScaffold(
         model = model,
         onMenu = onMenu,
+        onClick = onClick,
         engagement = engagement,
         pinnedBy = pinnedBy,
         onPin = onPin,
@@ -77,6 +80,7 @@ fun PostScaffold(
     pinnedBy: String? = null,
     onPin: (() -> Unit)? = null,
     onMenu: () -> Unit,
+    onClick: () -> Unit,
     engagement: @Composable () -> Unit,
     connection: @Composable RowScope.() -> Unit,
     background: @Composable BoxScope.() -> Unit = { PostScaffoldBackground() },
@@ -87,6 +91,7 @@ fun PostScaffold(
         Column(
             modifier = Modifier.padding(horizontal = 12.dp)
                 .padding(vertical = 7.dp)
+                .clickable(onClick = onClick)
         ) {
             PostToolbar(
                 slug = model.slug,
@@ -137,6 +142,7 @@ fun PostMediaScaffold(
     pinnedBy: String? = null,
     onPin: (() -> Unit)? = null,
     onMenu: () -> Unit,
+    onClick: () -> Unit,
     engagement: @Composable () -> Unit,
     connection: @Composable RowScope.() -> Unit,
     content: @Composable () -> Unit
@@ -158,6 +164,7 @@ fun PostMediaScaffold(
         )
         Box(
             modifier = Modifier.background(MaterialTheme.colorScheme.surfaceDim)
+                .clickable(onClick = onClick)
         ) { updatedContent() }
         PostStatus(
             username = model.username,
@@ -200,6 +207,7 @@ fun PreviewUserOption() {
             PostScaffold(
                 model = model,
                 onMenu = {},
+                onClick = {},
                 engagement = { EngagementOption(engagement) {} }
             ) {
                 DesignButton(
@@ -214,6 +222,7 @@ fun PreviewUserOption() {
                 model = model,
                 onPin = {},
                 onMenu = {},
+                onClick = {},
                 engagement = { EngagementOption(engagement) {} },
                 pinnedBy = "Thomas",
                 connection = {
@@ -233,6 +242,7 @@ fun PreviewUserOption() {
                 model = model,
                 pinnedBy = "Thomas",
                 onMenu = {},
+                onClick = {},
                 engagement = { EngagementOption(engagement) {} },
                 connection = {
                     DesignButton(

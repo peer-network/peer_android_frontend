@@ -44,6 +44,7 @@ fun ArticleListing(
     viewModelStoreOwner: ViewModelStoreOwner,
     connection: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit,
     onMenu: (UiPost) -> Unit,
+    onClick: (UiPost) -> Unit,
     content: @Composable (ModerationScreenEvent) -> Unit
 ) {
     val enable = remember { derivedStateOf { !listState.isScrollInProgress } }
@@ -60,6 +61,7 @@ fun ArticleListing(
             state = state,
             listState = listState,
             onMenu = onMenu,
+            onClick = onClick,
             connection = connection,
             engagement = { post ->
                 EngagementOption(
@@ -92,6 +94,7 @@ fun ArticleListing(
     state: State<DesignStreamState<Flow<PagingData<UiPost>>>>,
     listState: LazyListState,
     onMenu: (UiPost) -> Unit,
+    onClick: (UiPost) -> Unit,
     engagement: @Composable (UiPost) -> Unit,
     connection: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit,
     content: @Composable (UiPost, String, Int) -> Unit,
@@ -100,6 +103,7 @@ fun ArticleListing(
     val updatedConnection by rememberUpdatedState(connection)
     val updatedContent by rememberUpdatedState(content)
     val handleMenu by rememberUpdatedState(onMenu)
+    val handleClick by rememberUpdatedState(onClick)
     DesignStream(state) { result ->
         val lazyPagingItems = result.value.collectAsLazyPagingItems()
         LazyColumn(
@@ -117,6 +121,7 @@ fun ArticleListing(
                         model = post.mapToDetail(),
                         media = post.media,
                         onMenu = { handleMenu(post) },
+                        onClick = { handleClick(post) },
                         engagement = { updatedEngagement(post) },
                         connection = {
                             updatedConnection(

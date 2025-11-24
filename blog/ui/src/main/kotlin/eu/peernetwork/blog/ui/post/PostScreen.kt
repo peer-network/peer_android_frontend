@@ -95,6 +95,7 @@ fun PostScreen(
     media: ImmutableList<UiMedia>,
     onPin: (() -> Unit)? = null,
     onMenu: () -> Unit,
+    onClick: () -> Unit,
     engagement: @Composable () -> Unit,
     connection: @Composable RowScope.() -> Unit,
     content: @Composable (String) -> Unit
@@ -106,6 +107,7 @@ fun PostScreen(
             pinnedBy = pinnedBy,
             onPin = onPin,
             onMenu = onMenu,
+            onClick = onClick,
             engagement = engagement,
             connection = connection,
         )
@@ -115,6 +117,7 @@ fun PostScreen(
             pinnedBy = pinnedBy,
             onPin = onPin,
             onMenu = onMenu,
+            onClick = onClick,
             connection = connection,
             engagement = engagement
         ) {

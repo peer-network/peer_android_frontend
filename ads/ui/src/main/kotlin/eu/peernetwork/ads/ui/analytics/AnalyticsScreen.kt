@@ -14,13 +14,15 @@ import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.luna.DesignRefreshScaffold
 import eu.peernetwork.core.ui.design.luna.DesignStream
 import eu.peernetwork.core.ui.design.luna.DesignStreamState
+import eu.peernetwork.core.ui.design.luna.DesignStyledText
 import eu.peernetwork.core.ui.extension.builder
 
 @Composable
 fun AnalyticsScreen(
     id: String,
     provider: UiComponentProvider,
-    viewModelStoreOwner: ViewModelStoreOwner
+    viewModelStoreOwner: ViewModelStoreOwner,
+    onClick: (DesignStyledText) -> Unit
 ) {
     val context = LocalContext.current
     val component = remember { provider.builder(Analytics.Builder::class.java).build(context) }
@@ -61,15 +63,16 @@ fun AnalyticsScreen(
             onRefresh = { viewModel(id) }
         ) {
             AnalyticsPage(
-                title = target.value.ads.ads.content.title,
-                description = target.value.ads.ads.content.description,
-                status = target.value.ads.ads.status,
-                metrics = target.value.ads.metrics,
-                start = target.value.ads.ads.from,
-                end = target.value.ads.ads.to
+                title = target.value.campaign.ads.content.title,
+                description = target.value.campaign.ads.content.description,
+                status = target.value.campaign.ads.status,
+                metrics = target.value.campaign.metrics,
+                start = target.value.campaign.ads.from,
+                end = target.value.campaign.ads.to,
+                onClick = onClick
             ) {
                 AnalyticsMedia(
-                    url = target.value.ads.ads.content.path,
+                    url = target.value.campaign.ads.content.path,
                     component = component
                 )
             }

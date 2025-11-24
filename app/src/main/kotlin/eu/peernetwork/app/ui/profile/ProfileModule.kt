@@ -7,7 +7,7 @@ import eu.peernetwork.ads.ui.boost.Boost
 import eu.peernetwork.ads.ui.checkout.Checkout
 import eu.peernetwork.ads.ui.checkout.CheckoutBalance
 import eu.peernetwork.ads.ui.dashboard.Dashboard
-import eu.peernetwork.app.ui.renderer.CheckoutBalanceRenderer
+import eu.peernetwork.app.ui.renderer.BalanceRenderer
 import eu.peernetwork.app.ui.renderer.EngagementRenderer
 import eu.peernetwork.app.ui.search.Search
 import eu.peernetwork.app.ui.settings.Settings
@@ -153,6 +153,6 @@ object ProfileModule {
     @Provides
     @Profile.Scope
     fun provideCheckoutBalance(component: Profile.Component): CheckoutBalance {
-        return CheckoutBalanceRenderer(component)
+        return BalanceRenderer(component)
     }
 }

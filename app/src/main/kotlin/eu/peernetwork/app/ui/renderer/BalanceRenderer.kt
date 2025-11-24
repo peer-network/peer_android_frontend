@@ -31,7 +31,7 @@ import eu.peernetwork.wallet.ui.R
 import eu.peernetwork.wallet.ui.balance.BalanceScreen
 import javax.inject.Inject
 
-class CheckoutBalanceRenderer @Inject constructor(
+class BalanceRenderer @Inject constructor(
     private val provider: UiComponentProvider
 ) : CheckoutBalance {
     @Composable

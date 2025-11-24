@@ -32,6 +32,7 @@ import eu.peernetwork.core.ui.design.luna.DesignStreamState
 import eu.peernetwork.core.ui.extension.builder
 
 sealed interface ArticleScreenEvent {
+    data class Post(val id: String): ArticleScreenEvent
     data class Boost(val id: String): ArticleScreenEvent
 }
 
@@ -106,7 +107,8 @@ fun ArticleScreen(
         component = component,
         viewModelStoreOwner = viewModelStoreOwner,
         connection = connection,
-        onMenu = { showSheet.value = it }
+        onMenu = { showSheet.value = it },
+        onClick = { handleEvent(ArticleScreenEvent.Post(it.id)) },
     ) {
         ArticleSheet(showSheet) { sheetState, post ->
             when (sheetState) {

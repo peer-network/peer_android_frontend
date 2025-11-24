@@ -37,6 +37,7 @@ fun AnalyticsPost(
     description: AnnotatedString,
     status: Boolean,
     modifier: Modifier = Modifier,
+    onClick: (DesignStyledText) -> Unit,
     content: @Composable () -> Unit
 ) {
     val updatedContent by rememberUpdatedState(content)
@@ -63,7 +64,8 @@ fun AnalyticsPost(
                     color = MaterialTheme.colorScheme.onBackground,
                     style = MaterialTheme.typography.labelLarge,
                     fontWeight = FontWeight.SemiBold,
-                    maxLines = 1
+                    maxLines = 1,
+                    onClick = onClick
                 )
             }
             Box(
@@ -75,7 +77,8 @@ fun AnalyticsPost(
                     color = MaterialTheme.colorScheme.onBackground,
                     style = MaterialTheme.typography.labelMedium,
                     maxLines = 2,
-                    modifier = Modifier.padding(top = 2.dp)
+                    modifier = Modifier.padding(top = 2.dp),
+                    onClick = onClick
                 )
             }
             Row(
@@ -110,7 +113,8 @@ fun PreviewAnalyticsPost() {
         AnalyticsPost(
             title = buildAnnotatedString { append("Title") },
             description = buildAnnotatedString { append("There’s something about hiking that resets everything. ") },
-            status = true
+            status = true,
+            onClick = {}
         ) {}
     }
 }

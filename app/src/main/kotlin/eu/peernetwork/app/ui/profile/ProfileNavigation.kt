@@ -112,7 +112,7 @@ fun ProfileNavigation(
                 provider = component,
                 viewModelStoreOwner = backStackEntry,
                 onBack = { controller.popBackStack() }
-            ) }
+            ) {} }
         }
     }
 }
