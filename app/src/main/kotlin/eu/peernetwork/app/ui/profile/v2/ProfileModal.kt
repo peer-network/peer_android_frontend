@@ -11,7 +11,7 @@ import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.material.DesignOverlay
 
 @Composable
-fun ProfileOverlay(
+fun ProfileModal(
     principal: String,
     userId: String,
     isVisible: MutableState<Boolean>,

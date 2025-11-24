@@ -61,7 +61,7 @@ fun ProfileScreen(
         ) {
             val postState = rememberLazyListState()
             val mediaState = rememberLazyListState()
-            ProfilePreview(
+            ProfilePage(
                 id = userId,
                 title = title,
                 limit = BuildConfig.PAGING_LIMIT,
@@ -74,7 +74,7 @@ fun ProfileScreen(
                 onClick = { isVisible.value = true }
             )
         }
-        ProfileOverlay(
+        ProfileModal(
             principal = principal,
             userId = userId,
             isVisible = isVisible,

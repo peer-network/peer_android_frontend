@@ -25,7 +25,6 @@ import eu.peernetwork.core.ui.factory.UiViewModelStore
 fun ProfileNavigation(
     principal: String,
     userId: String,
-    startDestination: String = "content",
     controller: NavHostController,
     provider: UiComponentProvider,
     component: Profile.Component,
@@ -35,7 +34,7 @@ fun ProfileNavigation(
     val updatedContent by rememberUpdatedState(content)
     DesignRouter(
         navController = controller,
-        startDestination = startDestination
+        startDestination = "content"
     ) {
         composable("content") { updatedContent(it) }
         composable(
