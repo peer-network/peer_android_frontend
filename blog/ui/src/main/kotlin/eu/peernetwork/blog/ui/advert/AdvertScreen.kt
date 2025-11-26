@@ -81,7 +81,7 @@ fun AdvertScreen(
         provider = component,
         viewModelStoreOwner = viewModelStoreOwner,
         connection = connection
-    ) { handler, state -> updatedContent(handler, derivedState) }
+    ) { handler -> updatedContent(handler, derivedState) }
     LaunchedEffect(Unit) {
         viewModel(FEED, Pageable(0, postLimit))
     }

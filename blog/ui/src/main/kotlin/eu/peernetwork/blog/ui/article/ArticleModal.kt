@@ -28,5 +28,9 @@ fun ArticleModal(
         provider = provider,
         viewModelStoreOwner = viewModelStoreOwner,
         onEvent = onEvent
-    ) { component, items -> PostModal() }
+    ) { component, items, index ->
+        items[index]?.title?.text?.let {
+            PostModal(it)
+        }
+    }
 }

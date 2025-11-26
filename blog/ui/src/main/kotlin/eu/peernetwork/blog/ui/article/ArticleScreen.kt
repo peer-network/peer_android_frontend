@@ -6,6 +6,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.pager.PagerScope
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -159,7 +161,7 @@ fun ArticleScreen(
             provider = component,
             viewModelStoreOwner = viewModelStoreOwner,
             connection = connection
-        ) { handle, position ->
+        ) { handle ->
             val handleEvent by rememberUpdatedState(onEvent)
             val shareTitle = stringResource(eu.peernetwork.blog.ui.R.string.share_label)
             LazyColumn(
@@ -187,8 +189,9 @@ fun ArticleScreen(
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
     onEvent: (ArticleEvent) -> Unit,
-    content: @Composable (Article.Component, LazyPagingItems<UiPost>) -> Unit
+    content: @Composable PagerScope.(Article.Component, LazyPagingItems<UiPost>, Int) -> Unit
 ) {
+    val updatedContent by rememberUpdatedState(content)
     ArticleScreen(
         id = id,
         types = types,
@@ -200,6 +203,13 @@ fun ArticleScreen(
         onEvent = onEvent,
         loading = { PostSkeleton(3) }
     ) { component, items ->
-        content(component, items)
+        val pagerState = rememberPagerState(initialPage = selected.intValue) { items.itemCount }
+        PostScreen(
+            id = id,
+            limit = limit,
+            pagerState = pagerState,
+            provider = component,
+            viewModelStoreOwner = viewModelStoreOwner
+        ) { handle, index -> updatedContent(this, component, items, index) }
     }
 }

@@ -1,7 +1,19 @@
 package eu.peernetwork.blog.ui.post
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.pager.PagerScope
+import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.pager.VerticalPager
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.State
@@ -10,7 +22,9 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import eu.peernetwork.blog.ui.engagement.EngagementObserver.State as ObserverState
 import eu.peernetwork.blog.ui.engagement.v2.EngagementScreen
@@ -87,7 +101,7 @@ fun PostScreen(
     viewModelStoreOwner: ViewModelStoreOwner,
     onFocus: (Int) -> Unit = {},
     connection: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit,
-    content: @Composable (Post.Handle, State<Int>) -> Unit
+    content: @Composable (Post.Handle) -> Unit
 ) {
     val updatedContent by rememberUpdatedState(content)
     PostScreen(
@@ -101,6 +115,45 @@ fun PostScreen(
             listState = listState,
             onFocused = { focused.intValue = it },
             onFocus = onFocus
-        ) { updatedContent(handle, focused) }
+        ) { updatedContent(handle) }
     }
 }
+
+@Composable
+fun PostScreen(
+    id: String,
+    limit: Int,
+    pagerState: PagerState,
+    provider: UiComponentProvider,
+    viewModelStoreOwner: ViewModelStoreOwner,
+    content: @Composable PagerScope.(Post.Handle, Int) -> Unit
+) {
+    val updatedContent by rememberUpdatedState(content)
+    PostScreen(
+        id = id,
+        limit = limit,
+        provider = provider,
+        viewModelStoreOwner = viewModelStoreOwner,
+        connection = {  }
+    ) { handle ->
+        Column(
+            verticalArrangement = Arrangement.Bottom,
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+                .navigationBarsPadding()
+        ) {
+            VerticalPager(
+                state = pagerState,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+            ) { updatedContent(this, handle, it) }
+            Box(modifier = Modifier
+                .fillMaxWidth()
+                .height(48.dp)
+                .background(MaterialTheme.colorScheme.surfaceVariant))
+        }
+    }
+}
+
