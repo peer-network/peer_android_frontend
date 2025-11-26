@@ -2,6 +2,7 @@ package eu.peernetwork.blog.ui.article
 
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -78,4 +79,9 @@ fun ArticleOverlay(
         onRefresh = { viewModel.load(author, types, Pageable(0, limit)) },
         onView = { viewModel.view(it) }
     )
+    DisposableEffect(Unit) {
+        onDispose {
+            viewModel.selected(author, -1)
+        }
+    }
 }

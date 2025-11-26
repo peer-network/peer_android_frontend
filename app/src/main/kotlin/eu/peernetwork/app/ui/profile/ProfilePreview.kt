@@ -148,25 +148,25 @@ fun ProfilePreview(
                 )
             },
         ) {
-            ArticleScreen(
-                author = id,
-                types = if (it == 0) {
-                    PostUsecase.POST
-                } else {
-                    PostUsecase.MEDIA
-                },
-                status = enable,
-                postLimit = limit,
-                requireUpdate = requirePostUpdate,
-                provider = component,
-                viewModelStoreOwner = viewModelStoreOwner,
-                onEvent = { },
-                listState =  if (it == 0) {
-                    postState
-                } else {
-                    mediaState
-                }
-            )
+//            ArticleScreen(
+//                author = id,
+//                types = if (it == 0) {
+//                    PostUsecase.POST
+//                } else {
+//                    PostUsecase.MEDIA
+//                },
+//                status = enable,
+//                postLimit = limit,
+//                requireUpdate = requirePostUpdate,
+//                provider = component,
+//                viewModelStoreOwner = viewModelStoreOwner,
+//                onEvent = { },
+//                listState =  if (it == 0) {
+//                    postState
+//                } else {
+//                    mediaState
+//                }
+//            )
         }
         ProfileSheet(
             id = id,

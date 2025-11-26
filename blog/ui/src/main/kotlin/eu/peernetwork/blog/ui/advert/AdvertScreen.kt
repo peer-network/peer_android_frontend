@@ -18,10 +18,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import eu.peernetwork.blog.domain.usecase.PostUsecase.Companion.FEED
-import eu.peernetwork.blog.ui.engagement.v2.EngagementOption
 import eu.peernetwork.blog.ui.mapper.mapToDetail
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.post.Post
+import eu.peernetwork.blog.ui.post.PostItem
 import eu.peernetwork.blog.ui.post.PostScreen
 import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.core.ui.R
@@ -39,8 +39,7 @@ fun AdvertScreen(
     viewModelStoreOwner: ViewModelStoreOwner,
     connection: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit = {},
     content: @Composable (
-        Post.Component,
-        EngagementOption, State<Int>,
+        Post.Handle,
         state: State<DesignStreamState<Flow<PagingData<UiPost>>>>,
     ) -> Unit
 ) {
@@ -82,9 +81,7 @@ fun AdvertScreen(
         provider = component,
         viewModelStoreOwner = viewModelStoreOwner,
         connection = connection
-    ) { postComponent, event, moderation, position ->
-        updatedContent(postComponent, event, position, derivedState)
-    }
+    ) { handler, state -> updatedContent(handler, derivedState) }
     LaunchedEffect(Unit) {
         viewModel(FEED, Pageable(0, postLimit))
     }
@@ -105,7 +102,7 @@ fun LazyListScope.advert(
         val updatedConnection by rememberUpdatedState(connection)
         val updatedContent by rememberUpdatedState(content)
         state[index]?.let { post ->
-            PostScreen(
+            PostItem(
                 type = post.type,
                 pinnedBy = null,
                 model = post.mapToDetail(),

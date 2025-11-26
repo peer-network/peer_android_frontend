@@ -16,7 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 
 @Composable
-fun DesignLoader(
+fun DesignShimmer(
     durationMillis: Int = 1000,
     easing: Easing = FastOutSlowInEasing,
     content: @Composable BoxScope.() -> Unit = {}

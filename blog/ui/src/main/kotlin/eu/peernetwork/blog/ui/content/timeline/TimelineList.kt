@@ -33,7 +33,7 @@ import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.event.UiModerationEvent
 import eu.peernetwork.blog.ui.event.UiPostListener
 import eu.peernetwork.blog.ui.moderation.ModerationScreen
-import eu.peernetwork.core.ui.design.material.DesignLoader
+import eu.peernetwork.core.ui.design.material.DesignShimmer
 
 @Composable
 fun TimelineList(
@@ -158,7 +158,7 @@ fun TimelineList(
             item(key = id) {
                 Column(modifier = Modifier.fillMaxWidth()) {
                     if (lazyPagingItems.value.loadState.append is LoadState.Loading) {
-                        DesignLoader { PostPlaceholder(contentPaddingValues = PaddingValues(16.dp)) }
+                        DesignShimmer { PostPlaceholder(contentPaddingValues = PaddingValues(16.dp)) }
                     }
                     Box(modifier = Modifier.fillMaxWidth()
                         .height(48.dp))

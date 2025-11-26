@@ -1,12 +1,13 @@
 package eu.peernetwork.app.ui.profile.v2
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.navigation.compose.rememberNavController
 import eu.peernetwork.blog.domain.usecase.PostUsecase
-import eu.peernetwork.blog.ui.article.ArticleOverlay
-import eu.peernetwork.blog.ui.event.UiPostListener
+import eu.peernetwork.blog.ui.article.ArticleModal
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.material.DesignOverlay
 
@@ -14,7 +15,9 @@ import eu.peernetwork.core.ui.design.material.DesignOverlay
 fun ProfileModal(
     principal: String,
     userId: String,
+    selected: MutableIntState,
     isVisible: MutableState<Boolean>,
+    timestamp: State<Long>,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner
 ) {
@@ -23,10 +26,7 @@ fun ProfileModal(
         state = isVisible,
         onDismiss = { isVisible.value = false }
     ) {
-        ProfileScreen(
-            provider = provider,
-            viewModelStoreOwner = viewModelStoreOwner
-        ) { component, connection ->
+        ProfileScreen(provider) { component ->
             ProfileNavigation(
                 principal = principal,
                 userId = userId,
@@ -35,21 +35,14 @@ fun ProfileModal(
                 component = component,
                 viewModelStoreOwner = viewModelStoreOwner
             ) {
-                ArticleOverlay(
+                ArticleModal(
                     author = userId,
                     types = PostUsecase.POST,
-                    enabled = isVisible.value,
                     limit = 20,
-                    position = 1,
+                    selected = selected,
+                    timestamp = timestamp,
                     provider = component,
-                    viewModelStoreOwner = viewModelStoreOwner,
-                    event = object : UiPostListener {
-                        override fun invoke(event: UiPostListener.Event) {
-                        }
-                    },
-                    header = {
-
-                    }
+                    viewModelStoreOwner = viewModelStoreOwner
                 ) {}
             }
         }

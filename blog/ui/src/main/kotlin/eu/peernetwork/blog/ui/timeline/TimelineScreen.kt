@@ -31,20 +31,14 @@ import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
 import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.blog.domain.model.Category
-import eu.peernetwork.blog.ui.advert.AdvertScreen
-import eu.peernetwork.blog.ui.advert.advert
 import eu.peernetwork.blog.ui.compose.PostPlaceholder
 import eu.peernetwork.blog.ui.event.UiPostListener
 import eu.peernetwork.core.common.paging.Pageable
-import eu.peernetwork.blog.ui.engagement.v2.EngagementOption
-import eu.peernetwork.blog.ui.mapper.mapToDetail
 import eu.peernetwork.blog.ui.model.UiPost
-import eu.peernetwork.blog.ui.post.PostMedia
-import eu.peernetwork.blog.ui.post.PostScreen
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.design.luna.DesignStream
 import eu.peernetwork.core.ui.design.luna.DesignStreamState
-import eu.peernetwork.core.ui.design.material.DesignLoader
+import eu.peernetwork.core.ui.design.material.DesignShimmer
 import kotlinx.coroutines.flow.Flow
 
 @Composable
@@ -109,88 +103,88 @@ fun TimelineScreen(
             }
         }
     }
-    AdvertScreen(
-        id = id,
-        postLimit = postLimit,
-        listState = listState,
-        provider = component,
-        viewModelStoreOwner = viewModelStoreOwner,
-        connection = connection
-    ) { postComponent, event, position, ads ->
-        val content = remember { derivedStateOf {
-            (ads.value as? DesignStreamState.Success?)?.data
-        } }
-        val adverts = content.value?.collectAsLazyPagingItems()
-        TimelineScreen(
-            author = id,
-            state = derivedState,
-            listState = listState,
-            header = { adverts?.let { ads ->
-                advert(
-                    state = ads,
-                    engagement = { post ->
-                        EngagementOption(
-                            post = post,
-                            state = event.observe()
-                        ) { event(post, it) }
-                    },
-                    onMenu = {},
-                    connection = {
-                        updatedConnection(
-                            Triple(
-                                it.author.id,
-                                it.author.isfollowing,
-                                it.author.isfollowed
-                            )
-                        )
-                    }
-                ) { post, path, index ->
-                    val isActive = remember { derivedStateOf { index == position.value } }
-                    PostMedia(
-                        type = post.type,
-                        path = path,
-                        avatar = post.author.imageUrl,
-                        position = index,
-                        aspectRatio = post.aspectRatio,
-                        status = status,
-                        enable = enable,
-                        isActive = isActive,
-                        component = postComponent,
-                        viewModelStoreOwner = viewModelStoreOwner,
-                    )
-                }
-            } },
-            connection = {
-                updatedConnection(
-                    Triple(
-                        it.author.id,
-                        it.author.isfollowing,
-                        it.author.isfollowed
-                    )
-                )
-            },
-            engagement = { post ->
-                EngagementOption(
-                    post = post,
-                    state = event.observe()
-                ) { event(post, it) }
-            }
-        ) { post, path, index ->
-            val isActive = remember { derivedStateOf { index == position.value } }
-            PostMedia(
-                type = post.type,
-                path = path,
-                avatar = post.author.imageUrl,
-                position = index,
-                aspectRatio = post.aspectRatio,
-                status = status,
-                enable = enable,
-                isActive = isActive,
-                component = postComponent,
-                viewModelStoreOwner = viewModelStoreOwner,
-            )
-        }
-    }
+//    AdvertScreen(
+//        id = id,
+//        postLimit = postLimit,
+//        listState = listState,
+//        provider = component,
+//        viewModelStoreOwner = viewModelStoreOwner,
+//        connection = connection
+//    ) { postComponent, event, position, ads ->
+//        val content = remember { derivedStateOf {
+//            (ads.value as? DesignStreamState.Success?)?.data
+//        } }
+//        val adverts = content.value?.collectAsLazyPagingItems()
+//        TimelineScreen(
+//            author = id,
+//            state = derivedState,
+//            listState = listState,
+//            header = { adverts?.let { ads ->
+//                advert(
+//                    state = ads,
+//                    engagement = { post ->
+//                        EngagementOption(
+//                            post = post,
+//                            state = event.observe()
+//                        ) { event(post, it) }
+//                    },
+//                    onMenu = {},
+//                    connection = {
+//                        updatedConnection(
+//                            Triple(
+//                                it.author.id,
+//                                it.author.isfollowing,
+//                                it.author.isfollowed
+//                            )
+//                        )
+//                    }
+//                ) { post, path, index ->
+//                    val isActive = remember { derivedStateOf { index == position.value } }
+//                    PostMedia(
+//                        type = post.type,
+//                        path = path,
+//                        avatar = post.author.imageUrl,
+//                        position = index,
+//                        aspectRatio = post.aspectRatio,
+//                        status = status,
+//                        enable = enable,
+//                        isActive = isActive,
+//                        component = postComponent,
+//                        viewModelStoreOwner = viewModelStoreOwner,
+//                    )
+//                }
+//            } },
+//            connection = {
+//                updatedConnection(
+//                    Triple(
+//                        it.author.id,
+//                        it.author.isfollowing,
+//                        it.author.isfollowed
+//                    )
+//                )
+//            },
+//            engagement = { post ->
+//                EngagementOption(
+//                    post = post,
+//                    state = event.observe()
+//                ) { event(post, it) }
+//            }
+//        ) { post, path, index ->
+//            val isActive = remember { derivedStateOf { index == position.value } }
+//            PostMedia(
+//                type = post.type,
+//                path = path,
+//                avatar = post.author.imageUrl,
+//                position = index,
+//                aspectRatio = post.aspectRatio,
+//                status = status,
+//                enable = enable,
+//                isActive = isActive,
+//                component = postComponent,
+//                viewModelStoreOwner = viewModelStoreOwner,
+//            )
+//        }
+//    }
     LaunchedEffect(category, criteria) {
         val currentState = state as? TimelineViewModel.State.Success?
         val requiresChange = currentState?.category != category
@@ -229,29 +223,29 @@ fun TimelineScreen(
             modifier = Modifier.fillMaxSize()
         ) {
             updatedHeader()
-            items(
-                count = lazyPagingItems.itemCount,
-                key = { index -> lazyPagingItems[index]?.id?.let { "$it;$index" } ?: index }
-            ) { index ->
-                lazyPagingItems[index]?.let { post ->
-                    PostScreen(
-                        type = post.type,
-                        pinnedBy = null,
-                        model = post.mapToDetail(),
-                        media = post.media,
-                        onMenu = {},
-                        onClick = {},
-                        engagement = { updatedEngagement(post) },
-                        connection = { updatedConnection(post) },
-                        content = { path -> updatedContent(post, path, index) }
-                    )
-                }
-            }
+//            items(
+//                count = lazyPagingItems.itemCount,
+//                key = { index -> lazyPagingItems[index]?.id?.let { "$it;$index" } ?: index }
+//            ) { index ->
+//                lazyPagingItems[index]?.let { post ->
+//                    PostScreen(
+//                        type = post.type,
+//                        pinnedBy = null,
+//                        model = post.mapToDetail(),
+//                        media = post.media,
+//                        onMenu = {},
+//                        onClick = {},
+//                        engagement = { updatedEngagement(post) },
+//                        connection = { updatedConnection(post) },
+//                        content = { path -> updatedContent(post, path, index) }
+//                    )
+//                }
+//            }
             if (lazyPagingItems.loadState.refresh !is LoadState.Loading) {
                 item(key = author) {
                     Column(modifier = Modifier.fillMaxWidth()) {
                         if (lazyPagingItems.loadState.append is LoadState.Loading) {
-                            DesignLoader {
+                            DesignShimmer {
                                 PostPlaceholder(
                                     contentPaddingValues = PaddingValues(16.dp)
                                 )

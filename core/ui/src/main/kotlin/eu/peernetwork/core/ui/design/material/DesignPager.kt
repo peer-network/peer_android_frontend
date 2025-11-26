@@ -113,7 +113,7 @@ fun<T : Any> DesignRefreshablePager(
         val updatedError by rememberUpdatedState(error)
         Crossfade(derivedState.value) { target ->
             when (target) {
-                is DesignStreamState.Loading -> DesignLoader { updatedLoading() }
+                is DesignStreamState.Loading -> DesignShimmer { updatedLoading() }
                 is DesignStreamState.Error -> {
                     if (target.error is NoContentException) {
                         updatedEmpty()

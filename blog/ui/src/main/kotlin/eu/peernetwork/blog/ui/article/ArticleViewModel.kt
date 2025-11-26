@@ -70,8 +70,20 @@ class ArticleViewModel @Inject constructor(
         }
     }
 
-    private fun updateStatus(id: String, status: Status) {
-        _status.update { it + (id to status) }
+    fun selected(tag: String, position: Int) {
+        viewModelScope.launch {
+            updateStatus(tag, Status.Success(position))
+        }
+    }
+
+    fun updatedAt(page: Int, timestamp: Long) {
+        viewModelScope.launch {
+            updateStatus(page.toString(), Status.Success(timestamp))
+        }
+    }
+
+    private fun updateStatus(tag: String, status: Status) {
+        _status.update { it + (tag to status) }
     }
 
     sealed interface Status {

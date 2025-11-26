@@ -6,8 +6,10 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableIntState
+import androidx.compose.runtime.MutableLongState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -18,7 +20,7 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.navigation.NavHostController
 import eu.peernetwork.app.ui.profile.Profile
 import eu.peernetwork.app.ui.profile.ProfileSheet
-import eu.peernetwork.blog.ui.article.ArticleScreenEvent
+import eu.peernetwork.blog.ui.article.ArticleEvent
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.design.material.DesignTitle
 import eu.peernetwork.core.ui.design.material.DesignTitleBarHost
@@ -33,16 +35,17 @@ fun ProfilePage(
     id: String,
     title: String?,
     limit: Int,
-    onSettings: () -> Unit = {},
-    onClick: () -> Unit = {},
+    selected: MutableIntState,
+    timestamp: MutableLongState,
     postState: LazyListState = rememberLazyListState(),
     mediaState: LazyListState = rememberLazyListState(),
     component: Profile.Component,
     viewModelStoreOwner: ViewModelStoreOwner,
+    onSettings: () -> Unit,
+    onClick: () -> Unit,
     controller: NavHostController,
 ) {
     val requireUpdate = rememberSaveable { mutableStateOf(false) }
-    val timestamp = rememberSaveable { mutableLongStateOf(System.currentTimeMillis()) }
     val requirePostUpdate = rememberSaveable { mutableStateOf(false) }
     val connection = remember { mutableStateOf<ConnectionStatus?>(null) }
     val showSheet = remember { mutableStateOf(false) }
@@ -75,19 +78,16 @@ fun ProfilePage(
             id = id,
             page = it,
             limit = limit,
+            selected = selected,
             timestamp = timestamp,
             component = component,
             viewModelStoreOwner = viewModelStoreOwner,
             postState = postState,
-            mediaState = mediaState
+            mediaState = mediaState,
         ) { event ->
             when(event) {
-                is ArticleScreenEvent.Boost -> {
-                    controller.navigate("boost/${event.id}")
-                }
-                is ArticleScreenEvent.Post -> {
-                    handleClick()
-                }
+                is ArticleEvent.Boost -> controller.navigate("boost/${event.id}")
+                is ArticleEvent.Post -> handleClick()
             }
         }
     }
