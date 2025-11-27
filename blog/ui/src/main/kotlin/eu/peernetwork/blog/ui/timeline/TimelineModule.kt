@@ -7,7 +7,6 @@ import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
 import eu.peernetwork.blog.ui.advert.Advert
-import eu.peernetwork.blog.ui.content.overlay.Overlay
 import eu.peernetwork.blog.ui.post.Post
 import eu.peernetwork.core.ui.annotation.UiBuilder
 import eu.peernetwork.core.ui.annotation.UiViewModel
@@ -48,14 +47,6 @@ class TimelineModule(private val context: Context) {
     @UiBuilder(Post.Builder::class)
     fun providePostBuilder(component: Timeline.Component): UiComponent.Builder {
         return Post.Builder(component)
-    }
-
-    @Provides
-    @IntoMap
-    @Timeline.Scope
-    @UiBuilder(Overlay.Builder::class)
-    fun provideOverlayBuilder(component: Timeline.Component): UiComponent.Builder {
-        return Overlay.Builder(component)
     }
 
     @Provides

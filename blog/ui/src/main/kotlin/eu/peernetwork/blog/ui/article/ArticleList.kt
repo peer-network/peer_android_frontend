@@ -25,8 +25,8 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.paging.LoadState
 import eu.peernetwork.blog.domain.model.Content
 import eu.peernetwork.blog.ui.engagement.v2.EngagementOption
-import eu.peernetwork.blog.ui.mapper.mapToDetail
-import eu.peernetwork.blog.ui.model.UiPost
+import eu.peernetwork.blog.ui.mapper.v2.mapToDetail
+import eu.peernetwork.blog.ui.model.v2.UiPost
 import eu.peernetwork.blog.ui.post.PostItem
 import eu.peernetwork.blog.ui.post.PostMedia
 import eu.peernetwork.blog.ui.post.PostSkeleton
@@ -90,7 +90,7 @@ fun ArticleList(
                     type = post.type,
                     pinnedBy = null,
                     model = post.mapToDetail(),
-                    media = post.media,
+                    asset = post.asset,
                     onMenu = { showSheet.value = post },
                     onClick = { selected.intValue = index },
                     engagement = {
@@ -103,8 +103,8 @@ fun ArticleList(
                         updatedConnection(
                             Triple(
                                 post.author.id,
-                                post.author.isfollowing,
-                                post.author.isfollowed
+                                post.author.following,
+                                post.author.followed
                             )
                         )
                     },
@@ -115,7 +115,7 @@ fun ArticleList(
                             path = path,
                             avatar = post.author.imageUrl,
                             position = index,
-                            aspectRatio = post.aspectRatio,
+                            aspectRatio = post.asset.ratio,
                             status = status,
                             enable = enable,
                             isActive = isActive,

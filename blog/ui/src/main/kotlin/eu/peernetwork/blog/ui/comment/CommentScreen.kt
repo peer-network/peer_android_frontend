@@ -34,7 +34,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import eu.peernetwork.blog.domain.model.Engagement
-import eu.peernetwork.blog.ui.compose.Placeholder
 import eu.peernetwork.blog.ui.interaction.listing.ListingScreen
 import eu.peernetwork.blog.ui.model.UiContent
 import eu.peernetwork.core.common.paging.Pageable
@@ -147,7 +146,7 @@ fun CommentScreen(
         DesignPagingScaffold(
             state = derivedState,
             onRefresh = { state.value?.let { viewModel.load(it.id, Pageable(0, postLimit)) } },
-            placeholder = { Placeholder(modifier = Modifier.padding(horizontal = 24.dp)) },
+            placeholder = {  },
             errorContent = { error, refresh ->
                 Column(modifier = Modifier
                     .fillMaxSize()

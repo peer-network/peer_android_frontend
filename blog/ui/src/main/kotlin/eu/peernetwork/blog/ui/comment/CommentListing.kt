@@ -20,7 +20,6 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.LazyPagingItems
-import eu.peernetwork.blog.ui.compose.CommentSummary
 import eu.peernetwork.blog.ui.mapper.mapToContent
 import eu.peernetwork.blog.ui.model.UiComment
 
@@ -45,31 +44,31 @@ fun CommentListing(
         items(lazyPagingItems.itemCount) { index ->
             lazyPagingItems[index]?.let { comment ->
                 val interactionSource = remember { MutableInteractionSource() }
-                CommentSummary(
-                    model = comment.mapToContent(),
-                    likes = likes.value[comment.id]?.likes ?: comment.likes,
-                    modifier = Modifier.combinedClickable(
-                        interactionSource = interactionSource,
-                        indication = ripple(),
-                        onClick = { },
-                        onLongClick = {
-                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                            handleOnComment(comment)
-                        }
-                    ).padding(horizontal = 24.dp)
-                        .padding(top = 12.dp),
-                    onComment = { handleOnComment(comment) },
-                    titleOnClick = { handleTitleOnClick(comment.author.username) },
-                    onMentionClick = onMentionClick,
-                    onHashtagClick = onHashtagClick,
-                    onAuthorClick = onAuthorClick
-                ) {
-                    CommentOptions(
-                        likes = likes.value[comment.id]?.likes ?: comment.likes,
-                        isLiked = likes.value[comment.id]?.isLiked ?: comment.isLiked,
-                        onComment = { handleOnComment(comment) }
-                    ) { handleOnLike(comment) }
-                }
+//                CommentSummary(
+//                    model = comment.mapToContent(),
+//                    likes = likes.value[comment.id]?.likes ?: comment.likes,
+//                    modifier = Modifier.combinedClickable(
+//                        interactionSource = interactionSource,
+//                        indication = ripple(),
+//                        onClick = { },
+//                        onLongClick = {
+//                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+//                            handleOnComment(comment)
+//                        }
+//                    ).padding(horizontal = 24.dp)
+//                        .padding(top = 12.dp),
+//                    onComment = { handleOnComment(comment) },
+//                    titleOnClick = { handleTitleOnClick(comment.author.username) },
+//                    onMentionClick = onMentionClick,
+//                    onHashtagClick = onHashtagClick,
+//                    onAuthorClick = onAuthorClick
+//                ) {
+//                    CommentOptions(
+//                        likes = likes.value[comment.id]?.likes ?: comment.likes,
+//                        isLiked = likes.value[comment.id]?.isLiked ?: comment.isLiked,
+//                        onComment = { handleOnComment(comment) }
+//                    ) { handleOnLike(comment) }
+//                }
             }
         }
         item { Box(modifier = Modifier

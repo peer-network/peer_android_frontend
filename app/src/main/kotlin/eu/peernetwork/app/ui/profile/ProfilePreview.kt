@@ -34,9 +34,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import eu.peernetwork.app.extension.navigateToTagSearch
 import eu.peernetwork.app.extension.navigateToUsernameSearch
-import eu.peernetwork.blog.domain.usecase.PostUsecase
-import eu.peernetwork.blog.ui.event.UiPostListener
-import eu.peernetwork.blog.ui.article.ArticleScreen
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.design.compose.DesignRefreshableScaffold
 import eu.peernetwork.core.ui.design.compose.DesignStatefulScaffoldState
@@ -83,30 +80,30 @@ fun ProfilePreview(
         viewModelStoreOwner = viewModelStoreOwner
     ) { connectionController ->
         val connectionState by connectionController.value.observe().collectAsStateWithLifecycle()
-        val event = remember {
-            object : UiPostListener {
-                override fun invoke(event: UiPostListener.Event) {
-                    when(event) {
-                        is UiPostListener.Event.Mention -> {
-                            controller.navigateToUsernameSearch(event.username)
-                        }
-                        is UiPostListener.Event.Hashtag -> {
-                            controller.navigateToTagSearch(event.tag)
-                        }
-                        is UiPostListener.Event.Author -> {
-                            controller.navigateIfNecessary("profile/${event.id}")
-                        }
-                        is UiPostListener.Event.Post -> {
-                            state.value = ProfileOverlayState.Photo(
-                                id = event.id,
-                                position = event.position,
-                                page = pageState.currentPage
-                            )
-                        }
-                    }
-                }
-            }
-        }
+//        val event = remember {
+//            object : UiPostListener {
+//                override fun invoke(event: UiPostListener.Event) {
+//                    when(event) {
+//                        is UiPostListener.Event.Mention -> {
+//                            controller.navigateToUsernameSearch(event.username)
+//                        }
+//                        is UiPostListener.Event.Hashtag -> {
+//                            controller.navigateToTagSearch(event.tag)
+//                        }
+//                        is UiPostListener.Event.Author -> {
+//                            controller.navigateIfNecessary("profile/${event.id}")
+//                        }
+//                        is UiPostListener.Event.Post -> {
+//                            state.value = ProfileOverlayState.Photo(
+//                                id = event.id,
+//                                position = event.position,
+//                                page = pageState.currentPage
+//                            )
+//                        }
+//                    }
+//                }
+//            }
+//        }
         ProfilePreview(
             pageState = pageState,
             onRefresh = {

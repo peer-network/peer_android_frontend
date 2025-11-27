@@ -23,14 +23,18 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.blog.ui.R
 import eu.peernetwork.core.ui.theme.DesignTheme
+import eu.peernetwork.core.ui.theme.PeerAppDarkRed
 
 @Composable
 fun EngagementMetric(
     text: String,
     painter: Painter,
     modifier: Modifier = Modifier,
+    checked: Boolean = false,
+    checkedPainter: Painter = painter,
     color: Color = MaterialTheme.colorScheme.onBackground,
     tint: Color = color,
+    checkedTint: Color = PeerAppDarkRed,
     contentDescription: String? = null,
     size: Dp = 18.dp,
     style: TextStyle = MaterialTheme.typography.labelLarge,
@@ -43,7 +47,10 @@ fun EngagementMetric(
             painter = painter,
             modifier = modifier,
             color = color,
+            checked = checked,
+            checkedPainter = checkedPainter,
             tint = tint,
+            checkedTint = checkedTint,
             contentDescription = contentDescription,
             size = size,
             style = style,
@@ -56,7 +63,10 @@ fun EngagementMetric(
             painter = painter,
             modifier = modifier,
             color = color,
+            checked = checked,
+            checkedPainter = checkedPainter,
             tint = tint,
+            checkedTint = checkedTint,
             contentDescription = contentDescription,
             size = size,
             style = style,
@@ -71,8 +81,11 @@ fun EngagementMetric(
     text: String,
     painter: Painter,
     modifier: Modifier = Modifier,
+    checked: Boolean = false,
+    checkedPainter: Painter = painter,
     color: Color = MaterialTheme.colorScheme.onBackground,
     tint: Color = color,
+    checkedTint: Color = PeerAppDarkRed,
     contentDescription: String? = null,
     size: Dp = 18.dp,
     style: TextStyle = MaterialTheme.typography.labelLarge,
@@ -86,9 +99,17 @@ fun EngagementMetric(
         horizontalAlignment = horizontalAlignment
     ) {
         Icon(
-            painter = painter,
+            painter = if (checked) {
+                checkedPainter
+            } else {
+                painter
+            },
             contentDescription = contentDescription,
-            tint = tint,
+            tint = if (checked) {
+                checkedTint
+            } else {
+                tint
+            },
             modifier = Modifier.size(size)
         )
         Text(
@@ -104,8 +125,11 @@ fun EngagementMetric(
     text: String,
     painter: Painter,
     modifier: Modifier = Modifier,
+    checked: Boolean = false,
+    checkedPainter: Painter = painter,
     color: Color = MaterialTheme.colorScheme.onBackground,
     tint: Color = color,
+    checkedTint: Color = PeerAppDarkRed,
     contentDescription: String? = null,
     size: Dp = 18.dp,
     style: TextStyle = MaterialTheme.typography.labelLarge,
@@ -121,9 +145,17 @@ fun EngagementMetric(
         verticalAlignment = verticalAlignment
     ) {
         Icon(
-            painter = painter,
+            painter = if (checked) {
+                checkedPainter
+            } else {
+                painter
+            },
             contentDescription = contentDescription,
-            tint = tint,
+            tint = if (checked) {
+                checkedTint
+            } else {
+                tint
+            },
             modifier = Modifier.size(size)
         )
         Text(
@@ -141,7 +173,9 @@ fun PreviewEngagementMetric() {
         Column(modifier = Modifier.padding(16.dp)) {
             EngagementMetric(
                 text = "5k",
+                checked = true,
                 painter = painterResource(R.drawable.ic_love_outline),
+                checkedPainter = painterResource(R.drawable.ic_love),
                 orientation = Orientation.Vertical,
                 modifier = Modifier.align(Alignment.End)
             ) {}

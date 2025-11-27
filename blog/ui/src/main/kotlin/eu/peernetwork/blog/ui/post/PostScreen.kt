@@ -30,8 +30,8 @@ import eu.peernetwork.blog.ui.engagement.EngagementObserver.State as ObserverSta
 import eu.peernetwork.blog.ui.engagement.v2.EngagementScreen
 import eu.peernetwork.blog.ui.engagement.v2.EngagementOption
 import eu.peernetwork.blog.ui.engagement.v2.EngagementOption.State as EngagementState
-import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.model.UiReaction
+import eu.peernetwork.blog.ui.model.v2.UiPost
 import eu.peernetwork.blog.ui.moderation.v2.ModerationScreen
 import eu.peernetwork.blog.ui.moderation.v2.ModerationScreenEvent
 import eu.peernetwork.core.ui.component.UiComponentProvider

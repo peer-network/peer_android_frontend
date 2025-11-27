@@ -22,27 +22,28 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import eu.peernetwork.blog.ui.model.UiMedia
+import eu.peernetwork.blog.ui.model.v2.UiAsset
+import eu.peernetwork.blog.ui.model.v2.UiDisplay
+import eu.peernetwork.blog.ui.model.v2.UiMedia
 import eu.peernetwork.core.ui.theme.PeerTheme
-import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 fun PostPager(
     state: PagerState,
-    media: ImmutableList<UiMedia>,
+    asset: UiAsset,
     content: @Composable (String) -> Unit
 ) {
     val updatedContent by rememberUpdatedState(content)
     Box(contentAlignment = Alignment.BottomEnd) {
         HorizontalPager(state = state) {
-            Box { updatedContent(media[it].path) }
+            Box { updatedContent(asset.media[it].path) }
         }
         Box(modifier = Modifier.padding(horizontal = 24.dp)
             .padding(vertical = 16.dp)) {
             PostPagerIndicator(
                 state,
-                media
+                asset
             )
         }
     }
@@ -51,11 +52,11 @@ fun PostPager(
 @Composable
 fun PostPagerIndicator(
     state: PagerState,
-    media: ImmutableList<UiMedia>,
+    asset: UiAsset,
     modifier: Modifier = Modifier
 ) {
-    val total = if (media.size <= 3) {
-        media.size
+    val total = if (asset.media.size <= 3) {
+        asset.media.size
     } else {
         3
     }
@@ -72,11 +73,11 @@ fun PostPagerIndicator(
         ) {
             repeat(total) {
                 val isSelected = when {
-                    media.size <= 3 -> state.currentPage == it
+                    asset.media.size <= 3 -> state.currentPage == it
                     else -> when (it) {
                         0 -> state.currentPage == 0
-                        1 -> state.currentPage in 1 until (media.size - 1)
-                        2 -> state.currentPage == (media.size - 1)
+                        1 -> state.currentPage in 1 until (asset.media.size - 1)
+                        2 -> state.currentPage == (asset.media.size - 1)
                         else -> false
                     }
                 }
@@ -102,16 +103,14 @@ fun PostPagerIndicator(
 fun PreviewPostPager() {
     PeerTheme {
         val items = persistentListOf(
-            UiMedia("http://localhost", UiMedia.Options("", null)),
-            UiMedia("http://localhost", UiMedia.Options("", null)),
-            UiMedia("http://localhost", UiMedia.Options("", null)),
-            UiMedia("http://localhost", UiMedia.Options("", null)),
-            UiMedia("http://localhost", UiMedia.Options("", null)),
+            UiMedia("http://localhost", UiDisplay("", null)),
+            UiMedia("http://localhost", UiDisplay("", null)),
+            UiMedia("http://localhost", UiDisplay("", null)),
         )
         val state = rememberPagerState(initialPage = 0) { items.size }
         PostPager(
             state,
-            items,
+            UiAsset(.5f, items),
         ) {
             Box(modifier = Modifier.aspectRatio(1f))
         }

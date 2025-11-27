@@ -18,14 +18,14 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import eu.peernetwork.blog.ui.model.UiPost.Type
+import eu.peernetwork.blog.ui.model.v2.UiPostType
 import eu.peernetwork.core.ui.design.material.DesignThumbnail
 import eu.peernetwork.media.core.renderer.ImageView
 import eu.peernetwork.media.core.renderer.VideoThumbnail
 
 @Composable
 fun PostMedia(
-    type: Type,
+    type: UiPostType,
     path: String,
     avatar: String,
     position: Int,
@@ -43,7 +43,7 @@ fun PostMedia(
         factory = component.viewModelFactory()
     )
     val thumbnail = viewModel.thumbnail.collectAsStateWithLifecycle()
-    if (type == Type.IMAGE) {
+    if (type == UiPostType.IMAGE) {
         component.imageView()(
             modifier = Modifier,
             spec = ImageView.Spec(
@@ -60,7 +60,7 @@ fun PostMedia(
                 ratio = aspectRatio
             )
         )
-    } else if (type == Type.VIDEO) {
+    } else if (type == UiPostType.VIDEO) {
         val isPlaying = remember { derivedStateOf { status.value && isActive.value } }
         val postThumbnail = remember { derivedStateOf { thumbnail.value[path] } }
         DesignThumbnail(
@@ -86,7 +86,7 @@ fun PostMedia(
                 isPlaying = isPlaying
             )
         )
-    } else if (type == Type.AUDIO) {
+    } else if (type == UiPostType.AUDIO) {
         Box(contentAlignment = Alignment.BottomEnd) {
             val current = remember { mutableIntStateOf(-1) }
             val length = remember { mutableLongStateOf(0L) }

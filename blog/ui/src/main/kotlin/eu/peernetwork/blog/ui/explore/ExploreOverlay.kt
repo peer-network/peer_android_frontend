@@ -9,9 +9,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import eu.peernetwork.blog.ui.event.UiPostListener
-import eu.peernetwork.blog.ui.content.overlay.OverlayScreen
-import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.luna.DesignStreamState
 import eu.peernetwork.core.ui.extension.builder
@@ -24,7 +21,6 @@ fun ExploreOverlay(
     enabled: Boolean,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
-    event: UiPostListener,
     header: @Composable () -> Unit = {},
     connection: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit = {}
 ) {
@@ -54,18 +50,4 @@ fun ExploreOverlay(
             }
         }
     }
-    OverlayScreen(
-        id = author,
-        limit = limit,
-        position = position,
-        status = enabled,
-        event = event,
-        state = derivedState,
-        provider = component,
-        header = header,
-        connection = connection,
-        viewModelStoreOwner = viewModelStoreOwner,
-        onRefresh = { viewModel.get(Pageable(0, limit)) },
-        onView = { viewModel.view(it) }
-    )
 }

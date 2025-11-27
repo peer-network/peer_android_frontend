@@ -1,7 +1,7 @@
 package eu.peernetwork.blog.ui.mock
 
 import androidx.compose.ui.text.buildAnnotatedString
-import eu.peernetwork.blog.ui.model.UiAuthor
+import eu.peernetwork.blog.ui.model.v2.UiAuthor
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.model.UiVideo
 import io.mockk.mockk
@@ -17,8 +17,8 @@ object MockContent {
                 username = "<test-username>",
                 slug = 0,
                 imageUrl = "http://localhost",
-                isfollowed = false,
-                isfollowing = false
+                followed = false,
+                following = false
             ),
             type = UiPost.Type.IMAGE,
             time = "<test-time>",
@@ -46,8 +46,8 @@ object MockContent {
                 username = "<test-username>",
                 slug = 0,
                 imageUrl = "http://localhost",
-                isfollowed = false,
-                isfollowing = false
+                followed = false,
+                following = false
             ),
             time = "<test-time>",
             createdAt = System.currentTimeMillis(),

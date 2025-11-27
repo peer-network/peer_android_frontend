@@ -10,7 +10,6 @@ import eu.peernetwork.app.ui.renderer.EngagementRenderer
 import eu.peernetwork.app.ui.search.Search
 import eu.peernetwork.app.ui.window.Window
 import eu.peernetwork.blog.ui.engagement.EngagementDialog
-import eu.peernetwork.blog.ui.feed.timeline.Post
 import eu.peernetwork.blog.ui.timeline.Timeline
 import eu.peernetwork.core.ui.annotation.UiBuilder
 import eu.peernetwork.core.ui.annotation.UiViewModel
@@ -49,14 +48,6 @@ object FeedModule {
     @UiBuilder(Profile.Builder::class)
     fun provideProfileBuilder(component: Feed.Component): UiComponent.Builder {
         return Profile.Builder(component)
-    }
-
-    @Feed.Scope
-    @Provides
-    @IntoMap
-    @UiBuilder(Post.Builder::class)
-    fun providePhotoBuilder(component: Feed.Component): UiComponent.Builder {
-        return Post.Builder(component)
     }
 
     @Feed.Scope

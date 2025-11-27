@@ -11,8 +11,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import eu.peernetwork.app.extension.navigateToTagSearch
 import eu.peernetwork.app.extension.navigateToUsernameSearch
 import eu.peernetwork.app.ui.window.WindowTitle
-import eu.peernetwork.blog.ui.feed.detail.DetailOverlay
-import eu.peernetwork.blog.ui.event.UiPostListener
 import eu.peernetwork.core.ui.design.material.DesignOverlay
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.core.ui.factory.UiViewModelStore
@@ -41,56 +39,56 @@ fun ContentOverlay(
         onDismiss = { overlay.value = null }
     ) { controller ->
         val overlayState = remember { mutableStateOf(overlay.value) }
-        val event = remember {
-            object : UiPostListener {
-                override fun invoke(event: UiPostListener.Event) {
-                    when(event) {
-                        is UiPostListener.Event.Mention -> {
-                            controller.navigateToUsernameSearch(event.username)
-                        }
-                        is UiPostListener.Event.Hashtag -> {
-                            controller.navigateToTagSearch(event.tag)
-                        }
-                        is UiPostListener.Event.Author -> {
-                            controller.navigateIfNecessary("profile/${event.id}")
-                        }
-                        else -> {}
-                    }
-                }
-            }
-        }
-        ContentNavigation(
-            userId = userId,
-            postLimit = postLimit,
-            overlay = overlayState,
-            component = component,
-            viewModelStore = viewModelStore,
-            controller = controller,
-            onCancel = { visible.value = false },
-        ) { backStackEntry ->
-            DetailOverlay(
-                id = overlayState.value!!,
-                userId = userId,
-                limit = postLimit,
-                event = event,
-                provider = component,
-                viewModelStoreOwner = viewModelStore.get(overlayState.value!!),
-                header = {
-                    WindowTitle(
-                        provider = component,
-                        viewModelStoreOwner = backStackEntry,
-                        onCancel = { visible.value = false },
-                    )
-                }
-            ) {
-                ConnectionScreen(
-                    isFollowing = connection.getOrDefault(it.first, it.third),
-                    isFollowed = it.second,
-                    onClick = { follow ->
-                        connectionController.value.invoke(it.first, !follow)
-                    }
-                )
-            }
-        }
+//        val event = remember {
+//            object : UiPostListener {
+//                override fun invoke(event: UiPostListener.Event) {
+//                    when(event) {
+//                        is UiPostListener.Event.Mention -> {
+//                            controller.navigateToUsernameSearch(event.username)
+//                        }
+//                        is UiPostListener.Event.Hashtag -> {
+//                            controller.navigateToTagSearch(event.tag)
+//                        }
+//                        is UiPostListener.Event.Author -> {
+//                            controller.navigateIfNecessary("profile/${event.id}")
+//                        }
+//                        else -> {}
+//                    }
+//                }
+//            }
+//        }
+//        ContentNavigation(
+//            userId = userId,
+//            postLimit = postLimit,
+//            overlay = overlayState,
+//            component = component,
+//            viewModelStore = viewModelStore,
+//            controller = controller,
+//            onCancel = { visible.value = false },
+//        ) { backStackEntry ->
+//            DetailOverlay(
+//                id = overlayState.value!!,
+//                userId = userId,
+//                limit = postLimit,
+//                event = event,
+//                provider = component,
+//                viewModelStoreOwner = viewModelStore.get(overlayState.value!!),
+//                header = {
+//                    WindowTitle(
+//                        provider = component,
+//                        viewModelStoreOwner = backStackEntry,
+//                        onCancel = { visible.value = false },
+//                    )
+//                }
+//            ) {
+//                ConnectionScreen(
+//                    isFollowing = connection.getOrDefault(it.first, it.third),
+//                    isFollowed = it.second,
+//                    onClick = { follow ->
+//                        connectionController.value.invoke(it.first, !follow)
+//                    }
+//                )
+//            }
+//        }
     }
 }

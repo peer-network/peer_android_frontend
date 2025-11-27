@@ -3,7 +3,6 @@ package eu.peernetwork.blog.ui.article
 import android.content.Context
 import androidx.lifecycle.ViewModelProvider
 import eu.peernetwork.blog.ui.engagement.EngagementDialog
-import eu.peernetwork.blog.ui.content.overlay.Overlay
 import eu.peernetwork.blog.ui.post.Post
 import eu.peernetwork.blog.ui.provider.BlogProvider
 import eu.peernetwork.core.ui.component.UiComponent
@@ -21,7 +20,7 @@ interface Article : BlogProvider {
         dependencies = [Article::class ],
         modules = [ ArticleModule::class ]
     )
-    interface Component : Article, UiComponentProvider, Overlay, Post {
+    interface Component : Article, UiComponentProvider, Post {
         fun viewModelFactory(): ViewModelProvider.Factory
     }
 

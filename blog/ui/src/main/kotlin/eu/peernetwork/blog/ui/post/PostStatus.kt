@@ -30,7 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import eu.peernetwork.blog.ui.R
 import eu.peernetwork.blog.ui.engagement.v2.EngagementOption
-import eu.peernetwork.blog.ui.model.UiPost
+import eu.peernetwork.blog.ui.model.v2.UiEngagement
 import eu.peernetwork.core.ui.design.luna.DesignStyledText
 import eu.peernetwork.core.ui.theme.DesignTheme
 
@@ -168,7 +168,7 @@ fun PostStatus(
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, showBackground = true)
 fun PreviewPostStatus() {
-    val engagement = UiPost.Engagement(
+    val engagement = UiEngagement(
         id = "<test-id>",
         likes = "5k",
         dislikes = "1k",

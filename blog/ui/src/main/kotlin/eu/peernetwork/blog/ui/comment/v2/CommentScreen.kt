@@ -37,7 +37,6 @@ import eu.peernetwork.blog.domain.model.Engagement
 import eu.peernetwork.blog.ui.comment.Comment
 import eu.peernetwork.blog.ui.comment.CommentListing
 import eu.peernetwork.blog.ui.comment.CommentViewModel
-import eu.peernetwork.blog.ui.compose.Placeholder
 import eu.peernetwork.blog.ui.interaction.listing.ListingScreen
 import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.core.ui.component.UiComponentProvider
@@ -149,7 +148,7 @@ fun CommentScreen(
         DesignPagingScaffold(
             state = derivedState,
             onRefresh = { state.value?.let { viewModel.load(it, Pageable(0, postLimit)) } },
-            placeholder = { Placeholder(modifier = Modifier.padding(horizontal = 24.dp)) },
+            placeholder = {  },
             errorContent = { error, refresh ->
                 Column(modifier = Modifier
                     .fillMaxSize()

@@ -16,11 +16,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.blog.ui.R
-import eu.peernetwork.blog.ui.mapper.mapToEngagement
-import eu.peernetwork.blog.ui.model.UiPost
+import eu.peernetwork.blog.ui.mapper.v2.mapToEngagement
 import eu.peernetwork.blog.ui.model.UiReaction
+import eu.peernetwork.blog.ui.model.v2.UiEngagement
+import eu.peernetwork.blog.ui.model.v2.UiPost
 import eu.peernetwork.core.ui.extension.toInt
 import eu.peernetwork.core.ui.theme.DesignTheme
+import eu.peernetwork.core.ui.theme.LightAccentColor
 
 interface EngagementOption {
     fun observe(): androidx.compose.runtime.State<Map<String, UiReaction>>
@@ -66,18 +68,23 @@ fun EngagementOption(
 
 @Composable
 fun EngagementOption(
-    engagement: UiPost.Engagement,
+    engagement: UiEngagement,
     onClick: (EngagementOption.State) -> Unit
 ) {
     val handleClick by rememberUpdatedState(onClick)
     EngagementMetric(
         text = engagement.likes,
+        checked = engagement.isLiked,
         painter = painterResource(R.drawable.ic_love_outline),
+        checkedPainter = painterResource(R.drawable.ic_love),
         orientation = Orientation.Horizontal
     ) { handleClick(EngagementOption.State.Like) }
     EngagementMetric(
         text = engagement.dislikes,
+        checked = engagement.isDisliked,
         painter = painterResource(R.drawable.ic_hate_outline),
+        checkedPainter = painterResource(R.drawable.ic_hate),
+        checkedTint = LightAccentColor,
         orientation = Orientation.Horizontal
     ) { handleClick(EngagementOption.State.Dislike) }
     EngagementMetric(
@@ -96,7 +103,7 @@ fun EngagementOption(
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, showBackground = true)
 fun PreviewEngagementOption() {
     DesignTheme(isDarkMode = false) {
-        val model = UiPost.Engagement(
+        val model = UiEngagement(
             id = "<test-id>",
             likes = "5k",
             dislikes = "1k",

@@ -40,10 +40,10 @@ fun PostToolbar(
     username: String,
     imageUrl: String,
     modifier: Modifier = Modifier,
+    pinnedBy: String? = null,
     color: Color = MaterialTheme.colorScheme.surfaceContainerLow,
     accent: Color = MaterialTheme.colorScheme.surfaceVariant,
     onAuthorClick: () -> Unit,
-    onPin: (() -> Unit)? = null,
     onMenu: () -> Unit,
     connection: @Composable RowScope.() -> Unit
 ) {
@@ -93,7 +93,7 @@ fun PostToolbar(
         updatedConnection()
         PostHeaderOption(
             color = accent,
-            onPin = onPin,
+            pinnedBy = pinnedBy,
             onMenu = onMenu
         )
     }
@@ -102,13 +102,12 @@ fun PostToolbar(
 @Composable
 private fun PostHeaderOption(
     color: Color = MaterialTheme.colorScheme.surfaceVariant,
-    onPin: (() -> Unit)? = null,
+    pinnedBy: String? = null,
     onMenu: () -> Unit
 ) {
-    val handleOnPin by rememberUpdatedState(onPin)
-    if (handleOnPin != null) {
+    if (pinnedBy != null) {
         IconButton(
-            onClick = { handleOnPin?.invoke() },
+            onClick = { },
             modifier = Modifier.padding(horizontal = 8.dp)
                 .size(32.dp),
             colors = IconButtonColors(

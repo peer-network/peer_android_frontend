@@ -7,9 +7,7 @@ import eu.peernetwork.app.ui.profile.Profile
 import eu.peernetwork.app.ui.renderer.EngagementRenderer
 import eu.peernetwork.app.ui.search.Search
 import eu.peernetwork.app.ui.window.Window
-import eu.peernetwork.blog.ui.feed.detail.Detail
 import eu.peernetwork.blog.ui.engagement.EngagementDialog
-import eu.peernetwork.blog.ui.feed.timeline.Post
 import eu.peernetwork.core.ui.annotation.UiBuilder
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
@@ -29,14 +27,6 @@ object ContentModule {
     @UiBuilder(Profile.Builder::class)
     fun provideProfileBuilder(component: Content.Component): UiComponent.Builder {
         return Profile.Builder(component)
-    }
-
-    @Content.Scope
-    @Provides
-    @IntoMap
-    @UiBuilder(Post.Builder::class)
-    fun providePhotoBuilder(component: Content.Component): UiComponent.Builder {
-        return Post.Builder(component)
     }
 
     @Content.Scope
@@ -67,14 +57,6 @@ object ContentModule {
     @Provides
     fun provideEngagementRenderer(component: Content.Component): EngagementDialog {
         return EngagementRenderer(component)
-    }
-
-    @Content.Scope
-    @Provides
-    @IntoMap
-    @UiBuilder(Detail.Builder::class)
-    fun provideDetailBuilder(component: Content.Component): UiComponent.Builder {
-        return Detail.Builder(component)
     }
 
     @Content.Scope

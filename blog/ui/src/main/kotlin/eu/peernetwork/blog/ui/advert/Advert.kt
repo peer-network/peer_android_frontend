@@ -2,7 +2,6 @@ package eu.peernetwork.blog.ui.advert
 
 import android.content.Context
 import androidx.lifecycle.ViewModelProvider
-import eu.peernetwork.blog.ui.content.overlay.Overlay
 import eu.peernetwork.blog.ui.engagement.EngagementDialog
 import eu.peernetwork.blog.ui.post.Post
 import eu.peernetwork.blog.ui.provider.BlogProvider
@@ -21,7 +20,7 @@ interface Advert : BlogProvider {
         dependencies = [Advert::class ],
         modules = [ AdvertModule::class ]
     )
-    interface Component : Advert, Overlay, Post, UiComponentProvider {
+    interface Component : Advert, Post, UiComponentProvider {
         fun viewModelFactory(): ViewModelProvider.Factory
     }
 

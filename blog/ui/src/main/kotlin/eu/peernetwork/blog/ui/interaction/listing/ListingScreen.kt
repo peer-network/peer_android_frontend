@@ -28,9 +28,7 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import eu.peernetwork.blog.domain.model.Engagement
-import eu.peernetwork.blog.ui.compose.ListItem
-import eu.peernetwork.blog.ui.compose.ListItemSkeleton
-import eu.peernetwork.blog.ui.model.UiAuthor
+import eu.peernetwork.blog.ui.model.v2.UiAuthor
 import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.compose.DesignErrorLabel
@@ -87,7 +85,7 @@ fun ListingScreen(
             )
         },
         modifier = Modifier.fillMaxSize(),
-        placeholder = { ListItemSkeleton(modifier = Modifier.padding(horizontal = 16.dp)) },
+        placeholder = { },
         errorContent = { error, refresh ->
             Column(modifier = Modifier
                 .fillMaxSize()
@@ -113,8 +111,8 @@ fun ListingScreen(
                         updatedConnection(
                             Triple(
                                 author.id,
-                                author.isfollowing,
-                                author.isfollowed
+                                author.following,
+                                author.followed
                             )
                         )
                     }
@@ -134,36 +132,36 @@ fun ListingScreen(
     val slug = "#${author.slug}"
     val handleOnClick by rememberUpdatedState(onClick)
     val updatedContent by rememberUpdatedState(action)
-    ListItem(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { handleOnClick(author) }
-            .padding(vertical = 8.dp, horizontal = 16.dp),
-        lead = {
-            DesignImage(
-                label = author.username,
-                imageUrl = author.imageUrl,
-                size = 42.dp,
-                color = MaterialTheme.colorScheme.surfaceVariant,
-                style = MaterialTheme.typography.bodyMedium.copy(
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-            )
-        }
-    ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(
-                text = "@${author.username} $slug".annotate(
-                    slug,
-                    style = MaterialTheme.typography.bodySmall.toSpanStyle().copy(
-                        color = MaterialTheme.colorScheme.tertiary
-                    )
-                ),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onBackground,
-                modifier = Modifier.weight(1f)
-            )
-            updatedContent?.invoke(this)
-        }
-    }
+//    ListItem(
+//        modifier = Modifier
+//            .fillMaxWidth()
+//            .clickable { handleOnClick(author) }
+//            .padding(vertical = 8.dp, horizontal = 16.dp),
+//        lead = {
+//            DesignImage(
+//                label = author.username,
+//                imageUrl = author.imageUrl,
+//                size = 42.dp,
+//                color = MaterialTheme.colorScheme.surfaceVariant,
+//                style = MaterialTheme.typography.bodyMedium.copy(
+//                    color = MaterialTheme.colorScheme.onBackground
+//                )
+//            )
+//        }
+//    ) {
+//        Row(verticalAlignment = Alignment.CenterVertically) {
+//            Text(
+//                text = "@${author.username} $slug".annotate(
+//                    slug,
+//                    style = MaterialTheme.typography.bodySmall.toSpanStyle().copy(
+//                        color = MaterialTheme.colorScheme.tertiary
+//                    )
+//                ),
+//                style = MaterialTheme.typography.bodyMedium,
+//                color = MaterialTheme.colorScheme.onBackground,
+//                modifier = Modifier.weight(1f)
+//            )
+//            updatedContent?.invoke(this)
+//        }
+//    }
 }

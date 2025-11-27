@@ -18,7 +18,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import eu.peernetwork.blog.domain.usecase.PostUsecase.Companion.FEED
-import eu.peernetwork.blog.ui.mapper.mapToDetail
+import eu.peernetwork.blog.ui.mapper.v2.mapToDetail
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.post.Post
 import eu.peernetwork.blog.ui.post.PostItem
@@ -102,17 +102,17 @@ fun LazyListScope.advert(
         val updatedConnection by rememberUpdatedState(connection)
         val updatedContent by rememberUpdatedState(content)
         state[index]?.let { post ->
-            PostItem(
-                type = post.type,
-                pinnedBy = null,
-                model = post.mapToDetail(),
-                media = post.media,
-                onMenu = onMenu,
-                onClick = onMenu,
-                engagement = { updatedEngagement(post) },
-                connection = { updatedConnection(post) },
-                content = { path -> updatedContent(post, path, index) }
-            )
+//            PostItem(
+//                type = post.type,
+//                pinnedBy = null,
+//                model = post.mapToDetail(),
+//                media = post.media,
+//                onMenu = onMenu,
+//                onClick = onMenu,
+//                engagement = { updatedEngagement(post) },
+//                connection = { updatedConnection(post) },
+//                content = { path -> updatedContent(post, path, index) }
+//            )
         }
     }
 }

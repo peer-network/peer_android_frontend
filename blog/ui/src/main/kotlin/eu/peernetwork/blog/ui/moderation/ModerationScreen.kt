@@ -22,7 +22,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import eu.peernetwork.blog.ui.event.UiModerationEvent
 import eu.peernetwork.blog.ui.model.UiContent
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.component.UiComponentProvider
@@ -33,7 +32,7 @@ import eu.peernetwork.core.ui.extension.builder
 fun ModerationScreen(
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
-    content: @Composable (UiModerationEvent) -> Unit
+    content: @Composable () -> Unit
 ) {
     val context = LocalContext.current
     val component = remember {
@@ -49,13 +48,13 @@ fun ModerationScreen(
     val success by remember { derivedStateOf { state as? ModerationViewModel.State.Success? } }
     val message = stringResource(eu.peernetwork.blog.ui.R.string.action_message)
     val updatedContent by rememberUpdatedState(content)
-    val event = remember(state) {
-        UiModerationEvent(
-            onSave = { viewModel.save(it) },
-            onReport = { viewModel.report(it) }
-        )
-    }
-    updatedContent(event)
+//    val event = remember(state) {
+//        UiModerationEvent(
+//            onSave = { viewModel.save(it) },
+//            onReport = { viewModel.report(it) }
+//        )
+//    }
+//    updatedContent(event)
     LaunchedEffect(error, success) {
         success?.postId?.let {
             Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
@@ -71,12 +70,10 @@ fun ModerationScreen(
 @Composable
 fun ModerationScreen(
     model: UiContent,
-    event: UiModerationEvent,
     size: Dp = 24.dp,
     color: Color = MaterialTheme.colorScheme.tertiary,
 ) {
     var expanded by remember { mutableStateOf(false) }
-    val handleOnReport by rememberUpdatedState(event.onReport)
     val context = LocalContext.current
     Box {
         DesignTextButton(
@@ -99,7 +96,6 @@ fun ModerationScreen(
                 text = { Text("Report") },
                 onClick = {
                     expanded = false
-                    handleOnReport(model.id)
                 }
             )
             DropdownMenuItem(

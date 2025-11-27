@@ -10,18 +10,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
-import eu.peernetwork.blog.ui.model.UiMedia
-import eu.peernetwork.blog.ui.model.UiPost
-import eu.peernetwork.blog.ui.model.UiPost.Type
+import eu.peernetwork.blog.ui.model.v2.UiAsset
+import eu.peernetwork.blog.ui.model.v2.UiPostDetail
+import eu.peernetwork.blog.ui.model.v2.UiPostType
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 fun PostItem(
-    type: Type,
+    type: UiPostType,
     pinnedBy: String?,
-    model: UiPost.Detail,
-    media: ImmutableList<UiMedia>,
-    onPin: (() -> Unit)? = null,
+    model: UiPostDetail,
+    asset: UiAsset,
     onMenu: () -> Unit,
     onClick: () -> Unit,
     engagement: @Composable () -> Unit,
@@ -29,11 +28,10 @@ fun PostItem(
     content: @Composable (String) -> Unit
 ) {
     val updatedContent by rememberUpdatedState(content)
-    if (type == Type.TEXT) {
+    if (type == UiPostType.TEXT) {
         PostScaffold(
             model = model,
             pinnedBy = pinnedBy,
-            onPin = onPin,
             onMenu = onMenu,
             onClick = onClick,
             engagement = engagement,
@@ -43,21 +41,20 @@ fun PostItem(
         PostMediaScaffold(
             model = model,
             pinnedBy = pinnedBy,
-            onPin = onPin,
             onMenu = onMenu,
             onClick = onClick,
             connection = connection,
             engagement = engagement
         ) {
             Box(modifier = Modifier.fillMaxWidth()) {
-                if (media.size == 1) {
-                    val path by remember { derivedStateOf { media.first().path } }
+                if (asset.media.size == 1) {
+                    val path by remember { derivedStateOf { asset.media.first().path } }
                     updatedContent(path)
                 } else {
-                    val pagerState = rememberPagerState(initialPage = 0) { media.size }
+                    val pagerState = rememberPagerState(initialPage = 0) { asset.media.size }
                     PostPager(
                         pagerState,
-                        media,
+                        asset,
                     ) { updatedContent(it) }
                 }
             }

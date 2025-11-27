@@ -13,8 +13,6 @@ import eu.peernetwork.app.extension.navigateToUsernameSearch
 import eu.peernetwork.app.ui.window.WindowTitle
 import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.blog.domain.model.Category
-import eu.peernetwork.blog.ui.event.UiPostListener
-import eu.peernetwork.blog.ui.feed.timeline.PostOverlay
 import eu.peernetwork.core.ui.design.material.DesignOverlay
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.core.ui.factory.UiViewModelStore
@@ -55,61 +53,61 @@ fun FeedOverlay(
         onDismiss = { overlay.value = FeedOverlayState.Empty }
     ) { controller ->
         val overlayState = remember { mutableStateOf<FeedOverlayState?>(overlay.value) }
-        val event = remember {
-            object : UiPostListener {
-                override fun invoke(event: UiPostListener.Event) {
-                    when(event) {
-                        is UiPostListener.Event.Mention -> {
-                            controller.navigateToUsernameSearch(event.username)
-                        }
-                        is UiPostListener.Event.Hashtag -> {
-                            controller.navigateToTagSearch(event.tag)
-                        }
-                        is UiPostListener.Event.Author -> {
-                            controller.navigateIfNecessary("profile/${event.id}")
-                        }
-                        else -> {}
-                    }
-                }
-            }
-        }
-        FeedNavigation(
-            userId = userId,
-            startDestination = "overlay",
-            postLimit = postLimit,
-            controller = controller,
-            component = component,
-            viewModelStore = viewModelStore,
-            onCancel = { visible.value = false }
-        ) { backStackEntry ->
-            val state = (overlayState.value as FeedOverlayState.Post)
-            val storeKey = "${state.category};${state.criteria?.toString() ?: userId}"
-            PostOverlay(
-                id = userId,
-                limit = postLimit,
-                enabled = visible.value,
-                position = state.position,
-                category = state.category,
-                criteria = criteria,
-                provider = component,
-                viewModelStoreOwner = viewModelStore.get(storeKey),
-                event = event,
-                header = {
-                    WindowTitle(
-                        provider = component,
-                        viewModelStoreOwner = backStackEntry,
-                        onCancel = { visible.value = false },
-                    )
-                }
-            ) {
-                ConnectionScreen(
-                    isFollowing = connection.getOrDefault(it.first, it.third),
-                    isFollowed = it.second,
-                    onClick = { follow ->
-                        connectionController.value.invoke(it.first, !follow)
-                    }
-                )
-            }
-        }
+//        val event = remember {
+//            object : UiPostListener {
+//                override fun invoke(event: UiPostListener.Event) {
+//                    when(event) {
+//                        is UiPostListener.Event.Mention -> {
+//                            controller.navigateToUsernameSearch(event.username)
+//                        }
+//                        is UiPostListener.Event.Hashtag -> {
+//                            controller.navigateToTagSearch(event.tag)
+//                        }
+//                        is UiPostListener.Event.Author -> {
+//                            controller.navigateIfNecessary("profile/${event.id}")
+//                        }
+//                        else -> {}
+//                    }
+//                }
+//            }
+//        }
+//        FeedNavigation(
+//            userId = userId,
+//            startDestination = "overlay",
+//            postLimit = postLimit,
+//            controller = controller,
+//            component = component,
+//            viewModelStore = viewModelStore,
+//            onCancel = { visible.value = false }
+//        ) { backStackEntry ->
+//            val state = (overlayState.value as FeedOverlayState.Post)
+//            val storeKey = "${state.category};${state.criteria?.toString() ?: userId}"
+//            PostOverlay(
+//                id = userId,
+//                limit = postLimit,
+//                enabled = visible.value,
+//                position = state.position,
+//                category = state.category,
+//                criteria = criteria,
+//                provider = component,
+//                viewModelStoreOwner = viewModelStore.get(storeKey),
+//                event = event,
+//                header = {
+//                    WindowTitle(
+//                        provider = component,
+//                        viewModelStoreOwner = backStackEntry,
+//                        onCancel = { visible.value = false },
+//                    )
+//                }
+//            ) {
+//                ConnectionScreen(
+//                    isFollowing = connection.getOrDefault(it.first, it.third),
+//                    isFollowed = it.second,
+//                    onClick = { follow ->
+//                        connectionController.value.invoke(it.first, !follow)
+//                    }
+//                )
+//            }
+//        }
     }
 }

@@ -5,18 +5,25 @@ import androidx.compose.ui.text.AnnotatedString
 import eu.peernetwork.blog.domain.model.Content
 import eu.peernetwork.blog.ui.model.UiContent
 import eu.peernetwork.blog.ui.model.UiPost
-import kotlinx.collections.immutable.toPersistentList
+import eu.peernetwork.blog.ui.model.v2.UiAuthor
+import kotlinx.collections.immutable.persistentListOf
 
 fun Content.mapToPhoto(context: Context, annotate: (String) -> AnnotatedString): UiPost {
-    val media = media.map { it.mapFromDomain() }.toPersistentList()
     return UiPost(
         id = id,
         title = annotate(title),
         description = annotate(description),
-        media = media,
-        author = author.mapFromDomain(),
+        media = persistentListOf(),
+        author = UiAuthor(
+            id = author.id,
+            username = author.username,
+            slug = author.slug,
+            imageUrl = author.imageUrl,
+            following = author.isfollowing,
+            followed = author.isfollowed
+        ),
         type = type.mapFromDomain(),
-        aspectRatio = media.getAspectRatio(),
+        aspectRatio = .4f,
         time = context.timeAgo(createdAt, System.currentTimeMillis()),
         createdAt = createdAt,
         likes = likes,

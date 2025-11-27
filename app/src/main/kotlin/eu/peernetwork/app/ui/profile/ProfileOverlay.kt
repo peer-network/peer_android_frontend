@@ -13,16 +13,12 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import eu.peernetwork.app.extension.navigateToTagSearch
-import eu.peernetwork.app.extension.navigateToUsernameSearch
 import eu.peernetwork.app.ui.window.WindowTitle
 import eu.peernetwork.blog.domain.usecase.PostUsecase
-import eu.peernetwork.blog.ui.event.UiPostListener
 import eu.peernetwork.blog.ui.article.ArticleOverlay
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.material.DesignOverlay
 import eu.peernetwork.core.ui.design.material.DesignOverlayPage
-import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.social.ui.connection.ConnectionController
 import eu.peernetwork.social.ui.connection.ConnectionScreen
 
@@ -65,24 +61,24 @@ fun ProfileOverlay(
                 .background(MaterialTheme.colorScheme.background)
         ) {
             val overlayState = remember { mutableStateOf<ProfileOverlayState?>(overlay.value) }
-            val event = remember {
-                object : UiPostListener {
-                    override fun invoke(event: UiPostListener.Event) {
-                        when(event) {
-                            is UiPostListener.Event.Mention -> {
-                                controller.navigateToUsernameSearch(event.username)
-                            }
-                            is UiPostListener.Event.Hashtag -> {
-                                controller.navigateToTagSearch(event.tag)
-                            }
-                            is UiPostListener.Event.Author -> {
-                                controller.navigateIfNecessary("profile/${event.id}")
-                            }
-                            else -> {}
-                        }
-                    }
-                }
-            }
+//            val event = remember {
+//                object : UiPostListener {
+//                    override fun invoke(event: UiPostListener.Event) {
+//                        when(event) {
+//                            is UiPostListener.Event.Mention -> {
+//                                controller.navigateToUsernameSearch(event.username)
+//                            }
+//                            is UiPostListener.Event.Hashtag -> {
+//                                controller.navigateToTagSearch(event.tag)
+//                            }
+//                            is UiPostListener.Event.Author -> {
+//                                controller.navigateIfNecessary("profile/${event.id}")
+//                            }
+//                            else -> {}
+//                        }
+//                    }
+//                }
+//            }
             ProfileNavigation(
                 principal = principal,
                 userId = userId,
@@ -102,7 +98,6 @@ fun ProfileOverlay(
                     position = state.position,
                     provider = component,
                     viewModelStoreOwner = viewModelStoreOwner,
-                    event = event,
                     header = {
                         WindowTitle(
                             provider = component,

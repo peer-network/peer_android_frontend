@@ -28,8 +28,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.app.R
-import eu.peernetwork.blog.ui.compose.PostIcon
-import eu.peernetwork.blog.ui.compose.PostScaffold
 import eu.peernetwork.blog.ui.model.UiAction
 import eu.peernetwork.core.ui.design.luna.DesignAvatar
 import eu.peernetwork.core.ui.theme.DesignTheme
@@ -38,112 +36,112 @@ import eu.peernetwork.core.ui.theme.DesignTheme
 fun PostSnapshot(
     modifier: Modifier = Modifier,
 ) {
-    PostScaffold(
-        modifier = modifier,
-        header = {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                DesignAvatar {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_icon),
-                        contentDescription = stringResource(R.string.app_name),
-                        modifier = Modifier.size(36.dp),
-                        tint = Color.Unspecified
-                    )
-                }
-                Text(
-                    text = stringResource(R.string.peernetwork_label),
-                    style = MaterialTheme.typography.labelLarge.copy(
-                        fontStyle = FontStyle.Italic,
-                        fontWeight = FontWeight.Bold
-                    ),
-                    color = MaterialTheme.colorScheme.onBackground,
-                    modifier = Modifier.padding(start = 4.dp)
-                )
-                Spacer(modifier = Modifier.weight(1f))
-                Text(
-                    text = stringResource(R.string.peertext_label),
-                    color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.labelLarge.copy(
-                        fontWeight = FontWeight.SemiBold
-                    ),
-                    fontStyle = FontStyle.Italic,
-                    modifier = Modifier.padding(end = 4.dp)
-                        .background(
-                            color = MaterialTheme.colorScheme.primary,
-                            shape = RoundedCornerShape(16.dp)
-                        ).padding(
-                            horizontal = 16.dp,
-                            vertical = 6.dp
-                        )
-                )
-                Icon(
-                    painter = painterResource(id = eu.peernetwork.core.ui.R.drawable.ic_menu),
-                    contentDescription = "More",
-                    modifier = Modifier.padding(8.dp)
-                        .size(16.dp),
-                    tint = MaterialTheme.colorScheme.onBackground
-                )
-            }
-        },
-        toolbar = {},
-        background = {
-            Box(
-                modifier = Modifier.fillMaxSize()
-                    .background(
-                        MaterialTheme.colorScheme.surfaceDim,
-                        RoundedCornerShape(24.dp)
-                    )
-            ) },
-        footer = {},
-        contentPadding = PaddingValues(12.dp),
-    ) {
-        Column(modifier = Modifier.fillMaxWidth()
-            .padding(horizontal = 4.dp)
-        ) {
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = stringResource(R.string.onboarding_created_something_love),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onBackground,
-                modifier = Modifier.padding(vertical = 4.dp)
-            )
-            Text(
-                text = stringResource(R.string.onboarding_get_rewarded),
-                style = MaterialTheme.typography.labelLarge.copy(
-                    fontWeight = FontWeight.Normal,
-                ),
-                color = MaterialTheme.colorScheme.outline,
-                modifier = Modifier.padding(top = 4.dp)
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            Row(
-                modifier = Modifier.padding(vertical = 8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                PostIcon(
-                    action = UiAction.Like,
-                    value = "5k",
-                    size = 18.dp,
-                    spacer = 4.dp,
-                    padding = PaddingValues(0.dp)
-                )
-                PostIcon(
-                    action = UiAction.Dislike,
-                    value = "5k",
-                    size = 18.dp,
-                    spacer = 4.dp,
-                    padding = PaddingValues(0.dp)
-                )
-                PostIcon(
-                    action = UiAction.Comment,
-                    value = "5k",
-                    size = 18.dp,
-                    spacer = 4.dp,
-                    padding = PaddingValues(0.dp)
-                )
-            }
-        }
-    }
+//    PostScaffold(
+//        modifier = modifier,
+//        header = {
+//            Row(verticalAlignment = Alignment.CenterVertically) {
+//                DesignAvatar {
+//                    Icon(
+//                        painter = painterResource(id = R.drawable.ic_icon),
+//                        contentDescription = stringResource(R.string.app_name),
+//                        modifier = Modifier.size(36.dp),
+//                        tint = Color.Unspecified
+//                    )
+//                }
+//                Text(
+//                    text = stringResource(R.string.peernetwork_label),
+//                    style = MaterialTheme.typography.labelLarge.copy(
+//                        fontStyle = FontStyle.Italic,
+//                        fontWeight = FontWeight.Bold
+//                    ),
+//                    color = MaterialTheme.colorScheme.onBackground,
+//                    modifier = Modifier.padding(start = 4.dp)
+//                )
+//                Spacer(modifier = Modifier.weight(1f))
+//                Text(
+//                    text = stringResource(R.string.peertext_label),
+//                    color = MaterialTheme.colorScheme.onBackground,
+//                    style = MaterialTheme.typography.labelLarge.copy(
+//                        fontWeight = FontWeight.SemiBold
+//                    ),
+//                    fontStyle = FontStyle.Italic,
+//                    modifier = Modifier.padding(end = 4.dp)
+//                        .background(
+//                            color = MaterialTheme.colorScheme.primary,
+//                            shape = RoundedCornerShape(16.dp)
+//                        ).padding(
+//                            horizontal = 16.dp,
+//                            vertical = 6.dp
+//                        )
+//                )
+//                Icon(
+//                    painter = painterResource(id = eu.peernetwork.core.ui.R.drawable.ic_menu),
+//                    contentDescription = "More",
+//                    modifier = Modifier.padding(8.dp)
+//                        .size(16.dp),
+//                    tint = MaterialTheme.colorScheme.onBackground
+//                )
+//            }
+//        },
+//        toolbar = {},
+//        background = {
+//            Box(
+//                modifier = Modifier.fillMaxSize()
+//                    .background(
+//                        MaterialTheme.colorScheme.surfaceDim,
+//                        RoundedCornerShape(24.dp)
+//                    )
+//            ) },
+//        footer = {},
+//        contentPadding = PaddingValues(12.dp),
+//    ) {
+//        Column(modifier = Modifier.fillMaxWidth()
+//            .padding(horizontal = 4.dp)
+//        ) {
+//            Spacer(modifier = Modifier.height(8.dp))
+//            Text(
+//                text = stringResource(R.string.onboarding_created_something_love),
+//                style = MaterialTheme.typography.bodyMedium,
+//                color = MaterialTheme.colorScheme.onBackground,
+//                modifier = Modifier.padding(vertical = 4.dp)
+//            )
+//            Text(
+//                text = stringResource(R.string.onboarding_get_rewarded),
+//                style = MaterialTheme.typography.labelLarge.copy(
+//                    fontWeight = FontWeight.Normal,
+//                ),
+//                color = MaterialTheme.colorScheme.outline,
+//                modifier = Modifier.padding(top = 4.dp)
+//            )
+//            Spacer(modifier = Modifier.height(16.dp))
+//            Row(
+//                modifier = Modifier.padding(vertical = 8.dp),
+//                horizontalArrangement = Arrangement.spacedBy(8.dp)
+//            ) {
+//                PostIcon(
+//                    action = UiAction.Like,
+//                    value = "5k",
+//                    size = 18.dp,
+//                    spacer = 4.dp,
+//                    padding = PaddingValues(0.dp)
+//                )
+//                PostIcon(
+//                    action = UiAction.Dislike,
+//                    value = "5k",
+//                    size = 18.dp,
+//                    spacer = 4.dp,
+//                    padding = PaddingValues(0.dp)
+//                )
+//                PostIcon(
+//                    action = UiAction.Comment,
+//                    value = "5k",
+//                    size = 18.dp,
+//                    spacer = 4.dp,
+//                    padding = PaddingValues(0.dp)
+//                )
+//            }
+//        }
+//    }
 }
 
 @Composable

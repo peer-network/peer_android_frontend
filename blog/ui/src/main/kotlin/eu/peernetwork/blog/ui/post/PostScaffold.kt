@@ -23,13 +23,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import eu.peernetwork.blog.ui.engagement.v2.EngagementOption
-import eu.peernetwork.blog.ui.model.UiPost
+import eu.peernetwork.blog.ui.mapper.v2.format
+import eu.peernetwork.blog.ui.model.v2.UiEngagement
+import eu.peernetwork.blog.ui.model.v2.UiPostDetail
+import eu.peernetwork.blog.ui.model.v2.UiTimer
 import eu.peernetwork.core.ui.design.luna.DesignStyledText
 import eu.peernetwork.core.ui.design.luna.DesignBox
 import eu.peernetwork.core.ui.design.luna.DesignButton
@@ -37,8 +41,7 @@ import eu.peernetwork.core.ui.theme.DesignTheme
 
 @Composable
 fun PostScaffold(
-    model: UiPost.Detail,
-    onPin: (() -> Unit)? = null,
+    model: UiPostDetail,
     pinnedBy: String? = null,
     onMenu: () -> Unit,
     onClick: () -> Unit,
@@ -51,7 +54,6 @@ fun PostScaffold(
         onClick = onClick,
         engagement = engagement,
         pinnedBy = pinnedBy,
-        onPin = onPin,
         connection = connection
     ) {
         Column(modifier = Modifier.padding(horizontal = 12.dp)
@@ -76,9 +78,8 @@ fun PostScaffold(
 
 @Composable
 fun PostScaffold(
-    model: UiPost.Detail,
+    model: UiPostDetail,
     pinnedBy: String? = null,
-    onPin: (() -> Unit)? = null,
     onMenu: () -> Unit,
     onClick: () -> Unit,
     engagement: @Composable () -> Unit,
@@ -86,6 +87,7 @@ fun PostScaffold(
     background: @Composable BoxScope.() -> Unit = { PostScaffoldBackground() },
     content: @Composable () -> Unit
 ) {
+    val context = LocalContext.current
     val updatedContent by rememberUpdatedState(content)
     DesignBox(background = background) {
         Column(
@@ -97,24 +99,24 @@ fun PostScaffold(
                 slug = model.slug,
                 username = model.username,
                 imageUrl = model.imageUrl,
+                pinnedBy = pinnedBy,
                 color = MaterialTheme.colorScheme.surfaceContainerLow,
                 modifier = Modifier.padding(12.dp),
                 onAuthorClick = {},
                 onMenu = onMenu,
-                onPin = onPin,
                 connection = connection
             )
             updatedContent()
             if (pinnedBy == null) {
                 PostStatus(
-                    time = model.time,
+                    time = context.format(model.time),
                     engagement = engagement,
                     modifier = Modifier.padding(horizontal = 12.dp)
                         .padding(bottom = 12.dp)
                 )
             } else {
                 PostStatus(
-                    time = model.time,
+                    time = context.format(model.time),
                     engagement = engagement,
                     pinnedBy = pinnedBy,
                     modifier = Modifier.padding(horizontal = 12.dp)
@@ -138,15 +140,15 @@ fun BoxScope.PostScaffoldBackground(
 
 @Composable
 fun PostMediaScaffold(
-    model: UiPost.Detail,
+    model: UiPostDetail,
     pinnedBy: String? = null,
-    onPin: (() -> Unit)? = null,
     onMenu: () -> Unit,
     onClick: () -> Unit,
     engagement: @Composable () -> Unit,
     connection: @Composable RowScope.() -> Unit,
     content: @Composable () -> Unit
 ) {
+    val context = LocalContext.current
     val updatedContent by rememberUpdatedState(content)
     Column {
         PostToolbar(
@@ -157,9 +159,9 @@ fun PostMediaScaffold(
             modifier = Modifier
                 .padding(horizontal = 24.dp)
                 .padding(vertical = 10.dp),
+            pinnedBy = pinnedBy,
             onAuthorClick = {},
             onMenu = onMenu,
-            onPin = onPin,
             connection = connection
         )
         Box(
@@ -171,7 +173,7 @@ fun PostMediaScaffold(
             pinnedBy = pinnedBy,
             title = model.title,
             description = model.description,
-            time = model.time,
+            time = context.format(model.time),
             engagement = engagement,
             modifier = Modifier
                 .padding(horizontal = 24.dp)
@@ -183,7 +185,7 @@ fun PostMediaScaffold(
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, showBackground = true)
 fun PreviewUserOption() {
     DesignTheme(isDarkMode = false) {
-        val model = UiPost.Detail(
+        val model = UiPostDetail(
             title = buildAnnotatedString { append("John Doe") },
             slug = "#12034",
             username = "JohnDoe",
@@ -191,9 +193,9 @@ fun PreviewUserOption() {
             description = buildAnnotatedString {
                 append("This is a mock description for a content post. It's purely for testing.")
             },
-            time = "2h ago"
+            time = UiTimer.Date("Oct 20, 2023")
         )
-        val engagement = UiPost.Engagement(
+        val engagement = UiEngagement(
             id = "<test-id>",
             likes = "5k",
             dislikes = "1k",
@@ -220,7 +222,6 @@ fun PreviewUserOption() {
             }
             PostScaffold(
                 model = model,
-                onPin = {},
                 onMenu = {},
                 onClick = {},
                 engagement = { EngagementOption(engagement) {} },

@@ -3,6 +3,7 @@ package eu.peernetwork.blog.ui.mapper
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.buildAnnotatedString
 import eu.peernetwork.blog.domain.model.Comment
+import eu.peernetwork.blog.ui.mapper.v2.mapFromDomain
 import eu.peernetwork.blog.ui.model.UiComment
 import eu.peernetwork.blog.ui.model.UiContent
 

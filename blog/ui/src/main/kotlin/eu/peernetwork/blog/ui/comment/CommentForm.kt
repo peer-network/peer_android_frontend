@@ -41,8 +41,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.blog.ui.R
-import eu.peernetwork.blog.ui.compose.PostSummary
-import eu.peernetwork.blog.ui.model.UiAuthor
+import eu.peernetwork.blog.ui.model.v2.UiAuthor
 import eu.peernetwork.blog.ui.model.UiContent
 import eu.peernetwork.core.ui.design.material.DesignOutlinedButton
 import eu.peernetwork.core.ui.design.material.DesignRichTextField
@@ -65,16 +64,13 @@ fun CommentForm(
     val keyboardController = LocalSoftwareKeyboardController.current
     val derivedState = remember { derivedStateOf { comment.isValidInput() } }
     Column {
-        Box(modifier = Modifier.height(1.dp)
-            .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.surfaceDim.copy(alpha = .1f)))
         Column(modifier = modifier) {
-            PostSummary(
-                model = model,
-                modifier = Modifier.padding(top = 16.dp, end = 16.dp),
-                onMentionClick = onMentionClick,
-                onHashtagClick = onHashtagClick
-            ) {}
+//            PostSummary(
+//                model = model,
+//                modifier = Modifier.padding(top = 16.dp, end = 16.dp),
+//                onMentionClick = onMentionClick,
+//                onHashtagClick = onHashtagClick
+//            ) {}
             DesignRichTextField(
                 state = comment,
                 enabled = !isLoading.value,
@@ -160,8 +156,8 @@ fun PreviewCommentForm() {
                     slug = 12034,
                     username = "JohnDoe",
                     imageUrl = "http://localhost",
-                    isfollowing = false,
-                    isfollowed = false
+                    following = false,
+                    followed = false
                 ),
                 createdAt = System.currentTimeMillis(),
                 description = buildAnnotatedString {

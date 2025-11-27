@@ -27,7 +27,6 @@ import eu.peernetwork.app.extension.navigateToUsernameSearch
 import eu.peernetwork.app.mapper.mapToCriteria
 import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.blog.domain.model.Category
-import eu.peernetwork.blog.ui.event.UiPostListener
 import eu.peernetwork.blog.ui.model.UiFilter
 import eu.peernetwork.blog.ui.timeline.TimelineScreen
 import eu.peernetwork.core.ui.design.luna.DesignTab
@@ -75,73 +74,73 @@ fun FeedPreview(
         pageCount = { UiMimeType.TYPES.size },
         initialPage = state.intValue
     )
-    val event = remember {
-        object : UiPostListener {
-            override fun invoke(event: UiPostListener.Event) {
-                when(event) {
-                    is UiPostListener.Event.Mention ->
-                        controller.navigateToUsernameSearch(event.username)
-                    is UiPostListener.Event.Hashtag ->
-                        controller.navigateToTagSearch(event.tag)
-                    is UiPostListener.Event.Author ->
-                        controller.navigateIfNecessary("profile/${event.id}")
-                    is UiPostListener.Event.Post -> {
-                        selected.value = FeedOverlayState.Post(
-                            id = event.id,
-                            position = event.position,
-                            criteria = derivedCriteria.value,
-                            category = if (pageState.currentPage == 0) {
-                                Category.FOLLOWED
-                            } else {
-                                Category.FOLLOWER
-                            }
-                        )
-                    }
-                }
-            }
-        }
-    }
-    FeedPreview(
-        state = state,
-        pageState = pageState,
-        modifier = Modifier.fillMaxSize(),
-        onNavigate = { handleOnNavigate(it) }
-    ) {
-        val storeKey = "$it;${derivedCriteria.value?.toString() ?: id}"
-        TimelineScreen(
-            id = id,
-            status = enable,
-            postLimit = BuildConfig.PAGING_LIMIT,
-            category = it,
-            criteria = derivedCriteria.value,
-            event = event,
-            provider = component,
-            viewModelStoreOwner = viewModelStore.get(storeKey),
-            requireUpdate = requireUpdate,
-            listState = if (it == Category.FOLLOWER) {
-                followerListState
-            } else {
-                followedListState
-            },
-            onExplore = onExplore
-        ) { relation ->
-            ConnectionButton(
-                minHeight = 32.dp,
-                contentPadding = PaddingValues(horizontal = 20.dp),
-                isFollowing = connection.getOrDefault(
-                    key = relation.first,
-                    defaultValue = relation.third
-                ),
-                isFollowed = relation.second,
-                onClick = { follow ->
-                    connectionController.value(
-                        id = relation.first,
-                        value = !follow
-                    )
-                },
-            )
-        }
-    }
+//    val event = remember {
+//        object : UiPostListener {
+//            override fun invoke(event: UiPostListener.Event) {
+//                when(event) {
+//                    is UiPostListener.Event.Mention ->
+//                        controller.navigateToUsernameSearch(event.username)
+//                    is UiPostListener.Event.Hashtag ->
+//                        controller.navigateToTagSearch(event.tag)
+//                    is UiPostListener.Event.Author ->
+//                        controller.navigateIfNecessary("profile/${event.id}")
+//                    is UiPostListener.Event.Post -> {
+//                        selected.value = FeedOverlayState.Post(
+//                            id = event.id,
+//                            position = event.position,
+//                            criteria = derivedCriteria.value,
+//                            category = if (pageState.currentPage == 0) {
+//                                Category.FOLLOWED
+//                            } else {
+//                                Category.FOLLOWER
+//                            }
+//                        )
+//                    }
+//                }
+//            }
+//        }
+//    }
+//    FeedPreview(
+//        state = state,
+//        pageState = pageState,
+//        modifier = Modifier.fillMaxSize(),
+//        onNavigate = { handleOnNavigate(it) }
+//    ) {
+//        val storeKey = "$it;${derivedCriteria.value?.toString() ?: id}"
+//        TimelineScreen(
+//            id = id,
+//            status = enable,
+//            postLimit = BuildConfig.PAGING_LIMIT,
+//            category = it,
+//            criteria = derivedCriteria.value,
+//            event = event,
+//            provider = component,
+//            viewModelStoreOwner = viewModelStore.get(storeKey),
+//            requireUpdate = requireUpdate,
+//            listState = if (it == Category.FOLLOWER) {
+//                followerListState
+//            } else {
+//                followedListState
+//            },
+//            onExplore = onExplore
+//        ) { relation ->
+//            ConnectionButton(
+//                minHeight = 32.dp,
+//                contentPadding = PaddingValues(horizontal = 20.dp),
+//                isFollowing = connection.getOrDefault(
+//                    key = relation.first,
+//                    defaultValue = relation.third
+//                ),
+//                isFollowed = relation.second,
+//                onClick = { follow ->
+//                    connectionController.value(
+//                        id = relation.first,
+//                        value = !follow
+//                    )
+//                },
+//            )
+//        }
+//    }
     FeedMenu(
         id = id,
         default = ordinal,

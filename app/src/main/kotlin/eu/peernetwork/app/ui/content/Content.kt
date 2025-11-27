@@ -6,8 +6,6 @@ import eu.peernetwork.app.ui.profile.Profile
 import eu.peernetwork.app.ui.search.Search
 import eu.peernetwork.app.ui.settings.SettingsEvent
 import eu.peernetwork.app.ui.window.Window
-import eu.peernetwork.blog.ui.feed.detail.Detail
-import eu.peernetwork.blog.ui.feed.timeline.Post
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.social.ui.connection.Connection
@@ -27,13 +25,11 @@ interface Content : ApplicationProvider {
     )
     interface Component : Content,
         UiComponentProvider,
-        Post,
         Search,
         Profile,
         Connection,
         Confirmation,
-        Window,
-        Detail
+        Window
 
     class Builder(private val dependency: Content) : UiComponent.DefaultBuilder<Content, Component>() {
         override fun build(context: Context): Component {

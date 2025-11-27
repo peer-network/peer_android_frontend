@@ -1,16 +1,17 @@
-package eu.peernetwork.blog.ui.model
+package eu.peernetwork.blog.ui.model.v2
 
-import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.Stable
 import androidx.compose.ui.text.AnnotatedString
-import eu.peernetwork.blog.ui.model.v2.UiAuthor
 
-@Immutable
-data class UiContent(
+@Stable
+data class UiPost(
     val id: String,
-    val title: AnnotatedString,
+    val type: UiPostType,
     val author: UiAuthor,
-    val createdAt: Long,
+    val title: AnnotatedString,
     val description: AnnotatedString,
+    val asset: UiAsset,
+    val pinnedBy: String? = null,
     val likes: Int,
     val isLiked: Boolean,
     val isDisliked: Boolean,
@@ -18,5 +19,7 @@ data class UiContent(
     val dislikes: Int,
     val views: Int,
     val comment: Int,
-    val url: String
+    val url: String,
+    val time: UiTimer,
+    val createdAt: Long,
 )

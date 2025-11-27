@@ -23,8 +23,6 @@ import eu.peernetwork.app.extension.navigateToUsernameSearch
 import eu.peernetwork.blog.domain.model.Category
 import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.blog.domain.model.Sort
-import eu.peernetwork.blog.ui.event.UiPostListener
-import eu.peernetwork.blog.ui.feed.timeline.PostScreen
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.material.DesignTitle
@@ -159,54 +157,54 @@ private fun FeedExplorerTabs(
             } }
             val enable = remember { derivedStateOf { selected.value == FeedOverlayState.Empty } }
             val connection by connectionController.value.observe().collectAsStateWithLifecycle()
-            val event = remember {
-                object : UiPostListener {
-                    override fun invoke(event: UiPostListener.Event) {
-                        when (event) {
-                            is UiPostListener.Event.Mention ->
-                                controller.navigateToUsernameSearch(event.username)
-                            is UiPostListener.Event.Hashtag ->
-                                controller.navigateToTagSearch(event.tag)
-                            is UiPostListener.Event.Author ->
-                                controller.navigateIfNecessary("profile/${event.id}")
-                            is UiPostListener.Event.Post -> selected.value = FeedOverlayState.Post(
-                                id = event.id,
-                                position = event.position,
-                                category = Category.NONE,
-                                criteria = derivedCriteria.value
-                            )
-                        }
-                    }
-                }
-            }
-            val storeKey = "${Category.NONE};${derivedCriteria.value}"
-            PostScreen(
-                id = id,
-                status = enable,
-                postLimit = postLimit,
-                category = Category.NONE,
-                criteria = derivedCriteria.value,
-                event = event,
-                provider = component,
-                viewModelStoreOwner = viewModelStore.get(storeKey),
-                requireUpdate = requireUpdate,
-                listState = if (page == 0) trendListState else latestListState,
-                onExplore = onExplore
-            ) { relation ->
-                ConnectionScreen(
-                    isFollowing = connection.getOrDefault(
-                        key = relation.first,
-                        defaultValue = relation.third
-                    ),
-                    isFollowed = relation.second,
-                    onClick = { follow ->
-                        connectionController.value(
-                            id = relation.first,
-                            value = !follow
-                        )
-                    },
-                )
-            }
+//            val event = remember {
+//                object : UiPostListener {
+//                    override fun invoke(event: UiPostListener.Event) {
+//                        when (event) {
+//                            is UiPostListener.Event.Mention ->
+//                                controller.navigateToUsernameSearch(event.username)
+//                            is UiPostListener.Event.Hashtag ->
+//                                controller.navigateToTagSearch(event.tag)
+//                            is UiPostListener.Event.Author ->
+//                                controller.navigateIfNecessary("profile/${event.id}")
+//                            is UiPostListener.Event.Post -> selected.value = FeedOverlayState.Post(
+//                                id = event.id,
+//                                position = event.position,
+//                                category = Category.NONE,
+//                                criteria = derivedCriteria.value
+//                            )
+//                        }
+//                    }
+//                }
+//            }
+//            val storeKey = "${Category.NONE};${derivedCriteria.value}"
+//            PostScreen(
+//                id = id,
+//                status = enable,
+//                postLimit = postLimit,
+//                category = Category.NONE,
+//                criteria = derivedCriteria.value,
+//                event = event,
+//                provider = component,
+//                viewModelStoreOwner = viewModelStore.get(storeKey),
+//                requireUpdate = requireUpdate,
+//                listState = if (page == 0) trendListState else latestListState,
+//                onExplore = onExplore
+//            ) { relation ->
+//                ConnectionScreen(
+//                    isFollowing = connection.getOrDefault(
+//                        key = relation.first,
+//                        defaultValue = relation.third
+//                    ),
+//                    isFollowed = relation.second,
+//                    onClick = { follow ->
+//                        connectionController.value(
+//                            id = relation.first,
+//                            value = !follow
+//                        )
+//                    },
+//                )
+//            }
         }
     }
 }

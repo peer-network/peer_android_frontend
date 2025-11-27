@@ -19,7 +19,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.blog.ui.R
-import eu.peernetwork.blog.ui.model.UiPost
+import eu.peernetwork.blog.ui.model.v2.UiPost
 import eu.peernetwork.core.ui.design.luna.DesignItem
 import eu.peernetwork.core.ui.design.material.DesignBottomSheetScaffold
 import eu.peernetwork.core.ui.theme.DesignTheme

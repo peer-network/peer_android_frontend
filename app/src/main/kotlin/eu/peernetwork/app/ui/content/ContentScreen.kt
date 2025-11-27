@@ -18,8 +18,6 @@ import androidx.navigation.compose.rememberNavController
 import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.app.extension.navigateToTagSearch
 import eu.peernetwork.app.extension.navigateToUsernameSearch
-import eu.peernetwork.blog.ui.feed.detail.DetailScreen
-import eu.peernetwork.blog.ui.event.UiPostListener
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.material.DesignTitle
 import eu.peernetwork.core.ui.design.material.DesignTitleBarHost
@@ -42,23 +40,23 @@ fun ContentScreen(
     val controller = rememberNavController()
     val overlay = remember { mutableStateOf<String?>(null) }
     val enabled = remember { derivedStateOf { overlay.value == null } }
-    val event = remember {
-        object : UiPostListener {
-            override fun invoke(event: UiPostListener.Event) {
-                when(event) {
-                    is UiPostListener.Event.Mention ->
-                        controller.navigateToUsernameSearch(event.username)
-                    is UiPostListener.Event.Hashtag ->
-                        controller.navigateToTagSearch(event.tag)
-                    is UiPostListener.Event.Author ->
-                        controller.navigateIfNecessary("profile/${event.id}")
-                    is UiPostListener.Event.Post -> {
-                        overlay.value = event.id
-                    }
-                }
-            }
-        }
-    }
+//    val event = remember {
+//        object : UiPostListener {
+//            override fun invoke(event: UiPostListener.Event) {
+//                when(event) {
+//                    is UiPostListener.Event.Mention ->
+//                        controller.navigateToUsernameSearch(event.username)
+//                    is UiPostListener.Event.Hashtag ->
+//                        controller.navigateToTagSearch(event.tag)
+//                    is UiPostListener.Event.Author ->
+//                        controller.navigateIfNecessary("profile/${event.id}")
+//                    is UiPostListener.Event.Post -> {
+//                        overlay.value = event.id
+//                    }
+//                }
+//            }
+//        }
+//    }
     ConnectionScreen(
         provider = component,
         viewModelStoreOwner = viewModelStore.get(postId)
@@ -85,30 +83,30 @@ fun ContentScreen(
                         .fillMaxSize()
                         .verticalScroll(rememberScrollState())
                 ) {
-                    DetailScreen(
-                        id = postId,
-                        userId = userId,
-                        enabled = enabled,
-                        limit = BuildConfig.PAGING_LIMIT,
-                        event = event,
-                        provider = component,
-                        viewModelStoreOwner = viewModelStore.get(postId),
-                        connection = { relation ->
-                            ConnectionScreen(
-                                isFollowing = connection.getOrDefault(
-                                    key = relation.first,
-                                    defaultValue = relation.third
-                                ),
-                                isFollowed = relation.second,
-                                onClick = { follow ->
-                                    connectionController.value(
-                                        id = relation.first,
-                                        value = !follow
-                                    )
-                                },
-                            )
-                        }
-                    )
+//                    DetailScreen(
+//                        id = postId,
+//                        userId = userId,
+//                        enabled = enabled,
+//                        limit = BuildConfig.PAGING_LIMIT,
+//                        event = event,
+//                        provider = component,
+//                        viewModelStoreOwner = viewModelStore.get(postId),
+//                        connection = { relation ->
+//                            ConnectionScreen(
+//                                isFollowing = connection.getOrDefault(
+//                                    key = relation.first,
+//                                    defaultValue = relation.third
+//                                ),
+//                                isFollowed = relation.second,
+//                                onClick = { follow ->
+//                                    connectionController.value(
+//                                        id = relation.first,
+//                                        value = !follow
+//                                    )
+//                                },
+//                            )
+//                        }
+//                    )
                 }
             }
         }

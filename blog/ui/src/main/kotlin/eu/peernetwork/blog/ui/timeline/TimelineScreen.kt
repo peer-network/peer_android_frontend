@@ -2,7 +2,6 @@ package eu.peernetwork.blog.ui.timeline
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -31,8 +30,6 @@ import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
 import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.blog.domain.model.Category
-import eu.peernetwork.blog.ui.compose.PostPlaceholder
-import eu.peernetwork.blog.ui.event.UiPostListener
 import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.core.ui.R
@@ -48,7 +45,6 @@ fun TimelineScreen(
     status: State<Boolean>,
     postLimit: Int,
     category: Category,
-    event: UiPostListener,
     criteria: Criteria? = null,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
@@ -246,9 +242,7 @@ fun TimelineScreen(
                     Column(modifier = Modifier.fillMaxWidth()) {
                         if (lazyPagingItems.loadState.append is LoadState.Loading) {
                             DesignShimmer {
-                                PostPlaceholder(
-                                    contentPaddingValues = PaddingValues(16.dp)
-                                )
+
                             }
                         }
                         Box(modifier = Modifier

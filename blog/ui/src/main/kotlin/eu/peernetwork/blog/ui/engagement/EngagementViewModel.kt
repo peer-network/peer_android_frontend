@@ -6,7 +6,6 @@ import eu.peernetwork.blog.domain.usecase.DislikeUsecase
 import eu.peernetwork.blog.domain.usecase.LikeUsecase
 import eu.peernetwork.blog.domain.usecase.ObserveReactionUsecase
 import eu.peernetwork.blog.ui.mapper.mapFromDomain
-import eu.peernetwork.blog.ui.model.UiContent
 import eu.peernetwork.blog.ui.model.UiReaction
 import eu.peernetwork.core.common.interactor.NotificationInteractor
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,18 +21,18 @@ class EngagementViewModel @Inject constructor(
     private val observeReactionUsecase: ObserveReactionUsecase,
     private val interactor: NotificationInteractor
 ) : ViewModel() {
-    private val mutableState = MutableStateFlow<State>(State.Default)
+    private val _state = MutableStateFlow<State>(State.Default)
 
-    private val mutableReactions = MutableStateFlow<Map<String, UiReaction>>(emptyMap())
+    private val _reactions = MutableStateFlow<Map<String, UiReaction>>(emptyMap())
 
-    val reactions: StateFlow<Map<String, UiReaction>> = mutableReactions.asStateFlow()
+    val reactions: StateFlow<Map<String, UiReaction>> = _reactions.asStateFlow()
 
-    val state: StateFlow<State> = mutableState.asStateFlow()
+    val state: StateFlow<State> = _state.asStateFlow()
 
     fun initialize() {
         viewModelScope.launch {
             observeReactionUsecase().collectLatest { reactions ->
-                mutableReactions.emit(reactions.mapValues { it.value.mapFromDomain() })
+                 _reactions.emit(reactions.mapValues { it.value.mapFromDomain() })
             }
         }
     }
@@ -55,37 +54,37 @@ class EngagementViewModel @Inject constructor(
     fun like(id: String) { viewModelScope.launch { handleLike(id) } }
 
     suspend fun handleLike(id: String, callback: suspend () -> Unit = {}) {
-        mutableState.emit(State.Loading)
+        _state.emit(State.Loading)
         runCatching {
             likeUsecase(id)
-            mutableState.emit(State.Success(id))
+            _state.emit(State.Success(id))
             callback()
         }.onFailure {
-            mutableState.emit(State.Error(id, it))
+            _state.emit(State.Error(id, it))
         }
     }
 
     fun dislike(id: String) {
         viewModelScope.launch {
-            mutableState.emit(State.Loading)
+            _state.emit(State.Loading)
             runCatching {
                 dislikeUsecase(id)
-                mutableState.emit(State.Success(id))
+                _state.emit(State.Success(id))
             }.onFailure {
-                mutableState.emit(State.Error(id, it))
+                _state.emit(State.Error(id, it))
             }
         }
     }
 
     fun clear() {
         viewModelScope.launch {
-            mutableState.tryEmit(State.Default)
+            _state.tryEmit(State.Default)
         }
     }
 
     fun reset() {
         viewModelScope.launch {
-            mutableState.tryEmit(State.Default)
+            _state.tryEmit(State.Default)
         }
     }
 

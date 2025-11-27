@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.lifecycle.ViewModelProvider
 import eu.peernetwork.blog.ui.advert.Advert
 import eu.peernetwork.blog.ui.engagement.EngagementDialog
-import eu.peernetwork.blog.ui.content.overlay.Overlay
 import eu.peernetwork.blog.ui.post.Post
 import eu.peernetwork.blog.ui.provider.BlogProvider
 import eu.peernetwork.core.ui.component.UiComponent
@@ -22,7 +21,7 @@ interface Timeline : BlogProvider {
         dependencies = [Timeline::class],
         modules = [TimelineModule::class]
     )
-    interface Component : Timeline, UiComponentProvider, Overlay, Post, Advert {
+    interface Component : Timeline, UiComponentProvider, Post, Advert {
         fun viewModelFactory(): ViewModelProvider.Factory
     }
 

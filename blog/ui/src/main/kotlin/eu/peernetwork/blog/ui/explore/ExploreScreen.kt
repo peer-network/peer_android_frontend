@@ -3,7 +3,6 @@ package eu.peernetwork.blog.ui.explore
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
@@ -21,7 +20,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
-import eu.peernetwork.blog.ui.compose.PhotoPlaceholder
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.core.ui.R
@@ -72,7 +70,7 @@ fun ExploreScreen(
     DesignPagingScaffold(
         state = derivedState,
         onRefresh = { viewModel.get(Pageable(0, postLimit)) },
-        placeholder = { PhotoPlaceholder(modifier = Modifier.padding(top = 72.dp)) },
+        placeholder = {  },
         errorContent = { error, refresh ->
             DesignError(refresh, error, component.resource())
         },

@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModelProvider
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
-import eu.peernetwork.blog.ui.content.overlay.Overlay
 import eu.peernetwork.blog.ui.post.Post
 import eu.peernetwork.core.ui.annotation.UiBuilder
 import eu.peernetwork.core.ui.annotation.UiViewModel
@@ -40,14 +39,6 @@ class ArticleModule(private val context: Context) {
     @Article.Scope
     @UiViewModel(ArticleViewModel::class)
     fun viewModel(viewModel: ArticleViewModel): ViewModel = viewModel
-
-    @Provides
-    @IntoMap
-    @Article.Scope
-    @UiBuilder(Overlay.Builder::class)
-    fun provideOverlayBuilder(post: Article.Component): UiComponent.Builder {
-        return Overlay.Builder(post)
-    }
 
     @Provides
     @IntoMap

@@ -1,6 +1,5 @@
 package eu.peernetwork.blog.ui.usecase
 
-import android.content.Context
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
@@ -11,22 +10,19 @@ import eu.peernetwork.blog.domain.model.Category
 import eu.peernetwork.blog.domain.model.Content
 import eu.peernetwork.blog.domain.usecase.PostUsecase
 import eu.peernetwork.blog.domain.usecase.PostUsecase.Companion.POST
-import eu.peernetwork.blog.ui.mapper.mapToPhoto
-import eu.peernetwork.blog.ui.model.UiPost
+import eu.peernetwork.blog.ui.mapper.v2.mapFromDomain
+import eu.peernetwork.blog.ui.model.v2.UiPost
 import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.core.common.provider.Dispatcher
 import eu.peernetwork.core.ui.exception.NoContentException
-import eu.peernetwork.core.ui.usecase.AnnotationUsecase
 import eu.peernetwork.core.ui.usecase.PagingUsecase
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class AuthorPostUsecase @Inject constructor(
-    private val context: Context,
     private val dispatcher: Dispatcher,
     private val usecase: PostUsecase,
-    private val annotationUsecase: AnnotationUsecase
 ) : PagingUsecase<AuthorPostUsecase.Parameter, UiPost>() {
     private lateinit var param: Parameter
 
@@ -43,7 +39,9 @@ class AuthorPostUsecase @Inject constructor(
         ).flow
     }
 
-    override suspend fun getData(params: LoadParams<Int>): LoadResult<Int, UiPost> = withContext(dispatcher.io) {
+    override suspend fun getData(
+        params: LoadParams<Int>
+    ): LoadResult<Int, UiPost> = withContext(dispatcher.io) {
         val currentOffset = params.key ?: param.page.offset
         val currentPage = Pageable(
             offset = currentOffset,
@@ -62,7 +60,7 @@ class AuthorPostUsecase @Inject constructor(
         } else {
             LoadResult.Page(
                 data = response.items.map { photo ->
-                    photo.mapToPhoto(context) { annotationUsecase(it) }
+                    photo.mapFromDomain()
                 },
                 prevKey = if (currentOffset != param.page.offset) {
                     (currentOffset - params.loadSize).coerceAtLeast(0)

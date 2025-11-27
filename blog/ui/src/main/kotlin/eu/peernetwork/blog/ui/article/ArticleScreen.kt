@@ -28,7 +28,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.compose.LazyPagingItems
 import eu.peernetwork.blog.domain.model.Content
 import eu.peernetwork.blog.ui.extension.share
-import eu.peernetwork.blog.ui.model.UiPost
+import eu.peernetwork.blog.ui.model.v2.UiPost
 import eu.peernetwork.blog.ui.post.Post
 import eu.peernetwork.blog.ui.post.PostScreen
 import eu.peernetwork.blog.ui.post.PostSkeleton
