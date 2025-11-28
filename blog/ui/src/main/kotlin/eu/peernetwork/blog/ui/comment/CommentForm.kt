@@ -1,6 +1,7 @@
 package eu.peernetwork.blog.ui.comment
 
 import android.content.res.Configuration
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -55,31 +56,34 @@ fun CommentForm(
                 )
             )
         }
-        DesignTextField(
-            state = comment,
-            hint = stringResource(R.string.post_reply),
-            enabled = !isLoading.value,
-            contentPadding = PaddingValues(
-                start = 16.dp,
-                top = 4.dp,
-                end = 4.dp,
-                bottom = 4.dp,
-            ),
-            trailing = {
-                CommentButton(
-                    isLoading = isLoading,
-                    onSubmit = onSubmit
-                )
-            },
-            visualTransformation = VisualTransformation {
-                TransformedText(
-                    text = comment.text.toString().annotate(),
-                    offsetMapping = OffsetMapping.Identity
-                )
-            },
+        Box(
+            contentAlignment = Alignment.CenterEnd,
             modifier = Modifier.weight(1f)
                 .padding(start = 10.dp)
-        )
+        ) {
+            DesignTextField(
+                state = comment,
+                hint = stringResource(R.string.post_reply),
+                enabled = !isLoading.value,
+                contentPadding = PaddingValues(
+                    top = 16.dp,
+                    start = 16.dp,
+                    end = 56.dp,
+                    bottom = 16.dp,
+                ),
+                visualTransformation = VisualTransformation {
+                    TransformedText(
+                        text = comment.text.toString().annotate(),
+                        offsetMapping = OffsetMapping.Identity
+                    )
+                },
+            )
+            CommentButton(
+                isLoading = isLoading,
+                modifier = Modifier.padding(4.dp),
+                onSubmit = onSubmit
+            )
+        }
         LaunchedEffect(isLoading.value) {
             if (isSuccess.value) {
                 comment.clearText()
@@ -93,7 +97,7 @@ fun CommentForm(
 fun PreviewCommentForm() {
     DesignTheme {
         val comment = remember { TextFieldState() }
-        val isLoading = remember { mutableStateOf(true) }
+        val isLoading = remember { mutableStateOf(false) }
         val isSuccess = remember { mutableStateOf(true) }
         CommentForm(
             username = "John Doe",

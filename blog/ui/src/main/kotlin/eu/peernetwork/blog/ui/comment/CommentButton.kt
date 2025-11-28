@@ -24,6 +24,7 @@ import eu.peernetwork.blog.ui.R
 @Composable
 fun CommentButton(
     isLoading: State<Boolean>,
+    modifier: Modifier = Modifier,
     durationMillis: Int = 1000,
     easing: Easing = FastOutSlowInEasing,
     onSubmit: () -> Unit
@@ -40,7 +41,8 @@ fun CommentButton(
     IconButton(
         onClick = onSubmit,
         enabled = !isLoading.value,
-        modifier = Modifier.size(42.dp),
+        modifier = Modifier.then(modifier)
+            .size(42.dp),
         colors = IconButtonColors(
             containerColor = MaterialTheme.colorScheme.primary,
             contentColor = MaterialTheme.colorScheme.onPrimary,
