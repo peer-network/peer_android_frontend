@@ -14,7 +14,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -28,7 +27,7 @@ import kotlinx.collections.immutable.persistentListOf
 @Composable
 fun OverviewScaffold(
     modifier: Modifier = Modifier,
-    label: (UiAction) -> String,
+    header: @Composable (PagerState, Int) -> Unit,
     content: @Composable (PagerState) -> Unit
 ) {
     val tabs = remember { persistentListOf(
@@ -36,9 +35,8 @@ fun OverviewScaffold(
         UiAction.Dislike,
         UiAction.View
     ) }
-    val scope = rememberCoroutineScope()
     val state = rememberPagerState { tabs.size }
-    val updatedLabel by rememberUpdatedState(label)
+    val handleHeader by rememberUpdatedState(header)
     val updatedContent by rememberUpdatedState(content)
     Column(modifier) {
         DesignTabLayout(
@@ -51,18 +49,7 @@ fun OverviewScaffold(
                     .height(1.dp)
                     .background(PeerAppRed, shape = CircleShape))
             }
-        ) {
-//            PostIcon(
-//                action = tabs[it],
-//                value = updatedLabel(tabs[it]),
-//                size = 20.dp,
-//                spacer = 6.dp,
-//                padding = PaddingValues(end = 8.dp),
-//                color = MaterialTheme.colorScheme.tertiary,
-//            ) { action ->
-//                scope.launch { state.animateScrollToPage(tabs.indexOf(action)) }
-//            }
-        }
+        ) { handleHeader(state, it) }
         updatedContent(state)
     }
 }
@@ -74,7 +61,7 @@ fun PreviewDesignTabLayout() {
         OverviewScaffold(
             modifier = Modifier.fillMaxSize()
                 .padding(top = 8.dp),
-            label = { "1" }
+            header = { pagerState, index -> }
         ) {}
     }
 }

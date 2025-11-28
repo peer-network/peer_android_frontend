@@ -1,7 +1,6 @@
 package eu.peernetwork.blog.ui.engagement
 
 import android.widget.Toast
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
@@ -17,7 +16,7 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import eu.peernetwork.blog.ui.comment.CommentList
-import eu.peernetwork.blog.ui.interaction.overview.v2.OverviewScreen
+import eu.peernetwork.blog.ui.interaction.overview.OverviewScreen
 import eu.peernetwork.blog.ui.model.UiReaction
 import eu.peernetwork.blog.ui.model.v2.UiEngagement
 import eu.peernetwork.blog.ui.model.v2.UiPostDetail

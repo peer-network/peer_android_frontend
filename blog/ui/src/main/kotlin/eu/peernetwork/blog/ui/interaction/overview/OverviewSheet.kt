@@ -1,4 +1,4 @@
-package eu.peernetwork.blog.ui.interaction.overview.v2
+package eu.peernetwork.blog.ui.interaction.overview
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState

@@ -1,4 +1,4 @@
-package eu.peernetwork.blog.ui.interaction.overview.v2
+package eu.peernetwork.blog.ui.interaction.overview
 
 import android.content.res.Configuration
 import androidx.compose.foundation.gestures.Orientation
@@ -20,8 +20,7 @@ import androidx.lifecycle.ViewModelStoreOwner
 import eu.peernetwork.blog.domain.model.Engagement
 import eu.peernetwork.blog.ui.R
 import eu.peernetwork.blog.ui.engagement.EngagementMetric
-import eu.peernetwork.blog.ui.interaction.user.UserScreen
-import eu.peernetwork.blog.ui.interaction.overview.Overview
+import eu.peernetwork.blog.ui.interaction.user.UserList
 import eu.peernetwork.blog.ui.model.v2.UiEngagement
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.extension.builder
@@ -71,12 +70,11 @@ fun OverviewScreen(
                         else -> Engagement.Content.Like
                     }
                 }
-                UserScreen(
+                UserList(
                     id = it.id,
                     limit = postLimit,
                     engagement = engagement,
                     provider = component,
-                    onAuthorClick = onAuthorClick,
                     viewModelStoreOwner = viewModelStoreOwner,
                 )
             }
