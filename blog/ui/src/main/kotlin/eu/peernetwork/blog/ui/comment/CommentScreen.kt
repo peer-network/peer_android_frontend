@@ -15,7 +15,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -24,11 +23,11 @@ import androidx.paging.compose.LazyPagingItems
 import eu.peernetwork.blog.ui.model.UiComment
 import eu.peernetwork.blog.ui.model.v2.UiPostDetail
 import eu.peernetwork.core.common.paging.Pageable
-import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.luna.DesignPagingStream
 import eu.peernetwork.core.ui.design.luna.DesignStreamState
 import eu.peernetwork.core.ui.extension.builder
+import eu.peernetwork.core.ui.extension.error
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
@@ -59,7 +58,9 @@ fun CommentScreen(
     content: @Composable (Comment.Component, CommentInteractor, LazyPagingItems<UiComment>) -> Unit
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
+    val status = viewModel.status.collectAsStateWithLifecycle()
     val likes = viewModel.likes.collectAsStateWithLifecycle()
+    val isSuccess = remember { derivedStateOf { status.value is CommentViewModel.Status.Success<*> } }
     val derivedState = remember {
         derivedStateOf {
             when (state.value) {
@@ -88,15 +89,14 @@ fun CommentScreen(
             handleViewLikes(id)
         }
     } }
-    val errorMessage = stringResource(R.string.unknown_error_message)
     DesignPagingStream(
         state = derivedState,
         loading = { CommentSkeleton(4) },
         error = {
-            val message = it.value.message?.let { key ->
-                component.resource().string(key)
-            } ?: errorMessage
-            CommentError(message) {
+            CommentError(
+                isSuccess = isSuccess,
+                error = component.resource().error(it.value),
+            ) {
                 viewModel.load(id, Pageable(0, limit))
             }
         }
@@ -128,9 +128,9 @@ fun CommentScreen(
         provider = provider,
         viewModelStoreOwner = viewModelStoreOwner
     ) { component, viewModel ->
-        val state = viewModel.status.collectAsStateWithLifecycle()
-        val isLoading = remember { derivedStateOf { state.value is CommentViewModel.Status.Loading } }
-        val isSuccess = remember { derivedStateOf { state.value is CommentViewModel.Status.Success<*> } }
+        val status = viewModel.status.collectAsStateWithLifecycle()
+        val isLoading = remember { derivedStateOf { status.value is CommentViewModel.Status.Loading } }
+        val isSuccess = remember { derivedStateOf { status.value is CommentViewModel.Status.Success<*> } }
         CommentSheet(
             state = post,
             isSuccess = isSuccess,
@@ -162,8 +162,8 @@ fun CommentScreen(
                     LazyColumn(
                         modifier = Modifier.fillMaxSize()
                     ) { updatedContent(this, component, interactor, items) }
-                    LaunchedEffect(state.value) {
-                        if (state.value is CommentViewModel.Status.Success<*>) {
+                    LaunchedEffect(status.value) {
+                        if (status.value is CommentViewModel.Status.Success<*>) {
                             items.refresh()
                         }
                     }

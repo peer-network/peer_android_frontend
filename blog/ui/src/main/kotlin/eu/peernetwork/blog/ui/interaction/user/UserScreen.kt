@@ -17,7 +17,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -26,7 +25,6 @@ import androidx.paging.compose.LazyPagingItems
 import eu.peernetwork.blog.domain.model.Engagement
 import eu.peernetwork.blog.ui.model.v2.UiAuthor
 import eu.peernetwork.core.common.paging.Pageable
-import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.compose.DesignErrorLabel
 import eu.peernetwork.core.ui.design.compose.DesignPagingScaffold
@@ -34,6 +32,7 @@ import eu.peernetwork.core.ui.design.compose.DesignStatefulScaffoldState
 import eu.peernetwork.core.ui.design.luna.DesignPagingStream
 import eu.peernetwork.core.ui.design.luna.DesignStreamState
 import eu.peernetwork.core.ui.extension.builder
+import eu.peernetwork.core.ui.extension.error
 
 @Composable
 fun UserScreen(
@@ -70,15 +69,11 @@ fun UserScreen(
         }
     }
     val updatedContent by rememberUpdatedState(content)
-    val errorMessage = stringResource(R.string.unknown_error_message)
     DesignPagingStream(
         state = derivedState,
         loading = { UserSkeleton(4) },
         error = {
-            val message = it.value.message?.let { key ->
-                component.resource().string(key)
-            } ?: errorMessage
-            UserError(message) {
+            UserError(component.resource().error(it.value)) {
                 viewModel.load(
                     id,
                     engagement,
@@ -164,64 +159,14 @@ fun UserScreen(
             item { Spacer(modifier = Modifier.height(6.dp)) }
             items(lazyPagingItems.itemCount) { index ->
                 lazyPagingItems[index]?.let { author ->
-                    UserScreen(
-                        author = author,
-                        onClick = { handleAuthorClick(it.id) }
-                    ) {
-                        updatedConnection(
-                            Triple(
-                                author.id,
-                                author.following,
-                                author.followed
-                            )
-                        )
-                    }
+                    UserItem(
+                        slug = author.slug.toString(),
+                        username = author.username,
+                        imageUrl = author.imageUrl,
+                    )
                 }
             }
             item { Spacer(modifier = Modifier.height(56.dp)) }
         }
     }
-}
-
-@Composable
-fun UserScreen(
-    author: UiAuthor,
-    onClick: (UiAuthor) -> Unit,
-    action: (@Composable RowScope.() -> Unit)? = null
-) {
-    val slug = "#${author.slug}"
-    val handleOnClick by rememberUpdatedState(onClick)
-    val updatedContent by rememberUpdatedState(action)
-//    ListItem(
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .clickable { handleOnClick(author) }
-//            .padding(vertical = 8.dp, horizontal = 16.dp),
-//        lead = {
-//            DesignImage(
-//                label = author.username,
-//                imageUrl = author.imageUrl,
-//                size = 42.dp,
-//                color = MaterialTheme.colorScheme.surfaceVariant,
-//                style = MaterialTheme.typography.bodyMedium.copy(
-//                    color = MaterialTheme.colorScheme.onBackground
-//                )
-//            )
-//        }
-//    ) {
-//        Row(verticalAlignment = Alignment.CenterVertically) {
-//            Text(
-//                text = "@${author.username} $slug".annotate(
-//                    slug,
-//                    style = MaterialTheme.typography.bodySmall.toSpanStyle().copy(
-//                        color = MaterialTheme.colorScheme.tertiary
-//                    )
-//                ),
-//                style = MaterialTheme.typography.bodyMedium,
-//                color = MaterialTheme.colorScheme.onBackground,
-//                modifier = Modifier.weight(1f)
-//            )
-//            updatedContent?.invoke(this)
-//        }
-//    }
 }

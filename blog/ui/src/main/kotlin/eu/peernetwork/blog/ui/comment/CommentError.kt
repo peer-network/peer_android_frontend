@@ -13,6 +13,11 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -28,8 +33,10 @@ import eu.peernetwork.core.ui.theme.PeerAppDarkRed
 @Composable
 fun CommentError(
     error: String,
+    isSuccess: State<Boolean>,
     onRefresh: () -> Unit
 ) {
+    val handleRefresh by rememberUpdatedState(onRefresh)
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
@@ -69,13 +76,18 @@ fun CommentError(
             )
         }
     }
+    if (isSuccess.value) {
+        handleRefresh()
+    }
 }
 
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun PreviewUserError() {
     DesignTheme {
+        val isSuccess = remember { mutableStateOf(true) }
         CommentError(
+            isSuccess = isSuccess,
             error = "Error occured!",
         ) {}
     }

@@ -7,10 +7,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.text.input.TextFieldState
-import androidx.compose.foundation.text.input.clearText
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
@@ -23,6 +21,7 @@ import eu.peernetwork.blog.ui.model.v2.UiPostDetail
 import eu.peernetwork.core.ui.design.luna.DesignStream
 import eu.peernetwork.core.ui.design.luna.DesignStreamState
 import eu.peernetwork.core.ui.design.material.DesignBottomSheet
+import eu.peernetwork.core.ui.extension.value
 
 @Composable
 fun CommentSheet(
@@ -65,13 +64,9 @@ fun CommentSheet(
                         imageUrl = post.value.imageUrl,
                         comment = comment,
                         isLoading = isLoading,
-                        onSubmit = { handleComment(post.value.id, comment.text.toString()) }
+                        isSuccess = isSuccess,
+                        onSubmit = { handleComment(post.value.id, comment.value) }
                     )
-                    LaunchedEffect(isLoading.value) {
-                        if (isSuccess.value) {
-                            comment.clearText()
-                        }
-                    }
                 }
             },
             content = {

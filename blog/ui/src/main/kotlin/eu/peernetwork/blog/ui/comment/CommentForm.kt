@@ -6,8 +6,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.clearText
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,6 +34,7 @@ fun CommentForm(
     imageUrl: String,
     comment: TextFieldState,
     isLoading: State<Boolean>,
+    isSuccess: State<Boolean>,
     onSubmit: () -> Unit
 ) {
     Row(
@@ -77,6 +80,11 @@ fun CommentForm(
             modifier = Modifier.weight(1f)
                 .padding(start = 10.dp)
         )
+        LaunchedEffect(isLoading.value) {
+            if (isSuccess.value) {
+                comment.clearText()
+            }
+        }
     }
 }
 
@@ -86,11 +94,13 @@ fun PreviewCommentForm() {
     DesignTheme {
         val comment = remember { TextFieldState() }
         val isLoading = remember { mutableStateOf(true) }
+        val isSuccess = remember { mutableStateOf(true) }
         CommentForm(
             username = "John Doe",
             imageUrl = "http://localhost",
             comment = comment,
-            isLoading = isLoading
+            isLoading = isLoading,
+            isSuccess = isSuccess
         ) {}
     }
 }
