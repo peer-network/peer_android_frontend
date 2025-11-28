@@ -3,6 +3,7 @@ package eu.peernetwork.blog.ui.comment
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -118,6 +119,7 @@ fun CommentScreen(
 fun CommentScreen(
     limit: Int,
     post: MutableState<UiPostDetail?>,
+    comment: TextFieldState,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
     content: LazyListScope.(Comment.Component, CommentInteractor, LazyPagingItems<UiComment>) -> Unit
@@ -133,6 +135,7 @@ fun CommentScreen(
         val isSuccess = remember { derivedStateOf { status.value is CommentViewModel.Status.Success<*> } }
         CommentSheet(
             state = post,
+            comment = comment,
             isSuccess = isSuccess,
             isLoading = isLoading,
             canDismiss = {

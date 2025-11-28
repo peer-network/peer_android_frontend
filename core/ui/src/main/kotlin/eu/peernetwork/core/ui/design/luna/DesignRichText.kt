@@ -30,14 +30,14 @@ import androidx.compose.ui.unit.TextUnit
 import eu.peernetwork.core.ui.mapper.annotate
 import eu.peernetwork.core.ui.theme.DesignTheme
 
-sealed class DesignStyledText(val value: String) {
-    object Link : DesignStyledText("*")
-    object Mention : DesignStyledText("@")
-    object Tag : DesignStyledText("#")
+sealed class DesignRichText(val value: String) {
+    object Link : DesignRichText("*")
+    object Mention : DesignRichText("@")
+    object Tag : DesignRichText("#")
 }
 
 @Composable
-fun DesignStyledText(
+fun DesignRichText(
     text: AnnotatedString,
     modifier: Modifier = Modifier,
     color: Color = Color.Unspecified,
@@ -54,7 +54,7 @@ fun DesignStyledText(
     maxLines: Int = Int.MAX_VALUE,
     minLines: Int = 1,
     inlineContent: Map<String, InlineTextContent> = mapOf(),
-    onClick: (DesignStyledText) -> Unit = {},
+    onClick: (DesignRichText) -> Unit = {},
     onTextLayout: (TextLayoutResult) -> Unit = {},
     style: TextStyle = LocalTextStyle.current
 ) {
@@ -100,12 +100,12 @@ fun DesignStyledText(
 fun AnnotatedString.getStringAnnotations(
     start: Int,
     end: Int,
-    onClick: (DesignStyledText) -> Unit
+    onClick: (DesignRichText) -> Unit
 ) {
     listOf(
-        DesignStyledText.Link,
-        DesignStyledText.Mention,
-        DesignStyledText.Tag,
+        DesignRichText.Link,
+        DesignRichText.Mention,
+        DesignRichText.Tag,
     ).forEach {
         getStringAnnotations(
             tag = it.value,
@@ -128,17 +128,17 @@ fun DesignStyledTextPreview() {
             .annotate()
         Column {
             Text(text = count.longValue.toString())
-            DesignStyledText(
+            DesignRichText(
                 text = annotatedString,
                 onClick = {
                     when (it) {
-                        DesignStyledText.Tag -> {
+                        DesignRichText.Tag -> {
                             count.longValue = System.currentTimeMillis()
                         }
-                        DesignStyledText.Mention -> {
+                        DesignRichText.Mention -> {
                             count.longValue = System.currentTimeMillis() / 10000
                         }
-                        DesignStyledText.Link -> {
+                        DesignRichText.Link -> {
                             count.longValue = -System.currentTimeMillis()
                         }
                     }

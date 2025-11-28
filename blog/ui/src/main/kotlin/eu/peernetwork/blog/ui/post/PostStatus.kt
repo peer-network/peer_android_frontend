@@ -31,7 +31,7 @@ import androidx.compose.ui.unit.sp
 import eu.peernetwork.blog.ui.R
 import eu.peernetwork.blog.ui.engagement.EngagementOption
 import eu.peernetwork.blog.ui.model.v2.UiEngagement
-import eu.peernetwork.core.ui.design.luna.DesignStyledText
+import eu.peernetwork.core.ui.design.luna.DesignRichText
 import eu.peernetwork.core.ui.theme.DesignTheme
 
 @Composable
@@ -138,14 +138,14 @@ fun PostStatus(
                     .padding(start = 10.dp)
                     .padding(bottom = 10.dp)
             ) {
-                DesignStyledText(
+                DesignRichText(
                     text = title,
                     maxLines = 1,
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onBackground,
                 )
                 if (description.isNotEmpty()) {
-                    DesignStyledText(
+                    DesignRichText(
                         text = description,
                         maxLines = 3,
                         style = MaterialTheme.typography.labelLarge,

@@ -78,9 +78,8 @@ fun ArticleList(
         provider = provider,
         viewModelStoreOwner = viewModelStoreOwner,
         onEvent = onEvent,
-        listState = listState,
-        connection = connection
-    ) { component, handle, items ->
+        listState = listState
+    ) { component, interactor, items ->
         items(
             count = items.itemCount,
             key = { index -> items[index]?.id?.let { "$it;$index" } ?: index }
@@ -96,8 +95,8 @@ fun ArticleList(
                     engagement = {
                         EngagementOption(
                             post = post,
-                            state = handle.engagementOption().observe()
-                        ) { handle.engagementOption()(post, it) }
+                            state = interactor.engagement().observe()
+                        ) { interactor.reaction()(post, it) }
                     },
                     connection = {
                         updatedConnection(
@@ -119,7 +118,7 @@ fun ArticleList(
                             status = status,
                             enable = enable,
                             isActive = isActive,
-                            component = handle.component(),
+                            component = interactor.component(),
                             viewModelStoreOwner = viewModelStoreOwner,
                         )
                     }

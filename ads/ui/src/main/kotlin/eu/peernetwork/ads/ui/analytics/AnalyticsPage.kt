@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.dp
 import eu.peernetwork.ads.ui.R
 import eu.peernetwork.ads.ui.model.UiMetrics
 import eu.peernetwork.ads.ui.overview.OverviewStatistics
-import eu.peernetwork.core.ui.design.luna.DesignStyledText
+import eu.peernetwork.core.ui.design.luna.DesignRichText
 import eu.peernetwork.core.ui.theme.DesignTheme
 
 @Composable
@@ -32,7 +32,7 @@ fun AnalyticsPage(
     status: Boolean,
     metrics: UiMetrics,
     modifier: Modifier = Modifier,
-    onClick: (DesignStyledText) -> Unit,
+    onClick: (DesignRichText) -> Unit,
     content: @Composable () -> Unit
 ) {
     Column(

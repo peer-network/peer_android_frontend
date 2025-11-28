@@ -8,7 +8,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import eu.peernetwork.ads.ui.adverts.AdvertsScreen
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.luna.DesignStyledText
+import eu.peernetwork.core.ui.design.luna.DesignRichText
 import eu.peernetwork.core.ui.extension.builder
 
 @Composable
@@ -18,7 +18,7 @@ fun DashboardScreen(
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
     onBack: () -> Unit,
-    onClick: (DesignStyledText) -> Unit
+    onClick: (DesignRichText) -> Unit
 ) {
     val context = LocalContext.current
     val component = remember {
@@ -50,7 +50,7 @@ fun DashboardScreen(
     component: Dashboard.Component,
     viewModelStoreOwner: ViewModelStoreOwner,
     onBack: () -> Unit,
-    onClick: (DesignStyledText) -> Unit
+    onClick: (DesignRichText) -> Unit
 ) {
     AdvertsScreen(
         id = id,

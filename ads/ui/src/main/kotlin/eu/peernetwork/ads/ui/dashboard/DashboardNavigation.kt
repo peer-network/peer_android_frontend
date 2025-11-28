@@ -8,14 +8,14 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import eu.peernetwork.ads.ui.analytics.AnalyticsScreen
-import eu.peernetwork.core.ui.design.luna.DesignStyledText
+import eu.peernetwork.core.ui.design.luna.DesignRichText
 import eu.peernetwork.core.ui.design.material.DesignRouter
 
 @Composable
 fun DashboardNavigation(
     component: Dashboard.Component,
     navController: NavHostController,
-    onClick: (DesignStyledText) -> Unit,
+    onClick: (DesignRichText) -> Unit,
     content: @Composable () -> Unit
 ) {
     val updatedContent by rememberUpdatedState(content)

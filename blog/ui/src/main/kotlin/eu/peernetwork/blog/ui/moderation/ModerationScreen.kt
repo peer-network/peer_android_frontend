@@ -31,14 +31,14 @@ fun ModerationScreen(
     val success by remember { derivedStateOf { state as? ModerationViewModel.State.Success? } }
     val message = stringResource(R.string.action_message)
     val updatedContent by rememberUpdatedState(content)
-    val event = remember(state) {
+    val interactor = remember(state) {
         object : ModerationInteractor {
             override fun onReport(id: String) {
                 viewModel.report(id)
             }
         }
     }
-    updatedContent(event)
+    updatedContent(interactor)
     LaunchedEffect(error, success) {
         success?.postId?.let {
             Toast.makeText(context, message, Toast.LENGTH_SHORT).show()

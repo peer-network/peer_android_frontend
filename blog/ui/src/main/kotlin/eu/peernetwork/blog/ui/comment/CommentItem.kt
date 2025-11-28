@@ -47,6 +47,7 @@ fun CommentItem(
     isLiked: Boolean,
     likes: Int,
     color: Color = MaterialTheme.colorScheme.outline,
+    onReply: () -> Unit,
     onViewLikes: () -> Unit,
     onLike: () -> Unit,
 ) {
@@ -87,6 +88,7 @@ fun CommentItem(
                 overflow = TextOverflow.Ellipsis,
                 fontWeight = FontWeight.SemiBold,
                 maxLines = 1,
+                modifier = Modifier.clickable(onClick = onReply)
             )
             DesignText(
                 text = comment,
@@ -154,6 +156,7 @@ fun PreviewCommentItem() {
             comment = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum accumsan elementum commodo.".annotate(),
             isLiked = true,
             likes = 1,
+            onReply = {},
             onViewLikes = {}
         ) {}
     }

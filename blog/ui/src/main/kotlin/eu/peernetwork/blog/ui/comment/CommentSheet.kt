@@ -26,6 +26,7 @@ import eu.peernetwork.core.ui.extension.value
 @Composable
 fun CommentSheet(
     state: MutableState<UiPostDetail?>,
+    comment: TextFieldState,
     isLoading: State<Boolean>,
     isSuccess: State<Boolean>,
     canDismiss: () -> Boolean,
@@ -43,7 +44,6 @@ fun CommentSheet(
             DesignStreamState.Success(state.value!!)
         }
     } }
-    val comment = remember { TextFieldState() }
     val updatedContent by rememberUpdatedState(content)
     DesignStream(sheetState) { post ->
         DesignBottomSheet(

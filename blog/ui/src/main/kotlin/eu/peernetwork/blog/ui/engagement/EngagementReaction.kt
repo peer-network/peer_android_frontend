@@ -24,9 +24,7 @@ import eu.peernetwork.core.ui.extension.toInt
 import eu.peernetwork.core.ui.theme.DesignTheme
 import eu.peernetwork.core.ui.theme.LightAccentColor
 
-interface EngagementOption {
-    fun observe(): androidx.compose.runtime.State<Map<String, UiReaction>>
-
+interface EngagementReaction {
     operator fun invoke(post: UiPost, state: State)
 
     sealed interface State {
@@ -41,7 +39,7 @@ interface EngagementOption {
 fun EngagementOption(
     post: UiPost,
     state: State<Map<String, UiReaction>>,
-    onClick: (EngagementOption.State) -> Unit
+    onClick: (EngagementReaction.State) -> Unit
 ) {
     val isLiked = state.value[post.id]?.isLiked
     val isDisliked = state.value[post.id]?.isDisliked
@@ -69,7 +67,7 @@ fun EngagementOption(
 @Composable
 fun EngagementOption(
     engagement: UiEngagement,
-    onClick: (EngagementOption.State) -> Unit
+    onClick: (EngagementReaction.State) -> Unit
 ) {
     val handleClick by rememberUpdatedState(onClick)
     EngagementMetric(
@@ -78,7 +76,7 @@ fun EngagementOption(
         painter = painterResource(R.drawable.ic_love_outline),
         checkedPainter = painterResource(R.drawable.ic_love),
         orientation = Orientation.Horizontal
-    ) { handleClick(EngagementOption.State.Like) }
+    ) { handleClick(EngagementReaction.State.Like) }
     EngagementMetric(
         text = engagement.dislikes,
         checked = engagement.isDisliked,
@@ -86,17 +84,17 @@ fun EngagementOption(
         checkedPainter = painterResource(R.drawable.ic_hate),
         checkedTint = LightAccentColor,
         orientation = Orientation.Horizontal
-    ) { handleClick(EngagementOption.State.Dislike) }
+    ) { handleClick(EngagementReaction.State.Dislike) }
     EngagementMetric(
         text = engagement.comment,
         painter = painterResource(R.drawable.ic_comment_outline),
         orientation = Orientation.Horizontal
-    ) { handleClick(EngagementOption.State.Comment) }
+    ) { handleClick(EngagementReaction.State.Comment) }
     EngagementMetric(
         text = engagement.views,
         painter = painterResource(R.drawable.ic_view),
         orientation = Orientation.Horizontal
-    ) { handleClick(EngagementOption.State.View) }
+    ) { handleClick(EngagementReaction.State.View) }
 }
 
 @Composable

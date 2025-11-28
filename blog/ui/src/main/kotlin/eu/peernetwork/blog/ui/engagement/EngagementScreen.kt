@@ -19,6 +19,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import eu.peernetwork.blog.ui.comment.CommentList
 import eu.peernetwork.blog.ui.interaction.overview.v2.OverviewScreen
 import eu.peernetwork.blog.ui.model.UiReaction
+import eu.peernetwork.blog.ui.model.v2.UiEngagement
 import eu.peernetwork.blog.ui.model.v2.UiPostDetail
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.component.UiComponentProvider
@@ -26,12 +27,10 @@ import eu.peernetwork.core.ui.extension.builder
 
 @Composable
 fun EngagementScreen(
-    userId: String,
     postLimit: Int,
     onAuthorClick: (String) -> Unit = {},
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
-    connection: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit = {},
     content: @Composable (EngagementInteractor) -> Unit
 ) {
     val context = LocalContext.current
@@ -51,7 +50,7 @@ fun EngagementScreen(
         }
     }
     val post = remember { mutableStateOf<UiPostDetail?>(null) }
-    val overview = remember { mutableStateOf<String?>(null) }
+    val overview = remember { mutableStateOf<UiEngagement?>(null) }
     val errorMessage = stringResource(R.string.unknown_error_message)
     val hasError = remember { derivedStateOf { error.value != null } }
     val updatedContent by rememberUpdatedState(content)
@@ -72,7 +71,7 @@ fun EngagementScreen(
             } else if (state is EngagementInteractor.State.Comment) {
                 post.value = state.model
             } else if (state is EngagementInteractor.State.View) {
-                overview.value = state.id
+                overview.value = state.engagement
             }
         }
     } }
@@ -96,7 +95,6 @@ fun EngagementScreen(
         state = overview,
         postLimit = postLimit,
         provider = component,
-        connection = connection,
         viewModelStoreOwner = viewModelStoreOwner,
         onAuthorClick = { handleAuthorClick(it) }
     )

@@ -34,7 +34,7 @@ import eu.peernetwork.blog.ui.mapper.v2.format
 import eu.peernetwork.blog.ui.model.v2.UiEngagement
 import eu.peernetwork.blog.ui.model.v2.UiPostDetail
 import eu.peernetwork.blog.ui.model.v2.UiTimer
-import eu.peernetwork.core.ui.design.luna.DesignStyledText
+import eu.peernetwork.core.ui.design.luna.DesignRichText
 import eu.peernetwork.core.ui.design.luna.DesignBox
 import eu.peernetwork.core.ui.design.luna.DesignButton
 import eu.peernetwork.core.ui.theme.DesignTheme
@@ -58,13 +58,13 @@ fun PostScaffold(
     ) {
         Column(modifier = Modifier.padding(horizontal = 12.dp)
             .padding(bottom = 16.dp)) {
-            DesignStyledText(
+            DesignRichText(
                 text = model.title,
                 maxLines = 2,
                 color = MaterialTheme.colorScheme.onBackground,
                 style = MaterialTheme.typography.bodyMedium,
             )
-            DesignStyledText(
+            DesignRichText(
                 text = model.description,
                 maxLines = 6,
                 lineHeight = 18.sp,

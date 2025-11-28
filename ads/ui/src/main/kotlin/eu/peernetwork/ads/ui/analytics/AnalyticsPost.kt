@@ -27,7 +27,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.ads.ui.R
-import eu.peernetwork.core.ui.design.luna.DesignStyledText
+import eu.peernetwork.core.ui.design.luna.DesignRichText
 import eu.peernetwork.core.ui.theme.DesignTheme
 import eu.peernetwork.core.ui.theme.PeerAppGreen
 
@@ -37,7 +37,7 @@ fun AnalyticsPost(
     description: AnnotatedString,
     status: Boolean,
     modifier: Modifier = Modifier,
-    onClick: (DesignStyledText) -> Unit,
+    onClick: (DesignRichText) -> Unit,
     content: @Composable () -> Unit
 ) {
     val updatedContent by rememberUpdatedState(content)
@@ -59,7 +59,7 @@ fun AnalyticsPost(
                 modifier = Modifier.fillMaxWidth()
                     .heightIn(min = 24.dp)
             ) {
-                DesignStyledText(
+                DesignRichText(
                     text = title,
                     color = MaterialTheme.colorScheme.onBackground,
                     style = MaterialTheme.typography.labelLarge,
@@ -72,7 +72,7 @@ fun AnalyticsPost(
                 modifier = Modifier.fillMaxWidth()
                     .heightIn(min = 32.dp)
             ) {
-                DesignStyledText(
+                DesignRichText(
                     text = description,
                     color = MaterialTheme.colorScheme.onBackground,
                     style = MaterialTheme.typography.labelMedium,

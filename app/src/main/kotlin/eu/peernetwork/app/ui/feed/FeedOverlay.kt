@@ -8,16 +8,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import eu.peernetwork.app.extension.navigateToTagSearch
-import eu.peernetwork.app.extension.navigateToUsernameSearch
-import eu.peernetwork.app.ui.window.WindowTitle
 import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.blog.domain.model.Category
 import eu.peernetwork.core.ui.design.material.DesignOverlay
-import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.core.ui.factory.UiViewModelStore
 import eu.peernetwork.social.ui.connection.ConnectionController
-import eu.peernetwork.social.ui.connection.ConnectionScreen
 
 sealed interface FeedOverlayState {
     data object Empty : FeedOverlayState

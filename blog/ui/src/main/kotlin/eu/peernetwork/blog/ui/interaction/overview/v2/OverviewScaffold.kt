@@ -49,9 +49,7 @@ fun OverviewScaffold(
                     .height(1.dp)
                     .background(PeerAppRed, shape = CircleShape))
             }
-        ) {
-            handleHeader(state, it)
-        }
+        ) { handleHeader(state, it) }
         updatedContent(state)
     }
 }

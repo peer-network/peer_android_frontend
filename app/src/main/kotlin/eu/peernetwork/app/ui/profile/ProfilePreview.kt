@@ -32,8 +32,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
-import eu.peernetwork.app.extension.navigateToTagSearch
-import eu.peernetwork.app.extension.navigateToUsernameSearch
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.design.compose.DesignRefreshableScaffold
 import eu.peernetwork.core.ui.design.compose.DesignStatefulScaffoldState

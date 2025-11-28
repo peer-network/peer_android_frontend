@@ -10,6 +10,7 @@ import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.clearText
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
@@ -88,6 +89,9 @@ fun CommentForm(
             if (isSuccess.value) {
                 comment.clearText()
             }
+        }
+        DisposableEffect(Unit) {
+            onDispose { comment.clearText() }
         }
     }
 }

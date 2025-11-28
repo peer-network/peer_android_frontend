@@ -14,7 +14,7 @@ import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.luna.DesignRefreshScaffold
 import eu.peernetwork.core.ui.design.luna.DesignStream
 import eu.peernetwork.core.ui.design.luna.DesignStreamState
-import eu.peernetwork.core.ui.design.luna.DesignStyledText
+import eu.peernetwork.core.ui.design.luna.DesignRichText
 import eu.peernetwork.core.ui.extension.builder
 
 @Composable
@@ -22,7 +22,7 @@ fun AnalyticsScreen(
     id: String,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
-    onClick: (DesignStyledText) -> Unit
+    onClick: (DesignRichText) -> Unit
 ) {
     val context = LocalContext.current
     val component = remember { provider.builder(Analytics.Builder::class.java).build(context) }

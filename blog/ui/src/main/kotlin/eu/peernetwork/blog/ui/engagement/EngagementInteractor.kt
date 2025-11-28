@@ -1,6 +1,7 @@
 package eu.peernetwork.blog.ui.engagement
 
 import eu.peernetwork.blog.ui.model.UiReaction
+import eu.peernetwork.blog.ui.model.v2.UiEngagement
 import eu.peernetwork.blog.ui.model.v2.UiPostDetail
 
 interface EngagementInteractor {
@@ -16,6 +17,6 @@ interface EngagementInteractor {
         ) : State
         data class Dislike(val id: String) : State
         data class Comment(val model: UiPostDetail) : State
-        data class View(val id: String) : State
+        data class View(val engagement: UiEngagement) : State
     }
 }

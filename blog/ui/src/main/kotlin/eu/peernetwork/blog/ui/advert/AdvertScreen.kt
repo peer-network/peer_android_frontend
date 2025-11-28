@@ -18,10 +18,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import eu.peernetwork.blog.domain.usecase.PostUsecase.Companion.FEED
-import eu.peernetwork.blog.ui.mapper.v2.mapToDetail
 import eu.peernetwork.blog.ui.model.UiPost
-import eu.peernetwork.blog.ui.post.Post
-import eu.peernetwork.blog.ui.post.PostItem
+import eu.peernetwork.blog.ui.post.PostInteractor
 import eu.peernetwork.blog.ui.post.PostScreen
 import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.core.ui.R
@@ -39,7 +37,7 @@ fun AdvertScreen(
     viewModelStoreOwner: ViewModelStoreOwner,
     connection: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit = {},
     content: @Composable (
-        Post.Handle,
+        PostInteractor,
         state: State<DesignStreamState<Flow<PagingData<UiPost>>>>,
     ) -> Unit
 ) {
@@ -75,12 +73,10 @@ fun AdvertScreen(
         }
     }
     PostScreen(
-        id = id,
         limit = postLimit,
         listState = listState,
         provider = component,
         viewModelStoreOwner = viewModelStoreOwner,
-        connection = connection
     ) { handler -> updatedContent(handler, derivedState) }
     LaunchedEffect(Unit) {
         viewModel(FEED, Pageable(0, postLimit))

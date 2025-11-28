@@ -1,6 +1,5 @@
 package eu.peernetwork.blog.ui.article
 
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
@@ -29,7 +28,7 @@ import androidx.paging.compose.LazyPagingItems
 import eu.peernetwork.blog.domain.model.Content
 import eu.peernetwork.blog.ui.extension.share
 import eu.peernetwork.blog.ui.model.v2.UiPost
-import eu.peernetwork.blog.ui.post.Post
+import eu.peernetwork.blog.ui.post.PostInteractor
 import eu.peernetwork.blog.ui.post.PostScreen
 import eu.peernetwork.blog.ui.post.PostSkeleton
 import eu.peernetwork.core.common.paging.Pageable
@@ -137,8 +136,7 @@ fun ArticleScreen(
     viewModelStoreOwner: ViewModelStoreOwner,
     onEvent: (ArticleEvent) -> Unit,
     listState: LazyListState = rememberLazyListState(),
-    connection: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit = {},
-    content: LazyListScope.(Article.Component, Post.Handle, LazyPagingItems<UiPost>) -> Unit
+    content: LazyListScope.(Article.Component, PostInteractor, LazyPagingItems<UiPost>) -> Unit
 ) {
     val context = LocalContext.current
     val updatedContent by rememberUpdatedState(content)
@@ -154,24 +152,22 @@ fun ArticleScreen(
         loading = { PostSkeleton(3) }
     ) { component, items ->
         PostScreen(
-            id = id,
             limit = limit,
             focused = focused,
             listState = listState,
             provider = component,
-            viewModelStoreOwner = viewModelStoreOwner,
-            connection = connection
-        ) { handle ->
+            viewModelStoreOwner = viewModelStoreOwner
+        ) { interactor ->
             val handleEvent by rememberUpdatedState(onEvent)
             val shareTitle = stringResource(eu.peernetwork.blog.ui.R.string.share_label)
             LazyColumn(
                 state = listState,
                 modifier = Modifier.fillMaxSize()
-            ) { updatedContent(this, component, handle, items) }
+            ) { updatedContent(this, component, interactor, items) }
             ArticleSheet(showSheet) { sheetState, post ->
                 when (sheetState) {
                     ArticleSheetMenuItem.BOOST -> handleEvent(ArticleEvent.Boost(post.id))
-                    ArticleSheetMenuItem.REPORT -> handle.moderation().onReport(post.id)
+                    ArticleSheetMenuItem.REPORT -> interactor.moderation().onReport(post.id)
                     ArticleSheetMenuItem.SHARE -> { context.share(post.url, shareTitle) }
                 }
             }
@@ -205,11 +201,10 @@ fun ArticleScreen(
     ) { component, items ->
         val pagerState = rememberPagerState(initialPage = selected.intValue) { items.itemCount }
         PostScreen(
-            id = id,
             limit = limit,
             pagerState = pagerState,
             provider = component,
             viewModelStoreOwner = viewModelStoreOwner
-        ) { handle, index -> updatedContent(this, component, items, index) }
+        ) { interactor, index -> updatedContent(this, component, items, index) }
     }
 }
