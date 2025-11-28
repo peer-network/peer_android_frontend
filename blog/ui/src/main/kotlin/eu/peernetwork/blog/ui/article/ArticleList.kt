@@ -87,7 +87,7 @@ fun ArticleList(
             items[index]?.let { post ->
                 PostItem(
                     type = post.type,
-                    pinnedBy = null,
+                    pinnedBy = post.pinnedBy,
                     model = post.mapToDetail(),
                     asset = post.asset,
                     onMenu = { showSheet.value = post },

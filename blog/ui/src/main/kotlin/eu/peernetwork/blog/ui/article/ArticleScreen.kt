@@ -32,11 +32,29 @@ import eu.peernetwork.blog.ui.post.PostInteractor
 import eu.peernetwork.blog.ui.post.PostScreen
 import eu.peernetwork.blog.ui.post.PostSkeleton
 import eu.peernetwork.core.common.paging.Pageable
-import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.luna.DesignPagingStream
 import eu.peernetwork.core.ui.design.luna.DesignStreamState
 import eu.peernetwork.core.ui.extension.builder
+
+@Composable
+@Suppress("UNCHECKED_CAST")
+@OptIn(ExperimentalMaterial3Api::class)
+fun ArticleScreen(
+    provider: UiComponentProvider,
+    viewModelStoreOwner: ViewModelStoreOwner,
+    content: @Composable (Article.Component, ArticleViewModel) -> Unit
+) {
+    val context = LocalContext.current
+    val component = remember { provider.builder(Article.Builder::class.java).build(context) }
+    val viewModel = viewModel(
+        modelClass = ArticleViewModel::class.java,
+        viewModelStoreOwner = viewModelStoreOwner,
+        factory = component.viewModelFactory()
+    )
+    val updatedContent by rememberUpdatedState(content)
+    updatedContent(component, viewModel)
+}
 
 @Composable
 @Suppress("UNCHECKED_CAST")
@@ -47,19 +65,12 @@ fun ArticleScreen(
     types: Set<Content.Type>,
     selected: MutableIntState,
     timestamp: State<Long>,
-    provider: UiComponentProvider,
-    viewModelStoreOwner: ViewModelStoreOwner,
+    component: Article.Component,
+    viewModel: ArticleViewModel,
     onEvent: (ArticleEvent) -> Unit,
     loading: @Composable () -> Unit = {},
     content: @Composable (Article.Component, LazyPagingItems<UiPost>) -> Unit
 ) {
-    val context = LocalContext.current
-    val component = remember { provider.builder(Article.Builder::class.java).build(context) }
-    val viewModel = viewModel(
-        modelClass = ArticleViewModel::class.java,
-        viewModelStoreOwner = viewModelStoreOwner,
-        factory = component.viewModelFactory()
-    )
     val state by viewModel.states.collectAsStateWithLifecycle()
     val status by viewModel.status.collectAsStateWithLifecycle()
     val localState = remember { derivedStateOf {
@@ -74,7 +85,6 @@ fun ArticleScreen(
     val position = remember { derivedStateOf {
         (selector.value as? ArticleViewModel.Status.Success<Int>?)?.data ?: -1
     } }
-    val errorMessage = stringResource(R.string.unknown_error_message)
     val derivedState = remember {
         derivedStateOf {
             val currentState = localState.value
@@ -85,10 +95,7 @@ fun ArticleScreen(
                     currentState.content
                 )
                 is ArticleViewModel.State.Error -> DesignStreamState.Error(
-                    currentState.error.let {
-                        Throwable(component.resource()
-                            .string(it.message ?: errorMessage), it)
-                    }
+                    currentState.error
                 )
             }
         }
@@ -141,34 +148,44 @@ fun ArticleScreen(
     val context = LocalContext.current
     val updatedContent by rememberUpdatedState(content)
     ArticleScreen(
-        id = id,
-        types = types,
-        limit = limit,
-        selected = selected,
-        timestamp = timestamp,
         provider = provider,
-        viewModelStoreOwner = viewModelStoreOwner,
-        onEvent = onEvent,
-        loading = { PostSkeleton(3) }
-    ) { component, items ->
-        PostScreen(
+        viewModelStoreOwner = viewModelStoreOwner
+    ) { component, viewModel ->
+        ArticleScreen(
+            id = id,
+            types = types,
             limit = limit,
-            focused = focused,
-            listState = listState,
-            provider = component,
-            viewModelStoreOwner = viewModelStoreOwner
-        ) { interactor ->
-            val handleEvent by rememberUpdatedState(onEvent)
-            val shareTitle = stringResource(eu.peernetwork.blog.ui.R.string.share_label)
-            LazyColumn(
-                state = listState,
-                modifier = Modifier.fillMaxSize()
-            ) { updatedContent(this, component, interactor, items) }
-            ArticleSheet(showSheet) { sheetState, post ->
-                when (sheetState) {
-                    ArticleSheetMenuItem.BOOST -> handleEvent(ArticleEvent.Boost(post.id))
-                    ArticleSheetMenuItem.REPORT -> interactor.moderation().onReport(post.id)
-                    ArticleSheetMenuItem.SHARE -> { context.share(post.url, shareTitle) }
+            selected = selected,
+            timestamp = timestamp,
+            component = component,
+            viewModel = viewModel,
+            onEvent = onEvent,
+            loading = { PostSkeleton(3) }
+        ) { component, items ->
+            PostScreen(
+                limit = limit,
+                focused = focused,
+                listState = listState,
+                provider = component,
+                viewModelStoreOwner = viewModelStoreOwner,
+                onFocus = {
+                    items.itemSnapshotList.get(it)?.let { post ->
+                        viewModel.view(post.id)
+                    }
+                }
+            ) { interactor ->
+                val handleEvent by rememberUpdatedState(onEvent)
+                val shareTitle = stringResource(eu.peernetwork.blog.ui.R.string.share_label)
+                LazyColumn(
+                    state = listState,
+                    modifier = Modifier.fillMaxSize()
+                ) { updatedContent(this, component, interactor, items) }
+                ArticleSheet(showSheet) { sheetState, post ->
+                    when (sheetState) {
+                        ArticleSheetMenuItem.BOOST -> handleEvent(ArticleEvent.Boost(post.id))
+                        ArticleSheetMenuItem.REPORT -> interactor.moderation().onReport(post.id)
+                        ArticleSheetMenuItem.SHARE -> { context.share(post.url, shareTitle) }
+                    }
                 }
             }
         }
@@ -189,22 +206,34 @@ fun ArticleScreen(
 ) {
     val updatedContent by rememberUpdatedState(content)
     ArticleScreen(
-        id = id,
-        types = types,
-        limit = limit,
-        selected = selected,
-        timestamp = timestamp,
         provider = provider,
-        viewModelStoreOwner = viewModelStoreOwner,
-        onEvent = onEvent,
-        loading = { PostSkeleton(3) }
-    ) { component, items ->
-        val pagerState = rememberPagerState(initialPage = selected.intValue) { items.itemCount }
-        PostScreen(
+        viewModelStoreOwner = viewModelStoreOwner
+    ) { component, viewModel ->
+        ArticleScreen(
+            id = id,
+            types = types,
             limit = limit,
-            pagerState = pagerState,
-            provider = component,
-            viewModelStoreOwner = viewModelStoreOwner
-        ) { interactor, index -> updatedContent(this, component, items, index) }
+            selected = selected,
+            timestamp = timestamp,
+            component = component,
+            viewModel = viewModel,
+            onEvent = onEvent,
+            loading = { PostSkeleton(3) }
+        ) { component, items ->
+            val pagerState = rememberPagerState(initialPage = selected.intValue) { items.itemCount }
+            PostScreen(
+                limit = limit,
+                pagerState = pagerState,
+                provider = component,
+                viewModelStoreOwner = viewModelStoreOwner
+            ) { interactor, index ->
+                updatedContent(this, component, items, index)
+                LaunchedEffect(Unit) {
+                    items.itemSnapshotList.get(pagerState.currentPage)?.let { post ->
+                        viewModel.view(post.id)
+                    }
+                }
+            }
+        }
     }
 }

@@ -2,7 +2,6 @@ package eu.peernetwork.blog.ui.timeline
 
 import android.content.Context
 import androidx.lifecycle.ViewModelProvider
-import eu.peernetwork.blog.ui.advert.Advert
 import eu.peernetwork.blog.ui.engagement.EngagementDialog
 import eu.peernetwork.blog.ui.post.Post
 import eu.peernetwork.blog.ui.provider.BlogProvider
@@ -21,7 +20,7 @@ interface Timeline : BlogProvider {
         dependencies = [Timeline::class],
         modules = [TimelineModule::class]
     )
-    interface Component : Timeline, UiComponentProvider, Post, Advert {
+    interface Component : Timeline, UiComponentProvider, Post {
         fun viewModelFactory(): ViewModelProvider.Factory
     }
 

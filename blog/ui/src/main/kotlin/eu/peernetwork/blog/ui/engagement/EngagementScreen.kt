@@ -27,7 +27,6 @@ import eu.peernetwork.core.ui.extension.builder
 @Composable
 fun EngagementScreen(
     postLimit: Int,
-    onAuthorClick: (String) -> Unit = {},
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
     content: @Composable (EngagementInteractor) -> Unit
@@ -53,7 +52,6 @@ fun EngagementScreen(
     val errorMessage = stringResource(R.string.unknown_error_message)
     val hasError = remember { derivedStateOf { error.value != null } }
     val updatedContent by rememberUpdatedState(content)
-    val handleAuthorClick by rememberUpdatedState(onAuthorClick)
     val type = remember { mutableStateOf<EngagementIntent?>(null) }
     val interactor = remember { object : EngagementInteractor {
         override fun observe(): State<Map<String, UiReaction>> = reactionState
@@ -94,8 +92,7 @@ fun EngagementScreen(
         state = overview,
         postLimit = postLimit,
         provider = component,
-        viewModelStoreOwner = viewModelStoreOwner,
-        onAuthorClick = { handleAuthorClick(it) }
+        viewModelStoreOwner = viewModelStoreOwner
     )
     component.engagementConfirmation()(
         Modifier,

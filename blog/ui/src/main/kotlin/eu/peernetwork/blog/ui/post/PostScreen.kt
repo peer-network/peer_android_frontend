@@ -52,7 +52,6 @@ fun PostScreen(
     val updatedContent by rememberUpdatedState(content)
     EngagementScreen(
         postLimit = limit,
-        onAuthorClick = {  },
         provider = component,
         viewModelStoreOwner = viewModelStoreOwner
     ) { engagement ->

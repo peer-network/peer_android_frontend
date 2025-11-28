@@ -32,8 +32,7 @@ fun OverviewScreen(
     state: MutableState<UiEngagement?>,
     postLimit: Int,
     provider: UiComponentProvider,
-    viewModelStoreOwner: ViewModelStoreOwner,
-    onAuthorClick: (String) -> Unit = {}
+    viewModelStoreOwner: ViewModelStoreOwner
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()

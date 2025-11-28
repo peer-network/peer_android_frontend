@@ -3,7 +3,9 @@ package eu.peernetwork.blog.ui.interaction.user
 import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -30,43 +32,46 @@ fun UserError(
     error: String,
     onRefresh: () -> Unit
 ) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp)
-            .padding(vertical = 8.dp),
-    ) {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier.size(36.dp)
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.surfaceContainerLow)
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.ic_warning),
-                contentDescription = stringResource(R.string.error_label),
-                tint = PeerAppDarkRed,
-                modifier = Modifier.size(16.dp)
-            )
-        }
-        Text(
-            text = error,
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.outline,
-            overflow = TextOverflow.Ellipsis,
-            maxLines = 1,
+    Column(modifier = Modifier.fillMaxSize()) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
-                .weight(1f)
-                .padding(horizontal = 10.dp)
-        )
-        IconButton(onClick = onRefresh) {
-            Icon(
-                painter = painterResource(R.drawable.ic_refresh),
-                contentDescription = stringResource(R.string.retry_label),
-                tint = MaterialTheme.colorScheme.outline,
-                modifier = Modifier.size(16.dp)
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+                .padding(vertical = 8.dp),
+        ) {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .size(36.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.surfaceContainerLow)
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_warning),
+                    contentDescription = stringResource(R.string.error_label),
+                    tint = PeerAppDarkRed,
+                    modifier = Modifier.size(16.dp)
+                )
+            }
+            Text(
+                text = error,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.outline,
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 1,
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(horizontal = 10.dp)
             )
+            IconButton(onClick = onRefresh) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_refresh),
+                    contentDescription = stringResource(R.string.retry_label),
+                    tint = MaterialTheme.colorScheme.outline,
+                    modifier = Modifier.size(16.dp)
+                )
+            }
         }
     }
 }
