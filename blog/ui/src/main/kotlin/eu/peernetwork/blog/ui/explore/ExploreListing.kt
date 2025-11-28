@@ -46,7 +46,7 @@ fun ExploreListing(
                     component.imageView()(
                         Modifier,
                         ImageView.Spec(
-                            post.media.first().path,
+                            "post.media.first().path",
                             null,
                             ContentScale.Crop,
                             width = 250

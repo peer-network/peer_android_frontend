@@ -29,7 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import eu.peernetwork.blog.ui.R
-import eu.peernetwork.blog.ui.engagement.v2.EngagementOption
+import eu.peernetwork.blog.ui.engagement.EngagementOption
 import eu.peernetwork.blog.ui.model.v2.UiEngagement
 import eu.peernetwork.core.ui.design.luna.DesignStyledText
 import eu.peernetwork.core.ui.theme.DesignTheme

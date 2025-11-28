@@ -24,7 +24,7 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.paging.LoadState
 import eu.peernetwork.blog.domain.model.Content
-import eu.peernetwork.blog.ui.engagement.v2.EngagementOption
+import eu.peernetwork.blog.ui.engagement.EngagementOption
 import eu.peernetwork.blog.ui.mapper.v2.mapToDetail
 import eu.peernetwork.blog.ui.model.v2.UiPost
 import eu.peernetwork.blog.ui.post.PostItem

@@ -5,7 +5,6 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Easing
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -19,15 +18,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.text.input.InputTransformation
-import androidx.compose.foundation.text.input.KeyboardActionHandler
-import androidx.compose.foundation.text.input.OutputTransformation
-import androidx.compose.foundation.text.input.TextFieldDecorator
-import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
@@ -52,8 +46,8 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.theme.DesignTheme
@@ -76,20 +70,19 @@ fun DesignTextField(
         horizontal = 16.dp,
         vertical = 14.dp
     ),
-    inputTransformation: InputTransformation? = null,
     textStyle: TextStyle = MaterialTheme.typography.bodyMedium,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
-    onKeyboardAction: KeyboardActionHandler? = null,
-    lineLimits: TextFieldLineLimits = TextFieldLineLimits.Default,
-    onTextLayout: (Density.(getResult: () -> TextLayoutResult?) -> Unit)? = null,
+    onKeyboardAction: KeyboardActions = KeyboardActions.Default,
+    minLines: Int = 1,
+    maxLength: Int = Int.MAX_VALUE,
+    maxLines: Int = Int.MAX_VALUE,
+    visualTransformation: VisualTransformation = VisualTransformation.None,
+    onTextLayout: (TextLayoutResult) -> Unit = {},
     interactionSource: MutableInteractionSource? = null,
     cursorBrush: Brush = SolidColor(MaterialTheme.colorScheme.primary),
-    outputTransformation: OutputTransformation? = null,
-    decorator: TextFieldDecorator? = null,
     durationMillis: Int = 10,
     delayMillis: Int = 0,
     easing: Easing = FastOutSlowInEasing,
-    scrollState: ScrollState = rememberScrollState(),
     leading: @Composable RowScope.() -> Unit = {},
     trailing: @Composable RowScope.() -> Unit = {},
 ) {
@@ -158,23 +151,26 @@ fun DesignTextField(
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 updatedLeading()
-                Box {
+                Box(modifier = Modifier.weight(1f)) {
                     BasicTextField(
-                        state = state,
+                        value = state.text.toString(),
+                        onValueChange = { input ->
+                            if (maxLength == Int.MAX_VALUE || input.length <= maxLength) {
+                                state.edit { replace(0, length, input) }
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth(),
                         enabled = enabled,
                         readOnly = readOnly,
-                        modifier = Modifier.fillMaxWidth(),
-                        inputTransformation = inputTransformation,
                         textStyle = LocalTextStyle.current,
+                        keyboardActions = onKeyboardAction,
                         keyboardOptions = keyboardOptions,
-                        onKeyboardAction = onKeyboardAction,
-                        lineLimits = lineLimits,
-                        onTextLayout = onTextLayout,
                         interactionSource = interactionSource,
                         cursorBrush = cursorBrush,
-                        outputTransformation = outputTransformation,
-                        decorator = decorator,
-                        scrollState = scrollState
+                        maxLines = maxLines,
+                        minLines = minLines,
+                        onTextLayout = onTextLayout,
+                        visualTransformation = visualTransformation
                     )
                     Crossfade(state.text.isEmpty()) { targetState ->
                         if (targetState) {

@@ -1,4 +1,4 @@
-package eu.peernetwork.blog.ui.interaction.listing
+package eu.peernetwork.blog.ui.interaction.user
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -10,9 +10,9 @@ import eu.peernetwork.core.ui.factory.UiViewModelFactory
 import javax.inject.Provider
 
 @Module
-object ListingModule {
+object UserModule {
     @Provides
-    @Listing.Scope
+    @User.Scope
     fun provideViewModelFactory(
         classToViewModel:
         @JvmSuppressWildcards Map<Class<out ViewModel>, Provider<ViewModel>>
@@ -22,7 +22,7 @@ object ListingModule {
 
     @Provides
     @IntoMap
-    @Listing.Scope
-    @UiViewModel(ListingViewModel::class)
-    fun viewModel(viewModel: ListingViewModel): ViewModel = viewModel
+    @User.Scope
+    @UiViewModel(UserViewModel::class)
+    fun viewModel(viewModel: UserViewModel): ViewModel = viewModel
 }

@@ -41,7 +41,7 @@ fun ArticleSheet(
     val handleConfirm by rememberUpdatedState(onMenuClicked)
     DesignBottomSheetScaffold(
         state = showSheet,
-        color = MaterialTheme.colorScheme.surfaceVariant,
+        color = MaterialTheme.colorScheme.surfaceDim,
         onDismiss = {
             state.value = null
             confirmed.value?.let {
@@ -112,7 +112,7 @@ fun ArticleSheet(
 @Preview
 @OptIn(ExperimentalMaterial3Api::class)
 fun PreviewArticleSheet() {
-    DesignTheme {
+    DesignTheme(isDarkMode = true) {
         ArticleSheet({}) {}
     }
 }

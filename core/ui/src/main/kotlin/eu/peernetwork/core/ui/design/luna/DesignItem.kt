@@ -33,7 +33,7 @@ fun DesignItem(
     horizontalArrangement: Arrangement.Horizontal = Arrangement.Start,
     onClick: () -> Unit,
 ) {
-    val border = MaterialTheme.colorScheme.surfaceDim
+    val border = MaterialTheme.colorScheme.surfaceContainerLowest
     Row(
         horizontalArrangement = horizontalArrangement,
         verticalAlignment = Alignment.CenterVertically,

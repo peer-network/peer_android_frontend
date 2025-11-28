@@ -1,4 +1,4 @@
-package eu.peernetwork.blog.ui.interaction.listing
+package eu.peernetwork.blog.ui.interaction.user
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -19,7 +19,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class ListingViewModel @Inject constructor(
+class UserViewModel @Inject constructor(
     private val usecase: InteractionUsecase
 ) : ViewModel() {
     private val mutableState = MutableStateFlow<Map<String, State>>(emptyMap())
@@ -53,9 +53,9 @@ class ListingViewModel @Inject constructor(
     }
 
     sealed interface State {
-        data object Empty: State
-        data object Loading: State
-        data class Success(val content: Flow<PagingData<UiAuthor>>): State
-        data class Error(val error: Throwable): State
+        data object Empty : State
+        data object Loading : State
+        data class Success(val content: Flow<PagingData<UiAuthor>>) : State
+        data class Error(val error: Throwable) : State
     }
 }

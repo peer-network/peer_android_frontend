@@ -13,14 +13,10 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import eu.peernetwork.app.ui.window.WindowTitle
-import eu.peernetwork.blog.domain.usecase.PostUsecase
-import eu.peernetwork.blog.ui.article.ArticleOverlay
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.material.DesignOverlay
 import eu.peernetwork.core.ui.design.material.DesignOverlayPage
 import eu.peernetwork.social.ui.connection.ConnectionController
-import eu.peernetwork.social.ui.connection.ConnectionScreen
 
 sealed interface ProfileOverlayState {
     data object Empty : ProfileOverlayState
@@ -90,32 +86,32 @@ fun ProfileOverlay(
                 onCancel = { visible.value = false }
             ) { backStackEntry ->
                 val state = (overlayState.value as ProfileOverlayState.Photo)
-                ArticleOverlay(
-                    author = userId,
-                    types = PostUsecase.POST,
-                    enabled = visible.value,
-                    limit = limit,
-                    position = state.position,
-                    provider = component,
-                    viewModelStoreOwner = viewModelStoreOwner,
-                    header = {
-                        WindowTitle(
-                            provider = component,
-                            viewModelStoreOwner = backStackEntry,
-                            onCancel = { visible.value = false },
-                        )
-                    }
-                ) {
-                    if (userId != principal) {
-                        ConnectionScreen(
-                            isFollowing = connection.getOrDefault(it.first, it.third),
-                            isFollowed = it.second,
-                            onClick = { follow ->
-                                connectionController.value.invoke(it.first, !follow)
-                            }
-                        )
-                    }
-                }
+//                ArticleOverlay(
+//                    author = userId,
+//                    types = PostUsecase.POST,
+//                    enabled = visible.value,
+//                    limit = limit,
+//                    position = state.position,
+//                    provider = component,
+//                    viewModelStoreOwner = viewModelStoreOwner,
+//                    header = {
+//                        WindowTitle(
+//                            provider = component,
+//                            viewModelStoreOwner = backStackEntry,
+//                            onCancel = { visible.value = false },
+//                        )
+//                    }
+//                ) {
+//                    if (userId != principal) {
+//                        ConnectionScreen(
+//                            isFollowing = connection.getOrDefault(it.first, it.third),
+//                            isFollowed = it.second,
+//                            onClick = { follow ->
+//                                connectionController.value.invoke(it.first, !follow)
+//                            }
+//                        )
+//                    }
+//                }
             }
         }
     }

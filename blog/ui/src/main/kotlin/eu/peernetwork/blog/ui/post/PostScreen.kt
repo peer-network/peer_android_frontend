@@ -26,14 +26,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
-import eu.peernetwork.blog.ui.engagement.EngagementObserver.State as ObserverState
-import eu.peernetwork.blog.ui.engagement.v2.EngagementScreen
-import eu.peernetwork.blog.ui.engagement.v2.EngagementOption
-import eu.peernetwork.blog.ui.engagement.v2.EngagementOption.State as EngagementState
+import eu.peernetwork.blog.ui.engagement.EngagementInteractor.State as ObserverState
+import eu.peernetwork.blog.ui.engagement.EngagementScreen
+import eu.peernetwork.blog.ui.engagement.EngagementOption
+import eu.peernetwork.blog.ui.mapper.v2.mapToDetail
+import eu.peernetwork.blog.ui.engagement.EngagementOption.State as EngagementState
 import eu.peernetwork.blog.ui.model.UiReaction
 import eu.peernetwork.blog.ui.model.v2.UiPost
-import eu.peernetwork.blog.ui.moderation.v2.ModerationScreen
-import eu.peernetwork.blog.ui.moderation.v2.ModerationScreenEvent
+import eu.peernetwork.blog.ui.moderation.ModerationInteractor
+import eu.peernetwork.blog.ui.moderation.ModerationScreen
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.extension.builder
 
@@ -55,8 +56,6 @@ fun PostScreen(
         userId = id,
         postLimit = limit,
         onAuthorClick = {  },
-        onMentionClick = {  },
-        onHashtagClick = {  },
         provider = component,
         viewModelStoreOwner = viewModelStoreOwner,
         connection = connection
@@ -72,7 +71,9 @@ fun PostScreen(
                             message = post.title.text
                         ))
                     EngagementState.Dislike -> engagement(ObserverState.Dislike(post.id))
-                    EngagementState.Comment -> engagement(ObserverState.Comment(post.id))
+                    EngagementState.Comment -> {
+                        engagement(ObserverState.Comment(post.mapToDetail()))
+                    }
                     EngagementState.View -> engagement(ObserverState.View(post.id))
                 }
             }
@@ -84,7 +85,7 @@ fun PostScreen(
             val handle = remember { object : Post.Handle {
                 override fun component(): Post.Component = component
                 override fun engagementOption(): EngagementOption = event
-                override fun moderation(): ModerationScreenEvent = moderation
+                override fun moderation(): ModerationInteractor = moderation
             } }
             updatedContent(handle)
         }

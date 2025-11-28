@@ -1,27 +1,27 @@
-package eu.peernetwork.blog.ui.interaction.listing
+package eu.peernetwork.blog.ui.interaction.user
 
 import android.content.Context
 import androidx.lifecycle.ViewModelProvider
 import eu.peernetwork.blog.ui.provider.BlogProvider
 import eu.peernetwork.core.ui.component.UiComponent
 
-interface Listing : BlogProvider {
+interface User : BlogProvider {
     @javax.inject.Scope
     @Retention(AnnotationRetention.RUNTIME)
     annotation class Scope
 
     @Scope
     @dagger.Component(
-        dependencies = [Listing::class],
-        modules = [ListingModule::class]
+        dependencies = [User::class],
+        modules = [UserModule::class]
     )
-    interface Component : Listing {
+    interface Component : User {
         fun viewModelFactory(): ViewModelProvider.Factory
     }
 
-    class Builder(private val dependency: Listing) : UiComponent.DefaultBuilder<Listing, Component>() {
+    class Builder(private val dependency: User) : UiComponent.DefaultBuilder<User, Component>() {
         override fun build(context: Context): Component {
-            return DaggerListing_Component.builder().listing(dependency).build()
+            return DaggerUser_Component.builder().user(dependency).build()
         }
     }
 }

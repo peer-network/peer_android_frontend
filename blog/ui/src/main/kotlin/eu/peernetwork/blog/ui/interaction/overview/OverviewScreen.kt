@@ -19,7 +19,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.blog.domain.model.Engagement
-import eu.peernetwork.blog.ui.interaction.listing.ListingScreen
+import eu.peernetwork.blog.ui.interaction.user.UserScreen
 import eu.peernetwork.blog.ui.model.UiAction
 import eu.peernetwork.blog.ui.model.UiContent
 import eu.peernetwork.core.ui.component.UiComponentProvider
@@ -82,9 +82,9 @@ fun OverviewScreen(
                         else -> content.value?.likes
                     } } ?: postLimit
                     val tag = remember { "${engagement::class.java.name}/${content.value?.id}/$size" }
-                    ListingScreen(
+                    UserScreen(
                         id = content.value?.id ?: "",
-                        postLimit = postLimit,
+                        limit = postLimit,
                         engagement = engagement,
                         provider = component,
                         onAuthorClick = {

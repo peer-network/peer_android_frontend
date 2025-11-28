@@ -1,4 +1,4 @@
-package eu.peernetwork.blog.ui.engagement.v2
+package eu.peernetwork.blog.ui.engagement
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.RowScope
@@ -16,14 +16,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import eu.peernetwork.blog.ui.comment.CommentList
 import eu.peernetwork.blog.ui.interaction.overview.v2.OverviewScreen
-import eu.peernetwork.blog.ui.comment.v2.CommentScreen
-import eu.peernetwork.blog.ui.engagement.Engagement
-import eu.peernetwork.blog.ui.engagement.EngagementDialog
-import eu.peernetwork.blog.ui.engagement.EngagementEvent
-import eu.peernetwork.blog.ui.engagement.EngagementObserver
-import eu.peernetwork.blog.ui.engagement.EngagementViewModel
 import eu.peernetwork.blog.ui.model.UiReaction
+import eu.peernetwork.blog.ui.model.v2.UiPostDetail
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.extension.builder
@@ -32,13 +28,11 @@ import eu.peernetwork.core.ui.extension.builder
 fun EngagementScreen(
     userId: String,
     postLimit: Int,
-    onMentionClick: (String) -> Unit = {},
-    onHashtagClick: (String) -> Unit = {},
     onAuthorClick: (String) -> Unit = {},
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
     connection: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit = {},
-    content: @Composable (EngagementObserver) -> Unit
+    content: @Composable (EngagementInteractor) -> Unit
 ) {
     val context = LocalContext.current
     val component = remember {
@@ -56,35 +50,33 @@ fun EngagementScreen(
             (state as? EngagementViewModel.State.Error?)?.error
         }
     }
-    val post = remember { mutableStateOf<String?>(null) }
+    val post = remember { mutableStateOf<UiPostDetail?>(null) }
     val overview = remember { mutableStateOf<String?>(null) }
     val errorMessage = stringResource(R.string.unknown_error_message)
     val hasError = remember { derivedStateOf { error.value != null } }
     val updatedContent by rememberUpdatedState(content)
-    val handleMentionClick by rememberUpdatedState(onMentionClick)
-    val handleHashtagClick by rememberUpdatedState(onHashtagClick)
     val handleAuthorClick by rememberUpdatedState(onAuthorClick)
-    val type = remember { mutableStateOf<EngagementEvent?>(null) }
-    val observer = remember { object : EngagementObserver {
+    val type = remember { mutableStateOf<EngagementIntent?>(null) }
+    val interactor = remember { object : EngagementInteractor {
         override fun observe(): State<Map<String, UiReaction>> = reactionState
 
-        override fun invoke(state: EngagementObserver.State) {
-            if (state is EngagementObserver.State.Like) {
-                type.value = EngagementEvent.Like(
+        override fun invoke(state: EngagementInteractor.State) {
+            if (state is EngagementInteractor.State.Like) {
+                type.value = EngagementIntent.Like(
                     post = state.id,
                     author = state.author,
                     message = state.message
                 )
-            } else if (state is EngagementObserver.State.Dislike) {
-                type.value = EngagementEvent.DisLike(state.id)
-            } else if (state is EngagementObserver.State.Comment) {
-                post.value = state.id
-            } else if (state is EngagementObserver.State.View) {
+            } else if (state is EngagementInteractor.State.Dislike) {
+                type.value = EngagementIntent.DisLike(state.id)
+            } else if (state is EngagementInteractor.State.Comment) {
+                post.value = state.model
+            } else if (state is EngagementInteractor.State.View) {
                 overview.value = state.id
             }
         }
     } }
-    updatedContent(observer)
+    updatedContent(interactor)
     LaunchedEffect(Unit) { viewModel.initialize() }
     LaunchedEffect(hasError.value) {
         if (hasError.value) {
@@ -94,16 +86,11 @@ fun EngagementScreen(
             viewModel.clear()
         }
     }
-    CommentScreen(
+    CommentList(
+        limit = postLimit,
         state = post,
-        userId = userId,
-        postLimit = postLimit,
         provider = component,
-        viewModelStoreOwner = viewModelStoreOwner,
-        onMentionClick = { handleMentionClick(it) },
-        onHashtagClick = { handleHashtagClick(it) },
-        onAuthorClick = { handleAuthorClick(it) },
-        connection = connection,
+        viewModelStoreOwner = viewModelStoreOwner
     )
     OverviewScreen(
         state = overview,
@@ -117,12 +104,12 @@ fun EngagementScreen(
         Modifier,
         spec = EngagementDialog.Spec(type, viewModelStoreOwner) {
             when(it) {
-                is EngagementEvent.Like -> viewModel.like(
+                is EngagementIntent.Like -> viewModel.like(
                     id = it.id,
                     author = it.author,
                     message = it.message
                 )
-                is EngagementEvent.DisLike -> viewModel.dislike(it.id)
+                is EngagementIntent.DisLike -> viewModel.dislike(it.id)
                 else -> {}
             }
         }

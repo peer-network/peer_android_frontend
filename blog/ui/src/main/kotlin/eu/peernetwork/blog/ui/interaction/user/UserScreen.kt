@@ -1,48 +1,108 @@
-package eu.peernetwork.blog.ui.interaction.listing
+package eu.peernetwork.blog.ui.interaction.user
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.paging.compose.LazyPagingItems
 import eu.peernetwork.blog.domain.model.Engagement
 import eu.peernetwork.blog.ui.model.v2.UiAuthor
 import eu.peernetwork.core.common.paging.Pageable
+import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.compose.DesignErrorLabel
 import eu.peernetwork.core.ui.design.compose.DesignPagingScaffold
 import eu.peernetwork.core.ui.design.compose.DesignStatefulScaffoldState
-import eu.peernetwork.core.ui.design.luna.DesignImage
-import eu.peernetwork.core.ui.extension.annotate
+import eu.peernetwork.core.ui.design.luna.DesignPagingStream
+import eu.peernetwork.core.ui.design.luna.DesignStreamState
 import eu.peernetwork.core.ui.extension.builder
 
 @Composable
-fun ListingScreen(
+fun UserScreen(
     id: String,
+    limit: Int,
     engagement: Engagement.Content,
-    postLimit: Int,
+    provider: UiComponentProvider,
+    viewModelStoreOwner: ViewModelStoreOwner,
+    content: @Composable (User.Component, LazyPagingItems<UiAuthor>) -> Unit
+) {
+    val context = LocalContext.current
+    val component = remember {
+        provider.builder(User.Builder::class.java).build(context)
+    }
+    val viewModel = viewModel(
+        modelClass = UserViewModel::class.java,
+        viewModelStoreOwner = viewModelStoreOwner,
+        factory = component.viewModelFactory()
+    )
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    val derivedState = remember {
+        derivedStateOf {
+            val currentState = state["$id/$engagement"] ?: UserViewModel.State.Empty
+            when (currentState) {
+                UserViewModel.State.Empty -> DesignStreamState.Default
+                UserViewModel.State.Loading -> DesignStreamState.Loading
+                is UserViewModel.State.Success -> DesignStreamState.Success(
+                    currentState.content
+                )
+                is UserViewModel.State.Error -> DesignStreamState.Error(
+                    currentState.error
+                )
+            }
+        }
+    }
+    val updatedContent by rememberUpdatedState(content)
+    val errorMessage = stringResource(R.string.unknown_error_message)
+    DesignPagingStream(
+        state = derivedState,
+        loading = { UserSkeleton(4) },
+        error = {
+            val message = it.value.message?.let { key ->
+                component.resource().string(key)
+            } ?: errorMessage
+            UserError(message) {
+                viewModel.load(
+                    id,
+                    engagement,
+                    Pageable(offset = 0, limit = limit)
+                )
+            }
+        }
+    ) { updatedContent(component, it) }
+    LaunchedEffect(Unit) {
+        if (derivedState.value is DesignStreamState.Default) {
+            viewModel.load(
+                id,
+                engagement,
+                Pageable(offset = 0, limit = limit)
+            )
+        }
+    }
+}
+
+@Composable
+fun UserScreen(
+    id: String,
+    limit: Int,
+    engagement: Engagement.Content,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
     onAuthorClick: (String) -> Unit = {},
@@ -50,24 +110,24 @@ fun ListingScreen(
 ) {
     val context = LocalContext.current
     val component = remember {
-        provider.builder(Listing.Builder::class.java).build(context)
+        provider.builder(User.Builder::class.java).build(context)
     }
     val viewModel = viewModel(
-        modelClass = ListingViewModel::class.java,
+        modelClass = UserViewModel::class.java,
         viewModelStoreOwner = viewModelStoreOwner,
         factory = component.viewModelFactory()
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
     val derivedState = remember {
         derivedStateOf {
-            val currentState = state["$id/$engagement"] ?: ListingViewModel.State.Empty
+            val currentState = state["$id/$engagement"] ?: UserViewModel.State.Empty
             when (currentState) {
-                ListingViewModel.State.Empty -> DesignStatefulScaffoldState.Empty
-                ListingViewModel.State.Loading -> DesignStatefulScaffoldState.Loading
-                is ListingViewModel.State.Success -> DesignStatefulScaffoldState.Success(
+                UserViewModel.State.Empty -> DesignStatefulScaffoldState.Empty
+                UserViewModel.State.Loading -> DesignStatefulScaffoldState.Loading
+                is UserViewModel.State.Success -> DesignStatefulScaffoldState.Success(
                     currentState.content
                 )
-                is ListingViewModel.State.Error -> DesignStatefulScaffoldState.Error(
+                is UserViewModel.State.Error -> DesignStatefulScaffoldState.Error(
                     currentState.error
                 )
             }
@@ -81,7 +141,7 @@ fun ListingScreen(
             viewModel.load(
                 id,
                 engagement,
-                Pageable(offset = 0, limit = postLimit)
+                Pageable(offset = 0, limit = limit)
             )
         },
         modifier = Modifier.fillMaxSize(),
@@ -104,7 +164,7 @@ fun ListingScreen(
             item { Spacer(modifier = Modifier.height(6.dp)) }
             items(lazyPagingItems.itemCount) { index ->
                 lazyPagingItems[index]?.let { author ->
-                    ListingScreen(
+                    UserScreen(
                         author = author,
                         onClick = { handleAuthorClick(it.id) }
                     ) {
@@ -124,7 +184,7 @@ fun ListingScreen(
 }
 
 @Composable
-fun ListingScreen(
+fun UserScreen(
     author: UiAuthor,
     onClick: (UiAuthor) -> Unit,
     action: (@Composable RowScope.() -> Unit)? = null

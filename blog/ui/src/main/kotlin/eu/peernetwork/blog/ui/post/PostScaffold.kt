@@ -29,7 +29,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import eu.peernetwork.blog.ui.engagement.v2.EngagementOption
+import eu.peernetwork.blog.ui.engagement.EngagementOption
 import eu.peernetwork.blog.ui.mapper.v2.format
 import eu.peernetwork.blog.ui.model.v2.UiEngagement
 import eu.peernetwork.blog.ui.model.v2.UiPostDetail
@@ -186,6 +186,7 @@ fun PostMediaScaffold(
 fun PreviewUserOption() {
     DesignTheme(isDarkMode = false) {
         val model = UiPostDetail(
+            id = "#test",
             title = buildAnnotatedString { append("John Doe") },
             slug = "#12034",
             username = "JohnDoe",

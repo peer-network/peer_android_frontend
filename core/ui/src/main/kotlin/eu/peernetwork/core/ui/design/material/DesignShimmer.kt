@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 
@@ -30,7 +29,6 @@ fun DesignShimmer(
             repeatMode = RepeatMode.Reverse
         )
     )
-    val updatedContent by rememberUpdatedState(content)
     Box(modifier = Modifier.graphicsLayer {
         this.alpha = alpha
     }, content = content)

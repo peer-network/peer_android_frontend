@@ -1,4 +1,4 @@
-package eu.peernetwork.blog.ui.engagement.v2
+package eu.peernetwork.blog.ui.engagement
 
 import android.content.res.Configuration
 import androidx.compose.foundation.gestures.Orientation

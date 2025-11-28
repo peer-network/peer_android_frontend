@@ -20,7 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import eu.peernetwork.blog.domain.model.Engagement
-import eu.peernetwork.blog.ui.interaction.listing.ListingScreen
+import eu.peernetwork.blog.ui.interaction.user.UserScreen
 import eu.peernetwork.blog.ui.interaction.overview.Overview
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.material.DesignCollapsibleBottomSheet
@@ -71,9 +71,9 @@ fun OverviewScreen(
                             else -> Engagement.Content.Like
                         }
                     }
-                    ListingScreen(
+                    UserScreen(
                         id = content.value ?: "",
-                        postLimit = postLimit,
+                        limit = postLimit,
                         engagement = engagement,
                         provider = component,
                         onAuthorClick = {

@@ -69,7 +69,7 @@ fun DesignBottomSheet(
     state: State<Boolean>,
     dim: Boolean = true,
     canDismiss: () -> Boolean = { true },
-    color: Color = MaterialTheme.colorScheme.tertiaryContainer,
+    color: Color = MaterialTheme.colorScheme.surfaceDim,
     peekHeight: Dp = 400.dp,
     orientation: Orientation = Orientation.Vertical,
     confirmValueChange: (DesignBottomSheetState) -> Boolean = { true },

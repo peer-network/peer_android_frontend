@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
@@ -81,7 +80,7 @@ fun ReferralForm(
                 keyboardType = KeyboardType.Text,
                 imeAction = ImeAction.Next
             ),
-            lineLimits = TextFieldLineLimits.SingleLine,
+            minLines = 1,
             hint = stringResource(id = R.string.referral_code),
             leading = {
                 Icon(

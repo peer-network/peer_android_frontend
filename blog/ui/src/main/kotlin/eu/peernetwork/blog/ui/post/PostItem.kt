@@ -13,7 +13,6 @@ import androidx.compose.ui.Modifier
 import eu.peernetwork.blog.ui.model.v2.UiAsset
 import eu.peernetwork.blog.ui.model.v2.UiPostDetail
 import eu.peernetwork.blog.ui.model.v2.UiPostType
-import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 fun PostItem(

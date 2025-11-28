@@ -31,7 +31,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import eu.peernetwork.blog.ui.R
 import eu.peernetwork.blog.ui.engagement.EngagementDialog
-import eu.peernetwork.blog.ui.engagement.EngagementEvent
+import eu.peernetwork.blog.ui.engagement.EngagementIntent
 import eu.peernetwork.blog.ui.model.UiDraft
 import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.core.ui.component.UiComponentProvider
@@ -88,7 +88,7 @@ fun CreatorScreen(
     } }
     val draft = remember { mutableStateOf<UiDraft?>(null) }
     val type = remember(draft.value) {
-        mutableStateOf<EngagementEvent?>(draft.value?.let { EngagementEvent.Post(it) })
+        mutableStateOf<EngagementIntent?>(draft.value?.let { EngagementIntent.Post(it) })
     }
     val handleOnClear by rememberUpdatedState(onClear)
     val handleOnSuccess by rememberUpdatedState(onSuccess)
@@ -115,7 +115,7 @@ fun CreatorScreen(
             viewModelStoreOwner,
         ) {
             when(it) {
-                is EngagementEvent.Post -> {
+                is EngagementIntent.Post -> {
                     viewModel.create(it.draft)
                 }
                 else -> {}

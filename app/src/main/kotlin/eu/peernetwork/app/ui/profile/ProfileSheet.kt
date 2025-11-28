@@ -43,7 +43,7 @@ fun ProfileSheet(
         state = state,
         content = {
             Box(modifier = Modifier.statusBarsPadding()) {
-                val connection = remember { mutableStateOf<ConnectionStatus?>(status.value) }
+                val connection = remember { mutableStateOf(status.value) }
                 connection.value?.let {
                     when (it) {
                         ConnectionStatus.FOLLOWER -> FollowersScreen(

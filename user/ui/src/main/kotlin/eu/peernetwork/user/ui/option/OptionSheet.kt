@@ -19,7 +19,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.core.ui.design.luna.DesignItem
 import eu.peernetwork.core.ui.design.material.DesignBottomSheetScaffold
-import eu.peernetwork.core.ui.theme.PeerTheme
+import eu.peernetwork.core.ui.theme.DesignTheme
 import eu.peernetwork.user.ui.R
 
 @Composable
@@ -31,7 +31,7 @@ fun OptionSheet(
     val handleConfirm by rememberUpdatedState(onMenuClicked)
     DesignBottomSheetScaffold(
         state = state,
-        color = MaterialTheme.colorScheme.surfaceVariant,
+        color = MaterialTheme.colorScheme.surfaceDim,
         onDismiss = {
             state.value = false
             if (confirmed.value) {
@@ -79,7 +79,7 @@ fun OptionSheet(
 @Preview
 @OptIn(ExperimentalMaterial3Api::class)
 fun PreviewOptionSheet() {
-    PeerTheme {
+    DesignTheme(isDarkMode = true) {
         OptionSheet({}) {}
     }
 }

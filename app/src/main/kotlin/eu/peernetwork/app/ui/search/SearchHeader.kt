@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.clearText
 import androidx.compose.material3.Icon
@@ -108,7 +107,7 @@ fun SearchHeader(
                     unFocusedContentColor = MaterialTheme.colorScheme.tertiary,
                     hintColor = MaterialTheme.colorScheme.surfaceDim,
                     unFocusedHintColor = MaterialTheme.colorScheme.surfaceTint,
-                    lineLimits = TextFieldLineLimits.SingleLine,
+                    minLines = 1,
                     leading = {
                         Text(
                             lastMode.symbol,
