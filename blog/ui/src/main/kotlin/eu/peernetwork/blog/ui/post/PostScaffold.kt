@@ -155,7 +155,6 @@ fun PostMediaScaffold(
             slug = model.slug,
             username = model.username,
             imageUrl = model.imageUrl,
-            accent = MaterialTheme.colorScheme.surfaceContainerLow,
             modifier = Modifier
                 .padding(horizontal = 24.dp)
                 .padding(vertical = 10.dp),

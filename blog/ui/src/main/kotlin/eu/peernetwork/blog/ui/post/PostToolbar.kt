@@ -1,6 +1,7 @@
 package eu.peernetwork.blog.ui.post
 
 import android.content.res.Configuration
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -13,7 +14,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -42,7 +42,6 @@ fun PostToolbar(
     modifier: Modifier = Modifier,
     pinnedBy: String? = null,
     color: Color = MaterialTheme.colorScheme.surfaceContainerLow,
-    accent: Color = MaterialTheme.colorScheme.surfaceVariant,
     onAuthorClick: () -> Unit,
     onMenu: () -> Unit,
     connection: @Composable RowScope.() -> Unit
@@ -92,7 +91,6 @@ fun PostToolbar(
         }
         updatedConnection()
         PostHeaderOption(
-            color = accent,
             pinnedBy = pinnedBy,
             onMenu = onMenu
         )
@@ -101,29 +99,16 @@ fun PostToolbar(
 
 @Composable
 private fun PostHeaderOption(
-    color: Color = MaterialTheme.colorScheme.surfaceVariant,
     pinnedBy: String? = null,
     onMenu: () -> Unit
 ) {
     if (pinnedBy != null) {
-        IconButton(
-            onClick = { },
+        Image(
+            painter = painterResource(R.drawable.ic_pinned),
+            contentDescription = null,
             modifier = Modifier.padding(horizontal = 8.dp)
-                .size(32.dp),
-            colors = IconButtonColors(
-                containerColor = color,
-                contentColor = MaterialTheme.colorScheme.onPrimary,
-                disabledContentColor = MaterialTheme.colorScheme.outlineVariant,
-                disabledContainerColor = MaterialTheme.colorScheme.surfaceContainerLow
-            )
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.ic_pin),
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onPrimary,
-                modifier = Modifier.size(18.dp)
-            )
-        }
+                .size(28.dp),
+        )
     } else {
         Spacer(modifier = Modifier.width(8.dp))
     }
