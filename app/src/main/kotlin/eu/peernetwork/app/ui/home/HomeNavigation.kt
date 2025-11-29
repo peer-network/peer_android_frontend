@@ -12,7 +12,7 @@ import eu.peernetwork.app.ui.composer.ComposerScreen
 import eu.peernetwork.app.ui.content.ContentScreen
 import eu.peernetwork.app.ui.feed.FeedExplorer
 import eu.peernetwork.app.ui.feed.FeedScreen
-import eu.peernetwork.app.ui.profile.v2.ProfileScreen
+import eu.peernetwork.app.ui.profile.ProfileScreen
 import eu.peernetwork.app.ui.search.SearchScreen
 import eu.peernetwork.app.ui.wallet.WalletScreen
 import eu.peernetwork.core.ui.R

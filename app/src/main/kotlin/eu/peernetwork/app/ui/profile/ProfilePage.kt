@@ -1,4 +1,4 @@
-package eu.peernetwork.app.ui.profile.v2
+package eu.peernetwork.app.ui.profile
 
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -9,7 +9,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.MutableLongState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -18,8 +17,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.navigation.NavHostController
-import eu.peernetwork.app.ui.profile.Profile
-import eu.peernetwork.app.ui.profile.ProfileSheet
 import eu.peernetwork.blog.ui.article.ArticleEvent
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.design.material.DesignTitle
@@ -48,7 +45,6 @@ fun ProfilePage(
     val requireUpdate = rememberSaveable { mutableStateOf(false) }
     val requirePostUpdate = rememberSaveable { mutableStateOf(false) }
     val connection = remember { mutableStateOf<ConnectionStatus?>(null) }
-    val showSheet = remember { mutableStateOf(false) }
     val coroutine = rememberCoroutineScope()
     val pageState = rememberPagerState(
         pageCount = { UiMimeType.TYPES.size },
@@ -65,8 +61,8 @@ fun ProfilePage(
         header = {
             ProfileDetail(
                 id = id,
+                connection = connection,
                 timestamp = timestamp,
-                showSheet = showSheet,
                 onSettings = onSettings,
                 onMenuClicked = { controller.navigate("adverts") },
                 component = component,
@@ -93,9 +89,8 @@ fun ProfilePage(
     }
     ProfileSheet(
         id = id,
-        state = showSheet,
+        state = connection,
         limit = limit,
-        status = connection,
         provider = component,
         viewModelStoreOwner = viewModelStoreOwner
     ) { controller.navigateIfNecessary("profile/${it.id}") }

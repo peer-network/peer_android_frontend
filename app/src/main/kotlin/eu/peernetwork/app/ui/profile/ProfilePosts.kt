@@ -1,4 +1,4 @@
-package eu.peernetwork.app.ui.profile.v2
+package eu.peernetwork.app.ui.profile
 
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -8,7 +8,6 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModelStoreOwner
-import eu.peernetwork.app.ui.profile.Profile
 import eu.peernetwork.blog.domain.usecase.PostUsecase
 import eu.peernetwork.blog.ui.article.ArticleEvent
 import eu.peernetwork.blog.ui.article.ArticleList

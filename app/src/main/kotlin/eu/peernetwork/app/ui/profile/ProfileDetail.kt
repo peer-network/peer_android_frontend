@@ -1,4 +1,4 @@
-package eu.peernetwork.app.ui.profile.v2
+package eu.peernetwork.app.ui.profile
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -6,13 +6,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import eu.peernetwork.app.ui.profile.Profile
 import eu.peernetwork.social.ui.connection.ConnectionButton
 import eu.peernetwork.social.ui.connection.ConnectionScreen
 import eu.peernetwork.social.ui.connection.ConnectionStatus
@@ -22,14 +19,13 @@ import eu.peernetwork.user.ui.user.UserScreen
 @Composable
 fun ProfileDetail(
     id: String,
+    connection: MutableState<ConnectionStatus?>,
     timestamp: State<Long>,
-    showSheet: MutableState<Boolean>,
     onSettings: () -> Unit = {},
     onMenuClicked: () -> Unit = {},
     component: Profile.Component,
     viewModelStoreOwner: ViewModelStoreOwner,
 ) {
-    val connection = remember { mutableStateOf<ConnectionStatus?>(null) }
     ConnectionScreen(
         provider = component,
         viewModelStoreOwner = viewModelStoreOwner
@@ -58,7 +54,6 @@ fun ProfileDetail(
                     UserMetric.PEER -> ConnectionStatus.PEER
                     else -> null
                 }
-                showSheet.value = connection.value != null
             },
             onSettings = onSettings,
             onMenuClicked = onMenuClicked,

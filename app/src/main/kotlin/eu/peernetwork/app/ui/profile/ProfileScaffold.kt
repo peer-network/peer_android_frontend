@@ -1,4 +1,4 @@
-package eu.peernetwork.app.ui.profile.v2
+package eu.peernetwork.app.ui.profile
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding

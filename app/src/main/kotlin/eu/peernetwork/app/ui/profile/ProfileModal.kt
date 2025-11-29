@@ -1,4 +1,4 @@
-package eu.peernetwork.app.ui.profile.v2
+package eu.peernetwork.app.ui.profile
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableIntState
