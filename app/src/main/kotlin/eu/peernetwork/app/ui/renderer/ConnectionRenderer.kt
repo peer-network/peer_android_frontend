@@ -6,15 +6,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import eu.peernetwork.blog.ui.post.PostUserFollow
+import eu.peernetwork.blog.ui.post.PostUserConnection
 import eu.peernetwork.social.ui.connection.ConnectionButton
 import eu.peernetwork.social.ui.connection.ConnectionInteractor.Companion.LocalConnectionInteractor
 
-class ConnectionRenderer : PostUserFollow {
+class ConnectionRenderer : PostUserConnection {
     @Composable
     override fun invoke(
         modifier: Modifier,
-        spec: PostUserFollow.Spec
+        spec: PostUserConnection.Spec
     ) {
         val controller = LocalConnectionInteractor.current
         val connection = controller.observe().collectAsStateWithLifecycle()

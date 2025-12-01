@@ -2,7 +2,7 @@ package eu.peernetwork.blog.ui.post
 
 import eu.peernetwork.core.ui.renderer.Renderer
 
-interface PostUserFollow : Renderer.Stateful<PostUserFollow.Spec> {
+interface PostUserConnection : Renderer.Stateful<PostUserConnection.Spec> {
     data class Spec(
         val id: String,
         val isFollowing: Boolean,

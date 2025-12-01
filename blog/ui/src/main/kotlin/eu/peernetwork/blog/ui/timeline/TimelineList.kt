@@ -27,7 +27,7 @@ import eu.peernetwork.blog.ui.model.v2.UiPost
 import eu.peernetwork.blog.ui.post.PostItem
 import eu.peernetwork.blog.ui.post.PostMedia
 import eu.peernetwork.blog.ui.post.PostSkeleton
-import eu.peernetwork.blog.ui.post.PostUserFollow
+import eu.peernetwork.blog.ui.post.PostUserConnection
 import eu.peernetwork.core.ui.component.UiComponentProvider
 
 @Composable
@@ -94,7 +94,7 @@ fun TimelineList(
                         if (id != post.author.id) {
                             component.postUserFollow()(
                                 modifier = Modifier,
-                                PostUserFollow.Spec(
+                                PostUserConnection.Spec(
                                     id = post.author.id,
                                     isFollowing = post.author.following,
                                     isFollowed = post.author.followed

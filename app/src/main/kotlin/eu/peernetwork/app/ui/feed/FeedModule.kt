@@ -11,7 +11,7 @@ import eu.peernetwork.app.ui.renderer.EngagementRenderer
 import eu.peernetwork.app.ui.search.Search
 import eu.peernetwork.app.ui.window.Window
 import eu.peernetwork.blog.ui.engagement.EngagementDialog
-import eu.peernetwork.blog.ui.post.PostUserFollow
+import eu.peernetwork.blog.ui.post.PostUserConnection
 import eu.peernetwork.blog.ui.timeline.Timeline
 import eu.peernetwork.core.ui.annotation.UiBuilder
 import eu.peernetwork.core.ui.annotation.UiViewModel
@@ -92,7 +92,7 @@ object FeedModule {
 
     @Feed.Scope
     @Provides
-    fun providePostUserFollow(): PostUserFollow {
+    fun providePostUserFollow(): PostUserConnection {
         return ConnectionRenderer()
     }
 
