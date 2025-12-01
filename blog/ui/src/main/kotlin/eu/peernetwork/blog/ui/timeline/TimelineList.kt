@@ -3,7 +3,6 @@ package eu.peernetwork.blog.ui.timeline
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.MutableIntState
@@ -28,10 +27,12 @@ import eu.peernetwork.blog.ui.model.v2.UiPost
 import eu.peernetwork.blog.ui.post.PostItem
 import eu.peernetwork.blog.ui.post.PostMedia
 import eu.peernetwork.blog.ui.post.PostSkeleton
+import eu.peernetwork.blog.ui.post.PostUserFollow
 import eu.peernetwork.core.ui.component.UiComponentProvider
 
 @Composable
 fun TimelineList(
+    id: String,
     status: State<Boolean>,
     selected: MutableIntState,
     limit: Int,
@@ -89,7 +90,18 @@ fun TimelineList(
                             state = interactor.engagement().observe()
                         ) { interactor.reaction()(post, it) }
                     },
-                    connection = { },
+                    connection = {
+                        if (id != post.author.id) {
+                            component.postUserFollow()(
+                                modifier = Modifier,
+                                PostUserFollow.Spec(
+                                    id = post.author.id,
+                                    isFollowing = post.author.following,
+                                    isFollowed = post.author.followed
+                                )
+                            )
+                        }
+                    },
                     content = { path ->
                         val isActive = remember { derivedStateOf { index == current.intValue } }
                         PostMedia(

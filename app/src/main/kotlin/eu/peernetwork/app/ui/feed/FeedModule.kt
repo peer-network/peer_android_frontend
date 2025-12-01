@@ -6,10 +6,12 @@ import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
 import eu.peernetwork.app.ui.profile.Profile
+import eu.peernetwork.app.ui.renderer.ConnectionRenderer
 import eu.peernetwork.app.ui.renderer.EngagementRenderer
 import eu.peernetwork.app.ui.search.Search
 import eu.peernetwork.app.ui.window.Window
 import eu.peernetwork.blog.ui.engagement.EngagementDialog
+import eu.peernetwork.blog.ui.post.PostUserFollow
 import eu.peernetwork.blog.ui.timeline.Timeline
 import eu.peernetwork.core.ui.annotation.UiBuilder
 import eu.peernetwork.core.ui.annotation.UiViewModel
@@ -86,6 +88,12 @@ object FeedModule {
     @Provides
     fun provideEngagementRenderer(component: Feed.Component): EngagementDialog {
         return EngagementRenderer(component)
+    }
+
+    @Feed.Scope
+    @Provides
+    fun providePostUserFollow(): PostUserFollow {
+        return ConnectionRenderer()
     }
 
     @Feed.Scope

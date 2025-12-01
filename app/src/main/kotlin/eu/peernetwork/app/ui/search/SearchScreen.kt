@@ -29,6 +29,7 @@ import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.core.ui.factory.UiViewModelStore
 import eu.peernetwork.core.ui.theme.PeerTheme
+import eu.peernetwork.social.ui.connection.ConnectionInteractor.Companion.LocalConnectionInteractor
 import eu.peernetwork.social.ui.connection.ConnectionScreen
 import eu.peernetwork.social.ui.search.member.MemberScreen
 import eu.peernetwork.social.ui.search.tag.TagScreen
@@ -59,7 +60,8 @@ fun SearchScreen(
     ConnectionScreen(
         provider = component,
         viewModelStoreOwner = viewModelStore.get(id)
-    ) { connection ->
+    ) {
+        val connection = LocalConnectionInteractor.current
         SearchOverlay(
             id = id,
             limit = postLimit,

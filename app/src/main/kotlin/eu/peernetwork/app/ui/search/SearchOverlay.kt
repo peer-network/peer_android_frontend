@@ -12,7 +12,7 @@ import eu.peernetwork.app.ui.window.WindowTitle
 import eu.peernetwork.blog.ui.explore.ExploreOverlay
 import eu.peernetwork.core.ui.design.material.DesignOverlay
 import eu.peernetwork.core.ui.factory.UiViewModelStore
-import eu.peernetwork.social.ui.connection.ConnectionController
+import eu.peernetwork.social.ui.connection.ConnectionInteractor
 import eu.peernetwork.social.ui.connection.ConnectionScreen
 
 sealed interface SearchOverlayState {
@@ -30,11 +30,11 @@ fun SearchOverlay(
     overlay: MutableState<SearchOverlayState>,
     component: Search.Component,
     viewModelStore: UiViewModelStore,
-    connectionController: State<ConnectionController>,
+    connectionController: ConnectionInteractor,
     content: @Composable () -> Unit
 ) {
     val updatedContent by rememberUpdatedState(content)
-    val connection by connectionController.value.observe().collectAsStateWithLifecycle()
+    val connection by connectionController.observe().collectAsStateWithLifecycle()
     val visible = remember(overlay.value) { mutableStateOf(overlay.value !is SearchOverlayState.Empty) }
     updatedContent()
     DesignOverlay(
@@ -90,7 +90,7 @@ fun SearchOverlay(
                 ConnectionScreen(
                     isFollowing = connection.getOrDefault(it.first, it.third),
                     isFollowed = it.second,
-                    onClick = { follow -> connectionController.value.invoke(it.first, !follow) }
+                    onClick = { follow -> connectionController.invoke(it.first, !follow) }
                 )
             }
         }

@@ -1,4 +1,4 @@
-package eu.peernetwork.app.ui.feed.v2
+package eu.peernetwork.app.ui.feed
 
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -14,8 +14,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.lifecycle.ViewModelStoreOwner
 import eu.peernetwork.app.mapper.mapToCriteria
-import eu.peernetwork.app.ui.feed.Feed
-import eu.peernetwork.app.ui.feed.FeedMenu
 import eu.peernetwork.blog.domain.model.Category
 import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.blog.ui.model.UiFilter
@@ -56,6 +54,7 @@ fun FeedPage(
     val handleOnFilter by rememberUpdatedState(onFilter)
     FeedScaffold(pageState = pageState) {
         TimelineList(
+            id = id,
             status = enable,
             selected = selected,
             limit = limit,

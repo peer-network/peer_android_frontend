@@ -1,4 +1,4 @@
-package eu.peernetwork.app.ui.feed.v2
+package eu.peernetwork.app.ui.feed
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,6 +16,24 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.design.luna.DesignTab
+
+@Composable
+fun FeedScaffold(
+    pageState: PagerState,
+    modifier: Modifier = Modifier,
+    label: @Composable (Int) -> Unit,
+    content: @Composable (Int) -> Unit
+) {
+    val updatedLabel by rememberUpdatedState(label)
+    val updatedContent by rememberUpdatedState(content)
+    Column(modifier = modifier.fillMaxSize()) {
+        DesignTab(pageState) { index -> updatedLabel(index) }
+        HorizontalPager(
+            state = pageState,
+            verticalAlignment = Alignment.Top,
+        ) { page -> updatedContent(page) }
+    }
+}
 
 @Composable
 fun FeedScaffold(
@@ -44,19 +62,26 @@ fun FeedScaffold(
 }
 
 @Composable
-fun FeedScaffold(
+fun FeedExploreScaffold(
     pageState: PagerState,
     modifier: Modifier = Modifier,
-    label: @Composable (Int) -> Unit,
     content: @Composable (Int) -> Unit
 ) {
-    val updatedLabel by rememberUpdatedState(label)
-    val updatedContent by rememberUpdatedState(content)
-    Column(modifier = modifier.fillMaxSize()) {
-        DesignTab(pageState) { index -> updatedLabel(index) }
-        HorizontalPager(
-            state = pageState,
-            verticalAlignment = Alignment.Top,
-        ) { page -> updatedContent(page) }
-    }
+    FeedScaffold(
+        pageState = pageState,
+        modifier = modifier,
+        label = {
+            Text(
+                text = stringResource(id = if (it == 0) {
+                    R.string.latest_label
+                } else {
+                    R.string.trends_label
+                }),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onBackground,
+                modifier = Modifier.padding(vertical = 10.dp)
+            )
+        },
+        content = content
+    )
 }

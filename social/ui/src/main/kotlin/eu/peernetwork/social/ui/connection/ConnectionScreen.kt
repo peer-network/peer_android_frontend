@@ -9,8 +9,8 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -27,13 +27,8 @@ import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.material.DesignOutlinedButton
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.social.ui.R
+import eu.peernetwork.social.ui.connection.ConnectionInteractor.Companion.LocalConnectionInteractor
 import kotlinx.coroutines.flow.StateFlow
-
-interface ConnectionController {
-    operator fun invoke(id: String, value: Boolean)
-
-    fun observe(): StateFlow<Map<String, Boolean>>
-}
 
 data class ConnectionState(
     val res: Int,
@@ -52,7 +47,7 @@ enum class ConnectionStatus {
 fun ConnectionScreen(
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
-    content: @Composable (State<ConnectionController>) -> Unit
+    content: @Composable () -> Unit
 ) {
     val context = LocalContext.current
     val component = remember {
@@ -66,7 +61,7 @@ fun ConnectionScreen(
     val updatedContent by rememberUpdatedState(content)
     val error = remember { derivedStateOf { (state as? ConnectionViewModel.State.Error)?.error } }
     val controller = remember { derivedStateOf {
-        object : ConnectionController {
+        object : ConnectionInteractor {
             override fun invoke(id: String, value: Boolean) {
                 viewModel.connect(id, value)
             }
@@ -76,7 +71,9 @@ fun ConnectionScreen(
             }
         }
     } }
-    updatedContent(controller)
+    CompositionLocalProvider(
+        LocalConnectionInteractor provides controller.value
+    ) {  updatedContent() }
     LaunchedEffect(Unit) {
         viewModel.initialize()
     }

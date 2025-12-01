@@ -24,6 +24,7 @@ import eu.peernetwork.core.ui.design.material.DesignTitleBarHost
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.core.ui.factory.UiViewModelStore
+import eu.peernetwork.social.ui.connection.ConnectionInteractor.Companion.LocalConnectionInteractor
 import eu.peernetwork.social.ui.connection.ConnectionScreen
 
 @Composable
@@ -60,7 +61,8 @@ fun ContentScreen(
     ConnectionScreen(
         provider = component,
         viewModelStoreOwner = viewModelStore.get(postId)
-    ) { connectionController ->
+    ) {
+        val connectionController = LocalConnectionInteractor.current
         ContentOverlay(
             overlay = overlay,
             userId = userId,
@@ -69,7 +71,7 @@ fun ContentScreen(
             viewModelStore = viewModelStore,
             connectionController = connectionController
         ) {
-            val connection by connectionController.value.observe().collectAsStateWithLifecycle()
+            val connection by connectionController.observe().collectAsStateWithLifecycle()
             ContentNavigation(
                 userId = userId,
                 postLimit = BuildConfig.PAGING_LIMIT,

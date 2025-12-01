@@ -28,6 +28,7 @@ import eu.peernetwork.core.ui.design.compose.DesignStatefulScaffoldState
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.social.ui.compose.Peer
 import eu.peernetwork.social.ui.compose.SearchItemSkeleton
+import eu.peernetwork.social.ui.connection.ConnectionInteractor.Companion.LocalConnectionInteractor
 import eu.peernetwork.social.ui.connection.ConnectionScreen
 import eu.peernetwork.social.ui.model.UiMember
 
@@ -80,8 +81,9 @@ fun FollowersScreen(
             }
         }
     ) { state, lazyPagingItems ->
-        ConnectionScreen(provider = provider, viewModelStoreOwner = viewModelStoreOwner) { controller ->
-            val connection by controller.value.observe().collectAsState()
+        ConnectionScreen(provider = provider, viewModelStoreOwner = viewModelStoreOwner) {
+            val controller = LocalConnectionInteractor.current
+            val connection by controller.observe().collectAsState()
             LazyColumn(modifier = Modifier.fillMaxSize()) {
                 items(lazyPagingItems.itemCount) { index ->
                     lazyPagingItems[index]?.let { member ->
@@ -96,7 +98,7 @@ fun FollowersScreen(
                                     ),
                                     isFollowed = member.isFollowing,
                                     onClick = { follow ->
-                                        controller.value.invoke(
+                                        controller.invoke(
                                             member.id,
                                             !follow
                                         )

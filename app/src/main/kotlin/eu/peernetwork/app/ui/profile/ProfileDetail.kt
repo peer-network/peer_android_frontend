@@ -11,6 +11,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import eu.peernetwork.social.ui.connection.ConnectionButton
+import eu.peernetwork.social.ui.connection.ConnectionInteractor.Companion.LocalConnectionInteractor
 import eu.peernetwork.social.ui.connection.ConnectionScreen
 import eu.peernetwork.social.ui.connection.ConnectionStatus
 import eu.peernetwork.user.ui.user.UserMetric
@@ -29,8 +30,9 @@ fun ProfileDetail(
     ConnectionScreen(
         provider = component,
         viewModelStoreOwner = viewModelStoreOwner
-    ) { controller ->
-        val connectionState by controller.value.observe().collectAsStateWithLifecycle()
+    ) {
+        val controller = LocalConnectionInteractor.current
+        val connectionState by controller.observe().collectAsStateWithLifecycle()
         UserScreen(
             id = id,
             timestamp = timestamp,
@@ -42,7 +44,7 @@ fun ProfileDetail(
                         defaultValue = it.first
                     ),
                     onClick = { follow ->
-                        controller.value.invoke(id, !follow)
+                        controller.invoke(id, !follow)
                     },
                     modifier = Modifier.fillMaxWidth()
                 )

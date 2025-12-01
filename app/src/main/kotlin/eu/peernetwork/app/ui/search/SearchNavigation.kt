@@ -12,7 +12,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import eu.peernetwork.app.BuildConfig
-import eu.peernetwork.app.ui.feed.FeedExplorer
+import eu.peernetwork.app.ui.feed.FeedExplore
 import eu.peernetwork.app.ui.profile.ProfileScreen
 import eu.peernetwork.app.ui.window.WindowScreen
 import eu.peernetwork.blog.domain.model.Filter
@@ -78,14 +78,14 @@ fun SearchNavigation(
                 mode = windowMode,
                 onCancel = onCancel,
             ) {
-                FeedExplorer(
+                FeedExplore(
                     id = userId,
-                    postLimit = BuildConfig.PAGING_LIMIT,
+                    limit = BuildConfig.PAGING_LIMIT,
                     provider = component,
-                    viewModelStore = viewModelStore,
+                    viewModelStoreOwner = backStackEntry,
                     title = tag,
                     criteria = tag?.let { Filter.Criteria.Content(tag = it) },
-                    hasUpdate = requireUpdate
+                    refresh = requireUpdate
                 )
             }
         }
@@ -104,14 +104,14 @@ fun SearchNavigation(
                 mode = windowMode,
                 onCancel = onCancel,
             ) {
-                FeedExplorer(
+                FeedExplore(
                     userId,
                     BuildConfig.PAGING_LIMIT,
                     component,
-                    viewModelStore = viewModelStore,
+                    viewModelStoreOwner = backStackEntry,
                     title = query,
                     criteria = query?.let { Filter.Criteria.Content(title = it) },
-                    hasUpdate = requireUpdate
+                    refresh = requireUpdate
                 )
             }
         }

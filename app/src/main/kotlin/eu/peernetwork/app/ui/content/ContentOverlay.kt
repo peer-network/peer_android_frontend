@@ -10,7 +10,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import eu.peernetwork.core.ui.design.material.DesignOverlay
 import eu.peernetwork.core.ui.factory.UiViewModelStore
-import eu.peernetwork.social.ui.connection.ConnectionController
+import eu.peernetwork.social.ui.connection.ConnectionInteractor
 
 @Composable
 fun ContentOverlay(
@@ -19,11 +19,11 @@ fun ContentOverlay(
     postLimit: Int,
     component: Content.Component,
     viewModelStore: UiViewModelStore,
-    connectionController: State<ConnectionController>,
+    connectionController: ConnectionInteractor,
     content: @Composable () -> Unit
 ) {
     val updatedContent by rememberUpdatedState(content)
-    val connection by connectionController.value.observe().collectAsStateWithLifecycle()
+    val connection by connectionController.observe().collectAsStateWithLifecycle()
     val visible = remember(overlay.value) {
         mutableStateOf(overlay.value != null)
     }

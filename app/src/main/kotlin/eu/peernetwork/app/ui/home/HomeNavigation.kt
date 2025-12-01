@@ -10,9 +10,8 @@ import androidx.navigation.compose.composable
 import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.app.ui.composer.ComposerScreen
 import eu.peernetwork.app.ui.content.ContentScreen
-import eu.peernetwork.app.ui.feed.FeedExplorer
-import eu.peernetwork.app.ui.feed.v2.FeedExplore
-import eu.peernetwork.app.ui.feed.v2.FeedScreen
+import eu.peernetwork.app.ui.feed.FeedExplore
+import eu.peernetwork.app.ui.feed.FeedScreen
 import eu.peernetwork.app.ui.profile.ProfileScreen
 import eu.peernetwork.app.ui.search.SearchScreen
 import eu.peernetwork.app.ui.wallet.WalletScreen
