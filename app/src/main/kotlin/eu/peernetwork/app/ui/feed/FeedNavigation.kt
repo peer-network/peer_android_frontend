@@ -3,14 +3,15 @@ package eu.peernetwork.app.ui.feed
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.lifecycle.ViewModelStoreOwner
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.app.ui.profile.ProfileScreen
-import eu.peernetwork.app.ui.search.SearchState
+import eu.peernetwork.app.ui.search.SearchMode
+import eu.peernetwork.app.ui.search.SearchScreen
 import eu.peernetwork.core.ui.design.material.DesignRouter
 
 @Composable
@@ -18,7 +19,6 @@ fun FeedNavigation(
     id: String,
     controller: NavHostController,
     component: Feed.Component,
-    viewModelStoreOwner: ViewModelStoreOwner,
     content: @Composable (NavBackStackEntry) -> Unit = {}
 ) {
     val updatedContent by rememberUpdatedState(content)
@@ -49,18 +49,19 @@ fun FeedNavigation(
         ) { backStackEntry ->
             val type = backStackEntry.arguments?.getString("type") ?: ""
             val query = backStackEntry.arguments?.getString("query") ?: ""
-            val searchState = when (type) {
-                "username" -> SearchState.Active.Username(query)
-                "tag" -> SearchState.Active.Tag(query)
-                else -> SearchState.Default
+            val mode = when (type) {
+                "username" -> SearchMode.Username
+                "tag" -> SearchMode.Tag
+                else -> SearchMode.Default
             }
-//            SearchScreen(
-//                id = id,
-//                postLimit = postLimit,
-//                provider = component,
-//                viewModelStore = UiViewModel.Owner(),
-//                searchState = searchState,
-//            )
+            SearchScreen(
+                id = id,
+                limit = BuildConfig.PAGING_LIMIT,
+                provider = component,
+                query = query,
+                viewModelStoreOwner = backStackEntry,
+                mode = mode,
+            )
         }
     }
 }

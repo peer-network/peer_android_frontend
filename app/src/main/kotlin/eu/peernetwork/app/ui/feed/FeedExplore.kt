@@ -45,7 +45,6 @@ fun FeedExplore(
             id = id,
             component = component,
             controller = navHostController,
-            viewModelStoreOwner = viewModelStoreOwner,
         ) { updatedContent(component, viewModel) }
     }
 }

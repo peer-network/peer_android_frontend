@@ -13,11 +13,10 @@ import eu.peernetwork.ads.ui.boost.BoostScreen
 import eu.peernetwork.ads.ui.dashboard.DashboardScreen
 import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.app.ui.search.SearchScreen
-import eu.peernetwork.app.ui.search.SearchState
+import eu.peernetwork.app.ui.search.SearchMode
 import eu.peernetwork.app.ui.settings.SettingsScreen
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.material.DesignRouter
-import eu.peernetwork.core.ui.factory.UiViewModelStore
 
 @Composable
 fun ProfileNavigation(
@@ -63,17 +62,18 @@ fun ProfileNavigation(
         ) { backStackEntry ->
             val searchType = backStackEntry.arguments?.getString("type") ?: ""
             val query = backStackEntry.arguments?.getString("query") ?: ""
-            val searchState = when (searchType) {
-                "username" -> SearchState.Active.Username(query)
-                "tag" -> SearchState.Active.Tag(query)
-                else -> SearchState.Default
+            val mode = when (searchType) {
+                "username" -> SearchMode.Username
+                "tag" -> SearchMode.Tag
+                else -> SearchMode.Default
             }
             SearchScreen(
                 id = userId,
-                postLimit = BuildConfig.PAGING_LIMIT,
+                limit = BuildConfig.PAGING_LIMIT,
                 provider = component,
-                viewModelStore = UiViewModelStore.Delegate(),
-                searchState = searchState,
+                viewModelStoreOwner = backStackEntry,
+                mode = mode,
+                query = query
             )
         }
         composable("adverts") { backStackEntry ->

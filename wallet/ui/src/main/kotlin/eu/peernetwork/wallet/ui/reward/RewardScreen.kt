@@ -78,11 +78,7 @@ fun RewardScreen(points: List<UiReward> = listOf()) {
                                 showPopup.value = true
                                 selectedPoint.value = point
                             },
-                            color = if (enabled.value) {
-                                MaterialTheme.colorScheme.onBackground
-                            } else {
-                                MaterialTheme.colorScheme.outline
-                            },
+                            color = MaterialTheme.colorScheme.onBackground,
                             modifier = Modifier.padding(horizontal = 5.dp)
                                 .padding(vertical = 2.dp)
                         )

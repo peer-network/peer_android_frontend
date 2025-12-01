@@ -13,7 +13,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
@@ -46,8 +45,7 @@ fun RewardItem(
         Image(
             painter = painter,
             contentDescription = contentDescription,
-            modifier = Modifier.size(size),
-            colorFilter = ColorFilter.tint(color)
+            modifier = Modifier.size(size)
         )
         Text(
             text = text,

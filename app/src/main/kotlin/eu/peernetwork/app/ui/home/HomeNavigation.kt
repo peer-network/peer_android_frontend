@@ -13,6 +13,7 @@ import eu.peernetwork.app.ui.content.ContentScreen
 import eu.peernetwork.app.ui.feed.FeedExplore
 import eu.peernetwork.app.ui.feed.FeedScreen
 import eu.peernetwork.app.ui.profile.ProfileScreen
+import eu.peernetwork.app.ui.search.SearchMode
 import eu.peernetwork.app.ui.search.SearchScreen
 import eu.peernetwork.app.ui.wallet.WalletScreen
 import eu.peernetwork.core.ui.R
@@ -67,9 +68,10 @@ fun HomeNavigation(
                     )
                     is HomeRoute.Search -> SearchScreen(
                         id = id,
-                        postLimit = BuildConfig.PAGING_LIMIT,
+                        limit = BuildConfig.PAGING_LIMIT,
+                        mode = SearchMode.Default,
                         provider = component,
-                        viewModelStore = viewModelStore,
+                        viewModelStoreOwner = backStackEntry
                     )
                     else -> {}
                 }

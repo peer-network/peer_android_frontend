@@ -29,7 +29,8 @@ fun MemberItem(
         modifier = Modifier
             .fillMaxWidth()
             .clickable { handleOnClick(model.id) }
-            .padding(vertical = 8.dp),
+            .padding(vertical = 8.dp)
+            .padding(horizontal = 16.dp),
         lead = {
             DesignImage(
                 label = model.username,

@@ -65,7 +65,6 @@ fun FeedScreen(
             id = id,
             component = component,
             controller = controller,
-            viewModelStoreOwner = viewModelStoreOwner,
         ) {
             val state by viewModel.state.collectAsStateWithLifecycle()
             val position = remember { mutableIntStateOf(state.page) }

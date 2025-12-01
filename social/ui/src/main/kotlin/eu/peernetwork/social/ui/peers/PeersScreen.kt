@@ -17,6 +17,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -28,6 +29,7 @@ import eu.peernetwork.core.ui.design.compose.DesignStatefulScaffoldState
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.social.ui.compose.Peer
 import eu.peernetwork.social.ui.compose.SearchItemSkeleton
+import eu.peernetwork.social.ui.connection.ConnectionButton
 import eu.peernetwork.social.ui.connection.ConnectionInteractor.Companion.LocalConnectionInteractor
 import eu.peernetwork.social.ui.connection.ConnectionScreen
 import eu.peernetwork.social.ui.model.UiMember
@@ -93,18 +95,21 @@ fun PeersScreen(
                             member = member,
                             onClick = onClick,
                             action = {
-                                ConnectionScreen(
+                                ConnectionButton(
                                     isFollowing = connection.getOrDefault(
-                                        member.id,
-                                        member.isFollowing
+                                        key = member.id,
+                                        defaultValue = member.isFollowing
                                     ),
                                     isFollowed = member.isFollowed,
                                     onClick = { follow ->
-                                        controller.invoke(
-                                            member.id,
-                                            !follow
-                                        )
-                                    }
+                                        controller.invoke(member.id, !follow)
+                                    },
+                                    fontWeight = FontWeight.SemiBold,
+                                    minHeight = 32.dp,
+                                    contentPadding = PaddingValues(
+                                        horizontal = 16.dp,
+                                        vertical = 8.dp
+                                    )
                                 )
                             }
                         )

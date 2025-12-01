@@ -87,9 +87,10 @@ fun MemberScreen(
             }
         },
         modifier = Modifier.fillMaxSize()
-            .padding(horizontal = 24.dp)
             .then(modifier),
-        placeholder = { SearchItemSkeleton(modifier = Modifier.padding(top = 16.dp)) },
+        placeholder = { SearchItemSkeleton(modifier = Modifier
+            .padding(horizontal = 16.dp)
+            .padding(top = 16.dp)) },
         errorContent = { error, refresh ->
             Column(modifier = Modifier.fillMaxSize()
                 .verticalScroll(rememberScrollState())) {
