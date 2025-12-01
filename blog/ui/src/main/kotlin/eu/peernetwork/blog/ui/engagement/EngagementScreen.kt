@@ -2,6 +2,7 @@ package eu.peernetwork.blog.ui.engagement
 
 import android.widget.Toast
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
@@ -16,6 +17,7 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import eu.peernetwork.blog.ui.comment.CommentList
+import eu.peernetwork.blog.ui.engagement.EngagementInteractor.Companion.LocalEngagementInteractor
 import eu.peernetwork.blog.ui.interaction.overview.OverviewScreen
 import eu.peernetwork.blog.ui.model.UiReaction
 import eu.peernetwork.blog.ui.model.v2.UiEngagement
@@ -29,7 +31,7 @@ fun EngagementScreen(
     postLimit: Int,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
-    content: @Composable (EngagementInteractor) -> Unit
+    content: @Composable () -> Unit
 ) {
     val context = LocalContext.current
     val component = remember {
@@ -72,7 +74,10 @@ fun EngagementScreen(
             }
         }
     } }
-    updatedContent(interactor)
+    CompositionLocalProvider(LocalEngagementInteractor provides interactor) {
+        updatedContent()
+    }
+    LaunchedEffect(type.value) { }
     LaunchedEffect(Unit) { viewModel.initialize() }
     LaunchedEffect(hasError.value) {
         if (hasError.value) {

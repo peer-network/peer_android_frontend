@@ -112,7 +112,7 @@ fun DesignTitleBarRegistry.DesignPageHeader(
             Box(modifier = Modifier.padding(start = 16.dp))
             updatedOption()
             updatedAction()
-            Box(modifier = Modifier.padding(start = 16.dp))
+            Box(modifier = Modifier.padding(start = 8.dp))
         }
     }
 }

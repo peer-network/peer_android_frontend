@@ -14,6 +14,7 @@ import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -24,16 +25,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
-import eu.peernetwork.blog.ui.engagement.EngagementInteractor
+import eu.peernetwork.blog.ui.engagement.EngagementInteractor.Companion.LocalEngagementInteractor
 import eu.peernetwork.blog.ui.engagement.EngagementInteractor.State as EngagementState
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
 import eu.peernetwork.blog.ui.engagement.EngagementReaction
+import eu.peernetwork.blog.ui.engagement.EngagementReaction.Companion.LocalEngagementReaction
 import eu.peernetwork.blog.ui.mapper.v2.mapToDetail
 import eu.peernetwork.blog.ui.mapper.v2.mapToEngagement
 import eu.peernetwork.blog.ui.engagement.EngagementReaction.State as ReactionState
 import eu.peernetwork.blog.ui.model.v2.UiPost
-import eu.peernetwork.blog.ui.moderation.ModerationInteractor
 import eu.peernetwork.blog.ui.moderation.ModerationScreen
+import eu.peernetwork.blog.ui.post.PostInteractor.Companion.LocalPostInteractor
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.extension.builder
 
@@ -42,7 +44,7 @@ fun PostScreen(
     limit: Int,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
-    content: @Composable (PostInteractor) -> Unit
+    content: @Composable () -> Unit
 ) {
     val context = LocalContext.current
     val component = remember {
@@ -53,8 +55,9 @@ fun PostScreen(
         postLimit = limit,
         provider = component,
         viewModelStoreOwner = viewModelStoreOwner
-    ) { engagement ->
-        val event = remember { object : EngagementReaction {
+    ) {
+        val engagement = LocalEngagementInteractor.current
+        val reaction = remember { object : EngagementReaction {
             override fun invoke(post: UiPost, state: ReactionState) {
                 when (state) {
                     ReactionState.Like -> engagement(
@@ -76,14 +79,14 @@ fun PostScreen(
         ModerationScreen(
             provider = component,
             viewModelStoreOwner = viewModelStoreOwner
-        ) { moderation ->
-            val handle = remember { object : PostInteractor {
+        ) {
+            val interactor = remember { object : PostInteractor {
                 override fun component(): Post.Component = component
-                override fun reaction(): EngagementReaction = event
-                override fun engagement(): EngagementInteractor = engagement
-                override fun moderation(): ModerationInteractor = moderation
             } }
-            updatedContent(handle)
+            CompositionLocalProvider(
+                LocalPostInteractor provides interactor,
+                LocalEngagementReaction provides reaction,
+            ) { updatedContent() }
         }
     }
 }
@@ -96,19 +99,19 @@ fun PostScreen(
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
     onFocus: (Int) -> Unit = {},
-    content: @Composable (PostInteractor) -> Unit
+    content: @Composable () -> Unit
 ) {
     val updatedContent by rememberUpdatedState(content)
     PostScreen(
         limit = limit,
         provider = provider,
         viewModelStoreOwner = viewModelStoreOwner,
-    ) { interactor ->
+    ) {
         PostList(
             listState = listState,
             onFocused = { focused.intValue = it },
             onFocus = onFocus
-        ) { updatedContent(interactor) }
+        ) { updatedContent() }
     }
 }
 
@@ -118,14 +121,14 @@ fun PostScreen(
     pagerState: PagerState,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
-    content: @Composable PagerScope.(PostInteractor, Int) -> Unit
+    content: @Composable PagerScope.(Int) -> Unit
 ) {
     val updatedContent by rememberUpdatedState(content)
     PostScreen(
         limit = limit,
         provider = provider,
         viewModelStoreOwner = viewModelStoreOwner,
-    ) { interactor ->
+    ) {
         Column(
             verticalArrangement = Arrangement.Bottom,
             modifier = Modifier
@@ -138,7 +141,7 @@ fun PostScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f)
-            ) { updatedContent(this, interactor, it) }
+            ) { updatedContent(this, it) }
             Box(modifier = Modifier
                 .fillMaxWidth()
                 .height(48.dp)

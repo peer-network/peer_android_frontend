@@ -21,7 +21,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -30,7 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import eu.peernetwork.blog.ui.R
-import eu.peernetwork.blog.ui.engagement.EngagementOption
+import eu.peernetwork.blog.ui.engagement.EngagementReaction
 import eu.peernetwork.blog.ui.model.v2.UiEngagement
 import eu.peernetwork.core.ui.design.luna.DesignRichText
 import eu.peernetwork.core.ui.theme.DesignTheme
@@ -72,7 +71,6 @@ fun PostStatus(
             append(stringResource(R.string.pin_label))
             append(" ")
             withStyle(style = SpanStyle(
-                fontStyle = FontStyle.Italic,
                 fontWeight = FontWeight.SemiBold
             )) { append(pinnedBy) }
         }
@@ -108,7 +106,6 @@ fun PostStatus(
             append(stringResource(R.string.pin_label))
             append(" ")
             withStyle(style = SpanStyle(
-                fontStyle = FontStyle.Italic,
                 fontWeight = FontWeight.SemiBold
             )) { append(pinnedBy) }
         }
@@ -161,6 +158,7 @@ fun PostStatus(
                         text = pinnedText,
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.outline,
+                        modifier = Modifier.padding(top = 4.dp)
                     )
                 }
             }
@@ -188,7 +186,7 @@ fun PreviewPostStatus() {
                 pinnedBy = "Thomas",
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
-            ) { EngagementOption(engagement) {} }
+            ) { EngagementReaction(engagement) {} }
             PostStatus(
                 time = "2h ago",
                 username = "John",
@@ -197,7 +195,7 @@ fun PreviewPostStatus() {
                 description = buildAnnotatedString { append("Description") },
                 modifier = Modifier
                     .padding(horizontal = 16.dp),
-            ) { EngagementOption(engagement) {} }
+            ) { EngagementReaction(engagement) {} }
         }
     }
 }

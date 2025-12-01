@@ -29,7 +29,7 @@ import eu.peernetwork.blog.domain.model.Content
 import eu.peernetwork.blog.ui.R
 import eu.peernetwork.blog.ui.extension.share
 import eu.peernetwork.blog.ui.model.v2.UiPost
-import eu.peernetwork.blog.ui.post.PostInteractor
+import eu.peernetwork.blog.ui.moderation.ModerationInteractor.Companion.LocalModerationInteractor
 import eu.peernetwork.blog.ui.post.PostScreen
 import eu.peernetwork.blog.ui.post.PostSkeleton
 import eu.peernetwork.core.common.paging.Pageable
@@ -144,7 +144,7 @@ fun ArticleScreen(
     viewModelStoreOwner: ViewModelStoreOwner,
     onEvent: (ArticleEvent) -> Unit,
     listState: LazyListState = rememberLazyListState(),
-    content: LazyListScope.(Article.Component, PostInteractor, LazyPagingItems<UiPost>) -> Unit
+    content: LazyListScope.(Article.Component, LazyPagingItems<UiPost>) -> Unit
 ) {
     val context = LocalContext.current
     val updatedContent by rememberUpdatedState(content)
@@ -176,15 +176,16 @@ fun ArticleScreen(
                         viewModel.view(post.id)
                     }
                 }
-            ) { interactor ->
+            ) {
                 LazyColumn(
                     state = listState,
                     modifier = Modifier.fillMaxSize()
-                ) { updatedContent(this, component, interactor, items) }
+                ) { updatedContent(this, component, items) }
+                val moderation = LocalModerationInteractor.current
                 ArticleSheet(showSheet) { sheetState, post ->
                     when (sheetState) {
                         ArticleSheetMenuItem.BOOST -> handleEvent(ArticleEvent.Boost(post.id))
-                        ArticleSheetMenuItem.REPORT -> interactor.moderation().onReport(post.id)
+                        ArticleSheetMenuItem.REPORT -> moderation.onReport(post.id)
                         ArticleSheetMenuItem.SHARE -> { context.share(post.url, shareTitle) }
                     }
                 }
@@ -227,7 +228,7 @@ fun ArticleScreen(
                 pagerState = pagerState,
                 provider = component,
                 viewModelStoreOwner = viewModelStoreOwner
-            ) { interactor, index ->
+            ) { index ->
                 updatedContent(this, component, items, index)
                 LaunchedEffect(Unit) {
                     items.itemSnapshotList.get(pagerState.currentPage)?.let { post ->

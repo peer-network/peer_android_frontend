@@ -11,6 +11,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -33,10 +34,16 @@ interface EngagementReaction {
         data object Comment : State
         data object View : State
     }
+
+    companion object {
+        val LocalEngagementReaction = staticCompositionLocalOf<EngagementReaction> {
+            error("EngagementReaction not provided")
+        }
+    }
 }
 
 @Composable
-fun EngagementOption(
+fun EngagementReaction(
     post: UiPost,
     state: State<Map<String, UiReaction>>,
     onClick: (EngagementReaction.State) -> Unit
@@ -58,14 +65,14 @@ fun EngagementOption(
             views = viewCount.toString()
         )
     } }
-    EngagementOption(
+    EngagementReaction(
         onClick = onClick,
         engagement = engagement.value
     )
 }
 
 @Composable
-fun EngagementOption(
+fun EngagementReaction(
     engagement: UiEngagement,
     onClick: (EngagementReaction.State) -> Unit
 ) {
@@ -113,6 +120,6 @@ fun PreviewEngagementOption() {
         Row(
             horizontalArrangement = Arrangement.spacedBy(10.dp),
             modifier = Modifier.padding(horizontal = 10.dp)
-        ) { EngagementOption(model) {} }
+        ) { EngagementReaction(model) {} }
     }
 }

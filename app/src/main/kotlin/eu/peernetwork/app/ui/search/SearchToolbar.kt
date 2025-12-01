@@ -42,7 +42,7 @@ fun SearchToolbar(
     Box(
         modifier = modifier
             .clip(CircleShape)
-            .background(MaterialTheme.colorScheme.surfaceDim)
+            .background(MaterialTheme.colorScheme.surfaceVariant)
     ) {
         Crossfade(
             targetState = mode.value,

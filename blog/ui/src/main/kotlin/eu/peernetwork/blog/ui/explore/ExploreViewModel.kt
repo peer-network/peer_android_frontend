@@ -7,7 +7,7 @@ import androidx.paging.cachedIn
 import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.blog.domain.model.Sort
 import eu.peernetwork.blog.domain.usecase.ViewUsecase
-import eu.peernetwork.blog.ui.model.UiPost
+import eu.peernetwork.blog.ui.model.v2.UiPost
 import eu.peernetwork.blog.ui.usecase.ExplorePostsUsecase
 import eu.peernetwork.core.common.paging.Pageable
 import kotlinx.coroutines.flow.Flow

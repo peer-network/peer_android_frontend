@@ -22,7 +22,7 @@ import eu.peernetwork.blog.domain.model.Filter
 import eu.peernetwork.blog.ui.R
 import eu.peernetwork.blog.ui.extension.share
 import eu.peernetwork.blog.ui.model.v2.UiPost
-import eu.peernetwork.blog.ui.post.PostInteractor
+import eu.peernetwork.blog.ui.moderation.ModerationInteractor.Companion.LocalModerationInteractor
 import eu.peernetwork.blog.ui.post.PostScreen
 import eu.peernetwork.blog.ui.post.PostSkeleton
 import eu.peernetwork.core.common.paging.Pageable
@@ -107,7 +107,7 @@ fun TimelineScreen(
     listState: LazyListState = rememberLazyListState(),
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
-    content: LazyListScope.(Timeline.Component, PostInteractor, LazyPagingItems<UiPost>) -> Unit
+    content: LazyListScope.(Timeline.Component, LazyPagingItems<UiPost>) -> Unit
 ) {
     val context = LocalContext.current
     val updatedContent by rememberUpdatedState(content)
@@ -150,14 +150,15 @@ fun TimelineScreen(
                             viewModel.view(post.id)
                         }
                     }
-                ) { interactor ->
+                ) {
+                    val moderation = LocalModerationInteractor.current
                     LazyColumn(
                         state = listState,
                         modifier = Modifier.fillMaxSize()
-                    ) { updatedContent(this, component, interactor, items) }
+                    ) { updatedContent(this, component, items) }
                     TimelineSheet(showSheet) { sheetState, post ->
                         when (sheetState) {
-                            TimelineSheetMenuItem.REPORT -> interactor.moderation().onReport(post.id)
+                            TimelineSheetMenuItem.REPORT -> moderation.onReport(post.id)
                             TimelineSheetMenuItem.SHARE -> { context.share(post.url, shareTitle) }
                         }
                     }

@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import eu.peernetwork.blog.ui.R
+import eu.peernetwork.blog.ui.moderation.ModerationInteractor.Companion.LocalModerationInteractor
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.extension.builder
 
@@ -15,7 +16,7 @@ import eu.peernetwork.core.ui.extension.builder
 fun ModerationScreen(
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
-    content: @Composable (ModerationInteractor) -> Unit
+    content: @Composable () -> Unit
 ) {
     val context = LocalContext.current
     val component = remember {
@@ -38,7 +39,9 @@ fun ModerationScreen(
             }
         }
     }
-    updatedContent(interactor)
+    CompositionLocalProvider(LocalModerationInteractor provides interactor) {
+        updatedContent()
+    }
     LaunchedEffect(error, success) {
         success?.postId?.let {
             Toast.makeText(context, message, Toast.LENGTH_SHORT).show()

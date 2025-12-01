@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -29,7 +30,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import eu.peernetwork.blog.ui.engagement.EngagementOption
+import eu.peernetwork.blog.ui.engagement.EngagementReaction
 import eu.peernetwork.blog.ui.mapper.v2.format
 import eu.peernetwork.blog.ui.model.v2.UiEngagement
 import eu.peernetwork.blog.ui.model.v2.UiPostDetail
@@ -71,6 +72,7 @@ fun PostScaffold(
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.outline,
                 modifier = Modifier.padding(top = 4.dp)
+                    .heightIn(min = 48.dp)
             )
         }
     }
@@ -91,7 +93,7 @@ fun PostScaffold(
     val updatedContent by rememberUpdatedState(content)
     DesignBox(background = background) {
         Column(
-            modifier = Modifier.padding(horizontal = 12.dp)
+            modifier = Modifier.padding(horizontal = 8.dp)
                 .padding(vertical = 7.dp)
                 .clickable(onClick = onClick)
         ) {
@@ -132,7 +134,7 @@ fun BoxScope.PostScaffoldBackground(
 ) {
     Box(modifier = Modifier.fillMaxSize()
         .padding(vertical = 7.dp)
-        .padding(horizontal = 12.dp)
+        .padding(horizontal = 8.dp)
         .clip(shape = RoundedCornerShape(size = 24.dp))
         .background(color)
         .align(Alignment.Center))
@@ -156,7 +158,7 @@ fun PostMediaScaffold(
             username = model.username,
             imageUrl = model.imageUrl,
             modifier = Modifier
-                .padding(horizontal = 24.dp)
+                .padding(horizontal = 16.dp)
                 .padding(vertical = 10.dp),
             pinnedBy = pinnedBy,
             onAuthorClick = {},
@@ -175,7 +177,7 @@ fun PostMediaScaffold(
             time = context.format(model.time),
             engagement = engagement,
             modifier = Modifier
-                .padding(horizontal = 24.dp)
+                .padding(horizontal = 16.dp)
         )
     }
 }
@@ -210,7 +212,7 @@ fun PreviewUserOption() {
                 model = model,
                 onMenu = {},
                 onClick = {},
-                engagement = { EngagementOption(engagement) {} }
+                engagement = { EngagementReaction(engagement) {} }
             ) {
                 DesignButton(
                     minHeight = 32.dp,
@@ -224,7 +226,7 @@ fun PreviewUserOption() {
                 model = model,
                 onMenu = {},
                 onClick = {},
-                engagement = { EngagementOption(engagement) {} },
+                engagement = { EngagementReaction(engagement) {} },
                 pinnedBy = "Thomas",
                 connection = {
                     DesignButton(
@@ -244,7 +246,7 @@ fun PreviewUserOption() {
                 pinnedBy = "Thomas",
                 onMenu = {},
                 onClick = {},
-                engagement = { EngagementOption(engagement) {} },
+                engagement = { EngagementReaction(engagement) {} },
                 connection = {
                     DesignButton(
                         minHeight = 32.dp,

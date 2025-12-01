@@ -30,7 +30,7 @@ fun SearchPage(
             SearchToolbar(
                 state = state,
                 mode = mode,
-                modifier = Modifier.padding(horizontal = 16.dp)
+                modifier = Modifier.padding(horizontal = 12.dp)
                     .padding(top = 8.dp)
             )
         }

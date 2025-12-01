@@ -21,9 +21,12 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.paging.LoadState
 import eu.peernetwork.blog.domain.model.Content
-import eu.peernetwork.blog.ui.engagement.EngagementOption
+import eu.peernetwork.blog.ui.engagement.EngagementInteractor.Companion.LocalEngagementInteractor
+import eu.peernetwork.blog.ui.engagement.EngagementReaction
+import eu.peernetwork.blog.ui.engagement.EngagementReaction.Companion.LocalEngagementReaction
 import eu.peernetwork.blog.ui.mapper.v2.mapToDetail
 import eu.peernetwork.blog.ui.model.v2.UiPost
+import eu.peernetwork.blog.ui.post.PostInteractor.Companion.LocalPostInteractor
 import eu.peernetwork.blog.ui.post.PostItem
 import eu.peernetwork.blog.ui.post.PostMedia
 import eu.peernetwork.blog.ui.post.PostSkeleton
@@ -74,11 +77,14 @@ fun ArticleList(
         viewModelStoreOwner = viewModelStoreOwner,
         onEvent = onEvent,
         listState = listState
-    ) { component, interactor, items ->
+    ) { component, items ->
         items(
             count = items.itemCount,
             key = { index -> items[index]?.id?.let { "$it;$index" } ?: index }
         ) { index ->
+            val interactor = LocalPostInteractor.current
+            val engagement = LocalEngagementInteractor.current
+            val reaction = LocalEngagementReaction.current
             items[index]?.let { post ->
                 PostItem(
                     type = post.type,
@@ -88,10 +94,10 @@ fun ArticleList(
                     onMenu = { showSheet.value = post },
                     onClick = { selected.intValue = index },
                     engagement = {
-                        EngagementOption(
+                        EngagementReaction(
                             post = post,
-                            state = interactor.engagement().observe()
-                        ) { interactor.reaction()(post, it) }
+                            state = engagement.observe()
+                        ) { reaction(post, it) }
                     },
                     connection = { },
                     content = { path ->
