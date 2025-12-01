@@ -1,61 +1,43 @@
 package eu.peernetwork.blog.ui.timeline
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.ViewModelStoreOwner
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import eu.peernetwork.core.ui.extension.builder
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.paging.LoadState
-import androidx.paging.PagingData
-import androidx.paging.compose.collectAsLazyPagingItems
-import eu.peernetwork.blog.domain.model.Filter.Criteria
+import androidx.paging.compose.LazyPagingItems
 import eu.peernetwork.blog.domain.model.Category
+import eu.peernetwork.blog.domain.model.Filter
+import eu.peernetwork.blog.ui.R
+import eu.peernetwork.blog.ui.extension.share
+import eu.peernetwork.blog.ui.model.v2.UiPost
+import eu.peernetwork.blog.ui.post.PostInteractor
+import eu.peernetwork.blog.ui.post.PostScreen
+import eu.peernetwork.blog.ui.post.PostSkeleton
 import eu.peernetwork.core.common.paging.Pageable
-import eu.peernetwork.blog.ui.model.UiPost
-import eu.peernetwork.core.ui.R
-import eu.peernetwork.core.ui.design.luna.DesignStream
+import eu.peernetwork.core.ui.design.luna.DesignPagingStream
+import eu.peernetwork.core.ui.design.luna.DesignRefreshScaffold
 import eu.peernetwork.core.ui.design.luna.DesignStreamState
-import eu.peernetwork.core.ui.design.material.DesignShimmer
-import kotlinx.coroutines.flow.Flow
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
 fun TimelineScreen(
-    id: String,
-    status: State<Boolean>,
-    postLimit: Int,
-    category: Category,
-    criteria: Criteria? = null,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
-    requireUpdate: MutableState<Boolean>,
-    listState: LazyListState = rememberLazyListState(),
-    onExplore: (() -> Unit)? = null,
-    connection: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit = {}
+    content: @Composable (Timeline.Component, TimelineViewModel) -> Unit
 ) {
     val context = LocalContext.current
-    val scope = rememberCoroutineScope()
-    val lifecycleOwner = LocalLifecycleOwner.current
     val component = remember {
         provider.builder(Timeline.Builder::class.java).build(context)
     }
@@ -64,190 +46,120 @@ fun TimelineScreen(
         viewModelStoreOwner = viewModelStoreOwner,
         factory = component.viewModelFactory()
     )
+    val updatedContent by rememberUpdatedState(content)
+    updatedContent(component, viewModel)
+}
+
+@Composable
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
+fun TimelineScreen(
+    limit: Int,
+    category: Category,
+    criteria: Filter.Criteria? = null,
+    component: Timeline.Component,
+    viewModel: TimelineViewModel,
+    loading: @Composable () -> Unit,
+    content: @Composable (Timeline.Component, LazyPagingItems<UiPost>) -> Unit
+) {
+    val updatedContent by rememberUpdatedState(content)
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val updatedConnection by rememberUpdatedState(connection)
-    val errorMessage = stringResource(R.string.unknown_error_message)
-    val derivedState = remember {
+    val key = listOf(category, criteria).hashCode()
+    val localState = remember(key) { derivedStateOf {
+        state[key] ?: TimelineViewModel.State.Empty
+    } }
+    val derivedState = remember(localState.value) {
         derivedStateOf {
-            when (state) {
+            val currentState = localState.value
+            when (currentState) {
                 TimelineViewModel.State.Empty -> DesignStreamState.Default
                 TimelineViewModel.State.Loading -> DesignStreamState.Loading
                 is TimelineViewModel.State.Success -> DesignStreamState.Success(
-                    (state as TimelineViewModel.State.Success).content
+                    currentState.content
                 )
                 is TimelineViewModel.State.Error -> DesignStreamState.Error(
-                    (state as TimelineViewModel.State.Error).error.let {
-                        Throwable(component.resource()
-                            .string(it.message ?: errorMessage), it)
-                    }
+                    currentState.error
                 )
             }
         }
     }
-    val pause = remember { mutableStateOf(false) }
-    val enable = remember { derivedStateOf { !listState.isScrollInProgress } }
-    val lifecycleObserver = remember {
-        LifecycleEventObserver { _, event ->
-            when (event) {
-                Lifecycle.Event.ON_RESUME -> {
-                    pause.value = false
-                }
-                Lifecycle.Event.ON_STOP -> {
-                    pause.value = true
-                }
-                else -> Unit
-            }
-        }
-    }
-//    AdvertScreen(
-//        id = id,
-//        postLimit = postLimit,
-//        listState = listState,
-//        provider = component,
-//        viewModelStoreOwner = viewModelStoreOwner,
-//        connection = connection
-//    ) { postComponent, event, position, ads ->
-//        val content = remember { derivedStateOf {
-//            (ads.value as? DesignStreamState.Success?)?.data
-//        } }
-//        val adverts = content.value?.collectAsLazyPagingItems()
-//        TimelineScreen(
-//            author = id,
-//            state = derivedState,
-//            listState = listState,
-//            header = { adverts?.let { ads ->
-//                advert(
-//                    state = ads,
-//                    engagement = { post ->
-//                        EngagementOption(
-//                            post = post,
-//                            state = event.observe()
-//                        ) { event(post, it) }
-//                    },
-//                    onMenu = {},
-//                    connection = {
-//                        updatedConnection(
-//                            Triple(
-//                                it.author.id,
-//                                it.author.isfollowing,
-//                                it.author.isfollowed
-//                            )
-//                        )
-//                    }
-//                ) { post, path, index ->
-//                    val isActive = remember { derivedStateOf { index == position.value } }
-//                    PostMedia(
-//                        type = post.type,
-//                        path = path,
-//                        avatar = post.author.imageUrl,
-//                        position = index,
-//                        aspectRatio = post.aspectRatio,
-//                        status = status,
-//                        enable = enable,
-//                        isActive = isActive,
-//                        component = postComponent,
-//                        viewModelStoreOwner = viewModelStoreOwner,
-//                    )
-//                }
-//            } },
-//            connection = {
-//                updatedConnection(
-//                    Triple(
-//                        it.author.id,
-//                        it.author.isfollowing,
-//                        it.author.isfollowed
-//                    )
-//                )
-//            },
-//            engagement = { post ->
-//                EngagementOption(
-//                    post = post,
-//                    state = event.observe()
-//                ) { event(post, it) }
-//            }
-//        ) { post, path, index ->
-//            val isActive = remember { derivedStateOf { index == position.value } }
-//            PostMedia(
-//                type = post.type,
-//                path = path,
-//                avatar = post.author.imageUrl,
-//                position = index,
-//                aspectRatio = post.aspectRatio,
-//                status = status,
-//                enable = enable,
-//                isActive = isActive,
-//                component = postComponent,
-//                viewModelStoreOwner = viewModelStoreOwner,
-//            )
-//        }
-//    }
+    DesignPagingStream(
+        state = derivedState,
+        loading = loading
+    ) { updatedContent(component, it) }
     LaunchedEffect(category, criteria) {
-        val currentState = state as? TimelineViewModel.State.Success?
+        val currentState = localState.value as? TimelineViewModel.State.Success?
         val requiresChange = currentState?.category != category
                 || currentState.criteria != criteria
         if (requiresChange) {
-            viewModel.load(Pageable(0, postLimit), category, criteria)
-            requireUpdate.value = true
-        }
-    }
-    DisposableEffect(Unit) {
-        lifecycleOwner.lifecycle.addObserver(lifecycleObserver)
-        onDispose {
-            lifecycleOwner.lifecycle.removeObserver(lifecycleObserver)
+            viewModel.load(Pageable(0, limit), category, criteria)
         }
     }
 }
 
 @Composable
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
 fun TimelineScreen(
-    author: String,
-    state: State<DesignStreamState<Flow<PagingData<UiPost>>>>,
-    listState: LazyListState,
-    header: LazyListScope.() -> Unit,
-    engagement: @Composable (UiPost) -> Unit,
-    connection: @Composable RowScope.(UiPost) -> Unit,
-    content: @Composable (UiPost, String, Int) -> Unit,
+    limit: Int,
+    category: Category,
+    criteria: Filter.Criteria? = null,
+    focused: MutableIntState,
+    showSheet: MutableState<UiPost?>,
+    listState: LazyListState = rememberLazyListState(),
+    provider: UiComponentProvider,
+    viewModelStoreOwner: ViewModelStoreOwner,
+    content: LazyListScope.(Timeline.Component, PostInteractor, LazyPagingItems<UiPost>) -> Unit
 ) {
-    val updatedHeader by rememberUpdatedState(header)
-    val updatedEngagement by rememberUpdatedState(engagement)
-    val updatedConnection by rememberUpdatedState(connection)
+    val context = LocalContext.current
     val updatedContent by rememberUpdatedState(content)
-    DesignStream(state) { result ->
-        val lazyPagingItems = result.value.collectAsLazyPagingItems()
-        LazyColumn(
-            state = listState,
-            modifier = Modifier.fillMaxSize()
+    val shareTitle = stringResource(R.string.share_label)
+    TimelineScreen(
+        provider = provider,
+        viewModelStoreOwner = viewModelStoreOwner
+    ) { component, viewModel ->
+        val page = Pageable(0, limit)
+        val state by viewModel.state.collectAsStateWithLifecycle()
+        val key = listOf(category, criteria).hashCode()
+        val isLoading = remember { derivedStateOf { state[key] == TimelineViewModel.State.Loading  } }
+        val isRefreshing = remember { mutableStateOf(isLoading.value) }
+        DesignRefreshScaffold(
+            isRefreshing = isRefreshing,
+            onRefresh = {
+                viewModel.load(
+                    page = page,
+                    category = category,
+                    criteria = criteria
+                )
+            }
         ) {
-            updatedHeader()
-//            items(
-//                count = lazyPagingItems.itemCount,
-//                key = { index -> lazyPagingItems[index]?.id?.let { "$it;$index" } ?: index }
-//            ) { index ->
-//                lazyPagingItems[index]?.let { post ->
-//                    PostScreen(
-//                        type = post.type,
-//                        pinnedBy = null,
-//                        model = post.mapToDetail(),
-//                        media = post.media,
-//                        onMenu = {},
-//                        onClick = {},
-//                        engagement = { updatedEngagement(post) },
-//                        connection = { updatedConnection(post) },
-//                        content = { path -> updatedContent(post, path, index) }
-//                    )
-//                }
-//            }
-            if (lazyPagingItems.loadState.refresh !is LoadState.Loading) {
-                item(key = author) {
-                    Column(modifier = Modifier.fillMaxWidth()) {
-                        if (lazyPagingItems.loadState.append is LoadState.Loading) {
-                            DesignShimmer {
-
-                            }
+            TimelineScreen(
+                limit = limit,
+                category = category,
+                criteria = criteria,
+                component = component,
+                viewModel = viewModel,
+                loading = { PostSkeleton(3) },
+            ) { component, items ->
+                PostScreen(
+                    limit = limit,
+                    focused = focused,
+                    listState = listState,
+                    provider = component,
+                    viewModelStoreOwner = viewModelStoreOwner,
+                    onFocus = {
+                        items.itemSnapshotList.get(it)?.let { post ->
+                            viewModel.view(post.id)
                         }
-                        Box(modifier = Modifier
-                            .fillMaxWidth()
-                            .height(48.dp))
+                    }
+                ) { interactor ->
+                    LazyColumn(
+                        state = listState,
+                        modifier = Modifier.fillMaxSize()
+                    ) { updatedContent(this, component, interactor, items) }
+                    TimelineSheet(showSheet) { sheetState, post ->
+                        when (sheetState) {
+                            TimelineSheetMenuItem.REPORT -> interactor.moderation().onReport(post.id)
+                            TimelineSheetMenuItem.SHARE -> { context.share(post.url, shareTitle) }
+                        }
                     }
                 }
             }

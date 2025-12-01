@@ -26,6 +26,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.compose.LazyPagingItems
 import eu.peernetwork.blog.domain.model.Content
+import eu.peernetwork.blog.ui.R
 import eu.peernetwork.blog.ui.extension.share
 import eu.peernetwork.blog.ui.model.v2.UiPost
 import eu.peernetwork.blog.ui.post.PostInteractor
@@ -147,6 +148,8 @@ fun ArticleScreen(
 ) {
     val context = LocalContext.current
     val updatedContent by rememberUpdatedState(content)
+    val handleEvent by rememberUpdatedState(onEvent)
+    val shareTitle = stringResource(R.string.share_label)
     ArticleScreen(
         provider = provider,
         viewModelStoreOwner = viewModelStoreOwner
@@ -174,8 +177,6 @@ fun ArticleScreen(
                     }
                 }
             ) { interactor ->
-                val handleEvent by rememberUpdatedState(onEvent)
-                val shareTitle = stringResource(eu.peernetwork.blog.ui.R.string.share_label)
                 LazyColumn(
                     state = listState,
                     modifier = Modifier.fillMaxSize()

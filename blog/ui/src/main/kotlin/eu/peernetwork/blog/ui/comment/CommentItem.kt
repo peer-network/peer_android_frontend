@@ -25,6 +25,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
@@ -80,6 +81,7 @@ fun CommentItem(
                     append(username)
                     withStyle(SpanStyle(
                         color = MaterialTheme.colorScheme.outline,
+                        fontStyle = FontStyle.Italic,
                         fontSize = MaterialTheme.typography.labelMedium.fontSize
                     )) { append(" #$slug") }
                 },

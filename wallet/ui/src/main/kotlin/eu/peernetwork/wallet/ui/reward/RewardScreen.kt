@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -15,7 +16,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -24,7 +24,6 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.material.DesignLabeledIcon
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.wallet.ui.model.UiReward
 
@@ -56,13 +55,14 @@ fun RewardScreen(
 
 @Composable
 fun RewardScreen(points: List<UiReward> = listOf()) {
-    var showPopup = remember { mutableStateOf(false) }
-    var selectedPoint = remember { mutableStateOf<UiReward?>(null) }
+    val showPopup = remember { mutableStateOf(false) }
+    val selectedPoint = remember { mutableStateOf<UiReward?>(null) }
     Column {
         Row (
             modifier = Modifier
-                .clip(RoundedCornerShape(4.dp))
-                .background(MaterialTheme.colorScheme.surfaceContainerLowest)
+                .clip(RoundedCornerShape(5.dp))
+                .background(MaterialTheme.colorScheme.surfaceVariant)
+                .padding(horizontal = 3.dp)
         ) {
             points.forEach { point ->
                 RewardType.MAP[point.name]?.let { model ->
@@ -70,7 +70,7 @@ fun RewardScreen(points: List<UiReward> = listOf()) {
                         showPopup.value && selectedPoint.value?.name == point.name
                     } }
                     Box {
-                        DesignLabeledIcon(
+                        RewardItem(
                             text = point.available.toString(),
                             painter = painterResource(id = model.icon),
                             contentDescription = stringResource(model.label),
@@ -78,30 +78,13 @@ fun RewardScreen(points: List<UiReward> = listOf()) {
                                 showPopup.value = true
                                 selectedPoint.value = point
                             },
-                            tint = MaterialTheme.colorScheme.primary.copy(alpha = .8f),
-                            modifier = Modifier.graphicsLayer {
-                                alpha = if (enabled.value) {
-                                    1f
-                                } else {
-                                    .0f
-                                }
-                            }
-                        )
-                        DesignLabeledIcon(
-                            text = point.available.toString(),
-                            painter = painterResource(id = model.icon),
-                            contentDescription = stringResource(model.label),
-                            onClick = {
-                                showPopup.value = true
-                                selectedPoint.value = point
+                            color = if (enabled.value) {
+                                MaterialTheme.colorScheme.onBackground
+                            } else {
+                                MaterialTheme.colorScheme.outline
                             },
-                            modifier = Modifier.graphicsLayer {
-                                alpha = if (enabled.value) {
-                                    0f
-                                } else {
-                                    1f
-                                }
-                            }
+                            modifier = Modifier.padding(horizontal = 5.dp)
+                                .padding(vertical = 2.dp)
                         )
                     }
                 }

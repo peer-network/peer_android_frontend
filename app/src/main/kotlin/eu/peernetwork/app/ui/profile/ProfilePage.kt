@@ -17,7 +17,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.navigation.NavHostController
+import eu.peernetwork.blog.domain.usecase.PostUsecase
 import eu.peernetwork.blog.ui.article.ArticleEvent
+import eu.peernetwork.blog.ui.article.ArticleList
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.design.material.DesignTitle
 import eu.peernetwork.core.ui.design.material.DesignTitleBarHost
@@ -70,22 +72,32 @@ fun ProfilePage(
             )
         },
     ) {
-        ProfilePosts(
-            id = id,
-            page = it,
+        val enable =  remember { mutableStateOf(false) }
+        ArticleList(
+            author = id,
+            types = if (it == 0) {
+                PostUsecase.POST
+            } else {
+                PostUsecase.MEDIA
+            },
+            status = enable,
             limit = limit,
             selected = selected,
             timestamp = timestamp,
-            component = component,
+            provider = component,
             viewModelStoreOwner = viewModelStoreOwner,
-            postState = postState,
-            mediaState = mediaState,
-        ) { event ->
-            when(event) {
-                is ArticleEvent.Boost -> controller.navigate("boost/${event.id}")
-                is ArticleEvent.Post -> handleClick()
+            onEvent = { event ->
+                when(event) {
+                    is ArticleEvent.Boost -> controller.navigate("boost/${event.id}")
+                    is ArticleEvent.Post -> handleClick()
+                }
+            },
+            listState =  if (it == 0) {
+                postState
+            } else {
+                mediaState
             }
-        }
+        )
     }
     ProfileSheet(
         id = id,

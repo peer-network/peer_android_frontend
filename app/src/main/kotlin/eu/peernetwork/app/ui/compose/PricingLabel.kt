@@ -107,13 +107,13 @@ fun PricingLabelPreview() {
     DesignTheme {
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             PricingLabel(
-                lead = painterResource(R.drawable.ic_like),
+                lead = painterResource(R.drawable.ic_flag),
                 trailing = painterResource(R.drawable.ic_gem),
                 price = "+ 2",
                 label = "Got a like"
             )
             PricingLabel(
-                lead = painterResource(R.drawable.ic_like),
+                lead = painterResource(R.drawable.ic_flag),
                 trailing = painterResource(R.drawable.ic_gem),
                 price = "+ 2",
                 label = "Got a like"

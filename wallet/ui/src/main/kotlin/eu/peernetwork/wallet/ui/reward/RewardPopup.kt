@@ -34,7 +34,7 @@ fun RewardPopup(
             onDismissRequest = { state.value = false }
         ) {
             Surface(
-                color = MaterialTheme.colorScheme.tertiaryContainer,
+                color = MaterialTheme.colorScheme.surfaceVariant,
                 shadowElevation = 4.dp,
                 shape = RoundedCornerShape(6.dp)
             ) {
@@ -43,10 +43,9 @@ fun RewardPopup(
                         RewardType.MAP[target.name]?.let { model ->
                             Text(
                                 text = stringResource(R.string.reward_description, target.available, target.name),
-                                style = MaterialTheme.typography.labelMedium.copy(
-                                    color = MaterialTheme.colorScheme.tertiary,
-                                    fontWeight = FontWeight.Normal
-                                ),
+                                color = MaterialTheme.colorScheme.outline,
+                                fontWeight = FontWeight.Normal,
+                                style = MaterialTheme.typography.labelMedium,
                                 modifier = Modifier.padding(horizontal = 8.dp, vertical = 6.dp)
                             )
                         }

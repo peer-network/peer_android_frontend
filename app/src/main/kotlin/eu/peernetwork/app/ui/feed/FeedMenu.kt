@@ -57,13 +57,13 @@ fun FeedMenu(
             } else {
                 DesignDropDown(
                     expanded,
-                    color = MaterialTheme.colorScheme.surfaceContainerLowest,
+                    color = MaterialTheme.colorScheme.surfaceVariant,
                     contentPadding = PaddingValues(vertical = 4.dp),
                     default = (UiFilter.entries.getOrNull(default) ?: UiFilter.NONE).name,
                     modifier = Modifier
                         .padding(vertical = 4.dp)
                         .clip(RoundedCornerShape(6.dp))
-                        .background(MaterialTheme.colorScheme.tertiaryContainer),
+                        .background(MaterialTheme.colorScheme.surfaceVariant),
                 ) {
                     relations.entries.forEach {
                         item(tag = it.key.name, {
@@ -84,7 +84,7 @@ fun FeedMenu(
                                         )
                                     } else {
                                         MaterialTheme.typography.bodyMedium.copy(
-                                            MaterialTheme.colorScheme.tertiary
+                                            MaterialTheme.colorScheme.outline
                                         )
                                     },
                                 )
@@ -94,7 +94,7 @@ fun FeedMenu(
                                         painter = painterResource(R.drawable.ic_caret_down),
                                         contentDescription = stringResource(filter.value),
                                         modifier = Modifier.size(16.dp),
-                                        tint = MaterialTheme.colorScheme.onSurface
+                                        tint = MaterialTheme.colorScheme.outline
                                     )
                                     Spacer(modifier = Modifier.width(4.dp))
                                 } else {

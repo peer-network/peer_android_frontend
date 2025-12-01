@@ -80,7 +80,7 @@ fun DesignTitle(
             .then(modifier)
             .padding(horizontal = 8.dp),
     ) {
-        CompositionLocalProvider(LocalTextStyle provides MaterialTheme.typography.bodyMedium) {
+        CompositionLocalProvider(LocalTextStyle provides MaterialTheme.typography.labelLarge) {
             updatedContent()
         }
     }

@@ -1,13 +1,13 @@
-package eu.peernetwork.blog.ui.article
+package eu.peernetwork.blog.ui.timeline
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.MutableIntState
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableIntStateOf
@@ -20,7 +20,8 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.paging.LoadState
-import eu.peernetwork.blog.domain.model.Content
+import eu.peernetwork.blog.domain.model.Category
+import eu.peernetwork.blog.domain.model.Filter
 import eu.peernetwork.blog.ui.engagement.EngagementOption
 import eu.peernetwork.blog.ui.mapper.v2.mapToDetail
 import eu.peernetwork.blog.ui.model.v2.UiPost
@@ -30,19 +31,17 @@ import eu.peernetwork.blog.ui.post.PostSkeleton
 import eu.peernetwork.core.ui.component.UiComponentProvider
 
 @Composable
-@Suppress("UNCHECKED_CAST")
-@OptIn(ExperimentalMaterial3Api::class)
-fun ArticleList(
-    author: String,
-    types: Set<Content.Type>,
-    limit: Int,
+fun TimelineList(
     status: State<Boolean>,
     selected: MutableIntState,
-    timestamp: State<Long>,
+    limit: Int,
+    category: Category,
+    criteria: Filter.Criteria? = null,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
-    onEvent: (ArticleEvent) -> Unit,
-    listState: LazyListState = rememberLazyListState()
+    refresh: MutableState<Boolean>,
+    listState: LazyListState,
+    onExplore: (() -> Unit)? = null,
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
     val enable = remember { derivedStateOf { !listState.isScrollInProgress } }
@@ -62,17 +61,14 @@ fun ArticleList(
             }
         }
     }
-    ArticleScreen(
-        id = author,
+    TimelineScreen(
         limit = limit,
-        types = types,
+        category = category,
+        criteria = criteria,
         focused = current,
         showSheet = showSheet,
-        selected = selected,
-        timestamp = timestamp,
         provider = provider,
         viewModelStoreOwner = viewModelStoreOwner,
-        onEvent = onEvent,
         listState = listState
     ) { component, interactor, items ->
         items(
@@ -113,7 +109,7 @@ fun ArticleList(
             }
         }
         if (items.loadState.refresh !is LoadState.Loading) {
-            item(key = author) {
+            item(key = category.name) {
                 Column(modifier = Modifier.fillMaxWidth()) {
                     if (items.loadState.append is LoadState.Loading) {
                         PostSkeleton()

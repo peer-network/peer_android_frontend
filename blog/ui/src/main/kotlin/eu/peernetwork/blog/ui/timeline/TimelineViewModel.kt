@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import eu.peernetwork.blog.domain.model.Filter.Criteria
-import eu.peernetwork.blog.ui.model.UiPost
+import eu.peernetwork.blog.ui.model.v2.UiPost
 import eu.peernetwork.blog.ui.usecase.FeedUsecase
 import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.blog.domain.model.Category
@@ -17,22 +17,25 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.collections.plus
 
 class TimelineViewModel @Inject constructor(
     private val usecase: FeedUsecase,
     private val viewUsecase: ViewUsecase
 ) : ViewModel() {
-    private val mutableState = MutableStateFlow<State>(State.Empty)
+    private val _state = MutableStateFlow<Map<Int, State>>(emptyMap())
 
-    val state: StateFlow<State> = mutableState.asStateFlow()
+    val state: StateFlow<Map<Int, State>> = _state.asStateFlow()
 
     fun load(
         page: Pageable,
         category: Category = Category.NONE,
         criteria: Criteria? = null
     ) {
+        val key = listOf(category, criteria).hashCode()
         viewModelScope.launch {
             usecase(
                 FeedUsecase.Parameter(
@@ -40,12 +43,12 @@ class TimelineViewModel @Inject constructor(
                     criteria = criteria,
                     page = page
                 )
-            ).catch { mutableState.tryEmit(State.Error(it)) }
-                .onStart { mutableState.tryEmit(State.Loading) }
+            ).catch { updateState(key, State.Error(it)) }
+                .onStart { updateState(key, State.Loading) }
                 .cachedIn(viewModelScope)
                 .apply {
                     collectLatest {
-                        mutableState.tryEmit(State.Success(
+                        updateState(key, State.Success(
                             category = category,
                             criteria = criteria,
                             content = this
@@ -63,6 +66,10 @@ class TimelineViewModel @Inject constructor(
                 error.printStackTrace()
             }
         }
+    }
+
+    private fun updateState(key: Int, state: State) {
+        _state.update { it + (key to state) }
     }
 
     sealed interface State {
