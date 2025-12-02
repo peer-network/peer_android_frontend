@@ -48,6 +48,27 @@ jobs:
     with:
       scan_target: .
 
+  determine_event_type:
+    name: Determine Discord Event Type
+    runs-on: ubuntu-latest
+    needs: [check_branch_sync, gitleaks, trivy_scan, build]
+    outputs:
+      event_type: ${{ steps.set_type.outputs.event_type }}
+    steps:
+      - id: set_type
+        run: |
+          if [ "${{ needs.check_branch_sync.outputs.is_behind }}" == "true" ]; then
+            echo "event_type=behind" >> $GITHUB_OUTPUT
+          elif [ "${{ needs.gitleaks.result }}" == "failure" ]; then
+            echo "event_type=gitleaks_failed" >> $GITHUB_OUTPUT
+          elif [ "${{ needs.trivy_scan.outputs.has_findings }}" == "true" ]; then
+            echo "event_type=trivy_vulnerabilities" >> $GITHUB_OUTPUT
+          elif [ "${{ needs.build.result }}" == "failure" ]; then
+            echo "event_type=build_failed" >> $GITHUB_OUTPUT
+          else
+            echo "event_type=success" >> $GITHUB_OUTPUT
+          fi
+
   build:
     runs-on: ubuntu-latest
     needs: [check_branch_sync, gitleaks, trivy_scan]
@@ -154,90 +175,25 @@ jobs:
   send_discord_notification:
     name: Unified Discord Notification
     runs-on: ubuntu-latest
-    needs: [check_branch_sync, gitleaks, trivy_scan, build, map_pr_to_discord]
+    needs: [
+      check_branch_sync,
+      gitleaks,
+      trivy_scan,
+      build,
+      map_pr_to_discord,
+      determine_event_type
+    ]
     if: always()
-    steps:
-      - name: Determine message type
-        id: decide
-        run: |
-          is_behind="${{ needs.check_branch_sync.outputs.is_behind }}"
-          gitleaks_result="${{ needs.gitleaks.result }}"
-          trivy_findings="${{ needs.trivy_scan.outputs.has_findings }}"
-          build_result="${{ needs.build.result }}"
-          
-          type="none"
-          if [ "$is_behind" == "true" ]; then
-            type="behind"
-          elif [ "$gitleaks_result" == "failure" ]; then
-            type="gitleaks_failed"
-          elif [ "$trivy_findings" == "true" ]; then
-            type="trivy_vulnerabilities"
-          elif [ "$build_result" == "failure" ]; then
-            type="build_failed"
-          elif [ "$build_result" == "success" ]; then
-            type="success"
-          fi
-          echo "type=$type" >> $GITHUB_OUTPUT
-
-      - name: Send Discord Notification
-        if: steps.decide.outputs.type != 'none'
-        env:
-          ANDROID_DISCORD: ${{ secrets.ANDROID_DISCORD }}
-          DISCORD_MENTION: ${{ needs.map_pr_to_discord.outputs.discord_mention }}
-          PR_TITLE: ${{ github.event.pull_request.title }}
-          PR_URL: ${{ github.event.pull_request.html_url }}
-          RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
-        run: |
-          case "${{ steps.decide.outputs.type }}" in
-            behind)
-              MESSAGE=":warning: **Android PR Branch is Behind the Base Branch**\n"
-              MESSAGE+="**PR:** $PR_TITLE\n"
-              MESSAGE+="Link: <$PR_URL>\n"
-              MESSAGE+="Author: $DISCORD_MENTION\n"
-              MESSAGE+="Please update your branch with the latest changes from \`${{ github.event.pull_request.base.ref }}\`."
-              ;;
-            gitleaks_failed)
-              MESSAGE=":x: **Android Gitleaks Scan Failed!**\n"
-              MESSAGE+="**PR:** $PR_TITLE\n"
-              MESSAGE+="PR Link: <$PR_URL>\n"
-              MESSAGE+="CI Run: <$RUN_URL>\n"
-              MESSAGE+="Author: $DISCORD_MENTION\n\n"
-              MESSAGE+=":warning: **Secrets were detected by Gitleaks.**\n"
-              MESSAGE+="You can:\n"
-              MESSAGE+="- [Click here to view workflow artifacts](<$RUN_URL>) (download the **gitleaks-report** artifact)\n"
-              MESSAGE+="- Check the **Actions → Artifacts** tab to view/download the report\n\n"
-              MESSAGE+=":no_entry: **Reminder:** Do NOT bypass with \`git commit --no-verify\`. CI will still block your PR.\n"
-              MESSAGE+="If this secret is actually required (false positive or approved usage), please contact **CTO / Team Lead / DevOps** for approval and whitelisting."
-              ;;
-            trivy_vulnerabilities)
-              MESSAGE="**Trivy found HIGH or CRITICAL vulnerabilities in Android Frontend!**\n"
-              MESSAGE+="**Do NOT ignore this finding — inform your Team Lead or CTO immediately.**\n"
-              MESSAGE+="View the **Trivy report artifact** in the Actions run for full details.\n"
-              MESSAGE+="**PR:** $PR_TITLE\nLink: <$PR_URL>\nRun: <$RUN_URL>\nAuthor: $DISCORD_MENTION\n\n"
-              MESSAGE+="<@1354048093376610366> <@1334087880833892392> <@1362087975906967736>"
-              ;;
-            build_failed)
-              MESSAGE=":x: **Android Build or Tests Failed**\n"
-              MESSAGE+="**PR:** $PR_TITLE\n"
-              MESSAGE+="PR Link: <$PR_URL>\n"
-              MESSAGE+="CI Run: <$RUN_URL>\n"
-              MESSAGE+="Author: $DISCORD_MENTION\n"
-              MESSAGE+="Please review your Gradle build and unit test logs."
-              ;;
-            success)
-              MESSAGE=":white_check_mark: **Android CI Passed Successfully**\n"
-              MESSAGE+="**PR:** $PR_TITLE\n"
-              MESSAGE+="PR Link: <$PR_URL>\n"
-              MESSAGE+="CI Run: <$RUN_URL>\n\n"
-              MESSAGE+="All checks passed successfully.\n"
-              MESSAGE+="Team Lead: <@1354048093376610366>"
-              ;;
-          esac
-
-          curl -H "Content-Type: application/json" \
-               -X POST \
-               -d "{\"content\": \"$MESSAGE\"}" \
-               "$ANDROID_DISCORD"
+    uses: peer-network/.github/.github/workflows/discord-notify.yml@main
+    with:
+      repo_name: "Android Frontend"
+      event_type: ${{ needs.determine_event_type.outputs.event_type }}
+      pr_title: ${{ github.event.pull_request.title }}
+      pr_url: ${{ github.event.pull_request.html_url }}
+      run_url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+      discord_mention: ${{ needs.map_pr_to_discord.outputs.discord_mention }}
+    secrets:
+      webhook: ${{ secrets.ANDROID_DISCORD }}
 
   final_check:
     name: Final Check — Block Merge if Any Critical Job Failed
