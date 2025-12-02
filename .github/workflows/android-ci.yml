@@ -171,13 +171,12 @@ jobs:
           else
             echo "event_type=success" >> $GITHUB_OUTPUT
           fi
-
   send_discord_notification:
     name: Unified Discord Notification
     runs-on: ubuntu-latest
     needs: [check_branch_sync, gitleaks, trivy_scan, build, map_pr_to_discord, determine_event_type]
     if: always()
-    uses: peer-network/.guthub/.github/workflows/discord-notify.yml@main
+    uses: peer-network/.github/.github/workflows/discord-notify.yml@main
     with:
       repo_name: "Android Frontend"
       event_type: ${{ needs.determine_event_type.outputs.event_type }}
@@ -185,8 +184,8 @@ jobs:
       pr_url: ${{ github.event.pull_request.html_url }}
       run_url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
       discord_mention: ${{ needs.map_pr_to_discord.outputs.discord_mention }}
-      secrets:
-        webhook: ${{ secrets.ANDROID_DISCORD }}
+    secrets:
+      webhook: ${{ secrets.ANDROID_DISCORD }}
 
   final_check:
     name: Final Check — Block Merge if Any Critical Job Failed
