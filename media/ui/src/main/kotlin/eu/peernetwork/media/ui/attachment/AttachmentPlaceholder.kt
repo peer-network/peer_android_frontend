@@ -36,7 +36,7 @@ fun AttachmentPlaceholder(
     modifier: Modifier = Modifier,
     onAttach: () -> Unit
 ) {
-    val color = MaterialTheme.colorScheme.tertiaryContainer
+    val color = MaterialTheme.colorScheme.surfaceDim
     Box(
         contentAlignment = Alignment.BottomEnd,
         modifier = modifier
@@ -63,7 +63,7 @@ fun AttachmentPlaceholder(
         ) {
             Text(
                 stringResource(R.string.media_label),
-                color = MaterialTheme.colorScheme.tertiary
+                color = MaterialTheme.colorScheme.outlineVariant
             )
         }
         IconButton(

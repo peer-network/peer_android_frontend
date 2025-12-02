@@ -34,7 +34,9 @@ class ExplorePostsUsecase @Inject constructor(
         ).flow
     }
 
-    override suspend fun getData(params: LoadParams<Int>): LoadResult<Int, UiPost> = withContext(dispatcher.io) {
+    override suspend fun getData(
+        params: LoadParams<Int>
+    ): LoadResult<Int, UiPost> = withContext(dispatcher.io) {
         val currentOffset = params.key ?: param.page.offset
         val currentPage = Pageable(
             offset = currentOffset,

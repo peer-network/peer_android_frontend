@@ -218,7 +218,7 @@ fun AttachmentPreview(
                             Icon(
                                 painter = painterResource(eu.peernetwork.core.ui.R.drawable.ic_cancel),
                                 contentDescription = stringResource(R.string.remove_label),
-                                tint = MaterialTheme.colorScheme.tertiary,
+                                tint = MaterialTheme.colorScheme.onPrimary,
                                 modifier = Modifier.size(16.dp)
                             )
                         }

@@ -12,7 +12,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
-import eu.peernetwork.blog.ui.explore.ExploreScreen
+import eu.peernetwork.blog.ui.explore.ExploreList
 import eu.peernetwork.core.ui.design.material.DesignScaffold
 import eu.peernetwork.social.ui.search.member.MemberScreen
 import eu.peernetwork.social.ui.search.tag.TagScreen
@@ -70,7 +70,7 @@ fun SearchSuggestion(
                     .statusBarsPadding()
                     .navigationBarsPadding()
             ) {
-                ExploreScreen(
+                ExploreList(
                     limit = limit,
                     provider = component,
                     viewModelStoreOwner = viewModelStoreOwner,

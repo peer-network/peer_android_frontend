@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Warning
@@ -42,9 +43,9 @@ fun AttachmentSize(
     val showWarning = remember { mutableStateOf(false) }
     val maxSizeBytes = 500L * 1024L * 1024L // 500 MB
     var wasExceedingLimit by remember { mutableStateOf(false) }
-    val normalTextStyle = MaterialTheme.typography.bodyMedium
-        .copy(color = MaterialTheme.colorScheme.tertiary)
-    val errorTextStyle = MaterialTheme.typography.bodyMedium
+    val normalTextStyle = MaterialTheme.typography.labelMedium
+        .copy(color = MaterialTheme.colorScheme.outline)
+    val errorTextStyle = MaterialTheme.typography.labelMedium
         .copy(color = MaterialTheme.colorScheme.error)
 
     LaunchedEffect(attachment) {
@@ -63,7 +64,6 @@ fun AttachmentSize(
         }
         wasExceedingLimit = newExceeds
     }
-
     Box(
         modifier = modifier,
         contentAlignment = Alignment.Center
@@ -71,8 +71,8 @@ fun AttachmentSize(
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
-                .clip(RoundedCornerShape(8.dp))
-                .background(MaterialTheme.colorScheme.tertiaryContainer)
+                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.surfaceContainerLow)
                 .padding(horizontal = 12.dp, vertical = 6.dp)
         ) {
             Text(
@@ -81,7 +81,6 @@ fun AttachmentSize(
             )
         }
     }
-
     DesignBottomSheetScaffold(
         state = showWarning,
         onDismiss = { showWarning.value = false }

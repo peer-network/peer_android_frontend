@@ -33,10 +33,10 @@ import eu.peernetwork.blog.ui.R
 import eu.peernetwork.blog.ui.engagement.EngagementDialog
 import eu.peernetwork.blog.ui.engagement.EngagementIntent
 import eu.peernetwork.blog.ui.model.UiDraft
-import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.material.DesignLabel
 import eu.peernetwork.core.ui.extension.builder
+import eu.peernetwork.core.ui.theme.DesignTheme
 import eu.peernetwork.media.core.model.UiAttachment
 import eu.peernetwork.media.core.model.UiMimeType
 
@@ -181,7 +181,7 @@ fun CreatorScreen(
 @Preview
 @Composable
 fun PreviewCreatorScreen() {
-    PeerTheme {
+    DesignTheme(isDarkMode = true) {
         val focus = remember { FocusRequester() }
         var title by rememberSaveable(stateSaver = TextFieldState.Saver) { mutableStateOf(TextFieldState()) }
         var description by rememberSaveable(stateSaver = TextFieldState.Saver) {

@@ -38,6 +38,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -71,6 +73,7 @@ fun DesignTextField(
         vertical = 14.dp
     ),
     textStyle: TextStyle = MaterialTheme.typography.bodyMedium,
+    focusRequester: FocusRequester = FocusRequester(),
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     onKeyboardAction: KeyboardActions = KeyboardActions.Default,
     minLines: Int = 1,
@@ -159,7 +162,8 @@ fun DesignTextField(
                                 state.edit { replace(0, length, input) }
                             }
                         },
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier.fillMaxWidth()
+                            .focusRequester(focusRequester),
                         enabled = enabled,
                         readOnly = readOnly,
                         textStyle = LocalTextStyle.current,

@@ -33,12 +33,11 @@ import eu.peernetwork.core.ui.design.material.DesignTitle
 import eu.peernetwork.core.ui.design.material.DesignTitleBarHost
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
-import eu.peernetwork.core.ui.theme.PeerTheme
+import eu.peernetwork.core.ui.theme.DesignTheme
 import eu.peernetwork.media.core.model.UiAttachment
 import eu.peernetwork.media.core.model.UiMimeType
 import eu.peernetwork.media.ui.attachment.AttachmentScreen
 import eu.peernetwork.media.ui.saveable.UiAttachmentSaver
-import eu.peernetwork.wallet.ui.model.UiToken
 
 @Composable
 fun ComposerScreen(
@@ -53,8 +52,6 @@ fun ComposerScreen(
     val controller = rememberNavController()
     val attachment = rememberSaveable(saver = UiAttachmentSaver) { mutableStateOf<UiAttachment>(UiAttachment.Text) }
     val focus = remember { FocusRequester() }
-    val intent = UiToken.Post
-    val key = intent::class.java.name
     var title by rememberSaveable(stateSaver = TextFieldState.Saver) { mutableStateOf(TextFieldState()) }
     var description by rememberSaveable(stateSaver = TextFieldState.Saver) { mutableStateOf(TextFieldState()) }
     Box {
@@ -135,7 +132,7 @@ fun ComposerScreen(
 @Preview
 @Composable
 fun PreviewComposerScreen() {
-    PeerTheme {
+    DesignTheme {
         val focus = remember { FocusRequester() }
         val title = remember { TextFieldState() }
         val description = remember { TextFieldState() }

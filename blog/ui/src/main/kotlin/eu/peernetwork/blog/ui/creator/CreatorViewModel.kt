@@ -1,29 +1,24 @@
 package eu.peernetwork.blog.ui.creator
 
-import androidx.core.net.toFile
-import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import eu.peernetwork.blog.domain.model.Draft
 import eu.peernetwork.blog.ui.model.UiDraft
-import eu.peernetwork.blog.ui.model.UiPost
+import eu.peernetwork.blog.ui.model.v2.UiPost
 import eu.peernetwork.blog.ui.usecase.CreateUsecase
 import eu.peernetwork.media.core.model.UiMimeType
 import eu.peernetwork.media.core.model.UiOffset
 import eu.peernetwork.media.core.usecase.MediaEncoderUsecase
-import eu.peernetwork.media.core.usecase.TextEncoderUsecase
 import eu.peernetwork.media.core.usecase.TrimUsecase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import java.io.File
 import javax.inject.Inject
 
 class CreatorViewModel @Inject constructor(
     private val usecase: CreateUsecase,
     private val trimUsecase: TrimUsecase,
-    private val textEncoderUsecase: TextEncoderUsecase,
     private val mediaEncoderUsecase: MediaEncoderUsecase,
 ) : ViewModel() {
     private val mutableState = MutableStateFlow<State>(State.Empty)
@@ -64,7 +59,7 @@ class CreatorViewModel @Inject constructor(
                     )
                 }
             )
-            else -> Draft.Type.Text(listOf(textEncoderUsecase(description)))
+            else -> Draft.Type.Text(listOf(description))
         }
         return Draft(
             title = title,

@@ -10,7 +10,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -26,7 +26,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.core.ui.R
-import eu.peernetwork.core.ui.theme.PeerTheme
+import eu.peernetwork.core.ui.theme.DesignTheme
 
 @Composable
 fun AttachmentOption(
@@ -69,14 +69,15 @@ fun AttachmentOption(
     onClick: () -> Unit = {}
 ) {
     val textStyle = MaterialTheme.typography.bodyMedium
-        .copy(color = MaterialTheme.colorScheme.tertiary)
+        .copy(color = MaterialTheme.colorScheme.outline)
     val labelStyle = MaterialTheme.typography.labelMedium
-        .copy(color = MaterialTheme.colorScheme.tertiary)
+        .copy(color = MaterialTheme.colorScheme.outline)
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.clip(RoundedCornerShape(8.dp))
-            .background(MaterialTheme.colorScheme.tertiaryContainer)
+        modifier = Modifier.clip(CircleShape)
+            .background(MaterialTheme.colorScheme.surfaceContainerLow)
             .padding(8.dp)
+            .padding(horizontal = 6.dp)
             .clickable(
                 enabled = true,
                 role = Role.Button,
@@ -87,7 +88,7 @@ fun AttachmentOption(
             painter = painter,
             contentDescription = null,
             modifier = Modifier.size(18.dp),
-            tint = MaterialTheme.colorScheme.tertiary
+            tint = MaterialTheme.colorScheme.outline
         )
         Spacer(modifier = Modifier.width(space))
         Text(text, style = textStyle)
@@ -99,7 +100,7 @@ fun AttachmentOption(
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun PreviewAttachmentOption() {
-    PeerTheme {
+    DesignTheme(isDarkMode = true) {
         AttachmentOption({}, {})
     }
 }

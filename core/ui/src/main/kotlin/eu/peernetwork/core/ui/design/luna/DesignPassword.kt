@@ -39,6 +39,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -76,6 +78,7 @@ fun DesignPassword(
         autoCorrectEnabled = false,
         keyboardType = KeyboardType.Password
     ),
+    focusRequester: FocusRequester = FocusRequester(),
     onKeyboardAction: KeyboardActionHandler? = null,
     onTextLayout: (Density.(getResult: () -> TextLayoutResult?) -> Unit)? = null,
     interactionSource: MutableInteractionSource? = null,
@@ -158,7 +161,8 @@ fun DesignPassword(
                     BasicSecureTextField(
                         state = state,
                         enabled = enabled && !readOnly,
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier.fillMaxWidth()
+                            .focusRequester(focusRequester),
                         inputTransformation = inputTransformation,
                         textStyle = LocalTextStyle.current,
                         keyboardOptions = keyboardOptions,
