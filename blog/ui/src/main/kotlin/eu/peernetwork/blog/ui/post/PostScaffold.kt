@@ -109,21 +109,12 @@ fun PostScaffold(
                 connection = connection
             )
             updatedContent()
-            if (pinnedBy == null) {
-                PostStatus(
-                    time = context.format(model.time),
-                    engagement = engagement,
-                    modifier = Modifier.padding(horizontal = 12.dp)
-                        .padding(bottom = 12.dp)
-                )
-            } else {
-                PostStatus(
-                    time = context.format(model.time),
-                    engagement = engagement,
-                    pinnedBy = pinnedBy,
-                    modifier = Modifier.padding(horizontal = 12.dp)
-                )
-            }
+            PostStatus(
+                time = context.format(model.time),
+                engagement = engagement,
+                modifier = Modifier.padding(horizontal = 12.dp)
+                    .padding(bottom = 12.dp)
+            )
         }
     }
 }
@@ -239,7 +230,7 @@ fun PreviewUserOption() {
                 }
             ) {
                 Box(modifier = Modifier.fillMaxWidth()
-                    .height(64.dp))
+                    .height(56.dp))
             }
             PostMediaScaffold(
                 model = model,

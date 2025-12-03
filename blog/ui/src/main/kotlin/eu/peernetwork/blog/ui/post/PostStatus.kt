@@ -153,14 +153,6 @@ fun PostStatus(
                         lineHeight = 18.sp
                     )
                 }
-                pinnedBy?.let {
-                    Text(
-                        text = pinnedText,
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.outline,
-                        modifier = Modifier.padding(top = 4.dp)
-                    )
-                }
             }
         }
     }

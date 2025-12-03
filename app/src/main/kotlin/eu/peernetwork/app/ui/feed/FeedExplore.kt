@@ -84,13 +84,12 @@ fun FeedExplore(
                 sort = sorts[pageState.currentPage],
             ) ?: Criteria.Content(sort = sorts[pageState.currentPage])
         } }
-        val enable = remember { mutableStateOf(false) }
         FeedExploreScaffold(pageState = pageState) {
             TimelineList(
                 id = account.id,
                 username = account.username,
                 imageUrl = account.imageUrl,
-                status = enable,
+                status = isVisible,
                 selected = selected,
                 limit = limit,
                 category = Category.NONE,

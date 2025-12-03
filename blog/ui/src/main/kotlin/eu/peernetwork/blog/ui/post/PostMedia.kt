@@ -53,7 +53,6 @@ fun PostMedia(
             )
         )
     } else if (type == UiPostType.VIDEO) {
-        val isPlaying = remember { derivedStateOf { status.value && isActive.value } }
         val postThumbnail = remember { derivedStateOf { thumbnail.value[path] } }
         DesignThumbnail(
             enable = enable,
@@ -75,7 +74,7 @@ fun PostMedia(
             spec = VideoThumbnail.Spec(
                 url = path,
                 ratio = aspectRatio,
-                isPlaying = isPlaying
+                isPlaying = isActive
             )
         )
     } else if (type == UiPostType.AUDIO) {

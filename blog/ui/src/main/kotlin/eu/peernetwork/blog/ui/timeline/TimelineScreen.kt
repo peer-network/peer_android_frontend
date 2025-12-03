@@ -165,7 +165,7 @@ fun TimelineScreen(
                     provider = component,
                     viewModelStoreOwner = viewModelStoreOwner,
                     onFocus = {
-                        items.itemSnapshotList.get(it)?.let { post ->
+                        items.itemSnapshotList.getOrNull(it)?.let { post ->
                             viewModel.view(post.id)
                         }
                     }

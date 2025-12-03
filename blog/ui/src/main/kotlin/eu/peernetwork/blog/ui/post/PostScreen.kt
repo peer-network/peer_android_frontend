@@ -128,12 +128,12 @@ fun PostScreen(
     limit: Int,
     username: String,
     imageUrl: String,
-    focused: MutableIntState = rememberSaveable { mutableIntStateOf(-1) },
+    focused: MutableIntState,
     listState: LazyListState,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
     onFocus: (Int) -> Unit = {},
-    content: @Composable () -> Unit
+    content: @Composable (State<Int>) -> Unit
 ) {
     val updatedContent by rememberUpdatedState(content)
     PostScreen(
@@ -147,7 +147,7 @@ fun PostScreen(
             listState = listState,
             onFocused = { focused.intValue = it },
             onFocus = onFocus
-        ) { updatedContent() }
+        ) { updatedContent(it) }
     }
 }
 

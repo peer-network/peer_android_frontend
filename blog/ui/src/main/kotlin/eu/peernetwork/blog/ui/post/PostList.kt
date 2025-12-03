@@ -43,7 +43,7 @@ fun PostList(
                 } else if (position != -1) {
                     handleFocus(position)
                 }
-            }.debounce(800)
+            }.debounce(500)
             .collectLatest {
                 val visibleItems = listState.layoutInfo.visibleItemsInfo
                 if (visibleItems.isEmpty()) {

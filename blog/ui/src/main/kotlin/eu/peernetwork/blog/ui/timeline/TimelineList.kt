@@ -48,8 +48,8 @@ fun TimelineList(
     onExplore: (() -> Unit)? = null,
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
-    val enable = remember { derivedStateOf { !listState.isScrollInProgress } }
     val pause = remember { mutableStateOf(false) }
+    val enable = remember { derivedStateOf { !status.value } }
     val showSheet = remember { mutableStateOf<UiPost?>(null) }
     val current = rememberSaveable { mutableIntStateOf(-1) }
     val lifecycleObserver = remember {
@@ -112,16 +112,14 @@ fun TimelineList(
                         }
                     },
                     content = { path ->
-                        val isActive = remember { derivedStateOf {
-                            index == current.intValue
-                        } }
+                        val isActive = remember { derivedStateOf { index == current.intValue } }
                         PostMedia(
                             type = post.type,
                             path = path,
                             avatar = post.author.imageUrl,
                             position = index,
                             aspectRatio = post.asset.ratio,
-                            status = status,
+                            status = enable,
                             enable = enable,
                             isActive = isActive,
                         )
