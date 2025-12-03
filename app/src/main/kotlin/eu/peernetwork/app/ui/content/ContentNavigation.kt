@@ -14,10 +14,11 @@ import eu.peernetwork.app.ui.search.SearchScreen
 import eu.peernetwork.app.ui.search.SearchMode
 import eu.peernetwork.core.ui.design.material.DesignRouter
 import eu.peernetwork.core.ui.factory.UiViewModelStore
+import eu.peernetwork.user.domain.model.Account
 
 @Composable
 fun ContentNavigation(
-    userId: String,
+    account: Account,
     postLimit: Int,
     overlay: MutableState<String?>,
     startDestination: String = "content",
@@ -40,7 +41,7 @@ fun ContentNavigation(
             })
         ) { backStackEntry ->
             ProfileScreen(
-                principal = userId,
+                account = account,
                 userId = backStackEntry.arguments?.getString("id") ?: "",
                 provider = component,
                 viewModelStoreOwner = backStackEntry,
@@ -61,7 +62,7 @@ fun ContentNavigation(
                 else -> SearchMode.Default
             }
             SearchScreen(
-                id = userId,
+                account = account,
                 query = query,
                 limit = postLimit,
                 provider = component,

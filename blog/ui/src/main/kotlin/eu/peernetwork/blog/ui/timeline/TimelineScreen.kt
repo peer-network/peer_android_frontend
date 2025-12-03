@@ -23,6 +23,7 @@ import eu.peernetwork.blog.domain.model.Category
 import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.blog.ui.R
 import eu.peernetwork.blog.ui.extension.share
+import eu.peernetwork.blog.ui.mapper.v2.mapToDetail
 import eu.peernetwork.blog.ui.model.v2.UiPost
 import eu.peernetwork.blog.ui.moderation.ModerationInteractor.Companion.LocalModerationInteractor
 import eu.peernetwork.blog.ui.post.PostScreen
@@ -103,6 +104,8 @@ fun TimelineScreen(
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
 fun TimelineScreen(
     limit: Int,
+    username: String,
+    imageUrl: String,
     category: Category,
     criteria: Criteria = Criteria.None,
     focused: MutableIntState,
@@ -154,6 +157,8 @@ fun TimelineScreen(
             ) { component, items ->
                 PostScreen(
                     limit = limit,
+                    username = username,
+                    imageUrl = imageUrl,
                     focused = focused,
                     listState = listState,
                     provider = component,
@@ -189,6 +194,8 @@ fun TimelineScreen(
 
 @Composable
 fun TimelineFullScreen(
+    username: String,
+    imageUrl: String,
     selected: MutableIntState,
     limit: Int,
     category: Category,
@@ -213,10 +220,13 @@ fun TimelineFullScreen(
         ) { component, items ->
             val pagerState = rememberPagerState(initialPage = selected.intValue) { items.itemCount }
             PostScreen(
+                imageUrl = imageUrl,
+                username = username,
                 limit = limit,
                 pagerState = pagerState,
                 provider = component,
-                viewModelStoreOwner = viewModelStoreOwner
+                viewModelStoreOwner = viewModelStoreOwner,
+                onComment = { items.itemSnapshotList.getOrNull(it)?.mapToDetail() }
             ) { index ->
                 updatedContent(this, component, items, index)
                 LaunchedEffect(Unit) {

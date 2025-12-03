@@ -1,6 +1,5 @@
 package eu.peernetwork.blog.ui.post
 
-import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -126,9 +125,9 @@ private fun PostHeaderOption(
 }
 
 @Composable
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, showBackground = true)
+@Preview
 fun PreviewPostHeader() {
-    DesignTheme(isDarkMode = false) {
+    DesignTheme(isDarkMode = true) {
         PostToolbar(
             slug = "#239100",
             username = "John",

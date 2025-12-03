@@ -16,6 +16,7 @@ import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
+import eu.peernetwork.user.domain.model.Account
 
 @Composable
 fun ProfileScreen(
@@ -32,7 +33,7 @@ fun ProfileScreen(
 
 @Composable
 fun ProfileScreen(
-    principal: String,
+    account: Account,
     userId: String,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
@@ -44,8 +45,7 @@ fun ProfileScreen(
     val timestamp = rememberSaveable { mutableLongStateOf(System.currentTimeMillis()) }
     ProfileScreen(provider) { component ->
         ProfileNavigation(
-            principal = principal,
-            userId = userId,
+            account = account,
             controller = controller,
             component = component,
             viewModelStoreOwner = viewModelStoreOwner
@@ -54,6 +54,8 @@ fun ProfileScreen(
             val mediaState = rememberLazyListState()
             ProfilePage(
                 id = userId,
+                username = account.username,
+                imageUrl = account.imageUrl,
                 title = title,
                 limit = BuildConfig.PAGING_LIMIT,
                 selected = selected,
@@ -68,7 +70,7 @@ fun ProfileScreen(
             )
         }
         ProfileModal(
-            principal = principal,
+            account = account,
             userId = userId,
             isVisible = isVisible,
             selected = selected,

@@ -35,6 +35,8 @@ import eu.peernetwork.core.ui.component.UiComponentProvider
 @Composable
 fun TimelineList(
     id: String,
+    username: String,
+    imageUrl: String,
     status: State<Boolean>,
     selected: MutableIntState,
     limit: Int,
@@ -66,6 +68,8 @@ fun TimelineList(
     }
     TimelineScreen(
         limit = limit,
+        username = username,
+        imageUrl = imageUrl,
         category = category,
         criteria = criteria,
         focused = current,

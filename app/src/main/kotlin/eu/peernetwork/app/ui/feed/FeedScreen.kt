@@ -20,6 +20,7 @@ import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.media.core.model.UiMimeType
 import eu.peernetwork.social.ui.connection.ConnectionScreen
+import eu.peernetwork.user.domain.model.Account
 
 @Composable
 fun FeedScreen(
@@ -45,7 +46,7 @@ fun FeedScreen(
 
 @Composable
 fun FeedScreen(
-    id: String,
+    account: Account,
     limit: Int,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
@@ -71,12 +72,14 @@ fun FeedScreen(
             initialPage = state.page
         )
         FeedNavigation(
-            id = id,
+            account = account,
             component = component,
             controller = controller,
         ) {
             FeedPage(
-                id = id,
+                id = account.id,
+                username = account.username,
+                imageUrl = account.imageUrl,
                 title = title,
                 selected = selected,
                 limit = limit,
@@ -89,7 +92,7 @@ fun FeedScreen(
             ) { isVisible.value = true }
         }
         FeedModal(
-            id = id,
+            account = account,
             selected = selected,
             isVisible = isVisible,
             criteria = criteria,

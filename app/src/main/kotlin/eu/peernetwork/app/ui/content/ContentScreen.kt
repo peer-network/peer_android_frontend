@@ -26,10 +26,11 @@ import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.core.ui.factory.UiViewModelStore
 import eu.peernetwork.social.ui.connection.ConnectionInteractor.Companion.LocalConnectionInteractor
 import eu.peernetwork.social.ui.connection.ConnectionScreen
+import eu.peernetwork.user.domain.model.Account
 
 @Composable
 fun ContentScreen(
-    userId: String,
+    account: Account,
     postId: String,
     provider: UiComponentProvider,
     viewModelStore: UiViewModelStore,
@@ -65,7 +66,7 @@ fun ContentScreen(
         val connectionController = LocalConnectionInteractor.current
         ContentOverlay(
             overlay = overlay,
-            userId = userId,
+            userId = account.id,
             postLimit = BuildConfig.PAGING_LIMIT,
             component = component,
             viewModelStore = viewModelStore,
@@ -73,7 +74,7 @@ fun ContentScreen(
         ) {
             val connection by connectionController.observe().collectAsStateWithLifecycle()
             ContentNavigation(
-                userId = userId,
+                account = account,
                 postLimit = BuildConfig.PAGING_LIMIT,
                 component = component,
                 viewModelStore = viewModelStore,

@@ -13,10 +13,11 @@ import eu.peernetwork.app.ui.profile.ProfileScreen
 import eu.peernetwork.app.ui.search.SearchMode
 import eu.peernetwork.app.ui.search.SearchScreen
 import eu.peernetwork.core.ui.design.material.DesignRouter
+import eu.peernetwork.user.domain.model.Account
 
 @Composable
 fun FeedNavigation(
-    id: String,
+    account: Account,
     controller: NavHostController,
     component: Feed.Component,
     content: @Composable (NavBackStackEntry) -> Unit = {}
@@ -34,7 +35,7 @@ fun FeedNavigation(
             })
         ) { backStackEntry ->
             ProfileScreen(
-                principal = id,
+                account = account,
                 userId = backStackEntry.arguments?.getString("id") ?: "",
                 provider = component,
                 viewModelStoreOwner = backStackEntry,
@@ -55,7 +56,7 @@ fun FeedNavigation(
                 else -> SearchMode.Default
             }
             SearchScreen(
-                id = id,
+                account = account,
                 limit = BuildConfig.PAGING_LIMIT,
                 provider = component,
                 query = query,

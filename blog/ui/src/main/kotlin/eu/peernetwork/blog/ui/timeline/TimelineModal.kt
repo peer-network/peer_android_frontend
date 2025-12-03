@@ -10,6 +10,8 @@ import eu.peernetwork.core.ui.component.UiComponentProvider
 
 @Composable
 fun TimelineModal(
+    username: String,
+    imageUrl: String,
     selected: MutableIntState,
     limit: Int,
     category: Category,
@@ -18,6 +20,8 @@ fun TimelineModal(
     viewModelStoreOwner: ViewModelStoreOwner,
 ) {
     TimelineFullScreen(
+        username = username,
+        imageUrl = imageUrl,
         limit = limit,
         selected = selected,
         category = category,

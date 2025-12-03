@@ -32,6 +32,8 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 fun ProfilePage(
     id: String,
+    username: String,
+    imageUrl: String,
     title: String?,
     limit: Int,
     selected: MutableIntState,
@@ -75,6 +77,8 @@ fun ProfilePage(
         val enable =  remember { mutableStateOf(false) }
         ArticleList(
             author = id,
+            username = username,
+            imageUrl = imageUrl,
             types = if (it == 0) {
                 PostUsecase.POST
             } else {

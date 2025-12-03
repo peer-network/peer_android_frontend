@@ -16,6 +16,7 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.compose.LazyPagingItems
+import eu.peernetwork.blog.ui.mapper.v2.mapToDetail
 import eu.peernetwork.blog.ui.model.v2.UiPost
 import eu.peernetwork.blog.ui.post.PostScreen
 import eu.peernetwork.core.common.paging.Pageable
@@ -89,6 +90,8 @@ fun ExploreScreen(
 
 @Composable
 fun ExploreFullScreen(
+    username: String,
+    imageUrl: String,
     selected: MutableIntState,
     limit: Int,
     provider: UiComponentProvider,
@@ -108,10 +111,13 @@ fun ExploreFullScreen(
         ) { component, items ->
             val pagerState = rememberPagerState(initialPage = selected.intValue) { items.itemCount }
             PostScreen(
+                username = username,
+                imageUrl = imageUrl,
                 limit = limit,
                 pagerState = pagerState,
                 provider = component,
-                viewModelStoreOwner = viewModelStoreOwner
+                viewModelStoreOwner = viewModelStoreOwner,
+                onComment = { items.itemSnapshotList.getOrNull(it)?.mapToDetail() }
             ) { index ->
                 updatedContent(this, component, items, index)
                 LaunchedEffect(Unit) {

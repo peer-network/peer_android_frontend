@@ -23,6 +23,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun FeedPage(
     id: String,
+    username: String,
+    imageUrl: String,
     ordinal: Int,
     limit: Int,
     title: String?,
@@ -51,6 +53,8 @@ fun FeedPage(
     FeedScaffold(pageState = pageState) {
         TimelineList(
             id = id,
+            username = username,
+            imageUrl = imageUrl,
             status = enable,
             selected = selected,
             limit = limit,

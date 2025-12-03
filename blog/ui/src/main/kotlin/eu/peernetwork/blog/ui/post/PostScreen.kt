@@ -2,11 +2,9 @@ package eu.peernetwork.blog.ui.post
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.pager.PagerScope
@@ -23,8 +21,9 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
+import eu.peernetwork.blog.ui.comment.CommentToolbar
+import eu.peernetwork.blog.ui.engagement.EngagementInteractor
 import eu.peernetwork.blog.ui.engagement.EngagementInteractor.Companion.LocalEngagementInteractor
 import eu.peernetwork.blog.ui.engagement.EngagementInteractor.State as EngagementState
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
@@ -34,6 +33,7 @@ import eu.peernetwork.blog.ui.mapper.v2.mapToDetail
 import eu.peernetwork.blog.ui.mapper.v2.mapToEngagement
 import eu.peernetwork.blog.ui.engagement.EngagementReaction.State as ReactionState
 import eu.peernetwork.blog.ui.model.v2.UiPost
+import eu.peernetwork.blog.ui.model.v2.UiPostDetail
 import eu.peernetwork.blog.ui.moderation.ModerationScreen
 import eu.peernetwork.blog.ui.post.PostInteractor.Companion.LocalPostInteractor
 import eu.peernetwork.core.ui.component.UiComponentProvider
@@ -42,6 +42,8 @@ import eu.peernetwork.core.ui.extension.builder
 @Composable
 fun PostScreen(
     limit: Int,
+    username: String,
+    imageUrl: String,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
     content: @Composable () -> Unit
@@ -52,7 +54,9 @@ fun PostScreen(
     }
     val updatedContent by rememberUpdatedState(content)
     EngagementScreen(
-        postLimit = limit,
+        limit = limit,
+        username = username,
+        imageUrl = imageUrl,
         provider = component,
         viewModelStoreOwner = viewModelStoreOwner
     ) {
@@ -94,6 +98,8 @@ fun PostScreen(
 @Composable
 fun PostScreen(
     limit: Int,
+    username: String,
+    imageUrl: String,
     focused: MutableIntState = rememberSaveable { mutableIntStateOf(-1) },
     listState: LazyListState,
     provider: UiComponentProvider,
@@ -104,6 +110,8 @@ fun PostScreen(
     val updatedContent by rememberUpdatedState(content)
     PostScreen(
         limit = limit,
+        username = username,
+        imageUrl = imageUrl,
         provider = provider,
         viewModelStoreOwner = viewModelStoreOwner,
     ) {
@@ -117,18 +125,25 @@ fun PostScreen(
 
 @Composable
 fun PostScreen(
+    username: String,
+    imageUrl: String,
     limit: Int,
     pagerState: PagerState,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
+    onComment: (Int) -> UiPostDetail?,
     content: @Composable PagerScope.(Int) -> Unit
 ) {
+    val handleComment by rememberUpdatedState(onComment)
     val updatedContent by rememberUpdatedState(content)
     PostScreen(
         limit = limit,
+        username = username,
+        imageUrl = imageUrl,
         provider = provider,
         viewModelStoreOwner = viewModelStoreOwner,
     ) {
+        val interactor = LocalEngagementInteractor.current
         Column(
             verticalArrangement = Arrangement.Bottom,
             modifier = Modifier
@@ -142,10 +157,15 @@ fun PostScreen(
                     .fillMaxWidth()
                     .weight(1f)
             ) { updatedContent(this, it) }
-            Box(modifier = Modifier
-                .fillMaxWidth()
-                .height(48.dp)
-                .background(MaterialTheme.colorScheme.surfaceVariant))
+            CommentToolbar(
+                username = username,
+                imageUrl = imageUrl,
+                onClick = {
+                    handleComment(pagerState.currentPage)?.let {
+                        interactor(EngagementInteractor.State.Comment(it))
+                    }
+                }
+            )
         }
     }
 }

@@ -11,6 +11,8 @@ import eu.peernetwork.core.ui.component.UiComponentProvider
 @Composable
 fun ArticleModal(
     author: String,
+    username: String,
+    imageUrl: String,
     types: Set<Content.Type>,
     limit: Int,
     selected: MutableIntState,
@@ -21,6 +23,8 @@ fun ArticleModal(
 ) {
     ArticleFullScreen(
         id = author,
+        username = username,
+        imageUrl = imageUrl,
         types = types,
         limit = limit,
         selected = selected,

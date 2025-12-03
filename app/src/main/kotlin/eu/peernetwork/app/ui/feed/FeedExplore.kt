@@ -26,11 +26,12 @@ import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.material.DesignTitle
 import eu.peernetwork.core.ui.design.material.DesignTitleBarHost
 import eu.peernetwork.media.core.model.UiMimeType
+import eu.peernetwork.user.domain.model.Account
 import kotlinx.coroutines.launch
 
 @Composable
 fun FeedExplore(
-    id: String,
+    account: Account,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
     navHostController: NavHostController,
@@ -42,7 +43,7 @@ fun FeedExplore(
         viewModelStoreOwner = viewModelStoreOwner,
     ) { component, viewModel ->
         FeedNavigation(
-            id = id,
+            account = account,
             component = component,
             controller = navHostController,
         ) { updatedContent(component, viewModel) }
@@ -51,7 +52,7 @@ fun FeedExplore(
 
 @Composable
 fun FeedExplore(
-    id: String,
+    account: Account,
     limit: Int,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
@@ -66,7 +67,7 @@ fun FeedExplore(
     val isVisible = remember { mutableStateOf(false) }
     val selected = remember { mutableIntStateOf(-1) }
     FeedExplore(
-        id = id,
+        account = account,
         provider = provider,
         viewModelStoreOwner = viewModelStoreOwner,
         navHostController = controller
@@ -86,7 +87,9 @@ fun FeedExplore(
         val enable = remember { mutableStateOf(false) }
         FeedExploreScaffold(pageState = pageState) {
             TimelineList(
-                id = id,
+                id = account.id,
+                username = account.username,
+                imageUrl = account.imageUrl,
                 status = enable,
                 selected = selected,
                 limit = limit,
@@ -102,7 +105,7 @@ fun FeedExplore(
                 onEvent = { isVisible.value = true }
             ) {}
             FeedModal(
-                id = id,
+                account = account,
                 selected = selected,
                 isVisible = isVisible,
                 criteria = derivedCriteria.value,

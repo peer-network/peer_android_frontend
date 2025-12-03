@@ -117,6 +117,8 @@ fun CommentScreen(
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 fun CommentScreen(
+    username: String,
+    imageUrl: String,
     limit: Int,
     post: MutableState<UiPostDetail?>,
     comment: TextFieldState,
@@ -135,6 +137,8 @@ fun CommentScreen(
         val isSuccess = remember { derivedStateOf { status.value is CommentViewModel.Status.Success<*> } }
         CommentSheet(
             state = post,
+            username = username,
+            imageUrl = imageUrl,
             comment = comment,
             isSuccess = isSuccess,
             isLoading = isLoading,

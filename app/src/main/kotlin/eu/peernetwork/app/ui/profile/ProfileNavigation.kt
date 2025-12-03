@@ -16,11 +16,11 @@ import eu.peernetwork.app.ui.search.SearchScreen
 import eu.peernetwork.app.ui.search.SearchMode
 import eu.peernetwork.app.ui.settings.SettingsScreen
 import eu.peernetwork.core.ui.design.material.DesignRouter
+import eu.peernetwork.user.domain.model.Account
 
 @Composable
 fun ProfileNavigation(
-    principal: String,
-    userId: String,
+    account: Account,
     controller: NavHostController,
     component: Profile.Component,
     viewModelStoreOwner: ViewModelStoreOwner,
@@ -38,7 +38,7 @@ fun ProfileNavigation(
         ) { backStackEntry ->
             val id = backStackEntry.arguments?.getString("id") ?: ""
             ProfileScreen(
-                principal = principal,
+                account = account,
                 userId = id,
                 provider = component,
                 viewModelStoreOwner = backStackEntry,
@@ -46,7 +46,7 @@ fun ProfileNavigation(
         }
         composable("settings") {
             SettingsScreen(
-                userId = userId,
+                account = account,
                 provider = component,
                 viewModelStoreOwner = viewModelStoreOwner
             )
@@ -66,7 +66,7 @@ fun ProfileNavigation(
                 else -> SearchMode.Default
             }
             SearchScreen(
-                id = userId,
+                account = account,
                 limit = BuildConfig.PAGING_LIMIT,
                 provider = component,
                 viewModelStoreOwner = backStackEntry,
@@ -76,7 +76,7 @@ fun ProfileNavigation(
         }
         composable("adverts") { backStackEntry ->
             DashboardScreen(
-                id = principal,
+                id = account.id,
                 limit = BuildConfig.PAGING_LIMIT,
                 provider = component,
                 viewModelStoreOwner = backStackEntry,

@@ -29,6 +29,7 @@ import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.core.ui.theme.DesignTheme
 import eu.peernetwork.core.ui.theme.PeerAppRed
 import eu.peernetwork.social.ui.feedback.FeedbackScreen
+import eu.peernetwork.user.domain.model.Account
 import eu.peernetwork.user.ui.R
 import eu.peernetwork.user.ui.deactivate.DeactivateScreen
 import eu.peernetwork.user.ui.logout.LogoutScreen
@@ -36,7 +37,7 @@ import eu.peernetwork.user.ui.user.UserBadge
 
 @Composable
 fun SettingsScreen(
-    userId: String,
+    account: Account,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner
 ) {
@@ -44,10 +45,10 @@ fun SettingsScreen(
     val component = remember {
         provider.builder(Settings.Builder::class.java).build(context)
     }
-    val account = stringResource(R.string.account_label)
+    val accountLabel = stringResource(R.string.account_label)
     val showLogout = remember { mutableStateOf(false) }
     val showDeactivation = remember { mutableStateOf(false) }
-    SettingsNavigation(userId, component) { backstack, controller ->
+    SettingsNavigation(account, component) { backstack, controller ->
         SettingsScreen(
             showLogout = showLogout,
             showDeactivate = showDeactivation,
@@ -55,10 +56,10 @@ fun SettingsScreen(
             onNavigate = { controller.navigateIfNecessary(it) }
         ) {
             UserBadge(
-                id = userId,
+                id = account.id,
                 provider = component,
                 viewModelStoreOwner = viewModelStoreOwner
-            ) { controller.navigateIfNecessary(account) }
+            ) { controller.navigateIfNecessary(accountLabel) }
         }
         DesignTitleBarHost("SettingsScreen") {
             titleBar {

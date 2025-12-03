@@ -14,10 +14,11 @@ import eu.peernetwork.app.ui.feed.FeedExplore
 import eu.peernetwork.app.ui.profile.ProfileScreen
 import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.core.ui.design.material.DesignRouter
+import eu.peernetwork.user.domain.model.Account
 
 @Composable
 fun SearchNavigation(
-    id: String,
+    account: Account,
     component: Search.Component,
     controller: NavHostController,
     content: @Composable () -> Unit
@@ -37,7 +38,7 @@ fun SearchNavigation(
         ) { backStackEntry ->
             val uuid = backStackEntry.arguments?.getString("id") ?: ""
             ProfileScreen(
-                principal = id,
+                account = account,
                 userId = uuid,
                 provider = component,
                 viewModelStoreOwner = backStackEntry,
@@ -51,7 +52,7 @@ fun SearchNavigation(
         ) { backStackEntry ->
             val tag = backStackEntry.arguments?.getString("tag")
             FeedExplore(
-                id = id,
+                account = account,
                 limit = BuildConfig.PAGING_LIMIT,
                 provider = component,
                 viewModelStoreOwner = backStackEntry,
@@ -70,7 +71,7 @@ fun SearchNavigation(
         ) { backStackEntry ->
             val query = backStackEntry.arguments?.getString("query")
             FeedExplore(
-                id,
+                account = account,
                 BuildConfig.PAGING_LIMIT,
                 component,
                 viewModelStoreOwner = backStackEntry,
@@ -89,7 +90,7 @@ fun SearchNavigation(
             val type = backStackEntry.arguments?.getString("type") ?: ""
             val query = backStackEntry.arguments?.getString("query") ?: ""
             SearchScreen(
-                id = id,
+                account = account,
                 limit = BuildConfig.PAGING_LIMIT,
                 provider = component,
                 viewModelStoreOwner = backStackEntry,

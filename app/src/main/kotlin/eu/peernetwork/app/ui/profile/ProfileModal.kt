@@ -11,10 +11,11 @@ import eu.peernetwork.blog.domain.usecase.PostUsecase
 import eu.peernetwork.blog.ui.article.ArticleModal
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.material.DesignOverlay
+import eu.peernetwork.user.domain.model.Account
 
 @Composable
 fun ProfileModal(
-    principal: String,
+    account: Account,
     userId: String,
     selected: MutableIntState,
     isVisible: MutableState<Boolean>,
@@ -29,14 +30,15 @@ fun ProfileModal(
     ) {
         ProfileScreen(provider) { component ->
             ProfileNavigation(
-                principal = principal,
-                userId = userId,
+                account = account,
                 controller = controller,
                 component = component,
                 viewModelStoreOwner = viewModelStoreOwner
             ) {
                 ArticleModal(
                     author = userId,
+                    username = account.username,
+                    imageUrl = account.imageUrl,
                     types = PostUsecase.POST,
                     limit = BuildConfig.PAGING_LIMIT,
                     selected = selected,

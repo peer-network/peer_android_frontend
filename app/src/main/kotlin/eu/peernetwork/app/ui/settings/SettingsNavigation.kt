@@ -18,6 +18,7 @@ import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.material.DesignRouter
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.social.ui.referral.ReferralScreen
+import eu.peernetwork.user.domain.model.Account
 import eu.peernetwork.user.ui.R
 import eu.peernetwork.user.ui.password.update.PasswordUpdateScreen
 import eu.peernetwork.user.ui.account.AccountScreen
@@ -25,22 +26,22 @@ import eu.peernetwork.user.ui.email.EmailScreen
 
 @Composable
 fun SettingsNavigation(
-    userId: String,
+    account: Account,
     provider: UiComponentProvider,
     settings: @Composable (NavBackStackEntry, NavHostController) -> Unit
 ) {
     val controller = rememberNavController()
     val updatedSettings by rememberUpdatedState(settings)
-    val referral = stringResource(R.string.referral_name_label)
-    val password = stringResource(R.string.password_label)
-    val email = stringResource(R.string.email_label)
-    val account = stringResource(R.string.account_label)
+    val referralLabel = stringResource(R.string.referral_name_label)
+    val passwordLabel = stringResource(R.string.password_label)
+    val emailLabel = stringResource(R.string.email_label)
+    val accountLabel = stringResource(R.string.account_label)
     DesignRouter(
         navController = controller,
         startDestination = "settings",
     ) {
         composable("settings") { updatedSettings(it, controller) }
-        composable(account) { AccountScreen(provider, it) }
+        composable(accountLabel) { AccountScreen(provider, it) }
         composable(
             "profile/{id}",
             arguments = listOf(navArgument("id") {
@@ -49,15 +50,15 @@ fun SettingsNavigation(
         ) { backStackEntry ->
             val id = backStackEntry.arguments?.getString("id") ?: ""
             ProfileScreen(
-                principal = userId,
+                account = account,
                 userId = id,
                 provider = provider,
                 viewModelStoreOwner = backStackEntry,
             )
         }
-        composable(referral) { backStackEntry ->
+        composable(referralLabel) { backStackEntry ->
             ReferralScreen(
-                userId = userId,
+                userId = account.id,
                 postLimit = BuildConfig.PAGING_LIMIT,
                 provider = provider,
                 viewModelStoreOwner = backStackEntry
@@ -65,12 +66,12 @@ fun SettingsNavigation(
                 controller.navigateIfNecessary("profile/${it.id}")
             }
         }
-        composable(password) {
+        composable(passwordLabel) {
             PasswordUpdateScreen(provider) {
                 controller.popBackStack()
             }
         }
-        composable(email) {
+        composable(emailLabel) {
             EmailScreen(provider) {
                 controller.popBackStack()
             }

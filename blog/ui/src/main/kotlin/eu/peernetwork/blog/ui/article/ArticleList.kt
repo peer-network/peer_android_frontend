@@ -37,6 +37,8 @@ import eu.peernetwork.core.ui.component.UiComponentProvider
 @OptIn(ExperimentalMaterial3Api::class)
 fun ArticleList(
     author: String,
+    username: String,
+    imageUrl: String,
     types: Set<Content.Type>,
     limit: Int,
     status: State<Boolean>,
@@ -67,6 +69,8 @@ fun ArticleList(
     }
     ArticleScreen(
         id = author,
+        username = username,
+        imageUrl = imageUrl,
         limit = limit,
         types = types,
         focused = current,

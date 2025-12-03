@@ -9,10 +9,11 @@ import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.blog.ui.explore.ExploreModal
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.material.DesignOverlay
+import eu.peernetwork.user.domain.model.Account
 
 @Composable
 fun SearchModal(
-    id: String,
+    account: Account,
     selected: MutableIntState,
     isVisible: MutableState<Boolean>,
     provider: UiComponentProvider,
@@ -28,7 +29,7 @@ fun SearchModal(
             viewModelStoreOwner = viewModelStoreOwner
         ) { component ->
             SearchNavigation(
-                id = id,
+                account = account,
                 controller = controller,
                 component = component
             ) {
@@ -36,6 +37,8 @@ fun SearchModal(
                     limit = BuildConfig.PAGING_LIMIT,
                     selected = selected,
                     provider = component,
+                    imageUrl = account.imageUrl,
+                    username = account.username,
                     viewModelStoreOwner = viewModelStoreOwner
                 )
             }

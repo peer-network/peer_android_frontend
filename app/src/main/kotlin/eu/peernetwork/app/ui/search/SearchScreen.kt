@@ -22,6 +22,7 @@ import eu.peernetwork.core.ui.design.material.DesignTitle
 import eu.peernetwork.core.ui.design.material.DesignTitleBarHost
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.social.ui.connection.ConnectionScreen
+import eu.peernetwork.user.domain.model.Account
 
 @Composable
 fun SearchScreen(
@@ -40,7 +41,7 @@ fun SearchScreen(
 
 @Composable
 fun SearchScreen(
-    id: String,
+    account: Account,
     limit: Int,
     mode: SearchMode,
     provider: UiComponentProvider,
@@ -58,7 +59,7 @@ fun SearchScreen(
         viewModelStoreOwner = viewModelStoreOwner,
     ) { component ->
         SearchNavigation(
-            id = id,
+            account = account,
             controller = controller,
             component = component
         ) {
@@ -89,7 +90,7 @@ fun SearchScreen(
             }
         }
         SearchModal(
-            id = id,
+            account = account,
             selected = selected,
             isVisible = isVisible,
             provider = component,

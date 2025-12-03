@@ -25,6 +25,8 @@ import eu.peernetwork.core.ui.extension.value
 
 @Composable
 fun CommentSheet(
+    username: String,
+    imageUrl: String,
     state: MutableState<UiPostDetail?>,
     comment: TextFieldState,
     isLoading: State<Boolean>,
@@ -60,8 +62,8 @@ fun CommentSheet(
                     .background(MaterialTheme.colorScheme.surfaceDim)
                     .navigationBarsPadding()) {
                     CommentForm(
-                        username = post.value.username,
-                        imageUrl = post.value.imageUrl,
+                        username = username,
+                        imageUrl = imageUrl,
                         comment = comment,
                         isLoading = isLoading,
                         isSuccess = isSuccess,

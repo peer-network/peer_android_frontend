@@ -19,10 +19,11 @@ import eu.peernetwork.app.ui.wallet.WalletScreen
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.design.material.DesignNavigation
 import eu.peernetwork.core.ui.factory.UiViewModelStore
+import eu.peernetwork.user.domain.model.Account
 
 @Composable
 fun HomeNavigation(
-    id: String,
+    account: Account,
     startDestination: String,
     navController: NavHostController,
     component: Home.Component,
@@ -40,34 +41,34 @@ fun HomeNavigation(
             composable(route.path) { backStackEntry ->
                 when (route) {
                     is HomeRoute.Home -> FeedScreen(
-                        id = id,
+                        account = account,
                         limit = BuildConfig.PAGING_LIMIT,
                         provider = component,
                         viewModelStoreOwner = backStackEntry,
                         refresh = hasUpdate,
                     )
                     is HomeRoute.Profile -> ProfileScreen(
-                        principal = id,
-                        userId = id,
+                        account = account,
+                        userId = account.id,
                         provider = component,
                         viewModelStoreOwner = backStackEntry,
                     )
                     is HomeRoute.Add -> ComposerScreen(
                         provider = component,
-                        viewModelStoreOwner = viewModelStore.get(id),
+                        viewModelStoreOwner = viewModelStore.get(account.id),
                         onPostSuccess = {
                             hasUpdate.value = true
                             handleOnHomeClick()
                         }
                     )
                     is HomeRoute.Wallet -> WalletScreen(
-                        id = id,
+                        account = account,
                         postLimit = BuildConfig.PAGING_LIMIT,
                         provider = component,
                         viewModelState = viewModelStore
                     )
                     is HomeRoute.Search -> SearchScreen(
-                        id = id,
+                        account = account,
                         limit = BuildConfig.PAGING_LIMIT,
                         mode = SearchMode.Default,
                         provider = component,
@@ -79,7 +80,7 @@ fun HomeNavigation(
         }
         composable(HomeRoute.Explore.path) { backStackEntry ->
             FeedExplore(
-                id = id,
+                account = account,
                 limit = BuildConfig.PAGING_LIMIT,
                 provider = component,
                 viewModelStoreOwner = backStackEntry,
@@ -89,7 +90,7 @@ fun HomeNavigation(
         composable("post/{id}") {
             val postId = it.arguments?.getString("id") ?: ""
             ContentScreen(
-                userId = id,
+                account = account,
                 postId = postId,
                 provider = component,
                 viewModelStore = viewModelStore

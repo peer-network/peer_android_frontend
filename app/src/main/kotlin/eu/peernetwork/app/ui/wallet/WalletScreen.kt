@@ -30,6 +30,7 @@ import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.core.ui.factory.UiViewModelStore
 import eu.peernetwork.social.ui.search.member.MemberDialog
+import eu.peernetwork.user.domain.model.Account
 import eu.peernetwork.wallet.ui.model.UiRecipient
 import eu.peernetwork.wallet.ui.overview.OverviewScreen
 import eu.peernetwork.wallet.ui.service.ServiceScreen
@@ -38,7 +39,7 @@ import eu.peernetwork.wallet.ui.saveable.UiRecipientSaver
 
 @Composable
 fun WalletScreen(
-    id: String,
+    account: Account,
     postLimit: Int,
     provider: UiComponentProvider,
     viewModelState: UiViewModelStore
@@ -49,17 +50,17 @@ fun WalletScreen(
     }
     val viewModelStoreOwner = remember { viewModelState.get("WalletScreen") }
     val recipient = rememberSaveable(saver = UiRecipientSaver) {
-        mutableStateOf<UiRecipient?>(null)
+        mutableStateOf(null)
     }
     val service = remember(recipient.value) {
-        mutableStateOf<ServiceState>(recipient.value?.let {
+        mutableStateOf(recipient.value?.let {
             ServiceState.Transfer(it)
         } ?: ServiceState.Default)
     }
     val showSheet = rememberSaveable { mutableStateOf(false) }
     val lastUpdated = remember { mutableLongStateOf(System.currentTimeMillis()) }
     WalletNavigation(
-        id = id,
+        account = account,
         provider = component
     ) { controller ->
         WalletScreen(

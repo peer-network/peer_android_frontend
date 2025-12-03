@@ -97,7 +97,7 @@ fun HomeScreen(
             start = navigationState,
             options = { RewardScreen(
                 provider = component,
-                viewModelStoreOwner = viewModelStore.get(data.value.userId)
+                viewModelStoreOwner = viewModelStore.get(data.value.account.id)
             ) },
             onClick = {
                 viewModel.lastVisited(it)
@@ -118,7 +118,7 @@ fun HomeScreen(
             isExploreActive = currentRoute == HomeRoute.Explore.path
         ) { state ->
             HomeNavigation(
-                id = data.value.userId,
+                account = data.value.account,
                 startDestination = route ?: startDestination,
                 navController = controller,
                 component = component,

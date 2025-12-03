@@ -28,6 +28,7 @@ import androidx.paging.compose.LazyPagingItems
 import eu.peernetwork.blog.domain.model.Content
 import eu.peernetwork.blog.ui.R
 import eu.peernetwork.blog.ui.extension.share
+import eu.peernetwork.blog.ui.mapper.v2.mapToDetail
 import eu.peernetwork.blog.ui.model.v2.UiPost
 import eu.peernetwork.blog.ui.moderation.ModerationInteractor.Companion.LocalModerationInteractor
 import eu.peernetwork.blog.ui.post.PostScreen
@@ -134,6 +135,8 @@ fun ArticleScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 fun ArticleScreen(
     id: String,
+    username: String,
+    imageUrl: String,
     types: Set<Content.Type>,
     limit: Int,
     focused: MutableIntState,
@@ -167,6 +170,8 @@ fun ArticleScreen(
         ) { component, items ->
             PostScreen(
                 limit = limit,
+                username = username,
+                imageUrl = imageUrl,
                 focused = focused,
                 listState = listState,
                 provider = component,
@@ -197,6 +202,8 @@ fun ArticleScreen(
 @Composable
 fun ArticleFullScreen(
     id: String,
+    username: String,
+    imageUrl: String,
     types: Set<Content.Type>,
     limit: Int,
     selected: MutableIntState,
@@ -224,10 +231,13 @@ fun ArticleFullScreen(
         ) { component, items ->
             val pagerState = rememberPagerState(initialPage = selected.intValue) { items.itemCount }
             PostScreen(
+                username = username,
+                imageUrl = imageUrl,
                 limit = limit,
                 pagerState = pagerState,
                 provider = component,
-                viewModelStoreOwner = viewModelStoreOwner
+                viewModelStoreOwner = viewModelStoreOwner,
+                onComment = { items.itemSnapshotList.getOrNull(it)?.mapToDetail() }
             ) { index ->
                 updatedContent(this, component, items, index)
                 LaunchedEffect(Unit) {

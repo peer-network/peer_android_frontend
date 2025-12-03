@@ -11,12 +11,16 @@ import eu.peernetwork.core.ui.component.UiComponentProvider
 @Composable
 fun CommentList(
     limit: Int,
+    username: String,
+    imageUrl: String,
     state: MutableState<UiPostDetail?>,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner
 ) {
     val textField = remember { TextFieldState() }
     CommentScreen(
+        username = username,
+        imageUrl = imageUrl,
         limit = limit,
         post = state,
         comment = textField,

@@ -8,12 +8,16 @@ import eu.peernetwork.core.ui.component.UiComponentProvider
 
 @Composable
 fun ExploreModal(
+    username: String,
+    imageUrl: String,
     selected: MutableIntState,
     limit: Int,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
 ) {
     ExploreFullScreen(
+        username = username,
+        imageUrl = imageUrl,
         selected = selected,
         limit = limit,
         provider = provider,

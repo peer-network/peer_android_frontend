@@ -11,10 +11,11 @@ import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.blog.ui.timeline.TimelineModal
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.material.DesignOverlay
+import eu.peernetwork.user.domain.model.Account
 
 @Composable
 fun FeedModal(
-    id: String,
+    account: Account,
     selected: MutableIntState,
     category: Category,
     criteria: Criteria = Criteria.None,
@@ -32,13 +33,15 @@ fun FeedModal(
             viewModelStoreOwner = viewModelStoreOwner
         ) { component, viewModel ->
             FeedNavigation(
-                id = id,
+                account = account,
                 controller = controller,
                 component = component
             ) {
                 TimelineModal(
                     limit = BuildConfig.PAGING_LIMIT,
                     selected = selected,
+                    username = account.username,
+                    imageUrl = account.imageUrl,
                     category = category,
                     criteria = criteria,
                     provider = component,

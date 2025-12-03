@@ -28,7 +28,9 @@ import eu.peernetwork.core.ui.extension.builder
 
 @Composable
 fun EngagementScreen(
-    postLimit: Int,
+    username: String,
+    imageUrl: String,
+    limit: Int,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
     content: @Composable () -> Unit
@@ -88,14 +90,16 @@ fun EngagementScreen(
         }
     }
     CommentList(
-        limit = postLimit,
+        username = username,
+        imageUrl = imageUrl,
+        limit = limit,
         state = post,
         provider = component,
         viewModelStoreOwner = viewModelStoreOwner
     )
     OverviewScreen(
         state = overview,
-        postLimit = postLimit,
+        postLimit = limit,
         provider = component,
         viewModelStoreOwner = viewModelStoreOwner
     )
