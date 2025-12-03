@@ -15,16 +15,25 @@ fun ExploreModal(
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
 ) {
-    ExploreFullScreen(
-        username = username,
-        imageUrl = imageUrl,
-        selected = selected,
-        limit = limit,
+    ExploreScreen(
         provider = provider,
         viewModelStoreOwner = viewModelStoreOwner
-    ) { component, items, index ->
-        items[index]?.title?.text?.let {
-            PostModal(it)
+    ) { component, viewModel ->
+        ExploreFullScreen(
+            username = username,
+            imageUrl = imageUrl,
+            selected = selected,
+            limit = limit,
+            component = component,
+            viewModel = viewModel,
+            viewModelStoreOwner = viewModelStoreOwner
+        ) { component, item, index, pagerState ->
+            PostModal(
+                position = index,
+                current = selected,
+                enabled =!pagerState.isScrollInProgress,
+                item
+            )
         }
     }
 }

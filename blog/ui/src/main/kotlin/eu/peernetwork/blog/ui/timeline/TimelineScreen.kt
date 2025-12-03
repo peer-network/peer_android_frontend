@@ -6,6 +6,7 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.PagerScope
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.ViewModelStoreOwner
@@ -202,7 +203,7 @@ fun TimelineFullScreen(
     criteria: Criteria,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
-    content: @Composable PagerScope.(Timeline.Component, LazyPagingItems<UiPost>, Int) -> Unit
+    content: @Composable PagerScope.(Timeline.Component, UiPost, Int, PagerState) -> Unit
 ) {
     val updatedContent by rememberUpdatedState(content)
     TimelineScreen(
@@ -228,7 +229,7 @@ fun TimelineFullScreen(
                 viewModelStoreOwner = viewModelStoreOwner,
                 onComment = { items.itemSnapshotList.getOrNull(it)?.mapToDetail() }
             ) { index ->
-                updatedContent(this, component, items, index)
+                items[index]?.let { updatedContent(this, component, it, index, pagerState) }
                 LaunchedEffect(Unit) {
                     items.itemSnapshotList.getOrNull(pagerState.currentPage)?.let { post ->
                         viewModel.view(post.id)

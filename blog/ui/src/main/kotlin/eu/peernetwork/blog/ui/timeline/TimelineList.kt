@@ -25,7 +25,6 @@ import eu.peernetwork.blog.ui.engagement.EngagementReaction
 import eu.peernetwork.blog.ui.engagement.EngagementReaction.Companion.LocalEngagementReaction
 import eu.peernetwork.blog.ui.mapper.v2.mapToDetail
 import eu.peernetwork.blog.ui.model.v2.UiPost
-import eu.peernetwork.blog.ui.post.PostInteractor.Companion.LocalPostInteractor
 import eu.peernetwork.blog.ui.post.PostItem
 import eu.peernetwork.blog.ui.post.PostMedia
 import eu.peernetwork.blog.ui.post.PostSkeleton
@@ -85,7 +84,6 @@ fun TimelineList(
             key = { index -> items[index]?.id?.let { "$it;$index" } ?: index }
         ) { index ->
             items[index]?.let { post ->
-                val interactor = LocalPostInteractor.current
                 val engagement = LocalEngagementInteractor.current
                 val reaction = LocalEngagementReaction.current
                 PostItem(
@@ -114,7 +112,9 @@ fun TimelineList(
                         }
                     },
                     content = { path ->
-                        val isActive = remember { derivedStateOf { index == current.intValue } }
+                        val isActive = remember { derivedStateOf {
+                            index == current.intValue
+                        } }
                         PostMedia(
                             type = post.type,
                             path = path,
@@ -124,8 +124,6 @@ fun TimelineList(
                             status = status,
                             enable = enable,
                             isActive = isActive,
-                            component = interactor.component(),
-                            viewModelStoreOwner = viewModelStoreOwner,
                         )
                     }
                 )

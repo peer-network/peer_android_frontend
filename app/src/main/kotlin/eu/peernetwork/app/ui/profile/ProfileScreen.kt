@@ -1,6 +1,7 @@
 package eu.peernetwork.app.ui.profile
 
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -13,9 +14,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.navigation.compose.rememberNavController
 import eu.peernetwork.app.BuildConfig
+import eu.peernetwork.blog.domain.usecase.PostUsecase
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
+import eu.peernetwork.media.core.model.UiMimeType
 import eu.peernetwork.user.domain.model.Account
 
 @Composable
@@ -44,6 +47,10 @@ fun ProfileScreen(
     val selected = remember { mutableIntStateOf(-1) }
     val timestamp = rememberSaveable { mutableLongStateOf(System.currentTimeMillis()) }
     ProfileScreen(provider) { component ->
+        val pageState = rememberPagerState(
+            pageCount = { UiMimeType.TYPES.size },
+            initialPage = 0
+        )
         ProfileNavigation(
             account = account,
             controller = controller,
@@ -66,6 +73,7 @@ fun ProfileScreen(
                 postState = postState,
                 mediaState = mediaState,
                 controller = controller,
+                pageState = pageState,
                 onClick = { isVisible.value = true }
             )
         }
@@ -76,6 +84,11 @@ fun ProfileScreen(
             selected = selected,
             timestamp = timestamp,
             provider = provider,
+            types = if (pageState.currentPage == 0) {
+                PostUsecase.POST
+            } else {
+                PostUsecase.MEDIA
+            },
             viewModelStoreOwner = viewModelStoreOwner
         )
     }

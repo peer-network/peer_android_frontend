@@ -6,6 +6,7 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.PagerScope
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
@@ -75,17 +76,18 @@ fun ArticleScreen(
 ) {
     val state by viewModel.states.collectAsStateWithLifecycle()
     val status by viewModel.status.collectAsStateWithLifecycle()
+    val key = "${types.hashCode()}/$id"
     val localState = remember { derivedStateOf {
         state[types.hashCode()] ?: ArticleViewModel.State.Empty
     } }
-    val localStatus = remember { derivedStateOf {
+    val refreshStatus = remember { derivedStateOf {
         status[types.hashCode().toString()] ?: ArticleViewModel.Status.Empty
     } }
-    val selector = remember { derivedStateOf {
-        status[id] ?: ArticleViewModel.Status.Empty
+    val localStatus = remember { derivedStateOf {
+        status[key] ?: ArticleViewModel.Status.Empty
     } }
     val position = remember { derivedStateOf {
-        (selector.value as? ArticleViewModel.Status.Success<Int>?)?.data ?: -1
+        (localStatus.value as? ArticleViewModel.Status.Success<Int>?)?.data ?: -1
     } }
     val derivedState = remember {
         derivedStateOf {
@@ -110,7 +112,7 @@ fun ArticleScreen(
     ) { updatedContent(component, it) }
     LaunchedEffect(timestamp.value) {
         val page = Pageable(0, limit)
-        (localStatus.value as? ArticleViewModel.Status.Success<Long>?)?.let {
+        (refreshStatus.value as? ArticleViewModel.Status.Success<Long>?)?.let {
             if (it.data != timestamp.value) {
                 viewModel.load(id, types, page)
             }
@@ -119,13 +121,15 @@ fun ArticleScreen(
     }
     LaunchedEffect(selected.intValue) {
         if (selected.intValue != position.value) {
-            viewModel.selected(id, selected.intValue)
-            handleEvent(ArticleEvent.Post(selected.intValue))
+            viewModel.selected(key, selected.intValue)
+            if (selected.intValue != -1) {
+                handleEvent(ArticleEvent.Post(selected.intValue))
+            }
         }
     }
     DisposableEffect(Unit) {
         onDispose {
-            viewModel.selected(id, -1)
+            viewModel.selected(key, -1)
             selected.intValue = -1
         }
     }
@@ -211,7 +215,7 @@ fun ArticleFullScreen(
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
     onEvent: (ArticleEvent) -> Unit,
-    content: @Composable PagerScope.(Article.Component, LazyPagingItems<UiPost>, Int) -> Unit
+    content: @Composable PagerScope.(Article.Component, UiPost, Int, PagerState) -> Unit
 ) {
     val updatedContent by rememberUpdatedState(content)
     ArticleScreen(
@@ -239,7 +243,7 @@ fun ArticleFullScreen(
                 viewModelStoreOwner = viewModelStoreOwner,
                 onComment = { items.itemSnapshotList.getOrNull(it)?.mapToDetail() }
             ) { index ->
-                updatedContent(this, component, items, index)
+                items[index]?.let { updatedContent(this, component, it, index, pagerState) }
                 LaunchedEffect(Unit) {
                     items.itemSnapshotList.getOrNull(pagerState.currentPage)?.let { post ->
                         viewModel.view(post.id)

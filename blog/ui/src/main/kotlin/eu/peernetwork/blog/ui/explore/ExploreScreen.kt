@@ -1,6 +1,7 @@
 package eu.peernetwork.blog.ui.explore
 
 import androidx.compose.foundation.pager.PagerScope
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -94,44 +95,40 @@ fun ExploreFullScreen(
     imageUrl: String,
     selected: MutableIntState,
     limit: Int,
-    provider: UiComponentProvider,
+    component: Explore.Component,
+    viewModel: ExploreViewModel,
     viewModelStoreOwner: ViewModelStoreOwner,
-    content: @Composable PagerScope.(Explore.Component, LazyPagingItems<UiPost>, Int) -> Unit
+    content: @Composable PagerScope.(Explore.Component, UiPost, Int, PagerState) -> Unit
 ) {
     val updatedContent by rememberUpdatedState(content)
+    val key = component.hashCode()
     ExploreScreen(
-        provider = provider,
-        viewModelStoreOwner = viewModelStoreOwner
-    ) { component, viewModel ->
-        val key = component.hashCode()
-        ExploreScreen(
+        limit = limit,
+        component = component,
+        viewModel = viewModel,
+    ) { component, items ->
+        val pagerState = rememberPagerState(initialPage = selected.intValue) { items.itemCount }
+        PostScreen(
+            username = username,
+            imageUrl = imageUrl,
             limit = limit,
-            component = component,
-            viewModel = viewModel,
-        ) { component, items ->
-            val pagerState = rememberPagerState(initialPage = selected.intValue) { items.itemCount }
-            PostScreen(
-                username = username,
-                imageUrl = imageUrl,
-                limit = limit,
-                pagerState = pagerState,
-                provider = component,
-                viewModelStoreOwner = viewModelStoreOwner,
-                onComment = { items.itemSnapshotList.getOrNull(it)?.mapToDetail() }
-            ) { index ->
-                updatedContent(this, component, items, index)
-                LaunchedEffect(Unit) {
-                    items.itemSnapshotList.getOrNull(pagerState.currentPage)?.let { post ->
-                        viewModel.view(post.id)
-                    }
+            pagerState = pagerState,
+            provider = component,
+            viewModelStoreOwner = viewModelStoreOwner,
+            onComment = { items.itemSnapshotList.getOrNull(it)?.mapToDetail() }
+        ) { index ->
+            items[index]?.let { updatedContent(this, component, it, index, pagerState) }
+            LaunchedEffect(Unit) {
+                items.itemSnapshotList.getOrNull(pagerState.currentPage)?.let { post ->
+                    viewModel.view(post.id)
                 }
             }
         }
-        DisposableEffect(Unit) {
-            onDispose {
-                viewModel.selected(key, -1)
-                selected.intValue = -1
-            }
+    }
+    DisposableEffect(Unit) {
+        onDispose {
+            viewModel.selected(key, -1)
+            selected.intValue = -1
         }
     }
 }

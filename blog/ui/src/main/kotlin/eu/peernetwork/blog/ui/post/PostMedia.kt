@@ -15,10 +15,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModelStoreOwner
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import eu.peernetwork.blog.ui.model.v2.UiPostType
+import eu.peernetwork.blog.ui.post.PostInteractor.Companion.LocalPostInteractor
 import eu.peernetwork.core.ui.design.material.DesignThumbnail
 import eu.peernetwork.media.core.renderer.ImageView
 import eu.peernetwork.media.core.renderer.VideoThumbnail
@@ -33,18 +31,12 @@ fun PostMedia(
     status: State<Boolean>,
     enable: State<Boolean>,
     isActive: State<Boolean>,
-    component: Post.Component,
-    viewModelStoreOwner: ViewModelStoreOwner,
 ) {
+    val interactor = LocalPostInteractor.current
     val configuration = LocalConfiguration.current
-    val viewModel = viewModel(
-        modelClass = PostViewModel::class.java,
-        viewModelStoreOwner = viewModelStoreOwner,
-        factory = component.viewModelFactory()
-    )
-    val thumbnail = viewModel.thumbnail.collectAsStateWithLifecycle()
+    val thumbnail = interactor.observe()
     if (type == UiPostType.IMAGE) {
-        component.imageView()(
+        interactor.component().imageView()(
             modifier = Modifier,
             spec = ImageView.Spec(
                 url = path,
@@ -53,7 +45,7 @@ fun PostMedia(
                 blur = 500f,
             )
         )
-        component.imageView()(
+        interactor.component().imageView()(
             modifier = Modifier,
             spec = ImageView.Spec(
                 url = path,
@@ -71,14 +63,14 @@ fun PostMedia(
                 .fillMaxWidth()
                 .aspectRatio(aspectRatio)
         ) {
-            viewModel.videoBackground(
+            interactor.background(
                 media = path,
                 aspectRatio = aspectRatio,
                 width = configuration.screenWidthDp,
                 height = (configuration.screenWidthDp / aspectRatio).toInt()
             )
         }
-        component.videoThumbnail()(
+        interactor.component().videoThumbnail()(
             Modifier,
             spec = VideoThumbnail.Spec(
                 url = path,
@@ -90,7 +82,7 @@ fun PostMedia(
         Box(contentAlignment = Alignment.BottomEnd) {
             val current = remember { mutableIntStateOf(-1) }
             val length = remember { mutableLongStateOf(0L) }
-            component.imageView()(
+            interactor.component().imageView()(
                 modifier = Modifier,
                 spec = ImageView.Spec(
                     url = avatar,
@@ -99,14 +91,14 @@ fun PostMedia(
                     blur = 500f,
                 )
             )
-            component.imageView()(
+            interactor.component().imageView()(
                 modifier = Modifier,
                 spec = ImageView.Spec(
                     url = avatar,
                     ratio = aspectRatio
                 )
             )
-            component.audioPlayer().Thumbnail(
+            interactor.component().audioPlayer().Thumbnail(
                 path = path,
                 hasControls = false,
                 position = position,

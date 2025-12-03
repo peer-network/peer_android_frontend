@@ -2,7 +2,7 @@ package eu.peernetwork.app.ui.profile
 
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,7 +24,6 @@ import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.design.material.DesignTitle
 import eu.peernetwork.core.ui.design.material.DesignTitleBarHost
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
-import eu.peernetwork.media.core.model.UiMimeType
 import eu.peernetwork.social.ui.connection.ConnectionStatus
 import kotlinx.coroutines.launch
 
@@ -36,6 +35,7 @@ fun ProfilePage(
     imageUrl: String,
     title: String?,
     limit: Int,
+    pageState: PagerState,
     selected: MutableIntState,
     timestamp: MutableLongState,
     postState: LazyListState = rememberLazyListState(),
@@ -50,10 +50,6 @@ fun ProfilePage(
     val requirePostUpdate = rememberSaveable { mutableStateOf(false) }
     val connection = remember { mutableStateOf<ConnectionStatus?>(null) }
     val coroutine = rememberCoroutineScope()
-    val pageState = rememberPagerState(
-        pageCount = { UiMimeType.TYPES.size },
-        initialPage = 0
-    )
     val handleClick by rememberUpdatedState(onClick)
     ProfileScaffold(
         pageState = pageState,

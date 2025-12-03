@@ -1,5 +1,6 @@
 package eu.peernetwork.blog.ui.post
 
+import android.graphics.Bitmap
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -14,6 +15,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.MutableIntState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -22,6 +24,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModelStoreOwner
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import eu.peernetwork.blog.ui.comment.CommentToolbar
 import eu.peernetwork.blog.ui.engagement.EngagementInteractor
 import eu.peernetwork.blog.ui.engagement.EngagementInteractor.Companion.LocalEngagementInteractor
@@ -52,7 +56,13 @@ fun PostScreen(
     val component = remember {
         provider.builder(Post.Builder::class.java).build(context)
     }
+    val viewModel = viewModel(
+        modelClass = PostViewModel::class.java,
+        viewModelStoreOwner = viewModelStoreOwner,
+        factory = component.viewModelFactory()
+    )
     val updatedContent by rememberUpdatedState(content)
+    val thumbnail = viewModel.thumbnail.collectAsStateWithLifecycle()
     EngagementScreen(
         limit = limit,
         username = username,
@@ -85,7 +95,25 @@ fun PostScreen(
             viewModelStoreOwner = viewModelStoreOwner
         ) {
             val interactor = remember { object : PostInteractor {
+                override fun observe(): State<Map<String, Bitmap?>> = thumbnail
+
                 override fun component(): Post.Component = component
+
+                override fun background(
+                    media: String,
+                    aspectRatio: Float,
+                    width: Int,
+                    height: Int,
+                    fit: Boolean
+                ) {
+                    viewModel.videoBackground(
+                        media = media,
+                        aspectRatio = aspectRatio,
+                        width = width,
+                        height = height,
+                        fit = fit
+                    )
+                }
             } }
             CompositionLocalProvider(
                 LocalPostInteractor provides interactor,

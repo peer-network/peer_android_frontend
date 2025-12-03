@@ -28,9 +28,12 @@ fun TimelineModal(
         criteria = criteria,
         provider = provider,
         viewModelStoreOwner = viewModelStoreOwner,
-    ) { component, items, index ->
-        items[index]?.title?.text?.let {
-            PostModal(it)
-        }
+    ) { component, post, index, pagerState ->
+        PostModal(
+            position = index,
+            current = selected,
+            enabled =!pagerState.isScrollInProgress,
+            post
+        )
     }
 }

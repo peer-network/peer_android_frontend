@@ -32,9 +32,12 @@ fun ArticleModal(
         provider = provider,
         viewModelStoreOwner = viewModelStoreOwner,
         onEvent = onEvent,
-    ) { component, items, index ->
-        items[index]?.title?.text?.let {
-            PostModal(it)
-        }
+    ) { component, item, index, pagerState ->
+        PostModal(
+            position = index,
+            current = selected,
+            enabled = !pagerState.isScrollInProgress,
+            item
+        )
     }
 }

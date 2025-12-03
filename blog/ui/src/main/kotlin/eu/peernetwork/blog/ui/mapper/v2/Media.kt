@@ -4,6 +4,7 @@ import eu.peernetwork.blog.domain.model.Media
 import eu.peernetwork.blog.ui.model.v2.UiAsset
 import eu.peernetwork.blog.ui.model.v2.UiDisplay
 import eu.peernetwork.blog.ui.model.v2.UiMedia
+import eu.peernetwork.media.core.model.UiMimeType
 import kotlinx.collections.immutable.toPersistentList
 
 fun Media.mapFromDomain(): UiMedia {
@@ -38,4 +39,8 @@ fun List<UiMedia>.getAspectRatio(): Float {
     return (minOfOrNull { media ->
         media.display.resolution?.let { media.getAspectRatio() } ?: 1f
     } ?: 1f).coerceIn(0.8f, 1f)
+}
+
+fun UiMimeType.query(): String {
+    return "?query=$id"
 }
