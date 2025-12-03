@@ -5,16 +5,22 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import eu.peernetwork.blog.ui.model.v2.UiPostType
 import eu.peernetwork.blog.ui.post.PostInteractor.Companion.LocalPostInteractor
 import eu.peernetwork.core.ui.design.material.DesignThumbnail
@@ -28,13 +34,16 @@ fun PostMedia(
     avatar: String,
     position: Int,
     aspectRatio: Float,
-    status: State<Boolean>,
     enable: State<Boolean>,
-    isActive: State<Boolean>,
+    isPlaying: State<Boolean>,
 ) {
     val interactor = LocalPostInteractor.current
     val configuration = LocalConfiguration.current
-    val thumbnail = interactor.observe()
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val bitmaps = interactor.observe()
+    val thumbnail = remember { derivedStateOf { bitmaps.value[path] } }
+    val pause = remember { mutableStateOf(false) }
+    val isActive = remember { derivedStateOf { !pause.value && enable.value } }
     if (type == UiPostType.IMAGE) {
         interactor.component().imageView()(
             modifier = Modifier,
@@ -53,11 +62,10 @@ fun PostMedia(
             )
         )
     } else if (type == UiPostType.VIDEO) {
-        val postThumbnail = remember { derivedStateOf { thumbnail.value[path] } }
         DesignThumbnail(
             enable = enable,
             thumbnail = path,
-            bitmap = postThumbnail,
+            bitmap = thumbnail,
             modifier = Modifier
                 .fillMaxWidth()
                 .aspectRatio(aspectRatio)
@@ -74,7 +82,8 @@ fun PostMedia(
             spec = VideoThumbnail.Spec(
                 url = path,
                 ratio = aspectRatio,
-                isPlaying = isActive
+                enabled = isActive,
+                isPlaying = isPlaying
             )
         )
     } else if (type == UiPostType.AUDIO) {
@@ -101,13 +110,35 @@ fun PostMedia(
                 path = path,
                 hasControls = false,
                 position = position,
-                enable = isActive,
-                isActive = isActive,
+                enable = isPlaying,
+                isActive = isPlaying,
                 length = length,
                 current = current,
                 modifier = Modifier.padding(horizontal = 24.dp)
                     .padding(vertical = 12.dp)
             )
+        }
+    }
+    val lifecycleObserver = remember {
+        LifecycleEventObserver { _, event ->
+            when (event) {
+                Lifecycle.Event.ON_RESUME -> {
+                    pause.value = false
+                }
+                Lifecycle.Event.ON_STOP -> {
+                    pause.value = true
+                }
+                else -> Unit
+            }
+        }
+    }
+    LaunchedEffect(Unit) {
+        lifecycleOwner.lifecycle.addObserver(lifecycleObserver)
+    }
+    DisposableEffect(Unit) {
+        lifecycleOwner.lifecycle.addObserver(lifecycleObserver)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(lifecycleObserver)
         }
     }
 }

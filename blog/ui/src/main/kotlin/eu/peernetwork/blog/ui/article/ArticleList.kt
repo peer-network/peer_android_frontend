@@ -6,7 +6,6 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
@@ -15,10 +14,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.ViewModelStoreOwner
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.paging.LoadState
 import eu.peernetwork.blog.domain.model.Content
 import eu.peernetwork.blog.ui.engagement.EngagementInteractor.Companion.LocalEngagementInteractor
@@ -48,24 +44,9 @@ fun ArticleList(
     onEvent: (ArticleEvent) -> Unit,
     listState: LazyListState = rememberLazyListState()
 ) {
-    val lifecycleOwner = LocalLifecycleOwner.current
-    val enable = remember { derivedStateOf { !listState.isScrollInProgress } }
-    val pause = remember { mutableStateOf(false) }
+    val enable = remember { derivedStateOf { !status.value } }
     val showSheet = remember { mutableStateOf<UiPost?>(null) }
     val current = rememberSaveable { mutableIntStateOf(-1) }
-    val lifecycleObserver = remember {
-        LifecycleEventObserver { _, event ->
-            when (event) {
-                Lifecycle.Event.ON_RESUME -> {
-                    pause.value = false
-                }
-                Lifecycle.Event.ON_STOP -> {
-                    pause.value = true
-                }
-                else -> Unit
-            }
-        }
-    }
     ArticleScreen(
         id = author,
         username = username,
@@ -110,9 +91,8 @@ fun ArticleList(
                             avatar = post.author.imageUrl,
                             position = index,
                             aspectRatio = post.asset.ratio,
-                            status = status,
                             enable = enable,
-                            isActive = isActive
+                            isPlaying = isActive
                         )
                     }
                 )
@@ -126,12 +106,6 @@ fun ArticleList(
                     }
                 }
             }
-        }
-    }
-    DisposableEffect(Unit) {
-        lifecycleOwner.lifecycle.addObserver(lifecycleObserver)
-        onDispose {
-            lifecycleOwner.lifecycle.removeObserver(lifecycleObserver)
         }
     }
 }

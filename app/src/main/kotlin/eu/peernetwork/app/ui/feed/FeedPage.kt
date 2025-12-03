@@ -5,6 +5,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableIntState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -29,6 +30,7 @@ fun FeedPage(
     limit: Int,
     title: String?,
     criteria: Criteria?,
+    isVisible: State<Boolean>,
     selected: MutableIntState,
     pageState: PagerState,
     component: Feed.Component,
@@ -38,7 +40,6 @@ fun FeedPage(
     onFilter: (Int) -> Unit,
     onClick: () -> Unit,
 ) {
-    val enable = remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
     val filter = remember(criteria) { mutableStateOf(criteria) }
     val derivedCriteria = remember(ordinal, filter.value) { derivedStateOf {
@@ -55,7 +56,7 @@ fun FeedPage(
             id = id,
             username = username,
             imageUrl = imageUrl,
-            status = enable,
+            status = isVisible,
             selected = selected,
             limit = limit,
             category = if (it == 0) {

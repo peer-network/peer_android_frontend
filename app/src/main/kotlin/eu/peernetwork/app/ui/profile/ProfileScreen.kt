@@ -66,6 +66,7 @@ fun ProfileScreen(
                 title = title,
                 limit = BuildConfig.PAGING_LIMIT,
                 selected = selected,
+                isVisible = isVisible,
                 timestamp = timestamp,
                 onSettings = { controller.navigateIfNecessary("settings") },
                 component = component,

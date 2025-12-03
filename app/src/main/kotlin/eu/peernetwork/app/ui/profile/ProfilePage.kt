@@ -8,6 +8,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.MutableLongState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,6 +37,7 @@ fun ProfilePage(
     title: String?,
     limit: Int,
     pageState: PagerState,
+    isVisible: State<Boolean>,
     selected: MutableIntState,
     timestamp: MutableLongState,
     postState: LazyListState = rememberLazyListState(),
@@ -70,7 +72,6 @@ fun ProfilePage(
             )
         },
     ) {
-        val enable =  remember { mutableStateOf(false) }
         ArticleList(
             author = id,
             username = username,
@@ -80,7 +81,7 @@ fun ProfilePage(
             } else {
                 PostUsecase.MEDIA
             },
-            status = enable,
+            status = isVisible,
             limit = limit,
             selected = selected,
             timestamp = timestamp,

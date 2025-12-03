@@ -81,6 +81,7 @@ fun FeedScreen(
                 username = account.username,
                 imageUrl = account.imageUrl,
                 title = title,
+                isVisible = isVisible,
                 selected = selected,
                 limit = limit,
                 ordinal = ordinal.value,

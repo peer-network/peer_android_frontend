@@ -65,6 +65,9 @@ class VideoInteractorDelegate @Inject constructor(
         val surface = Surface(texture)
         player.setMediaItem(item)
         player.prepare()
+        if (currentSurface != null) {
+            player.clearVideoSurface()
+        }
         currentUrl = item
         player.setVideoSurface(surface)
         currentSurface = surface
