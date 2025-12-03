@@ -2,10 +2,9 @@ package eu.peernetwork.app.ui.feed
 
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableIntState
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -17,8 +16,8 @@ import eu.peernetwork.app.mapper.mapToCriteria
 import eu.peernetwork.blog.domain.model.Category
 import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.blog.ui.model.UiFilter
+import eu.peernetwork.blog.ui.timeline.TimelineEvent
 import eu.peernetwork.blog.ui.timeline.TimelineList
-import eu.peernetwork.media.core.model.UiMimeType
 import kotlinx.coroutines.launch
 
 @Composable
@@ -29,28 +28,25 @@ fun FeedPage(
     title: String?,
     criteria: Criteria?,
     selected: MutableIntState,
-    position: MutableIntState,
-    refresh: MutableState<Boolean>,
+    pageState: PagerState,
     component: Feed.Component,
     viewModelStoreOwner: ViewModelStoreOwner,
     left: LazyListState = rememberLazyListState(),
     right: LazyListState = rememberLazyListState(),
     onFilter: (Int) -> Unit,
+    onClick: () -> Unit,
 ) {
     val enable = remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
-    val pageState = rememberPagerState(
-        pageCount = { UiMimeType.TYPES.size },
-        initialPage = position.intValue
-    )
     val filter = remember(criteria) { mutableStateOf(criteria) }
     val derivedCriteria = remember(ordinal, filter.value) { derivedStateOf {
         val content = criteria as? Criteria.Content?
         filter.value ?: UiFilter.entries.getOrNull(ordinal)?.mapToCriteria(
             tag = content?.tag,
             title = content?.title
-        )
+        ) ?: Criteria.None
     } }
+    val handleClick by rememberUpdatedState(onClick)
     val handleOnFilter by rememberUpdatedState(onFilter)
     FeedScaffold(pageState = pageState) {
         TimelineList(
@@ -66,7 +62,11 @@ fun FeedPage(
             criteria = derivedCriteria.value,
             provider = component,
             viewModelStoreOwner = viewModelStoreOwner,
-            refresh = refresh,
+            onEvent = { event ->
+                when(event) {
+                    is TimelineEvent.Post -> handleClick()
+                }
+            },
             listState = if (it == 0) {
                 left
             } else {

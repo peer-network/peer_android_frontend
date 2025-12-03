@@ -15,7 +15,6 @@ import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.app.ui.search.SearchScreen
 import eu.peernetwork.app.ui.search.SearchMode
 import eu.peernetwork.app.ui.settings.SettingsScreen
-import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.material.DesignRouter
 
 @Composable
@@ -23,7 +22,6 @@ fun ProfileNavigation(
     principal: String,
     userId: String,
     controller: NavHostController,
-    provider: UiComponentProvider,
     component: Profile.Component,
     viewModelStoreOwner: ViewModelStoreOwner,
     content: @Composable (NavBackStackEntry) -> Unit = {},
@@ -42,7 +40,7 @@ fun ProfileNavigation(
             ProfileScreen(
                 principal = principal,
                 userId = id,
-                provider = provider,
+                provider = component,
                 viewModelStoreOwner = backStackEntry,
             )
         }

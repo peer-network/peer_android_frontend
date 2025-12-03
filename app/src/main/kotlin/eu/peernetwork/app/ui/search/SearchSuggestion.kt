@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
@@ -21,9 +22,11 @@ import eu.peernetwork.social.ui.search.title.TitleScreen
 @Composable
 fun SearchSuggestion(
     state: TextFieldState,
+    selected: MutableIntState,
     mode: SearchMode,
     limit: Int,
     onClick: (String) -> Boolean,
+    onShow: (Int) -> Unit,
     component: Search.Component,
     viewModelStoreOwner: ViewModelStoreOwner,
     listState: LazyGridState,
@@ -72,10 +75,12 @@ fun SearchSuggestion(
             ) {
                 ExploreList(
                     limit = limit,
+                    selected = selected,
                     provider = component,
                     viewModelStoreOwner = viewModelStoreOwner,
-                    listState = listState
-                ) { post, index -> }
+                    listState = listState,
+                    onShow = onShow
+                )
             }
         }
     }

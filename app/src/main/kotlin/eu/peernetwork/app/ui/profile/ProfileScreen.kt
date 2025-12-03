@@ -47,7 +47,6 @@ fun ProfileScreen(
             principal = principal,
             userId = userId,
             controller = controller,
-            provider = provider,
             component = component,
             viewModelStoreOwner = viewModelStoreOwner
         ) {

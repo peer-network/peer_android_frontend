@@ -195,7 +195,7 @@ fun ArticleScreen(
 }
 
 @Composable
-fun ArticleScreen(
+fun ArticleFullScreen(
     id: String,
     types: Set<Content.Type>,
     limit: Int,
@@ -231,7 +231,7 @@ fun ArticleScreen(
             ) { index ->
                 updatedContent(this, component, items, index)
                 LaunchedEffect(Unit) {
-                    items.itemSnapshotList.get(pagerState.currentPage)?.let { post ->
+                    items.itemSnapshotList.getOrNull(pagerState.currentPage)?.let { post ->
                         viewModel.view(post.id)
                     }
                 }

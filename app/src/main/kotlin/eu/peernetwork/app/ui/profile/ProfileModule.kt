@@ -35,6 +35,14 @@ object ProfileModule {
     @Profile.Scope
     @Provides
     @IntoMap
+    @UiBuilder(Profile.Builder::class)
+    fun provideProfileBuilder(component: Profile.Component): UiComponent.Builder {
+        return Profile.Builder(component)
+    }
+
+    @Profile.Scope
+    @Provides
+    @IntoMap
     @UiBuilder(User.Builder::class)
     fun provideUserBuilder(component: Profile.Component): UiComponent.Builder {
         return User.Builder(component)

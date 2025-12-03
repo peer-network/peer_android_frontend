@@ -1,24 +1,24 @@
-package eu.peernetwork.app.ui.profile
+package eu.peernetwork.app.ui.feed
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.State
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.navigation.compose.rememberNavController
 import eu.peernetwork.app.BuildConfig
-import eu.peernetwork.blog.domain.usecase.PostUsecase
-import eu.peernetwork.blog.ui.article.ArticleModal
+import eu.peernetwork.blog.domain.model.Category
+import eu.peernetwork.blog.domain.model.Filter.Criteria
+import eu.peernetwork.blog.ui.timeline.TimelineModal
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.material.DesignOverlay
 
 @Composable
-fun ProfileModal(
-    principal: String,
-    userId: String,
+fun FeedModal(
+    id: String,
     selected: MutableIntState,
+    category: Category,
+    criteria: Criteria = Criteria.None,
     isVisible: MutableState<Boolean>,
-    timestamp: State<Long>,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner
 ) {
@@ -27,23 +27,23 @@ fun ProfileModal(
         state = isVisible,
         onDismiss = { isVisible.value = false }
     ) {
-        ProfileScreen(provider) { component ->
-            ProfileNavigation(
-                principal = principal,
-                userId = userId,
+        FeedScreen(
+            provider = provider,
+            viewModelStoreOwner = viewModelStoreOwner
+        ) { component, viewModel ->
+            FeedNavigation(
+                id = id,
                 controller = controller,
-                component = component,
-                viewModelStoreOwner = viewModelStoreOwner
+                component = component
             ) {
-                ArticleModal(
-                    author = userId,
-                    types = PostUsecase.POST,
+                TimelineModal(
                     limit = BuildConfig.PAGING_LIMIT,
                     selected = selected,
-                    timestamp = timestamp,
+                    category = category,
+                    criteria = criteria,
                     provider = component,
                     viewModelStoreOwner = viewModelStoreOwner
-                ) {}
+                )
             }
         }
     }

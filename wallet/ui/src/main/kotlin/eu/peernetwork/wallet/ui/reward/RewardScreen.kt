@@ -16,6 +16,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -81,6 +82,9 @@ fun RewardScreen(points: List<UiReward> = listOf()) {
                             color = MaterialTheme.colorScheme.onBackground,
                             modifier = Modifier.padding(horizontal = 5.dp)
                                 .padding(vertical = 2.dp)
+                                .graphicsLayer {
+                                    alpha = if (enabled.value) 0.5f else 1f
+                                }
                         )
                     }
                 }

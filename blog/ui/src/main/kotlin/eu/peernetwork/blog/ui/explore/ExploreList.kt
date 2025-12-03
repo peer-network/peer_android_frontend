@@ -11,54 +11,84 @@ import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableIntState
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
-import eu.peernetwork.blog.ui.model.UiPost
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import eu.peernetwork.blog.ui.model.v2.UiPostType
+import eu.peernetwork.blog.ui.timeline.TimelineViewModel
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.media.core.renderer.ImageView
 
 @Composable
+@Suppress("UNCHECKED_CAST")
 fun ExploreList(
     limit: Int,
+    selected: MutableIntState,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
-    modifier: Modifier = Modifier,
     listState: LazyGridState = rememberLazyGridState(),
-    onClick: (UiPost, Int) -> Unit
+    onShow: (Int) -> Unit
 ) {
+    val handleShow by rememberUpdatedState(onShow)
     ExploreScreen(
-        limit = limit,
         provider = provider,
         viewModelStoreOwner = viewModelStoreOwner
-    ) { component, items ->
-        LazyVerticalGrid(
-            state = listState,
-            columns = GridCells.Fixed(3),
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(4.dp),
-            verticalArrangement = Arrangement.spacedBy(4.dp),
-            horizontalArrangement = Arrangement.spacedBy(4.dp)
-        ) {
-            items(items.itemCount) { index ->
-                val post = items[index]
-                if (post?.type == UiPostType.IMAGE) {
-                    Box(
-                        modifier = Modifier.aspectRatio(1f)
-                            .clickable {  }
-                    ) {
-                        component.imageView()(
-                            Modifier,
-                            ImageView.Spec(
-                                post.asset.media.first().path,
-                                null,
-                                ContentScale.Crop,
-                                width = 250
+    ) { component, viewModel ->
+        val key = component.hashCode()
+        val status by viewModel.status.collectAsStateWithLifecycle()
+        val selector = remember { derivedStateOf {
+            status[key] ?: TimelineViewModel.Status.Empty
+        } }
+        val position = remember { derivedStateOf {
+            (selector.value as? ExploreViewModel.Status.Success<Int>?)?.data ?: -1
+        } }
+        ExploreScreen(
+            limit = limit,
+            component = component,
+            viewModel = viewModel,
+        ) { component, items ->
+            LazyVerticalGrid(
+                state = listState,
+                columns = GridCells.Fixed(3),
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(4.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                items(items.itemCount) { index ->
+                    val post = items[index]
+                    if (post?.type == UiPostType.IMAGE) {
+                        Box(
+                            modifier = Modifier.aspectRatio(1f)
+                                .clickable { selected.intValue = index }
+                        ) {
+                            component.imageView()(
+                                Modifier,
+                                ImageView.Spec(
+                                    post.asset.media.first().path,
+                                    null,
+                                    ContentScale.Crop,
+                                    width = 250
+                                )
                             )
-                        )
+                        }
                     }
+                }
+            }
+        }
+        LaunchedEffect(selected.intValue) {
+            if (selected.intValue != position.value) {
+                viewModel.selected(key, selected.intValue)
+                if (selected.intValue != -1) {
+                    handleShow(selected.intValue)
                 }
             }
         }

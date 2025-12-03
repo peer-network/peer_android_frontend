@@ -6,6 +6,7 @@ import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
@@ -50,12 +51,14 @@ fun SearchScreen(
     val controller = rememberNavController()
     val currentMode = remember { mutableStateOf(mode) }
     val listState = rememberLazyGridState()
+    val selected = remember { mutableIntStateOf(-1) }
+    val isVisible = remember { mutableStateOf(false) }
     SearchScreen(
         provider = provider,
         viewModelStoreOwner = viewModelStoreOwner,
     ) { component ->
         SearchNavigation(
-            userId = id,
+            id = id,
             controller = controller,
             component = component
         ) {
@@ -66,9 +69,11 @@ fun SearchScreen(
             ) {
                 SearchSuggestion(
                     state = state,
+                    selected = selected,
                     mode = currentMode.value,
                     limit = limit,
                     onClick = { false },
+                    onShow = { isVisible.value = true },
                     component = component,
                     viewModelStoreOwner = viewModelStoreOwner,
                     listState = listState,
@@ -83,5 +88,12 @@ fun SearchScreen(
                 }
             }
         }
+        SearchModal(
+            id = id,
+            selected = selected,
+            isVisible = isVisible,
+            provider = component,
+            viewModelStoreOwner = viewModelStoreOwner
+        )
     }
 }

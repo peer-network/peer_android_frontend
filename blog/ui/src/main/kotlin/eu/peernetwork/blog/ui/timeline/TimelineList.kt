@@ -6,7 +6,6 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.MutableIntState
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableIntStateOf
@@ -40,11 +39,11 @@ fun TimelineList(
     selected: MutableIntState,
     limit: Int,
     category: Category,
-    criteria: Filter.Criteria? = null,
+    criteria: Filter.Criteria,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
-    refresh: MutableState<Boolean>,
     listState: LazyListState,
+    onEvent: (TimelineEvent) -> Unit,
     onExplore: (() -> Unit)? = null,
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -70,10 +69,12 @@ fun TimelineList(
         category = category,
         criteria = criteria,
         focused = current,
+        selected = selected,
         showSheet = showSheet,
         provider = provider,
         viewModelStoreOwner = viewModelStoreOwner,
-        listState = listState
+        listState = listState,
+        onEvent = onEvent,
     ) { component, items ->
         items(
             count = items.itemCount,

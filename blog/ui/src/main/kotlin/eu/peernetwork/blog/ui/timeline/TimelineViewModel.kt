@@ -26,7 +26,11 @@ class TimelineViewModel @Inject constructor(
     private val usecase: FeedUsecase,
     private val viewUsecase: ViewUsecase
 ) : ViewModel() {
+    private val _status = MutableStateFlow<Map<Int, Status>>(emptyMap())
+
     private val _state = MutableStateFlow<Map<Int, State>>(emptyMap())
+
+    val status: StateFlow<Map<Int, Status>> = _status.asStateFlow()
 
     val state: StateFlow<Map<Int, State>> = _state.asStateFlow()
 
@@ -68,8 +72,25 @@ class TimelineViewModel @Inject constructor(
         }
     }
 
+    fun selected(tag: Int, position: Int) {
+        viewModelScope.launch {
+            updateStatus(tag, Status.Success(position))
+        }
+    }
+
     private fun updateState(key: Int, state: State) {
         _state.update { it + (key to state) }
+    }
+
+    private fun updateStatus(tag: Int, status: Status) {
+        _status.update { it + (tag to status) }
+    }
+
+    sealed interface Status {
+        data object Empty : Status
+        data object Loading : Status
+        data class Success<T>(val data: T) : Status
+        data class Error(val error: Throwable) : Status
     }
 
     sealed interface State {

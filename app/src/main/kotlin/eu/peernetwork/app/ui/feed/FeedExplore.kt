@@ -57,12 +57,13 @@ fun FeedExplore(
     viewModelStoreOwner: ViewModelStoreOwner,
     refresh: MutableState<Boolean>,
     title: String? = null,
-    criteria: Criteria? = null,
+    criteria: Criteria = Criteria.None,
 ) {
     val left = rememberLazyListState()
     val right = rememberLazyListState()
     val scope = rememberCoroutineScope()
     val controller = rememberNavController()
+    val isVisible = remember { mutableStateOf(false) }
     val selected = remember { mutableIntStateOf(-1) }
     FeedExplore(
         id = id,
@@ -93,13 +94,22 @@ fun FeedExplore(
                 criteria = derivedCriteria.value,
                 provider = component,
                 viewModelStoreOwner = viewModelStoreOwner,
-                refresh = refresh,
                 listState = if (it == 0) {
                     left
                 } else {
                     right
-                }
+                },
+                onEvent = { isVisible.value = true }
             ) {}
+            FeedModal(
+                id = id,
+                selected = selected,
+                isVisible = isVisible,
+                criteria = derivedCriteria.value,
+                category = Category.NONE,
+                provider = provider,
+                viewModelStoreOwner = viewModelStoreOwner
+            )
         }
         DesignTitleBarHost(
             tag = "FeedExplorer",

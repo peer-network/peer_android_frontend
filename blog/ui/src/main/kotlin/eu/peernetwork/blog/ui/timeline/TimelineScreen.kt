@@ -5,6 +5,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.pager.PagerScope
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.ViewModelStoreOwner
 import eu.peernetwork.core.ui.component.UiComponentProvider
@@ -18,7 +20,7 @@ import eu.peernetwork.core.ui.extension.builder
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.compose.LazyPagingItems
 import eu.peernetwork.blog.domain.model.Category
-import eu.peernetwork.blog.domain.model.Filter
+import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.blog.ui.R
 import eu.peernetwork.blog.ui.extension.share
 import eu.peernetwork.blog.ui.model.v2.UiPost
@@ -55,7 +57,7 @@ fun TimelineScreen(
 fun TimelineScreen(
     limit: Int,
     category: Category,
-    criteria: Filter.Criteria? = null,
+    criteria: Criteria,
     component: Timeline.Component,
     viewModel: TimelineViewModel,
     loading: @Composable () -> Unit,
@@ -97,30 +99,41 @@ fun TimelineScreen(
 }
 
 @Composable
+@Suppress("UNCHECKED_CAST")
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
 fun TimelineScreen(
     limit: Int,
     category: Category,
-    criteria: Filter.Criteria? = null,
+    criteria: Criteria = Criteria.None,
     focused: MutableIntState,
+    selected: MutableIntState,
     showSheet: MutableState<UiPost?>,
     listState: LazyListState = rememberLazyListState(),
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
+    onEvent: (TimelineEvent) -> Unit,
     content: LazyListScope.(Timeline.Component, LazyPagingItems<UiPost>) -> Unit
 ) {
     val context = LocalContext.current
     val updatedContent by rememberUpdatedState(content)
     val shareTitle = stringResource(R.string.share_label)
+    val handleEvent by rememberUpdatedState(onEvent)
     TimelineScreen(
         provider = provider,
         viewModelStoreOwner = viewModelStoreOwner
     ) { component, viewModel ->
         val page = Pageable(0, limit)
         val state by viewModel.state.collectAsStateWithLifecycle()
+        val status by viewModel.status.collectAsStateWithLifecycle()
         val key = listOf(category, criteria).hashCode()
         val isLoading = remember { derivedStateOf { state[key] == TimelineViewModel.State.Loading  } }
         val isRefreshing = remember { mutableStateOf(isLoading.value) }
+        val selector = remember { derivedStateOf {
+            status[key] ?: TimelineViewModel.Status.Empty
+        } }
+        val position = remember { derivedStateOf {
+            (selector.value as? TimelineViewModel.Status.Success<Int>?)?.data ?: -1
+        } }
         DesignRefreshScaffold(
             isRefreshing = isRefreshing,
             onRefresh = {
@@ -163,6 +176,60 @@ fun TimelineScreen(
                         }
                     }
                 }
+            }
+        }
+        LaunchedEffect(selected.intValue) {
+            if (selected.intValue != position.value) {
+                viewModel.selected(key, selected.intValue)
+                handleEvent(TimelineEvent.Post(selected.intValue))
+            }
+        }
+    }
+}
+
+@Composable
+fun TimelineFullScreen(
+    selected: MutableIntState,
+    limit: Int,
+    category: Category,
+    criteria: Criteria,
+    provider: UiComponentProvider,
+    viewModelStoreOwner: ViewModelStoreOwner,
+    content: @Composable PagerScope.(Timeline.Component, LazyPagingItems<UiPost>, Int) -> Unit
+) {
+    val updatedContent by rememberUpdatedState(content)
+    TimelineScreen(
+        provider = provider,
+        viewModelStoreOwner = viewModelStoreOwner
+    ) { component, viewModel ->
+        val key = listOf(category, criteria).hashCode()
+        TimelineScreen(
+            limit = limit,
+            category = category,
+            criteria = criteria,
+            component = component,
+            viewModel = viewModel,
+            loading = {}
+        ) { component, items ->
+            val pagerState = rememberPagerState(initialPage = selected.intValue) { items.itemCount }
+            PostScreen(
+                limit = limit,
+                pagerState = pagerState,
+                provider = component,
+                viewModelStoreOwner = viewModelStoreOwner
+            ) { index ->
+                updatedContent(this, component, items, index)
+                LaunchedEffect(Unit) {
+                    items.itemSnapshotList.getOrNull(pagerState.currentPage)?.let { post ->
+                        viewModel.view(post.id)
+                    }
+                }
+            }
+        }
+        DisposableEffect(Unit) {
+            onDispose {
+                viewModel.selected(key, -1)
+                selected.intValue = -1
             }
         }
     }

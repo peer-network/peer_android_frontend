@@ -1,24 +1,20 @@
-package eu.peernetwork.app.ui.profile
+package eu.peernetwork.app.ui.search
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.State
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.navigation.compose.rememberNavController
 import eu.peernetwork.app.BuildConfig
-import eu.peernetwork.blog.domain.usecase.PostUsecase
-import eu.peernetwork.blog.ui.article.ArticleModal
+import eu.peernetwork.blog.ui.explore.ExploreModal
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.material.DesignOverlay
 
 @Composable
-fun ProfileModal(
-    principal: String,
-    userId: String,
+fun SearchModal(
+    id: String,
     selected: MutableIntState,
     isVisible: MutableState<Boolean>,
-    timestamp: State<Long>,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner
 ) {
@@ -27,23 +23,21 @@ fun ProfileModal(
         state = isVisible,
         onDismiss = { isVisible.value = false }
     ) {
-        ProfileScreen(provider) { component ->
-            ProfileNavigation(
-                principal = principal,
-                userId = userId,
+        SearchScreen(
+            provider = provider,
+            viewModelStoreOwner = viewModelStoreOwner
+        ) { component ->
+            SearchNavigation(
+                id = id,
                 controller = controller,
-                component = component,
-                viewModelStoreOwner = viewModelStoreOwner
+                component = component
             ) {
-                ArticleModal(
-                    author = userId,
-                    types = PostUsecase.POST,
+                ExploreModal(
                     limit = BuildConfig.PAGING_LIMIT,
                     selected = selected,
-                    timestamp = timestamp,
                     provider = component,
                     viewModelStoreOwner = viewModelStoreOwner
-                ) {}
+                )
             }
         }
     }

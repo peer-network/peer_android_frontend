@@ -1,33 +1,23 @@
-package eu.peernetwork.blog.ui.article
+package eu.peernetwork.blog.ui.explore
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableIntState
-import androidx.compose.runtime.State
 import androidx.lifecycle.ViewModelStoreOwner
-import eu.peernetwork.blog.domain.model.Content
 import eu.peernetwork.blog.ui.post.PostModal
 import eu.peernetwork.core.ui.component.UiComponentProvider
 
 @Composable
-fun ArticleModal(
-    author: String,
-    types: Set<Content.Type>,
-    limit: Int,
+fun ExploreModal(
     selected: MutableIntState,
-    timestamp: State<Long>,
+    limit: Int,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
-    onEvent: (ArticleEvent) -> Unit
 ) {
-    ArticleFullScreen(
-        id = author,
-        types = types,
-        limit = limit,
+    ExploreFullScreen(
         selected = selected,
-        timestamp = timestamp,
+        limit = limit,
         provider = provider,
-        viewModelStoreOwner = viewModelStoreOwner,
-        onEvent = onEvent,
+        viewModelStoreOwner = viewModelStoreOwner
     ) { component, items, index ->
         items[index]?.title?.text?.let {
             PostModal(it)

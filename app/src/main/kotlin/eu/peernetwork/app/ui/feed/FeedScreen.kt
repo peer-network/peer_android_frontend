@@ -1,10 +1,12 @@
 package eu.peernetwork.app.ui.feed
 
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.platform.LocalContext
@@ -12,9 +14,11 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
+import eu.peernetwork.blog.domain.model.Category
 import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.extension.builder
+import eu.peernetwork.media.core.model.UiMimeType
 import eu.peernetwork.social.ui.connection.ConnectionScreen
 
 @Composable
@@ -47,7 +51,7 @@ fun FeedScreen(
     viewModelStoreOwner: ViewModelStoreOwner,
     refresh: MutableState<Boolean>,
     title: String? = null,
-    criteria: Criteria? = null,
+    criteria: Criteria = Criteria.None,
 ) {
     val controller = rememberNavController()
     val selected = remember { mutableIntStateOf(-1) }
@@ -56,18 +60,21 @@ fun FeedScreen(
         viewModelStoreOwner = viewModelStoreOwner,
     ) { component, viewModel ->
         val state by viewModel.state.collectAsStateWithLifecycle()
+        val isVisible = remember { mutableStateOf(false) }
         val ordinal = remember {
             derivedStateOf {
                 (state as? FeedViewModel.State.Initialize?)?.filter ?: 0
             }
         }
+        val pageState = rememberPagerState(
+            pageCount = { UiMimeType.TYPES.size },
+            initialPage = state.page
+        )
         FeedNavigation(
             id = id,
             component = component,
             controller = controller,
         ) {
-            val state by viewModel.state.collectAsStateWithLifecycle()
-            val position = remember { mutableIntStateOf(state.page) }
             FeedPage(
                 id = id,
                 title = title,
@@ -75,11 +82,24 @@ fun FeedScreen(
                 limit = limit,
                 ordinal = ordinal.value,
                 criteria = criteria,
-                position = position,
-                refresh = refresh,
+                pageState = pageState,
                 component = component,
-                viewModelStoreOwner = viewModelStoreOwner
-            ) { viewModel.setFilter(it) }
+                viewModelStoreOwner = viewModelStoreOwner,
+                onFilter = { viewModel.setFilter(it) }
+            ) { isVisible.value = true }
         }
+        FeedModal(
+            id = id,
+            selected = selected,
+            isVisible = isVisible,
+            criteria = criteria,
+            category = if (pageState.currentPage == 0) {
+                Category.FOLLOWED
+            } else {
+                Category.FOLLOWER
+            },
+            provider = provider,
+            viewModelStoreOwner = viewModelStoreOwner
+        )
     }
 }

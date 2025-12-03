@@ -5,7 +5,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.setValue
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
@@ -13,18 +12,17 @@ import androidx.navigation.navArgument
 import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.app.ui.feed.FeedExplore
 import eu.peernetwork.app.ui.profile.ProfileScreen
-import eu.peernetwork.blog.domain.model.Filter
+import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.core.ui.design.material.DesignRouter
 
 @Composable
 fun SearchNavigation(
-    userId: String,
+    id: String,
     component: Search.Component,
     controller: NavHostController,
     content: @Composable () -> Unit
 ) {
     val updatedContent by rememberUpdatedState(content)
-    var id by remember { mutableStateOf("") }
     val requireUpdate = remember { mutableStateOf(false) }
     DesignRouter(
         navController = controller,
@@ -37,10 +35,10 @@ fun SearchNavigation(
                 type = NavType.StringType
             })
         ) { backStackEntry ->
-            id = backStackEntry.arguments?.getString("id") ?: ""
+            val uuid = backStackEntry.arguments?.getString("id") ?: ""
             ProfileScreen(
-                principal = userId,
-                userId = id,
+                principal = id,
+                userId = uuid,
                 provider = component,
                 viewModelStoreOwner = backStackEntry,
             )
@@ -53,12 +51,12 @@ fun SearchNavigation(
         ) { backStackEntry ->
             val tag = backStackEntry.arguments?.getString("tag")
             FeedExplore(
-                id = userId,
+                id = id,
                 limit = BuildConfig.PAGING_LIMIT,
                 provider = component,
                 viewModelStoreOwner = backStackEntry,
                 title = tag,
-                criteria = tag?.let { Filter.Criteria.Content(tag = it) },
+                criteria = tag?.let { Criteria.Content(tag = it) } ?: Criteria.None,
                 refresh = requireUpdate
             )
         }
@@ -72,12 +70,12 @@ fun SearchNavigation(
         ) { backStackEntry ->
             val query = backStackEntry.arguments?.getString("query")
             FeedExplore(
-                userId,
+                id,
                 BuildConfig.PAGING_LIMIT,
                 component,
                 viewModelStoreOwner = backStackEntry,
                 title = query,
-                criteria = query?.let { Filter.Criteria.Content(title = it) },
+                criteria = query?.let { Criteria.Content(title = it) } ?: Criteria.None,
                 refresh = requireUpdate
             )
         }
@@ -91,7 +89,7 @@ fun SearchNavigation(
             val type = backStackEntry.arguments?.getString("type") ?: ""
             val query = backStackEntry.arguments?.getString("query") ?: ""
             SearchScreen(
-                id = userId,
+                id = id,
                 limit = BuildConfig.PAGING_LIMIT,
                 provider = component,
                 viewModelStoreOwner = backStackEntry,
