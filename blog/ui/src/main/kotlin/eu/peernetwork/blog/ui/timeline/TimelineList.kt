@@ -92,16 +92,17 @@ fun TimelineList(
                             )
                         }
                     },
-                    content = { path ->
-                        val isActive = remember { derivedStateOf { index == current.intValue } }
+                    content = { path, expanded ->
+                        val isPlaying = remember { derivedStateOf { index == current.intValue } }
                         PostMedia(
                             type = post.type,
                             path = path,
+                            expanded = expanded,
                             avatar = post.author.imageUrl,
                             position = index,
-                            aspectRatio = post.asset.ratio,
+                            ratio = post.asset.ratio,
                             enable = enable,
-                            isPlaying = isActive,
+                            isPlaying = isPlaying,
                         )
                     }
                 )

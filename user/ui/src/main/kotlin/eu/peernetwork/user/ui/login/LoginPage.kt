@@ -37,7 +37,7 @@ fun LoginPage(
     login: String?,
     isLoading: State<Boolean>,
     error: State<String?>,
-    onLogin: (String, String) -> Unit,
+    onLogin: (String, String, Boolean) -> Unit,
     onPasswordReset: (String) -> Unit,
     onPrivacy: () -> Unit,
     onRegister: () -> Unit
@@ -46,7 +46,7 @@ fun LoginPage(
         mutableStateOf(TextFieldState(login ?: ""))
     }
     val password by rememberSaveable(stateSaver = TextFieldState.Saver) { mutableStateOf(TextFieldState()) }
-    val rememberMe = rememberSaveable { mutableStateOf(false) }
+    val rememberMe = rememberSaveable { mutableStateOf(true) }
     val isDarkTheme = MaterialTheme.colorScheme.background.luminance() < 0.5
     val handleOnLogin by rememberUpdatedState(onLogin)
     val handleOnPasswordReset by rememberUpdatedState(onPasswordReset)
@@ -82,7 +82,7 @@ fun LoginPage(
                 error = error,
                 rememberMe = rememberMe,
                 onLogin = {
-                    handleOnLogin(email.text.toString(), password.text.toString())
+                    handleOnLogin(email.text.toString(), password.text.toString(), rememberMe.value)
                 },
                 onRegister = onRegister,
                 onPasswordReset = {
@@ -120,7 +120,7 @@ fun PreviewLoginPage() {
             login = null,
             isLoading = isLoading,
             error = error,
-            onLogin = { _, _ -> },
+            onLogin = { _, _, _ -> },
             onPasswordReset = {},
             onPrivacy = {},
             onRegister = {}

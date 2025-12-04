@@ -83,14 +83,15 @@ fun ArticleList(
                         ) { reaction(post, it) }
                     },
                     connection = { },
-                    content = { path ->
+                    content = { path, expanded ->
                         val isActive = remember { derivedStateOf { index == current.intValue } }
                         PostMedia(
                             type = post.type,
                             path = path,
+                            expanded = expanded,
                             avatar = post.author.imageUrl,
                             position = index,
-                            aspectRatio = post.asset.ratio,
+                            ratio = post.asset.ratio,
                             enable = enable,
                             isPlaying = isActive
                         )

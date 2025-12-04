@@ -76,7 +76,7 @@ class ContentApiDelegate @Inject constructor(
                 ).firstOrNull()?.get("path") as? String
             } catch (_: Exception) {
                 null
-            }?.let { "$url$it" }
+            }
             content.mapToDomain(
                 url,
                 gson.fromJson<List<MediaModel>>(
@@ -128,7 +128,7 @@ class ContentApiDelegate @Inject constructor(
                 ).firstOrNull()?.get("path") as? String
             } catch (_: Exception) {
                 null
-            }?.let { "$url$it" }
+            }
             content.post.mapToDomain(
                 url,
                 gson.fromJson<List<MediaModel>>(

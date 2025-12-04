@@ -29,13 +29,11 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import eu.peernetwork.blog.ui.engagement.EngagementReaction
 import eu.peernetwork.blog.ui.mapper.v2.format
 import eu.peernetwork.blog.ui.model.v2.UiEngagement
 import eu.peernetwork.blog.ui.model.v2.UiPostDetail
 import eu.peernetwork.blog.ui.model.v2.UiTimer
-import eu.peernetwork.core.ui.design.luna.DesignRichText
 import eu.peernetwork.core.ui.design.luna.DesignBox
 import eu.peernetwork.core.ui.design.luna.DesignButton
 import eu.peernetwork.core.ui.theme.DesignTheme
@@ -56,26 +54,7 @@ fun PostScaffold(
         engagement = engagement,
         pinnedBy = pinnedBy,
         connection = connection
-    ) {
-        Column(modifier = Modifier.padding(horizontal = 12.dp)
-            .padding(bottom = 16.dp)) {
-            DesignRichText(
-                text = model.title,
-                maxLines = 2,
-                color = MaterialTheme.colorScheme.onBackground,
-                style = MaterialTheme.typography.bodyMedium,
-            )
-            DesignRichText(
-                text = model.description,
-                maxLines = 6,
-                lineHeight = 18.sp,
-                style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.outline,
-                modifier = Modifier.padding(top = 4.dp)
-                    .heightIn(min = 48.dp)
-            )
-        }
-    }
+    ) { PostText(model, Modifier.heightIn(min = 36.dp)) }
 }
 
 @Composable
@@ -132,7 +111,7 @@ fun BoxScope.PostScaffoldBackground(
 }
 
 @Composable
-fun PostMediaScaffold(
+fun PostExpandedScaffold(
     model: UiPostDetail,
     pinnedBy: String? = null,
     onMenu: () -> Unit,
@@ -232,7 +211,7 @@ fun PreviewUserOption() {
                 Box(modifier = Modifier.fillMaxWidth()
                     .height(56.dp))
             }
-            PostMediaScaffold(
+            PostExpandedScaffold(
                 model = model,
                 pinnedBy = "Thomas",
                 onMenu = {},

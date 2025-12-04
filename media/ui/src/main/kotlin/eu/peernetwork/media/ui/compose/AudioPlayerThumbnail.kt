@@ -97,7 +97,7 @@ fun AudioPlayerThumbnail(
                     },
                     modifier = Modifier.fillMaxWidth()
                         .height(height = 3.dp)
-                        .padding(start = 2.dp, end = 6.dp)
+                        .padding(end = 6.dp)
                 )
                 LaunchedEffect(enabled.value) {
                     if (!enabled.value) {

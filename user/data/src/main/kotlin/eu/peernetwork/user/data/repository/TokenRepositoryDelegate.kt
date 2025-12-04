@@ -9,9 +9,13 @@ import eu.peernetwork.user.data.api.TokenApi
 import eu.peernetwork.user.domain.model.Token
 import eu.peernetwork.user.domain.repository.TokenRepository
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.onStart
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class TokenRepositoryDelegate @Inject constructor(
     private val gson: Gson,
     private val api: TokenApi,
@@ -19,19 +23,31 @@ class TokenRepositoryDelegate @Inject constructor(
     private val observable: ObservableString,
     private val retrievableString: RetrievableString,
 ) : TokenRepository, AuthenticationApi.Listener {
+    private var _token: Token? = null
 
-    override fun get(): Token? = retrievableString(TAG)?.run {
+    private val flow: MutableSharedFlow<Token?> = MutableSharedFlow(replay = 1)
+
+    init { flow.tryEmit(_token) }
+
+    override fun get(): Token? = _token ?: retrievableString(TAG)?.run {
         gson.fromJson(this, Token::class.java)
     }
 
     override fun observe(): Flow<Token?> {
-        return observable(TAG).map { token ->
-            token?.let { gson.fromJson(it, Token::class.java) }
+        return flow.onStart {
+            _token = observable(TAG)
+                .firstOrNull()
+                ?.let { gson.fromJson(it, Token::class.java) }
+            flow.emit(_token)
         }
     }
 
-    override suspend fun onAuthenticationChanged(token: Token?) {
-        publisher(TAG, token?.let { gson.toJson(it) })
+    override suspend fun onAuthenticationChanged(token: Token?, remember: Boolean) {
+        _token = token
+        if (remember) {
+            publisher(TAG, token?.let { gson.toJson(it) })
+        }
+        flow.tryEmit(_token)
     }
 
     override suspend fun refresh(token: String): Token {

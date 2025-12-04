@@ -41,7 +41,7 @@ fun LoginScreen(
         login = email,
         isLoading = isLoading,
         error = error,
-        onLogin = { email, password -> viewModel.login(email, password) },
+        onLogin = { email, password, rememberMe -> viewModel.login(email, password, rememberMe) },
         onRegister = onRegister,
         onPasswordReset = onPasswordReset,
         onPrivacy = onPrivacy,

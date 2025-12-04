@@ -21,13 +21,13 @@ class LoginViewModel @Inject constructor(
         initialValue = State.Initial
     )
 
-    fun login(email: String, password: String) {
+    fun login(email: String, password: String, rememberMe: Boolean) {
         mutableState.tryEmit(State.Loading)
         viewModelScope.launch {
             try {
                 mutableState.tryEmit(
                     State.Success(
-                        loginUsecase(LoginUsecase.Parameter(email, password))
+                        loginUsecase(LoginUsecase.Parameter(email, password, rememberMe))
                     )
                 )
             } catch (error: Throwable) {

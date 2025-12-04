@@ -33,7 +33,8 @@ fun PostMedia(
     path: String,
     avatar: String,
     position: Int,
-    aspectRatio: Float,
+    expanded: Boolean,
+    ratio: Float,
     enable: State<Boolean>,
     isPlaying: State<Boolean>,
 ) {
@@ -43,13 +44,13 @@ fun PostMedia(
     val bitmaps = interactor.observe()
     val thumbnail = remember { derivedStateOf { bitmaps.value[path] } }
     val pause = remember { mutableStateOf(false) }
-    val isActive = remember { derivedStateOf { !pause.value && enable.value } }
+    val isEnabled = remember { derivedStateOf { !pause.value && enable.value && isPlaying.value } }
     if (type == UiPostType.IMAGE) {
         interactor.component().imageView()(
             modifier = Modifier,
             spec = ImageView.Spec(
                 url = path,
-                ratio = aspectRatio,
+                ratio = ratio,
                 contentScale = ContentScale.Crop,
                 blur = 500f,
             )
@@ -58,7 +59,7 @@ fun PostMedia(
             modifier = Modifier,
             spec = ImageView.Spec(
                 url = path,
-                ratio = aspectRatio
+                ratio = ratio
             )
         )
     } else if (type == UiPostType.VIDEO) {
@@ -68,21 +69,21 @@ fun PostMedia(
             bitmap = thumbnail,
             modifier = Modifier
                 .fillMaxWidth()
-                .aspectRatio(aspectRatio)
+                .aspectRatio(ratio)
         ) {
             interactor.background(
                 media = path,
-                aspectRatio = aspectRatio,
+                aspectRatio = ratio,
                 width = configuration.screenWidthDp,
-                height = (configuration.screenWidthDp / aspectRatio).toInt()
+                height = (configuration.screenWidthDp / ratio).toInt()
             )
         }
         interactor.component().videoThumbnail()(
             Modifier,
             spec = VideoThumbnail.Spec(
                 url = path,
-                ratio = aspectRatio,
-                enabled = isActive,
+                ratio = ratio,
+                enabled = isEnabled,
                 isPlaying = isPlaying
             )
         )
@@ -90,32 +91,34 @@ fun PostMedia(
         Box(contentAlignment = Alignment.BottomEnd) {
             val current = remember { mutableIntStateOf(-1) }
             val length = remember { mutableLongStateOf(0L) }
-            interactor.component().imageView()(
-                modifier = Modifier,
-                spec = ImageView.Spec(
-                    url = avatar,
-                    ratio = aspectRatio,
-                    contentScale = ContentScale.Crop,
-                    blur = 500f,
+            if (expanded) {
+                interactor.component().imageView()(
+                    modifier = Modifier,
+                    spec = ImageView.Spec(
+                        url = avatar,
+                        ratio = ratio,
+                        contentScale = ContentScale.Crop,
+                        blur = 500f,
+                    )
                 )
-            )
-            interactor.component().imageView()(
-                modifier = Modifier,
-                spec = ImageView.Spec(
-                    url = avatar,
-                    ratio = aspectRatio
+                interactor.component().imageView()(
+                    modifier = Modifier,
+                    spec = ImageView.Spec(
+                        url = avatar,
+                        ratio = ratio
+                    )
                 )
-            )
+            }
             interactor.component().audioPlayer().Thumbnail(
                 path = path,
-                hasControls = false,
+                hasControls = !expanded,
                 position = position,
-                enable = isPlaying,
+                enable = isEnabled,
                 isActive = isPlaying,
                 length = length,
                 current = current,
-                modifier = Modifier.padding(horizontal = 24.dp)
-                    .padding(vertical = 12.dp)
+                modifier = Modifier.padding(horizontal = 16.dp)
+                    .padding(bottom = 12.dp)
             )
         }
     }

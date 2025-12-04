@@ -79,7 +79,7 @@ fun HomeScreen(
     DesignStream(
         state = derivedState,
         modifier = Modifier.fillMaxSize(),
-        loading = {  },
+        loading = { HomeSkeleton() },
         error = {
             DesignError(
                 onRefresh = { viewModel() },

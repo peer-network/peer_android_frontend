@@ -26,9 +26,9 @@ class MultipartApiDelegate @Inject constructor(
         val requestBody = MultipartBody.Builder()
             .setType(MultipartBody.FORM)
             .addFormDataPart("eligibilityToken", token)
-        files.forEach { file ->
+        files.forEachIndexed { index, file ->
             requestBody.addFormDataPart(
-                "file",
+                "file[$index]",
                 file.name,
                 file.asRequestBody(helper.getType(file).toMediaType())
             )

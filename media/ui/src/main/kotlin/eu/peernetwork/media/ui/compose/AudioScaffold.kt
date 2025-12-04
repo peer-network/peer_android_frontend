@@ -28,7 +28,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import eu.peernetwork.core.ui.theme.PeerTheme
+import eu.peernetwork.core.ui.theme.DesignTheme
 import eu.peernetwork.media.core.R
 
 @Composable
@@ -69,7 +69,7 @@ fun AudioScaffold(
                 Icon(
                     painter = painterResource(icon),
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.surfaceTint,
+                    tint = MaterialTheme.colorScheme.outlineVariant,
                     modifier = Modifier.size(18.dp)
                 )
             }
@@ -81,7 +81,7 @@ fun AudioScaffold(
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun PreviewAudioScaffold() {
-    PeerTheme {
+    DesignTheme {
         val state = remember { mutableStateOf(false) }
         val isLoading = remember { mutableStateOf(true) }
         AudioScaffold(
