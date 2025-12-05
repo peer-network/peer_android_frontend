@@ -109,6 +109,13 @@ class AudioPlayerDelegate @Inject constructor(
                     }
                 }
         }
+        DisposableEffect(enable.value) {
+            onDispose {
+                if (!enable.value) {
+                    player.pause()
+                }
+            }
+        }
     }
 
     @Composable
