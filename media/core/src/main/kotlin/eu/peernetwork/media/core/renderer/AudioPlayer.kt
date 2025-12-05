@@ -12,13 +12,12 @@ interface AudioPlayer : Renderer.Stateful<AudioPlayer.Spec> {
     @Composable
     fun Thumbnail(
         path: String,
-        position: Int,
         hasControls: Boolean,
-        isActive: State<Boolean>,
         enable: State<Boolean>,
+        isPlaying: State<Boolean>,
         length: MutableLongState,
-        current: MutableState<Int>,
-        modifier: Modifier
+        modifier: Modifier,
+        onPlay: (Boolean) -> Unit
     )
 
     data class Spec(

@@ -36,7 +36,7 @@ fun EngagementMetric(
     tint: Color = color,
     checkedTint: Color = PeerAppDarkRed,
     contentDescription: String? = null,
-    size: Dp = 18.dp,
+    size: Dp = 20.dp,
     style: TextStyle = MaterialTheme.typography.labelLarge,
     orientation: Orientation = Orientation.Horizontal,
     onClick: () -> Unit
@@ -87,7 +87,7 @@ fun EngagementMetric(
     tint: Color = color,
     checkedTint: Color = PeerAppDarkRed,
     contentDescription: String? = null,
-    size: Dp = 18.dp,
+    size: Dp = 20.dp,
     style: TextStyle = MaterialTheme.typography.labelLarge,
     horizontalAlignment: Alignment.Horizontal = Alignment.CenterHorizontally,
     onClick: () -> Unit
@@ -131,9 +131,9 @@ fun EngagementMetric(
     tint: Color = color,
     checkedTint: Color = PeerAppDarkRed,
     contentDescription: String? = null,
-    size: Dp = 18.dp,
+    size: Dp = 20.dp,
     style: TextStyle = MaterialTheme.typography.labelLarge,
-    horizontalArrangement: Arrangement.Horizontal = Arrangement.spacedBy(4.dp),
+    horizontalArrangement: Arrangement.Horizontal = Arrangement.spacedBy(3.dp),
     verticalAlignment: Alignment.Vertical = Alignment.CenterVertically,
     onClick: () -> Unit
 ) {

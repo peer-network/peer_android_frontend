@@ -9,7 +9,6 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,11 +31,11 @@ fun PostMedia(
     type: UiPostType,
     path: String,
     avatar: String,
-    position: Int,
     expanded: Boolean,
     ratio: Float,
     enable: State<Boolean>,
     isPlaying: State<Boolean>,
+    onPlay: (Boolean) -> Unit
 ) {
     val interactor = LocalPostInteractor.current
     val configuration = LocalConfiguration.current
@@ -89,7 +88,6 @@ fun PostMedia(
         )
     } else if (type == UiPostType.AUDIO) {
         Box(contentAlignment = Alignment.BottomEnd) {
-            val current = remember { mutableIntStateOf(-1) }
             val length = remember { mutableLongStateOf(0L) }
             if (expanded) {
                 interactor.component().imageView()(
@@ -112,13 +110,12 @@ fun PostMedia(
             interactor.component().audioPlayer().Thumbnail(
                 path = path,
                 hasControls = !expanded,
-                position = position,
                 enable = isEnabled,
-                isActive = isPlaying,
                 length = length,
-                current = current,
+                isPlaying = isPlaying,
                 modifier = Modifier.padding(horizontal = 16.dp)
-                    .padding(bottom = 12.dp)
+                    .padding(bottom = 12.dp),
+                onPlay = onPlay
             )
         }
     }
@@ -128,7 +125,7 @@ fun PostMedia(
                 Lifecycle.Event.ON_RESUME -> {
                     pause.value = false
                 }
-                Lifecycle.Event.ON_STOP -> {
+                Lifecycle.Event.ON_PAUSE -> {
                     pause.value = true
                 }
                 else -> Unit

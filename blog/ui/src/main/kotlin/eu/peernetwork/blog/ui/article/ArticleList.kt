@@ -84,17 +84,22 @@ fun ArticleList(
                     },
                     connection = { },
                     content = { path, expanded ->
-                        val isActive = remember { derivedStateOf { index == current.intValue } }
+                        val isPlaying = remember { derivedStateOf { index == current.intValue } }
                         PostMedia(
                             type = post.type,
                             path = path,
                             expanded = expanded,
                             avatar = post.author.imageUrl,
-                            position = index,
                             ratio = post.asset.ratio,
                             enable = enable,
-                            isPlaying = isActive
-                        )
+                            isPlaying = isPlaying
+                        ) {
+                            if (it) {
+                                current.intValue = index
+                            } else {
+                                current.intValue = -1
+                            }
+                        }
                     }
                 )
             }

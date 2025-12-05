@@ -9,54 +9,105 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableLongState
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.media3.common.MediaItem
+import androidx.media3.common.PlaybackException
+import androidx.media3.common.Player
 import eu.peernetwork.media.core.renderer.AudioPlayer
 import eu.peernetwork.media.ui.annotation.Screen
-import eu.peernetwork.media.ui.annotation.Timeline
 import eu.peernetwork.media.ui.compose.AudioHost
 import eu.peernetwork.media.ui.compose.AudioPlayerThumbnail
 import eu.peernetwork.media.ui.compose.MediaControl
 import eu.peernetwork.media.ui.interactor.MediaInteractor
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class AudioPlayerDelegate @Inject constructor(
     private val session: MediaInteractor,
     @Screen private val screenPlayer: MediaPlayer,
-    @Timeline private val timelinePlayer: MediaPlayer,
 ) : AudioPlayer {
     @Composable
     @OptIn(FlowPreview::class)
     override fun Thumbnail(
         path: String,
-        position: Int,
         hasControls: Boolean,
-        isActive: State<Boolean>,
         enable: State<Boolean>,
+        isPlaying: State<Boolean>,
         length: MutableLongState,
-        current: MutableState<Int>,
-        modifier: Modifier
+        modifier: Modifier,
+        onPlay: (Boolean) -> Unit
     ) {
+        val player = remember { session.exoPlayer() }
+        val isReady = remember { mutableStateOf(isPlaying.value) }
+        val isLoading = remember { mutableStateOf(false) }
+        val mute = session.volume().collectAsStateWithLifecycle(session.exoPlayer().isDeviceMuted)
+        DisposableEffect(Unit) {
+            val listener = object : Player.Listener {
+                override fun onIsPlayingChanged(playing: Boolean) {
+                    if (playing) {
+                        isLoading.value = false
+                    }
+                }
+                override fun onPlayerError(error: PlaybackException) {
+                    player.setMediaItem(MediaItem.fromUri(path))
+                    player.prepare()
+                }
+            }
+            player.addListener(listener)
+            onDispose { player.removeListener(listener) }
+        }
         Box(modifier = modifier) {
             AudioPlayerThumbnail(
-                path = path,
-                position = position,
                 hasControls = hasControls,
-                isActive = isActive,
                 enabled = enable,
+                isPlaying = isPlaying,
+                isLoading = isLoading,
                 length = length,
-                current = current,
                 session = session,
-                source = { timelinePlayer }
+                source = { player },
+                onPlay = onPlay
             )
+        }
+        LaunchedEffect(Unit) {
+            snapshotFlow { isPlaying.value }
+                .distinctUntilChanged()
+                .debounce(500)
+                .collect { playing ->
+                    isReady.value = playing
+                    player.playWhenReady = playing
+                    if (playing) {
+                        isLoading.value = mute.value
+                        player.setMediaItem(MediaItem.fromUri(path))
+                        player.prepare()
+                    }
+                }
+        }
+        LaunchedEffect(Unit) {
+            snapshotFlow { mute.value }
+                .distinctUntilChanged()
+                .collect { muted ->
+                    session.exoPlayer().volume = if (muted) 1f else 0f
+                }
+        }
+        LaunchedEffect(Unit) {
+            snapshotFlow { enable.value }
+                .distinctUntilChanged()
+                .collect { enabled ->
+                    if (!enabled && isReady.value) {
+                        player.pause()
+                    }
+                }
         }
     }
 
