@@ -7,19 +7,26 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableIntState
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.compose.LazyPagingItems
+import eu.peernetwork.blog.ui.R
+import eu.peernetwork.blog.ui.extension.share
 import eu.peernetwork.blog.ui.mapper.v2.mapToDetail
 import eu.peernetwork.blog.ui.model.v2.UiPost
+import eu.peernetwork.blog.ui.moderation.ModerationInteractor.Companion.LocalModerationInteractor
 import eu.peernetwork.blog.ui.post.PostScreen
+import eu.peernetwork.blog.ui.timeline.TimelineSheet
+import eu.peernetwork.blog.ui.timeline.TimelineSheetMenuItem
 import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.luna.DesignPagingStream
@@ -94,14 +101,17 @@ fun ExploreFullScreen(
     username: String,
     imageUrl: String,
     selected: MutableIntState,
+    showSheet: MutableState<UiPost?>,
     limit: Int,
     component: Explore.Component,
     viewModel: ExploreViewModel,
     viewModelStoreOwner: ViewModelStoreOwner,
     content: @Composable PagerScope.(Explore.Component, UiPost, Int, PagerState) -> Unit
 ) {
+    val context = LocalContext.current
     val updatedContent by rememberUpdatedState(content)
     val key = component.hashCode()
+    val shareTitle = stringResource(R.string.share_label)
     ExploreScreen(
         limit = limit,
         component = component,
@@ -117,7 +127,14 @@ fun ExploreFullScreen(
             viewModelStoreOwner = viewModelStoreOwner,
             onComment = { items.itemSnapshotList.getOrNull(it)?.mapToDetail() }
         ) { index ->
+            val moderation = LocalModerationInteractor.current
             items[index]?.let { updatedContent(this, component, it, index, pagerState) }
+            TimelineSheet(showSheet) { sheetState, post ->
+                when (sheetState) {
+                    TimelineSheetMenuItem.REPORT -> moderation.onReport(post.id)
+                    TimelineSheetMenuItem.SHARE -> { context.share(post.url, shareTitle) }
+                }
+            }
             LaunchedEffect(Unit) {
                 items.itemSnapshotList.getOrNull(pagerState.currentPage)?.let { post ->
                     viewModel.view(post.id)

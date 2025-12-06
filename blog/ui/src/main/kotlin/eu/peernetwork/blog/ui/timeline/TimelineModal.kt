@@ -2,11 +2,14 @@ package eu.peernetwork.blog.ui.timeline
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableIntState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.ViewModelStoreOwner
 import eu.peernetwork.blog.domain.model.Category
 import eu.peernetwork.blog.domain.model.Filter
 import eu.peernetwork.blog.ui.gallery.GalleryScreen
+import eu.peernetwork.blog.ui.model.v2.UiPost
 import eu.peernetwork.blog.ui.post.PostUserConnection
 import eu.peernetwork.core.ui.component.UiComponentProvider
 
@@ -22,6 +25,7 @@ fun TimelineModal(
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner
 ) {
+    val showSheet = remember { mutableStateOf<UiPost?>(null) }
     TimelineFullScreen(
         username = username,
         imageUrl = imageUrl,
@@ -29,6 +33,7 @@ fun TimelineModal(
         selected = selected,
         category = category,
         criteria = criteria,
+        showSheet = showSheet,
         provider = provider,
         viewModelStoreOwner = viewModelStoreOwner,
     ) { component, post, index, pagerState ->
@@ -36,7 +41,8 @@ fun TimelineModal(
             position = index,
             current = selected,
             enabled = !pagerState.isScrollInProgress,
-            post = post
+            post = post,
+            showSheet = showSheet
         ) {
             if (id != post.author.id) {
                 component.postUserFollow()(

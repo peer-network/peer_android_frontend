@@ -212,12 +212,16 @@ fun ArticleFullScreen(
     limit: Int,
     selected: MutableIntState,
     timestamp: State<Long>,
+    showSheet: MutableState<UiPost?>,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
     onEvent: (ArticleEvent) -> Unit,
     content: @Composable PagerScope.(Article.Component, UiPost, Int, PagerState) -> Unit
 ) {
+    val context = LocalContext.current
+    val handleEvent by rememberUpdatedState(onEvent)
     val updatedContent by rememberUpdatedState(content)
+    val shareTitle = stringResource(R.string.share_label)
     ArticleScreen(
         provider = provider,
         viewModelStoreOwner = viewModelStoreOwner
@@ -243,10 +247,18 @@ fun ArticleFullScreen(
                 viewModelStoreOwner = viewModelStoreOwner,
                 onComment = { items.itemSnapshotList.getOrNull(it)?.mapToDetail() }
             ) { index ->
+                val moderation = LocalModerationInteractor.current
                 items[index]?.let { updatedContent(this, component, it, index, pagerState) }
                 LaunchedEffect(Unit) {
                     items.itemSnapshotList.getOrNull(pagerState.currentPage)?.let { post ->
                         viewModel.view(post.id)
+                    }
+                }
+                ArticleSheet(showSheet) { sheetState, post ->
+                    when (sheetState) {
+                        ArticleSheetMenuItem.BOOST -> handleEvent(ArticleEvent.Boost(post.id))
+                        ArticleSheetMenuItem.REPORT -> moderation.onReport(post.id)
+                        ArticleSheetMenuItem.SHARE -> { context.share(post.url, shareTitle) }
                     }
                 }
             }

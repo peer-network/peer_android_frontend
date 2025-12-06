@@ -34,7 +34,6 @@ fun SearchModal(
                 component = component
             ) {
                 ExploreModal(
-                    id = account.id,
                     limit = BuildConfig.PAGING_LIMIT,
                     selected = selected,
                     provider = component,

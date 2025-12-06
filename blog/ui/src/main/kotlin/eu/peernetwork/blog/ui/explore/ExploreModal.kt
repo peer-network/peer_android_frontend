@@ -2,13 +2,15 @@ package eu.peernetwork.blog.ui.explore
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableIntState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModelStoreOwner
 import eu.peernetwork.blog.ui.gallery.GalleryScreen
+import eu.peernetwork.blog.ui.model.v2.UiPost
 import eu.peernetwork.core.ui.component.UiComponentProvider
 
 @Composable
 fun ExploreModal(
-    id: String,
     username: String,
     imageUrl: String,
     selected: MutableIntState,
@@ -16,6 +18,7 @@ fun ExploreModal(
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner
 ) {
+    val showSheet = remember { mutableStateOf<UiPost?>(null) }
     ExploreScreen(
         provider = provider,
         viewModelStoreOwner = viewModelStoreOwner
@@ -23,6 +26,7 @@ fun ExploreModal(
         ExploreFullScreen(
             username = username,
             imageUrl = imageUrl,
+            showSheet = showSheet,
             selected = selected,
             limit = limit,
             component = component,
@@ -33,10 +37,9 @@ fun ExploreModal(
                 position = index,
                 current = selected,
                 enabled =!pagerState.isScrollInProgress,
-                post = item
-            ) {
-
-            }
+                post = item,
+                showSheet = showSheet
+            ) {}
         }
     }
 }

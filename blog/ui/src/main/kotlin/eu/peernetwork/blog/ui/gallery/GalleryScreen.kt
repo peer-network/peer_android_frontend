@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableIntState
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableLongStateOf
@@ -32,6 +33,7 @@ import eu.peernetwork.media.core.renderer.VideoPlayer
 fun GalleryScreen(
     position: Int,
     current: MutableIntState,
+    showSheet: MutableState<UiPost?>,
     enabled: Boolean,
     post: UiPost,
     connection: @Composable () -> Unit,
@@ -58,7 +60,7 @@ fun GalleryScreen(
             asset = post.asset,
             engagement = engagement,
             onEngage = { reaction(post, it) },
-            onMenu = {},
+            onMenu = { showSheet.value = post },
             showAuthor = {},
             modifier = Modifier
                 .fillMaxSize()

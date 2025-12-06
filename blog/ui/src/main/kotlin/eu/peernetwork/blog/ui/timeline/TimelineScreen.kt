@@ -120,8 +120,8 @@ fun TimelineScreen(
 ) {
     val context = LocalContext.current
     val updatedContent by rememberUpdatedState(content)
-    val shareTitle = stringResource(R.string.share_label)
     val handleEvent by rememberUpdatedState(onEvent)
+    val shareTitle = stringResource(R.string.share_label)
     TimelineScreen(
         provider = provider,
         viewModelStoreOwner = viewModelStoreOwner
@@ -198,6 +198,7 @@ fun TimelineFullScreen(
     username: String,
     imageUrl: String,
     selected: MutableIntState,
+    showSheet: MutableState<UiPost?>,
     limit: Int,
     category: Category,
     criteria: Criteria,
@@ -205,7 +206,9 @@ fun TimelineFullScreen(
     viewModelStoreOwner: ViewModelStoreOwner,
     content: @Composable PagerScope.(Timeline.Component, UiPost, Int, PagerState) -> Unit
 ) {
+    val context = LocalContext.current
     val updatedContent by rememberUpdatedState(content)
+    val shareTitle = stringResource(R.string.share_label)
     TimelineScreen(
         provider = provider,
         viewModelStoreOwner = viewModelStoreOwner
@@ -229,7 +232,14 @@ fun TimelineFullScreen(
                 viewModelStoreOwner = viewModelStoreOwner,
                 onComment = { items.itemSnapshotList.getOrNull(it)?.mapToDetail() }
             ) { index ->
+                val moderation = LocalModerationInteractor.current
                 items[index]?.let { updatedContent(this, component, it, index, pagerState) }
+                TimelineSheet(showSheet) { sheetState, post ->
+                    when (sheetState) {
+                        TimelineSheetMenuItem.REPORT -> moderation.onReport(post.id)
+                        TimelineSheetMenuItem.SHARE -> { context.share(post.url, shareTitle) }
+                    }
+                }
                 LaunchedEffect(Unit) {
                     items.itemSnapshotList.getOrNull(pagerState.currentPage)?.let { post ->
                         viewModel.view(post.id)
