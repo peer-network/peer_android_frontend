@@ -38,6 +38,7 @@ fun FeedModal(
                 component = component
             ) {
                 TimelineModal(
+                    id = account.id,
                     limit = BuildConfig.PAGING_LIMIT,
                     selected = selected,
                     username = account.username,

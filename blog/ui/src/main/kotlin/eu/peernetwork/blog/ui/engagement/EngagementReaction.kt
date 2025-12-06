@@ -3,7 +3,9 @@ package eu.peernetwork.blog.ui.engagement
 import android.content.res.Configuration
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
@@ -15,6 +17,7 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.blog.ui.R
 import eu.peernetwork.blog.ui.mapper.v2.mapToEngagement
@@ -45,9 +48,31 @@ interface EngagementReaction {
 @Composable
 fun EngagementReaction(
     post: UiPost,
+    size: Dp = 20.dp,
+    orientation: Orientation = Orientation.Horizontal,
     state: State<Map<String, UiReaction>>,
     onClick: (EngagementReaction.State) -> Unit
 ) {
+    EngagementReactionStream(
+        post = post,
+        state = state,
+    ) { engagement ->
+        EngagementReaction(
+            size = size,
+            onClick = onClick,
+            engagement = engagement.value,
+            orientation = orientation,
+        )
+    }
+}
+
+@Composable
+fun EngagementReactionStream(
+    post: UiPost,
+    state: State<Map<String, UiReaction>>,
+    content: @Composable (State<UiEngagement>) -> Unit
+) {
+    val updatedContent by rememberUpdatedState(content)
     val isLiked = state.value[post.id]?.isLiked
     val isDisliked = state.value[post.id]?.isDisliked
     val isViewed = state.value[post.id]?.isViewed
@@ -65,42 +90,45 @@ fun EngagementReaction(
             views = viewCount.toString()
         )
     } }
-    EngagementReaction(
-        onClick = onClick,
-        engagement = engagement.value
-    )
+    updatedContent(engagement)
 }
 
 @Composable
 fun EngagementReaction(
     engagement: UiEngagement,
+    size: Dp = 20.dp,
+    orientation: Orientation = Orientation.Horizontal,
     onClick: (EngagementReaction.State) -> Unit
 ) {
     val handleClick by rememberUpdatedState(onClick)
     EngagementMetric(
+        size = size,
         text = engagement.likes,
         checked = engagement.isLiked,
         painter = painterResource(R.drawable.ic_love_outline),
         checkedPainter = painterResource(R.drawable.ic_love),
-        orientation = Orientation.Horizontal
+        orientation = orientation
     ) { handleClick(EngagementReaction.State.Like) }
     EngagementMetric(
+        size = size,
         text = engagement.dislikes,
         checked = engagement.isDisliked,
         painter = painterResource(R.drawable.ic_hate_outline),
         checkedPainter = painterResource(R.drawable.ic_hate),
         checkedTint = LightAccentColor,
-        orientation = Orientation.Horizontal
+        orientation = orientation
     ) { handleClick(EngagementReaction.State.Dislike) }
     EngagementMetric(
+        size = size,
         text = engagement.comment,
         painter = painterResource(R.drawable.ic_comment_outline),
-        orientation = Orientation.Horizontal
+        orientation = orientation
     ) { handleClick(EngagementReaction.State.Comment) }
     EngagementMetric(
+        size = size,
         text = engagement.views,
         painter = painterResource(R.drawable.ic_view),
-        orientation = Orientation.Horizontal
+        orientation = orientation
     ) { handleClick(EngagementReaction.State.View) }
 }
 
@@ -117,9 +145,17 @@ fun PreviewEngagementOption() {
             views = "3k",
             comment = "1k"
         )
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
-            modifier = Modifier.padding(horizontal = 10.dp)
-        ) { EngagementReaction(model) {} }
+        Column {
+            EngagementReaction(
+                size = 24.dp,
+                engagement = model,
+                orientation = Orientation.Vertical
+            ) {}
+            Spacer(modifier = Modifier.padding(8.dp))
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                modifier = Modifier.padding(horizontal = 10.dp)
+            ) { EngagementReaction(model) {} }
+        }
     }
 }

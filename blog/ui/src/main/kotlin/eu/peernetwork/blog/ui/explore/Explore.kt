@@ -32,7 +32,10 @@ interface Explore: BlogProvider {
 
     class Builder(private val dependency: Explore) : UiComponent.DefaultBuilder<Explore, Component>() {
         override fun build(context: Context): Component {
-            return DaggerExplore_Component.builder().explore(dependency).exploreModule(ExploreModule(context)).build()
+            return DaggerExplore_Component.builder()
+                .explore(dependency)
+                .exploreModule(ExploreModule(context))
+                .build()
         }
     }
 }

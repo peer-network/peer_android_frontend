@@ -49,7 +49,7 @@ class AudioPlayerDelegate @Inject constructor(
         onPlay: (Boolean) -> Unit
     ) {
         val player = remember { session.exoPlayer() }
-        val isReady = remember { mutableStateOf(isPlaying.value) }
+        val isReady = remember { mutableStateOf(false) }
         val isLoading = remember { mutableStateOf(false) }
         val mute = session.volume().collectAsStateWithLifecycle(session.exoPlayer().isDeviceMuted)
         DisposableEffect(Unit) {
@@ -71,7 +71,7 @@ class AudioPlayerDelegate @Inject constructor(
             AudioPlayerThumbnail(
                 hasControls = hasControls,
                 enabled = enable,
-                isPlaying = isPlaying,
+                isPlaying = isReady,
                 isLoading = isLoading,
                 length = length,
                 session = session,
@@ -84,10 +84,10 @@ class AudioPlayerDelegate @Inject constructor(
                 .distinctUntilChanged()
                 .debounce(500)
                 .collect { playing ->
-                    isReady.value = playing
+                    isReady.value = playing && mute.value
                     player.playWhenReady = playing
+                    isLoading.value = mute.value && playing
                     if (playing) {
-                        isLoading.value = mute.value
                         player.setMediaItem(MediaItem.fromUri(path))
                         player.prepare()
                     }

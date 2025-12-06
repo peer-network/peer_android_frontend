@@ -3,6 +3,7 @@ package eu.peernetwork.blog.ui.engagement
 import android.content.res.Configuration
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,6 +13,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -92,9 +94,12 @@ fun EngagementMetric(
     horizontalAlignment: Alignment.Horizontal = Alignment.CenterHorizontally,
     onClick: () -> Unit
 ) {
+    val interaction = remember { MutableInteractionSource() }
     Column(
         modifier = modifier.clickable(
-            onClick = onClick
+            onClick = onClick,
+            interactionSource = interaction,
+            indication = null
         ),
         horizontalAlignment = horizontalAlignment
     ) {
@@ -137,9 +142,12 @@ fun EngagementMetric(
     verticalAlignment: Alignment.Vertical = Alignment.CenterVertically,
     onClick: () -> Unit
 ) {
+    val interaction = remember { MutableInteractionSource() }
     Row(
         modifier = modifier.clickable(
-            onClick = onClick
+            onClick = onClick,
+            interactionSource = interaction,
+            indication = null
         ),
         horizontalArrangement = horizontalArrangement,
         verticalAlignment = verticalAlignment

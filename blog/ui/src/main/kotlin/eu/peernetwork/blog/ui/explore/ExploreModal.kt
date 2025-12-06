@@ -3,17 +3,18 @@ package eu.peernetwork.blog.ui.explore
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableIntState
 import androidx.lifecycle.ViewModelStoreOwner
-import eu.peernetwork.blog.ui.post.PostModal
+import eu.peernetwork.blog.ui.gallery.GalleryScreen
 import eu.peernetwork.core.ui.component.UiComponentProvider
 
 @Composable
 fun ExploreModal(
+    id: String,
     username: String,
     imageUrl: String,
     selected: MutableIntState,
     limit: Int,
     provider: UiComponentProvider,
-    viewModelStoreOwner: ViewModelStoreOwner,
+    viewModelStoreOwner: ViewModelStoreOwner
 ) {
     ExploreScreen(
         provider = provider,
@@ -28,12 +29,14 @@ fun ExploreModal(
             viewModel = viewModel,
             viewModelStoreOwner = viewModelStoreOwner
         ) { component, item, index, pagerState ->
-            PostModal(
+            GalleryScreen(
                 position = index,
                 current = selected,
                 enabled =!pagerState.isScrollInProgress,
-                item
-            )
+                post = item
+            ) {
+
+            }
         }
     }
 }

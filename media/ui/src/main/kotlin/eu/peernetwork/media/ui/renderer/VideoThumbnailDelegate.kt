@@ -45,14 +45,17 @@ class VideoThumbnailDelegate @Inject constructor(
         val isReady = remember { mutableStateOf(spec.isPlaying.value) }
         val dimension = session.observer.collectAsStateWithLifecycle()
         val mute = session.volume().collectAsStateWithLifecycle(session.exoPlayer().isDeviceMuted)
-        val listener = remember {
-            object : Player.Listener {
+        DisposableEffect(Unit) {
+            val listener = object : Player.Listener {
                 override fun onPlayerError(error: PlaybackException) {
                     surfaceView.surfaceTexture?.let {
                         interactor.attach(it, spec.url)
+                        player.play()
                     }
                 }
             }
+            player.addListener(listener)
+            onDispose { player.removeListener(listener) }
         }
         Box(
             contentAlignment = Alignment.Center,
@@ -104,7 +107,6 @@ class VideoThumbnailDelegate @Inject constructor(
                     if (playing) {
                         surfaceView.surfaceTexture?.let {
                             interactor.attach(it, spec.url)
-                            player.addListener(listener)
                             player.play()
                         }
                     }
@@ -128,6 +130,13 @@ class VideoThumbnailDelegate @Inject constructor(
                         }
                     }
                 }
+        }
+        DisposableEffect(spec.enabled.value) {
+            onDispose {
+                if (!spec.enabled.value) {
+                    player.pause()
+                }
+            }
         }
     }
 }

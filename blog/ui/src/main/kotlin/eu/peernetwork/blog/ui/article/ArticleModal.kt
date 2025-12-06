@@ -5,7 +5,7 @@ import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.State
 import androidx.lifecycle.ViewModelStoreOwner
 import eu.peernetwork.blog.domain.model.Content
-import eu.peernetwork.blog.ui.post.PostModal
+import eu.peernetwork.blog.ui.gallery.GalleryScreen
 import eu.peernetwork.core.ui.component.UiComponentProvider
 
 @Composable
@@ -33,11 +33,11 @@ fun ArticleModal(
         viewModelStoreOwner = viewModelStoreOwner,
         onEvent = onEvent,
     ) { component, item, index, pagerState ->
-        PostModal(
+        GalleryScreen(
             position = index,
             current = selected,
             enabled = !pagerState.isScrollInProgress,
-            item
-        )
+            post = item
+        ) {}
     }
 }

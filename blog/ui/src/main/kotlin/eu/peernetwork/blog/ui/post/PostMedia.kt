@@ -17,6 +17,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import eu.peernetwork.blog.ui.model.v2.UiPostType
 import eu.peernetwork.blog.ui.post.PostInteractor.Companion.LocalPostInteractor
 import eu.peernetwork.core.ui.design.material.DesignThumbnail
@@ -36,6 +39,7 @@ fun PostMedia(
 ) {
     val interactor = LocalPostInteractor.current
     val configuration = LocalConfiguration.current
+    val lifecycleOwner = LocalLifecycleOwner.current
     val bitmaps = interactor.observe()
     val thumbnail = remember { derivedStateOf { bitmaps.value[path] } }
     val pause = remember { mutableStateOf(false) }
@@ -115,12 +119,26 @@ fun PostMedia(
             )
         }
     }
+    val lifecycleObserver = remember {
+        LifecycleEventObserver { _, event ->
+            when (event) {
+                Lifecycle.Event.ON_RESUME -> {
+                    pause.value = false
+                }
+                Lifecycle.Event.ON_PAUSE -> {
+                    pause.value = true
+                }
+                else -> Unit
+            }
+        }
+    }
     LaunchedEffect(Unit) {
-        pause.value = false
+        lifecycleOwner.lifecycle.addObserver(lifecycleObserver)
     }
     DisposableEffect(Unit) {
+        lifecycleOwner.lifecycle.addObserver(lifecycleObserver)
         onDispose {
-            pause.value = true
+            lifecycleOwner.lifecycle.removeObserver(lifecycleObserver)
         }
     }
 }

@@ -7,7 +7,7 @@ fun UiPost.mapToEngagement(): UiEngagement {
     return UiEngagement(
         id = id,
         likes = likes.toString(),
-        dislikes = likes.toString(),
+        dislikes = dislikes.toString(),
         isLiked = isLiked,
         isDisliked = isDisliked,
         views = views.toString(),
