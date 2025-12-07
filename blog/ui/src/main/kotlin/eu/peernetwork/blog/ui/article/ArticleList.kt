@@ -76,6 +76,7 @@ fun ArticleList(
                     asset = post.asset,
                     onMenu = { showSheet.value = post },
                     onClick = { selected.intValue = index },
+                    onAuthorClick = { selected.intValue = index },
                     engagement = {
                         EngagementReaction(
                             post = post,

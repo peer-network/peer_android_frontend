@@ -44,6 +44,7 @@ fun PostScaffold(
     pinnedBy: String? = null,
     onMenu: () -> Unit,
     onClick: () -> Unit,
+    onAuthorClick: () -> Unit,
     engagement: @Composable () -> Unit,
     connection: @Composable RowScope.() -> Unit,
 ) {
@@ -51,6 +52,7 @@ fun PostScaffold(
         model = model,
         onMenu = onMenu,
         onClick = onClick,
+        onAuthorClick = onAuthorClick,
         engagement = engagement,
         pinnedBy = pinnedBy,
         connection = connection
@@ -63,6 +65,7 @@ fun PostScaffold(
     pinnedBy: String? = null,
     onMenu: () -> Unit,
     onClick: () -> Unit,
+    onAuthorClick: () -> Unit,
     engagement: @Composable () -> Unit,
     connection: @Composable RowScope.() -> Unit,
     background: @Composable BoxScope.() -> Unit = { PostScaffoldBackground() },
@@ -83,7 +86,7 @@ fun PostScaffold(
                 pinnedBy = pinnedBy,
                 color = MaterialTheme.colorScheme.surfaceContainerLow,
                 modifier = Modifier.padding(12.dp),
-                onAuthorClick = {},
+                onAuthorClick = onAuthorClick,
                 onMenu = onMenu,
                 connection = connection
             )
@@ -116,6 +119,7 @@ fun PostExpandedScaffold(
     pinnedBy: String? = null,
     onMenu: () -> Unit,
     onClick: () -> Unit,
+    onAuthorClick: () -> Unit,
     engagement: @Composable () -> Unit,
     connection: @Composable RowScope.() -> Unit,
     content: @Composable () -> Unit
@@ -131,7 +135,7 @@ fun PostExpandedScaffold(
                 .padding(horizontal = 16.dp)
                 .padding(vertical = 10.dp),
             pinnedBy = pinnedBy,
-            onAuthorClick = {},
+            onAuthorClick = onAuthorClick,
             onMenu = onMenu,
             connection = connection
         )
@@ -182,6 +186,7 @@ fun PreviewUserOption() {
                 model = model,
                 onMenu = {},
                 onClick = {},
+                onAuthorClick = {},
                 engagement = { EngagementReaction(engagement) {} }
             ) {
                 DesignButton(
@@ -196,6 +201,7 @@ fun PreviewUserOption() {
                 model = model,
                 onMenu = {},
                 onClick = {},
+                onAuthorClick = {},
                 engagement = { EngagementReaction(engagement) {} },
                 pinnedBy = "Thomas",
                 connection = {
@@ -216,6 +222,7 @@ fun PreviewUserOption() {
                 pinnedBy = "Thomas",
                 onMenu = {},
                 onClick = {},
+                onAuthorClick = {},
                 engagement = { EngagementReaction(engagement) {} },
                 connection = {
                     DesignButton(

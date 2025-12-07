@@ -23,6 +23,8 @@ import eu.peernetwork.blog.ui.mapper.v2.mapToDetail
 import eu.peernetwork.blog.ui.model.v2.UiPost
 import eu.peernetwork.blog.ui.post.PostItem
 import eu.peernetwork.blog.ui.post.PostMedia
+import eu.peernetwork.blog.ui.post.PostNavigator
+import eu.peernetwork.blog.ui.post.PostNavigator.Companion.LocalPostNavigator
 import eu.peernetwork.blog.ui.post.PostSkeleton
 import eu.peernetwork.blog.ui.post.PostUserConnection
 import eu.peernetwork.core.ui.component.UiComponentProvider
@@ -41,7 +43,6 @@ fun TimelineList(
     viewModelStoreOwner: ViewModelStoreOwner,
     listState: LazyListState,
     onEvent: (TimelineEvent) -> Unit,
-    onExplore: (() -> Unit)? = null,
 ) {
     val enable = remember { derivedStateOf { !status.value } }
     val showSheet = remember { mutableStateOf<UiPost?>(null) }
@@ -67,6 +68,7 @@ fun TimelineList(
             items[index]?.let { post ->
                 val engagement = LocalEngagementInteractor.current
                 val reaction = LocalEngagementReaction.current
+                val navigator = LocalPostNavigator.current
                 PostItem(
                     type = post.type,
                     pinnedBy = post.pinnedBy,
@@ -74,6 +76,11 @@ fun TimelineList(
                     asset = post.asset,
                     onMenu = { showSheet.value = post },
                     onClick = { selected.intValue = index },
+                    onAuthorClick = {
+                        navigator.navigate(
+                            route = PostNavigator.Route.Profile(post.author.id)
+                        )
+                    },
                     engagement = {
                         EngagementReaction(
                             post = post,

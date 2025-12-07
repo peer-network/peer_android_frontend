@@ -22,6 +22,7 @@ fun PostItem(
     asset: UiAsset,
     onMenu: () -> Unit,
     onClick: () -> Unit,
+    onAuthorClick: () -> Unit,
     engagement: @Composable () -> Unit,
     connection: @Composable RowScope.() -> Unit,
     content: @Composable (String, Boolean) -> Unit
@@ -34,6 +35,7 @@ fun PostItem(
             pinnedBy = pinnedBy,
             onMenu = onMenu,
             onClick = onClick,
+            onAuthorClick = onAuthorClick,
             engagement = engagement,
             connection = connection,
         )
@@ -43,6 +45,7 @@ fun PostItem(
             pinnedBy = pinnedBy,
             onMenu = onMenu,
             onClick = onClick,
+            onAuthorClick = onAuthorClick,
             engagement = engagement,
             connection = connection,
         ) {
@@ -60,6 +63,7 @@ fun PostItem(
             pinnedBy = pinnedBy,
             onMenu = onMenu,
             onClick = onClick,
+            onAuthorClick = onAuthorClick,
             connection = connection,
             engagement = engagement
         ) {

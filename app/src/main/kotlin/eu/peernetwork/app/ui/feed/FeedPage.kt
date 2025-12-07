@@ -77,7 +77,7 @@ fun FeedPage(
             } else {
                 right
             }
-        ) {}
+        )
     }
     FeedMenu(
         id = id,

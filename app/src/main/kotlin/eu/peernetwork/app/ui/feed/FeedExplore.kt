@@ -102,7 +102,7 @@ fun FeedExplore(
                     right
                 },
                 onEvent = { isVisible.value = true }
-            ) {}
+            )
             FeedModal(
                 account = account,
                 selected = selected,

@@ -2,6 +2,7 @@ package eu.peernetwork.app.ui.feed
 
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -16,6 +17,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import eu.peernetwork.blog.domain.model.Category
 import eu.peernetwork.blog.domain.model.Filter.Criteria
+import eu.peernetwork.blog.ui.post.PostNavigator
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.media.core.model.UiMimeType
@@ -56,54 +58,67 @@ fun FeedScreen(
 ) {
     val controller = rememberNavController()
     val selected = remember { mutableIntStateOf(-1) }
-    FeedScreen(
-        provider = provider,
-        viewModelStoreOwner = viewModelStoreOwner,
-    ) { component, viewModel ->
-        val state by viewModel.state.collectAsStateWithLifecycle()
-        val isVisible = remember { mutableStateOf(false) }
-        val ordinal = remember {
-            derivedStateOf {
-                (state as? FeedViewModel.State.Initialize?)?.filter ?: 0
+    val navigator = remember { object : PostNavigator {
+        override fun navigate(route: PostNavigator.Route) {
+            when(route) {
+                is PostNavigator.Route.Profile -> {
+                    controller.navigate("profile/${route.id}")
+                }
             }
         }
-        val pageState = rememberPagerState(
-            pageCount = { UiMimeType.TYPES.size },
-            initialPage = state.page
-        )
-        FeedNavigation(
-            account = account,
-            component = component,
-            controller = controller,
-        ) {
-            FeedPage(
-                id = account.id,
-                username = account.username,
-                imageUrl = account.imageUrl,
-                title = title,
-                isVisible = isVisible,
-                selected = selected,
-                limit = limit,
-                ordinal = ordinal.value,
-                criteria = criteria,
-                pageState = pageState,
-                component = component,
-                viewModelStoreOwner = viewModelStoreOwner,
-                onFilter = { viewModel.setFilter(it) }
-            ) { isVisible.value = true }
-        }
-        FeedModal(
-            account = account,
-            selected = selected,
-            isVisible = isVisible,
-            criteria = criteria,
-            category = if (pageState.currentPage == 0) {
-                Category.FOLLOWED
-            } else {
-                Category.FOLLOWER
-            },
+    } }
+    CompositionLocalProvider(
+        PostNavigator.LocalPostNavigator provides navigator
+    ) {
+        FeedScreen(
             provider = provider,
-            viewModelStoreOwner = viewModelStoreOwner
-        )
+            viewModelStoreOwner = viewModelStoreOwner,
+        ) { component, viewModel ->
+            val state by viewModel.state.collectAsStateWithLifecycle()
+            val isVisible = remember { mutableStateOf(false) }
+            val ordinal = remember {
+                derivedStateOf {
+                    (state as? FeedViewModel.State.Initialize?)?.filter ?: 0
+                }
+            }
+            val pageState = rememberPagerState(
+                pageCount = { UiMimeType.TYPES.size },
+                initialPage = state.page
+            )
+            FeedNavigation(
+                account = account,
+                component = component,
+                controller = controller,
+            ) {
+                FeedPage(
+                    id = account.id,
+                    username = account.username,
+                    imageUrl = account.imageUrl,
+                    title = title,
+                    isVisible = isVisible,
+                    selected = selected,
+                    limit = limit,
+                    ordinal = ordinal.value,
+                    criteria = criteria,
+                    pageState = pageState,
+                    component = component,
+                    viewModelStoreOwner = viewModelStoreOwner,
+                    onFilter = { viewModel.setFilter(it) }
+                ) { isVisible.value = true }
+            }
+            FeedModal(
+                account = account,
+                selected = selected,
+                isVisible = isVisible,
+                criteria = criteria,
+                category = if (pageState.currentPage == 0) {
+                    Category.FOLLOWED
+                } else {
+                    Category.FOLLOWER
+                },
+                provider = provider,
+                viewModelStoreOwner = viewModelStoreOwner
+            )
+        }
     }
 }
