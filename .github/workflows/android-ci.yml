@@ -1,4 +1,9 @@
 name: Android CI
+
+permissions:
+  contents: write
+  pull-requests: write
+
 on:
   pull_request:
   push:
@@ -7,9 +12,17 @@ on:
       - development
 
 jobs:
+  auto_update_branch:
+    name: Auto-Update PR Branch
+    uses: peer-network/.github/.github/workflows/auto-update-pr.yml@main
+    with:
+      pull_request: ${{ toJson(github.event.pull_request) }}
+    secrets: inherit
+
   check_branch_sync:
     name: Check if PR Branch is Behind Base
     runs-on: ubuntu-latest
+    needs: [auto_update_branch]
     outputs:
       is_behind: ${{ steps.check.outputs.is_behind }}
     steps:
@@ -32,9 +45,52 @@ jobs:
             echo "is_behind=false" >> $GITHUB_OUTPUT
           fi
 
+  fail_outdated_branch:
+    name: Block CI Due to Outdated Branch
+    runs-on: ubuntu-latest
+    needs: [check_branch_sync]
+    if: needs.check_branch_sync.outputs.is_behind == 'true'
+    steps:
+      - run: |
+          echo " PR branch is behind the base branch."
+          exit 1
+
+  map_pr_to_discord:
+    name: Map PR to Discord User
+    runs-on: ubuntu-latest
+    needs: [auto_update_branch]
+    outputs:
+      discord_mention: ${{ steps.map.outputs.discord_mention }}
+    steps:
+      - name: Map GitHub username to Discord ID
+        id: map
+        run: |
+          if [ "${{ github.event_name }}" != "pull_request" ]; then
+            echo "discord_mention=<@1362087975906967736>" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          case "${{ github.event.pull_request.user.login }}" in
+            WisdomNwaiwu)
+              echo "discord_mention=<@1362087975906967736>" >> $GITHUB_OUTPUT
+              ;;
+            jakobPeer)
+              echo "discord_mention=<@1334087880833892392>" >> $GITHUB_OUTPUT
+              ;;
+            conxtantyn)
+              echo "discord_mention=<@1354048093376610366>" >> $GITHUB_OUTPUT
+              ;;
+            NotBrightLight)
+              echo "discord_mention=<@310723093863858176>" >> $GITHUB_OUTPUT
+              ;;
+            *)
+              echo "discord_mention=<@1362087975906967736>" >> $GITHUB_OUTPUT
+              ;;
+          esac
+
   gitleaks:
     name: Run Gitleaks Scan
-    needs: check_branch_sync
+    needs: [auto_update_branch, check_branch_sync, map_pr_to_discord]
     if: needs.check_branch_sync.outputs.is_behind == 'false'
     uses: peer-network/peer_global_security/.github/workflows/gitleaks.yml@main
     with:
@@ -42,7 +98,7 @@ jobs:
 
   trivy_scan:
     name: Run Trivy Security Scan
-    needs: [gitleaks]
+    needs: [auto_update_branch, gitleaks, map_pr_to_discord]
     if: needs.gitleaks.result == 'success'
     uses: peer-network/.github/.github/workflows/trivy-scan.yml@main
     with:
@@ -119,42 +175,10 @@ jobs:
           name: app-release
           path: app/build/outputs/apk/release/app-release.apk
 
-  map_pr_to_discord:
-    name: Map PR to Discord User
-    runs-on: ubuntu-latest
-    outputs:
-      discord_mention: ${{ steps.map.outputs.discord_mention }}
-    steps:
-      - name: Map GitHub username to Discord ID
-        id: map
-        run: |
-          if [ "${{ github.event_name }}" != "pull_request" ]; then
-            echo "discord_mention=<@1362087975906967736>" >> $GITHUB_OUTPUT
-            exit 0
-          fi
-
-          case "${{ github.event.pull_request.user.login }}" in
-            WisdomNwaiwu)
-              echo "discord_mention=<@1362087975906967736>" >> $GITHUB_OUTPUT
-              ;;
-            jakobPeer)
-              echo "discord_mention=<@1334087880833892392>" >> $GITHUB_OUTPUT
-              ;;
-            conxtantyn)
-              echo "discord_mention=<@1354048093376610366>" >> $GITHUB_OUTPUT
-              ;;
-            NotBrightLight)
-              echo "discord_mention=<@310723093863858176>" >> $GITHUB_OUTPUT
-              ;;
-            *)
-              echo "discord_mention=<@1362087975906967736>" >> $GITHUB_OUTPUT
-              ;;
-          esac
-
   send_discord_notification:
     name: Unified Discord Notification
     runs-on: ubuntu-latest
-    needs: [check_branch_sync, gitleaks, trivy_scan, build, map_pr_to_discord]
+    needs: [auto_update_branch, check_branch_sync, gitleaks, trivy_scan, build, map_pr_to_discord]
     if: always()
     steps:
       - name: Determine message type
