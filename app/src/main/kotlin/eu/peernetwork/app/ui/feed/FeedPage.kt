@@ -37,6 +37,7 @@ fun FeedPage(
     viewModelStoreOwner: ViewModelStoreOwner,
     left: LazyListState = rememberLazyListState(),
     right: LazyListState = rememberLazyListState(),
+    onExplore: () -> Unit,
     onFilter: (Int) -> Unit,
     onClick: () -> Unit,
 ) {
@@ -67,6 +68,7 @@ fun FeedPage(
             criteria = derivedCriteria.value,
             provider = component,
             viewModelStoreOwner = viewModelStoreOwner,
+            onExplore = onExplore,
             onEvent = { event ->
                 when(event) {
                     is TimelineEvent.Post -> handleClick()

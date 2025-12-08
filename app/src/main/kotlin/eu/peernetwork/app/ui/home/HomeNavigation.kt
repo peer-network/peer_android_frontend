@@ -46,6 +46,7 @@ fun HomeNavigation(
                         provider = component,
                         viewModelStoreOwner = backStackEntry,
                         refresh = hasUpdate,
+                        onExplore = onExplore
                     )
                     is HomeRoute.Profile -> ProfileScreen(
                         account = account,

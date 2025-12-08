@@ -56,6 +56,7 @@ fun FeedScreen(
     refresh: MutableState<Boolean>,
     title: String? = null,
     criteria: Criteria = Criteria.None,
+    onExplore: () -> Unit
 ) {
     val context = LocalContext.current
     val controller = rememberNavController()
@@ -97,6 +98,7 @@ fun FeedScreen(
                     pageState = pageState,
                     component = component,
                     viewModelStoreOwner = viewModelStoreOwner,
+                    onExplore = onExplore,
                     onFilter = { viewModel.setFilter(it) }
                 ) { isVisible.value = true }
             }

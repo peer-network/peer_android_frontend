@@ -43,6 +43,7 @@ fun TimelineList(
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
     listState: LazyListState,
+    onExplore: () -> Unit,
     onEvent: (TimelineEvent) -> Unit,
 ) {
     val enable = remember { derivedStateOf { !status.value } }
@@ -61,6 +62,7 @@ fun TimelineList(
         viewModelStoreOwner = viewModelStoreOwner,
         listState = listState,
         onEvent = onEvent,
+        onExplore = onExplore
     ) { component, items ->
         items(
             count = items.itemCount,

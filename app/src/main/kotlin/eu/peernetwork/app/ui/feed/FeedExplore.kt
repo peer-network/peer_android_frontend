@@ -4,6 +4,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -12,14 +13,17 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import eu.peernetwork.app.interactor.PostNavigatorDelegate
 import eu.peernetwork.blog.domain.model.Category
 import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.blog.domain.model.Sort
+import eu.peernetwork.blog.ui.post.PostNavigator
 import eu.peernetwork.blog.ui.timeline.TimelineList
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.component.UiComponentProvider
@@ -60,74 +64,81 @@ fun FeedExplore(
     title: String? = null,
     criteria: Criteria = Criteria.None,
 ) {
+    val context = LocalContext.current
     val left = rememberLazyListState()
     val right = rememberLazyListState()
     val scope = rememberCoroutineScope()
     val controller = rememberNavController()
     val isVisible = remember { mutableStateOf(false) }
     val selected = remember { mutableIntStateOf(-1) }
-    FeedExplore(
-        account = account,
-        provider = provider,
-        viewModelStoreOwner = viewModelStoreOwner,
-        navHostController = controller
-    ) { component, viewModel ->
-        val state by viewModel.state.collectAsStateWithLifecycle()
-        val position = remember { mutableIntStateOf(state.page) }
-        val pageState = rememberPagerState(
-            pageCount = { UiMimeType.TYPES.size },
-            initialPage = position.intValue
-        )
-        val sorts = listOf(Sort.NEW, Sort.TREND)
-        val derivedCriteria = remember { derivedStateOf {
-            (criteria as? Criteria.Content?)?.copy(
-                sort = sorts[pageState.currentPage],
-            ) ?: Criteria.Content(sort = sorts[pageState.currentPage])
-        } }
-        FeedExploreScaffold(pageState = pageState) {
-            TimelineList(
-                id = account.id,
-                username = account.username,
-                imageUrl = account.imageUrl,
-                status = isVisible,
-                selected = selected,
-                limit = limit,
-                category = Category.NONE,
-                criteria = derivedCriteria.value,
-                provider = component,
-                viewModelStoreOwner = viewModelStoreOwner,
-                listState = if (it == 0) {
-                    left
-                } else {
-                    right
-                },
-                onEvent = { isVisible.value = true }
+    val navigator = remember { PostNavigatorDelegate(context, controller) }
+    CompositionLocalProvider(
+        PostNavigator.LocalPostNavigator provides navigator
+    ) {
+        FeedExplore(
+            account = account,
+            provider = provider,
+            viewModelStoreOwner = viewModelStoreOwner,
+            navHostController = controller
+        ) { component, viewModel ->
+            val state by viewModel.state.collectAsStateWithLifecycle()
+            val position = remember { mutableIntStateOf(state.page) }
+            val pageState = rememberPagerState(
+                pageCount = { UiMimeType.TYPES.size },
+                initialPage = position.intValue
             )
-            FeedModal(
-                account = account,
-                selected = selected,
-                isVisible = isVisible,
-                criteria = derivedCriteria.value,
-                category = Category.NONE,
-                provider = provider,
-                viewModelStoreOwner = viewModelStoreOwner
-            )
-        }
-        DesignTitleBarHost(
-            tag = "FeedExplorer",
-            listener = {
-                scope.launch {
-                    if (pageState.currentPage == 0) {
-                        left.animateScrollToItem(0)
+            val sorts = listOf(Sort.NEW, Sort.TREND)
+            val derivedCriteria = remember { derivedStateOf {
+                (criteria as? Criteria.Content?)?.copy(
+                    sort = sorts[pageState.currentPage],
+                ) ?: Criteria.Content(sort = sorts[pageState.currentPage])
+            } }
+            FeedExploreScaffold(pageState = pageState) {
+                TimelineList(
+                    id = account.id,
+                    username = account.username,
+                    imageUrl = account.imageUrl,
+                    status = isVisible,
+                    selected = selected,
+                    limit = limit,
+                    category = Category.NONE,
+                    criteria = derivedCriteria.value,
+                    provider = component,
+                    viewModelStoreOwner = viewModelStoreOwner,
+                    listState = if (it == 0) {
+                        left
                     } else {
-                        right.animateScrollToItem(0)
+                        right
+                    },
+                    onEvent = { isVisible.value = true },
+                    onExplore = {  }
+                )
+                FeedModal(
+                    account = account,
+                    selected = selected,
+                    isVisible = isVisible,
+                    criteria = derivedCriteria.value,
+                    category = Category.NONE,
+                    provider = provider,
+                    viewModelStoreOwner = viewModelStoreOwner
+                )
+            }
+            DesignTitleBarHost(
+                tag = "FeedExplorer",
+                listener = {
+                    scope.launch {
+                        if (pageState.currentPage == 0) {
+                            left.animateScrollToItem(0)
+                        } else {
+                            right.animateScrollToItem(0)
+                        }
                     }
                 }
-            }
-        ) {
-            titleBar {
-                DesignTitle {
-                    Text(title ?: stringResource(R.string.explore_label))
+            ) {
+                titleBar {
+                    DesignTitle {
+                        Text(title ?: stringResource(R.string.explore_label))
+                    }
                 }
             }
         }

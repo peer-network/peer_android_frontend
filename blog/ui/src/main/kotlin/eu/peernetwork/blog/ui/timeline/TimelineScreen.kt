@@ -62,6 +62,7 @@ fun TimelineScreen(
     criteria: Criteria,
     component: Timeline.Component,
     viewModel: TimelineViewModel,
+    onExplore: () -> Unit,
     loading: @Composable () -> Unit,
     content: @Composable (Timeline.Component, LazyPagingItems<UiPost>) -> Unit
 ) {
@@ -88,7 +89,15 @@ fun TimelineScreen(
     }
     DesignPagingStream(
         state = derivedState,
-        loading = loading
+        loading = loading,
+        error = {
+            TimelineError(
+                error = it,
+                component = component,
+                onRefresh = { viewModel.load(Pageable(0, limit), category, criteria) },
+                onExplore = onExplore
+            )
+        }
     ) { updatedContent(component, it) }
     LaunchedEffect(category, criteria) {
         val currentState = localState.value as? TimelineViewModel.State.Success?
@@ -115,6 +124,7 @@ fun TimelineScreen(
     listState: LazyListState = rememberLazyListState(),
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
+    onExplore: () -> Unit,
     onEvent: (TimelineEvent) -> Unit,
     content: LazyListScope.(Timeline.Component, LazyPagingItems<UiPost>) -> Unit
 ) {
@@ -154,6 +164,7 @@ fun TimelineScreen(
                 criteria = criteria,
                 component = component,
                 viewModel = viewModel,
+                onExplore = onExplore,
                 loading = { PostSkeleton(3) },
             ) { component, items ->
                 PostScreen(
@@ -220,7 +231,8 @@ fun TimelineFullScreen(
             criteria = criteria,
             component = component,
             viewModel = viewModel,
-            loading = {}
+            loading = {},
+            onExplore = {}
         ) { component, items ->
             val pagerState = rememberPagerState(initialPage = selected.intValue) { items.itemCount }
             PostScreen(

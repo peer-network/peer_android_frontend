@@ -81,7 +81,14 @@ fun SearchScreen(
                         selected = selected,
                         mode = currentMode.value,
                         limit = limit,
-                        onClick = { false },
+                        onClick = {
+                            when (currentMode.value) {
+                                is SearchMode.Tag -> controller.navigate("feed/$it")
+                                is SearchMode.Title -> controller.navigate("feed/$it")
+                                else -> controller.navigate("profile/$it")
+                            }
+                            false
+                        },
                         onShow = { isVisible.value = true },
                         component = component,
                         viewModelStoreOwner = viewModelStoreOwner,
