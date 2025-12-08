@@ -1,14 +1,18 @@
 package eu.peernetwork.app.ui.profile
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModelStoreOwner
-import androidx.navigation.compose.rememberNavController
 import eu.peernetwork.app.BuildConfig
+import eu.peernetwork.app.interactor.NavigationInteractor
 import eu.peernetwork.blog.domain.model.Content
 import eu.peernetwork.blog.ui.article.ArticleModal
+import eu.peernetwork.blog.ui.post.PostNavigator
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.material.DesignOverlay
 import eu.peernetwork.user.domain.model.Account
@@ -24,29 +28,34 @@ fun ProfileModal(
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner
 ) {
-    val controller = rememberNavController()
+    val context = LocalContext.current
     DesignOverlay(
         state = isVisible,
+        startDestination = "content",
         onDismiss = { isVisible.value = false }
-    ) {
-        ProfileScreen(provider) { component ->
-            ProfileNavigation(
-                account = account,
-                controller = controller,
-                component = component,
-                viewModelStoreOwner = viewModelStoreOwner
-            ) {
-                ArticleModal(
-                    author = userId,
-                    username = account.username,
-                    imageUrl = account.imageUrl,
-                    types = types,
-                    limit = BuildConfig.PAGING_LIMIT,
-                    selected = selected,
-                    timestamp = timestamp,
-                    provider = component,
+    ) { controller ->
+        val navigator = remember { NavigationInteractor(context, controller) }
+        CompositionLocalProvider(PostNavigator.LocalPostNavigator provides navigator) {
+            ProfileScreen(provider) { component ->
+                ProfileNavigation(
+                    account = account,
+                    isModal = true,
+                    controller = controller,
+                    component = component,
                     viewModelStoreOwner = viewModelStoreOwner
-                ) {}
+                ) {
+                    ArticleModal(
+                        author = userId,
+                        username = account.username,
+                        imageUrl = account.imageUrl,
+                        types = types,
+                        limit = BuildConfig.PAGING_LIMIT,
+                        selected = selected,
+                        timestamp = timestamp,
+                        provider = component,
+                        viewModelStoreOwner = viewModelStoreOwner
+                    ) {}
+                }
             }
         }
     }

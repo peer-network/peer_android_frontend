@@ -17,7 +17,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.navigation.compose.rememberNavController
-import eu.peernetwork.app.interactor.PostNavigatorDelegate
+import eu.peernetwork.app.interactor.NavigationInteractor
 import eu.peernetwork.blog.ui.post.PostNavigator
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.component.UiComponentProvider
@@ -58,7 +58,7 @@ fun SearchScreen(
     val listState = rememberLazyGridState()
     val selected = remember { mutableIntStateOf(-1) }
     val isVisible = remember { mutableStateOf(false) }
-    val navigator = remember { PostNavigatorDelegate(context, controller) }
+    val navigator = remember { NavigationInteractor(context, controller) }
     CompositionLocalProvider(
         PostNavigator.LocalPostNavigator provides navigator
     ) {

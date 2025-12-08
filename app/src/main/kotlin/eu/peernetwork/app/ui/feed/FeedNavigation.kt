@@ -6,9 +6,9 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
-import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import eu.peernetwork.app.BuildConfig
+import eu.peernetwork.app.extension.route
 import eu.peernetwork.app.ui.profile.ProfileScreen
 import eu.peernetwork.app.ui.search.SearchMode
 import eu.peernetwork.app.ui.search.SearchScreen
@@ -18,6 +18,7 @@ import eu.peernetwork.user.domain.model.Account
 @Composable
 fun FeedNavigation(
     account: Account,
+    isModal: Boolean = false,
     controller: NavHostController,
     component: Feed.Component,
     content: @Composable (NavBackStackEntry) -> Unit = {}
@@ -27,9 +28,10 @@ fun FeedNavigation(
         navController = controller,
         startDestination = "content",
     ) {
-        composable("content") { updatedContent(it) }
-        composable(
+        route("content", isModal) { updatedContent(it) }
+        route(
             "profile/{id}",
+            isModal = isModal,
             arguments = listOf(navArgument("id") {
                 type = NavType.StringType
             })
@@ -41,8 +43,9 @@ fun FeedNavigation(
                 viewModelStoreOwner = backStackEntry,
             )
         }
-        composable(
+        route(
             "search/{type}/{query}",
+            isModal = isModal,
             arguments = listOf(
                 navArgument("type") { type = NavType.StringType },
                 navArgument("query") { type = NavType.StringType }

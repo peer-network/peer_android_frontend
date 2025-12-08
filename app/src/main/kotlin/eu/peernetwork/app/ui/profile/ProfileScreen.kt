@@ -15,7 +15,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.navigation.compose.rememberNavController
 import eu.peernetwork.app.BuildConfig
-import eu.peernetwork.app.interactor.PostNavigatorDelegate
+import eu.peernetwork.app.interactor.NavigationInteractor
 import eu.peernetwork.blog.domain.usecase.PostUsecase
 import eu.peernetwork.blog.ui.post.PostNavigator
 import eu.peernetwork.core.ui.component.UiComponentProvider
@@ -50,7 +50,7 @@ fun ProfileScreen(
     val isVisible = remember { mutableStateOf(false) }
     val selected = remember { mutableIntStateOf(-1) }
     val timestamp = rememberSaveable { mutableLongStateOf(System.currentTimeMillis()) }
-    val navigator = remember { PostNavigatorDelegate(context, controller) }
+    val navigator = remember { NavigationInteractor(context, controller) }
     CompositionLocalProvider(
         PostNavigator.LocalPostNavigator provides navigator
     ) {

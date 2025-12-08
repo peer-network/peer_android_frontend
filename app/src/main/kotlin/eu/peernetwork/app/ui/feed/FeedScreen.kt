@@ -23,7 +23,7 @@ import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.media.core.model.UiMimeType
 import eu.peernetwork.social.ui.connection.ConnectionScreen
 import eu.peernetwork.user.domain.model.Account
-import eu.peernetwork.app.interactor.PostNavigatorDelegate
+import eu.peernetwork.app.interactor.NavigationInteractor
 
 @Composable
 fun FeedScreen(
@@ -61,7 +61,7 @@ fun FeedScreen(
     val context = LocalContext.current
     val controller = rememberNavController()
     val selected = remember { mutableIntStateOf(-1) }
-    val navigator = remember { PostNavigatorDelegate(context, controller) }
+    val navigator = remember { NavigationInteractor(context, controller) }
     CompositionLocalProvider(
         PostNavigator.LocalPostNavigator provides navigator
     ) {

@@ -52,16 +52,3 @@ fun DesignOverlay(
         }
     }
 }
-
-@Composable
-fun DesignOverlayPage(
-    modifier: Modifier = Modifier,
-    content: @Composable () -> Unit
-) {
-    val updatedContent by rememberUpdatedState(content)
-    DesignTitleBar {
-        Box(modifier = modifier) {
-            updatedContent()
-        }
-    }
-}

@@ -3,10 +3,8 @@ package eu.peernetwork.app.ui.feed
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -73,8 +71,7 @@ fun FeedMenu(
                             val filter = UiFilter.valueOf(label)
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier.padding(start = 8.dp)
-                                    .padding(vertical = 1.dp),
+                                modifier = Modifier.padding(start = 6.dp),
                             ) {
                                 Text(
                                     stringResource(filter.value),
@@ -89,16 +86,12 @@ fun FeedMenu(
                                     },
                                 )
                                 if (isActive) {
-                                    Spacer(modifier = Modifier.width(2.dp))
                                     Icon(
                                         painter = painterResource(R.drawable.ic_caret_down),
                                         contentDescription = stringResource(filter.value),
                                         modifier = Modifier.size(16.dp),
                                         tint = MaterialTheme.colorScheme.outline
                                     )
-                                    Spacer(modifier = Modifier.width(4.dp))
-                                } else {
-                                    Spacer(modifier = Modifier.width(8.dp))
                                 }
                             }
                         }

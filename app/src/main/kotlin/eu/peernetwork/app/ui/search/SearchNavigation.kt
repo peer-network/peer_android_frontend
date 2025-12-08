@@ -7,9 +7,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
-import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import eu.peernetwork.app.BuildConfig
+import eu.peernetwork.app.extension.route
 import eu.peernetwork.app.ui.feed.FeedExplore
 import eu.peernetwork.app.ui.profile.ProfileScreen
 import eu.peernetwork.blog.domain.model.Filter.Criteria
@@ -19,6 +19,7 @@ import eu.peernetwork.user.domain.model.Account
 @Composable
 fun SearchNavigation(
     account: Account,
+    isModal: Boolean = false,
     component: Search.Component,
     controller: NavHostController,
     content: @Composable () -> Unit
@@ -29,9 +30,10 @@ fun SearchNavigation(
         navController = controller,
         startDestination = "search",
     ) {
-        composable("search") { updatedContent() }
-        composable(
+        route("search", isModal) { updatedContent() }
+        route(
             "profile/{id}",
+            isModal = isModal,
             arguments = listOf(navArgument("id") {
                 type = NavType.StringType
             })
@@ -44,8 +46,9 @@ fun SearchNavigation(
                 viewModelStoreOwner = backStackEntry,
             )
         }
-        composable(
+        route(
             "feed/{tag}",
+            isModal = isModal,
             arguments = listOf(navArgument("tag") {
                 type = NavType.StringType
             })
@@ -61,8 +64,9 @@ fun SearchNavigation(
                 refresh = requireUpdate
             )
         }
-        composable(
+        route(
             route = "search?query={query}",
+            isModal = isModal,
             arguments = listOf(navArgument("query") {
                 type = NavType.StringType
                 defaultValue = ""
@@ -80,8 +84,9 @@ fun SearchNavigation(
                 refresh = requireUpdate
             )
         }
-        composable(
+        route(
             "search/{type}/{query}",
+            isModal = isModal,
             arguments = listOf(
                 navArgument("type") { type = NavType.StringType },
                 navArgument("query") { type = NavType.StringType }

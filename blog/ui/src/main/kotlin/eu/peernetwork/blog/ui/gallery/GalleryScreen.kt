@@ -23,6 +23,8 @@ import eu.peernetwork.blog.ui.mapper.v2.query
 import eu.peernetwork.blog.ui.model.v2.UiPost
 import eu.peernetwork.blog.ui.model.v2.UiPostType
 import eu.peernetwork.blog.ui.post.PostInteractor.Companion.LocalPostInteractor
+import eu.peernetwork.blog.ui.post.PostNavigator
+import eu.peernetwork.blog.ui.post.PostNavigator.Companion.LocalPostNavigator
 import eu.peernetwork.core.ui.design.material.DesignThumbnail
 import eu.peernetwork.media.core.model.UiMimeType
 import eu.peernetwork.media.core.renderer.AudioPlayer
@@ -40,6 +42,7 @@ fun GalleryScreen(
 ) {
     val context = LocalContext.current
     val density = LocalDensity.current
+    val navigator = LocalPostNavigator.current
     val reaction = LocalEngagementReaction.current
     val engagementInteractor = LocalEngagementInteractor.current
     val interactor = LocalPostInteractor.current
@@ -61,7 +64,9 @@ fun GalleryScreen(
             engagement = engagement,
             onEngage = { reaction(post, it) },
             onMenu = { showSheet.value = post },
-            showAuthor = {},
+            showAuthor = {
+                navigator.navigate(PostNavigator.Route.Profile(post.author.id))
+            },
             modifier = Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)

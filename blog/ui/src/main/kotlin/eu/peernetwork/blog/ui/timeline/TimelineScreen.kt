@@ -140,7 +140,9 @@ fun TimelineScreen(
         val state by viewModel.state.collectAsStateWithLifecycle()
         val status by viewModel.status.collectAsStateWithLifecycle()
         val key = listOf(category, criteria).hashCode()
-        val isLoading = remember { derivedStateOf { state[key] == TimelineViewModel.State.Loading  } }
+        val isLoading = remember { derivedStateOf {
+            state[key] == TimelineViewModel.State.Loading
+        } }
         val isRefreshing = remember { mutableStateOf(isLoading.value) }
         val selector = remember { derivedStateOf {
             status[key] ?: TimelineViewModel.Status.Empty
@@ -189,7 +191,7 @@ fun TimelineScreen(
                     TimelineSheet(showSheet) { sheetState, post ->
                         when (sheetState) {
                             TimelineSheetMenuItem.REPORT -> moderation.onReport(post.id)
-                            TimelineSheetMenuItem.SHARE -> { context.share(post.url, shareTitle) }
+                            TimelineSheetMenuItem.SHARE -> context.share(post.url, shareTitle)
                         }
                     }
                 }
@@ -234,7 +236,9 @@ fun TimelineFullScreen(
             loading = {},
             onExplore = {}
         ) { component, items ->
-            val pagerState = rememberPagerState(initialPage = selected.intValue) { items.itemCount }
+            val pagerState = rememberPagerState(initialPage = selected.intValue) {
+                items.itemCount
+            }
             PostScreen(
                 imageUrl = imageUrl,
                 username = username,
@@ -245,7 +249,9 @@ fun TimelineFullScreen(
                 onComment = { items.itemSnapshotList.getOrNull(it)?.mapToDetail() }
             ) { index ->
                 val moderation = LocalModerationInteractor.current
-                items[index]?.let { updatedContent(this, component, it, index, pagerState) }
+                items[index]?.let {
+                    updatedContent(this, component, it, index, pagerState)
+                }
                 TimelineSheet(showSheet) { sheetState, post ->
                     when (sheetState) {
                         TimelineSheetMenuItem.REPORT -> moderation.onReport(post.id)

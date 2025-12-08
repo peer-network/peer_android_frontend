@@ -1,12 +1,16 @@
 package eu.peernetwork.app.ui.search
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModelStoreOwner
-import androidx.navigation.compose.rememberNavController
 import eu.peernetwork.app.BuildConfig
+import eu.peernetwork.app.interactor.NavigationInteractor
 import eu.peernetwork.blog.ui.explore.ExploreModal
+import eu.peernetwork.blog.ui.post.PostNavigator
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.material.DesignOverlay
 import eu.peernetwork.user.domain.model.Account
@@ -19,28 +23,33 @@ fun SearchModal(
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner
 ) {
-    val controller = rememberNavController()
+    val context = LocalContext.current
     DesignOverlay(
         state = isVisible,
+        startDestination = "content",
         onDismiss = { isVisible.value = false }
-    ) {
-        SearchScreen(
-            provider = provider,
-            viewModelStoreOwner = viewModelStoreOwner
-        ) { component ->
-            SearchNavigation(
-                account = account,
-                controller = controller,
-                component = component
-            ) {
-                ExploreModal(
-                    limit = BuildConfig.PAGING_LIMIT,
-                    selected = selected,
-                    provider = component,
-                    imageUrl = account.imageUrl,
-                    username = account.username,
-                    viewModelStoreOwner = viewModelStoreOwner
-                )
+    ) { controller ->
+        val navigator = remember { NavigationInteractor(context, controller) }
+        CompositionLocalProvider(PostNavigator.LocalPostNavigator provides navigator) {
+            SearchScreen(
+                provider = provider,
+                viewModelStoreOwner = viewModelStoreOwner
+            ) { component ->
+                SearchNavigation(
+                    account = account,
+                    isModal = true,
+                    controller = controller,
+                    component = component
+                ) {
+                    ExploreModal(
+                        limit = BuildConfig.PAGING_LIMIT,
+                        selected = selected,
+                        provider = component,
+                        imageUrl = account.imageUrl,
+                        username = account.username,
+                        viewModelStoreOwner = viewModelStoreOwner
+                    )
+                }
             }
         }
     }

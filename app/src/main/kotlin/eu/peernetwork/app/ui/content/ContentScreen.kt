@@ -16,13 +16,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
 import eu.peernetwork.app.BuildConfig
-import eu.peernetwork.app.extension.navigateToTagSearch
-import eu.peernetwork.app.extension.navigateToUsernameSearch
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.material.DesignTitle
 import eu.peernetwork.core.ui.design.material.DesignTitleBarHost
 import eu.peernetwork.core.ui.extension.builder
-import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.core.ui.factory.UiViewModelStore
 import eu.peernetwork.social.ui.connection.ConnectionInteractor.Companion.LocalConnectionInteractor
 import eu.peernetwork.social.ui.connection.ConnectionScreen

@@ -7,11 +7,11 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
-import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import eu.peernetwork.ads.ui.boost.BoostScreen
 import eu.peernetwork.ads.ui.dashboard.DashboardScreen
 import eu.peernetwork.app.BuildConfig
+import eu.peernetwork.app.extension.route
 import eu.peernetwork.app.ui.search.SearchScreen
 import eu.peernetwork.app.ui.search.SearchMode
 import eu.peernetwork.app.ui.settings.SettingsScreen
@@ -21,6 +21,7 @@ import eu.peernetwork.user.domain.model.Account
 @Composable
 fun ProfileNavigation(
     account: Account,
+    isModal: Boolean = false,
     controller: NavHostController,
     component: Profile.Component,
     viewModelStoreOwner: ViewModelStoreOwner,
@@ -31,9 +32,10 @@ fun ProfileNavigation(
         navController = controller,
         startDestination = "content"
     ) {
-        composable("content") { updatedContent(it) }
-        composable(
+        route("content", isModal) { updatedContent(it) }
+        route(
             route = "profile/{id}",
+            isModal = isModal,
             arguments = listOf(navArgument("id") { this.type = NavType.StringType })
         ) { backStackEntry ->
             val id = backStackEntry.arguments?.getString("id") ?: ""
@@ -44,15 +46,16 @@ fun ProfileNavigation(
                 viewModelStoreOwner = backStackEntry,
             )
         }
-        composable("settings") {
+        route("settings", isModal) {
             SettingsScreen(
                 account = account,
                 provider = component,
                 viewModelStoreOwner = viewModelStoreOwner
             )
         }
-        composable(
+        route(
             route = "search/{type}/{query}",
+            isModal = isModal,
             arguments = listOf(
                 navArgument("type") { this.type = NavType.StringType },
                 navArgument("query") { this.type = NavType.StringType }
@@ -74,7 +77,7 @@ fun ProfileNavigation(
                 query = query
             )
         }
-        composable("adverts") { backStackEntry ->
+        route("adverts", isModal) { backStackEntry ->
             DashboardScreen(
                 id = account.id,
                 limit = BuildConfig.PAGING_LIMIT,
@@ -83,7 +86,7 @@ fun ProfileNavigation(
                 onBack = { controller.popBackStack() }
             ) { _,_ -> }
         }
-        composable("boost/{id}") { backStackEntry ->
+        route("boost/{id}", isModal) { backStackEntry ->
             val id = backStackEntry.arguments?.getString("id") ?: ""
             BoostScreen(
                 id = id,

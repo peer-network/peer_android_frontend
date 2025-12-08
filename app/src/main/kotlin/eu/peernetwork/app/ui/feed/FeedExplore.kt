@@ -19,7 +19,7 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import eu.peernetwork.app.interactor.PostNavigatorDelegate
+import eu.peernetwork.app.interactor.NavigationInteractor
 import eu.peernetwork.blog.domain.model.Category
 import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.blog.domain.model.Sort
@@ -71,7 +71,7 @@ fun FeedExplore(
     val controller = rememberNavController()
     val isVisible = remember { mutableStateOf(false) }
     val selected = remember { mutableIntStateOf(-1) }
-    val navigator = remember { PostNavigatorDelegate(context, controller) }
+    val navigator = remember { NavigationInteractor(context, controller) }
     CompositionLocalProvider(
         PostNavigator.LocalPostNavigator provides navigator
     ) {
