@@ -97,6 +97,7 @@ fun PostStatus(
     description: AnnotatedString,
     modifier: Modifier = Modifier,
     pinnedBy: String? = null,
+    onClick: (DesignRichText, String) -> Unit,
     engagement: @Composable () -> Unit
 ) {
     val configuration = LocalConfiguration.current
@@ -143,6 +144,7 @@ fun PostStatus(
                     maxLines = 1,
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onBackground,
+                    onClick = onClick
                 )
                 if (description.isNotEmpty()) {
                     DesignRichText(
@@ -150,7 +152,8 @@ fun PostStatus(
                         maxLines = 3,
                         style = MaterialTheme.typography.labelLarge,
                         color = MaterialTheme.colorScheme.outline,
-                        lineHeight = 18.sp
+                        lineHeight = 18.sp,
+                        onClick = onClick
                     )
                 }
             }
@@ -187,6 +190,7 @@ fun PreviewPostStatus() {
                 description = buildAnnotatedString { append("Description") },
                 modifier = Modifier
                     .padding(horizontal = 16.dp),
+                onClick = { _,_ -> }
             ) { EngagementReaction(engagement) {} }
         }
     }

@@ -39,7 +39,7 @@ fun AdvertsPost(
     to: String,
     status: Boolean,
     modifier: Modifier = Modifier,
-    onClick: (DesignRichText) -> Unit,
+    onClick: (DesignRichText, String) -> Unit,
     content: @Composable () -> Unit
 ) {
     val updatedContent by rememberUpdatedState(content)
@@ -124,7 +124,7 @@ fun PreviewAdvertsPost() {
             from = "8 Jun 2025",
             to = "10 Jun 2025",
             status = true,
-            onClick = {}
+            onClick = { _,_ -> }
         ) {}
     }
 }

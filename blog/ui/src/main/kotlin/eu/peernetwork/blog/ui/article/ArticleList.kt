@@ -20,10 +20,12 @@ import eu.peernetwork.blog.domain.model.Content
 import eu.peernetwork.blog.ui.engagement.EngagementInteractor.Companion.LocalEngagementInteractor
 import eu.peernetwork.blog.ui.engagement.EngagementReaction
 import eu.peernetwork.blog.ui.engagement.EngagementReaction.Companion.LocalEngagementReaction
+import eu.peernetwork.blog.ui.extension.route
 import eu.peernetwork.blog.ui.mapper.v2.mapToDetail
 import eu.peernetwork.blog.ui.model.v2.UiPost
 import eu.peernetwork.blog.ui.post.PostItem
 import eu.peernetwork.blog.ui.post.PostMedia
+import eu.peernetwork.blog.ui.post.PostNavigator.Companion.LocalPostNavigator
 import eu.peernetwork.blog.ui.post.PostSkeleton
 import eu.peernetwork.core.ui.component.UiComponentProvider
 
@@ -68,6 +70,7 @@ fun ArticleList(
         ) { index ->
             val engagement = LocalEngagementInteractor.current
             val reaction = LocalEngagementReaction.current
+            val navigator = LocalPostNavigator.current
             items[index]?.let { post ->
                 PostItem(
                     type = post.type,
@@ -84,6 +87,9 @@ fun ArticleList(
                         ) { reaction(post, it) }
                     },
                     connection = { },
+                    onContentClick = { type, value ->
+                        navigator.navigate(type.route(value))
+                    },
                     content = { path, expanded ->
                         val isPlaying = remember { derivedStateOf { index == current.intValue } }
                         PostMedia(

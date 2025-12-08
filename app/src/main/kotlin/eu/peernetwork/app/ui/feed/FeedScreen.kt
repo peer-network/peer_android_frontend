@@ -23,6 +23,7 @@ import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.media.core.model.UiMimeType
 import eu.peernetwork.social.ui.connection.ConnectionScreen
 import eu.peernetwork.user.domain.model.Account
+import eu.peernetwork.app.interactor.PostNavigatorDelegate
 
 @Composable
 fun FeedScreen(
@@ -56,17 +57,10 @@ fun FeedScreen(
     title: String? = null,
     criteria: Criteria = Criteria.None,
 ) {
+    val context = LocalContext.current
     val controller = rememberNavController()
     val selected = remember { mutableIntStateOf(-1) }
-    val navigator = remember { object : PostNavigator {
-        override fun navigate(route: PostNavigator.Route) {
-            when(route) {
-                is PostNavigator.Route.Profile -> {
-                    controller.navigate("profile/${route.id}")
-                }
-            }
-        }
-    } }
+    val navigator = remember { PostNavigatorDelegate(context, controller) }
     CompositionLocalProvider(
         PostNavigator.LocalPostNavigator provides navigator
     ) {

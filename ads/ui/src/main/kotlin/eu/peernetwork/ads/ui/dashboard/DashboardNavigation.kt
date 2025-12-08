@@ -15,7 +15,7 @@ import eu.peernetwork.core.ui.design.material.DesignRouter
 fun DashboardNavigation(
     component: Dashboard.Component,
     navController: NavHostController,
-    onClick: (DesignRichText) -> Unit,
+    onClick: (DesignRichText, String) -> Unit,
     content: @Composable () -> Unit
 ) {
     val updatedContent by rememberUpdatedState(content)

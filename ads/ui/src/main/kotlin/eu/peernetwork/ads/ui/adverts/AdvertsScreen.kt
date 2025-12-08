@@ -43,7 +43,7 @@ fun AdvertsScreen(
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
     onSelect: (String) -> Unit,
-    onClick: (DesignRichText) -> Unit,
+    onClick: (DesignRichText, String) -> Unit,
     onBack: () -> Unit
 ) {
     val context = LocalContext.current

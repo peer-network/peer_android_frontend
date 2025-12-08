@@ -22,7 +22,7 @@ fun AnalyticsScreen(
     id: String,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
-    onClick: (DesignRichText) -> Unit
+    onClick: (DesignRichText, String) -> Unit
 ) {
     val context = LocalContext.current
     val component = remember { provider.builder(Analytics.Builder::class.java).build(context) }

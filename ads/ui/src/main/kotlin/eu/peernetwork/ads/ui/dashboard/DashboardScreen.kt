@@ -18,7 +18,7 @@ fun DashboardScreen(
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
     onBack: () -> Unit,
-    onClick: (DesignRichText) -> Unit
+    onClick: (DesignRichText, String) -> Unit
 ) {
     val context = LocalContext.current
     val component = remember {
@@ -50,7 +50,7 @@ fun DashboardScreen(
     component: Dashboard.Component,
     viewModelStoreOwner: ViewModelStoreOwner,
     onBack: () -> Unit,
-    onClick: (DesignRichText) -> Unit
+    onClick: (DesignRichText, String) -> Unit
 ) {
     AdvertsScreen(
         id = id,

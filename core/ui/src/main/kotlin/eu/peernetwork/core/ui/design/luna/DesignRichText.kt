@@ -1,7 +1,6 @@
 package eu.peernetwork.core.ui.design.luna
 
 import android.content.res.Configuration
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.text.InlineTextContent
 import androidx.compose.material3.LocalTextStyle
@@ -15,7 +14,6 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
@@ -54,7 +52,7 @@ fun DesignRichText(
     maxLines: Int = Int.MAX_VALUE,
     minLines: Int = 1,
     inlineContent: Map<String, InlineTextContent> = mapOf(),
-    onClick: (DesignRichText) -> Unit = {},
+    onClick: (DesignRichText, String) -> Unit = { _,_ -> },
     onTextLayout: (TextLayoutResult) -> Unit = {},
     style: TextStyle = LocalTextStyle.current
 ) {
@@ -62,19 +60,17 @@ fun DesignRichText(
     val handleOnTextLayout by rememberUpdatedState(onTextLayout)
     DesignText(
         text = text,
-        modifier = Modifier
-            .pointerInput(Unit) {
-                detectTapGestures { offset ->
-                    layoutResult?.let { layout ->
-                        val position = layout.getOffsetForPosition(offset)
-                        text.getStringAnnotations(
-                            start = position,
-                            end = position,
-                            onClick = onClick
-                        )
-                    }
-                }
-            }.then(modifier),
+        modifier = modifier,
+        onTap = { offset ->
+            layoutResult?.let { layout ->
+                val position = layout.getOffsetForPosition(offset)
+                text.getStringAnnotations(
+                    start = position,
+                    end = position,
+                    onClick = onClick
+                )
+            }
+        },
         color = color,
         fontSize = fontSize,
         fontStyle = fontStyle,
@@ -100,20 +96,14 @@ fun DesignRichText(
 fun AnnotatedString.getStringAnnotations(
     start: Int,
     end: Int,
-    onClick: (DesignRichText) -> Unit
+    onClick: (DesignRichText, String) -> Unit
 ) {
-    listOf(
-        DesignRichText.Link,
-        DesignRichText.Mention,
-        DesignRichText.Tag,
-    ).forEach {
-        getStringAnnotations(
-            tag = it.value,
-            start = start,
-            end = end
-        ).firstOrNull()?.let { _ ->
-            onClick(it)
-        }
+    listOf(DesignRichText.Tag, DesignRichText.Mention, DesignRichText.Link).forEach { type ->
+        getStringAnnotations(tag = type.value, start = start, end = end)
+            .firstOrNull()
+            ?.let { annotation ->
+                onClick(type, annotation.item.trimStart(type.value[0]))
+            }
     }
 }
 
@@ -130,8 +120,9 @@ fun DesignStyledTextPreview() {
             Text(text = count.longValue.toString())
             DesignRichText(
                 text = annotatedString,
-                onClick = {
-                    when (it) {
+                maxLines = 1,
+                onClick = { type, value ->
+                    when (type) {
                         DesignRichText.Tag -> {
                             count.longValue = System.currentTimeMillis()
                         }

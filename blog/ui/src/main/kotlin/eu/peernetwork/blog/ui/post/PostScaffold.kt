@@ -36,6 +36,7 @@ import eu.peernetwork.blog.ui.model.v2.UiPostDetail
 import eu.peernetwork.blog.ui.model.v2.UiTimer
 import eu.peernetwork.core.ui.design.luna.DesignBox
 import eu.peernetwork.core.ui.design.luna.DesignButton
+import eu.peernetwork.core.ui.design.luna.DesignRichText
 import eu.peernetwork.core.ui.theme.DesignTheme
 
 @Composable
@@ -45,6 +46,7 @@ fun PostScaffold(
     onMenu: () -> Unit,
     onClick: () -> Unit,
     onAuthorClick: () -> Unit,
+    onContentClick: (DesignRichText, String) -> Unit,
     engagement: @Composable () -> Unit,
     connection: @Composable RowScope.() -> Unit,
 ) {
@@ -56,7 +58,13 @@ fun PostScaffold(
         engagement = engagement,
         pinnedBy = pinnedBy,
         connection = connection
-    ) { PostText(model, Modifier.heightIn(min = 36.dp)) }
+    ) {
+        PostText(
+            model = model,
+            modifier = Modifier.heightIn(min = 36.dp),
+            onClick = onContentClick
+        )
+    }
 }
 
 @Composable
@@ -121,6 +129,7 @@ fun PostExpandedScaffold(
     onClick: () -> Unit,
     onAuthorClick: () -> Unit,
     engagement: @Composable () -> Unit,
+    onContentClick: (DesignRichText, String) -> Unit,
     connection: @Composable RowScope.() -> Unit,
     content: @Composable () -> Unit
 ) {
@@ -151,7 +160,8 @@ fun PostExpandedScaffold(
             time = context.format(model.time),
             engagement = engagement,
             modifier = Modifier
-                .padding(horizontal = 16.dp)
+                .padding(horizontal = 16.dp),
+            onClick = onContentClick
         )
     }
 }
@@ -187,7 +197,8 @@ fun PreviewUserOption() {
                 onMenu = {},
                 onClick = {},
                 onAuthorClick = {},
-                engagement = { EngagementReaction(engagement) {} }
+                engagement = { EngagementReaction(engagement) {} },
+                onContentClick = { _,_ -> }
             ) {
                 DesignButton(
                     minHeight = 32.dp,
@@ -232,7 +243,8 @@ fun PreviewUserOption() {
                             .copy(fontWeight = FontWeight.Bold),
                         contentPadding = PaddingValues(horizontal = 16.dp)
                     ) { Text("peer") }
-                }
+                },
+                onContentClick = { _,_ -> }
             ) {
                 Box(modifier = Modifier.fillMaxWidth()
                     .height(260.dp))

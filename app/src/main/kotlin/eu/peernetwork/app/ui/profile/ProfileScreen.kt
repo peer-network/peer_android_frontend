@@ -3,6 +3,7 @@ package eu.peernetwork.app.ui.profile
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
@@ -14,7 +15,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.navigation.compose.rememberNavController
 import eu.peernetwork.app.BuildConfig
+import eu.peernetwork.app.interactor.PostNavigatorDelegate
 import eu.peernetwork.blog.domain.usecase.PostUsecase
+import eu.peernetwork.blog.ui.post.PostNavigator
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
@@ -42,55 +45,61 @@ fun ProfileScreen(
     viewModelStoreOwner: ViewModelStoreOwner,
     title: String? = null,
 ) {
+    val context = LocalContext.current
     val controller = rememberNavController()
     val isVisible = remember { mutableStateOf(false) }
     val selected = remember { mutableIntStateOf(-1) }
     val timestamp = rememberSaveable { mutableLongStateOf(System.currentTimeMillis()) }
-    ProfileScreen(provider) { component ->
-        val pageState = rememberPagerState(
-            pageCount = { UiMimeType.TYPES.size },
-            initialPage = 0
-        )
-        ProfileNavigation(
-            account = account,
-            controller = controller,
-            component = component,
-            viewModelStoreOwner = viewModelStoreOwner
-        ) {
-            val postState = rememberLazyListState()
-            val mediaState = rememberLazyListState()
-            ProfilePage(
-                id = userId,
-                username = account.username,
-                imageUrl = account.imageUrl,
-                title = title,
-                limit = BuildConfig.PAGING_LIMIT,
-                selected = selected,
-                isVisible = isVisible,
-                timestamp = timestamp,
-                onSettings = { controller.navigateIfNecessary("settings") },
-                component = component,
-                viewModelStoreOwner = viewModelStoreOwner,
-                postState = postState,
-                mediaState = mediaState,
+    val navigator = remember { PostNavigatorDelegate(context, controller) }
+    CompositionLocalProvider(
+        PostNavigator.LocalPostNavigator provides navigator
+    ) {
+        ProfileScreen(provider) { component ->
+            val pageState = rememberPagerState(
+                pageCount = { UiMimeType.TYPES.size },
+                initialPage = 0
+            )
+            ProfileNavigation(
+                account = account,
                 controller = controller,
-                pageState = pageState,
-                onClick = { isVisible.value = true }
+                component = component,
+                viewModelStoreOwner = viewModelStoreOwner
+            ) {
+                val postState = rememberLazyListState()
+                val mediaState = rememberLazyListState()
+                ProfilePage(
+                    id = userId,
+                    username = account.username,
+                    imageUrl = account.imageUrl,
+                    title = title,
+                    limit = BuildConfig.PAGING_LIMIT,
+                    selected = selected,
+                    isVisible = isVisible,
+                    timestamp = timestamp,
+                    onSettings = { controller.navigateIfNecessary("settings") },
+                    component = component,
+                    viewModelStoreOwner = viewModelStoreOwner,
+                    postState = postState,
+                    mediaState = mediaState,
+                    controller = controller,
+                    pageState = pageState,
+                    onClick = { isVisible.value = true }
+                )
+            }
+            ProfileModal(
+                account = account,
+                userId = userId,
+                isVisible = isVisible,
+                selected = selected,
+                timestamp = timestamp,
+                provider = provider,
+                types = if (pageState.currentPage == 0) {
+                    PostUsecase.POST
+                } else {
+                    PostUsecase.MEDIA
+                },
+                viewModelStoreOwner = viewModelStoreOwner
             )
         }
-        ProfileModal(
-            account = account,
-            userId = userId,
-            isVisible = isVisible,
-            selected = selected,
-            timestamp = timestamp,
-            provider = provider,
-            types = if (pageState.currentPage == 0) {
-                PostUsecase.POST
-            } else {
-                PostUsecase.MEDIA
-            },
-            viewModelStoreOwner = viewModelStoreOwner
-        )
     }
 }

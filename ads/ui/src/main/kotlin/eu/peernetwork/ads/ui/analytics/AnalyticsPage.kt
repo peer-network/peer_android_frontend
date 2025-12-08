@@ -32,7 +32,7 @@ fun AnalyticsPage(
     status: Boolean,
     metrics: UiMetrics,
     modifier: Modifier = Modifier,
-    onClick: (DesignRichText) -> Unit,
+    onClick: (DesignRichText, String) -> Unit,
     content: @Composable () -> Unit
 ) {
     Column(
@@ -115,7 +115,7 @@ fun PreviewAnalyticsPage() {
             start = "8 Jun 2025",
             end = "10 Jun 2025",
             metrics = metrics,
-            onClick = {},
+            onClick = { _,_ -> },
             modifier = Modifier.background(MaterialTheme.colorScheme.background)
                 .padding(12.dp),
         ) {}

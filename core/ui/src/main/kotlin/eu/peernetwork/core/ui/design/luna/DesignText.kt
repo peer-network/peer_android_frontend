@@ -16,6 +16,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
@@ -58,10 +59,12 @@ fun DesignText(
     collapseEllipsis: String = stringResource(R.string.show_less),
     inlineContent: Map<String, InlineTextContent> = mapOf(),
     onExpand: (Boolean) -> Unit = {},
+    onTap: (Offset) -> Unit = {},
     onTextLayout: (TextLayoutResult) -> Unit = {},
     style: TextStyle = LocalTextStyle.current
 ) {
     val handleOnExpand by rememberUpdatedState(onExpand)
+    val handleOnTap by rememberUpdatedState(onTap)
     val handleOnTextLayout by rememberUpdatedState(onTextLayout)
     var layoutResult by remember { mutableStateOf<TextLayoutResult?>(null) }
     var adjustedText by remember { mutableStateOf(text) }
@@ -72,6 +75,7 @@ fun DesignText(
         modifier = modifier
             .pointerInput(Unit) {
                 detectTapGestures { offset ->
+                    handleOnTap(offset)
                     layoutResult?.let { layout ->
                         val position = layout.getOffsetForPosition(offset)
                         val annotations = adjustedText.getStringAnnotations(expandEllipsis, position, position)

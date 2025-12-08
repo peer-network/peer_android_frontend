@@ -52,7 +52,7 @@ fun GalleryScaffold(
         modifier = modifier,
         contentAlignment = Alignment.BottomStart
     ) {
-        GalleryMedia(
+        GalleryPager(
             asset = asset,
             content = content
         )

@@ -15,7 +15,7 @@ import eu.peernetwork.blog.ui.model.v2.UiAsset
 import eu.peernetwork.blog.ui.post.PostPager
 
 @Composable
-fun GalleryMedia(
+fun GalleryPager(
     asset: UiAsset,
     content: @Composable BoxWithConstraintsScope.(String) -> Unit
 ) {

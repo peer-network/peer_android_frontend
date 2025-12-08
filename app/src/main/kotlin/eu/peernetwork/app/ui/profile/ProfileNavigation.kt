@@ -81,7 +81,7 @@ fun ProfileNavigation(
                 provider = component,
                 viewModelStoreOwner = backStackEntry,
                 onBack = { controller.popBackStack() }
-            ) {}
+            ) { _,_ -> }
         }
         composable("boost/{id}") { backStackEntry ->
             val id = backStackEntry.arguments?.getString("id") ?: ""

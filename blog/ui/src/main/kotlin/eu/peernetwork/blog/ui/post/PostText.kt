@@ -15,6 +15,7 @@ import eu.peernetwork.core.ui.design.luna.DesignRichText
 fun PostText(
     model: UiPostDetail,
     modifier: Modifier = Modifier,
+    onClick: (DesignRichText, String) -> Unit,
     contentPadding: PaddingValues = PaddingValues(
         start = 12.dp,
         end = 12.dp,
@@ -28,6 +29,7 @@ fun PostText(
             maxLines = 2,
             color = MaterialTheme.colorScheme.onBackground,
             style = MaterialTheme.typography.bodyMedium,
+            onClick = onClick
         )
         DesignRichText(
             text = model.description,
@@ -35,7 +37,8 @@ fun PostText(
             lineHeight = 18.sp,
             style = MaterialTheme.typography.labelLarge,
             color = MaterialTheme.colorScheme.outline,
-            modifier = Modifier.padding(top = 4.dp)
+            modifier = Modifier.padding(top = 4.dp),
+            onClick = onClick
         )
     }
 }

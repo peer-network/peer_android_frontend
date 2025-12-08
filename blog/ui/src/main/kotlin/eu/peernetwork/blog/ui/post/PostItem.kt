@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.dp
 import eu.peernetwork.blog.ui.model.v2.UiAsset
 import eu.peernetwork.blog.ui.model.v2.UiPostDetail
 import eu.peernetwork.blog.ui.model.v2.UiPostType
+import eu.peernetwork.core.ui.design.luna.DesignRichText
 
 @Composable
 fun PostItem(
@@ -23,6 +24,7 @@ fun PostItem(
     onMenu: () -> Unit,
     onClick: () -> Unit,
     onAuthorClick: () -> Unit,
+    onContentClick: (DesignRichText, String) -> Unit,
     engagement: @Composable () -> Unit,
     connection: @Composable RowScope.() -> Unit,
     content: @Composable (String, Boolean) -> Unit
@@ -36,6 +38,7 @@ fun PostItem(
             onMenu = onMenu,
             onClick = onClick,
             onAuthorClick = onAuthorClick,
+            onContentClick = onContentClick,
             engagement = engagement,
             connection = connection,
         )
@@ -51,6 +54,7 @@ fun PostItem(
         ) {
             PostText(
                 model = model,
+                onClick = onContentClick,
                 contentPadding = PaddingValues(horizontal = 12.dp)
             )
             Box(modifier = Modifier.fillMaxWidth()) {
@@ -64,6 +68,7 @@ fun PostItem(
             onMenu = onMenu,
             onClick = onClick,
             onAuthorClick = onAuthorClick,
+            onContentClick = onContentClick,
             connection = connection,
             engagement = engagement
         ) {

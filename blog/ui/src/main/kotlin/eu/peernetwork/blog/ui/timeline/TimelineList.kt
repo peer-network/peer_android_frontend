@@ -19,6 +19,7 @@ import eu.peernetwork.blog.domain.model.Filter
 import eu.peernetwork.blog.ui.engagement.EngagementInteractor.Companion.LocalEngagementInteractor
 import eu.peernetwork.blog.ui.engagement.EngagementReaction
 import eu.peernetwork.blog.ui.engagement.EngagementReaction.Companion.LocalEngagementReaction
+import eu.peernetwork.blog.ui.extension.route
 import eu.peernetwork.blog.ui.mapper.v2.mapToDetail
 import eu.peernetwork.blog.ui.model.v2.UiPost
 import eu.peernetwork.blog.ui.post.PostItem
@@ -76,6 +77,9 @@ fun TimelineList(
                     asset = post.asset,
                     onMenu = { showSheet.value = post },
                     onClick = { selected.intValue = index },
+                    onContentClick = { type, value ->
+                        navigator.navigate(type.route(value))
+                    },
                     onAuthorClick = {
                         navigator.navigate(
                             route = PostNavigator.Route.Profile(post.author.id)

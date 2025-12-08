@@ -37,7 +37,7 @@ fun AnalyticsPost(
     description: AnnotatedString,
     status: Boolean,
     modifier: Modifier = Modifier,
-    onClick: (DesignRichText) -> Unit,
+    onClick: (DesignRichText, String) -> Unit,
     content: @Composable () -> Unit
 ) {
     val updatedContent by rememberUpdatedState(content)
@@ -114,7 +114,7 @@ fun PreviewAnalyticsPost() {
             title = buildAnnotatedString { append("Title") },
             description = buildAnnotatedString { append("There’s something about hiking that resets everything. ") },
             status = true,
-            onClick = {}
+            onClick = { _,_ -> }
         ) {}
     }
 }

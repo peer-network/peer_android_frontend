@@ -5,6 +5,7 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -16,6 +17,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.navigation.compose.rememberNavController
+import eu.peernetwork.app.interactor.PostNavigatorDelegate
+import eu.peernetwork.blog.ui.post.PostNavigator
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.material.DesignTitle
@@ -49,52 +52,58 @@ fun SearchScreen(
     title: String? = null,
     query: String? = null
 ) {
+    val context = LocalContext.current
     val controller = rememberNavController()
     val currentMode = remember { mutableStateOf(mode) }
     val listState = rememberLazyGridState()
     val selected = remember { mutableIntStateOf(-1) }
     val isVisible = remember { mutableStateOf(false) }
-    SearchScreen(
-        provider = provider,
-        viewModelStoreOwner = viewModelStoreOwner,
-    ) { component ->
-        SearchNavigation(
-            account = account,
-            controller = controller,
-            component = component
-        ) {
-            val state = remember { TextFieldState(query ?: "") }
-            SearchPage(
-                state,
-                currentMode
+    val navigator = remember { PostNavigatorDelegate(context, controller) }
+    CompositionLocalProvider(
+        PostNavigator.LocalPostNavigator provides navigator
+    ) {
+        SearchScreen(
+            provider = provider,
+            viewModelStoreOwner = viewModelStoreOwner,
+        ) { component ->
+            SearchNavigation(
+                account = account,
+                controller = controller,
+                component = component
             ) {
-                SearchSuggestion(
-                    state = state,
-                    selected = selected,
-                    mode = currentMode.value,
-                    limit = limit,
-                    onClick = { false },
-                    onShow = { isVisible.value = true },
-                    component = component,
-                    viewModelStoreOwner = viewModelStoreOwner,
-                    listState = listState,
-                    modifier = Modifier.padding(top = 36.dp)
-                )
-            }
-            DesignTitleBarHost("SearchScreen") {
-                titleBar {
-                    DesignTitle {
-                        Text(title ?: stringResource(R.string.search_label))
+                val state = remember { TextFieldState(query ?: "") }
+                SearchPage(
+                    state,
+                    currentMode
+                ) {
+                    SearchSuggestion(
+                        state = state,
+                        selected = selected,
+                        mode = currentMode.value,
+                        limit = limit,
+                        onClick = { false },
+                        onShow = { isVisible.value = true },
+                        component = component,
+                        viewModelStoreOwner = viewModelStoreOwner,
+                        listState = listState,
+                        modifier = Modifier.padding(top = 36.dp)
+                    )
+                }
+                DesignTitleBarHost("SearchScreen") {
+                    titleBar {
+                        DesignTitle {
+                            Text(title ?: stringResource(R.string.search_label))
+                        }
                     }
                 }
             }
+            SearchModal(
+                account = account,
+                selected = selected,
+                isVisible = isVisible,
+                provider = component,
+                viewModelStoreOwner = viewModelStoreOwner
+            )
         }
-        SearchModal(
-            account = account,
-            selected = selected,
-            isVisible = isVisible,
-            provider = component,
-            viewModelStoreOwner = viewModelStoreOwner
-        )
     }
 }
