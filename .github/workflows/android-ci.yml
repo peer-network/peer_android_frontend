@@ -195,7 +195,6 @@ jobs:
           else
             echo "event_type=success" >> $GITHUB_OUTPUT
           fi
-
   send_discord_notification:
     name: Unified Discord Notification
     needs: [auto_update_branch, check_branch_sync, gitleaks, trivy_scan, build, map_pr_to_discord, determine_event_type]
