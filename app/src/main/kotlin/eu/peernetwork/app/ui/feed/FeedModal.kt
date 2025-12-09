@@ -13,6 +13,7 @@ import eu.peernetwork.app.interactor.NavigationInteractor
 import eu.peernetwork.blog.domain.model.Category
 import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.blog.ui.post.PostNavigator
+import eu.peernetwork.blog.ui.timeline.TimelineEvent
 import eu.peernetwork.blog.ui.timeline.TimelineModal
 import eu.peernetwork.blog.ui.timeline.TimelineScreen
 import eu.peernetwork.core.ui.component.UiComponentProvider
@@ -58,7 +59,13 @@ fun FeedModal(
                         category = category,
                         criteria = criteria,
                         provider = component,
-                        viewModelStoreOwner = viewModelStoreOwner
+                        viewModelStoreOwner = viewModelStoreOwner,
+                        onEvent = { event ->
+                            when(event) {
+                                is TimelineEvent.Post -> {}
+                                is TimelineEvent.Boost -> controller.navigate("boost/${event.id}")
+                            }
+                        }
                     )
                 }
                 TimelineScreen(

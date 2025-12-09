@@ -8,6 +8,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
+import eu.peernetwork.ads.ui.boost.BoostScreen
 import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.app.ui.screen.screen
 import eu.peernetwork.app.ui.feed.FeedExplore
@@ -74,6 +75,19 @@ fun SearchNavigation(
                 criteria = tag?.let { Criteria.Content(tag = it) } ?: Criteria.None,
                 refresh = requireUpdate
             )
+        }
+        screen(
+            route = "boost/{id}",
+            isModal = isModal,
+            provider = component,
+            onCancel = onCancel,
+        ) { backStackEntry ->
+            val id = backStackEntry.arguments?.getString("id") ?: ""
+            BoostScreen(
+                id = id,
+                provider = component,
+                viewModelStoreOwner = backStackEntry
+            ) { controller.popBackStack() }
         }
         screen(
             route = "search?query={query}",

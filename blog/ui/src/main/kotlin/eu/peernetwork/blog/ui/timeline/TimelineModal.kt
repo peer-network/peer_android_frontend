@@ -37,7 +37,8 @@ fun TimelineModal(
     category: Category,
     criteria: Criteria,
     provider: UiComponentProvider,
-    viewModelStoreOwner: ViewModelStoreOwner
+    viewModelStoreOwner: ViewModelStoreOwner,
+    onEvent: (TimelineEvent) -> Unit,
 ) {
     val showSheet = remember { mutableStateOf<UiPost?>(null) }
     TimelineModal(
@@ -51,6 +52,7 @@ fun TimelineModal(
         showSheet = showSheet,
         provider = provider,
         viewModelStoreOwner = viewModelStoreOwner,
+        onEvent = onEvent,
     ) { component, post, index, pagerState ->
         GalleryScreen(
             position = index,
@@ -85,9 +87,11 @@ fun TimelineModal(
     criteria: Criteria,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
+    onEvent: (TimelineEvent) -> Unit,
     content: @Composable PagerScope.(Timeline.Component, UiPost, Int, PagerState) -> Unit
 ) {
     val context = LocalContext.current
+    val handleEvent by rememberUpdatedState(onEvent)
     val updatedContent by rememberUpdatedState(content)
     val shareTitle = stringResource(R.string.share_label)
     TimelineScreen(
@@ -123,7 +127,7 @@ fun TimelineModal(
                         when (sheetState) {
                             TimelineSheetMenuItem.REPORT -> moderation.onReport(post.id)
                             TimelineSheetMenuItem.SHARE -> { context.share(post.url, shareTitle) }
-                            TimelineSheetMenuItem.BOOST -> { context.share(post.url, shareTitle) }
+                            TimelineSheetMenuItem.BOOST -> { handleEvent(TimelineEvent.Boost(post.id)) }
                         }
                     }
                 }

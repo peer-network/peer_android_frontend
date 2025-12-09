@@ -106,9 +106,11 @@ fun ExploreFullScreen(
     component: Explore.Component,
     viewModel: ExploreViewModel,
     viewModelStoreOwner: ViewModelStoreOwner,
+    onBoost: (String) -> Unit,
     content: @Composable PagerScope.(Explore.Component, UiPost, Int, PagerState) -> Unit
 ) {
     val context = LocalContext.current
+    val handleBoost by rememberUpdatedState(onBoost)
     val updatedContent by rememberUpdatedState(content)
     val shareTitle = stringResource(R.string.share_label)
     ExploreScreen(
@@ -134,7 +136,7 @@ fun ExploreFullScreen(
                     when (sheetState) {
                         TimelineSheetMenuItem.REPORT -> moderation.onReport(post.id)
                         TimelineSheetMenuItem.SHARE -> { context.share(post.url, shareTitle) }
-                        TimelineSheetMenuItem.BOOST -> { context.share(post.url, shareTitle) }
+                        TimelineSheetMenuItem.BOOST -> { handleBoost(post.id) }
                     }
                 }
             }

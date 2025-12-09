@@ -3,8 +3,12 @@ package eu.peernetwork.app.ui.search
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
+import eu.peernetwork.ads.ui.boost.Boost
+import eu.peernetwork.ads.ui.checkout.Checkout
+import eu.peernetwork.ads.ui.checkout.CheckoutBalance
 import eu.peernetwork.app.ui.feed.Feed
 import eu.peernetwork.app.ui.profile.Profile
+import eu.peernetwork.app.ui.renderer.BalanceRenderer
 import eu.peernetwork.app.ui.renderer.EngagementRenderer
 import eu.peernetwork.app.ui.screen.Screen
 import eu.peernetwork.blog.ui.engagement.EngagementDialog
@@ -17,6 +21,7 @@ import eu.peernetwork.social.ui.connection.Connection
 import eu.peernetwork.social.ui.search.member.Member
 import eu.peernetwork.social.ui.search.tag.Tag
 import eu.peernetwork.social.ui.search.title.Title
+import eu.peernetwork.wallet.ui.balance.Balance
 import eu.peernetwork.wallet.ui.confirmation.Confirmation
 
 @Module
@@ -109,5 +114,35 @@ object SearchModule {
     @UiBuilder(Search.Builder::class)
     fun provideSearchBuilder(component: Search.Component): UiComponent.Builder {
         return Search.Builder(component)
+    }
+
+    @Search.Scope
+    @Provides
+    @IntoMap
+    @UiBuilder(Checkout.Builder::class)
+    fun provideCheckoutBuilder(component: Search.Component): UiComponent.Builder {
+        return Checkout.Builder(component)
+    }
+
+    @Search.Scope
+    @Provides
+    @IntoMap
+    @UiBuilder(Balance.Builder::class)
+    fun provideBalanceBuilder(component: Search.Component): UiComponent.Builder {
+        return Balance.Builder(component)
+    }
+
+    @Provides
+    @Search.Scope
+    fun provideCheckoutBalance(component: Search.Component): CheckoutBalance {
+        return BalanceRenderer(component)
+    }
+
+    @Search.Scope
+    @Provides
+    @IntoMap
+    @UiBuilder(Boost.Builder::class)
+    fun provideBoostBuilder(component: Search.Component): UiComponent.Builder {
+        return Boost.Builder(component)
     }
 }

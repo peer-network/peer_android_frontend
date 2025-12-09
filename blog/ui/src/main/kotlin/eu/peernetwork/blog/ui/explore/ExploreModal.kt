@@ -17,7 +17,8 @@ fun ExploreModal(
     selected: MutableIntState,
     limit: Int,
     provider: UiComponentProvider,
-    viewModelStoreOwner: ViewModelStoreOwner
+    viewModelStoreOwner: ViewModelStoreOwner,
+    onBoost: (String) -> Unit
 ) {
     val showSheet = remember { mutableStateOf<UiPost?>(null) }
     ExploreScreen(
@@ -33,7 +34,8 @@ fun ExploreModal(
             limit = limit,
             component = component,
             viewModel = viewModel,
-            viewModelStoreOwner = viewModelStoreOwner
+            viewModelStoreOwner = viewModelStoreOwner,
+            onBoost = onBoost
         ) { component, item, index, pagerState ->
             GalleryScreen(
                 position = index,

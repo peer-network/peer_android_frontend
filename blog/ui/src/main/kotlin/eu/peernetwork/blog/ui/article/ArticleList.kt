@@ -33,6 +33,7 @@ import eu.peernetwork.core.ui.component.UiComponentProvider
 @Suppress("UNCHECKED_CAST")
 @OptIn(ExperimentalMaterial3Api::class)
 fun ArticleList(
+    id: String,
     author: String,
     username: String,
     imageUrl: String,
@@ -50,7 +51,8 @@ fun ArticleList(
     val showSheet = remember { mutableStateOf<UiPost?>(null) }
     val current = rememberSaveable { mutableIntStateOf(-1) }
     ArticleScreen(
-        id = author,
+        id = id,
+        author = author,
         username = username,
         imageUrl = imageUrl,
         limit = limit,

@@ -32,6 +32,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 fun ProfilePage(
     id: String,
+    user: String,
     username: String,
     imageUrl: String,
     title: String?,
@@ -62,7 +63,7 @@ fun ProfilePage(
         },
         header = {
             ProfileDetail(
-                id = id,
+                id = user,
                 connection = connection,
                 timestamp = timestamp,
                 onSettings = onSettings,
@@ -73,7 +74,8 @@ fun ProfilePage(
         },
     ) {
         ArticleList(
-            author = id,
+            id = id,
+            author = user,
             username = username,
             imageUrl = imageUrl,
             types = if (it == 0) {
@@ -101,13 +103,13 @@ fun ProfilePage(
         )
     }
     ProfileSheet(
-        id = id,
+        id = user,
         state = connection,
         limit = limit,
         provider = component,
         viewModelStoreOwner = viewModelStoreOwner
     ) { controller.navigateIfNecessary("profile/${it.id}") }
-    DesignTitleBarHost("ProfileScreen$id", {
+    DesignTitleBarHost("ProfileScreen$user", {
         coroutine.launch {
             if (pageState.currentPage == 0) {
                 postState.animateScrollToItem(0)

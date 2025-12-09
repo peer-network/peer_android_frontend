@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModelStoreOwner
 import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.app.interactor.NavigationInteractor
 import eu.peernetwork.blog.domain.model.Content
+import eu.peernetwork.blog.ui.article.ArticleEvent
 import eu.peernetwork.blog.ui.article.ArticleModal
 import eu.peernetwork.blog.ui.article.ArticleScreen
 import eu.peernetwork.blog.ui.post.PostNavigator
@@ -49,6 +50,7 @@ fun ProfileModal(
                     onCancel = { isVisible.value = false }
                 ) {
                     ArticleModal(
+                        id = account.id,
                         author = userId,
                         username = account.username,
                         imageUrl = account.imageUrl,
@@ -58,7 +60,12 @@ fun ProfileModal(
                         timestamp = timestamp,
                         provider = component,
                         viewModelStoreOwner = viewModelStoreOwner
-                    ) {}
+                    ) { event ->
+                        when(event) {
+                            is ArticleEvent.Boost -> controller.navigate("boost/${event.id}")
+                            is ArticleEvent.Post -> {}
+                        }
+                    }
                 }
                 ArticleScreen(
                     provider = component,

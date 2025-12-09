@@ -132,6 +132,7 @@ fun ArticleScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 fun ArticleScreen(
     id: String,
+    author: String,
     username: String,
     imageUrl: String,
     types: Set<Content.Type>,
@@ -155,7 +156,7 @@ fun ArticleScreen(
         viewModelStoreOwner = viewModelStoreOwner
     ) { component, viewModel ->
         ArticleScreen(
-            id = id,
+            id = author,
             types = types,
             limit = limit,
             selected = selected,
@@ -184,7 +185,10 @@ fun ArticleScreen(
                     modifier = Modifier.fillMaxSize()
                 ) { updatedContent(this, component, items) }
                 val moderation = LocalModerationInteractor.current
-                ArticleSheet(showSheet) { sheetState, post ->
+                ArticleSheet(
+                    id = id,
+                    state = showSheet
+                ) { sheetState, post ->
                     when (sheetState) {
                         ArticleSheetMenuItem.BOOST -> handleEvent(ArticleEvent.Boost(post.id))
                         ArticleSheetMenuItem.REPORT -> moderation.onReport(post.id)
@@ -199,6 +203,7 @@ fun ArticleScreen(
 @Composable
 fun ArticleFullScreen(
     id: String,
+    author: String,
     username: String,
     imageUrl: String,
     types: Set<Content.Type>,
@@ -220,7 +225,7 @@ fun ArticleFullScreen(
         viewModelStoreOwner = viewModelStoreOwner
     ) { component, viewModel ->
         ArticleScreen(
-            id = id,
+            id = author,
             types = types,
             limit = limit,
             selected = selected,
@@ -241,7 +246,10 @@ fun ArticleFullScreen(
                 onComment = { items.itemSnapshotList.getOrNull(it)?.mapToDetail() },
                 modal = {
                     val moderation = LocalModerationInteractor.current
-                    ArticleSheet(showSheet) { sheetState, post ->
+                    ArticleSheet(
+                        id = id,
+                        state = showSheet
+                    ) { sheetState, post ->
                         when (sheetState) {
                             ArticleSheetMenuItem.BOOST -> handleEvent(ArticleEvent.Boost(post.id))
                             ArticleSheetMenuItem.REPORT -> moderation.onReport(post.id)

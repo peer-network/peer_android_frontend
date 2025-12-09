@@ -52,7 +52,7 @@ fun SearchModal(
                         imageUrl = account.imageUrl,
                         username = account.username,
                         viewModelStoreOwner = viewModelStoreOwner
-                    )
+                    ) { controller.navigate("boost/$it") }
                 }
                 ExploreScreen(
                     provider = component,
