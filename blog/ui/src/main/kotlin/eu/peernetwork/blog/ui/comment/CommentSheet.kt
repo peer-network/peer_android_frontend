@@ -136,7 +136,10 @@ fun CommentSheet(
             }
             LaunchedEffect(sheetState.value) {
                 if (sheetState.value is CommentSheetState.Hidden) {
-                    controller.route("content")
+                    if (controller.currentDestination != null
+                        && controller.currentDestination!!.route != "content") {
+                        controller.route("content")
+                    }
                     state.value = null
                 }
             }

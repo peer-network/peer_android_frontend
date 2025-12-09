@@ -23,6 +23,7 @@ fun GalleryText(
     time: String,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(12.dp),
+    onClick: (DesignRichText, String) -> Unit,
 ) {
     Column(modifier = Modifier.then(modifier)
         .padding(contentPadding)) {
@@ -31,6 +32,7 @@ fun GalleryText(
             maxLines = 1,
             color = MaterialTheme.colorScheme.onBackground,
             style = MaterialTheme.typography.bodyMedium,
+            onClick = onClick
         )
         if (description.trim().isNotEmpty()) {
             DesignRichText(
@@ -39,7 +41,8 @@ fun GalleryText(
                 lineHeight = 18.sp,
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.outline,
-                modifier = Modifier.padding(top = 4.dp)
+                modifier = Modifier.padding(top = 4.dp),
+                onClick = onClick
             )
         }
         Text(
@@ -62,6 +65,6 @@ fun PreviewGalleryText() {
             description = buildAnnotatedString {
                 append("This is a mock description for a content post. It's purely for testing.")
             },
-        )
+        ) { _,_ -> }
     }
 }

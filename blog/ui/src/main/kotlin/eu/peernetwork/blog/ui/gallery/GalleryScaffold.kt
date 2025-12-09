@@ -28,6 +28,7 @@ import eu.peernetwork.blog.ui.model.v2.UiAsset
 import eu.peernetwork.blog.ui.model.v2.UiDisplay
 import eu.peernetwork.blog.ui.model.v2.UiEngagement
 import eu.peernetwork.blog.ui.model.v2.UiMedia
+import eu.peernetwork.core.ui.design.luna.DesignRichText
 import eu.peernetwork.core.ui.theme.DesignTheme
 import kotlinx.collections.immutable.persistentListOf
 
@@ -44,6 +45,7 @@ fun GalleryScaffold(
     onEngage: (EngagementReaction.State) -> Unit,
     onMenu: () -> Unit,
     showAuthor: () -> Unit,
+    onContentClick: (DesignRichText, String) -> Unit,
     modifier: Modifier = Modifier,
     connection: @Composable () -> Unit = {},
     content: @Composable BoxWithConstraintsScope.(String) -> Unit
@@ -83,6 +85,7 @@ fun GalleryScaffold(
                     title = title,
                     time = time,
                     description = description,
+                    onClick = onContentClick
                 )
             }
             GallerySidebar(
@@ -132,6 +135,7 @@ fun PreviewGalleryScaffold() {
             onEngage = {},
             onMenu = {},
             showAuthor = {},
+            onContentClick = { _,_ -> },
             modifier = Modifier.fillMaxSize()
         ) {}
     }

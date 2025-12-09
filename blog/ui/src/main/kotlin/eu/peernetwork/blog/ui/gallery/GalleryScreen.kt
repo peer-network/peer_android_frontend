@@ -18,6 +18,7 @@ import androidx.compose.ui.platform.LocalDensity
 import eu.peernetwork.blog.ui.engagement.EngagementInteractor.Companion.LocalEngagementInteractor
 import eu.peernetwork.blog.ui.engagement.EngagementReaction.Companion.LocalEngagementReaction
 import eu.peernetwork.blog.ui.engagement.EngagementReactionStream
+import eu.peernetwork.blog.ui.extension.route
 import eu.peernetwork.blog.ui.mapper.v2.format
 import eu.peernetwork.blog.ui.mapper.v2.query
 import eu.peernetwork.blog.ui.model.v2.UiPost
@@ -67,6 +68,7 @@ fun GalleryScreen(
             showAuthor = {
                 navigator.navigate(PostNavigator.Route.Profile(post.author.id))
             },
+            onContentClick = { spec, value -> navigator.navigate(spec.route(value)) },
             modifier = Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
