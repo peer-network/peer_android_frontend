@@ -113,6 +113,7 @@ fun TimelineScreen(
 @Suppress("UNCHECKED_CAST")
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
 fun TimelineScreen(
+    id: String,
     limit: Int,
     username: String,
     imageUrl: String,
@@ -188,10 +189,14 @@ fun TimelineScreen(
                         state = listState,
                         modifier = Modifier.fillMaxSize()
                     ) { updatedContent(this, component, items) }
-                    TimelineSheet(showSheet) { sheetState, post ->
+                    TimelineSheet(
+                        id = id,
+                        state = showSheet
+                    ) { sheetState, post ->
                         when (sheetState) {
                             TimelineSheetMenuItem.REPORT -> moderation.onReport(post.id)
                             TimelineSheetMenuItem.SHARE -> context.share(post.url, shareTitle)
+                            TimelineSheetMenuItem.BOOST -> handleEvent(TimelineEvent.Boost(post.id))
                         }
                     }
                 }
@@ -201,69 +206,6 @@ fun TimelineScreen(
             if (selected.intValue != position.value) {
                 viewModel.selected(key, selected.intValue)
                 handleEvent(TimelineEvent.Post(selected.intValue))
-            }
-        }
-    }
-}
-
-@Composable
-fun TimelineFullScreen(
-    username: String,
-    imageUrl: String,
-    selected: MutableIntState,
-    showSheet: MutableState<UiPost?>,
-    limit: Int,
-    category: Category,
-    criteria: Criteria,
-    provider: UiComponentProvider,
-    viewModelStoreOwner: ViewModelStoreOwner,
-    content: @Composable PagerScope.(Timeline.Component, UiPost, Int, PagerState) -> Unit
-) {
-    val context = LocalContext.current
-    val updatedContent by rememberUpdatedState(content)
-    val shareTitle = stringResource(R.string.share_label)
-    TimelineScreen(
-        provider = provider,
-        viewModelStoreOwner = viewModelStoreOwner
-    ) { component, viewModel ->
-        TimelineScreen(
-            limit = limit,
-            category = category,
-            criteria = criteria,
-            component = component,
-            viewModel = viewModel,
-            loading = {},
-            onExplore = {}
-        ) { component, items ->
-            val pagerState = rememberPagerState(initialPage = selected.intValue) {
-                items.itemCount
-            }
-            PostScreen(
-                imageUrl = imageUrl,
-                username = username,
-                limit = limit,
-                pagerState = pagerState,
-                provider = component,
-                viewModelStoreOwner = viewModelStoreOwner,
-                onComment = { items.itemSnapshotList.getOrNull(it)?.mapToDetail() },
-                modal = {
-                    val moderation = LocalModerationInteractor.current
-                    TimelineSheet(showSheet) { sheetState, post ->
-                        when (sheetState) {
-                            TimelineSheetMenuItem.REPORT -> moderation.onReport(post.id)
-                            TimelineSheetMenuItem.SHARE -> { context.share(post.url, shareTitle) }
-                        }
-                    }
-                }
-            ) { index ->
-                items[index]?.let {
-                    updatedContent(this, component, it, index, pagerState)
-                }
-                LaunchedEffect(Unit) {
-                    items.itemSnapshotList.getOrNull(pagerState.currentPage)?.let { post ->
-                        viewModel.view(post.id)
-                    }
-                }
             }
         }
     }

@@ -99,7 +99,8 @@ fun FeedScreen(
                     component = component,
                     viewModelStoreOwner = viewModelStoreOwner,
                     onExplore = onExplore,
-                    onFilter = { viewModel.setFilter(it) }
+                    onFilter = { viewModel.setFilter(it) },
+                    onBoost = { controller.navigate("boost/$it") }
                 ) { isVisible.value = true }
             }
             FeedModal(

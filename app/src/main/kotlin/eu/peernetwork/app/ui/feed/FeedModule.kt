@@ -5,7 +5,11 @@ import androidx.lifecycle.ViewModelProvider
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
+import eu.peernetwork.ads.ui.boost.Boost
+import eu.peernetwork.ads.ui.checkout.Checkout
+import eu.peernetwork.ads.ui.checkout.CheckoutBalance
 import eu.peernetwork.app.ui.profile.Profile
+import eu.peernetwork.app.ui.renderer.BalanceRenderer
 import eu.peernetwork.app.ui.renderer.ConnectionRenderer
 import eu.peernetwork.app.ui.renderer.EngagementRenderer
 import eu.peernetwork.app.ui.search.Search
@@ -20,6 +24,7 @@ import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.factory.UiBuilderFactory
 import eu.peernetwork.core.ui.factory.UiViewModelFactory
 import eu.peernetwork.social.ui.connection.Connection
+import eu.peernetwork.wallet.ui.balance.Balance
 import eu.peernetwork.wallet.ui.confirmation.Confirmation
 import javax.inject.Provider
 
@@ -100,7 +105,37 @@ object FeedModule {
     @Provides
     @IntoMap
     @UiBuilder(Screen.Builder::class)
-    fun provideWindowBuilder(component: Feed.Component): UiComponent.Builder {
+    fun provideScreenBuilder(component: Feed.Component): UiComponent.Builder {
         return Screen.Builder(component)
+    }
+
+    @Feed.Scope
+    @Provides
+    @IntoMap
+    @UiBuilder(Checkout.Builder::class)
+    fun provideCheckoutBuilder(component: Feed.Component): UiComponent.Builder {
+        return Checkout.Builder(component)
+    }
+
+    @Feed.Scope
+    @Provides
+    @IntoMap
+    @UiBuilder(Balance.Builder::class)
+    fun provideBalanceBuilder(component: Feed.Component): UiComponent.Builder {
+        return Balance.Builder(component)
+    }
+
+    @Provides
+    @Feed.Scope
+    fun provideCheckoutBalance(component: Feed.Component): CheckoutBalance {
+        return BalanceRenderer(component)
+    }
+
+    @Feed.Scope
+    @Provides
+    @IntoMap
+    @UiBuilder(Boost.Builder::class)
+    fun provideBoostBuilder(component: Feed.Component): UiComponent.Builder {
+        return Boost.Builder(component)
     }
 }

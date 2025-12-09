@@ -11,6 +11,7 @@ import eu.peernetwork.core.ui.component.UiComponentProvider
 
 @Composable
 fun ExploreModal(
+    id: String,
     username: String,
     imageUrl: String,
     selected: MutableIntState,
@@ -24,6 +25,7 @@ fun ExploreModal(
         viewModelStoreOwner = viewModelStoreOwner
     ) { component, viewModel ->
         ExploreFullScreen(
+            id = id,
             username = username,
             imageUrl = imageUrl,
             showSheet = showSheet,

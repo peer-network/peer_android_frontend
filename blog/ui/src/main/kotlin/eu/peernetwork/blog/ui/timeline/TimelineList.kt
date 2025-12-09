@@ -50,6 +50,7 @@ fun TimelineList(
     val showSheet = remember { mutableStateOf<UiPost?>(null) }
     val current = rememberSaveable { mutableIntStateOf(-1) }
     TimelineScreen(
+        id = id,
         limit = limit,
         username = username,
         imageUrl = imageUrl,

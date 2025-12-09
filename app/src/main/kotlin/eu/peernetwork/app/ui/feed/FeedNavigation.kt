@@ -7,6 +7,7 @@ import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
+import eu.peernetwork.ads.ui.boost.BoostScreen
 import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.app.ui.screen.screen
 import eu.peernetwork.app.ui.profile.ProfileScreen
@@ -51,6 +52,19 @@ fun FeedNavigation(
                 provider = component,
                 viewModelStoreOwner = backStackEntry,
             )
+        }
+        screen(
+            route = "boost/{id}",
+            isModal = isModal,
+            provider = component,
+            onCancel = onCancel,
+        ) { backStackEntry ->
+            val id = backStackEntry.arguments?.getString("id") ?: ""
+            BoostScreen(
+                id = id,
+                provider = component,
+                viewModelStoreOwner = backStackEntry
+            ) { controller.popBackStack() }
         }
         screen(
             "search/{type}/{query}",

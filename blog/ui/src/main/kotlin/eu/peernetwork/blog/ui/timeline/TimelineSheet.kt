@@ -26,11 +26,13 @@ import eu.peernetwork.core.ui.theme.DesignTheme
 
 enum class TimelineSheetMenuItem {
     REPORT,
+    BOOST,
     SHARE
 }
 
 @Composable
 fun TimelineSheet(
+    id: String,
     state: MutableState<UiPost?>,
     onMenuClicked: (TimelineSheetMenuItem, UiPost) -> Unit
 ) {
@@ -53,6 +55,8 @@ fun TimelineSheet(
         }
     ) {
         TimelineSheet(
+            canBoost = id == state.value?.author?.id
+                    && state.value?.pinnedBy == null,
             onMenuClicked = {
                 confirmed.value = it
                 current.value = state.value
@@ -65,6 +69,7 @@ fun TimelineSheet(
 @Composable
 fun TimelineSheet(
     onMenuClicked: (TimelineSheetMenuItem) -> Unit,
+    canBoost: Boolean = false,
     onCancel: () -> Unit,
 ) {
     val handleMenuClicked by rememberUpdatedState(onMenuClicked)
@@ -88,6 +93,15 @@ fun TimelineSheet(
             onClick = { handleMenuClicked(TimelineSheetMenuItem.SHARE) },
             horizontalArrangement = Arrangement.spacedBy(6.dp)
         )
+        if (canBoost) {
+            DesignItem(
+                size = 24.dp,
+                label = stringResource(R.string.boost_label),
+                painter = painterResource(R.drawable.ic_boost),
+                onClick = { handleMenuClicked(TimelineSheetMenuItem.BOOST) },
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
+            )
+        }
         DesignItem(
             size = 24.dp,
             label = stringResource(R.string.cancel_label),
@@ -105,6 +119,9 @@ fun TimelineSheet(
 @OptIn(ExperimentalMaterial3Api::class)
 fun PreviewArticleSheet() {
     DesignTheme(isDarkMode = true) {
-        TimelineSheet({}) {}
+        Column {
+            TimelineSheet({}) {}
+            TimelineSheet({}, canBoost = true) {}
+        }
     }
 }

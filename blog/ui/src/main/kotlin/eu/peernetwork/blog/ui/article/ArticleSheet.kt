@@ -54,6 +54,7 @@ fun ArticleSheet(
         }
     ) {
         ArticleSheet(
+            canBoost = state.value?.pinnedBy == null,
             onMenuClicked = {
                 confirmed.value = it
                 current.value = state.value
@@ -66,6 +67,7 @@ fun ArticleSheet(
 @Composable
 fun ArticleSheet(
     onMenuClicked: (ArticleSheetMenuItem) -> Unit,
+    canBoost: Boolean = false,
     onCancel: () -> Unit,
 ) {
     val handleMenuClicked by rememberUpdatedState(onMenuClicked)
@@ -89,13 +91,15 @@ fun ArticleSheet(
             onClick = { handleMenuClicked(ArticleSheetMenuItem.SHARE) },
             horizontalArrangement = Arrangement.spacedBy(6.dp)
         )
-        DesignItem(
-            size = 24.dp,
-            label = stringResource(R.string.boost_label),
-            painter = painterResource(R.drawable.ic_boost),
-            onClick = { handleMenuClicked(ArticleSheetMenuItem.BOOST) },
-            horizontalArrangement = Arrangement.spacedBy(6.dp)
-        )
+        if (canBoost) {
+            DesignItem(
+                size = 24.dp,
+                label = stringResource(R.string.boost_label),
+                painter = painterResource(R.drawable.ic_boost),
+                onClick = { handleMenuClicked(ArticleSheetMenuItem.BOOST) },
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
+            )
+        }
         DesignItem(
             size = 24.dp,
             label = stringResource(R.string.cancel_label),

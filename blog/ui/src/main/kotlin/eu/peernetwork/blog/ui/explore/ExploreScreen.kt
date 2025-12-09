@@ -97,6 +97,7 @@ fun ExploreScreen(
 
 @Composable
 fun ExploreFullScreen(
+    id: String,
     username: String,
     imageUrl: String,
     selected: MutableIntState,
@@ -126,10 +127,14 @@ fun ExploreFullScreen(
             onComment = { items.itemSnapshotList.getOrNull(it)?.mapToDetail() },
             modal = {
                 val moderation = LocalModerationInteractor.current
-                TimelineSheet(showSheet) { sheetState, post ->
+                TimelineSheet(
+                    id = id,
+                    state = showSheet
+                ) { sheetState, post ->
                     when (sheetState) {
                         TimelineSheetMenuItem.REPORT -> moderation.onReport(post.id)
                         TimelineSheetMenuItem.SHARE -> { context.share(post.url, shareTitle) }
+                        TimelineSheetMenuItem.BOOST -> { context.share(post.url, shareTitle) }
                     }
                 }
             }
