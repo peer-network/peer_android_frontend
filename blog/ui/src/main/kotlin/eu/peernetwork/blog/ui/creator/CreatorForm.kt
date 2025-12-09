@@ -48,6 +48,7 @@ fun CreatorForm(
                 state = title,
                 enabled = !isLoading.value,
                 focusRequester = focus,
+                contentPadding = PaddingValues(16.dp),
                 hint = stringResource(R.string.post_title),
                 modifier = Modifier.weight(1f),
                 keyboardOptions = KeyboardOptions(
@@ -65,6 +66,7 @@ fun CreatorForm(
         }
         DesignTextField(
             state = description,
+            verticalAlignment = Alignment.Top,
             contentPadding = PaddingValues(
                 top = 16.dp,
                 start = 16.dp,

@@ -86,6 +86,7 @@ fun DesignTextField(
     durationMillis: Int = 10,
     delayMillis: Int = 0,
     easing: Easing = FastOutSlowInEasing,
+    verticalAlignment: Alignment.Vertical = Alignment.CenterVertically,
     leading: @Composable RowScope.() -> Unit = {},
     trailing: @Composable RowScope.() -> Unit = {},
 ) {
@@ -152,7 +153,7 @@ fun DesignTextField(
                 }
             ),
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            Row(verticalAlignment = verticalAlignment) {
                 updatedLeading()
                 Box(modifier = Modifier.weight(1f)) {
                     BasicTextField(

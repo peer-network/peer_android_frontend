@@ -78,9 +78,14 @@ fun AttachmentPreview(
         onAttach = onAttach,
         onRemove = onRemove,
         onPreview = onPreview,
-        onSelectCover = {
-            attachment.value.files.firstOrNull()?.let {
-                handleOnSelectCover(it.uri) }
+        onEdit = { index ->
+            when (attached.media) {
+                UiMimeType.Music -> {
+                    attachment.value.files.firstOrNull()?.let {
+                        handleOnSelectCover(it.uri) }
+                }
+                else -> { onPreview(index) }
+            }
         }
     ) { index ->
         when (attached.media) {
@@ -99,7 +104,8 @@ fun AttachmentPreview(
                             painter = painterResource(id = eu.peernetwork.core.ui.R.drawable.ic_music),
                             contentDescription = "Audio Icon",
                             tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(48.dp)
+                            modifier = Modifier
+                                .size(48.dp)
                                 .align(Alignment.Center)
                         )
                     }
@@ -129,12 +135,13 @@ fun AttachmentPreview(
     onAttach: () -> Unit,
     onRemove: (Int) -> Unit,
     onPreview: (Int) -> Unit,
-    onSelectCover: () -> Unit,
+    onEdit: (Int) -> Unit,
     content: @Composable (Int) -> Unit
 ) {
     val updatedContent by rememberUpdatedState(content)
     val handleOnRemove by rememberUpdatedState(onRemove)
     val handleOnPreview by rememberUpdatedState(onPreview)
+    val handleOnEdit by rememberUpdatedState(onEdit)
     HorizontalPager(
         state = state,
         modifier = Modifier.fillMaxWidth(),
@@ -164,6 +171,9 @@ fun AttachmentPreview(
                         shadowElevation = if (scale == 1f) 16.dp.toPx() else 8.dp.toPx()
                         translationX = pageOffset
                     }.clip(RoundedCornerShape(24.dp))
+                    .clickable(onClick = {
+                        handleOnPreview(page)
+                    })
             ) {
                 if (page == state.pageCount - 1) {
                     Box(
@@ -174,10 +184,9 @@ fun AttachmentPreview(
                             .clickable(role = Role.Button, onClick = onAttach)
                     ) {
                         Text(
-                            stringResource(R.string.media_label),
-                            style = MaterialTheme.typography.bodySmall.copy(
-                                color = MaterialTheme.colorScheme.surfaceDim
-                            )
+                            text = stringResource(R.string.media_label),
+                            color = MaterialTheme.colorScheme.outlineVariant,
+                            style = MaterialTheme.typography.bodySmall
                         )
                     }
                 } else {
@@ -195,13 +204,14 @@ fun AttachmentPreview(
                             painter = painterResource(id = eu.peernetwork.core.ui.R.drawable.ic_edit),
                             contentDescription = "Select Cover Image",
                             tint = MaterialTheme.colorScheme.onPrimary,
-                            modifier = Modifier.padding(12.dp)
+                            modifier = Modifier
+                                .padding(12.dp)
                                 .size(28.dp)
                                 .align(Alignment.TopEnd)
                                 .clip(CircleShape)
                                 .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.8f))
                                 .padding(8.dp)
-                                .clickable(onClick = onSelectCover)
+                                .clickable(onClick = { handleOnEdit(page) })
                         )
                         Box(
                             modifier = Modifier
