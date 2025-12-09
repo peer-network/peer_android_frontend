@@ -6,7 +6,7 @@ import eu.peernetwork.app.provider.ApplicationProvider
 import eu.peernetwork.app.ui.profile.Profile
 import eu.peernetwork.app.ui.search.Search
 import eu.peernetwork.app.ui.settings.SettingsEvent
-import eu.peernetwork.app.ui.window.Window
+import eu.peernetwork.app.ui.screen.Screen
 import eu.peernetwork.blog.ui.timeline.Timeline
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
@@ -32,7 +32,7 @@ interface Feed : ApplicationProvider {
         Timeline,
         Connection,
         Confirmation,
-        Window {
+        Screen {
         fun viewModelFactory(): ViewModelProvider.Factory
     }
 

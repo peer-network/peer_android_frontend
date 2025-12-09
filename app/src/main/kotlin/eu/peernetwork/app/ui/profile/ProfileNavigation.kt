@@ -11,7 +11,7 @@ import androidx.navigation.navArgument
 import eu.peernetwork.ads.ui.boost.BoostScreen
 import eu.peernetwork.ads.ui.dashboard.DashboardScreen
 import eu.peernetwork.app.BuildConfig
-import eu.peernetwork.app.extension.route
+import eu.peernetwork.app.ui.screen.screen
 import eu.peernetwork.app.ui.search.SearchScreen
 import eu.peernetwork.app.ui.search.SearchMode
 import eu.peernetwork.app.ui.settings.SettingsScreen
@@ -25,6 +25,7 @@ fun ProfileNavigation(
     controller: NavHostController,
     component: Profile.Component,
     viewModelStoreOwner: ViewModelStoreOwner,
+    onCancel: () -> Unit = {},
     content: @Composable (NavBackStackEntry) -> Unit = {},
 ) {
     val updatedContent by rememberUpdatedState(content)
@@ -32,10 +33,18 @@ fun ProfileNavigation(
         navController = controller,
         startDestination = "content"
     ) {
-        route("content", isModal) { updatedContent(it) }
-        route(
+        screen(
+            route = "content",
+            isModal = isModal,
+            expanded = true,
+            provider = component,
+            onCancel = onCancel
+        ) { updatedContent(it) }
+        screen(
             route = "profile/{id}",
             isModal = isModal,
+            provider = component,
+            onCancel = onCancel,
             arguments = listOf(navArgument("id") { this.type = NavType.StringType })
         ) { backStackEntry ->
             val id = backStackEntry.arguments?.getString("id") ?: ""
@@ -46,16 +55,23 @@ fun ProfileNavigation(
                 viewModelStoreOwner = backStackEntry,
             )
         }
-        route("settings", isModal) {
+        screen(
+            route = "settings",
+            isModal = isModal,
+            provider = component,
+            onCancel = onCancel,
+        ) {
             SettingsScreen(
                 account = account,
                 provider = component,
                 viewModelStoreOwner = viewModelStoreOwner
             )
         }
-        route(
+        screen(
             route = "search/{type}/{query}",
             isModal = isModal,
+            provider = component,
+            onCancel = onCancel,
             arguments = listOf(
                 navArgument("type") { this.type = NavType.StringType },
                 navArgument("query") { this.type = NavType.StringType }
@@ -77,7 +93,12 @@ fun ProfileNavigation(
                 query = query
             )
         }
-        route("adverts", isModal) { backStackEntry ->
+        screen(
+            route = "adverts",
+            isModal = isModal,
+            provider = component,
+            onCancel = onCancel,
+        ) { backStackEntry ->
             DashboardScreen(
                 id = account.id,
                 limit = BuildConfig.PAGING_LIMIT,
@@ -86,7 +107,12 @@ fun ProfileNavigation(
                 onBack = { controller.popBackStack() }
             ) { _,_ -> }
         }
-        route("boost/{id}", isModal) { backStackEntry ->
+        screen(
+            route = "boost/{id}",
+            isModal = isModal,
+            provider = component,
+            onCancel = onCancel,
+        ) { backStackEntry ->
             val id = backStackEntry.arguments?.getString("id") ?: ""
             BoostScreen(
                 id = id,

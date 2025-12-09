@@ -41,7 +41,8 @@ fun SearchModal(
                     account = account,
                     isModal = true,
                     controller = controller,
-                    component = component
+                    component = component,
+                    onCancel = { isVisible.value = false }
                 ) {
                     ExploreModal(
                         limit = BuildConfig.PAGING_LIMIT,

@@ -9,7 +9,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import eu.peernetwork.app.BuildConfig
-import eu.peernetwork.app.extension.route
+import eu.peernetwork.app.ui.screen.screen
 import eu.peernetwork.app.ui.feed.FeedExplore
 import eu.peernetwork.app.ui.profile.ProfileScreen
 import eu.peernetwork.blog.domain.model.Filter.Criteria
@@ -22,6 +22,7 @@ fun SearchNavigation(
     isModal: Boolean = false,
     component: Search.Component,
     controller: NavHostController,
+    onCancel: () -> Unit = {},
     content: @Composable () -> Unit
 ) {
     val updatedContent by rememberUpdatedState(content)
@@ -30,10 +31,18 @@ fun SearchNavigation(
         navController = controller,
         startDestination = "search",
     ) {
-        route("search", isModal) { updatedContent() }
-        route(
+        screen(
+            route = "search",
+            isModal = isModal,
+            expanded = true,
+            provider = component,
+            onCancel = onCancel,
+        ) { updatedContent() }
+        screen(
             "profile/{id}",
             isModal = isModal,
+            provider = component,
+            onCancel = onCancel,
             arguments = listOf(navArgument("id") {
                 type = NavType.StringType
             })
@@ -46,9 +55,11 @@ fun SearchNavigation(
                 viewModelStoreOwner = backStackEntry,
             )
         }
-        route(
+        screen(
             "feed/{tag}",
             isModal = isModal,
+            provider = component,
+            onCancel = onCancel,
             arguments = listOf(navArgument("tag") {
                 type = NavType.StringType
             })
@@ -64,9 +75,11 @@ fun SearchNavigation(
                 refresh = requireUpdate
             )
         }
-        route(
+        screen(
             route = "search?query={query}",
             isModal = isModal,
+            provider = component,
+            onCancel = onCancel,
             arguments = listOf(navArgument("query") {
                 type = NavType.StringType
                 defaultValue = ""
@@ -84,9 +97,11 @@ fun SearchNavigation(
                 refresh = requireUpdate
             )
         }
-        route(
+        screen(
             "search/{type}/{query}",
             isModal = isModal,
+            provider = component,
+            onCancel = onCancel,
             arguments = listOf(
                 navArgument("type") { type = NavType.StringType },
                 navArgument("query") { type = NavType.StringType }

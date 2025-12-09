@@ -1,4 +1,4 @@
-package eu.peernetwork.app.ui.window
+package eu.peernetwork.app.ui.screen
 
 import dagger.Module
 import dagger.Provides
@@ -10,16 +10,16 @@ import eu.peernetwork.core.ui.factory.UiBuilderFactory
 import eu.peernetwork.wallet.ui.reward.Reward
 
 @Module
-object WindowModule {
+object ScreenModule {
     @Provides
-    @Window.Scope
+    @Screen.Scope
     fun provideBuilderFactory(factory: UiBuilderFactory): UiComponentProvider.Factory = factory
 
-    @Window.Scope
+    @Screen.Scope
     @Provides
     @IntoMap
     @UiBuilder(Reward.Builder::class)
-    fun provideRewardBuilder(component: Window.Component): UiComponent.Builder {
+    fun provideRewardBuilder(component: Screen.Component): UiComponent.Builder {
         return Reward.Builder(component)
     }
 }

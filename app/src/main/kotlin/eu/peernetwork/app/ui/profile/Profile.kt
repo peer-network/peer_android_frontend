@@ -8,7 +8,7 @@ import eu.peernetwork.app.provider.ApplicationProvider
 import eu.peernetwork.app.ui.search.Search
 import eu.peernetwork.app.ui.settings.Settings
 import eu.peernetwork.app.ui.settings.SettingsEvent
-import eu.peernetwork.app.ui.window.Window
+import eu.peernetwork.app.ui.screen.Screen
 import eu.peernetwork.blog.ui.article.Article
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
@@ -47,7 +47,7 @@ interface Profile : ApplicationProvider {
         Boost,
         Balance,
         Checkout,
-        Window
+        Screen
 
     class Builder(private val dependency: Profile) : UiComponent.DefaultBuilder<Profile, Component>() {
         override fun build(context: Context): Component {

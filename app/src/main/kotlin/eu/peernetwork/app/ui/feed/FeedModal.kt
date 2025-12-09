@@ -46,7 +46,8 @@ fun FeedModal(
                     account = account,
                     isModal = true,
                     controller = controller,
-                    component = component
+                    component = component,
+                    onCancel = { isVisible.value = false }
                 ) {
                     TimelineModal(
                         id = account.id,

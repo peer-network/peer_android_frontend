@@ -1,20 +1,20 @@
-package eu.peernetwork.app.extension
+package eu.peernetwork.app.ui.screen
 
 import androidx.compose.animation.AnimatedContentScope
-import androidx.compose.foundation.layout.Box
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavDeepLink
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import eu.peernetwork.core.ui.design.material.DesignTitleBar
+import eu.peernetwork.core.ui.component.UiComponentProvider
 
-fun NavGraphBuilder.route(
+fun NavGraphBuilder.screen(
     route: String,
     isModal: Boolean = false,
+    expanded: Boolean = false,
+    provider: UiComponentProvider,
+    onCancel: () -> Unit = {},
     arguments: List<NamedNavArgument> = emptyList(),
     deepLinks: List<NavDeepLink> = emptyList(),
     content: @Composable AnimatedContentScope.(NavBackStackEntry) -> Unit
@@ -24,15 +24,12 @@ fun NavGraphBuilder.route(
         arguments = arguments,
         deepLinks = deepLinks,
     ) {
-        if (isModal) {
-            DesignTitleBar {
-                Box {
-                    content( it)
-                    Text("test", color = MaterialTheme.colorScheme.onBackground)
-                }
-            }
-        } else {
-            content( it)
-        }
+        ScreenScaffold(
+            isModal = isModal,
+            expanded = expanded,
+            onCancel = onCancel,
+            provider = provider,
+            viewModelStoreOwner = it
+        ) { content( it) }
     }
 }

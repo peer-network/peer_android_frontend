@@ -45,7 +45,8 @@ fun ProfileModal(
                     isModal = true,
                     controller = controller,
                     component = component,
-                    viewModelStoreOwner = viewModelStoreOwner
+                    viewModelStoreOwner = viewModelStoreOwner,
+                    onCancel = { isVisible.value = false }
                 ) {
                     ArticleModal(
                         author = userId,

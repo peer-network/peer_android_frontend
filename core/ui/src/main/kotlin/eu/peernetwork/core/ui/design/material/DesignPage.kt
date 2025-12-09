@@ -22,8 +22,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,36 +32,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.theme.PeerTheme
-
-enum class DesignPageWindowMode {
-    DOCKED,
-    FLOATING,
-    HIDDEN
-}
-
-@Composable
-fun DesignPage(
-    mode: DesignPageWindowMode = DesignPageWindowMode.HIDDEN,
-    header: @Composable DesignTitleBarRegistry.(State<Float>) -> Unit = {},
-    footer: @Composable DesignTitleBarRegistry.(State<Float>) -> Unit = {},
-    content: @Composable (State<Float>) -> Unit,
-) {
-    val state = remember { mutableFloatStateOf(1f) }
-    val updatedHeader by rememberUpdatedState(header)
-    val updatedContent by rememberUpdatedState(content)
-    if (mode == DesignPageWindowMode.DOCKED) {
-        DesignPage(header, footer, content)
-    } else if (mode == DesignPageWindowMode.FLOATING) {
-        DesignTitleBar {
-            Box {
-                updatedContent(state)
-                updatedHeader(state)
-            }
-        }
-    } else if (mode == DesignPageWindowMode.HIDDEN) {
-        updatedContent(state)
-    }
-}
 
 @Composable
 fun DesignPage(

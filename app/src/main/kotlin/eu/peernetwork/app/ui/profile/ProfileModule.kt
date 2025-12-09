@@ -11,7 +11,7 @@ import eu.peernetwork.app.ui.renderer.BalanceRenderer
 import eu.peernetwork.app.ui.renderer.EngagementRenderer
 import eu.peernetwork.app.ui.search.Search
 import eu.peernetwork.app.ui.settings.Settings
-import eu.peernetwork.app.ui.window.Window
+import eu.peernetwork.app.ui.screen.Screen
 import eu.peernetwork.blog.ui.engagement.EngagementDialog
 import eu.peernetwork.blog.ui.article.Article
 import eu.peernetwork.core.ui.annotation.UiBuilder
@@ -121,9 +121,9 @@ object ProfileModule {
     @Profile.Scope
     @Provides
     @IntoMap
-    @UiBuilder(Window.Builder::class)
+    @UiBuilder(Screen.Builder::class)
     fun provideWindowBuilder(component: Profile.Component): UiComponent.Builder {
-        return Window.Builder(component)
+        return Screen.Builder(component)
     }
 
     @Profile.Scope
