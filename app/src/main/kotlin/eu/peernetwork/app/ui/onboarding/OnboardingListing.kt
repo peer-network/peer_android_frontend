@@ -24,7 +24,6 @@ import eu.peernetwork.app.ui.compose.PricingLabel
 import eu.peernetwork.app.R as AppRes
 import eu.peernetwork.blog.ui.R
 import eu.peernetwork.core.ui.theme.DesignTheme
-import eu.peernetwork.core.ui.theme.PeerTheme
 import kotlinx.collections.immutable.persistentListOf
 import kotlin.math.absoluteValue
 
@@ -130,11 +129,6 @@ fun BoxScope.OnboardingFeatureListing() {
             painterResource(AppRes.drawable.bg_unlock),
             stringResource(AppRes.string.onboarding_post_and_engage),
             null
-        ),
-        Triple(
-            painterResource(AppRes.drawable.bg_ad),
-            stringResource(AppRes.string.onboarding_boost_your_content),
-            stringResource(AppRes.string.onboarding_coming_soon)
         ),
         Triple(
             painterResource(AppRes.drawable.bg_shop),

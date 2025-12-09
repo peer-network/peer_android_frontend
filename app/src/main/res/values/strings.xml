@@ -47,7 +47,7 @@
     <string name="onboarding_option_extra_like">Extra like</string>
     <string name="onboarding_option_extra_comments">Extra comments</string>
     <string name="onboarding_option_dislike">Want to give a dislike?</string>
-    <string name="onboarding_invite_friends_prefix">But hey - you can also invite friends and earn 1%\nof their token income daily.</string>
+    <string name="onboarding_invite_friends_prefix">And hey - Invite friends and earn 1%\nfrom every token transaction they make!</string>
     <string name="onboarding_invite_friends_bold"> earn 1% </string>
     <string name="onboarding_skip">Skip</string>
     <string name="onboarding_back">Back</string>
