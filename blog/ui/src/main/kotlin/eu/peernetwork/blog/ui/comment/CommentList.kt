@@ -1,29 +1,30 @@
 package eu.peernetwork.blog.ui.comment
 
-import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.lifecycle.ViewModelStoreOwner
-import eu.peernetwork.blog.ui.model.v2.UiPostDetail
+import androidx.navigation.NavHostController
 import eu.peernetwork.core.ui.component.UiComponentProvider
+import eu.peernetwork.core.ui.design.luna.DesignRichText
 
 @Composable
 fun CommentList(
+    id: String,
     limit: Int,
-    username: String,
-    imageUrl: String,
-    state: MutableState<UiPostDetail?>,
+    controller: NavHostController,
     provider: UiComponentProvider,
-    viewModelStoreOwner: ViewModelStoreOwner
+    viewModelStoreOwner: ViewModelStoreOwner,
+    onContentClick: (DesignRichText, String) -> Unit,
+    onReply: (String) -> Unit,
+    onClick: (String) -> Unit
 ) {
-    val textField = remember { TextFieldState() }
+    val handleReply by rememberUpdatedState(onReply)
+    val handleClick by rememberUpdatedState(onClick)
     CommentScreen(
-        username = username,
-        imageUrl = imageUrl,
+        id = id,
         limit = limit,
-        post = state,
-        comment = textField,
+        controller = controller,
         provider = provider,
         viewModelStoreOwner = viewModelStoreOwner
     ) { component, interactor, items ->
@@ -42,11 +43,10 @@ fun CommentList(
                     onViewLikes = { interactor.viewLike(comment.id) },
                     onLike = { interactor.like(comment) },
                     onReply = {
-                        textField.edit {
-                            replace(0, length, "@${comment.author.username}")
-                        }
-                    }
-                )
+                        handleReply(comment.author.username)
+                    },
+                    onContentClick = onContentClick
+                ) { handleClick(comment.author.id) }
             }
         }
     }

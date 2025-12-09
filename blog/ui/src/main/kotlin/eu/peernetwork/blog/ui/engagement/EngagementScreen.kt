@@ -16,7 +16,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import eu.peernetwork.blog.ui.comment.CommentList
+import eu.peernetwork.blog.ui.comment.CommentSheet
 import eu.peernetwork.blog.ui.engagement.EngagementInteractor.Companion.LocalEngagementInteractor
 import eu.peernetwork.blog.ui.interaction.overview.OverviewScreen
 import eu.peernetwork.blog.ui.model.UiReaction
@@ -89,10 +89,9 @@ fun EngagementScreen(
             viewModel.clear()
         }
     }
-    CommentList(
+    CommentSheet(
         username = username,
         imageUrl = imageUrl,
-        limit = limit,
         state = post,
         provider = component,
         viewModelStoreOwner = viewModelStoreOwner

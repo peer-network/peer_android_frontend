@@ -3,12 +3,10 @@ package eu.peernetwork.blog.ui.comment
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -19,10 +17,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import androidx.paging.compose.LazyPagingItems
 import eu.peernetwork.blog.ui.model.UiComment
-import eu.peernetwork.blog.ui.model.v2.UiPostDetail
 import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.luna.DesignPagingStream
@@ -117,62 +115,37 @@ fun CommentScreen(
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 fun CommentScreen(
-    username: String,
-    imageUrl: String,
+    id: String,
     limit: Int,
-    post: MutableState<UiPostDetail?>,
-    comment: TextFieldState,
+    controller: NavHostController,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
     content: LazyListScope.(Comment.Component, CommentInteractor, LazyPagingItems<UiComment>) -> Unit
 ) {
-    val controller = rememberNavController()
     val updatedContent by rememberUpdatedState(content)
     CommentScreen(
         provider = provider,
         viewModelStoreOwner = viewModelStoreOwner
     ) { component, viewModel ->
         val status = viewModel.status.collectAsStateWithLifecycle()
-        val isLoading = remember { derivedStateOf { status.value is CommentViewModel.Status.Loading } }
-        val isSuccess = remember { derivedStateOf { status.value is CommentViewModel.Status.Success<*> } }
-        CommentSheet(
-            state = post,
-            username = username,
-            imageUrl = imageUrl,
-            comment = comment,
-            isSuccess = isSuccess,
-            isLoading = isLoading,
-            canDismiss = {
-                val dismissable = controller.previousBackStackEntry == null
-                if (!dismissable) {
-                    controller.popBackStack()
-                }
-                dismissable
-            },
-            onDismiss = { post.value = null },
-            onComment = { id, comment ->
-                viewModel.comment(id, comment)
-            }
-        ) {
-            CommentScreen(
-                id = it.id,
+        CommentScreen(
+            id = id,
+            limit = limit,
+            component = component,
+            viewModel = viewModel,
+            onViewLikes = { id -> controller.navigate("likes/$id") }
+        ) { component, interactor, items ->
+            CommentNavigation(
                 limit = limit,
-                component = component,
-                viewModel = viewModel,
-                onViewLikes = { id -> controller.navigate("likes/$id") }
-            ) { component, interactor, items ->
-                CommentNavigation(
-                    limit = limit,
-                    controller = controller,
-                    component = component
-                ) {
-                    LazyColumn(
-                        modifier = Modifier.fillMaxSize()
-                    ) { updatedContent(this, component, interactor, items) }
-                    LaunchedEffect(status.value) {
-                        if (status.value is CommentViewModel.Status.Success<*>) {
-                            items.refresh()
-                        }
+                controller = controller,
+                component = component
+            ) {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize()
+                ) { updatedContent(this, component, interactor, items) }
+                LaunchedEffect(status.value) {
+                    if (status.value is CommentViewModel.Status.Success<*>) {
+                        items.refresh()
                     }
                 }
             }

@@ -34,7 +34,7 @@ import androidx.compose.ui.unit.dp
 import eu.peernetwork.blog.ui.R
 import eu.peernetwork.core.ui.design.luna.DesignAvatar
 import eu.peernetwork.core.ui.design.luna.DesignImage
-import eu.peernetwork.core.ui.design.luna.DesignText
+import eu.peernetwork.core.ui.design.luna.DesignRichText
 import eu.peernetwork.core.ui.extension.annotate
 import eu.peernetwork.core.ui.theme.DesignTheme
 import eu.peernetwork.core.ui.theme.PeerAppDarkRed
@@ -51,6 +51,8 @@ fun CommentItem(
     onReply: () -> Unit,
     onViewLikes: () -> Unit,
     onLike: () -> Unit,
+    onContentClick: (DesignRichText, String) -> Unit,
+    onClick: () -> Unit,
 ) {
     val handleOnLike by rememberUpdatedState(onLike)
     Row(
@@ -67,7 +69,8 @@ fun CommentItem(
                 color = MaterialTheme.colorScheme.surfaceContainerLow,
                 style = MaterialTheme.typography.bodyMedium.copy(
                     color = MaterialTheme.colorScheme.onBackground
-                )
+                ),
+                modifier = Modifier.clickable(onClick = onClick)
             )
         }
         Column(
@@ -92,12 +95,13 @@ fun CommentItem(
                 maxLines = 1,
                 modifier = Modifier.clickable(onClick = onReply)
             )
-            DesignText(
+            DesignRichText(
                 text = comment,
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.outline,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 3,
+                onClick = onContentClick
             )
             if (likes > 0 || isLiked) {
                 Text(
@@ -159,7 +163,9 @@ fun PreviewCommentItem() {
             isLiked = true,
             likes = 1,
             onReply = {},
-            onViewLikes = {}
+            onViewLikes = {},
+            onLike = {},
+            onContentClick = { _,_ -> }
         ) {}
     }
 }
