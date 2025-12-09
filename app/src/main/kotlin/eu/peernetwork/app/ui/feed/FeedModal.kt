@@ -2,6 +2,7 @@ package eu.peernetwork.app.ui.feed
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.remember
@@ -13,6 +14,7 @@ import eu.peernetwork.blog.domain.model.Category
 import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.blog.ui.post.PostNavigator
 import eu.peernetwork.blog.ui.timeline.TimelineModal
+import eu.peernetwork.blog.ui.timeline.TimelineScreen
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.material.DesignOverlay
 import eu.peernetwork.user.domain.model.Account
@@ -33,6 +35,7 @@ fun FeedModal(
         startDestination = "content",
         onDismiss = { isVisible.value = false }
     ) { controller ->
+        val key = listOf(category, criteria).hashCode()
         val navigator = remember { NavigationInteractor(context, controller) }
         CompositionLocalProvider(PostNavigator.LocalPostNavigator provides navigator) {
             FeedScreen(
@@ -56,6 +59,17 @@ fun FeedModal(
                         provider = component,
                         viewModelStoreOwner = viewModelStoreOwner
                     )
+                }
+                TimelineScreen(
+                    provider = component,
+                    viewModelStoreOwner = viewModelStoreOwner
+                ) { component, viewModel ->
+                    DisposableEffect(Unit) {
+                        onDispose {
+                            viewModel.selected(key, -1)
+                            selected.intValue = -1
+                        }
+                    }
                 }
             }
         }

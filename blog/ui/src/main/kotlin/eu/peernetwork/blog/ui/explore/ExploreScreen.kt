@@ -4,7 +4,6 @@ import androidx.compose.foundation.pager.PagerScope
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.MutableState
@@ -110,7 +109,6 @@ fun ExploreFullScreen(
 ) {
     val context = LocalContext.current
     val updatedContent by rememberUpdatedState(content)
-    val key = component.hashCode()
     val shareTitle = stringResource(R.string.share_label)
     ExploreScreen(
         limit = limit,
@@ -125,27 +123,23 @@ fun ExploreFullScreen(
             pagerState = pagerState,
             provider = component,
             viewModelStoreOwner = viewModelStoreOwner,
-            onComment = { items.itemSnapshotList.getOrNull(it)?.mapToDetail() }
-        ) { index ->
-            val moderation = LocalModerationInteractor.current
-            items[index]?.let { updatedContent(this, component, it, index, pagerState) }
-            TimelineSheet(showSheet) { sheetState, post ->
-                when (sheetState) {
-                    TimelineSheetMenuItem.REPORT -> moderation.onReport(post.id)
-                    TimelineSheetMenuItem.SHARE -> { context.share(post.url, shareTitle) }
+            onComment = { items.itemSnapshotList.getOrNull(it)?.mapToDetail() },
+            modal = {
+                val moderation = LocalModerationInteractor.current
+                TimelineSheet(showSheet) { sheetState, post ->
+                    when (sheetState) {
+                        TimelineSheetMenuItem.REPORT -> moderation.onReport(post.id)
+                        TimelineSheetMenuItem.SHARE -> { context.share(post.url, shareTitle) }
+                    }
                 }
             }
+        ) { index ->
+            items[index]?.let { updatedContent(this, component, it, index, pagerState) }
             LaunchedEffect(Unit) {
                 items.itemSnapshotList.getOrNull(pagerState.currentPage)?.let { post ->
                     viewModel.view(post.id)
                 }
             }
-        }
-    }
-    DisposableEffect(Unit) {
-        onDispose {
-            viewModel.selected(key, -1)
-            selected.intValue = -1
         }
     }
 }

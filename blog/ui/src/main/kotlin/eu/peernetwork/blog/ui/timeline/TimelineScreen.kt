@@ -226,7 +226,6 @@ fun TimelineFullScreen(
         provider = provider,
         viewModelStoreOwner = viewModelStoreOwner
     ) { component, viewModel ->
-        val key = listOf(category, criteria).hashCode()
         TimelineScreen(
             limit = limit,
             category = category,
@@ -246,29 +245,25 @@ fun TimelineFullScreen(
                 pagerState = pagerState,
                 provider = component,
                 viewModelStoreOwner = viewModelStoreOwner,
-                onComment = { items.itemSnapshotList.getOrNull(it)?.mapToDetail() }
+                onComment = { items.itemSnapshotList.getOrNull(it)?.mapToDetail() },
+                modal = {
+                    val moderation = LocalModerationInteractor.current
+                    TimelineSheet(showSheet) { sheetState, post ->
+                        when (sheetState) {
+                            TimelineSheetMenuItem.REPORT -> moderation.onReport(post.id)
+                            TimelineSheetMenuItem.SHARE -> { context.share(post.url, shareTitle) }
+                        }
+                    }
+                }
             ) { index ->
-                val moderation = LocalModerationInteractor.current
                 items[index]?.let {
                     updatedContent(this, component, it, index, pagerState)
-                }
-                TimelineSheet(showSheet) { sheetState, post ->
-                    when (sheetState) {
-                        TimelineSheetMenuItem.REPORT -> moderation.onReport(post.id)
-                        TimelineSheetMenuItem.SHARE -> { context.share(post.url, shareTitle) }
-                    }
                 }
                 LaunchedEffect(Unit) {
                     items.itemSnapshotList.getOrNull(pagerState.currentPage)?.let { post ->
                         viewModel.view(post.id)
                     }
                 }
-            }
-        }
-        DisposableEffect(Unit) {
-            onDispose {
-                viewModel.selected(key, -1)
-                selected.intValue = -1
             }
         }
     }

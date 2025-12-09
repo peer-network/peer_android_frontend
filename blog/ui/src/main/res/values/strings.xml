@@ -24,8 +24,8 @@
     <string name="day_label">Yesterday</string>
     <string name="days_label">%d days ago</string>
 
-    <string name="likes_label">Liked by %d people</string>
-    <string name="likes_by_you_label">Liked by you and %d people</string>
+    <string name="likes_label">Liked by %d persons</string>
+    <string name="likes_by_you_label">Liked by you and %d other person(s)</string>
     <string name="liked_by_you_label">Liked by you</string>
     <string name="like_by_label">Liked by a user</string>
 

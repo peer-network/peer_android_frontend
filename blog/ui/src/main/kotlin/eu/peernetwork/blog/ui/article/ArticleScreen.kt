@@ -10,7 +10,6 @@ import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.MutableState
@@ -127,12 +126,6 @@ fun ArticleScreen(
             }
         }
     }
-    DisposableEffect(Unit) {
-        onDispose {
-            viewModel.selected(key, -1)
-            selected.intValue = -1
-        }
-    }
 }
 
 @Composable
@@ -245,20 +238,22 @@ fun ArticleFullScreen(
                 pagerState = pagerState,
                 provider = component,
                 viewModelStoreOwner = viewModelStoreOwner,
-                onComment = { items.itemSnapshotList.getOrNull(it)?.mapToDetail() }
+                onComment = { items.itemSnapshotList.getOrNull(it)?.mapToDetail() },
+                modal = {
+                    val moderation = LocalModerationInteractor.current
+                    ArticleSheet(showSheet) { sheetState, post ->
+                        when (sheetState) {
+                            ArticleSheetMenuItem.BOOST -> handleEvent(ArticleEvent.Boost(post.id))
+                            ArticleSheetMenuItem.REPORT -> moderation.onReport(post.id)
+                            ArticleSheetMenuItem.SHARE -> { context.share(post.url, shareTitle) }
+                        }
+                    }
+                }
             ) { index ->
-                val moderation = LocalModerationInteractor.current
                 items[index]?.let { updatedContent(this, component, it, index, pagerState) }
                 LaunchedEffect(Unit) {
                     items.itemSnapshotList.getOrNull(pagerState.currentPage)?.let { post ->
                         viewModel.view(post.id)
-                    }
-                }
-                ArticleSheet(showSheet) { sheetState, post ->
-                    when (sheetState) {
-                        ArticleSheetMenuItem.BOOST -> handleEvent(ArticleEvent.Boost(post.id))
-                        ArticleSheetMenuItem.REPORT -> moderation.onReport(post.id)
-                        ArticleSheetMenuItem.SHARE -> { context.share(post.url, shareTitle) }
                     }
                 }
             }

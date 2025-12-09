@@ -17,10 +17,8 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModelStoreOwner
@@ -160,8 +158,10 @@ fun PostScreen(
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
     onComment: (Int) -> UiPostDetail?,
+    modal: @Composable () -> Unit = {},
     content: @Composable PagerScope.(Int) -> Unit
 ) {
+    val updatedModal by rememberUpdatedState(modal)
     val handleComment by rememberUpdatedState(onComment)
     val updatedContent by rememberUpdatedState(content)
     PostScreen(
@@ -185,6 +185,7 @@ fun PostScreen(
                     .fillMaxWidth()
                     .weight(1f)
             ) { updatedContent(this, it) }
+            updatedModal()
             CommentToolbar(
                 username = username,
                 imageUrl = imageUrl,

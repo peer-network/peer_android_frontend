@@ -2,6 +2,7 @@ package eu.peernetwork.app.ui.profile
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
@@ -12,6 +13,7 @@ import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.app.interactor.NavigationInteractor
 import eu.peernetwork.blog.domain.model.Content
 import eu.peernetwork.blog.ui.article.ArticleModal
+import eu.peernetwork.blog.ui.article.ArticleScreen
 import eu.peernetwork.blog.ui.post.PostNavigator
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.material.DesignOverlay
@@ -34,6 +36,7 @@ fun ProfileModal(
         startDestination = "content",
         onDismiss = { isVisible.value = false }
     ) { controller ->
+        val key = "${types.hashCode()}/$userId"
         val navigator = remember { NavigationInteractor(context, controller) }
         CompositionLocalProvider(PostNavigator.LocalPostNavigator provides navigator) {
             ProfileScreen(provider) { component ->
@@ -55,6 +58,17 @@ fun ProfileModal(
                         provider = component,
                         viewModelStoreOwner = viewModelStoreOwner
                     ) {}
+                }
+                ArticleScreen(
+                    provider = component,
+                    viewModelStoreOwner = viewModelStoreOwner
+                ) { component, viewModel ->
+                    DisposableEffect(Unit) {
+                        onDispose {
+                            viewModel.selected(key, -1)
+                            selected.intValue = -1
+                        }
+                    }
                 }
             }
         }

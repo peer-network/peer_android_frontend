@@ -40,7 +40,7 @@ fun ArticleModal(
     ) { component, item, index, pagerState ->
         GalleryScreen(
             position = index,
-            current = selected,
+            selected = selected,
             showSheet = showSheet,
             enabled = !pagerState.isScrollInProgress,
             post = item

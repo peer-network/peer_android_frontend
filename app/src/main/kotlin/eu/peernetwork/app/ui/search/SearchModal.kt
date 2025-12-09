@@ -2,6 +2,7 @@ package eu.peernetwork.app.ui.search
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.remember
@@ -10,6 +11,7 @@ import androidx.lifecycle.ViewModelStoreOwner
 import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.app.interactor.NavigationInteractor
 import eu.peernetwork.blog.ui.explore.ExploreModal
+import eu.peernetwork.blog.ui.explore.ExploreScreen
 import eu.peernetwork.blog.ui.post.PostNavigator
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.material.DesignOverlay
@@ -26,7 +28,7 @@ fun SearchModal(
     val context = LocalContext.current
     DesignOverlay(
         state = isVisible,
-        startDestination = "content",
+        startDestination = "search",
         onDismiss = { isVisible.value = false }
     ) { controller ->
         val navigator = remember { NavigationInteractor(context, controller) }
@@ -49,6 +51,18 @@ fun SearchModal(
                         username = account.username,
                         viewModelStoreOwner = viewModelStoreOwner
                     )
+                }
+                ExploreScreen(
+                    provider = component,
+                    viewModelStoreOwner = viewModelStoreOwner
+                ) { component, viewModel ->
+                    val key = component.hashCode()
+                    DisposableEffect(Unit) {
+                        onDispose {
+                            viewModel.selected(key, -1)
+                            selected.intValue = -1
+                        }
+                    }
                 }
             }
         }

@@ -102,9 +102,9 @@ fun CommentItem(
             if (likes > 0 || isLiked) {
                 Text(
                     text = if (isLiked && likes > 1) {
-                        stringResource(R.string.likes_by_you_label)
+                        stringResource(R.string.likes_by_you_label, likes - 1)
                     } else if (likes > 1) {
-                        stringResource(R.string.likes_label)
+                        stringResource(R.string.likes_label, likes)
                     } else if (isLiked) {
                         stringResource(R.string.liked_by_you_label)
                     } else {

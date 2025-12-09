@@ -34,7 +34,7 @@ import eu.peernetwork.media.core.renderer.VideoPlayer
 @Composable
 fun GalleryScreen(
     position: Int,
-    current: MutableIntState,
+    selected: MutableIntState,
     showSheet: MutableState<UiPost?>,
     enabled: Boolean,
     post: UiPost,
@@ -118,7 +118,7 @@ fun GalleryScreen(
                         modifier = Modifier,
                         progress = progress,
                         enabled = enabled,
-                        current = current,
+                        current = selected,
                         position = position
                     )
                 )

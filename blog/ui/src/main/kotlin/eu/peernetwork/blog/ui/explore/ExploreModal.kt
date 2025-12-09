@@ -35,7 +35,7 @@ fun ExploreModal(
         ) { component, item, index, pagerState ->
             GalleryScreen(
                 position = index,
-                current = selected,
+                selected = selected,
                 enabled =!pagerState.isScrollInProgress,
                 post = item,
                 showSheet = showSheet

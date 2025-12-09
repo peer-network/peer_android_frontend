@@ -39,7 +39,7 @@ fun TimelineModal(
     ) { component, post, index, pagerState ->
         GalleryScreen(
             position = index,
-            current = selected,
+            selected = selected,
             enabled = !pagerState.isScrollInProgress,
             post = post,
             showSheet = showSheet
