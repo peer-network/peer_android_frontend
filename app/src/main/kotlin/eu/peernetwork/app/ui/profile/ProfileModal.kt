@@ -6,9 +6,11 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModelStoreOwner
+import eu.peernetwork.ads.ui.boost.BoostConfirmation
 import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.app.interactor.NavigationInteractor
 import eu.peernetwork.blog.domain.model.Content
@@ -32,6 +34,7 @@ fun ProfileModal(
     viewModelStoreOwner: ViewModelStoreOwner
 ) {
     val context = LocalContext.current
+    val showBoost = remember { mutableStateOf<String?>(null) }
     DesignOverlay(
         state = isVisible,
         startDestination = "content",
@@ -62,7 +65,7 @@ fun ProfileModal(
                         viewModelStoreOwner = viewModelStoreOwner
                     ) { event ->
                         when(event) {
-                            is ArticleEvent.Boost -> controller.navigate("boost/${event.id}")
+                            is ArticleEvent.Boost -> showBoost.value = event.id
                             is ArticleEvent.Post -> {}
                         }
                     }
@@ -80,5 +83,8 @@ fun ProfileModal(
                 }
             }
         }
+        BoostConfirmation(
+            state = showBoost
+        ) { controller.navigate("boost/$it") }
     }
 }

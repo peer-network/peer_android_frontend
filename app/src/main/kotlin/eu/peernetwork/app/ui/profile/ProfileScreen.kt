@@ -14,6 +14,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.navigation.compose.rememberNavController
+import eu.peernetwork.ads.ui.boost.BoostConfirmation
 import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.app.interactor.NavigationInteractor
 import eu.peernetwork.blog.domain.usecase.PostUsecase
@@ -55,6 +56,7 @@ fun ProfileScreen(
         PostNavigator.LocalPostNavigator provides navigator
     ) {
         ProfileScreen(provider) { component ->
+            val showBoost = remember { mutableStateOf<String?>(null) }
             val pageState = rememberPagerState(
                 pageCount = { UiMimeType.TYPES.size },
                 initialPage = 0
@@ -84,6 +86,7 @@ fun ProfileScreen(
                     mediaState = mediaState,
                     controller = controller,
                     pageState = pageState,
+                    onBoost = { showBoost.value = it },
                     onClick = { isVisible.value = true }
                 )
             }
@@ -101,6 +104,9 @@ fun ProfileScreen(
                 },
                 viewModelStoreOwner = viewModelStoreOwner
             )
+            BoostConfirmation(
+                state = showBoost
+            ) { controller.navigate("boost/$it") }
         }
     }
 }

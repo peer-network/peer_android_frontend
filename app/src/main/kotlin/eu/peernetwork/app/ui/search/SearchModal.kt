@@ -5,9 +5,11 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModelStoreOwner
+import eu.peernetwork.ads.ui.boost.BoostConfirmation
 import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.app.interactor.NavigationInteractor
 import eu.peernetwork.blog.ui.explore.ExploreModal
@@ -26,6 +28,7 @@ fun SearchModal(
     viewModelStoreOwner: ViewModelStoreOwner
 ) {
     val context = LocalContext.current
+    val showBoost = remember { mutableStateOf<String?>(null) }
     DesignOverlay(
         state = isVisible,
         startDestination = "search",
@@ -52,7 +55,7 @@ fun SearchModal(
                         imageUrl = account.imageUrl,
                         username = account.username,
                         viewModelStoreOwner = viewModelStoreOwner
-                    ) { controller.navigate("boost/$it") }
+                    ) { showBoost.value = it }
                 }
                 ExploreScreen(
                     provider = component,
@@ -68,5 +71,8 @@ fun SearchModal(
                 }
             }
         }
+        BoostConfirmation(
+            state = showBoost
+        ) { controller.navigate("boost/$it") }
     }
 }

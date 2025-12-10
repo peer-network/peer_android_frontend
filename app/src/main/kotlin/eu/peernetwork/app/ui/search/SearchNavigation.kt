@@ -40,7 +40,7 @@ fun SearchNavigation(
             onCancel = onCancel,
         ) { updatedContent() }
         screen(
-            "profile/{id}",
+            route = "profile/{id}",
             isModal = isModal,
             provider = component,
             onCancel = onCancel,
@@ -57,22 +57,18 @@ fun SearchNavigation(
             )
         }
         screen(
-            "feed/{tag}",
+            route = "feed",
             isModal = isModal,
             provider = component,
-            onCancel = onCancel,
-            arguments = listOf(navArgument("tag") {
-                type = NavType.StringType
-            })
+            onCancel = onCancel
         ) { backStackEntry ->
-            val tag = backStackEntry.arguments?.getString("tag")
             FeedExplore(
                 account = account,
                 limit = BuildConfig.PAGING_LIMIT,
                 provider = component,
                 viewModelStoreOwner = backStackEntry,
-                title = tag,
-                criteria = tag?.let { Criteria.Content(tag = it) } ?: Criteria.None,
+                title = null,
+                criteria = Criteria.None,
                 refresh = requireUpdate
             )
         }
@@ -87,8 +83,20 @@ fun SearchNavigation(
                 id = id,
                 provider = component,
                 viewModelStoreOwner = backStackEntry,
-                onProfile = { controller.navigate("profile/${account.id}") },
-                onFinish = { controller.navigate("feed") }
+                onProfile = {
+                    controller.navigate("profile/${account.id}") {
+                        popUpTo(backStackEntry.destination.id) {
+                            inclusive = true
+                        }
+                    }
+                },
+                onFinish = {
+                    controller.navigate("feed") {
+                        popUpTo(backStackEntry.destination.id) {
+                            inclusive = true
+                        }
+                    }
+                }
             ) { controller.popBackStack() }
         }
         screen(

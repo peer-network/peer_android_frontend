@@ -5,6 +5,7 @@ import eu.peernetwork.ads.ui.boost.Boost
 import eu.peernetwork.ads.ui.checkout.Checkout
 import eu.peernetwork.ads.ui.dashboard.Dashboard
 import eu.peernetwork.app.provider.ApplicationProvider
+import eu.peernetwork.app.ui.feed.Feed
 import eu.peernetwork.app.ui.search.Search
 import eu.peernetwork.app.ui.settings.Settings
 import eu.peernetwork.app.ui.settings.SettingsEvent
@@ -47,6 +48,7 @@ interface Profile : ApplicationProvider {
         Boost,
         Balance,
         Checkout,
+        Feed,
         Screen
 
     class Builder(private val dependency: Profile) : UiComponent.DefaultBuilder<Profile, Component>() {

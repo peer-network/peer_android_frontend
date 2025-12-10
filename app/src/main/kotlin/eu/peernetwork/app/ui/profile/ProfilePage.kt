@@ -46,6 +46,7 @@ fun ProfilePage(
     component: Profile.Component,
     viewModelStoreOwner: ViewModelStoreOwner,
     onSettings: () -> Unit,
+    onBoost: (String) -> Unit,
     onClick: () -> Unit,
     controller: NavHostController,
 ) {
@@ -54,6 +55,7 @@ fun ProfilePage(
     val connection = remember { mutableStateOf<ConnectionStatus?>(null) }
     val coroutine = rememberCoroutineScope()
     val handleClick by rememberUpdatedState(onClick)
+    val handleBoost by rememberUpdatedState(onBoost)
     ProfileScaffold(
         pageState = pageState,
         onRefresh = {
@@ -91,7 +93,7 @@ fun ProfilePage(
             viewModelStoreOwner = viewModelStoreOwner,
             onEvent = { event ->
                 when(event) {
-                    is ArticleEvent.Boost -> controller.navigate("boost/${event.id}")
+                    is ArticleEvent.Boost -> handleBoost(event.id)
                     is ArticleEvent.Post -> handleClick()
                 }
             },

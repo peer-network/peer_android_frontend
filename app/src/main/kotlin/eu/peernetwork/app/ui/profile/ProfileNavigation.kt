@@ -2,6 +2,8 @@ package eu.peernetwork.app.ui.profile
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.navigation.NavBackStackEntry
@@ -11,10 +13,12 @@ import androidx.navigation.navArgument
 import eu.peernetwork.ads.ui.boost.BoostScreen
 import eu.peernetwork.ads.ui.dashboard.DashboardScreen
 import eu.peernetwork.app.BuildConfig
+import eu.peernetwork.app.ui.feed.FeedExplore
 import eu.peernetwork.app.ui.screen.screen
 import eu.peernetwork.app.ui.search.SearchScreen
 import eu.peernetwork.app.ui.search.SearchMode
 import eu.peernetwork.app.ui.settings.SettingsScreen
+import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.core.ui.design.material.DesignRouter
 import eu.peernetwork.user.domain.model.Account
 
@@ -29,6 +33,7 @@ fun ProfileNavigation(
     content: @Composable (NavBackStackEntry) -> Unit = {},
 ) {
     val updatedContent by rememberUpdatedState(content)
+    val requireUpdate = remember { mutableStateOf(false) }
     DesignRouter(
         navController = controller,
         startDestination = "content"
@@ -53,6 +58,42 @@ fun ProfileNavigation(
                 userId = id,
                 provider = component,
                 viewModelStoreOwner = backStackEntry,
+            )
+        }
+        screen(
+            route = "feed",
+            isModal = isModal,
+            provider = component,
+            onCancel = onCancel
+        ) { backStackEntry ->
+            FeedExplore(
+                account = account,
+                limit = BuildConfig.PAGING_LIMIT,
+                provider = component,
+                viewModelStoreOwner = backStackEntry,
+                title = null,
+                criteria = Criteria.None,
+                refresh = requireUpdate
+            )
+        }
+        screen(
+            "feed/{tag}",
+            isModal = isModal,
+            provider = component,
+            onCancel = onCancel,
+            arguments = listOf(navArgument("tag") {
+                type = NavType.StringType
+            })
+        ) { backStackEntry ->
+            val tag = backStackEntry.arguments?.getString("tag")
+            FeedExplore(
+                account = account,
+                limit = BuildConfig.PAGING_LIMIT,
+                provider = component,
+                viewModelStoreOwner = backStackEntry,
+                title = tag,
+                criteria = tag?.let { Criteria.Content(tag = it) } ?: Criteria.None,
+                refresh = requireUpdate
             )
         }
         screen(
@@ -118,8 +159,20 @@ fun ProfileNavigation(
                 id = id,
                 provider = component,
                 viewModelStoreOwner = backStackEntry,
-                onProfile = { controller.navigate("profile/${account.id}") },
-                onFinish = { controller.navigate("adverts") }
+                onProfile = {
+                    controller.navigate("profile/${account.id}") {
+                        popUpTo(backStackEntry.destination.id) {
+                            inclusive = true
+                        }
+                    }
+                },
+                onFinish = {
+                    controller.navigate("feed") {
+                        popUpTo(backStackEntry.destination.id) {
+                            inclusive = true
+                        }
+                    }
+                }
             ) { controller.popBackStack() }
         }
     }

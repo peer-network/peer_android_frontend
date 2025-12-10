@@ -64,8 +64,20 @@ fun FeedNavigation(
                 id = id,
                 provider = component,
                 viewModelStoreOwner = backStackEntry,
-                onProfile = { controller.navigate("profile/${account.id}") },
-                onFinish = { controller.navigate("content") }
+                onProfile = {
+                    controller.navigate("profile/${account.id}") {
+                        popUpTo(backStackEntry.destination.id) {
+                            inclusive = true
+                        }
+                    }
+                },
+                onFinish = {
+                    controller.navigate("content") {
+                        popUpTo(backStackEntry.destination.id) {
+                            inclusive = true
+                        }
+                    }
+                }
             ) { controller.popBackStack() }
         }
         screen(

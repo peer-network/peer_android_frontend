@@ -7,6 +7,7 @@ import eu.peernetwork.ads.ui.boost.Boost
 import eu.peernetwork.ads.ui.checkout.Checkout
 import eu.peernetwork.ads.ui.checkout.CheckoutBalance
 import eu.peernetwork.ads.ui.dashboard.Dashboard
+import eu.peernetwork.app.ui.feed.Feed
 import eu.peernetwork.app.ui.renderer.BalanceRenderer
 import eu.peernetwork.app.ui.renderer.EngagementRenderer
 import eu.peernetwork.app.ui.search.Search
@@ -38,6 +39,14 @@ object ProfileModule {
     @UiBuilder(Profile.Builder::class)
     fun provideProfileBuilder(component: Profile.Component): UiComponent.Builder {
         return Profile.Builder(component)
+    }
+
+    @Profile.Scope
+    @Provides
+    @IntoMap
+    @UiBuilder(Feed.Builder::class)
+    fun provideFeedBuilder(component: Profile.Component): UiComponent.Builder {
+        return Feed.Builder(component)
     }
 
     @Profile.Scope
