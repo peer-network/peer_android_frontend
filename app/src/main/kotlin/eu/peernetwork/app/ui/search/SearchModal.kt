@@ -9,7 +9,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModelStoreOwner
-import eu.peernetwork.ads.ui.boost.BoostConfirmation
+import eu.peernetwork.ads.ui.boost.BoostModal
 import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.app.interactor.NavigationInteractor
 import eu.peernetwork.blog.ui.explore.ExploreModal
@@ -71,7 +71,7 @@ fun SearchModal(
                 }
             }
         }
-        BoostConfirmation(
+        BoostModal(
             state = showBoost
         ) { controller.navigate("boost/$it") }
     }

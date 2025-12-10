@@ -54,7 +54,7 @@ fun CheckoutScreen(
         onBack = onBack,
         onPay = { viewModel.invoke(id) }
     ) { component.checkoutBalance()(modifier = Modifier) }
-    CheckoutConfirmation(
+    CheckoutModal(
         state = order,
         showDialog = showDialog,
         onConfirm = {

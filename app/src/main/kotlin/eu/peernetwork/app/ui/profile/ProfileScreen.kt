@@ -14,7 +14,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.navigation.compose.rememberNavController
-import eu.peernetwork.ads.ui.boost.BoostConfirmation
+import eu.peernetwork.ads.ui.boost.BoostModal
 import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.app.interactor.NavigationInteractor
 import eu.peernetwork.blog.domain.usecase.PostUsecase
@@ -104,7 +104,7 @@ fun ProfileScreen(
                 },
                 viewModelStoreOwner = viewModelStoreOwner
             )
-            BoostConfirmation(
+            BoostModal(
                 state = showBoost
             ) { controller.navigate("boost/$it") }
         }

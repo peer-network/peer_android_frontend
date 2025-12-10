@@ -15,7 +15,7 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
-import eu.peernetwork.ads.ui.boost.BoostConfirmation
+import eu.peernetwork.ads.ui.boost.BoostModal
 import eu.peernetwork.blog.domain.model.Category
 import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.blog.ui.post.PostNavigator
@@ -118,7 +118,7 @@ fun FeedScreen(
                 provider = provider,
                 viewModelStoreOwner = viewModelStoreOwner
             )
-            BoostConfirmation(
+            BoostModal(
                 state = showBoost
             ) { controller.navigate("boost/$it") }
         }
