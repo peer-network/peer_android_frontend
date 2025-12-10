@@ -117,7 +117,9 @@ fun ProfileNavigation(
             BoostScreen(
                 id = id,
                 provider = component,
-                viewModelStoreOwner = backStackEntry
+                viewModelStoreOwner = backStackEntry,
+                onProfile = { controller.navigate("profile/${account.id}") },
+                onFinish = { controller.navigate("adverts") }
             ) { controller.popBackStack() }
         }
     }

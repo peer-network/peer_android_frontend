@@ -3,6 +3,8 @@ package eu.peernetwork.ads.ui.checkout
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import eu.peernetwork.ads.domain.usecase.BoostUsecase
+import eu.peernetwork.ads.ui.mapper.mapFromDomain
+import eu.peernetwork.ads.ui.model.UiOrder
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -20,8 +22,7 @@ class CheckoutViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 _state.tryEmit(State.Loading)
-                usecase(id)
-                _state.tryEmit(State.Success)
+                _state.tryEmit(State.Success(usecase(id).mapFromDomain()))
             } catch (error: Throwable) {
                 _state.tryEmit(State.Error(error))
             }
@@ -37,7 +38,7 @@ class CheckoutViewModel @Inject constructor(
     sealed interface State {
         data object Default: State
         data object Loading: State
-        data object Success: State
+        data class Success(val order: UiOrder): State
         data class Error(val error: Throwable): State
     }
 }

@@ -3,6 +3,8 @@ package eu.peernetwork.blog.ui.interaction.user
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.ViewModelStoreOwner
 import eu.peernetwork.blog.domain.model.Engagement
@@ -14,8 +16,10 @@ fun UserList(
     limit: Int,
     engagement: Engagement.Content,
     provider: UiComponentProvider,
-    viewModelStoreOwner: ViewModelStoreOwner
+    viewModelStoreOwner: ViewModelStoreOwner,
+    onUserClick: (String) -> Unit
 ) {
+    val handleClick by rememberUpdatedState(onUserClick)
     UserScreen(
         id = id,
         limit = limit,
@@ -33,7 +37,7 @@ fun UserList(
                         slug = user.slug.toString(),
                         username = user.username,
                         imageUrl = user.imageUrl
-                    )
+                    ) { handleClick(user.id) }
                 }
             }
         }

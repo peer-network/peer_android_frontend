@@ -15,6 +15,7 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
+import eu.peernetwork.ads.ui.boost.BoostConfirmation
 import eu.peernetwork.blog.domain.model.Category
 import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.blog.ui.post.PostNavigator
@@ -71,6 +72,7 @@ fun FeedScreen(
         ) { component, viewModel ->
             val state by viewModel.state.collectAsStateWithLifecycle()
             val isVisible = remember { mutableStateOf(false) }
+            val showBoost = remember { mutableStateOf<String?>(null) }
             val ordinal = remember {
                 derivedStateOf {
                     (state as? FeedViewModel.State.Initialize?)?.filter ?: 0
@@ -100,7 +102,7 @@ fun FeedScreen(
                     viewModelStoreOwner = viewModelStoreOwner,
                     onExplore = onExplore,
                     onFilter = { viewModel.setFilter(it) },
-                    onBoost = { controller.navigate("boost/$it") }
+                    onBoost = { showBoost.value = it }
                 ) { isVisible.value = true }
             }
             FeedModal(
@@ -116,6 +118,9 @@ fun FeedScreen(
                 provider = provider,
                 viewModelStoreOwner = viewModelStoreOwner
             )
+            BoostConfirmation(
+                state = showBoost
+            ) { controller.navigate("boost/$it") }
         }
     }
 }

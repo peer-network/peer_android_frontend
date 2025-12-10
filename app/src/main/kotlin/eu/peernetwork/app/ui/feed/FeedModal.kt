@@ -5,9 +5,11 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModelStoreOwner
+import eu.peernetwork.ads.ui.boost.BoostConfirmation
 import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.app.interactor.NavigationInteractor
 import eu.peernetwork.blog.domain.model.Category
@@ -31,6 +33,7 @@ fun FeedModal(
     viewModelStoreOwner: ViewModelStoreOwner
 ) {
     val context = LocalContext.current
+    val showBoost = remember { mutableStateOf<String?>(null) }
     DesignOverlay(
         state = isVisible,
         startDestination = "content",
@@ -63,7 +66,9 @@ fun FeedModal(
                         onEvent = { event ->
                             when(event) {
                                 is TimelineEvent.Post -> {}
-                                is TimelineEvent.Boost -> controller.navigate("boost/${event.id}")
+                                is TimelineEvent.Boost -> {
+                                    showBoost.value = event.id
+                                }
                             }
                         }
                     )
@@ -81,5 +86,8 @@ fun FeedModal(
                 }
             }
         }
+        BoostConfirmation(
+            state = showBoost
+        ) { controller.navigate("boost/$it") }
     }
 }

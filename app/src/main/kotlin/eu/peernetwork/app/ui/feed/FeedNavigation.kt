@@ -63,7 +63,9 @@ fun FeedNavigation(
             BoostScreen(
                 id = id,
                 provider = component,
-                viewModelStoreOwner = backStackEntry
+                viewModelStoreOwner = backStackEntry,
+                onProfile = { controller.navigate("profile/${account.id}") },
+                onFinish = { controller.navigate("content") }
             ) { controller.popBackStack() }
         }
         screen(

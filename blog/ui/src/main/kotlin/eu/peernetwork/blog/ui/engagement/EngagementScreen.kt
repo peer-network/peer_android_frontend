@@ -101,7 +101,7 @@ fun EngagementScreen(
         postLimit = limit,
         provider = component,
         viewModelStoreOwner = viewModelStoreOwner
-    )
+    ) {}
     component.engagementConfirmation()(
         Modifier,
         spec = EngagementDialog.Spec(type, viewModelStoreOwner) {

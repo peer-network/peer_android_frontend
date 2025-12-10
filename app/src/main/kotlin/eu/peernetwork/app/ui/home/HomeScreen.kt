@@ -25,7 +25,6 @@ import androidx.navigation.compose.rememberNavController
 import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.app.ui.settings.SettingsEvent
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.compose.DesignError
 import eu.peernetwork.core.ui.design.material.DesignPage
 import eu.peernetwork.core.ui.design.material.DesignPageHeader
 import eu.peernetwork.core.ui.design.luna.DesignStream
@@ -81,10 +80,10 @@ fun HomeScreen(
         modifier = Modifier.fillMaxSize(),
         loading = { HomeSkeleton() },
         error = {
-            DesignError(
+            HomeError(
                 onRefresh = { viewModel() },
-                error = it.value,
-                resource = component.resource()
+                error = it,
+                component = component
             )
         }
     ) { data ->

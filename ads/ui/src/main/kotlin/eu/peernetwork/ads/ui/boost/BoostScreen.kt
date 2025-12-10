@@ -20,6 +20,8 @@ fun BoostScreen(
     id: String,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
+    onProfile: () -> Unit,
+    onFinish: () -> Unit,
     onDismiss: () -> Unit
 ) {
     val context = LocalContext.current
@@ -36,6 +38,8 @@ fun BoostScreen(
             controller = controller,
             component = component,
             viewModelStoreOwner = viewModelStoreOwner,
+            onProfile = onProfile,
+            onFinish = onFinish,
             onDismiss = onDismiss
         )
     }

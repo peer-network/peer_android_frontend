@@ -18,7 +18,7 @@ fun HomeSkeleton() {
                 modifier = Modifier.fillMaxWidth()
                     .padding(horizontal = 12.dp)
                     .padding(vertical = 10.dp)
-                    .height(56.dp)
+                    .height(48.dp)
             )
         },
         footer = {
@@ -26,7 +26,7 @@ fun HomeSkeleton() {
                 modifier = Modifier.fillMaxWidth()
                     .padding(horizontal = 12.dp)
                     .padding(vertical = 10.dp)
-                    .height(56.dp)
+                    .height(48.dp)
             )
         }
     ) { PostSkeleton(3) }

@@ -6,6 +6,7 @@ import eu.peernetwork.ads.domain.model.AdsList
 import eu.peernetwork.ads.domain.model.Description
 import eu.peernetwork.ads.domain.model.Filter
 import eu.peernetwork.ads.domain.model.Metrics
+import eu.peernetwork.ads.domain.model.Order
 import eu.peernetwork.ads.domain.repository.AdvertiserRepository
 import eu.peernetwork.core.common.paging.Pageable
 import javax.inject.Inject
@@ -25,7 +26,7 @@ class AdvertiserRepositoryDelegate @Inject constructor(
         return api.getMetrics(filter)
     }
 
-    override suspend fun create(id: String) {
+    override suspend fun create(id: String): Order {
         return api.create(id)
     }
 

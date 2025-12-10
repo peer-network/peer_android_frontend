@@ -26,7 +26,8 @@ fun CommentList(
         limit = limit,
         controller = controller,
         provider = provider,
-        viewModelStoreOwner = viewModelStoreOwner
+        viewModelStoreOwner = viewModelStoreOwner,
+        onUserClick = { handleClick(it) }
     ) { component, interactor, items ->
         items(
             count = items.itemCount,

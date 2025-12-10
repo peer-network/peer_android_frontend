@@ -86,7 +86,9 @@ fun SearchNavigation(
             BoostScreen(
                 id = id,
                 provider = component,
-                viewModelStoreOwner = backStackEntry
+                viewModelStoreOwner = backStackEntry,
+                onProfile = { controller.navigate("profile/${account.id}") },
+                onFinish = { controller.navigate("feed") }
             ) { controller.popBackStack() }
         }
         screen(

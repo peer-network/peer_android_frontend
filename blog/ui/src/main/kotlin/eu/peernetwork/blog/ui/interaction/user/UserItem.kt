@@ -1,6 +1,7 @@
 package eu.peernetwork.blog.ui.interaction.user
 
 import android.content.res.Configuration
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -24,11 +25,12 @@ import eu.peernetwork.core.ui.theme.DesignTheme
 fun UserItem(
     slug: String,
     username: String,
-    imageUrl: String
+    imageUrl: String,
+    onClick: () -> Unit
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
+        modifier = Modifier.clickable(onClick = onClick)
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
             .padding(vertical = 8.dp),
@@ -74,6 +76,6 @@ fun PreviewUserItem() {
             slug = "239100",
             username = "John",
             imageUrl = "http://localhost"
-        )
+        ) {}
     }
 }

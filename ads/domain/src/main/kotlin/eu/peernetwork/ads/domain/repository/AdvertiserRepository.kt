@@ -5,6 +5,7 @@ import eu.peernetwork.ads.domain.model.AdsList
 import eu.peernetwork.ads.domain.model.Description
 import eu.peernetwork.ads.domain.model.Filter
 import eu.peernetwork.ads.domain.model.Metrics
+import eu.peernetwork.ads.domain.model.Order
 import eu.peernetwork.core.common.paging.Pageable
 
 interface AdvertiserRepository {
@@ -14,7 +15,7 @@ interface AdvertiserRepository {
 
     suspend fun getMetrics(filter: Filter = Filter()): Metrics
 
-    suspend fun create(id: String)
+    suspend fun create(id: String): Order
 
     suspend fun description(): Description
 }

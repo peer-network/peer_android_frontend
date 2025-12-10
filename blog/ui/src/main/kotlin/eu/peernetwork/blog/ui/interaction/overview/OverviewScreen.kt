@@ -32,7 +32,8 @@ fun OverviewScreen(
     state: MutableState<UiEngagement?>,
     postLimit: Int,
     provider: UiComponentProvider,
-    viewModelStoreOwner: ViewModelStoreOwner
+    viewModelStoreOwner: ViewModelStoreOwner,
+    onUserClick: (String) -> Unit
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -75,6 +76,7 @@ fun OverviewScreen(
                     engagement = engagement,
                     provider = component,
                     viewModelStoreOwner = viewModelStoreOwner,
+                    onUserClick = onUserClick
                 )
             }
         }

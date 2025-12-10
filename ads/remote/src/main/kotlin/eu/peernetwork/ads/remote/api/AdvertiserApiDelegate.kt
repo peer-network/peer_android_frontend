@@ -14,6 +14,7 @@ import eu.peernetwork.ads.domain.model.AdsList
 import eu.peernetwork.ads.domain.model.Description
 import eu.peernetwork.ads.domain.model.Filter
 import eu.peernetwork.ads.domain.model.Metrics
+import eu.peernetwork.ads.domain.model.Order
 import eu.peernetwork.ads.remote.mapper.mapToAds
 import eu.peernetwork.ads.remote.mapper.mapToContent
 import eu.peernetwork.ads.remote.mapper.mapToDomain
@@ -128,13 +129,14 @@ class AdvertiserApiDelegate @Inject constructor(
         return data.affectedRows?.stats?.mapToDomain() ?: throw ContentException()
     }
 
-    override suspend fun create(id: String) {
+    override suspend fun create(id: String): Order {
         val mutation = AdvertisePostPinnedMutation(
             postId = id,
             advertisePlan = AdvertisementPinnedPlan.PINNED
         )
         val response = client().mutation(mutation).executeOrThrow()
-        response.getOrThrow().advertisePostPinned
+        val data = response.getOrThrow().advertisePostPinned
+        return data.affectedRows?.map { it?.mapToDomain() }?.firstOrNull() ?: throw ContentException()
     }
 
     override suspend fun description(): Description {

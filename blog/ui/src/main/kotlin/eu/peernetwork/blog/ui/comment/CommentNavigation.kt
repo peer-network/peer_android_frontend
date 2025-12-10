@@ -16,6 +16,7 @@ fun CommentNavigation(
     limit: Int,
     controller: NavHostController,
     component: Comment.Component,
+    onUserClick: (String) -> Unit,
     content: @Composable () -> Unit,
 ) {
     val updatedContent by rememberUpdatedState(content)
@@ -37,6 +38,7 @@ fun CommentNavigation(
                 engagement = Engagement.Content.LikedComment,
                 provider = component,
                 viewModelStoreOwner = backStackEntry,
+                onUserClick = onUserClick
             )
         }
     }

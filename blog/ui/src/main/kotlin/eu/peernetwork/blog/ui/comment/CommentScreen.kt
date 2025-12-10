@@ -18,7 +18,6 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import androidx.paging.compose.LazyPagingItems
 import eu.peernetwork.blog.ui.model.UiComment
 import eu.peernetwork.core.common.paging.Pageable
@@ -120,6 +119,7 @@ fun CommentScreen(
     controller: NavHostController,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
+    onUserClick: (String) -> Unit,
     content: LazyListScope.(Comment.Component, CommentInteractor, LazyPagingItems<UiComment>) -> Unit
 ) {
     val updatedContent by rememberUpdatedState(content)
@@ -138,7 +138,8 @@ fun CommentScreen(
             CommentNavigation(
                 limit = limit,
                 controller = controller,
-                component = component
+                component = component,
+                onUserClick = onUserClick
             ) {
                 LazyColumn(
                     modifier = Modifier.fillMaxSize()

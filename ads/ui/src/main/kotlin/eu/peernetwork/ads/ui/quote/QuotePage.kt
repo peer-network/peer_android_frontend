@@ -80,6 +80,14 @@ fun QuotePage(
                 color = MaterialTheme.colorScheme.onBackground
             )
         }
+        Text(
+            text = stringResource(R.string.billing_summary_label),
+            fontWeight = FontWeight.SemiBold,
+            color = MaterialTheme.colorScheme.onBackground,
+            style = MaterialTheme.typography.labelLarge,
+            modifier = Modifier.padding(horizontal = 8.dp)
+                .padding(top = 12.dp)
+        )
         QuoteLabel(
             label = stringResource(R.string.advert_total_label),
             value = "$price",

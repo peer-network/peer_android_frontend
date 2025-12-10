@@ -16,7 +16,9 @@ fun BoostNavigation(
     controller: NavHostController,
     component: Boost.Component,
     viewModelStoreOwner: ViewModelStoreOwner,
-    onDismiss: () -> Unit
+    onProfile: () -> Unit,
+    onFinish: () -> Unit,
+    onDismiss: () -> Unit,
 ) {
     DesignRouter(
         navController = controller,
@@ -37,7 +39,8 @@ fun BoostNavigation(
                 provider = component,
                 viewModelStoreOwner = viewModelStoreOwner,
                 onBack = { controller.popBackStack() },
-                onFinish = onDismiss
+                onProfile = onProfile,
+                onFinish = onFinish
             )
         }
     }
