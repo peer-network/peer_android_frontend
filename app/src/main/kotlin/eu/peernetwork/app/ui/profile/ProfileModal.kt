@@ -53,7 +53,7 @@ fun ProfileModal(
                     onCancel = { isVisible.value = false }
                 ) {
                     ArticleModal(
-                        id = account.id,
+                        uuid = account.id,
                         author = userId,
                         username = account.username,
                         imageUrl = account.imageUrl,

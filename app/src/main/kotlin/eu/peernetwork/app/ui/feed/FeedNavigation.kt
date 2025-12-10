@@ -13,7 +13,9 @@ import eu.peernetwork.app.ui.screen.screen
 import eu.peernetwork.app.ui.profile.ProfileScreen
 import eu.peernetwork.app.ui.search.SearchMode
 import eu.peernetwork.app.ui.search.SearchScreen
+import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.core.ui.design.material.DesignRouter
+import eu.peernetwork.core.ui.extension.navigate
 import eu.peernetwork.user.domain.model.Account
 
 @Composable
@@ -54,6 +56,21 @@ fun FeedNavigation(
             )
         }
         screen(
+            route = "feed",
+            isModal = isModal,
+            provider = component,
+            onCancel = onCancel
+        ) { backStackEntry ->
+            FeedExplore(
+                account = account,
+                limit = BuildConfig.PAGING_LIMIT,
+                provider = component,
+                viewModelStoreOwner = backStackEntry,
+                title = null,
+                criteria = Criteria.None
+            )
+        }
+        screen(
             route = "boost/{id}",
             isModal = isModal,
             provider = component,
@@ -64,20 +81,8 @@ fun FeedNavigation(
                 id = id,
                 provider = component,
                 viewModelStoreOwner = backStackEntry,
-                onProfile = {
-                    controller.navigate("profile/${account.id}") {
-                        popUpTo(backStackEntry.destination.id) {
-                            inclusive = true
-                        }
-                    }
-                },
-                onFinish = {
-                    controller.navigate("content") {
-                        popUpTo(backStackEntry.destination.id) {
-                            inclusive = true
-                        }
-                    }
-                }
+                onProfile = { controller.navigate("profile/${account.id}", backStackEntry) },
+                onFinish = { controller.navigate("feed", backStackEntry) }
             ) { controller.popBackStack() }
         }
         screen(

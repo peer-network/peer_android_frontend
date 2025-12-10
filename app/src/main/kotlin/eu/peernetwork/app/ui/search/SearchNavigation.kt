@@ -2,8 +2,6 @@ package eu.peernetwork.app.ui.search
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -15,6 +13,7 @@ import eu.peernetwork.app.ui.feed.FeedExplore
 import eu.peernetwork.app.ui.profile.ProfileScreen
 import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.core.ui.design.material.DesignRouter
+import eu.peernetwork.core.ui.extension.navigate
 import eu.peernetwork.user.domain.model.Account
 
 @Composable
@@ -27,7 +26,6 @@ fun SearchNavigation(
     content: @Composable () -> Unit
 ) {
     val updatedContent by rememberUpdatedState(content)
-    val requireUpdate = remember { mutableStateOf(false) }
     DesignRouter(
         navController = controller,
         startDestination = "search",
@@ -48,10 +46,10 @@ fun SearchNavigation(
                 type = NavType.StringType
             })
         ) { backStackEntry ->
-            val uuid = backStackEntry.arguments?.getString("id") ?: ""
+            val id = backStackEntry.arguments?.getString("id") ?: ""
             ProfileScreen(
                 account = account,
-                userId = uuid,
+                userId = id,
                 provider = component,
                 viewModelStoreOwner = backStackEntry,
             )
@@ -68,8 +66,7 @@ fun SearchNavigation(
                 provider = component,
                 viewModelStoreOwner = backStackEntry,
                 title = null,
-                criteria = Criteria.None,
-                refresh = requireUpdate
+                criteria = Criteria.None
             )
         }
         screen(
@@ -90,13 +87,7 @@ fun SearchNavigation(
                         }
                     }
                 },
-                onFinish = {
-                    controller.navigate("feed") {
-                        popUpTo(backStackEntry.destination.id) {
-                            inclusive = true
-                        }
-                    }
-                }
+                onFinish = { controller.navigate("feed", backStackEntry) }
             ) { controller.popBackStack() }
         }
         screen(
@@ -117,8 +108,7 @@ fun SearchNavigation(
                 component,
                 viewModelStoreOwner = backStackEntry,
                 title = query,
-                criteria = query?.let { Criteria.Content(title = it) } ?: Criteria.None,
-                refresh = requireUpdate
+                criteria = query?.let { Criteria.Content(title = it) } ?: Criteria.None
             )
         }
         screen(

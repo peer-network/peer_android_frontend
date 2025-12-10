@@ -32,7 +32,7 @@ enum class ArticleSheetMenuItem {
 
 @Composable
 fun ArticleSheet(
-    id: String,
+    uuid: String,
     state: MutableState<UiPost?>,
     onMenuClicked: (ArticleSheetMenuItem, UiPost) -> Unit
 ) {
@@ -55,7 +55,7 @@ fun ArticleSheet(
         }
     ) {
         ArticleSheet(
-            canBoost = id == state.value?.author?.id
+            canBoost = uuid == state.value?.author?.id
                     && state.value?.pinnedBy == null,
             onMenuClicked = {
                 confirmed.value = it

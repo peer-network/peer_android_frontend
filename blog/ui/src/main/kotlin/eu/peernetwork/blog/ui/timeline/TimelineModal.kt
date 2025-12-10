@@ -121,7 +121,7 @@ fun TimelineModal(
                 modal = {
                     val moderation = LocalModerationInteractor.current
                     TimelineSheet(
-                        id = id,
+                        uuid = id,
                         state = showSheet
                     ) { sheetState, post ->
                         when (sheetState) {

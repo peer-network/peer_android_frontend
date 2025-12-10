@@ -97,7 +97,7 @@ fun ExploreScreen(
 
 @Composable
 fun ExploreFullScreen(
-    id: String,
+    uuid: String,
     username: String,
     imageUrl: String,
     selected: MutableIntState,
@@ -130,7 +130,7 @@ fun ExploreFullScreen(
             modal = {
                 val moderation = LocalModerationInteractor.current
                 TimelineSheet(
-                    id = id,
+                    uuid = uuid,
                     state = showSheet
                 ) { sheetState, post ->
                     when (sheetState) {

@@ -52,6 +52,14 @@ object FeedModule {
     @Feed.Scope
     @Provides
     @IntoMap
+    @UiBuilder(Feed.Builder::class)
+    fun provideFeedBuilder(component: Feed.Component): UiComponent.Builder {
+        return Feed.Builder(component)
+    }
+
+    @Feed.Scope
+    @Provides
+    @IntoMap
     @UiBuilder(Profile.Builder::class)
     fun provideProfileBuilder(component: Feed.Component): UiComponent.Builder {
         return Profile.Builder(component)

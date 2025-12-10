@@ -2,8 +2,6 @@ package eu.peernetwork.app.ui.profile
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.navigation.NavBackStackEntry
@@ -20,6 +18,7 @@ import eu.peernetwork.app.ui.search.SearchMode
 import eu.peernetwork.app.ui.settings.SettingsScreen
 import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.core.ui.design.material.DesignRouter
+import eu.peernetwork.core.ui.extension.navigate
 import eu.peernetwork.user.domain.model.Account
 
 @Composable
@@ -33,7 +32,6 @@ fun ProfileNavigation(
     content: @Composable (NavBackStackEntry) -> Unit = {},
 ) {
     val updatedContent by rememberUpdatedState(content)
-    val requireUpdate = remember { mutableStateOf(false) }
     DesignRouter(
         navController = controller,
         startDestination = "content"
@@ -72,8 +70,7 @@ fun ProfileNavigation(
                 provider = component,
                 viewModelStoreOwner = backStackEntry,
                 title = null,
-                criteria = Criteria.None,
-                refresh = requireUpdate
+                criteria = Criteria.None
             )
         }
         screen(
@@ -92,8 +89,7 @@ fun ProfileNavigation(
                 provider = component,
                 viewModelStoreOwner = backStackEntry,
                 title = tag,
-                criteria = tag?.let { Criteria.Content(tag = it) } ?: Criteria.None,
-                refresh = requireUpdate
+                criteria = tag?.let { Criteria.Content(tag = it) } ?: Criteria.None
             )
         }
         screen(
@@ -159,20 +155,8 @@ fun ProfileNavigation(
                 id = id,
                 provider = component,
                 viewModelStoreOwner = backStackEntry,
-                onProfile = {
-                    controller.navigate("profile/${account.id}") {
-                        popUpTo(backStackEntry.destination.id) {
-                            inclusive = true
-                        }
-                    }
-                },
-                onFinish = {
-                    controller.navigate("feed") {
-                        popUpTo(backStackEntry.destination.id) {
-                            inclusive = true
-                        }
-                    }
-                }
+                onProfile = { controller.navigate("profile/${account.id}", backStackEntry) },
+                onFinish = { controller.navigate("feed", backStackEntry) }
             ) { controller.popBackStack() }
         }
     }

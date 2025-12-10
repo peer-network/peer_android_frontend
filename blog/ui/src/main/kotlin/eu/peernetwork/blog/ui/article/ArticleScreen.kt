@@ -131,7 +131,7 @@ fun ArticleScreen(
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 fun ArticleScreen(
-    id: String,
+    uuid: String,
     author: String,
     username: String,
     imageUrl: String,
@@ -186,7 +186,7 @@ fun ArticleScreen(
                 ) { updatedContent(this, component, items) }
                 val moderation = LocalModerationInteractor.current
                 ArticleSheet(
-                    id = id,
+                    uuid = uuid,
                     state = showSheet
                 ) { sheetState, post ->
                     when (sheetState) {
@@ -202,7 +202,7 @@ fun ArticleScreen(
 
 @Composable
 fun ArticleFullScreen(
-    id: String,
+    uuid: String,
     author: String,
     username: String,
     imageUrl: String,
@@ -247,7 +247,7 @@ fun ArticleFullScreen(
                 modal = {
                     val moderation = LocalModerationInteractor.current
                     ArticleSheet(
-                        id = id,
+                        uuid = uuid,
                         state = showSheet
                     ) { sheetState, post ->
                         when (sheetState) {

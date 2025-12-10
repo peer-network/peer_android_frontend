@@ -13,7 +13,7 @@ import eu.peernetwork.core.ui.component.UiComponentProvider
 
 @Composable
 fun ArticleModal(
-    id: String,
+    uuid: String,
     author: String,
     username: String,
     imageUrl: String,
@@ -27,7 +27,7 @@ fun ArticleModal(
 ) {
     val showSheet = remember { mutableStateOf<UiPost?>(null) }
     ArticleFullScreen(
-        id = id,
+        uuid = uuid,
         author = author,
         username = username,
         imageUrl = imageUrl,

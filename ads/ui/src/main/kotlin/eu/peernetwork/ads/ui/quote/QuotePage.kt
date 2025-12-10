@@ -96,7 +96,7 @@ fun QuotePage(
                 .fillMaxWidth()
         )
         Row(
-            modifier = Modifier.padding(top = 18.dp),
+            modifier = Modifier.padding(top = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             DesignOutlineButton(

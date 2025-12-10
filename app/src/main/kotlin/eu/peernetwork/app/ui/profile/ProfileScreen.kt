@@ -70,7 +70,7 @@ fun ProfileScreen(
                 val postState = rememberLazyListState()
                 val mediaState = rememberLazyListState()
                 ProfilePage(
-                    id = account.id,
+                    uuid = account.id,
                     user = userId,
                     username = account.username,
                     imageUrl = account.imageUrl,

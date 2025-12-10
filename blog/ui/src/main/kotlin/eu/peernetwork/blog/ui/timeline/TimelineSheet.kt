@@ -32,7 +32,7 @@ enum class TimelineSheetMenuItem {
 
 @Composable
 fun TimelineSheet(
-    id: String,
+    uuid: String,
     state: MutableState<UiPost?>,
     onMenuClicked: (TimelineSheetMenuItem, UiPost) -> Unit
 ) {
@@ -55,7 +55,7 @@ fun TimelineSheet(
         }
     ) {
         TimelineSheet(
-            canBoost = id == state.value?.author?.id
+            canBoost = uuid == state.value?.author?.id
                     && state.value?.pinnedBy == null,
             onMenuClicked = {
                 confirmed.value = it

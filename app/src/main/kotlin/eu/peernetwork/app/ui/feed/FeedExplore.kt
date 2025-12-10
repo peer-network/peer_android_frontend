@@ -60,7 +60,7 @@ fun FeedExplore(
     limit: Int,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
-    refresh: MutableState<Boolean>,
+    refresh: MutableState<Boolean> = remember { mutableStateOf(false) },
     title: String? = null,
     criteria: Criteria = Criteria.None,
 ) {

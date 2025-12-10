@@ -31,7 +31,7 @@ import kotlinx.coroutines.launch
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 fun ProfilePage(
-    id: String,
+    uuid: String,
     user: String,
     username: String,
     imageUrl: String,
@@ -76,7 +76,7 @@ fun ProfilePage(
         },
     ) {
         ArticleList(
-            id = id,
+            uuid = uuid,
             author = user,
             username = username,
             imageUrl = imageUrl,
