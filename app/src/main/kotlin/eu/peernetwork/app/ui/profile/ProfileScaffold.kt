@@ -42,17 +42,13 @@ fun ProfileScaffold(
             modifier = modifier.fillMaxSize(),
             header = updatedHeader,
         ) {
-            DesignTab(
-                pageState,
-                modifier = Modifier.padding(top = 2.dp)
-            ) { index ->
+            DesignTab(pageState) { index ->
                 UiMimeType.get(index)?.let {
                     Icon(
                         painter = painterResource(id = it.id),
                         contentDescription = it.label?.let { stringResource(it) },
                         tint = MaterialTheme.colorScheme.outline,
-                        modifier = Modifier
-                            .padding(vertical = 6.dp)
+                        modifier = Modifier.padding(vertical = 6.dp)
                             .size(18.dp)
                     )
                 }

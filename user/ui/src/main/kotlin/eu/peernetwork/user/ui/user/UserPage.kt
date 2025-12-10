@@ -18,15 +18,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.core.ui.design.luna.DesignRichText
 import eu.peernetwork.core.ui.design.luna.DesignImage
 import eu.peernetwork.core.ui.design.luna.DesignAvatar
-import eu.peernetwork.core.ui.extension.annotate
+import eu.peernetwork.core.ui.mapper.annotate
 import eu.peernetwork.core.ui.theme.DesignTheme
 import eu.peernetwork.user.ui.R
 import eu.peernetwork.user.ui.model.UiAccount
@@ -61,16 +63,18 @@ fun UserPage(
                 }
                 Column(modifier = Modifier.padding(start = 16.dp)) {
                     Text(
-                        text = "${account.username} #${account.slug}"
-                            .annotate(
-                                text = "#${account.slug}",
-                                style = SpanStyle(
+                        text = buildAnnotatedString {
+                            append(account.username)
+                            append(" ")
+                            withStyle(
+                                SpanStyle(
                                     fontStyle = FontStyle.Italic,
                                     fontWeight = FontWeight.Normal,
                                     fontSize = MaterialTheme.typography.bodySmall.fontSize,
                                     color = MaterialTheme.colorScheme.outline
                                 )
-                            ),
+                            ) { append("#${account.slug}") }
+                        },
                         style = MaterialTheme.typography.bodyMedium.copy(
                             fontWeight = FontWeight.Bold,
                         ),
@@ -82,7 +86,7 @@ fun UserPage(
                         labelColor = MaterialTheme.colorScheme.outline,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(top = 4.dp),
+                            .padding(top = 6.dp),
                         onClick = {
                             if (!(!isAdmin && it == UserMetric.PEER)) {
                                 handleOnClick(it)
@@ -97,7 +101,7 @@ fun UserPage(
                 maxLines = 1,
                 color = MaterialTheme.colorScheme.outline,
                 style = MaterialTheme.typography.bodySmall,
-                modifier = Modifier.padding(top = 14.dp)
+                modifier = Modifier.padding(top = 16.dp)
             )
         }
         updatedContent()
@@ -111,7 +115,7 @@ fun PreviewUserPage() {
         val model = UiAccount(
             id = System.currentTimeMillis().toString(),
             username = "John Doe",
-            slug = 0,
+            slug = 2343,
             bio = "Description....",
             imageUrl = "",
             metric = UiMetric(

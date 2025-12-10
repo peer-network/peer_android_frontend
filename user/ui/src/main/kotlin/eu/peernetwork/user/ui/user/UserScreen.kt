@@ -89,7 +89,7 @@ fun UserScreen(
         error = { UserError(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 24.dp)
+                .padding(horizontal = 20.dp)
                 .padding(top = 10.dp)
         ) {
             error.value?.let { Text(it) }
@@ -97,7 +97,7 @@ fun UserScreen(
         loading = { UserSkeleton(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 24.dp)
+                .padding(start = 20.dp)
                 .padding(end = 16.dp)
                 .padding(top = 10.dp)
         ) }
@@ -107,12 +107,12 @@ fun UserScreen(
             isAdmin = data.value.second,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 24.dp)
+                .padding(horizontal = 20.dp)
                 .padding(top = 10.dp),
             onClick = onClick
         ) {
-            Box(modifier = Modifier.padding(start = 24.dp)
-                .padding(end = 16.dp)) {
+            Box(modifier = Modifier.padding(start = 20.dp)
+                .padding(end = 12.dp)) {
                 OptionScreen(
                     isAdmin = data.value.second,
                     provider = component,

@@ -180,7 +180,7 @@ fun HomeScreen(
                                 HomeRoute.Explore.icon
                             }),
                             contentDescription = stringResource(id = HomeRoute.Explore.icon),
-                            modifier = Modifier.size(19.dp)
+                            modifier = Modifier.size(18.dp)
                         )
                     }
                 },

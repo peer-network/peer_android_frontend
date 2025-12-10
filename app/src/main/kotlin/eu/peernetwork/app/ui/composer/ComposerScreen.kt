@@ -88,7 +88,7 @@ fun ComposerScreen(
                         viewModelStoreOwner = viewModelStoreOwner,
                         modifier = Modifier
                             .padding(top = 8.dp)
-                            .padding(horizontal = 16.dp),
+                            .padding(horizontal = 12.dp),
                         onClear = {
                             title = TextFieldState()
                             description = TextFieldState()

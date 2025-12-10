@@ -29,10 +29,10 @@ fun UserSkeleton(modifier: Modifier = Modifier) {
                     .background(MaterialTheme.colorScheme.surfaceDim))
             }
             DesignSkeleton(modifier = Modifier.padding(start = 12.dp)
-                .height(42.dp)
+                .height(36.dp)
                 .fillMaxWidth(fraction = .75f))
         }
-        DesignSkeleton(modifier = Modifier.padding(top = 14.dp)
+        DesignSkeleton(modifier = Modifier.padding(top = 16.dp)
             .fillMaxWidth(fraction = .6f)
             .height(16.dp))
         Row(modifier = Modifier.padding(top = 16.dp)) {
@@ -44,6 +44,7 @@ fun UserSkeleton(modifier: Modifier = Modifier) {
             Spacer(modifier = Modifier.width(12.dp))
             DesignSkeleton(modifier = Modifier.size(42.dp))
         }
+        Spacer(modifier = Modifier.height(1.dp))
     }
 }
 

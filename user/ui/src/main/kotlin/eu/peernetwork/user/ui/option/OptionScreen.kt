@@ -55,7 +55,7 @@ fun OptionScreen(
         )
     } else {
         OptionMenu(
-            onShare = {  },
+            onMenu = {  },
             content = content
         )
     }

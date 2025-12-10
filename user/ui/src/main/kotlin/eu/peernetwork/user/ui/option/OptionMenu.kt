@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
@@ -86,7 +87,7 @@ fun OptionMenu(
 
 @Composable
 fun OptionMenu(
-    onShare: () -> Unit,
+    onMenu: () -> Unit,
     content: @Composable () -> Unit,
 ) {
     val updatedContent by rememberUpdatedState(content)
@@ -94,31 +95,10 @@ fun OptionMenu(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.padding(top = 12.dp)
     ) {
-        Box(modifier = Modifier.weight(1f)
-            .padding(end = 6.dp)) {
+        Box(modifier = Modifier.weight(1f)) {
             updatedContent()
         }
-        DesignButton(
-            onClick = onShare,
-            minHeight = 42.dp,
-            contentPadding = PaddingValues(horizontal = 16.dp),
-            style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
-            colors = designTertiaryButtonColors(),
-            modifier = Modifier
-                .weight(1f)
-                .padding(start = 6.dp),
-            trailing = {
-                Icon(
-                    painter = painterResource(R.drawable.ic_share),
-                    contentDescription = stringResource(eu.peernetwork.core.ui.R.string.profile_label),
-                    tint = MaterialTheme.colorScheme.onBackground,
-                    modifier = Modifier
-                        .padding(start = 10.dp)
-                        .size(16.dp)
-                )
-            }
-        ) { Text(stringResource(R.string.share_label)) }
-        IconButton({}) {
+        IconButton(onMenu) {
             Icon(
                 painter = painterResource(R.drawable.ic_menu),
                 contentDescription = null,
@@ -149,7 +129,7 @@ fun PreviewUserMenu() {
 fun PreviewUserOption() {
     DesignTheme(isDarkMode = false) {
         Column(modifier = Modifier.padding(24.dp)) {
-            OptionMenu(onShare = {}) {
+            OptionMenu(onMenu = {}) {
                 DesignButton(
                     onClick = {},
                     minHeight = 42.dp,
@@ -157,8 +137,7 @@ fun PreviewUserOption() {
                     style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
                     contentPadding = PaddingValues(horizontal = 16.dp),
                     modifier = Modifier
-                        .weight(1f)
-                        .padding(end = 6.dp)
+                        .fillMaxWidth()
                 ) { Text("Peer") }
             }
         }

@@ -75,7 +75,7 @@ fun DesignTitleBarRegistry.DesignPageHeader(
                 .windowInsetsPadding(WindowInsets.statusBars),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Box(modifier = Modifier.padding(start = 16.dp))
+            Box(modifier = Modifier.padding(start = 12.dp))
             Box(modifier = Modifier.weight(1f)) { titleBar().value?.content?.invoke() }
             Box(modifier = Modifier.padding(start = 16.dp))
             updatedOption()
