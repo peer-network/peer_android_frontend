@@ -76,7 +76,7 @@ jobs:
     if: needs.check_branch_sync.outputs.is_behind == 'false'
     uses: peer-network/peer_global_security/.github/workflows/gitleaks.yml@main
     with:
-      config: gitleaks.toml
+      config: .security/gitleaks.toml
 
   trivy_scan:
     name: Run Trivy Security Scan
