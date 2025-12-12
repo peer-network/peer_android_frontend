@@ -97,6 +97,7 @@ fun FeedScreen(
                     limit = limit,
                     ordinal = ordinal.value,
                     criteria = criteria,
+                    refresh = refresh,
                     pageState = pageState,
                     component = component,
                     viewModelStoreOwner = viewModelStoreOwner,

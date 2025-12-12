@@ -99,6 +99,7 @@ fun FeedExplore(
                     imageUrl = account.imageUrl,
                     status = isVisible,
                     selected = selected,
+                    refresh = refresh,
                     limit = limit,
                     category = Category.NONE,
                     criteria = derivedCriteria.value,

@@ -31,7 +31,7 @@ fun HomeNavigation(
     onExplore: () -> Unit,
     onHome: () -> Unit
 ) {
-    val hasUpdate = remember { mutableStateOf(false) }
+    val refresh = remember { mutableStateOf(false) }
     val handleOnHomeClick by rememberUpdatedState(onHome)
     DesignNavigation(
         navController = navController,
@@ -45,7 +45,7 @@ fun HomeNavigation(
                         limit = BuildConfig.PAGING_LIMIT,
                         provider = component,
                         viewModelStoreOwner = backStackEntry,
-                        refresh = hasUpdate,
+                        refresh = refresh,
                         onExplore = onExplore
                     )
                     is HomeRoute.Profile -> ProfileScreen(
@@ -58,7 +58,7 @@ fun HomeNavigation(
                         provider = component,
                         viewModelStoreOwner = viewModelStore.get(account.id),
                         onPostSuccess = {
-                            hasUpdate.value = true
+                            refresh.value = true
                             handleOnHomeClick()
                         }
                     )
@@ -85,7 +85,7 @@ fun HomeNavigation(
                 limit = BuildConfig.PAGING_LIMIT,
                 provider = component,
                 viewModelStoreOwner = backStackEntry,
-                refresh = hasUpdate
+                refresh = refresh
             )
         }
         composable("post/{id}") {

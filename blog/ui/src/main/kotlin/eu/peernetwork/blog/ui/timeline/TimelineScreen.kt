@@ -16,6 +16,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import eu.peernetwork.core.ui.extension.builder
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import eu.peernetwork.blog.domain.model.Category
 import eu.peernetwork.blog.domain.model.Filter.Criteria
@@ -117,6 +118,7 @@ fun TimelineScreen(
     criteria: Criteria = Criteria.None,
     focused: MutableIntState,
     selected: MutableIntState,
+    refresh: MutableState<Boolean>,
     showSheet: MutableState<UiPost?>,
     listState: LazyListState = rememberLazyListState(),
     provider: UiComponentProvider,
@@ -195,6 +197,15 @@ fun TimelineScreen(
                             TimelineSheetMenuItem.BOOST -> handleEvent(TimelineEvent.Boost(post.id))
                         }
                     }
+                }
+                LaunchedEffect(refresh.value) {
+                    if (refresh.value) {
+                        items.refresh()
+                        refresh.value = false
+                    }
+                }
+                LaunchedEffect(items.loadState.refresh) {
+                    isRefreshing.value = items.loadState.refresh is LoadState.Loading
                 }
             }
         }

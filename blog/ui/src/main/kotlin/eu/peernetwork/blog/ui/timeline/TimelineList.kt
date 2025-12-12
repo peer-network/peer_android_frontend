@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableIntState
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableIntStateOf
@@ -37,6 +38,7 @@ fun TimelineList(
     imageUrl: String,
     status: State<Boolean>,
     selected: MutableIntState,
+    refresh: MutableState<Boolean>,
     limit: Int,
     category: Category,
     criteria: Filter.Criteria,
@@ -59,6 +61,7 @@ fun TimelineList(
         focused = current,
         selected = selected,
         showSheet = showSheet,
+        refresh = refresh,
         provider = provider,
         viewModelStoreOwner = viewModelStoreOwner,
         listState = listState,
