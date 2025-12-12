@@ -16,6 +16,7 @@ import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.luna.DesignStream
 import eu.peernetwork.core.ui.design.luna.DesignStreamState
 import eu.peernetwork.core.ui.extension.builder
+import eu.peernetwork.core.ui.extension.error
 import eu.peernetwork.wallet.ui.model.v2.UiQuote
 import eu.peernetwork.wallet.ui.model.v2.UiToken
 
@@ -41,7 +42,9 @@ fun ConfirmationScreen(
 @Composable
 fun ConfirmationScreen(
     token: UiToken,
+    component: Confirmation.Component,
     viewModel: ConfirmationViewModel,
+    onCancel: () -> Unit,
     content: @Composable (State<UiQuote>) -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -60,7 +63,14 @@ fun ConfirmationScreen(
     val updatedContent by rememberUpdatedState(content)
     DesignStream(
         state = derivedState,
-        loading = { ConfirmationSkeleton() }
+        default = { ConfirmationSkeleton() },
+        loading = { ConfirmationSkeleton() },
+        error = { error ->
+            ConfirmationError(
+                error = component.resource().error(error.value),
+                onCancel = onCancel,
+            ) { viewModel(token) }
+        }
     ) { data ->
         updatedContent(data)
     }

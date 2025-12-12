@@ -33,4 +33,6 @@
     <string name="comment_summary">Commenting on this post deducts %s from your balance of %s tokens.</string>
     <string name="balance_label">Current balance %s</string>
     <string name="reward_description">You have %d Free %s</string>
+    <string name="error_title">Oops! an error occurred</string>
+    <string name="retry_label">Retry</string>
 </resources>

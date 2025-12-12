@@ -13,6 +13,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -34,13 +35,15 @@ class ConfirmationViewModel @Inject constructor(
                 val quote = quoteUsecase(token.mapToDomain())
                 val wallet = overview().mapFromDomain()
                 val rewards = rewardUsecase().map { it.mapFromDomain() }.associateBy { it.name }
-                _state.tryEmit(State.Success(
-                    quote = UiQuote(
-                        value = quote.value / wallet.rate.toBigDecimal(),
-                        available = rewards[token.name]?.available ?: 0,
-                        balance = wallet.balance
-                    ),
-                ))
+                if (isActive) {
+                    _state.tryEmit(State.Success(
+                        quote = UiQuote(
+                            price = quote.value / wallet.rate.toBigDecimal(),
+                            available = rewards[token.name]?.available ?: 0,
+                            balance = wallet.balance
+                        ),
+                    ))
+                }
             } catch (error: Throwable) {
                 _state.tryEmit(State.Error(error))
             }

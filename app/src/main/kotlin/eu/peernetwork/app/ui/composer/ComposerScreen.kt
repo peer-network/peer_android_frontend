@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.navigation.compose.rememberNavController
 import eu.peernetwork.blog.ui.creator.CreatorScreen
+import eu.peernetwork.blog.ui.creator.CreatorPage
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.material.DesignTitle
 import eu.peernetwork.core.ui.design.material.DesignTitleBarHost
@@ -153,7 +154,7 @@ fun PreviewComposerScreen() {
                 )
             },
             content = {
-                CreatorScreen(
+                CreatorPage(
                     title = title,
                     description = description,
                     focus = focus,
