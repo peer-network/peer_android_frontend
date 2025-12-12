@@ -22,9 +22,9 @@ import javax.inject.Inject
 class UserViewModel @Inject constructor(
     private val usecase: InteractionUsecase
 ) : ViewModel() {
-    private val mutableState = MutableStateFlow<Map<String, State>>(emptyMap())
+    private val _state = MutableStateFlow<Map<String, State>>(emptyMap())
 
-    val state: StateFlow<Map<String, State>> = mutableState.asStateFlow()
+    val state: StateFlow<Map<String, State>> = _state.asStateFlow()
 
     fun load(
         id: String,
@@ -43,19 +43,28 @@ class UserViewModel @Inject constructor(
                 .onStart { updateState(key, State.Loading) }
                 .cachedIn(viewModelScope)
                 .apply {
-                    collectLatest { updateState(key, State.Success(this)) }
+                    collectLatest { updateState(key, State.Success(id, this)) }
                 }
         }
     }
 
     private fun updateState(key: String, state: State) {
-        mutableState.update { it + (key to state) }
+        _state.update { it + (key to state) }
+    }
+
+    fun reset() {
+        viewModelScope.launch {
+            _state.value = emptyMap()
+        }
     }
 
     sealed interface State {
         data object Empty : State
         data object Loading : State
-        data class Success(val content: Flow<PagingData<UiAuthor>>) : State
+        data class Success(
+            val id: String,
+            val content: Flow<PagingData<UiAuthor>>
+        ) : State
         data class Error(val error: Throwable) : State
     }
 }

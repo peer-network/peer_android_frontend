@@ -79,7 +79,6 @@ fun EngagementScreen(
     CompositionLocalProvider(LocalEngagementInteractor provides interactor) {
         updatedContent()
     }
-    LaunchedEffect(type.value) { }
     LaunchedEffect(Unit) { viewModel.initialize() }
     LaunchedEffect(hasError.value) {
         if (hasError.value) {

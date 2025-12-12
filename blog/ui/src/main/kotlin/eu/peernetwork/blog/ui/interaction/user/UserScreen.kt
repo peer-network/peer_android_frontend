@@ -39,6 +39,10 @@ fun UserScreen(
         factory = component.viewModelFactory()
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val currentId = remember { derivedStateOf {
+        val currentState = state["$id/$engagement"] ?: UserViewModel.State.Empty
+        (currentState as? UserViewModel.State.Success?)?.id
+    } }
     val derivedState = remember {
         derivedStateOf {
             val currentState = state["$id/$engagement"] ?: UserViewModel.State.Empty
@@ -69,6 +73,9 @@ fun UserScreen(
         }
     ) { updatedContent(component, it) }
     LaunchedEffect(Unit) {
+        if (id != currentId.value) {
+            viewModel.reset()
+        }
         if (derivedState.value is DesignStreamState.Default) {
             viewModel.load(
                 id,
@@ -78,4 +85,3 @@ fun UserScreen(
         }
     }
 }
-
