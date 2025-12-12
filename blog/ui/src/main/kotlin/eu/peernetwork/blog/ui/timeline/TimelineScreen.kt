@@ -16,7 +16,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import eu.peernetwork.core.ui.extension.builder
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import eu.peernetwork.blog.domain.model.Category
 import eu.peernetwork.blog.domain.model.Filter.Criteria
@@ -198,21 +197,23 @@ fun TimelineScreen(
                         }
                     }
                 }
-                LaunchedEffect(refresh.value) {
-                    if (refresh.value) {
-                        items.refresh()
-                        refresh.value = false
-                    }
-                }
-                LaunchedEffect(items.loadState.refresh) {
-                    isRefreshing.value = items.loadState.refresh is LoadState.Loading
-                }
             }
         }
         LaunchedEffect(selected.intValue) {
             if (selected.intValue != position.value) {
                 viewModel.selected(key, selected.intValue)
                 handleEvent(TimelineEvent.Post(selected.intValue))
+            }
+        }
+        LaunchedEffect(refresh.value) {
+            if (refresh.value) {
+                refresh.value = false
+                viewModel.load(
+                    page = page,
+                    category = category,
+                    criteria = criteria
+                )
+                listState.scrollToItem(0)
             }
         }
     }

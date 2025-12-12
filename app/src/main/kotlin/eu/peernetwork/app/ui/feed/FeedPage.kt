@@ -4,7 +4,6 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
@@ -102,17 +101,6 @@ fun FeedPage(
                 left.animateScrollToItem(0)
             } else {
                 right.animateScrollToItem(0)
-            }
-        }
-    }
-    LaunchedEffect(refresh.value) {
-        if (refresh.value) {
-            scope.launch {
-                if (pageState.currentPage == 0) {
-                    left.animateScrollToItem(0)
-                } else {
-                    right.animateScrollToItem(0)
-                }
             }
         }
     }
