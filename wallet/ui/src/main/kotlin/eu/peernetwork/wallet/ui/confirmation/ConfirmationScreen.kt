@@ -17,8 +17,8 @@ import eu.peernetwork.core.ui.design.luna.DesignStream
 import eu.peernetwork.core.ui.design.luna.DesignStreamState
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.extension.error
-import eu.peernetwork.wallet.ui.model.v2.UiQuote
-import eu.peernetwork.wallet.ui.model.v2.UiToken
+import eu.peernetwork.wallet.ui.model.UiQuote
+import eu.peernetwork.wallet.ui.model.UiToken
 
 @Composable
 fun ConfirmationScreen(

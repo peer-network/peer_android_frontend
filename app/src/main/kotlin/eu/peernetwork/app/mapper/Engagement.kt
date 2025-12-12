@@ -1,7 +1,7 @@
 package eu.peernetwork.app.mapper
 
 import eu.peernetwork.blog.ui.engagement.EngagementIntent
-import eu.peernetwork.wallet.ui.model.v2.UiToken
+import eu.peernetwork.wallet.ui.model.UiToken
 
 fun EngagementIntent.toUiToken(): UiToken {
     return when(this) {

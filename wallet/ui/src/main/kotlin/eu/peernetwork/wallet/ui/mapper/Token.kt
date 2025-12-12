@@ -1,54 +1,66 @@
 package eu.peernetwork.wallet.ui.mapper
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import eu.peernetwork.wallet.domain.model.Token
 import eu.peernetwork.wallet.ui.R
 import eu.peernetwork.wallet.ui.model.UiToken
-import java.math.BigDecimal
-import java.math.RoundingMode
 
 fun UiToken.mapToDomain(): Token {
-    return when(this) {
-        UiToken.Like -> Token.Like
-        UiToken.DisLike -> Token.DisLike
-        UiToken.Comment -> Token.Comment
-        UiToken.Post -> Token.Post
+    return when (this) {
+        UiToken.Posts -> Token.Post
+        UiToken.Likes -> Token.Like
+        UiToken.DisLikes -> Token.DisLike
+        UiToken.Comments -> Token.Comment
     }
 }
 
 @Composable
-fun UiToken.title(): String {
-    return when(this) {
-        UiToken.Post -> stringResource(R.string.post_caption)
-        UiToken.Like -> stringResource(R.string.like_caption)
-        UiToken.Comment -> stringResource(R.string.comment_caption)
-        UiToken.DisLike -> stringResource(R.string.dislike_caption)
-    }
+fun UiToken.mapToTitle(): String {
+    return stringResource(
+        when (this) {
+            UiToken.Posts -> R.string.post_caption
+            UiToken.Likes -> R.string.like_caption
+            UiToken.DisLikes -> R.string.dislike_caption
+            UiToken.Comments -> R.string.comment_caption
+        }
+    )
 }
 
 @Composable
-fun UiToken.summary(price: BigDecimal, balance: BigDecimal): String {
-    return when(this) {
-        UiToken.Post -> stringResource(
-            R.string.post_summary,
-            "${price.setScale(2, RoundingMode.HALF_UP)}",
-            "${balance.setScale(2, RoundingMode.HALF_UP)}"
-        )
-        UiToken.Like -> stringResource(
-            R.string.like_summary,
-            "${price.setScale(2, RoundingMode.HALF_UP)}",
-            "${balance.setScale(2, RoundingMode.HALF_UP)}"
-        )
-        UiToken.Comment -> stringResource(
-            R.string.comment_summary,
-            "${price.setScale(2, RoundingMode.HALF_UP)}",
-            "${balance.setScale(2, RoundingMode.HALF_UP)}"
-        )
-        UiToken.DisLike -> stringResource(
-            R.string.dislike_summary,
-            "${price.setScale(2, RoundingMode.HALF_UP)}",
-            "${balance.setScale(2, RoundingMode.HALF_UP)}"
-        )
-    }
+fun UiToken.mapToFreeTitle(): String {
+    return stringResource(
+        when (this) {
+            UiToken.Posts -> R.string.no_post_caption
+            UiToken.Likes -> R.string.no_like_caption
+            UiToken.DisLikes -> R.string.dislike_caption
+            UiToken.Comments -> R.string.comment_caption
+        }
+    )
+}
+
+@Composable
+fun UiToken.mapToIcon(): Painter {
+    return painterResource(
+        when (this) {
+            UiToken.Posts -> R.drawable.ic_add
+            UiToken.Likes -> R.drawable.ic_love
+            UiToken.DisLikes -> R.drawable.ic_hate
+            UiToken.Comments -> R.drawable.ic_comment
+        }
+    )
+}
+
+@Composable
+fun UiToken.mapToDisclaimer(): String {
+    return stringResource(
+        when (this) {
+            UiToken.Posts -> R.string.post_price_label
+            UiToken.Likes -> R.string.like_price_label
+            UiToken.DisLikes -> R.string.dislike_price_label
+            UiToken.Comments -> R.string.comment_price_label
+        }
+    )
 }

@@ -9,11 +9,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.wallet.ui.mapper.v2.mapToDisclaimer
-import eu.peernetwork.wallet.ui.mapper.v2.mapToFreeTitle
-import eu.peernetwork.wallet.ui.mapper.v2.mapToIcon
-import eu.peernetwork.wallet.ui.mapper.v2.mapToTitle
-import eu.peernetwork.wallet.ui.model.v2.UiToken
+import eu.peernetwork.wallet.ui.mapper.mapToDisclaimer
+import eu.peernetwork.wallet.ui.mapper.mapToFreeTitle
+import eu.peernetwork.wallet.ui.mapper.mapToIcon
+import eu.peernetwork.wallet.ui.mapper.mapToTitle
+import eu.peernetwork.wallet.ui.model.UiToken
 import java.math.BigDecimal
 import java.math.RoundingMode
 

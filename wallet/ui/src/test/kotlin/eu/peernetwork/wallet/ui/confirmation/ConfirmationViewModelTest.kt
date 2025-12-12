@@ -8,7 +8,7 @@ import eu.peernetwork.wallet.domain.model.Wallet
 import eu.peernetwork.wallet.domain.usecase.OverviewUsecase
 import eu.peernetwork.wallet.domain.usecase.QuoteUsecase
 import eu.peernetwork.wallet.domain.usecase.RewardUsecase
-import eu.peernetwork.wallet.ui.mapper.mapFromDomain
+import eu.peernetwork.wallet.ui.model.UiQuote
 import eu.peernetwork.wallet.ui.model.UiToken
 import io.mockk.coEvery
 import io.mockk.every
@@ -66,13 +66,15 @@ internal class ConfirmationViewModelTest {
             delay(100)
             mockData
         }
-        viewModel.initialize(UiToken.Post)
+        viewModel(UiToken.Posts)
         viewModel.state.test {
             assertEquals(ConfirmationViewModel.State.Loading, awaitItem())
             assertEquals(ConfirmationViewModel.State.Success(
-                quote.mapFromDomain(),
-                mockData.mapFromDomain(),
-                rewards.map { it.mapFromDomain() }
+                quote = UiQuote(
+                    price = quote.value / mockData.rate.toBigDecimal(),
+                    available = 0,
+                    balance = mockData.balance
+                ),
             ), awaitItem())
         }
     }
@@ -84,7 +86,7 @@ internal class ConfirmationViewModelTest {
         val error = RuntimeException()
         coEvery { quoteUsecase(any()) } returns quote
         coEvery { overviewUsecase() } throws error
-        viewModel.initialize(UiToken.Post)
+        viewModel(UiToken.Posts)
         viewModel.state.test {
             assertEquals(ConfirmationViewModel.State.Error(error), awaitItem())
         }

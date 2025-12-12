@@ -6,9 +6,9 @@ import eu.peernetwork.wallet.domain.usecase.OverviewUsecase
 import eu.peernetwork.wallet.domain.usecase.QuoteUsecase
 import eu.peernetwork.wallet.domain.usecase.RewardUsecase
 import eu.peernetwork.wallet.ui.mapper.mapFromDomain
-import eu.peernetwork.wallet.ui.mapper.v2.mapToDomain
-import eu.peernetwork.wallet.ui.model.v2.UiQuote
-import eu.peernetwork.wallet.ui.model.v2.UiToken
+import eu.peernetwork.wallet.ui.mapper.mapToDomain
+import eu.peernetwork.wallet.ui.model.UiQuote
+import eu.peernetwork.wallet.ui.model.UiToken
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
