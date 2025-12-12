@@ -11,7 +11,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import eu.peernetwork.blog.ui.model.v2.UiAsset
+import eu.peernetwork.blog.ui.model.UiAsset
 import eu.peernetwork.blog.ui.post.PostPager
 
 @Composable

@@ -29,7 +29,6 @@ import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.material.DesignTitle
 import eu.peernetwork.core.ui.design.material.DesignTitleBarHost
-import eu.peernetwork.media.core.model.UiMimeType
 import eu.peernetwork.user.domain.model.Account
 import kotlinx.coroutines.launch
 
@@ -83,11 +82,11 @@ fun FeedExplore(
         ) { component, viewModel ->
             val state by viewModel.state.collectAsStateWithLifecycle()
             val position = remember { mutableIntStateOf(state.page) }
+            val sorts = listOf(Sort.NEW, Sort.TREND)
             val pageState = rememberPagerState(
-                pageCount = { UiMimeType.TYPES.size },
+                pageCount = { sorts.size },
                 initialPage = position.intValue
             )
-            val sorts = listOf(Sort.NEW, Sort.TREND)
             val derivedCriteria = remember { derivedStateOf {
                 (criteria as? Criteria.Content?)?.copy(
                     sort = sorts[pageState.currentPage],

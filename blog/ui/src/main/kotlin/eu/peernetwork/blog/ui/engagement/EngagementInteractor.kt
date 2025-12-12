@@ -2,8 +2,8 @@ package eu.peernetwork.blog.ui.engagement
 
 import androidx.compose.runtime.staticCompositionLocalOf
 import eu.peernetwork.blog.ui.model.UiReaction
-import eu.peernetwork.blog.ui.model.v2.UiEngagement
-import eu.peernetwork.blog.ui.model.v2.UiPostDetail
+import eu.peernetwork.blog.ui.model.UiEngagement
+import eu.peernetwork.blog.ui.model.UiPostDetail
 
 interface EngagementInteractor {
     fun observe(): androidx.compose.runtime.State<Map<String, UiReaction>>

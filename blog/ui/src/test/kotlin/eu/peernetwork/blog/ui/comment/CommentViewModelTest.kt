@@ -8,7 +8,7 @@ import eu.peernetwork.blog.domain.model.Comment
 import eu.peernetwork.blog.domain.usecase.CommentLikeUsecase
 import eu.peernetwork.blog.domain.usecase.CommentUpdateUsecase
 import eu.peernetwork.blog.domain.usecase.CommentUsecase
-import eu.peernetwork.blog.ui.model.v2.UiAuthor
+import eu.peernetwork.blog.ui.model.UiAuthor
 import eu.peernetwork.blog.ui.model.UiComment
 import eu.peernetwork.blog.ui.usecase.CommentsUsecase
 import eu.peernetwork.core.common.paging.Pageable

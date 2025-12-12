@@ -2,8 +2,8 @@ package eu.peernetwork.blog.ui.usecase
 
 import eu.peernetwork.blog.domain.interactor.ContentInteractor
 import eu.peernetwork.blog.domain.model.Draft
-import eu.peernetwork.blog.ui.mapper.v2.mapFromDomain
-import eu.peernetwork.blog.ui.model.v2.UiPost
+import eu.peernetwork.blog.ui.mapper.mapFromDomain
+import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.core.common.provider.Dispatcher
 import eu.peernetwork.core.common.usecase.ParameterizedSuspendableUseCase
 import kotlinx.coroutines.withContext

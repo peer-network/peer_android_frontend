@@ -24,10 +24,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.blog.ui.R
 import eu.peernetwork.blog.ui.engagement.EngagementReaction
-import eu.peernetwork.blog.ui.model.v2.UiAsset
-import eu.peernetwork.blog.ui.model.v2.UiDisplay
-import eu.peernetwork.blog.ui.model.v2.UiEngagement
-import eu.peernetwork.blog.ui.model.v2.UiMedia
+import eu.peernetwork.blog.ui.model.UiAsset
+import eu.peernetwork.blog.ui.model.UiDisplay
+import eu.peernetwork.blog.ui.model.UiEngagement
+import eu.peernetwork.blog.ui.model.UiMedia
 import eu.peernetwork.core.ui.design.luna.DesignRichText
 import eu.peernetwork.core.ui.theme.DesignTheme
 import kotlinx.collections.immutable.persistentListOf

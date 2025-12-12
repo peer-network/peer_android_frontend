@@ -30,10 +30,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.blog.ui.engagement.EngagementReaction
-import eu.peernetwork.blog.ui.mapper.v2.format
-import eu.peernetwork.blog.ui.model.v2.UiEngagement
-import eu.peernetwork.blog.ui.model.v2.UiPostDetail
-import eu.peernetwork.blog.ui.model.v2.UiTimer
+import eu.peernetwork.blog.ui.mapper.format
+import eu.peernetwork.blog.ui.model.UiEngagement
+import eu.peernetwork.blog.ui.model.UiPostDetail
+import eu.peernetwork.blog.ui.model.UiTimer
 import eu.peernetwork.core.ui.design.luna.DesignBox
 import eu.peernetwork.core.ui.design.luna.DesignButton
 import eu.peernetwork.core.ui.design.luna.DesignRichText

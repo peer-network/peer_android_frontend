@@ -1,4 +1,4 @@
-package eu.peernetwork.blog.ui.model.v2
+package eu.peernetwork.blog.ui.model
 
 data class UiDisplay(
     val size: String,

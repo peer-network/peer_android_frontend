@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import eu.peernetwork.blog.domain.model.Filter.Criteria
-import eu.peernetwork.blog.ui.model.v2.UiPost
+import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.usecase.FeedUsecase
 import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.blog.domain.model.Category

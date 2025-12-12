@@ -7,7 +7,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.unit.dp
-import eu.peernetwork.blog.ui.model.v2.UiEngagement
+import eu.peernetwork.blog.ui.model.UiEngagement
 import eu.peernetwork.core.ui.design.luna.DesignStream
 import eu.peernetwork.core.ui.design.luna.DesignStreamState
 import eu.peernetwork.core.ui.design.material.DesignCollapsibleBottomSheet

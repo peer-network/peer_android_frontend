@@ -12,7 +12,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.compose.LazyPagingItems
 import eu.peernetwork.blog.domain.model.Engagement
-import eu.peernetwork.blog.ui.model.v2.UiAuthor
+import eu.peernetwork.blog.ui.model.UiAuthor
 import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.luna.DesignPagingStream

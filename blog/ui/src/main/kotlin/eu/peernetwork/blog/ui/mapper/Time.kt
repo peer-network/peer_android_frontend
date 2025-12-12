@@ -1,8 +1,8 @@
-package eu.peernetwork.blog.ui.mapper.v2
+package eu.peernetwork.blog.ui.mapper
 
 import android.content.Context
 import eu.peernetwork.blog.ui.R
-import eu.peernetwork.blog.ui.model.v2.UiTimer
+import eu.peernetwork.blog.ui.model.UiTimer
 import java.util.Calendar
 import java.util.Locale
 import java.util.concurrent.TimeUnit

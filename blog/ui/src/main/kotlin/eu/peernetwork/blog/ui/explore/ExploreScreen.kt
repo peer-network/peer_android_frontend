@@ -20,8 +20,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.compose.LazyPagingItems
 import eu.peernetwork.blog.ui.R
 import eu.peernetwork.blog.ui.extension.share
-import eu.peernetwork.blog.ui.mapper.v2.mapToDetail
-import eu.peernetwork.blog.ui.model.v2.UiPost
+import eu.peernetwork.blog.ui.mapper.mapToDetail
+import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.moderation.ModerationInteractor.Companion.LocalModerationInteractor
 import eu.peernetwork.blog.ui.post.PostScreen
 import eu.peernetwork.blog.ui.timeline.TimelineSheet

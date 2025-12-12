@@ -7,8 +7,8 @@ import androidx.paging.PagingData
 import androidx.paging.PagingSource.LoadResult
 import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.blog.domain.usecase.ExploreUsecase
-import eu.peernetwork.blog.ui.mapper.v2.mapFromDomain
-import eu.peernetwork.blog.ui.model.v2.UiPost
+import eu.peernetwork.blog.ui.mapper.mapFromDomain
+import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.core.common.provider.Dispatcher
 import eu.peernetwork.core.ui.exception.NoContentException

@@ -20,8 +20,8 @@ import eu.peernetwork.blog.ui.comment.CommentSheet
 import eu.peernetwork.blog.ui.engagement.EngagementInteractor.Companion.LocalEngagementInteractor
 import eu.peernetwork.blog.ui.interaction.overview.OverviewScreen
 import eu.peernetwork.blog.ui.model.UiReaction
-import eu.peernetwork.blog.ui.model.v2.UiEngagement
-import eu.peernetwork.blog.ui.model.v2.UiPostDetail
+import eu.peernetwork.blog.ui.model.UiEngagement
+import eu.peernetwork.blog.ui.model.UiPostDetail
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.extension.builder

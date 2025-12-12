@@ -22,7 +22,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import eu.peernetwork.blog.ui.model.v2.UiPostType
+import eu.peernetwork.blog.ui.model.UiPostType
 import eu.peernetwork.blog.ui.timeline.TimelineViewModel
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.media.core.renderer.ImageView

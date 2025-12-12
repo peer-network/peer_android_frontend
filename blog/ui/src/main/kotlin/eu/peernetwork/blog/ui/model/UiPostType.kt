@@ -1,4 +1,4 @@
-package eu.peernetwork.blog.ui.model.v2
+package eu.peernetwork.blog.ui.model
 
 enum class UiPostType {
     IMAGE,

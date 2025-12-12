@@ -6,11 +6,9 @@ import eu.peernetwork.wallet.domain.usecase.OverviewUsecase
 import eu.peernetwork.wallet.domain.usecase.QuoteUsecase
 import eu.peernetwork.wallet.domain.usecase.RewardUsecase
 import eu.peernetwork.wallet.ui.mapper.mapFromDomain
-import eu.peernetwork.wallet.ui.mapper.mapToDomain
-import eu.peernetwork.wallet.ui.model.UiToken
-import eu.peernetwork.wallet.ui.model.UiQuote
-import eu.peernetwork.wallet.ui.model.UiReward
-import eu.peernetwork.wallet.ui.model.UiWallet
+import eu.peernetwork.wallet.ui.mapper.v2.mapToDomain
+import eu.peernetwork.wallet.ui.model.v2.UiQuote
+import eu.peernetwork.wallet.ui.model.v2.UiToken
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -23,44 +21,43 @@ class ConfirmationViewModel @Inject constructor(
     private val rewardUsecase: RewardUsecase,
     private val quoteUsecase: QuoteUsecase
 ) : ViewModel() {
-    private val mutableState = MutableStateFlow<State>(State.Empty)
-
-    private val quotes = HashMap<UiToken, UiQuote>()
+    private val _state = MutableStateFlow<State>(State.Empty)
 
     private var job: Job? = null
 
-    val state: StateFlow<State> = mutableState.asStateFlow()
+    val state: StateFlow<State> = _state.asStateFlow()
 
-    fun initialize(token: UiToken) {
+    operator fun invoke(token: UiToken) {
         job = viewModelScope.launch {
-            mutableState.tryEmit(State.Loading)
+            _state.tryEmit(State.Loading)
             try {
-                val quote = quotes.getOrPut(token) {
-                    quoteUsecase(token.mapToDomain()).mapFromDomain()
-                }
-                mutableState.tryEmit(State.Success(
-                    quote,
-                    overview().mapFromDomain(),
-                    rewardUsecase().map { it.mapFromDomain() }
+                val quote = quoteUsecase(token.mapToDomain())
+                val wallet = overview().mapFromDomain()
+                val rewards = rewardUsecase().map { it.mapFromDomain() }.associateBy { it.name }
+                _state.tryEmit(State.Success(
+                    quote = UiQuote(
+                        value = quote.value / wallet.rate.toBigDecimal(),
+                        available = rewards[token.name]?.available ?: 0,
+                        balance = wallet.balance
+                    ),
                 ))
             } catch (error: Throwable) {
-                mutableState.tryEmit(State.Error(error))
+                _state.tryEmit(State.Error(error))
             }
         }
     }
 
-    fun cancel() {
+    fun reset() {
         job?.cancel()
+        viewModelScope.launch {
+            _state.emit(State.Empty)
+        }
     }
 
     sealed interface State {
         data object Empty : State
         data object Loading : State
-        data class Success(
-            val quote: UiQuote,
-            val wallet: UiWallet,
-            val rewards: List<UiReward>
-        ) : State
+        data class Success(val quote: UiQuote) : State
         data class Error(val error: Throwable) : State
     }
 }

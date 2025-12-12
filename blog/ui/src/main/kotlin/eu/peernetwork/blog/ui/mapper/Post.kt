@@ -1,9 +1,9 @@
-package eu.peernetwork.blog.ui.mapper.v2
+package eu.peernetwork.blog.ui.mapper
 
 import eu.peernetwork.blog.domain.model.Content
-import eu.peernetwork.blog.ui.model.v2.UiPost
-import eu.peernetwork.blog.ui.model.v2.UiPostDetail
-import eu.peernetwork.blog.ui.model.v2.UiPostType
+import eu.peernetwork.blog.ui.model.UiPost
+import eu.peernetwork.blog.ui.model.UiPostDetail
+import eu.peernetwork.blog.ui.model.UiPostType
 import eu.peernetwork.core.ui.mapper.annotate
 
 fun Content.mapFromDomain(): UiPost {

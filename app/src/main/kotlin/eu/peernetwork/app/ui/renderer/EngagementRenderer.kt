@@ -7,7 +7,7 @@ import androidx.compose.ui.Modifier
 import eu.peernetwork.app.mapper.toUiToken
 import eu.peernetwork.blog.ui.engagement.EngagementDialog
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.wallet.ui.confirmation.ConfirmationScreen
+import eu.peernetwork.wallet.ui.confirmation.ConfirmationModal
 import javax.inject.Inject
 
 class EngagementRenderer @Inject constructor(
@@ -18,18 +18,12 @@ class EngagementRenderer @Inject constructor(
         modifier: Modifier,
         spec: EngagementDialog.Spec
     ) {
-        val show = remember(spec.type.value) { mutableStateOf(spec.type.value != null) }
-        ConfirmationScreen(
-            spec.type.value?.toUiToken(),
-            show,
-            provider,
-            spec.viewModelStoreOwner,
-            { spec.type.value = null }
-        ) {
-            if (it) {
-                spec.type.value?.let { spec.onConfirm(it) }
-            }
-            show.value = false
-        }
+        val token = remember(spec.type.value) { mutableStateOf(spec.type.value?.toUiToken()) }
+        ConfirmationModal(
+            token = token,
+            provider = provider,
+            viewModelStoreOwner = spec.viewModelStoreOwner,
+            onDismiss = { spec.type.value = null }
+        ) { spec.type.value?.let { spec.onConfirm(it) } }
     }
 }

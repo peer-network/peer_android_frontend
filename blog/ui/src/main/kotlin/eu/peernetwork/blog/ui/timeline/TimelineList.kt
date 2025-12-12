@@ -20,8 +20,8 @@ import eu.peernetwork.blog.ui.engagement.EngagementInteractor.Companion.LocalEng
 import eu.peernetwork.blog.ui.engagement.EngagementReaction
 import eu.peernetwork.blog.ui.engagement.EngagementReaction.Companion.LocalEngagementReaction
 import eu.peernetwork.blog.ui.extension.route
-import eu.peernetwork.blog.ui.mapper.v2.mapToDetail
-import eu.peernetwork.blog.ui.model.v2.UiPost
+import eu.peernetwork.blog.ui.mapper.mapToDetail
+import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.post.PostItem
 import eu.peernetwork.blog.ui.post.PostMedia
 import eu.peernetwork.blog.ui.post.PostNavigator

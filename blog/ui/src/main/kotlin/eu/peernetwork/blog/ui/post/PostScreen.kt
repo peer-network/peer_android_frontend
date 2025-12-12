@@ -31,11 +31,11 @@ import eu.peernetwork.blog.ui.engagement.EngagementInteractor.State as Engagemen
 import eu.peernetwork.blog.ui.engagement.EngagementScreen
 import eu.peernetwork.blog.ui.engagement.EngagementReaction
 import eu.peernetwork.blog.ui.engagement.EngagementReaction.Companion.LocalEngagementReaction
-import eu.peernetwork.blog.ui.mapper.v2.mapToDetail
-import eu.peernetwork.blog.ui.mapper.v2.mapToEngagement
+import eu.peernetwork.blog.ui.mapper.mapToDetail
+import eu.peernetwork.blog.ui.mapper.mapToEngagement
 import eu.peernetwork.blog.ui.engagement.EngagementReaction.State as ReactionState
-import eu.peernetwork.blog.ui.model.v2.UiPost
-import eu.peernetwork.blog.ui.model.v2.UiPostDetail
+import eu.peernetwork.blog.ui.model.UiPost
+import eu.peernetwork.blog.ui.model.UiPostDetail
 import eu.peernetwork.blog.ui.moderation.ModerationScreen
 import eu.peernetwork.blog.ui.post.PostInteractor.Companion.LocalPostInteractor
 import eu.peernetwork.core.ui.component.UiComponentProvider

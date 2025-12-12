@@ -18,7 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.blog.ui.R
 import eu.peernetwork.blog.ui.engagement.EngagementReaction
-import eu.peernetwork.blog.ui.model.v2.UiEngagement
+import eu.peernetwork.blog.ui.model.UiEngagement
 import eu.peernetwork.core.ui.theme.DesignTheme
 
 @Composable

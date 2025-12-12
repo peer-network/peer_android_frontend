@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import eu.peernetwork.blog.domain.model.Draft
 import eu.peernetwork.blog.ui.model.UiDraft
-import eu.peernetwork.blog.ui.model.v2.UiPost
+import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.usecase.CreateUsecase
 import eu.peernetwork.media.core.model.UiMimeType
 import eu.peernetwork.media.core.model.UiOffset

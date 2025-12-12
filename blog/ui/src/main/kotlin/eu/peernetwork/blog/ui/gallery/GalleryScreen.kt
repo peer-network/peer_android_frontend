@@ -19,10 +19,10 @@ import eu.peernetwork.blog.ui.engagement.EngagementInteractor.Companion.LocalEng
 import eu.peernetwork.blog.ui.engagement.EngagementReaction.Companion.LocalEngagementReaction
 import eu.peernetwork.blog.ui.engagement.EngagementReactionStream
 import eu.peernetwork.blog.ui.extension.route
-import eu.peernetwork.blog.ui.mapper.v2.format
-import eu.peernetwork.blog.ui.mapper.v2.query
-import eu.peernetwork.blog.ui.model.v2.UiPost
-import eu.peernetwork.blog.ui.model.v2.UiPostType
+import eu.peernetwork.blog.ui.mapper.format
+import eu.peernetwork.blog.ui.mapper.query
+import eu.peernetwork.blog.ui.model.UiPost
+import eu.peernetwork.blog.ui.model.UiPostType
 import eu.peernetwork.blog.ui.post.PostInteractor.Companion.LocalPostInteractor
 import eu.peernetwork.blog.ui.post.PostNavigator
 import eu.peernetwork.blog.ui.post.PostNavigator.Companion.LocalPostNavigator

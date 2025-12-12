@@ -11,8 +11,8 @@ import eu.peernetwork.blog.domain.model.Content
 import eu.peernetwork.blog.domain.usecase.AdvertUsecase
 import eu.peernetwork.blog.domain.usecase.PostUsecase
 import eu.peernetwork.blog.domain.usecase.PostUsecase.Companion.FEED
-import eu.peernetwork.blog.ui.mapper.v2.mapFromDomain
-import eu.peernetwork.blog.ui.model.v2.UiPost
+import eu.peernetwork.blog.ui.mapper.mapFromDomain
+import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.core.common.provider.Dispatcher
 import eu.peernetwork.core.ui.exception.NoContentException

@@ -6,7 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModelStoreOwner
 import eu.peernetwork.blog.ui.gallery.GalleryScreen
-import eu.peernetwork.blog.ui.model.v2.UiPost
+import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.core.ui.component.UiComponentProvider
 
 @Composable

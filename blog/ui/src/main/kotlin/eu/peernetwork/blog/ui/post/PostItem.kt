@@ -10,9 +10,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import eu.peernetwork.blog.ui.model.v2.UiAsset
-import eu.peernetwork.blog.ui.model.v2.UiPostDetail
-import eu.peernetwork.blog.ui.model.v2.UiPostType
+import eu.peernetwork.blog.ui.model.UiAsset
+import eu.peernetwork.blog.ui.model.UiPostDetail
+import eu.peernetwork.blog.ui.model.UiPostType
 import eu.peernetwork.core.ui.design.luna.DesignRichText
 
 @Composable

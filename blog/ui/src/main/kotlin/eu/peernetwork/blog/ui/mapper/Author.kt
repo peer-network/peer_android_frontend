@@ -1,7 +1,7 @@
-package eu.peernetwork.blog.ui.mapper.v2
+package eu.peernetwork.blog.ui.mapper
 
 import eu.peernetwork.blog.domain.model.Author
-import eu.peernetwork.blog.ui.model.v2.UiAuthor
+import eu.peernetwork.blog.ui.model.UiAuthor
 
 fun Author.mapFromDomain(): UiAuthor {
     return UiAuthor(

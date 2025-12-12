@@ -1,4 +1,4 @@
-package eu.peernetwork.blog.ui.model.v2
+package eu.peernetwork.blog.ui.model
 
 sealed interface UiTimer {
     data object Now : UiTimer

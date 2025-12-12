@@ -1,9 +1,9 @@
-package eu.peernetwork.blog.ui.mapper.v2
+package eu.peernetwork.blog.ui.mapper
 
 import eu.peernetwork.blog.domain.model.Media
-import eu.peernetwork.blog.ui.model.v2.UiAsset
-import eu.peernetwork.blog.ui.model.v2.UiDisplay
-import eu.peernetwork.blog.ui.model.v2.UiMedia
+import eu.peernetwork.blog.ui.model.UiAsset
+import eu.peernetwork.blog.ui.model.UiDisplay
+import eu.peernetwork.blog.ui.model.UiMedia
 import eu.peernetwork.media.core.model.UiMimeType
 import kotlinx.collections.immutable.toPersistentList
 

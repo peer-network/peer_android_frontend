@@ -9,7 +9,7 @@ import javax.inject.Inject
 class QuoteUsecase @Inject constructor(
     private val repository: TransactionRepository
 ) : ParameterizedSuspendableUseCase<Token, Quote> {
-    override suspend fun invoke(args: Token): Quote {
-        return repository.getQuote(args)
+    override suspend fun invoke(param: Token): Quote {
+        return repository.getQuote(param)
     }
 }

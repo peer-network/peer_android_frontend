@@ -2,10 +2,10 @@ package eu.peernetwork.blog.ui.model
 
 data class UiEngagement(
     val id: String,
-    val likes: Int,
-    val dislikes: Int,
+    val likes: String,
+    val dislikes: String,
     val isLiked: Boolean,
     val isDisliked: Boolean,
-    val views: Int,
-    val comment: Int
+    val views: String,
+    val comment: String
 )

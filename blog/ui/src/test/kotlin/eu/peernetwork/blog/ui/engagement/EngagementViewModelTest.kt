@@ -48,16 +48,16 @@ internal class EngagementViewModelTest {
     fun `test like content success`() = runTest {
         val model = UiEngagement(
             id = "<test-id>",
-            likes = 0,
-            dislikes = 0,
+            likes = "0",
+            dislikes = "0",
             isDisliked = false,
             isLiked = false,
-            views = 0,
-            comment = 0
+            views = "0",
+            comment = "0"
         )
         val mockData = mockk<Content>(relaxed = true)
         every { mockData.id } returns model.id
-        every { mockData.likes } returns model.likes + 1
+        every { mockData.likes } returns mockData.likes + 1
         every { mockData.isLiked } returns true
         coEvery { likeUsecase(any()) } returns Unit
         viewModel.like(model.id)
@@ -70,12 +70,12 @@ internal class EngagementViewModelTest {
     fun `test like content failure`() = runTest {
         val model = UiEngagement(
             id = "<test-id>",
-            likes = 0,
-            dislikes = 0,
+            likes = "0",
+            dislikes = "0",
             isDisliked = false,
             isLiked = false,
-            views = 0,
-            comment = 0
+            views = "0",
+            comment = "0"
         )
         val error = RuntimeException()
         coEvery { likeUsecase(any()) } throws error
@@ -89,16 +89,16 @@ internal class EngagementViewModelTest {
     fun `test dislike content success`() = runTest {
         val model = UiEngagement(
             id = "<test-id>",
-            likes = 0,
-            dislikes = 0,
+            likes = "0",
+            dislikes = "0",
             isDisliked = false,
             isLiked = false,
-            views = 0,
-            comment = 0
+            views = "0",
+            comment = "0"
         )
         val mockData = mockk<Content>(relaxed = true)
         every { mockData.id } returns model.id
-        every { mockData.dislikes } returns model.likes + 1
+        every { mockData.dislikes } returns mockData.likes + 1
         every { mockData.isDisliked } returns true
         coEvery { dislikeUsecase(any()) } returns Unit
         viewModel.dislike(model.id)
@@ -111,12 +111,12 @@ internal class EngagementViewModelTest {
     fun `test dislike content failure`() = runTest {
         val model = UiEngagement(
             id = "<test-id>",
-            likes = 0,
-            dislikes = 0,
+            likes = "0",
+            dislikes = "0",
             isDisliked = false,
             isLiked = false,
-            views = 0,
-            comment = 0
+            views = "0",
+            comment = "0"
         )
         val error = RuntimeException()
         coEvery { dislikeUsecase(any()) } throws error

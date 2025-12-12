@@ -20,8 +20,8 @@ import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.blog.ui.R
 import eu.peernetwork.blog.ui.extension.share
 import eu.peernetwork.blog.ui.gallery.GalleryScreen
-import eu.peernetwork.blog.ui.mapper.v2.mapToDetail
-import eu.peernetwork.blog.ui.model.v2.UiPost
+import eu.peernetwork.blog.ui.mapper.mapToDetail
+import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.moderation.ModerationInteractor.Companion.LocalModerationInteractor
 import eu.peernetwork.blog.ui.post.PostScreen
 import eu.peernetwork.blog.ui.post.PostUserConnection

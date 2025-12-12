@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import eu.peernetwork.blog.ui.model.v2.UiPostType
+import eu.peernetwork.blog.ui.model.UiPostType
 import eu.peernetwork.blog.ui.post.PostInteractor.Companion.LocalPostInteractor
 import eu.peernetwork.core.ui.design.material.DesignThumbnail
 import eu.peernetwork.media.core.renderer.ImageView
