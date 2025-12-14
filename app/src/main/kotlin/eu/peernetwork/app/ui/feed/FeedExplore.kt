@@ -94,7 +94,7 @@ fun FeedExplore(
             } }
             FeedExploreScaffold(pageState = pageState) {
                 TimelineList(
-                    id = account.id,
+                    uuid = account.id,
                     username = account.username,
                     imageUrl = account.imageUrl,
                     status = isVisible,

@@ -88,7 +88,7 @@ fun FeedScreen(
                 controller = controller,
             ) {
                 FeedPage(
-                    id = account.id,
+                    uuid = account.id,
                     username = account.username,
                     imageUrl = account.imageUrl,
                     title = title,

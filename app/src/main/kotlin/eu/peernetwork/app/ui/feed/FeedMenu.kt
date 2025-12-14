@@ -30,7 +30,7 @@ import eu.peernetwork.core.ui.design.material.DesignTitleBarHost
 
 @Composable
 fun FeedMenu(
-    id: String,
+    uuid: String,
     default: Int,
     title: String? = null,
     onSelect: (Int, Criteria) -> Unit,
@@ -45,7 +45,7 @@ fun FeedMenu(
         UiFilter.MOST_DISLIKED to Criteria.Content(Sort.MOST_DISLIKED)
     )
     DesignTitleBarHost(
-        tag = "FeedScreen$id$title",
+        tag = "FeedScreen$uuid$title",
         listener = onHome
     ) {
         titleBar {

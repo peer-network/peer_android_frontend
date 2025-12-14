@@ -54,7 +54,7 @@ fun FeedModal(
                     onCancel = { isVisible.value = false }
                 ) {
                     TimelineModal(
-                        id = account.id,
+                        uuid = account.id,
                         limit = BuildConfig.PAGING_LIMIT,
                         selected = selected,
                         username = account.username,

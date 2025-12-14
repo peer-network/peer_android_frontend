@@ -18,7 +18,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import eu.peernetwork.blog.ui.comment.CommentSheet
 import eu.peernetwork.blog.ui.engagement.EngagementInteractor.Companion.LocalEngagementInteractor
-import eu.peernetwork.blog.ui.interaction.overview.OverviewScreen
+import eu.peernetwork.blog.ui.interaction.overview.OverviewSheet
 import eu.peernetwork.blog.ui.model.UiReaction
 import eu.peernetwork.blog.ui.model.UiEngagement
 import eu.peernetwork.blog.ui.model.UiPostDetail
@@ -28,6 +28,7 @@ import eu.peernetwork.core.ui.extension.builder
 
 @Composable
 fun EngagementScreen(
+    uuid: String,
     username: String,
     imageUrl: String,
     limit: Int,
@@ -89,18 +90,20 @@ fun EngagementScreen(
         }
     }
     CommentSheet(
+        uuid = uuid,
         username = username,
         imageUrl = imageUrl,
         state = post,
         provider = component,
         viewModelStoreOwner = viewModelStoreOwner
     )
-    OverviewScreen(
+    OverviewSheet(
+        uuid = uuid,
         state = overview,
-        postLimit = limit,
+        limit = limit,
         provider = component,
         viewModelStoreOwner = viewModelStoreOwner
-    ) {}
+    )
     component.engagementConfirmation()(
         Modifier,
         spec = EngagementDialog.Spec(type, viewModelStoreOwner) {

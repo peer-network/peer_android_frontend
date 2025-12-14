@@ -13,6 +13,7 @@ import eu.peernetwork.app.module.wallet.WalletModule
 import eu.peernetwork.app.service.MessagingService
 import eu.peernetwork.app.ui.main.Main
 import eu.peernetwork.core.ui.component.UiComponentProvider
+import eu.peernetwork.social.ui.connection.Connection
 import javax.inject.Singleton
 
 interface Peer {
@@ -32,7 +33,11 @@ interface Peer {
             SocialModule::class
         ]
     )
-    interface Component : Peer, AndroidInjector<PeerApplication>, UiComponentProvider, Main {
+    interface Component : Peer,
+        AndroidInjector<PeerApplication>,
+        UiComponentProvider,
+        Main,
+        Connection {
         fun inject(service: MessagingService)
     }
 }

@@ -10,12 +10,10 @@ import eu.peernetwork.ads.ui.checkout.Checkout
 import eu.peernetwork.ads.ui.checkout.CheckoutBalance
 import eu.peernetwork.app.ui.profile.Profile
 import eu.peernetwork.app.ui.renderer.BalanceRenderer
-import eu.peernetwork.app.ui.renderer.ConnectionRenderer
 import eu.peernetwork.app.ui.renderer.EngagementRenderer
 import eu.peernetwork.app.ui.search.Search
 import eu.peernetwork.app.ui.screen.Screen
 import eu.peernetwork.blog.ui.engagement.EngagementDialog
-import eu.peernetwork.blog.ui.post.PostUserConnection
 import eu.peernetwork.blog.ui.timeline.Timeline
 import eu.peernetwork.core.ui.annotation.UiBuilder
 import eu.peernetwork.core.ui.annotation.UiViewModel
@@ -101,12 +99,6 @@ object FeedModule {
     @Provides
     fun provideEngagementRenderer(component: Feed.Component): EngagementDialog {
         return EngagementRenderer(component)
-    }
-
-    @Feed.Scope
-    @Provides
-    fun providePostUserFollow(): PostUserConnection {
-        return ConnectionRenderer()
     }
 
     @Feed.Scope

@@ -167,6 +167,7 @@ fun ArticleScreen(
             loading = { PostSkeleton(3) }
         ) { component, items ->
             PostScreen(
+                uuid = uuid,
                 limit = limit,
                 username = username,
                 imageUrl = imageUrl,
@@ -237,6 +238,7 @@ fun ArticleFullScreen(
         ) { component, items ->
             val pagerState = rememberPagerState(initialPage = selected.intValue) { items.itemCount }
             PostScreen(
+                uuid = uuid,
                 username = username,
                 imageUrl = imageUrl,
                 limit = limit,

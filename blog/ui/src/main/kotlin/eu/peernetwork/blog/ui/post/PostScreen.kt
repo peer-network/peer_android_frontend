@@ -43,6 +43,7 @@ import eu.peernetwork.core.ui.extension.builder
 
 @Composable
 fun PostScreen(
+    uuid: String,
     limit: Int,
     username: String,
     imageUrl: String,
@@ -62,6 +63,7 @@ fun PostScreen(
     val updatedContent by rememberUpdatedState(content)
     val thumbnail = viewModel.thumbnail.collectAsStateWithLifecycle()
     EngagementScreen(
+        uuid = uuid,
         limit = limit,
         username = username,
         imageUrl = imageUrl,
@@ -123,6 +125,7 @@ fun PostScreen(
 
 @Composable
 fun PostScreen(
+    uuid: String,
     limit: Int,
     username: String,
     imageUrl: String,
@@ -135,6 +138,7 @@ fun PostScreen(
 ) {
     val updatedContent by rememberUpdatedState(content)
     PostScreen(
+        uuid = uuid,
         limit = limit,
         username = username,
         imageUrl = imageUrl,
@@ -151,6 +155,7 @@ fun PostScreen(
 
 @Composable
 fun PostScreen(
+    uuid: String,
     username: String,
     imageUrl: String,
     limit: Int,
@@ -165,6 +170,7 @@ fun PostScreen(
     val handleComment by rememberUpdatedState(onComment)
     val updatedContent by rememberUpdatedState(content)
     PostScreen(
+        uuid = uuid,
         limit = limit,
         username = username,
         imageUrl = imageUrl,

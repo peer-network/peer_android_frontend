@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -29,7 +28,8 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun OverviewScreen(
-    state: MutableState<UiEngagement?>,
+    uuid: String,
+    state: UiEngagement,
     postLimit: Int,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
@@ -40,45 +40,44 @@ fun OverviewScreen(
     val component = remember {
         provider.builder(Overview.Builder::class.java).build(context)
     }
-    OverviewSheet(state) {
-        val icons = listOf(
-            R.drawable.ic_love_outline to it.likes,
-            R.drawable.ic_hate_outline to it.dislikes,
-            R.drawable.ic_view to it.views
-        )
-        OverviewScaffold(
-            modifier = Modifier
-                .statusBarsPadding()
-                .fillMaxSize(),
-            header = { pagerState, index ->
-                EngagementMetric(
-                    text = icons[index].second,
-                    painter = painterResource(icons[index].first),
-                    orientation = Orientation.Horizontal,
-                    modifier = Modifier.padding(horizontal = 10.dp)
-                ) { scope.launch { pagerState.scrollToPage(index) } }
-            }
-        ) { pageState ->
-            HorizontalPager(
-                state = pageState,
-                verticalAlignment = Alignment.Top,
-            ) { page ->
-                val engagement = remember {
-                    when (page) {
-                        1 -> Engagement.Content.Dislike
-                        2 -> Engagement.Content.View
-                        else -> Engagement.Content.Like
-                    }
+    val icons = listOf(
+        R.drawable.ic_love_outline to state.likes,
+        R.drawable.ic_hate_outline to state.dislikes,
+        R.drawable.ic_view to state.views
+    )
+    OverviewScaffold(
+        modifier = Modifier
+            .statusBarsPadding()
+            .fillMaxSize(),
+        header = { pagerState, index ->
+            EngagementMetric(
+                text = icons[index].second,
+                painter = painterResource(icons[index].first),
+                orientation = Orientation.Horizontal,
+                modifier = Modifier.padding(horizontal = 10.dp)
+            ) { scope.launch { pagerState.scrollToPage(index) } }
+        }
+    ) { pageState ->
+        HorizontalPager(
+            state = pageState,
+            verticalAlignment = Alignment.Top,
+        ) { page ->
+            val engagement = remember {
+                when (page) {
+                    1 -> Engagement.Content.Dislike
+                    2 -> Engagement.Content.View
+                    else -> Engagement.Content.Like
                 }
-                UserList(
-                    id = it.id,
-                    limit = postLimit,
-                    engagement = engagement,
-                    provider = component,
-                    viewModelStoreOwner = viewModelStoreOwner,
-                    onUserClick = onUserClick
-                )
             }
+            UserList(
+                id = state.id,
+                uuid = uuid,
+                limit = postLimit,
+                engagement = engagement,
+                provider = component,
+                viewModelStoreOwner = viewModelStoreOwner,
+                onUserClick = onUserClick
+            )
         }
     }
 }

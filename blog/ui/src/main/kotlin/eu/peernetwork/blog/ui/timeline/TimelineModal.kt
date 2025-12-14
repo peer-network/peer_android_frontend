@@ -29,7 +29,7 @@ import eu.peernetwork.core.ui.component.UiComponentProvider
 
 @Composable
 fun TimelineModal(
-    id: String,
+    uuid: String,
     username: String,
     imageUrl: String,
     selected: MutableIntState,
@@ -42,7 +42,7 @@ fun TimelineModal(
 ) {
     val showSheet = remember { mutableStateOf<UiPost?>(null) }
     TimelineModal(
-        id = id,
+        uuid = uuid,
         username = username,
         imageUrl = imageUrl,
         limit = limit,
@@ -61,13 +61,14 @@ fun TimelineModal(
             post = post,
             showSheet = showSheet
         ) {
-            if (id != post.author.id) {
+            if (uuid != post.author.id) {
                 component.postUserFollow()(
                     modifier = Modifier,
                     PostUserConnection.Spec(
                         id = post.author.id,
                         isFollowing = post.author.following,
-                        isFollowed = post.author.followed
+                        isFollowed = post.author.followed,
+                        viewModelStoreOwner = viewModelStoreOwner
                     )
                 )
             }
@@ -77,7 +78,7 @@ fun TimelineModal(
 
 @Composable
 fun TimelineModal(
-    id: String,
+    uuid: String,
     username: String,
     imageUrl: String,
     selected: MutableIntState,
@@ -111,6 +112,7 @@ fun TimelineModal(
                 items.itemCount
             }
             PostScreen(
+                uuid = uuid,
                 imageUrl = imageUrl,
                 username = username,
                 limit = limit,
@@ -121,7 +123,7 @@ fun TimelineModal(
                 modal = {
                     val moderation = LocalModerationInteractor.current
                     TimelineSheet(
-                        uuid = id,
+                        uuid = uuid,
                         state = showSheet
                     ) { sheetState, post ->
                         when (sheetState) {

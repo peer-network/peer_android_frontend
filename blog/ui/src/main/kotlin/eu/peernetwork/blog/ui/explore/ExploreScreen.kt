@@ -120,6 +120,7 @@ fun ExploreFullScreen(
     ) { component, items ->
         val pagerState = rememberPagerState(initialPage = selected.intValue) { items.itemCount }
         PostScreen(
+            uuid = uuid,
             username = username,
             imageUrl = imageUrl,
             limit = limit,

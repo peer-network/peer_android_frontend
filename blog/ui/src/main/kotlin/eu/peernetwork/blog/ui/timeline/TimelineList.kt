@@ -33,7 +33,7 @@ import eu.peernetwork.core.ui.component.UiComponentProvider
 
 @Composable
 fun TimelineList(
-    id: String,
+    uuid: String,
     username: String,
     imageUrl: String,
     status: State<Boolean>,
@@ -52,7 +52,7 @@ fun TimelineList(
     val showSheet = remember { mutableStateOf<UiPost?>(null) }
     val current = rememberSaveable { mutableIntStateOf(-1) }
     TimelineScreen(
-        id = id,
+        uuid = uuid,
         limit = limit,
         username = username,
         imageUrl = imageUrl,
@@ -98,13 +98,14 @@ fun TimelineList(
                         ) { reaction(post, it) }
                     },
                     connection = {
-                        if (id != post.author.id) {
+                        if (uuid != post.author.id) {
                             component.postUserFollow()(
                                 modifier = Modifier,
                                 PostUserConnection.Spec(
                                     id = post.author.id,
                                     isFollowing = post.author.following,
-                                    isFollowed = post.author.followed
+                                    isFollowed = post.author.followed,
+                                    viewModelStoreOwner = viewModelStoreOwner
                                 )
                             )
                         }

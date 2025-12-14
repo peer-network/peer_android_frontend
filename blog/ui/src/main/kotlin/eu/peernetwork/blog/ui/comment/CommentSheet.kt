@@ -39,6 +39,7 @@ sealed interface CommentSheetState {
 
 @Composable
 fun CommentSheet(
+    uuid: String,
     username: String,
     imageUrl: String,
     state: MutableState<UiPostDetail?>,
@@ -105,6 +106,7 @@ fun CommentSheet(
                         .background(MaterialTheme.colorScheme.surfaceDim)) {
                         CommentList(
                             id = post.value.id,
+                            uuid = uuid,
                             limit = 10,
                             controller = controller,
                             provider = provider,

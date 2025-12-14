@@ -115,6 +115,7 @@ fun CommentScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 fun CommentScreen(
     id: String,
+    uuid: String,
     limit: Int,
     controller: NavHostController,
     provider: UiComponentProvider,
@@ -136,6 +137,7 @@ fun CommentScreen(
             onViewLikes = { id -> controller.navigate("likes/$id") }
         ) { component, interactor, items ->
             CommentNavigation(
+                uuid = uuid,
                 limit = limit,
                 controller = controller,
                 component = component,

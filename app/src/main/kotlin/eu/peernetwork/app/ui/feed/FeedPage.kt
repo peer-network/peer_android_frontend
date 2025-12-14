@@ -24,7 +24,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun FeedPage(
-    id: String,
+    uuid: String,
     username: String,
     imageUrl: String,
     ordinal: Int,
@@ -58,7 +58,7 @@ fun FeedPage(
     val handleOnBoost by rememberUpdatedState(onBoost)
     FeedScaffold(pageState = pageState) {
         TimelineList(
-            id = id,
+            uuid = uuid,
             username = username,
             imageUrl = imageUrl,
             status = isVisible,
@@ -88,7 +88,7 @@ fun FeedPage(
         )
     }
     FeedMenu(
-        id = id,
+        uuid = uuid,
         default = ordinal,
         title = title,
         onSelect = { ordinal, criteria ->

@@ -109,7 +109,7 @@ fun TimelineScreen(
 @Suppress("UNCHECKED_CAST")
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
 fun TimelineScreen(
-    id: String,
+    uuid: String,
     limit: Int,
     username: String,
     imageUrl: String,
@@ -168,6 +168,7 @@ fun TimelineScreen(
                 loading = { PostSkeleton(3) },
             ) { component, items ->
                 PostScreen(
+                    uuid = uuid,
                     limit = limit,
                     username = username,
                     imageUrl = imageUrl,
@@ -187,7 +188,7 @@ fun TimelineScreen(
                         modifier = Modifier.fillMaxSize()
                     ) { updatedContent(this, component, items) }
                     TimelineSheet(
-                        uuid = id,
+                        uuid = uuid,
                         state = showSheet
                     ) { sheetState, post ->
                         when (sheetState) {

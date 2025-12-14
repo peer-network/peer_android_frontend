@@ -2,6 +2,8 @@ package eu.peernetwork.app.module.social
 
 import dagger.Binds
 import dagger.Module
+import eu.peernetwork.app.ui.renderer.ConnectionRenderer
+import eu.peernetwork.blog.ui.post.PostUserConnection
 import eu.peernetwork.social.data.api.BlockApi
 import eu.peernetwork.social.data.api.FollowApi
 import eu.peernetwork.social.data.api.InviteApi
@@ -29,4 +31,7 @@ interface ApiModule {
 
     @Binds
     fun bindsInviteApi(delegate: InviteApiDelegate): InviteApi
+
+    @Binds
+    fun bindsPostUserFollow(renderer: ConnectionRenderer): PostUserConnection
 }

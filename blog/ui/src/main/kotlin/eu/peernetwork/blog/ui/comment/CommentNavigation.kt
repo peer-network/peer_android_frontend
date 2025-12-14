@@ -13,6 +13,7 @@ import eu.peernetwork.core.ui.design.material.DesignRouter
 
 @Composable
 fun CommentNavigation(
+    uuid: String,
     limit: Int,
     controller: NavHostController,
     component: Comment.Component,
@@ -34,6 +35,7 @@ fun CommentNavigation(
             val id = backStackEntry.arguments?.getString("id") ?: ""
             UserList(
                 id = id,
+                uuid = uuid,
                 limit = limit,
                 engagement = Engagement.Content.LikedComment,
                 provider = component,

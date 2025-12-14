@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.SpanStyle
@@ -26,8 +28,10 @@ fun UserItem(
     slug: String,
     username: String,
     imageUrl: String,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    connection: @Composable () -> Unit
 ) {
+    val updatedConnection by rememberUpdatedState(connection)
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.clickable(onClick = onClick)
@@ -65,6 +69,7 @@ fun UserItem(
                 .weight(1f)
                 .padding(horizontal = 10.dp)
         )
+        updatedConnection()
     }
 }
 
@@ -75,7 +80,8 @@ fun PreviewUserItem() {
         UserItem(
             slug = "239100",
             username = "John",
-            imageUrl = "http://localhost"
-        ) {}
+            imageUrl = "http://localhost",
+            onClick = { },
+        ) { Text("Hello") }
     }
 }

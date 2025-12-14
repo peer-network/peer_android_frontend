@@ -11,6 +11,7 @@ import eu.peernetwork.core.ui.design.luna.DesignRichText
 @Composable
 fun CommentList(
     id: String,
+    uuid: String,
     limit: Int,
     controller: NavHostController,
     provider: UiComponentProvider,
@@ -23,6 +24,7 @@ fun CommentList(
     val handleClick by rememberUpdatedState(onClick)
     CommentScreen(
         id = id,
+        uuid = uuid,
         limit = limit,
         controller = controller,
         provider = provider,
