@@ -4,8 +4,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import eu.peernetwork.blog.ui.model.UiEngagement
@@ -30,8 +32,9 @@ fun OverviewSheet(
     limit: Int,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
+    onDismiss: () -> Unit
 ) {
-    val showSheet = remember(state.value) { mutableStateOf(state.value != null) }
+    val showSheet = remember { derivedStateOf { state.value != null } }
     val sheetState = remember { mutableStateOf<OverviewSheetState>(OverviewSheetState.Hidden) }
     val streamState = remember { derivedStateOf {
         if (state.value == null) {
@@ -41,6 +44,7 @@ fun OverviewSheet(
         }
     } }
     val navigator = LocalPostNavigator.current
+    val handleDismiss by rememberUpdatedState(onDismiss)
     DesignStream(streamState) { engagement ->
         DesignCollapsibleBottomSheet(
             state = showSheet,
@@ -49,6 +53,7 @@ fun OverviewSheet(
                 if (sheetState.value is OverviewSheetState.Dismissing) {
                     (sheetState.value as OverviewSheetState.Dismissing).action.invoke()
                 }
+                handleDismiss()
                 sheetState.value = OverviewSheetState.Hidden
             },
         ) {
@@ -57,13 +62,14 @@ fun OverviewSheet(
                 state = engagement.value,
                 postLimit = limit,
                 provider = provider,
-                viewModelStoreOwner = viewModelStoreOwner
-            ) {
-                sheetState.value = OverviewSheetState.Dismissing {
-                    navigator.navigate(PostNavigator.Route.Profile(it))
+                viewModelStoreOwner = viewModelStoreOwner,
+                onUserClick = {
+                    sheetState.value = OverviewSheetState.Dismissing {
+                        navigator.navigate(PostNavigator.Route.Profile(it))
+                    }
+                    state.value = null
                 }
-                state.value = null
-            }
+            )
         }
     }
     LaunchedEffect(state.value) {

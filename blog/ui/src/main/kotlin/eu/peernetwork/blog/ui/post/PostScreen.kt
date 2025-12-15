@@ -68,7 +68,7 @@ fun PostScreen(
         username = username,
         imageUrl = imageUrl,
         provider = component,
-        viewModelStoreOwner = viewModelStoreOwner
+        viewModelStoreOwner = viewModelStoreOwner,
     ) {
         val engagement = LocalEngagementInteractor.current
         val reaction = remember { object : EngagementReaction {

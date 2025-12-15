@@ -21,6 +21,7 @@ import eu.peernetwork.blog.ui.R
 import eu.peernetwork.blog.ui.engagement.EngagementMetric
 import eu.peernetwork.blog.ui.interaction.user.UserList
 import eu.peernetwork.blog.ui.model.UiEngagement
+import eu.peernetwork.blog.ui.post.PostUserConnection
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.theme.PeerTheme
@@ -45,39 +46,52 @@ fun OverviewScreen(
         R.drawable.ic_hate_outline to state.dislikes,
         R.drawable.ic_view to state.views
     )
-    OverviewScaffold(
-        modifier = Modifier
-            .statusBarsPadding()
-            .fillMaxSize(),
-        header = { pagerState, index ->
-            EngagementMetric(
-                text = icons[index].second,
-                painter = painterResource(icons[index].first),
-                orientation = Orientation.Horizontal,
-                modifier = Modifier.padding(horizontal = 10.dp)
-            ) { scope.launch { pagerState.scrollToPage(index) } }
-        }
-    ) { pageState ->
-        HorizontalPager(
-            state = pageState,
-            verticalAlignment = Alignment.Top,
-        ) { page ->
-            val engagement = remember {
-                when (page) {
-                    1 -> Engagement.Content.Dislike
-                    2 -> Engagement.Content.View
-                    else -> Engagement.Content.Like
+    component.postUserFollow().Compose(viewModelStoreOwner) {
+        OverviewScaffold(
+            modifier = Modifier
+                .statusBarsPadding()
+                .fillMaxSize(),
+            header = { pagerState, index ->
+                EngagementMetric(
+                    text = icons[index].second,
+                    painter = painterResource(icons[index].first),
+                    orientation = Orientation.Horizontal,
+                    modifier = Modifier.padding(horizontal = 10.dp)
+                ) { scope.launch { pagerState.scrollToPage(index) } }
+            }
+        ) { pageState ->
+            HorizontalPager(
+                state = pageState,
+                userScrollEnabled = false,
+                verticalAlignment = Alignment.Top,
+            ) { page ->
+                val engagement = remember {
+                    when (page) {
+                        1 -> Engagement.Content.Dislike
+                        2 -> Engagement.Content.View
+                        else -> Engagement.Content.Like
+                    }
+                }
+                UserList(
+                    id = state.id,
+                    limit = postLimit,
+                    engagement = engagement,
+                    provider = component,
+                    viewModelStoreOwner = viewModelStoreOwner,
+                    onUserClick = onUserClick
+                ) { user ->
+                    if (uuid != user.id) {
+                        component.postUserFollow()(
+                            modifier = Modifier,
+                            spec = PostUserConnection.Spec(
+                                id = user.id,
+                                isFollowing = user.following,
+                                isFollowed = user.followed
+                            )
+                        )
+                    }
                 }
             }
-            UserList(
-                id = state.id,
-                uuid = uuid,
-                limit = postLimit,
-                engagement = engagement,
-                provider = component,
-                viewModelStoreOwner = viewModelStoreOwner,
-                onUserClick = onUserClick
-            )
         }
     }
 }

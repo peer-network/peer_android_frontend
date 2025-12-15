@@ -42,7 +42,9 @@ fun CommentScreen(
         factory = component.viewModelFactory()
     )
     val updatedContent by rememberUpdatedState(content)
-    updatedContent(component, viewModel)
+    component.postUserFollow().Compose(viewModelStoreOwner) {
+        updatedContent(component, viewModel)
+    }
 }
 
 @Composable

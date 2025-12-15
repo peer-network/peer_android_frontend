@@ -67,8 +67,7 @@ fun TimelineModal(
                     PostUserConnection.Spec(
                         id = post.author.id,
                         isFollowing = post.author.following,
-                        isFollowed = post.author.followed,
-                        viewModelStoreOwner = viewModelStoreOwner
+                        isFollowed = post.author.followed
                     )
                 )
             }

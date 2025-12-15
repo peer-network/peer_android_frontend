@@ -8,20 +8,21 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.ViewModelStoreOwner
 import eu.peernetwork.blog.domain.model.Engagement
-import eu.peernetwork.blog.ui.post.PostUserConnection
+import eu.peernetwork.blog.ui.model.UiAuthor
 import eu.peernetwork.core.ui.component.UiComponentProvider
 
 @Composable
 fun UserList(
     id: String,
-    uuid: String,
     limit: Int,
     engagement: Engagement.Content,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
-    onUserClick: (String) -> Unit
+    onUserClick: (String) -> Unit,
+    connection: @Composable (UiAuthor) -> Unit
 ) {
     val handleClick by rememberUpdatedState(onUserClick)
+    val updatedConnection by rememberUpdatedState(connection)
     UserScreen(
         id = id,
         limit = limit,
@@ -40,19 +41,7 @@ fun UserList(
                         username = user.username,
                         imageUrl = user.imageUrl,
                         onClick = { handleClick(user.id) }
-                    ) {
-                        if (uuid != user.id) {
-                            component.postUserFollow()(
-                                modifier = Modifier,
-                                PostUserConnection.Spec(
-                                    id = user.id,
-                                    isFollowing = user.following,
-                                    isFollowed = user.followed,
-                                    viewModelStoreOwner = viewModelStoreOwner
-                                )
-                            )
-                        }
-                    }
+                    ) { updatedConnection(user) }
                 }
             }
         }

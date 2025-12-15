@@ -105,7 +105,6 @@ fun TimelineList(
                                     id = post.author.id,
                                     isFollowing = post.author.following,
                                     isFollowed = post.author.followed,
-                                    viewModelStoreOwner = viewModelStoreOwner
                                 )
                             )
                         }
