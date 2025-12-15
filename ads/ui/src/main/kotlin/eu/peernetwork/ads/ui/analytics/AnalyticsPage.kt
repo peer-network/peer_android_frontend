@@ -27,6 +27,8 @@ import eu.peernetwork.core.ui.theme.DesignTheme
 fun AnalyticsPage(
     title: AnnotatedString,
     description: AnnotatedString,
+    from: String,
+    to: String,
     start: String,
     end: String,
     status: Boolean,
@@ -37,7 +39,7 @@ fun AnalyticsPage(
 ) {
     Column(
         modifier = Modifier.fillMaxSize()
-            .padding(horizontal = 16.dp)
+            .padding(horizontal = 12.dp)
             .padding(top = 12.dp)
             .padding(bottom = 4.dp)
             .then(modifier)
@@ -68,7 +70,7 @@ fun AnalyticsPage(
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(
-                text = start,
+                text = "$from $start",
                 style = MaterialTheme.typography.labelLarge,
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.onBackground
@@ -80,7 +82,7 @@ fun AnalyticsPage(
                 .fillMaxWidth()
         ) {
             Text(
-                text = end,
+                text = "$to $end",
                 style = MaterialTheme.typography.labelLarge,
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.onBackground
@@ -112,8 +114,10 @@ fun PreviewAnalyticsPage() {
             title = buildAnnotatedString { append("Title") },
             description = buildAnnotatedString { append("There’s something about hiking that resets everything. ") },
             status = true,
-            start = "8 Jun 2025",
-            end = "10 Jun 2025",
+            from = "8 Jun 2025",
+            to = "8 Jun 2025",
+            start = "14:23",
+            end = "14:23",
             metrics = metrics,
             onClick = { _,_ -> },
             modifier = Modifier.background(MaterialTheme.colorScheme.background)

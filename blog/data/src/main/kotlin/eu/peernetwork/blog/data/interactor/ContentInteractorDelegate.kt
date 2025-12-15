@@ -1,6 +1,6 @@
 package eu.peernetwork.blog.data.interactor
 
-import android.content.Context
+import eu.peernetwork.blog.data.provider.CacheProvider
 import eu.peernetwork.blog.domain.interactor.ContentInteractor
 import eu.peernetwork.blog.domain.model.Content
 import eu.peernetwork.blog.domain.model.Draft
@@ -12,7 +12,7 @@ import java.io.File
 import javax.inject.Inject
 
 class ContentInteractorDelegate @Inject constructor(
-    private val context: Context,
+    private val cache: CacheProvider,
     private val repository: ContentRepository,
     private val multipartRepository: MultipartRepository,
     private val eligibilityRepository: EligibilityRepository,
@@ -24,7 +24,7 @@ class ContentInteractorDelegate @Inject constructor(
             is Draft.Type.Text -> {
                 val paths = (draft.type as Draft.Type.Text).files.map { content ->
                     val name = String.format("%s.txt", System.currentTimeMillis().toString())
-                    val file = File(context.cacheDir, name)
+                    val file = File(cache.getCacheDirPath(), name)
                     if (!file.exists()) {
                         file.parentFile?.mkdirs()
                         file.createNewFile()

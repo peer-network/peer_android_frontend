@@ -14,3 +14,15 @@ fun AdvertisementHistoryQuery.Stats.mapToDomain(): Metrics {
         report = amountReports
     )
 }
+
+fun AdvertisementHistoryQuery.Advertisement.mapToMetrics(): Metrics {
+    return Metrics(
+        token = totalTokenCost.toFloat(),
+        euro = gemsEarned.toFloat(),
+        likes = amountLikes,
+        dislikes = amountDislikes,
+        views = amountViews,
+        comments = amountComments,
+        report = amountReports
+    )
+}

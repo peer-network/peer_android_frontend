@@ -41,7 +41,7 @@ fun CheckoutPage(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 16.dp)
+            .padding(horizontal = 12.dp)
             .padding(top = 12.dp)
             .padding(bottom = 4.dp)
             .then(modifier)

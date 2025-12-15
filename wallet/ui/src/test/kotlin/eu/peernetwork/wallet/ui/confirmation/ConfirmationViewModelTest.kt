@@ -59,6 +59,7 @@ internal class ConfirmationViewModelTest {
         val quote = Quote(balance)
         val mockData = mockk<Wallet>(relaxed = true)
         val rewards = emptyList<Reward>()
+        every { mockData.rate } returns 10.0f
         every { mockData.balance } returns balance
         coEvery { quoteUsecase(any()) } returns quote
         coEvery { rewardUsecase() } returns rewards

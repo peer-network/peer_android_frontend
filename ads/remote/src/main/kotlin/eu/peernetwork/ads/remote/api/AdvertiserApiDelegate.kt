@@ -18,6 +18,7 @@ import eu.peernetwork.ads.domain.model.Order
 import eu.peernetwork.ads.remote.mapper.mapToAds
 import eu.peernetwork.ads.remote.mapper.mapToContent
 import eu.peernetwork.ads.remote.mapper.mapToDomain
+import eu.peernetwork.ads.remote.mapper.mapToMetrics
 import eu.peernetwork.ads.remote.mapper.sortType
 import eu.peernetwork.ads.remote.model.DescriptionModel
 import eu.peernetwork.ads.remote.model.MediaModel
@@ -65,6 +66,7 @@ class AdvertiserApiDelegate @Inject constructor(
         val contents = rows.advertisements?.filterNotNull()?.map {
             val ads = it.mapToAds()
             val content = it.mapToContent()
+            val adsMetrics = it.mapToMetrics()
             Ads(
                 id = ads.id,
                 from = ads.from,
@@ -72,6 +74,7 @@ class AdvertiserApiDelegate @Inject constructor(
                 status = ads.status,
                 cost = ads.cost,
                 earning = ads.earning,
+                metrics = adsMetrics,
                 content = content.mapToDomain().copy(
                     path = gson.fromJson<List<MediaModel>>(
                         content.path,

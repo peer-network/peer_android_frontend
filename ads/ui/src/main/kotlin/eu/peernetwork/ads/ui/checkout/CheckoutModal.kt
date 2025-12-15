@@ -70,7 +70,7 @@ fun CheckoutModal(
                     }
             ) {
                 CheckoutModal(
-                    period = target.value.start,
+                    period = target.value.end,
                     duration = stringResource(R.string.advert_duration_label, target.value.duration),
                     onProfile = onProfile
                 ) { handleConfirm() }
@@ -126,7 +126,7 @@ fun CheckoutModal(
             color = MaterialTheme.colorScheme.outline,
             style = MaterialTheme.typography.labelMedium,
             textAlign = TextAlign.Center,
-            modifier = Modifier.padding(top = 2.dp)
+            modifier = Modifier.padding(top = 4.dp)
         )
         Row(
             verticalAlignment = Alignment.CenterVertically,

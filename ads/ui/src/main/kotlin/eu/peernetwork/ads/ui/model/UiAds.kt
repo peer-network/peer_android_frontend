@@ -6,8 +6,11 @@ data class UiAds(
     val id: String,
     val from: String,
     val to: String,
+    val start: String,
+    val end: String,
     val status: Boolean,
     val cost: BigDecimal,
     val earning: BigDecimal,
     val content: UiContent,
+    val metrics: UiMetrics
 )

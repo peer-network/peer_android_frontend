@@ -8,13 +8,17 @@ import java.util.Locale
 
 fun Ads.mapToDomain(): UiAds {
     val formatter = SimpleDateFormat("d MMM yyyy", Locale.getDefault())
+    val timeFormatter = SimpleDateFormat("HH:mm", Locale.getDefault())
     return UiAds(
         id = id,
         from = formatter.format(Date(from)),
         to = formatter.format(Date(to)),
+        start = timeFormatter.format(Date(from)),
+        end = timeFormatter.format(Date(to)),
         status = status,
         cost = cost,
         earning = earning,
-        content = content.mapToDomain()
+        content = content.mapToDomain(),
+        metrics = metrics.mapToDomain()
     )
 }

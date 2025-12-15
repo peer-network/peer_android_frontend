@@ -82,10 +82,10 @@ internal class AuthenticationInteractorDelegateTest {
                 followers = 0
             )
         )
-        coEvery { accountRepository.get(any()) } returns mockData
+        coEvery { accountRepository.get(any(), true) } returns mockData
         coEvery { authenticationRepository.authenticated() } returns mockData.id
 
-        val result = interactor.getCurrentAccount()
+        val result = interactor.getCurrentAccount(true)
 
         assertEquals(result, mockData)
         coVerify { publisher(any(), any()) }

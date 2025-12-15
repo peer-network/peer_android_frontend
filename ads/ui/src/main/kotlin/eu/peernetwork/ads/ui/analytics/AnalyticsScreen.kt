@@ -66,9 +66,11 @@ fun AnalyticsScreen(
                 title = target.value.campaign.ads.content.title,
                 description = target.value.campaign.ads.content.description,
                 status = target.value.campaign.ads.status,
-                metrics = target.value.campaign.metrics,
-                start = target.value.campaign.ads.from,
-                end = target.value.campaign.ads.to,
+                metrics = target.value.campaign.ads.metrics,
+                from = target.value.campaign.ads.from,
+                to = target.value.campaign.ads.to,
+                start = target.value.campaign.ads.start,
+                end = target.value.campaign.ads.end,
                 onClick = onClick
             ) {
                 AnalyticsMedia(

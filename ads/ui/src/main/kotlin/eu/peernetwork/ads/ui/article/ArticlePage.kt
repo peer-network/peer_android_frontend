@@ -25,7 +25,7 @@ fun ArticlePage(
 ) {
     Column(
         modifier = Modifier.fillMaxWidth()
-            .padding(horizontal = 16.dp)
+            .padding(horizontal = 12.dp)
             .padding(top = 12.dp)
             .then(modifier)
     ) {

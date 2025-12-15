@@ -57,7 +57,7 @@ internal class EngagementViewModelTest {
         )
         val mockData = mockk<Content>(relaxed = true)
         every { mockData.id } returns model.id
-        every { mockData.likes } returns mockData.likes + 1
+        every { mockData.likes } returns 1
         every { mockData.isLiked } returns true
         coEvery { likeUsecase(any()) } returns Unit
         viewModel.like(model.id)

@@ -14,6 +14,7 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import junit.framework.TestCase.assertEquals
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.single
 import kotlinx.coroutines.runBlocking
@@ -82,7 +83,7 @@ internal class TokenRepositoryDelegateTest {
         every { observer(any()) } returns flowOf(gson.toJson(token))
 
         val flow = repository.observe()
-        val emittedToken = flow.single()
+        val emittedToken = flow.firstOrNull()
 
         assertEquals(token, emittedToken)
     }

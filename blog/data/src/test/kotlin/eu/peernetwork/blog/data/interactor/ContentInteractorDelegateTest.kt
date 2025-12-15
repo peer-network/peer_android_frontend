@@ -1,5 +1,8 @@
 package eu.peernetwork.blog.data.interactor
 
+import android.content.Context
+import androidx.test.core.app.ApplicationProvider
+import eu.peernetwork.blog.data.provider.CacheProvider
 import eu.peernetwork.blog.domain.interactor.ContentInteractor
 import eu.peernetwork.blog.domain.model.Draft
 import eu.peernetwork.blog.domain.repository.ContentRepository
@@ -38,6 +41,11 @@ internal class ContentInteractorDelegateTest {
     fun setup() {
         Dispatchers.setMain(dispatcher)
         interactor = ContentInteractorDelegate(
+            cache = object : CacheProvider {
+                override fun getCacheDirPath(): String {
+                    return "<test-cache-dir>"
+                }
+            },
             repository,
             multipartRepository,
             eligibilityRepository,

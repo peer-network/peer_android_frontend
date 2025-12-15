@@ -9,7 +9,8 @@ data class Ads(
     val status: Boolean,
     val cost: BigDecimal,
     val earning: BigDecimal,
-    val content: Content
+    val content: Content,
+    val metrics: Metrics,
 ) {
     sealed interface Plan {
         data class Basic(val price: BigDecimal): Plan

@@ -6,6 +6,8 @@ dependencies {
     implementation(project(":blog:domain"))
     implementation(project(":persistence:domain"))
 
+    implementation(libs.androidx.core.ktx)
+
     testImplementation(libs.junit)
     testImplementation(libs.kotlin.test)
     testImplementation(libs.androidx.test)

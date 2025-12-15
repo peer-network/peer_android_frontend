@@ -10,6 +10,7 @@ import java.util.Locale
 fun Order.mapFromDomain(): UiOrder {
     return UiOrder(
         start = start.mapToTimestamp(),
+        end = end.mapToTimestamp(),
         duration = ((end - start) / (1000 * 60 * 60)).toInt(),
         price = when(plan) {
             is Ads.Plan.Basic -> (plan as Ads.Plan.Basic).price
