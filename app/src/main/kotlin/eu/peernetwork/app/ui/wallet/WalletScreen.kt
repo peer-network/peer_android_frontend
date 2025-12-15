@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModelStoreOwner
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.compose.DesignRefreshableScaffold
@@ -28,7 +29,6 @@ import eu.peernetwork.core.ui.design.material.DesignTitle
 import eu.peernetwork.core.ui.design.material.DesignTitleBarHost
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
-import eu.peernetwork.core.ui.factory.UiViewModelStore
 import eu.peernetwork.social.ui.search.member.MemberDialog
 import eu.peernetwork.user.domain.model.Account
 import eu.peernetwork.wallet.ui.model.UiRecipient
@@ -42,13 +42,12 @@ fun WalletScreen(
     account: Account,
     postLimit: Int,
     provider: UiComponentProvider,
-    viewModelState: UiViewModelStore
+    viewModelStoreOwner: ViewModelStoreOwner
 ) {
     val context = LocalContext.current
     val component = remember {
         provider.builder(Wallet.Builder::class.java).build(context)
     }
-    val viewModelStoreOwner = remember { viewModelState.get("WalletScreen") }
     val recipient = rememberSaveable(saver = UiRecipientSaver) {
         mutableStateOf(null)
     }

@@ -34,7 +34,6 @@ import eu.peernetwork.core.ui.design.luna.DesignStreamState
 import eu.peernetwork.core.ui.extension.attach
 import eu.peernetwork.core.ui.extension.attachIfNecessary
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
-import eu.peernetwork.core.ui.factory.UiViewModelStore
 import eu.peernetwork.wallet.ui.reward.RewardScreen
 import eu.peernetwork.social.ui.feedback.FeedbackPopup
 
@@ -46,7 +45,6 @@ fun HomeScreen(
     viewModelStoreOwner: ViewModelStoreOwner,
     onOnboard: (Boolean) -> Unit
 ) {
-    val viewModelStore = remember { UiViewModelStore.Delegate() }
     val context = LocalContext.current
     val handleOnOnboard by rememberUpdatedState(onOnboard)
     val component = remember {
@@ -96,7 +94,7 @@ fun HomeScreen(
             start = navigationState,
             options = { RewardScreen(
                 provider = component,
-                viewModelStoreOwner = viewModelStore.get(data.value.account.id)
+                viewModelStoreOwner = viewModelStoreOwner
             ) },
             onClick = {
                 viewModel.lastVisited(it)
@@ -121,7 +119,7 @@ fun HomeScreen(
                 startDestination = route ?: startDestination,
                 navController = controller,
                 component = component,
-                viewModelStore = viewModelStore,
+                viewModelStoreOwner = viewModelStoreOwner,
                 onExplore = { controller.navigateIfNecessary(HomeRoute.Explore.path) }
             ) {
                 viewModel.lastVisited(0)
@@ -137,7 +135,7 @@ fun HomeScreen(
         FeedbackPopup(
             appPackage = BuildConfig.APPLICATION_ID,
             provider = component,
-            viewModelStoreOwner = viewModelStore.get("FeedbackPopup")
+            viewModelStoreOwner = viewModelStoreOwner
         )
         LaunchedEffect(data.value) {
             if (data.value.preference.flags.isEmpty() && !isOnboarded) {
@@ -150,7 +148,6 @@ fun HomeScreen(
             viewModel()
         }
     }
-    DisposableEffect(Unit) { onDispose { viewModelStore.clear() } }
 }
 
 @Composable

@@ -5,6 +5,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.lifecycle.ViewModelStoreOwner
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import eu.peernetwork.app.BuildConfig
@@ -18,7 +19,6 @@ import eu.peernetwork.app.ui.search.SearchScreen
 import eu.peernetwork.app.ui.wallet.WalletScreen
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.design.material.DesignNavigation
-import eu.peernetwork.core.ui.factory.UiViewModelStore
 import eu.peernetwork.user.domain.model.Account
 
 @Composable
@@ -27,7 +27,7 @@ fun HomeNavigation(
     startDestination: String,
     navController: NavHostController,
     component: Home.Component,
-    viewModelStore: UiViewModelStore,
+    viewModelStoreOwner: ViewModelStoreOwner,
     onExplore: () -> Unit,
     onHome: () -> Unit
 ) {
@@ -56,7 +56,7 @@ fun HomeNavigation(
                     )
                     is HomeRoute.Add -> ComposerScreen(
                         provider = component,
-                        viewModelStoreOwner = viewModelStore.get(account.id),
+                        viewModelStoreOwner = viewModelStoreOwner,
                         onPostSuccess = {
                             refresh.value = true
                             handleOnHomeClick()
@@ -66,7 +66,7 @@ fun HomeNavigation(
                         account = account,
                         postLimit = BuildConfig.PAGING_LIMIT,
                         provider = component,
-                        viewModelState = viewModelStore
+                        viewModelStoreOwner = viewModelStoreOwner
                     )
                     is HomeRoute.Search -> SearchScreen(
                         account = account,
@@ -94,7 +94,7 @@ fun HomeNavigation(
                 account = account,
                 postId = postId,
                 provider = component,
-                viewModelStore = viewModelStore
+                viewModelStoreOwner = viewModelStoreOwner
             )
         }
     }

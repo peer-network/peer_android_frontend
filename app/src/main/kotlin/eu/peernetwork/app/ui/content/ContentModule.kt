@@ -7,6 +7,7 @@ import eu.peernetwork.app.ui.profile.Profile
 import eu.peernetwork.app.ui.renderer.EngagementRenderer
 import eu.peernetwork.app.ui.search.Search
 import eu.peernetwork.app.ui.screen.Screen
+import eu.peernetwork.blog.ui.detail.Detail
 import eu.peernetwork.blog.ui.engagement.EngagementDialog
 import eu.peernetwork.core.ui.annotation.UiBuilder
 import eu.peernetwork.core.ui.component.UiComponent
@@ -51,6 +52,14 @@ object ContentModule {
     @UiBuilder(Confirmation.Builder::class)
     fun provideConfirmationBuilder(component: Content.Component): UiComponent.Builder {
         return Confirmation.Builder(component)
+    }
+
+    @Content.Scope
+    @Provides
+    @IntoMap
+    @UiBuilder(Detail.Builder::class)
+    fun provideDetailBuilder(component: Content.Component): UiComponent.Builder {
+        return Detail.Builder(component)
     }
 
     @Content.Scope

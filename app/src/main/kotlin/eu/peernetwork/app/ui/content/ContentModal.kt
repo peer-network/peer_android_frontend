@@ -2,7 +2,6 @@ package eu.peernetwork.app.ui.content
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -13,7 +12,7 @@ import eu.peernetwork.core.ui.factory.UiViewModelStore
 import eu.peernetwork.social.ui.connection.ConnectionInteractor
 
 @Composable
-fun ContentOverlay(
+fun ContentModal(
     overlay: MutableState<String?>,
     userId: String,
     postLimit: Int,

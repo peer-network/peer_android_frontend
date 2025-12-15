@@ -107,7 +107,16 @@ fun ArticleScreen(
     val updatedContent by rememberUpdatedState(content)
     DesignPagingStream(
         state = derivedState,
-        loading = loading
+        loading = loading,
+        error = { error ->
+            ArticleError(
+                error = error.value,
+                component = component,
+            ) {
+                val page = Pageable(0, limit)
+                viewModel.load(id, types, page)
+            }
+        }
     ) { updatedContent(component, it) }
     LaunchedEffect(timestamp.value) {
         val page = Pageable(0, limit)
