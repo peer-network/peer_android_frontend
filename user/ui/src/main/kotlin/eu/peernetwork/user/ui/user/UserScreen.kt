@@ -13,7 +13,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
@@ -23,9 +22,6 @@ import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.design.luna.DesignStream
 import eu.peernetwork.core.ui.design.luna.DesignStreamState
-import eu.peernetwork.core.ui.design.material.DesignOverlay
-import eu.peernetwork.core.ui.design.material.DesignZoom
-import eu.peernetwork.media.core.renderer.ImageView
 import eu.peernetwork.user.ui.option.OptionScreen
 
 @Composable
@@ -72,9 +68,6 @@ fun UserScreen(
     } }
     val updatedConnection by rememberUpdatedState(connection)
     val selectedImage = remember { mutableStateOf<String?>(null) }
-    val visible = remember(selectedImage.value) {
-        mutableStateOf(selectedImage.value != null)
-    }
     val currentTimestamp = remember { derivedStateOf {
         (localState.value as? UserViewModel.State.Success?)?.timestamp
     } }
@@ -105,6 +98,7 @@ fun UserScreen(
         UserPage(
             account = data.value.first,
             isAdmin = data.value.second,
+            selectedImage = selectedImage,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 20.dp)
@@ -125,27 +119,10 @@ fun UserScreen(
                 }
             }
         }
-        DesignOverlay(
-            state = visible,
-            onDismiss = { selectedImage.value = null }
-        ) {
-            DesignZoom(background = {
-                component.imageView()(
-                    modifier = Modifier,
-                    spec = ImageView.Spec(
-                        url = data.value.first.imageUrl,
-                        ratio = null,
-                        blur = 500f,
-                        contentScale = ContentScale.Crop,
-                    )
-                )
-            }) {
-                component.imageView()(
-                    modifier = Modifier,
-                    spec = ImageView.Spec(data.value.first.imageUrl, null)
-                )
-            }
-        }
+        UserModal(
+            image = selectedImage,
+            component = component
+        )
     }
     LaunchedEffect(timestamp.value) {
         if (timestamp.value != currentTimestamp.value) {

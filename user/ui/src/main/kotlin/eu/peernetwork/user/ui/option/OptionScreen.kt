@@ -55,11 +55,15 @@ fun OptionScreen(
         )
     } else {
         OptionMenu(
-            onMenu = {  },
+            onMenu = { showOption.value = true },
             content = content
         )
     }
-    OptionSheet(showOption, onMenuClicked)
+    OptionSheet(
+        isAdmin = isAdmin,
+        state = showOption,
+        onMenuClicked = onMenuClicked
+    )
     LaunchedEffect(isInvited.value) {
         if (isInvited.value != null) {
             isInvited.value?.invite?.link?.let {

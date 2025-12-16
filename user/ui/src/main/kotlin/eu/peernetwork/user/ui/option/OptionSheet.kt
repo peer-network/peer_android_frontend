@@ -24,6 +24,7 @@ import eu.peernetwork.user.ui.R
 
 @Composable
 fun OptionSheet(
+    isAdmin: Boolean,
     state: MutableState<Boolean>,
     onMenuClicked: () -> Unit
 ) {
@@ -41,6 +42,7 @@ fun OptionSheet(
         }
     ) {
         OptionSheet(
+            isAdmin = isAdmin,
             onMenuClicked = {
                 confirmed.value = true
                 state.value = false
@@ -51,6 +53,7 @@ fun OptionSheet(
 
 @Composable
 fun OptionSheet(
+    isAdmin: Boolean,
     onMenuClicked: () -> Unit,
     onCancel: () -> Unit,
 ) {
@@ -60,11 +63,13 @@ fun OptionSheet(
             .padding(bottom = 24.dp)
             .navigationBarsPadding()
     ) {
-        DesignItem(
-            label = stringResource(R.string.ads_label),
-            painter = painterResource(R.drawable.ic_ads),
-            onClick = onMenuClicked
-        )
+        if (isAdmin) {
+            DesignItem(
+                label = stringResource(R.string.ads_label),
+                painter = painterResource(R.drawable.ic_ads),
+                onClick = onMenuClicked
+            )
+        }
         DesignItem(
             label = stringResource(R.string.cancel_text),
             painter = painterResource(R.drawable.ic_cancel),
@@ -80,6 +85,6 @@ fun OptionSheet(
 @OptIn(ExperimentalMaterial3Api::class)
 fun PreviewOptionSheet() {
     DesignTheme(isDarkMode = true) {
-        OptionSheet({}) {}
+        OptionSheet(true, {}) {}
     }
 }

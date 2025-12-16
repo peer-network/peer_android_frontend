@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,13 +39,13 @@ import eu.peernetwork.user.ui.model.UiMetric
 fun UserPage(
     account: UiAccount,
     isAdmin: Boolean,
+    selectedImage: MutableState<String?>,
     modifier: Modifier = Modifier,
     onClick: (UserMetric) -> Unit,
     content: @Composable () -> Unit,
 ) {
     val handleOnClick by rememberUpdatedState(onClick)
     val updatedContent by rememberUpdatedState(content)
-    val selectedImage = remember { mutableStateOf<String?>(null) }
     val emptyDescription = stringResource(R.string.empty_description_message)
     Column {
         Column(modifier = modifier) {
@@ -112,6 +113,7 @@ fun UserPage(
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, showBackground = true)
 fun PreviewUserPage() {
     DesignTheme(isDarkMode = false) {
+        val selectedImage = remember { mutableStateOf<String?>(null) }
         val model = UiAccount(
             id = System.currentTimeMillis().toString(),
             username = "John Doe",
@@ -130,6 +132,7 @@ fun PreviewUserPage() {
         UserPage(
             account = model,
             isAdmin = true,
+            selectedImage = selectedImage,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 24.dp)
