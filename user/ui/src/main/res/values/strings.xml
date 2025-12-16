@@ -73,6 +73,7 @@
 
     <string name="or">Or</string>
     <string name="click_here">Click here</string>
+    <string name="cancel_label">Cancel</string>
     <string name="forgot_password_text">Forgot password</string>
     <string name="forgot_password_label">Forgot password?</string>
     <string name="forgot_instruction">Please enter your email and we’ll send you a reset link.</string>
