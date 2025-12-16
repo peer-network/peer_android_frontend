@@ -53,7 +53,7 @@ fun FollowingsSkeleton(modifier: Modifier) {
 
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
-fun PreviewReferralSkeleton() {
+fun PreviewFollowingsSkeleton() {
     DesignTheme(isDarkMode = true) {
         FollowingsSkeleton(3)
     }

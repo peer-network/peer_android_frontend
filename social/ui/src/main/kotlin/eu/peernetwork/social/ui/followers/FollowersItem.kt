@@ -75,7 +75,7 @@ fun FollowersItem(
 
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
-fun PreviewFollowings() {
+fun PreviewFollowersItem() {
     DesignTheme {
         FollowersItem(
             slug = "239100",

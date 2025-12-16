@@ -75,7 +75,7 @@ fun PeersItem(
 
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
-fun PreviewFollowings() {
+fun PreviewPeersItem() {
     DesignTheme {
         PeersItem(
             slug = "239100",

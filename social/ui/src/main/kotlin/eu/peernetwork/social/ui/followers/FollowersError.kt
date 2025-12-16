@@ -1,4 +1,4 @@
-package eu.peernetwork.social.ui.followings
+package eu.peernetwork.social.ui.followers
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -26,7 +26,7 @@ import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.theme.PeerAppDarkRed
 
 @Composable
-fun FollowingsError(
+fun FollowersError(
     error: String,
     onRefresh: () -> Unit
 ) {

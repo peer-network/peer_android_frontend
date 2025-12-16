@@ -26,7 +26,7 @@ import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.theme.PeerAppDarkRed
 
 @Composable
-fun FollowersError(
+fun PeersError(
     error: String,
     onRefresh: () -> Unit
 ) {
