@@ -55,18 +55,37 @@ fun SearchNavigation(
             )
         }
         screen(
-            route = "feed",
+            route = "feed/{type}/{value}",
             isModal = isModal,
             provider = component,
-            onCancel = onCancel
+            onCancel = onCancel,
+            arguments = listOf(navArgument("type") {
+                type = NavType.StringType
+            }, navArgument("value") {
+                type = NavType.StringType
+            })
         ) { backStackEntry ->
+            val type = backStackEntry.arguments?.getString("type") ?: ""
+            val value = backStackEntry.arguments?.getString("value") ?: ""
+            val criteria = Criteria.Content(
+                tag = if (type == "tag") {
+                    value
+                } else {
+                    null
+                },
+                title = if (type == "title") {
+                    value
+                } else {
+                    null
+                }
+            )
             FeedExplore(
                 account = account,
                 limit = BuildConfig.PAGING_LIMIT,
                 provider = component,
                 viewModelStoreOwner = backStackEntry,
-                title = null,
-                criteria = Criteria.None
+                title = criteria.title,
+                criteria = criteria
             )
         }
         screen(

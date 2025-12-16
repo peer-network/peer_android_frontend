@@ -83,8 +83,8 @@ fun SearchScreen(
                         limit = limit,
                         onClick = {
                             when (currentMode.value) {
-                                is SearchMode.Tag -> controller.navigate("feed/$it")
-                                is SearchMode.Title -> controller.navigate("feed/$it")
+                                is SearchMode.Tag -> controller.navigate("feed/tag/$it")
+                                is SearchMode.Title -> controller.navigate("feed/title/$it")
                                 else -> controller.navigate("profile/$it")
                             }
                             false
