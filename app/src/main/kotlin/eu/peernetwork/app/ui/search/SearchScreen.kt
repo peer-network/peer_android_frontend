@@ -10,6 +10,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
@@ -27,6 +28,7 @@ import eu.peernetwork.core.ui.design.material.DesignTitleBarHost
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.social.ui.connection.ConnectionScreen
 import eu.peernetwork.user.domain.model.Account
+import kotlinx.coroutines.launch
 
 @Composable
 fun SearchScreen(
@@ -54,6 +56,7 @@ fun SearchScreen(
     query: String? = null
 ) {
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
     val controller = rememberNavController()
     val currentMode = remember { mutableStateOf(mode) }
     val listState = rememberLazyGridState()
@@ -99,7 +102,14 @@ fun SearchScreen(
                         modifier = Modifier.padding(top = 32.dp)
                     )
                 }
-                DesignTitleBarHost("SearchScreen") {
+                DesignTitleBarHost(
+                    tag = "SearchScreen",
+                    listener = {
+                        scope.launch {
+                            listState.animateScrollToItem(0)
+                        }
+                    }
+                ) {
                     titleBar {
                         DesignTitle {
                             Text(title ?: stringResource(R.string.search_label))

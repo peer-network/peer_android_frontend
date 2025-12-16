@@ -8,7 +8,6 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.snapshotFlow
@@ -64,7 +63,11 @@ fun TagScreen(
             }
         }
     }
-    val lastSearch = remember { mutableStateOf(query.text.toString()) }
+    val lastSearch = remember {
+        derivedStateOf {
+            (state as? TagViewModel.State.Success?)?.tag
+        }
+    }
     DesignPagingStream(
         state = derivedState,
         modifier = Modifier.fillMaxSize()
@@ -94,7 +97,6 @@ fun TagScreen(
             .debounce(300)
             .collectLatest { text ->
                 if (text.length >= 3 && lastSearch.value != text) {
-                    lastSearch.value = text
                     viewModel.search(text, Pageable(0, postLimit))
                 } else if (lastSearch.value != text) {
                     viewModel.reset()

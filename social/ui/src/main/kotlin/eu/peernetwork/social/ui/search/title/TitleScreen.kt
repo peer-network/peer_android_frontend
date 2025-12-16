@@ -8,10 +8,8 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -66,7 +64,11 @@ fun TitleScreen(
         }
     }
     val handleOnClick by rememberUpdatedState(onClick)
-    val lastSearch = rememberSaveable { mutableStateOf(query.text.toString()) }
+    val lastSearch = remember {
+        derivedStateOf {
+            (state as? TitleViewModel.State.Success?)?.title
+        }
+    }
     DesignPagingStream(
         state = derivedState,
         modifier = Modifier.fillMaxSize()
@@ -96,7 +98,6 @@ fun TitleScreen(
             .debounce(300)
             .collectLatest { text ->
                 if (text.length >= 3 && lastSearch.value != text) {
-                    lastSearch.value = text
                     viewModel.search(text, Pageable(0, postLimit))
                 } else if (lastSearch.value != text) {
                     viewModel.reset()

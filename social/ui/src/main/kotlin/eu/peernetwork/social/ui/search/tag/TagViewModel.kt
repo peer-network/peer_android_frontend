@@ -18,37 +18,40 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class TagViewModel @Inject constructor(private val usecase: TagUsecase) : ViewModel() {
-    private val mutableState = MutableStateFlow<State>(State.Empty)
+    private val _state = MutableStateFlow<State>(State.Empty)
 
-    val state: StateFlow<State> = mutableState.asStateFlow()
+    val state: StateFlow<State> = _state.asStateFlow()
 
     fun search(tag: String, page: Pageable) {
         viewModelScope.launch {
-            mutableState.tryEmit(State.Loading)
+            _state.tryEmit(State.Loading)
             usecase(
                 TagUsecase.Parameter(
                     tag = tag,
                     page = page
                 )
-            ).catch { mutableState.tryEmit(State.Error(it)) }
-                .onStart { mutableState.tryEmit(State.Loading) }
+            ).catch { _state.tryEmit(State.Error(it)) }
+                .onStart { _state.tryEmit(State.Loading) }
                 .cachedIn(viewModelScope)
                 .apply {
-                    collectLatest { mutableState.tryEmit(State.Success(this)) }
+                    collectLatest { _state.tryEmit(State.Success(tag, this)) }
                 }
         }
     }
 
     fun reset() {
         viewModelScope.launch {
-            mutableState.tryEmit(State.Empty)
+            _state.tryEmit(State.Empty)
         }
     }
 
     sealed interface State {
         data object Empty : State
         data object Loading : State
-        data class Success(val content: Flow<PagingData<UiTag>>) : State
+        data class Success(
+            val tag: String,
+            val content: Flow<PagingData<UiTag>>
+        ) : State
         data class Error(val error: Throwable) : State
     }
 }
