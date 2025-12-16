@@ -4,6 +4,7 @@ import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -39,7 +40,6 @@ import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.luna.DesignOutlineButton
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.theme.DesignTheme
-import eu.peernetwork.social.domain.model.Invite
 import eu.peernetwork.social.ui.R
 
 @Composable
@@ -58,7 +58,7 @@ fun ReferralHeader(
     )
     val clipboardManager = LocalClipboardManager.current
     val state by viewModel.invite.collectAsState()
-    val invitation = remember { mutableStateOf<Invite?>(
+    val invitation = remember { mutableStateOf(
         (state as? ReferralViewModel.Status.Success)?.invite
     ) }
     val isLoading = remember { derivedStateOf {
@@ -114,7 +114,7 @@ fun ReferralHeader(
                     end = Offset(size.width, size.height),
                     strokeWidth = strokeWidth
                 )
-            }.padding(vertical = 8.dp, horizontal = 24.dp)
+            }.padding(vertical = 8.dp, horizontal = 18.dp)
     ) {
         Text(
             text = stringResource(R.string.referrals_header),
@@ -134,7 +134,8 @@ fun ReferralHeader(
             onClick = onClick,
             isLoading = isLoading.value,
             enabled = !isLoading.value,
-            minHeight = 36.dp,
+            minHeight = 42.dp,
+            contentPadding = PaddingValues(horizontal = 16.dp),
             border = BorderStroke(
                 width = 1.dp,
                 color = MaterialTheme.colorScheme.outline
@@ -165,7 +166,7 @@ fun ReferralHeader(
 @Preview
 @Composable
 fun PreviewReferralHeader() {
-    DesignTheme {
+    DesignTheme(isDarkMode = true) {
         ReferralHeader(remember { mutableStateOf(false) }) {}
     }
 }

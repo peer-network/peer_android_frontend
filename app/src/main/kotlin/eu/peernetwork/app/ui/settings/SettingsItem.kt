@@ -42,7 +42,7 @@ fun SettingsItem(
                     strokeWidth = strokeWidth
                 )
             }
-            .padding(horizontal = 24.dp, vertical = 10.dp)
+            .padding(horizontal = 18.dp, vertical = 10.dp)
     ) {
         Text(
             label,

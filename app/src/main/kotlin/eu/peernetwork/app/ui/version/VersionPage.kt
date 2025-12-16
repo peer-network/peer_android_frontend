@@ -60,19 +60,19 @@ fun VersionPage(
                             end = Offset(size.width, y),
                             strokeWidth = 2f
                         )
-                    }.padding(24.dp),
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
+                    }.padding(16.dp),
+                horizontalArrangement = Arrangement.spacedBy(18.dp)
             ) {
                 DesignOutlineButton(
                     onClick = onAppWikiClicked,
-                    minHeight = 48.dp,
+                    minHeight = 42.dp,
                     contentPadding = PaddingValues(horizontal = 16.dp),
                     modifier = Modifier.weight(1f),
                     border = borderStroke
                 ) { Text(stringResource(R.string.app_wiki)) }
                 DesignOutlineButton(
                     onClick = onBackendWikiClicked,
-                    minHeight = 48.dp,
+                    minHeight = 42.dp,
                     contentPadding = PaddingValues(horizontal = 16.dp),
                     modifier = Modifier.weight(1f),
                     border = borderStroke
@@ -87,8 +87,8 @@ fun VersionPage(
                 version = version,
                 versionCode = versionCode,
                 modifier = Modifier.padding(
-                    horizontal = 24.dp,
-                    vertical = 16.dp
+                    horizontal = 18.dp,
+                    vertical = 12.dp
                 )
             )
             MarkdownText(

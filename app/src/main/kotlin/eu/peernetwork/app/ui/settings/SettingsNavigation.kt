@@ -63,7 +63,7 @@ fun SettingsNavigation(
                 provider = provider,
                 viewModelStoreOwner = backStackEntry
             ) {
-                controller.navigateIfNecessary("profile/${it.id}")
+                controller.navigateIfNecessary("profile/$it")
             }
         }
         composable(passwordLabel) {
