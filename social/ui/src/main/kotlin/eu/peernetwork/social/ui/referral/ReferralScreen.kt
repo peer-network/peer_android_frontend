@@ -1,5 +1,6 @@
 package eu.peernetwork.social.ui.referral
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
@@ -13,6 +14,8 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import eu.peernetwork.core.common.paging.Pageable
@@ -24,6 +27,9 @@ import eu.peernetwork.core.ui.design.material.DesignTitleBarHost
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.extension.error
 import eu.peernetwork.social.ui.R
+import eu.peernetwork.social.ui.connection.ConnectionButton
+import eu.peernetwork.social.ui.connection.ConnectionInteractor.Companion.LocalConnectionInteractor
+import eu.peernetwork.social.ui.connection.ConnectionScreen
 
 @Composable
 fun ReferralScreen(
@@ -64,28 +70,52 @@ fun ReferralScreen(
         onRefresh = { viewModel.referral(userId, Pageable(0, postLimit)) },
         header = { ReferralHeader(provider, viewModelStoreOwner) }
     ) {
-        DesignPagingStream(
-            state = derivedState,
-            modifier = Modifier.fillMaxSize(),
-            loading = { ReferralSkeleton(3) },
-            error = { error ->
-                ReferralError(component.resource().error(error.value)) {
-                    viewModel.referral(userId, Pageable(0, postLimit))
+        ConnectionScreen(
+            provider = component,
+            viewModelStoreOwner = viewModelStoreOwner
+        ) {
+            val controller = LocalConnectionInteractor.current
+            val connection by controller.observe().collectAsState()
+            DesignPagingStream(
+                state = derivedState,
+                modifier = Modifier.fillMaxSize(),
+                loading = { ReferralSkeleton(3) },
+                error = { error ->
+                    ReferralError(component.resource().error(error.value)) {
+                        viewModel.referral(userId, Pageable(0, postLimit))
+                    }
                 }
-            }
-        ) { lazyPagingItems ->
-            LazyColumn(modifier = Modifier.fillMaxSize()) {
-                items(
-                    count = lazyPagingItems.itemCount,
-                    key = { lazyPagingItems[it]?.id ?: it }
-                ) { index ->
-                    lazyPagingItems[index]?.let { referral ->
-                        ReferralItem(
-                            slug = referral.slug,
-                            username = referral.username,
-                            imageUrl = referral.img,
-                            onClick = { handleClick(referral.id) }
-                        ) {}
+            ) { lazyPagingItems ->
+                LazyColumn(modifier = Modifier.fillMaxSize()) {
+                    items(
+                        count = lazyPagingItems.itemCount,
+                        key = { lazyPagingItems[it]?.id ?: it }
+                    ) { index ->
+                        lazyPagingItems[index]?.let { referral ->
+                            ReferralItem(
+                                slug = referral.slug,
+                                username = referral.username,
+                                imageUrl = referral.img,
+                                onClick = { handleClick(referral.id) }
+                            ) {
+                                ConnectionButton(
+                                    isFollowing = connection.getOrDefault(
+                                        key = referral.id,
+                                        defaultValue = referral.isFollowing
+                                    ),
+                                    isFollowed = referral.isFollowed,
+                                    onClick = { follow ->
+                                        controller.invoke(referral.id, !follow)
+                                    },
+                                    fontWeight = FontWeight.SemiBold,
+                                    minHeight = 32.dp,
+                                    contentPadding = PaddingValues(
+                                        horizontal = 16.dp,
+                                        vertical = 8.dp
+                                    )
+                                )
+                            }
+                        }
                     }
                 }
             }

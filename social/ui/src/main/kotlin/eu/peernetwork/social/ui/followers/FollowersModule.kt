@@ -7,16 +7,10 @@ import dagger.Provides
 import dagger.multibindings.IntoMap
 import eu.peernetwork.core.ui.annotation.UiViewModel
 import javax.inject.Provider
-import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.factory.UiBuilderFactory
 import eu.peernetwork.core.ui.factory.UiViewModelFactory
 
 @Module
 object FollowersModule {
-    @Provides
-    @Followers.Scope
-    fun provideBuilderFactory(factory: UiBuilderFactory): UiComponentProvider.Factory = factory
-
     @Provides
     @Followers.Scope
     fun provideViewModelFactory(
