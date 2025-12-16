@@ -110,7 +110,7 @@ fun ProfilePage(
         limit = limit,
         provider = component,
         viewModelStoreOwner = viewModelStoreOwner
-    ) { controller.navigateIfNecessary("profile/${it.id}") }
+    ) { controller.navigateIfNecessary("profile/$it") }
     DesignTitleBarHost("ProfileScreen$user", {
         coroutine.launch {
             if (pageState.currentPage == 0) {
