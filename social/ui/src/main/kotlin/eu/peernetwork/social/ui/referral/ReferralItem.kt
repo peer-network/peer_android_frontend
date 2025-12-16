@@ -75,7 +75,7 @@ fun ReferralItem(
 
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
-fun PreviewUserItem() {
+fun PreviewReferralItem() {
     DesignTheme {
         ReferralItem(
             slug = "239100",

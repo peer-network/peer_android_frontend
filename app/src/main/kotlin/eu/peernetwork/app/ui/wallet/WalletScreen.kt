@@ -29,7 +29,7 @@ import eu.peernetwork.core.ui.design.material.DesignTitle
 import eu.peernetwork.core.ui.design.material.DesignTitleBarHost
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
-import eu.peernetwork.social.ui.search.member.MemberDialog
+import eu.peernetwork.social.ui.search.member.MemberModal
 import eu.peernetwork.user.domain.model.Account
 import eu.peernetwork.wallet.ui.model.UiRecipient
 import eu.peernetwork.wallet.ui.overview.OverviewScreen
@@ -77,7 +77,7 @@ fun WalletScreen(
                 }
             }
         }
-        MemberDialog(postLimit, showSheet, component, viewModelStoreOwner) {
+        MemberModal(postLimit, showSheet, component, viewModelStoreOwner) {
             recipient.value = UiRecipient(
                 id = it.id,
                 username = it.username,

@@ -1,40 +1,38 @@
 package eu.peernetwork.social.ui.search.title
 
+import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import eu.peernetwork.core.ui.theme.PeerTheme
-import eu.peernetwork.social.ui.compose.SearchItem
-import eu.peernetwork.social.ui.model.UiMember
-import eu.peernetwork.social.ui.model.UiPost
-import java.util.UUID
+import eu.peernetwork.core.ui.design.luna.DesignAvatar
+import eu.peernetwork.core.ui.theme.DesignTheme
 
 @Composable
 fun TitleItem(
-    post: UiPost,
-    onClick: (UiPost) -> Unit = {}
+    title: String,
+    onClick: () -> Unit
 ) {
-    val handleOnClick by rememberUpdatedState(onClick)
-    SearchItem(
-        modifier = Modifier
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.clickable(onClick = onClick)
             .fillMaxWidth()
-            .clickable { handleOnClick(post) }
+            .padding(horizontal = 16.dp)
             .padding(vertical = 8.dp),
-        lead = {
-            Box(modifier = Modifier.size(42.dp)
-                .background(MaterialTheme.colorScheme.tertiaryContainer)) {
+    ) {
+        DesignAvatar {
+            Box(modifier = Modifier.size(36.dp)
+                .background(MaterialTheme.colorScheme.surfaceContainerLow)) {
                 Text(
                     text = "~",
                     style = MaterialTheme.typography.bodyMedium.copy(
@@ -44,34 +42,21 @@ fun TitleItem(
                 )
             }
         }
-    ) {
         Text(
-            text = post.title,
+            text = title,
             style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onBackground
+            color = MaterialTheme.colorScheme.onBackground,
+            modifier = Modifier
+                .weight(1f)
+                .padding(horizontal = 10.dp)
         )
     }
 }
 
-@Preview
 @Composable
-fun PreviewTitleItem() {
-    PeerTheme {
-        val author = UiMember(
-            id = UUID.randomUUID().toString(),
-            slug = "1234",
-            username = "johnDoe",
-            imageUrl = "http://localhost",
-            isFollowed = false,
-            isFollowing = false
-        )
-        val post = UiPost(
-            id = UUID.randomUUID().toString(),
-            type = "post",
-            title = "Lorem ipsum",
-            description = "Lorem ipsum dolor sit amet",
-            author = author
-        )
-        TitleItem(post) {}
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
+fun PreviewMemberItem() {
+    DesignTheme {
+        TitleItem(title = "239100") {}
     }
 }

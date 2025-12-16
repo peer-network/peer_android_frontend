@@ -11,6 +11,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -59,6 +60,9 @@ fun SearchScreen(
     val selected = remember { mutableIntStateOf(-1) }
     val isVisible = remember { mutableStateOf(false) }
     val navigator = remember { NavigationInteractor(context, controller) }
+    val state by rememberSaveable(stateSaver = TextFieldState.Saver) {
+        mutableStateOf(TextFieldState(query ?: ""))
+    }
     CompositionLocalProvider(
         PostNavigator.LocalPostNavigator provides navigator
     ) {
@@ -71,7 +75,6 @@ fun SearchScreen(
                 controller = controller,
                 component = component
             ) {
-                val state = remember { TextFieldState(query ?: "") }
                 SearchPage(
                     state,
                     currentMode
@@ -93,7 +96,7 @@ fun SearchScreen(
                         component = component,
                         viewModelStoreOwner = viewModelStoreOwner,
                         listState = listState,
-                        modifier = Modifier.padding(top = 36.dp)
+                        modifier = Modifier.padding(top = 32.dp)
                     )
                 }
                 DesignTitleBarHost("SearchScreen") {

@@ -33,7 +33,7 @@ import eu.peernetwork.social.ui.model.UiMember
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun MemberDialog(
+fun MemberModal(
     postLimit: Int,
     showSheet: MutableState<Boolean>,
     provider: UiComponentProvider,
@@ -47,7 +47,7 @@ fun MemberDialog(
         showSheet,
         onDismiss = { showSheet.value = false }
     ) {
-        MemberDialog(state, showSheet, focus) {
+        MemberModal(state, showSheet, focus) {
             MemberScreen(
                 state,
                 postLimit,
@@ -69,7 +69,7 @@ fun MemberDialog(
 }
 
 @Composable
-fun MemberDialog(
+fun MemberModal(
     state: TextFieldState,
     enable: State<Boolean>,
     focusRequester: FocusRequester = FocusRequester(),
@@ -114,7 +114,7 @@ fun PreviewMemberDialog() {
     PeerTheme {
         val state = remember { TextFieldState() }
         val enable = remember { mutableStateOf(true) }
-        MemberDialog(state, enable) {
+        MemberModal(state, enable) {
             Box(modifier = Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background))

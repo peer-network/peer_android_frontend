@@ -1,5 +1,6 @@
 package eu.peernetwork.blog.ui.explore
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -10,6 +11,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableIntState
@@ -68,6 +70,7 @@ fun ExploreList(
                     if (post?.type == UiPostType.IMAGE) {
                         Box(
                             modifier = Modifier.aspectRatio(1f)
+                                .background(MaterialTheme.colorScheme.surfaceDim)
                                 .clickable { selected.intValue = index }
                         ) {
                             component.imageView()(
