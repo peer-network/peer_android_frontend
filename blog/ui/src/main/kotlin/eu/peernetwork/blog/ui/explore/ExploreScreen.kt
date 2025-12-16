@@ -83,7 +83,7 @@ fun ExploreScreen(
     ) {
         DesignPagingStream(
             state = derivedState,
-            loading = {  }
+            loading = { ExploreSkeleton(3) }
         ) { lazyPagingItems ->
             updatedContent(component, lazyPagingItems)
         }

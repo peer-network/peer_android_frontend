@@ -131,6 +131,11 @@ fun BoxScope.OnboardingFeatureListing() {
             null
         ),
         Triple(
+            painterResource(AppRes.drawable.bg_ad),
+            stringResource(AppRes.string.onboarding_boost_your_content),
+            null
+        ),
+        Triple(
             painterResource(AppRes.drawable.bg_shop),
             stringResource(AppRes.string.onboarding_shop_in_app),
             stringResource(AppRes.string.onboarding_coming_soon)
@@ -139,7 +144,7 @@ fun BoxScope.OnboardingFeatureListing() {
             painterResource(AppRes.drawable.bg_transfer),
             stringResource(AppRes.string.onboarding_cash_out),
             stringResource(AppRes.string.onboarding_cash_out_working_on_license)
-        )
+        ),
     )
     LazyVerticalStaggeredGrid(
         columns = StaggeredGridCells.Fixed(2),

@@ -17,7 +17,7 @@ import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
-import eu.peernetwork.core.ui.theme.PeerTheme
+import eu.peernetwork.core.ui.theme.DesignTheme
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -55,7 +55,7 @@ fun DesignAvatar(
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun PreviewDesignAvatar() {
-    PeerTheme {
+    DesignTheme(isDarkMode = true) {
         DesignAvatar(
             icon = { Box(
                 modifier = Modifier.size(18.dp)
