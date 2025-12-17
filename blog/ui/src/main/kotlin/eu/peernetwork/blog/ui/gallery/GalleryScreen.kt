@@ -56,6 +56,7 @@ fun GalleryScreen(
     ) { engagement ->
         GalleryScaffold(
             slug = post.author.slug.toString(),
+            type = post.type,
             username = post.author.username,
             title = post.title,
             description = post.description,
@@ -124,6 +125,11 @@ fun GalleryScreen(
                         position = position
                     )
                 )
+            } else {
+                GalleryCaption(
+                    description = post.description,
+                    modifier = Modifier.fillMaxSize()
+                ) { spec, value -> navigator.navigate(spec.route(value)) }
             }
         }
     }

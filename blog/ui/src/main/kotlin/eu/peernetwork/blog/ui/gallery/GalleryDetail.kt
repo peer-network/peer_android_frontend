@@ -17,7 +17,7 @@ import eu.peernetwork.core.ui.design.luna.DesignRichText
 import eu.peernetwork.core.ui.theme.DesignTheme
 
 @Composable
-fun GalleryText(
+fun GalleryDetail(
     title: AnnotatedString,
     description: AnnotatedString,
     time: String,
@@ -57,9 +57,9 @@ fun GalleryText(
 
 @Composable
 @Preview
-fun PreviewGalleryText() {
+fun PreviewGalleryDetail() {
     DesignTheme(isDarkMode = true) {
-        GalleryText(
+        GalleryDetail(
             time = "2hr ago",
             title = buildAnnotatedString { append("John Doe") },
             description = buildAnnotatedString {

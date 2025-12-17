@@ -10,12 +10,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
@@ -28,6 +31,7 @@ import eu.peernetwork.blog.ui.model.UiAsset
 import eu.peernetwork.blog.ui.model.UiDisplay
 import eu.peernetwork.blog.ui.model.UiEngagement
 import eu.peernetwork.blog.ui.model.UiMedia
+import eu.peernetwork.blog.ui.model.UiPostType
 import eu.peernetwork.core.ui.design.luna.DesignRichText
 import eu.peernetwork.core.ui.theme.DesignTheme
 import kotlinx.collections.immutable.persistentListOf
@@ -36,6 +40,7 @@ import kotlinx.collections.immutable.persistentListOf
 fun GalleryScaffold(
     slug: String,
     username: String,
+    type: UiPostType,
     title: AnnotatedString,
     description: AnnotatedString,
     imageUrl: String,
@@ -50,6 +55,7 @@ fun GalleryScaffold(
     connection: @Composable () -> Unit = {},
     content: @Composable BoxWithConstraintsScope.(String) -> Unit
 ) {
+    val borderColor = MaterialTheme.colorScheme.surfaceDim
     Box(
         modifier = modifier,
         contentAlignment = Alignment.BottomStart
@@ -58,17 +64,32 @@ fun GalleryScaffold(
             asset = asset,
             content = content
         )
-        Image(
-            painter = painterResource(R.drawable.overlay_gradient),
-            contentDescription = null,
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight(fraction = .9f),
-            contentScale = ContentScale.Crop
-        )
+        if (type != UiPostType.TEXT) {
+            Image(
+                painter = painterResource(R.drawable.overlay_gradient),
+                contentDescription = null,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(fraction = .9f),
+                contentScale = ContentScale.Crop
+            )
+        }
         Row(
             verticalAlignment = Alignment.Bottom,
-            modifier = Modifier.fillMaxWidth()
+            modifier = if (type != UiPostType.TEXT) {
+                Modifier.fillMaxWidth()
+            } else {
+                Modifier.fillMaxWidth()
+                    .drawBehind {
+                    val strokeWidth = 1.dp.toPx()
+                    drawLine(
+                        color = borderColor,
+                        start = Offset(0f, size.height),
+                        end = Offset(size.width, size.height),
+                        strokeWidth = strokeWidth
+                    )
+                }
+            },
         ) {
             Column(modifier = Modifier.weight(1f)) {
                 GalleryToolbar(
@@ -81,10 +102,12 @@ fun GalleryScaffold(
                     onClick = showAuthor,
                     content = connection
                 )
-                GalleryText(
+                GalleryDetail(
                     title = title,
                     time = time,
-                    description = description,
+                    description = if (type == UiPostType.TEXT) {
+                        buildAnnotatedString {  }
+                    } else { description },
                     onClick = onContentClick
                 )
             }
@@ -124,6 +147,7 @@ fun PreviewGalleryScaffold() {
         GalleryScaffold(
             slug = "239100",
             username = "John",
+            type = UiPostType.IMAGE,
             title = buildAnnotatedString { append("John Doe") },
             description = buildAnnotatedString {
                 append("This is a mock description for a content post. It's purely for testing.")
