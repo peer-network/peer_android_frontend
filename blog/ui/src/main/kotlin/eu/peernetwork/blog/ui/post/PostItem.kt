@@ -11,6 +11,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.blog.ui.model.UiAsset
+import eu.peernetwork.blog.ui.model.UiMedia
 import eu.peernetwork.blog.ui.model.UiPostDetail
 import eu.peernetwork.blog.ui.model.UiPostType
 import eu.peernetwork.core.ui.design.luna.DesignRichText
@@ -27,7 +28,7 @@ fun PostItem(
     onContentClick: (DesignRichText, String) -> Unit,
     engagement: @Composable () -> Unit,
     connection: @Composable RowScope.() -> Unit,
-    content: @Composable (String, Boolean) -> Unit
+    content: @Composable (UiMedia, Boolean) -> Unit
 ) {
     val updatedContent by rememberUpdatedState(content)
     val pagerState = rememberPagerState(initialPage = 0) { asset.media.size }
@@ -42,7 +43,7 @@ fun PostItem(
             engagement = engagement,
             connection = connection,
         )
-    } else if (type == UiPostType.AUDIO && asset.media.any { it.display.cover == null }) {
+    } else if (type == UiPostType.AUDIO && !asset.hasCover) {
         PostScaffold(
             model = model,
             pinnedBy = pinnedBy,
@@ -58,7 +59,7 @@ fun PostItem(
                 contentPadding = PaddingValues(horizontal = 12.dp)
             )
             Box(modifier = Modifier.fillMaxWidth()) {
-                updatedContent(asset.media.first().path, false)
+                updatedContent(asset.media.first(), false)
             }
         }
     } else {
@@ -74,7 +75,7 @@ fun PostItem(
         ) {
             Box(modifier = Modifier.fillMaxWidth()) {
                 if (asset.media.size == 1) {
-                    updatedContent(asset.media.first().path, true)
+                    updatedContent(asset.media.first(), true)
                 } else {
                     PostPager(
                         pagerState,

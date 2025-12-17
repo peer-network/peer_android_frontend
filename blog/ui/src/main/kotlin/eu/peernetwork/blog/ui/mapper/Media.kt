@@ -22,6 +22,7 @@ fun List<Media>.mapFromDomain(): UiAsset {
     val media = map { it.mapFromDomain() }
     return UiAsset(
         ratio = media.getAspectRatio(),
+        hasCover = media.any { it.display.cover != null },
         media = media.toPersistentList()
     )
 }

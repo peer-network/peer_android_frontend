@@ -77,9 +77,9 @@ fun GalleryScreen(
             connection = connection
         ) { media ->
             if (post.type == UiPostType.VIDEO) {
-                val path = "${media}${UiMimeType.Video.query()}"
+                val path = "${media.path}${UiMimeType.Video.query()}"
                 val bitmap = remember { derivedStateOf { thumbnail.value[path] } }
-                DesignThumbnail(media, bitmap) {
+                DesignThumbnail(media.path, bitmap) {
                     interactor.background(
                         media = path,
                         aspectRatio = post.asset.ratio,
@@ -91,7 +91,7 @@ fun GalleryScreen(
                 interactor.component().videoPlayer()(
                     Modifier,
                     spec = VideoPlayer.Spec(
-                        url = media,
+                        url = media.path,
                         ratio = post.asset.ratio,
                         progress = progress,
                         length = length,
@@ -102,7 +102,7 @@ fun GalleryScreen(
                 interactor.component().imageView()(
                     Modifier,
                     spec = ImageView.Spec(
-                        url = media,
+                        url = media.path,
                         ratio = null,
                         contentScale = ContentScale.Crop,
                         blur = 500f,
@@ -110,13 +110,28 @@ fun GalleryScreen(
                 )
                 interactor.component().imageView()(
                     Modifier,
-                    spec = ImageView.Spec(media, post.asset.ratio, zoomable = true)
+                    spec = ImageView.Spec(media.path, post.asset.ratio, zoomable = true)
                 )
             } else if (post.type == UiPostType.AUDIO) {
+                media.display.cover?.let {
+                    interactor.component().imageView()(
+                        Modifier,
+                        spec = ImageView.Spec(
+                            url = it,
+                            ratio = null,
+                            contentScale = ContentScale.Crop,
+                            blur = 500f,
+                        )
+                    )
+                    interactor.component().imageView()(
+                        Modifier,
+                        spec = ImageView.Spec(it, post.asset.ratio, zoomable = true)
+                    )
+                }
                 interactor.component().audioPlayer()(
                     Modifier,
                     spec = AudioPlayer.Spec(
-                        path = media,
+                        path = media.path,
                         length = length,
                         modifier = Modifier,
                         progress = progress,

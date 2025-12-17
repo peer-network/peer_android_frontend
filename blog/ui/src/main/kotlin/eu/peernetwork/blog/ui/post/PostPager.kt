@@ -32,12 +32,12 @@ import kotlinx.collections.immutable.persistentListOf
 fun PostPager(
     state: PagerState,
     asset: UiAsset,
-    content: @Composable (String) -> Unit
+    content: @Composable (UiMedia) -> Unit
 ) {
     val updatedContent by rememberUpdatedState(content)
     Box(contentAlignment = Alignment.BottomEnd) {
         HorizontalPager(state = state) {
-            Box { updatedContent(asset.media[it].path) }
+            Box { updatedContent(asset.media[it]) }
         }
         Box(modifier = Modifier.padding(horizontal = 24.dp)
             .padding(vertical = 16.dp)) {
@@ -110,7 +110,7 @@ fun PreviewPostPager() {
         val state = rememberPagerState(initialPage = 0) { items.size }
         PostPager(
             state,
-            UiAsset(.5f, items),
+            UiAsset(.5f,  false,items),
         ) {
             Box(modifier = Modifier.aspectRatio(1f))
         }

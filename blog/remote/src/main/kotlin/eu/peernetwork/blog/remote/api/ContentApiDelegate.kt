@@ -84,7 +84,7 @@ class ContentApiDelegate @Inject constructor(
                     object : TypeToken<List<MediaModel>>() {}.type
                 ).map {
                     it.copy(
-                        options = it.options?.copy(cover = coverPath)
+                        options = it.options?.copy(cover = coverPath?.let { "$url$coverPath" })
                     ).mapFromDomain().copy(path = "$url${it.path}")
                 }
             )

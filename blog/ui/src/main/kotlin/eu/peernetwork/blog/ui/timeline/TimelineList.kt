@@ -109,13 +109,13 @@ fun TimelineList(
                             )
                         }
                     },
-                    content = { path, expanded ->
+                    content = { media, expanded ->
                         val isPlaying = remember { derivedStateOf { index == current.intValue } }
                         PostMedia(
                             type = post.type,
-                            path = path,
+                            path = media.path,
                             expanded = expanded,
-                            avatar = post.author.imageUrl,
+                            cover = media.display.cover ?: post.author.imageUrl,
                             ratio = post.asset.ratio,
                             enable = enable,
                             isPlaying = isPlaying,

@@ -30,7 +30,7 @@ import eu.peernetwork.media.core.renderer.VideoThumbnail
 fun PostMedia(
     type: UiPostType,
     path: String,
-    avatar: String,
+    cover: String,
     expanded: Boolean,
     ratio: Float,
     enable: State<Boolean>,
@@ -93,7 +93,7 @@ fun PostMedia(
                 interactor.component().imageView()(
                     modifier = Modifier,
                     spec = ImageView.Spec(
-                        url = avatar,
+                        url = cover,
                         ratio = ratio,
                         contentScale = ContentScale.Crop,
                         blur = 500f,
@@ -102,7 +102,7 @@ fun PostMedia(
                 interactor.component().imageView()(
                     modifier = Modifier,
                     spec = ImageView.Spec(
-                        url = avatar,
+                        url = cover,
                         ratio = ratio
                     )
                 )

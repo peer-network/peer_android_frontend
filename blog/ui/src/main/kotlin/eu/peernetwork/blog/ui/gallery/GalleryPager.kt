@@ -12,20 +12,21 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import eu.peernetwork.blog.ui.model.UiAsset
+import eu.peernetwork.blog.ui.model.UiMedia
 import eu.peernetwork.blog.ui.post.PostPager
 
 @Composable
 fun GalleryPager(
     asset: UiAsset,
-    content: @Composable BoxWithConstraintsScope.(String) -> Unit
+    content: @Composable BoxWithConstraintsScope.(UiMedia) -> Unit
 ) {
     val updatedContent by rememberUpdatedState(content)
     if (asset.media.size == 1) {
-        val path by remember { derivedStateOf { asset.media.first().path } }
+        val media by remember { derivedStateOf { asset.media.first() } }
         BoxWithConstraints(
             contentAlignment = Alignment.Center,
             modifier = Modifier.fillMaxSize()
-        ) { updatedContent(this, path) }
+        ) { updatedContent(this, media) }
     } else {
         val pagerState = rememberPagerState(initialPage = 0) { asset.media.size }
         PostPager(

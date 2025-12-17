@@ -168,12 +168,12 @@ fun DetailScreen(
                     )
                 }
             },
-            content = { path, expanded ->
+            content = { media, expanded ->
                 PostMedia(
                     type = post.type,
-                    path = path,
+                    path = media.path,
                     expanded = expanded,
-                    avatar = post.author.imageUrl,
+                    cover = media.display.cover ?: post.author.imageUrl,
                     ratio = post.asset.ratio,
                     enable = isVisible,
                     isPlaying = isPlaying,

@@ -1,6 +1,7 @@
 package eu.peernetwork.blog.ui.gallery
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraintsScope
 import androidx.compose.foundation.layout.Column
@@ -19,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
@@ -53,18 +55,25 @@ fun GalleryScaffold(
     onContentClick: (DesignRichText, String) -> Unit,
     modifier: Modifier = Modifier,
     connection: @Composable () -> Unit = {},
-    content: @Composable BoxWithConstraintsScope.(String) -> Unit
+    content: @Composable BoxWithConstraintsScope.(UiMedia) -> Unit
 ) {
     val borderColor = MaterialTheme.colorScheme.surfaceDim
+    val hasMedia = (type == UiPostType.VIDEO ||
+            type == UiPostType.IMAGE ||
+            (type == UiPostType.AUDIO && asset.media.any { it.display.cover != null }))
     Box(
         modifier = modifier,
         contentAlignment = Alignment.BottomStart
     ) {
+        if (hasMedia) {
+            Box(modifier = Modifier.fillMaxSize()
+                .background(Color.Black))
+        }
         GalleryPager(
             asset = asset,
             content = content
         )
-        if (type != UiPostType.TEXT) {
+        if (hasMedia) {
             Image(
                 painter = painterResource(R.drawable.overlay_gradient),
                 contentDescription = null,
@@ -76,7 +85,7 @@ fun GalleryScaffold(
         }
         Row(
             verticalAlignment = Alignment.Bottom,
-            modifier = if (type != UiPostType.TEXT) {
+            modifier = if (hasMedia) {
                 Modifier.fillMaxWidth()
             } else {
                 Modifier.fillMaxWidth()
@@ -126,6 +135,7 @@ fun GalleryScaffold(
 fun PreviewGalleryScaffold() {
     val asset = UiAsset(
         ratio = .5f,
+        hasCover = false,
         media = persistentListOf(
             UiMedia("http://localhost", UiDisplay("", null)),
         )
