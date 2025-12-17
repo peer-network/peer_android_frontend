@@ -21,6 +21,13 @@
     <string name="app_wiki">App Wiki</string>
     <string name="backend_wiki">Backend Wiki</string>
 
+    <string name="search_label">Search</string>
+    <string name="explore_label">Explore</string>
+    <string name="add_label">New post</string>
+    <string name="wallet_label">Wallet</string>
+    <string name="profile_label">Profile</string>
+    <string name="trend_label">Trend</string>
+
     <string name="version_label">Version %s</string>
     <string name="skip_label">Skip</string>
     <string name="proceed_label">Proceed</string>

@@ -209,7 +209,7 @@ fun DarkDesignTextFieldPreview() {
                 modifier = Modifier.fillMaxWidth(),
                 leading = {
                     Icon(
-                        painter = painterResource(R.drawable.ic_trend_outline),
+                        painter = painterResource(R.drawable.ic_more),
                         contentDescription = null,
                         modifier = Modifier.padding(end = 8.dp)
                             .size(22.dp),

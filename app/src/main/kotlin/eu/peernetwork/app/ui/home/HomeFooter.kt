@@ -44,7 +44,7 @@ fun HomeFooter(
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            HomeRoute.ROUTES.forEachIndexed { index, navigation ->
+            HomeMenu.MENU.forEachIndexed { index, navigation ->
                 IconButton(onClick = {
                     handleClick(start.value, index)
                 }) {
@@ -53,15 +53,15 @@ fun HomeFooter(
                             tint = MaterialTheme.colorScheme.onSurface,
                             painter = painterResource(id = navigation.icon),
                             contentDescription = stringResource(id = navigation.label),
-                            modifier = Modifier.size(32.dp).graphicsLayer {
+                            modifier = Modifier.size(20.dp).graphicsLayer {
                                 alpha = if (index == start.value) 0f else 1f
                             }
                         )
                         Icon(
                             tint = MaterialTheme.colorScheme.onBackground,
-                            painter = painterResource(id = navigation.activeIcon),
+                            painter = painterResource(id = navigation.active),
                             contentDescription = stringResource(id = navigation.label),
-                            modifier = Modifier.size(32.dp).graphicsLayer {
+                            modifier = Modifier.size(20.dp).graphicsLayer {
                                 alpha = if (index == start.value) 1f else 0f
                             }
                         )

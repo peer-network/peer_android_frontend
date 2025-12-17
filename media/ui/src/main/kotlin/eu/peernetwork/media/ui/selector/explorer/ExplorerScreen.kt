@@ -178,7 +178,7 @@ fun ExplorerScreen(
                     photo to eu.peernetwork.core.ui.R.drawable.ic_photo,
                     video to eu.peernetwork.core.ui.R.drawable.ic_movie,
                     audio to eu.peernetwork.core.ui.R.drawable.ic_music,
-                    files to eu.peernetwork.core.ui.R.drawable.ic_wallet
+                    files to R.drawable.ic_folder
                 )
                 items.entries.forEach { (label, iconRes) ->
                     item(tag = label, {
