@@ -2,7 +2,6 @@ package eu.peernetwork.blog.ui.detail
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -11,15 +10,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import eu.peernetwork.blog.ui.R
 import eu.peernetwork.blog.ui.engagement.EngagementInteractor.Companion.LocalEngagementInteractor
 import eu.peernetwork.blog.ui.engagement.EngagementReaction
 import eu.peernetwork.blog.ui.engagement.EngagementReaction.Companion.LocalEngagementReaction
 import eu.peernetwork.blog.ui.extension.route
+import eu.peernetwork.blog.ui.extension.share
 import eu.peernetwork.blog.ui.mapper.mapToDetail
 import eu.peernetwork.blog.ui.model.UiPost
+import eu.peernetwork.blog.ui.moderation.ModerationInteractor.Companion.LocalModerationInteractor
 import eu.peernetwork.blog.ui.post.PostItem
 import eu.peernetwork.blog.ui.post.PostMedia
 import eu.peernetwork.blog.ui.post.PostNavigator
@@ -27,6 +30,8 @@ import eu.peernetwork.blog.ui.post.PostNavigator.Companion.LocalPostNavigator
 import eu.peernetwork.blog.ui.post.PostScreen
 import eu.peernetwork.blog.ui.post.PostSkeleton
 import eu.peernetwork.blog.ui.post.PostUserConnection
+import eu.peernetwork.blog.ui.timeline.TimelineSheet
+import eu.peernetwork.blog.ui.timeline.TimelineSheetMenuItem
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.luna.DesignStream
 import eu.peernetwork.core.ui.design.luna.DesignStreamState
@@ -70,11 +75,9 @@ fun DetailScreen(
 @Composable
 fun DetailScreen(
     id: String,
-    uuid: String,
-    enable: State<Boolean>,
-    selected: MutableIntState,
     component: Detail.Component,
-    viewModel: DetailViewModel
+    viewModel: DetailViewModel,
+    content: @Composable (State<UiPost>) -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val derivedState = remember {
@@ -91,8 +94,7 @@ fun DetailScreen(
             }
         }
     }
-    val isPlaying = remember { mutableStateOf(false) }
-    val showSheet = remember { mutableStateOf<UiPost?>(null) }
+    val updatedContent by rememberUpdatedState(content)
     DesignStream(
         state = derivedState,
         loading = { PostSkeleton() },
@@ -104,18 +106,42 @@ fun DetailScreen(
                 )
             }
         }
+    ) { postState -> updatedContent(postState) }
+}
+
+@Composable
+fun DetailScreen(
+    id: String,
+    uuid: String,
+    isVisible: State<Boolean>,
+    component: Detail.Component,
+    viewModel: DetailViewModel,
+    onBoost: (String) -> Unit,
+    onClick: () -> Unit,
+) {
+    val context = LocalContext.current
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    val isPlaying = remember { mutableStateOf(false) }
+    val showSheet = remember { mutableStateOf<UiPost?>(null) }
+    val shareTitle = stringResource(R.string.share_label)
+    val handleOnBoost by rememberUpdatedState(onBoost)
+    DetailScreen(
+        id = id,
+        component = component,
+        viewModel = viewModel,
     ) { postState ->
         val post = postState.value
         val engagement = LocalEngagementInteractor.current
         val reaction = LocalEngagementReaction.current
         val navigator = LocalPostNavigator.current
+        val moderation = LocalModerationInteractor.current
         PostItem(
             type = post.type,
             pinnedBy = post.pinnedBy,
             model = post.mapToDetail(),
             asset = post.asset,
             onMenu = { showSheet.value = post },
-            onClick = { selected.intValue = 0 },
+            onClick = onClick,
             onContentClick = { type, value ->
                 navigator.navigate(type.route(value))
             },
@@ -149,11 +175,21 @@ fun DetailScreen(
                     expanded = expanded,
                     avatar = post.author.imageUrl,
                     ratio = post.asset.ratio,
-                    enable = enable,
+                    enable = isVisible,
                     isPlaying = isPlaying,
                 ) {}
             }
         )
+        TimelineSheet(
+            uuid = uuid,
+            state = showSheet
+        ) { sheetState, post ->
+            when (sheetState) {
+                TimelineSheetMenuItem.REPORT -> moderation.onReport(post.id)
+                TimelineSheetMenuItem.SHARE -> context.share(post.url, shareTitle)
+                TimelineSheetMenuItem.BOOST -> handleOnBoost(post.id)
+            }
+        }
     }
     LaunchedEffect(Unit) {
         if (state is DetailViewModel.State.Default) {

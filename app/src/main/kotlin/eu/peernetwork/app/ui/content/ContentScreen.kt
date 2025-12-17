@@ -3,7 +3,6 @@ package eu.peernetwork.app.ui.content
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -50,9 +49,7 @@ fun ContentScreen(
 ) {
     val context = LocalContext.current
     val controller = rememberNavController()
-    val overlay = remember { mutableStateOf<String?>(null) }
-    val enable = remember { derivedStateOf { overlay.value == null } }
-    val selected = remember { mutableIntStateOf(-1) }
+    val selected = remember { mutableIntStateOf(0) }
     val navigator = remember { NavigationInteractor(context, controller) }
     CompositionLocalProvider(
         PostNavigator.LocalPostNavigator provides navigator
@@ -61,9 +58,10 @@ fun ContentScreen(
             provider = provider,
             viewModelStoreOwner = viewModelStoreOwner
         ) { component ->
+            val isVisible = remember { mutableStateOf(false) }
             ContentNavigation(
                 account = account,
-                postLimit = BuildConfig.PAGING_LIMIT,
+                limit = BuildConfig.PAGING_LIMIT,
                 component = component,
                 controller = controller
             ) {
@@ -78,13 +76,21 @@ fun ContentScreen(
                     DetailScreen(
                         id = postId,
                         uuid = account.id,
-                        enable = enable,
-                        selected = selected,
+                        isVisible = isVisible,
                         component = component,
                         viewModel = viewModel,
-                    )
+                        onBoost = { controller.navigate("boost/$it") }
+                    ) { isVisible.value = true }
                 }
             }
+            ContentModal(
+                account = account,
+                postId = postId,
+                selected = selected,
+                isVisible = isVisible,
+                provider = provider,
+                viewModelStoreOwner = viewModelStoreOwner
+            )
         }
     }
     DesignTitleBarHost("ContentScreen$postId") {
