@@ -74,7 +74,13 @@ fun GalleryScreen(
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
                 .navigationBarsPadding(),
-            connection = connection
+            connection = connection,
+            menu = {
+                if (post.type != UiPostType.TEXT
+                    && post.type != UiPostType.IMAGE) {
+                    interactor.component().audioPlayer().Volume()
+                }
+            }
         ) { media ->
             if (post.type == UiPostType.VIDEO) {
                 val path = "${media.path}${UiMimeType.Video.query()}"

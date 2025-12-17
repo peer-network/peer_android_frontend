@@ -11,6 +11,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -26,8 +28,10 @@ fun GallerySidebar(
     engagement: UiEngagement,
     onEngage: (EngagementReaction.State) -> Unit,
     onMenu: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit = {}
 ) {
+    val updatedContent by rememberUpdatedState(content)
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
@@ -39,6 +43,7 @@ fun GallerySidebar(
                 onClick = onEngage,
                 size = 24.dp
             )
+            updatedContent()
         }
         Box(
             contentAlignment = Alignment.Center,

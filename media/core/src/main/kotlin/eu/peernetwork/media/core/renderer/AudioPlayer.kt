@@ -20,6 +20,9 @@ interface AudioPlayer : Renderer.Stateful<AudioPlayer.Spec> {
         onPlay: (Boolean) -> Unit
     )
 
+    @Composable
+    fun Volume()
+
     data class Spec(
         val path: String,
         val progress: MutableFloatState,

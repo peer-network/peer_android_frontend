@@ -54,6 +54,7 @@ fun GalleryScaffold(
     showAuthor: () -> Unit,
     onContentClick: (DesignRichText, String) -> Unit,
     modifier: Modifier = Modifier,
+    menu: @Composable () -> Unit = {},
     connection: @Composable () -> Unit = {},
     content: @Composable BoxWithConstraintsScope.(UiMedia) -> Unit
 ) {
@@ -124,7 +125,8 @@ fun GalleryScaffold(
                 engagement = engagement.value,
                 onEngage = onEngage,
                 onMenu = onMenu,
-                Modifier.width(56.dp)
+                modifier = Modifier.width(56.dp),
+                content = menu
             )
         }
     }
