@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.clearText
@@ -85,7 +86,8 @@ fun SearchToolbar(
                     painterResource(R.drawable.ic_return)
                 },
                 contentDescription = mode.value.label(),
-                tint = MaterialTheme.colorScheme.outline
+                tint = MaterialTheme.colorScheme.outline,
+                modifier = Modifier.size(18.dp)
             )
         }
     }
