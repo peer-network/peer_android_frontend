@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -54,10 +55,10 @@ fun TimelineModal(
         viewModelStoreOwner = viewModelStoreOwner,
         onEvent = onEvent,
     ) { component, post, index, pagerState ->
+        val enabled = remember { derivedStateOf { pagerState.currentPage == index } }
         GalleryScreen(
             position = index,
-            selected = selected,
-            enabled = !pagerState.isScrollInProgress,
+            enabled = enabled,
             post = post,
             showSheet = showSheet
         ) {

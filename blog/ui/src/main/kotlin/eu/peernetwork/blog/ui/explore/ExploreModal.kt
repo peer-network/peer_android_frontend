@@ -2,6 +2,7 @@ package eu.peernetwork.blog.ui.explore
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableIntState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModelStoreOwner
@@ -37,10 +38,10 @@ fun ExploreModal(
             viewModelStoreOwner = viewModelStoreOwner,
             onBoost = onBoost
         ) { component, item, index, pagerState ->
+            val enabled = remember { derivedStateOf { pagerState.currentPage == index } }
             GalleryScreen(
                 position = index,
-                selected = selected,
-                enabled =!pagerState.isScrollInProgress,
+                enabled = enabled,
                 post = item,
                 showSheet = showSheet
             ) {}

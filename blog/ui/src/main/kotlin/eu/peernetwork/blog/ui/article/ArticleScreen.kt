@@ -269,11 +269,18 @@ fun ArticleFullScreen(
                     }
                 }
             ) { index ->
-                items[index]?.let { updatedContent(this, component, it, index, pagerState) }
+                items[index]?.let {
+                    updatedContent(
+                        this,
+                        component,
+                        it,
+                        index,
+                        pagerState
+                    ) }
                 LaunchedEffect(Unit) {
-                    items.itemSnapshotList.getOrNull(pagerState.currentPage)?.let { post ->
-                        viewModel.view(post.id)
-                    }
+                    items.itemSnapshotList
+                        .getOrNull(pagerState.currentPage)
+                        ?.let { post -> viewModel.view(post.id) }
                 }
             }
         }

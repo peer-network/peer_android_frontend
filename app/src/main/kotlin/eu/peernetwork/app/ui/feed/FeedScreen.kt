@@ -3,6 +3,7 @@ package eu.peernetwork.app.ui.feed
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -105,6 +106,11 @@ fun FeedScreen(
                     onFilter = { viewModel.setFilter(it) },
                     onBoost = { showBoost.value = it }
                 ) { isVisible.value = true }
+                DisposableEffect(Unit) {
+                    onDispose {
+                        viewModel.lastVisited(pageState.currentPage)
+                    }
+                }
             }
             FeedModal(
                 account = account,

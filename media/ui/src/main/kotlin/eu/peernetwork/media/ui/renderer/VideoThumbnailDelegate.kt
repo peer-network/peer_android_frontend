@@ -44,7 +44,9 @@ class VideoThumbnailDelegate @Inject constructor(
         val surfaceView = remember { TextureView(context) }
         val isReady = remember { mutableStateOf(spec.isPlaying.value) }
         val dimension = session.observer.collectAsStateWithLifecycle()
-        val mute = session.volume().collectAsStateWithLifecycle(session.exoPlayer().isDeviceMuted)
+        val mute = session.volume().collectAsStateWithLifecycle(
+            initialValue = session.exoPlayer().isDeviceMuted
+        )
         DisposableEffect(Unit) {
             val listener = object : Player.Listener {
                 override fun onPlayerError(error: PlaybackException) {

@@ -39,7 +39,9 @@ fun AudioPlayerThumbnail(
     val progress = remember { mutableFloatStateOf(0f) }
     val volume = session.volume().collectAsStateWithLifecycle(enabled.value)
     val player = remember { source() }
-    val playing = remember(isPlaying.value) { mutableStateOf(isPlaying.value) }
+    val playing = remember(isPlaying.value, volume.value) {
+        mutableStateOf(isPlaying.value && volume.value)
+    }
     val handlePlay by rememberUpdatedState(onPlay)
     if (hasControls) {
         AudioScaffold(
@@ -87,8 +89,8 @@ fun AudioPlayerThumbnail(
             }
         }
     }
-    LaunchedEffect(isPlaying.value, enabled.value) {
-        while (isPlaying.value && enabled.value) {
+    LaunchedEffect(isPlaying.value, enabled.value, volume.value) {
+        while (isPlaying.value && enabled.value && volume.value) {
             withFrameMillis {
                 length.longValue = player.duration.coerceAtLeast(1L)
                 progress.floatValue =

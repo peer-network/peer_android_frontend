@@ -5,8 +5,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableLongStateOf
@@ -35,9 +35,8 @@ import eu.peernetwork.media.core.renderer.VideoPlayer
 @Composable
 fun GalleryScreen(
     position: Int,
-    selected: MutableIntState,
+    enabled: State<Boolean>,
     showSheet: MutableState<UiPost?>,
-    enabled: Boolean,
     post: UiPost,
     connection: @Composable () -> Unit,
 ) {
@@ -101,7 +100,7 @@ fun GalleryScreen(
                         ratio = post.asset.ratio,
                         progress = progress,
                         length = length,
-                        enabled = enabled,
+                        enabled = enabled.value,
                     )
                 )
             } else if (post.type == UiPostType.IMAGE) {
@@ -131,7 +130,11 @@ fun GalleryScreen(
                     )
                     interactor.component().imageView()(
                         Modifier,
-                        spec = ImageView.Spec(it, post.asset.ratio, zoomable = true)
+                        spec = ImageView.Spec(
+                            url = it,
+                            ratio = post.asset.ratio,
+                            zoomable = true
+                        )
                     )
                 }
                 interactor.component().audioPlayer()(
@@ -142,7 +145,6 @@ fun GalleryScreen(
                         modifier = Modifier,
                         progress = progress,
                         enabled = enabled,
-                        current = selected,
                         position = position
                     )
                 )

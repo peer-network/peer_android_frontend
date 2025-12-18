@@ -3,6 +3,7 @@ package eu.peernetwork.blog.ui.detail
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableIntState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -53,6 +54,7 @@ fun DetailModal(
             viewModel = viewModel,
         ) { postState ->
             val pagerState = rememberPagerState(initialPage = 0) { 1 }
+            val enabled = remember { derivedStateOf { pagerState.currentPage > 0 } }
             PostScreen(
                 uuid = uuid,
                 imageUrl = imageUrl,
@@ -78,8 +80,7 @@ fun DetailModal(
             ) {
                 GalleryScreen(
                     position = selected.intValue,
-                    selected = selected,
-                    enabled = true,
+                    enabled = enabled,
                     post = postState.value,
                     showSheet = showSheet
                 ) {

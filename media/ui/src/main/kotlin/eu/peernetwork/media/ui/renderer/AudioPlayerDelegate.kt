@@ -10,9 +10,11 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableLongState
 import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -46,10 +48,21 @@ class AudioPlayerDelegate @Inject constructor(
         onPlay: (Boolean) -> Unit
     ) {
         val player = remember { session.exoPlayer() }
-        val isReady = remember { mutableStateOf(false) }
         val isLoading = remember { mutableStateOf(false) }
-        val mute = session.volume().collectAsStateWithLifecycle(session.exoPlayer().isDeviceMuted)
-        DisposableEffect(Unit) {
+        val mute = session.volume().collectAsStateWithLifecycle(
+            initialValue = session.exoPlayer().isDeviceMuted
+        )
+        val handlePlay by rememberUpdatedState {
+            player.playWhenReady = true
+            player.setMediaItem(
+                MediaItem.Builder()
+                    .setUri(path)
+                    .setMediaId(path)
+                    .build()
+            )
+            player.prepare()
+        }
+        DisposableEffect(path) {
             val listener = object : Player.Listener {
                 override fun onIsPlayingChanged(playing: Boolean) {
                     if (playing) {
@@ -57,8 +70,9 @@ class AudioPlayerDelegate @Inject constructor(
                     }
                 }
                 override fun onPlayerError(error: PlaybackException) {
-                    player.setMediaItem(MediaItem.fromUri(path))
-                    player.prepare()
+                    if (player.currentMediaItem?.mediaId == path) {
+                        handlePlay()
+                    }
                 }
             }
             player.addListener(listener)
@@ -68,7 +82,7 @@ class AudioPlayerDelegate @Inject constructor(
             AudioPlayerThumbnail(
                 hasControls = hasControls,
                 enabled = enable,
-                isPlaying = isReady,
+                isPlaying = isPlaying,
                 isLoading = isLoading,
                 length = length,
                 session = session,
@@ -77,38 +91,44 @@ class AudioPlayerDelegate @Inject constructor(
             )
         }
         LaunchedEffect(Unit) {
-            snapshotFlow { isPlaying.value }
-                .distinctUntilChanged()
-                .debounce(500)
-                .collect { playing ->
-                    isReady.value = playing && mute.value
-                    player.playWhenReady = playing
-                    isLoading.value = mute.value && playing
-                    if (playing) {
-                        player.setMediaItem(MediaItem.fromUri(path))
-                        player.prepare()
-                    }
-                }
-        }
-        LaunchedEffect(Unit) {
             snapshotFlow { mute.value }
                 .distinctUntilChanged()
                 .collect { muted ->
                     session.exoPlayer().volume = if (muted) 1f else 0f
+                    if (player.currentMediaItem?.mediaId == path) {
+                        if (mute.value) {
+                            player.play()
+                        } else {
+                            player.pause()
+                        }
+                    }
+                }
+        }
+        LaunchedEffect(Unit) {
+            snapshotFlow { isPlaying.value }
+                .distinctUntilChanged()
+                .debounce(500)
+                .collect { playing ->
+                    isLoading.value = playing
+                    if (playing) {
+                        if (player.currentMediaItem?.mediaId != path) {
+                            handlePlay()
+                        }
+                    }
                 }
         }
         LaunchedEffect(Unit) {
             snapshotFlow { enable.value }
                 .distinctUntilChanged()
                 .collect { enabled ->
-                    if (!enabled && isReady.value) {
+                    if (!enabled && player.currentMediaItem?.mediaId == path) {
                         player.pause()
                     }
                 }
         }
-        DisposableEffect(enable.value) {
+        DisposableEffect(Unit) {
             onDispose {
-                if (!enable.value) {
+                if (player.currentMediaItem?.mediaId == path) {
                     player.pause()
                 }
             }
@@ -139,10 +159,35 @@ class AudioPlayerDelegate @Inject constructor(
     }
 
     @Composable
+    @OptIn(FlowPreview::class)
     override fun invoke(
         modifier: Modifier,
         spec: AudioPlayer.Spec
     ) {
-
+        val player = remember { session.exoPlayer() }
+        LaunchedEffect(Unit) {
+            snapshotFlow { spec.enabled.value }
+                .distinctUntilChanged()
+                .debounce(500)
+                .collect { playing ->
+                    if (playing) {
+                        player.playWhenReady = true
+                        player.setMediaItem(
+                            MediaItem.Builder()
+                                .setUri(spec.path)
+                                .setMediaId(spec.path)
+                                .build()
+                        )
+                        player.prepare()
+                    }
+                }
+        }
+        DisposableEffect(Unit) {
+            onDispose {
+                if (player.currentMediaItem?.mediaId == spec.path) {
+                    player.pause()
+                }
+            }
+        }
     }
 }

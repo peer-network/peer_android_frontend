@@ -3,6 +3,7 @@ package eu.peernetwork.blog.ui.article
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.State
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModelStoreOwner
@@ -40,11 +41,11 @@ fun ArticleModal(
         viewModelStoreOwner = viewModelStoreOwner,
         onEvent = onEvent,
     ) { component, item, index, pagerState ->
+        val enabled = remember { derivedStateOf { pagerState.currentPage == index } }
         GalleryScreen(
             position = index,
-            selected = selected,
+            enabled = enabled,
             showSheet = showSheet,
-            enabled = !pagerState.isScrollInProgress,
             post = item
         ) {}
     }
