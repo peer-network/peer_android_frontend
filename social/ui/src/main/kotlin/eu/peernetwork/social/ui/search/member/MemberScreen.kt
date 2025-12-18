@@ -36,7 +36,8 @@ fun MemberScreen(
     onClick: (UiMember) -> Boolean,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    header: @Composable () -> Unit = {},
 ) {
     val context = LocalContext.current
     val component = remember {
@@ -49,6 +50,7 @@ fun MemberScreen(
     )
     val page = remember(postLimit) { Pageable(0, postLimit) }
     val handleClick by rememberUpdatedState(onClick)
+    val updatedHeader by rememberUpdatedState(header)
     val state by viewModel.state.collectAsStateWithLifecycle()
     val derivedState = remember {
         derivedStateOf {
@@ -75,7 +77,7 @@ fun MemberScreen(
         state = derivedState,
         modifier = Modifier.fillMaxSize()
             .then(modifier),
-        loading = { MemberSkeleton(3) },
+        loading = { MemberSkeleton(3, header) },
         error = { error ->
             MemberError(component.resource().error(error.value)) {
                 viewModel.search(query.text.toString(), page)
@@ -83,6 +85,7 @@ fun MemberScreen(
         }
     ) { lazyPagingItems ->
         LazyColumn(modifier = Modifier.fillMaxSize()) {
+            item { updatedHeader() }
             items(
                 count = lazyPagingItems.itemCount,
                 key = { index -> index }

@@ -4,6 +4,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.text.KeyboardOptions
@@ -52,20 +54,27 @@ fun MemberModal(
         state = showSheet,
         onDismiss = { showSheet.value = false }
     ) {
-        MemberModal(state, showSheet, focus) {
+        MemberModal(
+            state = state, 
+            enable = showSheet,
+            focusRequester = focus
+        ) {
             MemberScreen(
-                state,
-                postLimit,
-                {
+                query = state,
+                postLimit = postLimit,
+                onClick = {
                     val shouldDismiss = handleClick(it)
                     if (shouldDismiss) {
                         showSheet.value = false
                     }
                     shouldDismiss
                 },
-                provider,
-                viewModelStoreOwner
-            )
+                provider = provider,
+                viewModelStoreOwner = viewModelStoreOwner
+            ) {
+                Box(modifier = Modifier.fillMaxWidth()
+                    .height(32.dp))
+            }
         }
         LaunchedEffect(Unit) {
             focus.requestFocus()
@@ -84,7 +93,7 @@ fun MemberModal(
     Box(modifier = Modifier
         .statusBarsPadding()
         .padding(vertical = 16.dp)) {
-        Box(modifier = Modifier.padding(top = 48.dp)) {
+        Box(modifier = Modifier.padding(top = 24.dp)) {
             updateContent()
         }
         DesignTextField(
@@ -110,7 +119,7 @@ fun MemberModal(
                 )
             },
             modifier = Modifier.focusRequester(focusRequester)
-                .padding(horizontal = 18.dp)
+                .padding(horizontal = 16.dp)
         )
     }
 }

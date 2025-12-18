@@ -2,7 +2,6 @@ package eu.peernetwork.social.ui.search.member
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -10,6 +9,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -19,8 +20,13 @@ import eu.peernetwork.core.ui.design.material.DesignShimmer
 import eu.peernetwork.core.ui.theme.DesignTheme
 
 @Composable
-fun MemberSkeleton(count: Int) {
+fun MemberSkeleton(
+    count: Int,
+    header: @Composable () -> Unit = {},
+) {
+    val updatedHeader by rememberUpdatedState(header)
     LazyColumn {
+        item { updatedHeader() }
         items(count) {
             MemberSkeleton(
                 Modifier.fillMaxWidth()
