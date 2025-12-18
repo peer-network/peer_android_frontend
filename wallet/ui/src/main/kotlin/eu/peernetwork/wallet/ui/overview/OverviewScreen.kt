@@ -20,8 +20,8 @@ import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.compose.DesignStatefulScaffold
 import eu.peernetwork.core.ui.design.compose.DesignStatefulScaffoldState
 import eu.peernetwork.core.ui.extension.builder
+import eu.peernetwork.core.ui.theme.DesignTheme
 import eu.peernetwork.core.ui.theme.PeerAppGreen
-import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.wallet.ui.model.UiWallet
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -105,7 +105,7 @@ fun OverviewScreen(wallet: UiWallet) {
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun PreviewOverviewScreen() {
-    PeerTheme {
+    DesignTheme(isDarkMode = true) {
         OverviewScreen(
             UiWallet(
                 balance = BigDecimal(1000),

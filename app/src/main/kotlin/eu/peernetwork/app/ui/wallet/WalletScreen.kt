@@ -105,7 +105,7 @@ fun WalletScreen(
     val updatedContent by rememberUpdatedState(content)
     val state = remember { derivedStateOf { DesignStatefulScaffoldState.Success(Unit) } }
     DesignRefreshableScaffold<Unit>(state, onRefresh = onRefresh) {
-        Column(modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp)
+        Column(modifier = Modifier.padding(horizontal = 18.dp, vertical = 8.dp)
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
         ) {
