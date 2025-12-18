@@ -66,9 +66,15 @@ fun WalletScreen(
             onRefresh = { lastUpdated.longValue = System.currentTimeMillis() },
             header = { OverviewScreen(lastUpdated, component, viewModelStoreOwner) }
         ) {
-            ServiceScreen(service, component, viewModelStoreOwner, {
-                controller.navigateIfNecessary("profile/${it}")
-            }, { recipient.value = null }) { showSheet.value = true }
+            ServiceScreen(
+                serviceState = service,
+                provider = component,
+                viewModelStoreOwner = viewModelStoreOwner,
+                onAccountClicked = {
+                    controller.navigateIfNecessary("profile/${it}")
+                },
+                onClear = { recipient.value = null }
+            ) { showSheet.value = true }
         }
         DesignTitleBarHost("WalletScreen") {
             titleBar {

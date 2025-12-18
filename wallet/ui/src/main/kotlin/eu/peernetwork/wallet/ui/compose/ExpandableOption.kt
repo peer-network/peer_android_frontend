@@ -37,7 +37,7 @@ import androidx.compose.ui.unit.dp
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.design.material.DesignDetailLayout
 import eu.peernetwork.core.ui.design.material.DesignLabel
-import eu.peernetwork.core.ui.theme.PeerTheme
+import eu.peernetwork.core.ui.theme.DesignTheme
 
 @Composable
 fun ExpandableOption(
@@ -92,7 +92,7 @@ fun ExpandableOption(
                                     0f
                                 }
                             },
-                        tint = MaterialTheme.colorScheme.surfaceDim
+                        tint = MaterialTheme.colorScheme.outlineVariant
                     )
                 }
             }
@@ -103,8 +103,8 @@ fun ExpandableOption(
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun PreviewOption() {
-    PeerTheme {
-        var state = remember { mutableStateOf(false) }
+    DesignTheme {
+        val state = remember { mutableStateOf(false) }
         ExpandableOption(state, icon = { Box(modifier = Modifier
             .size(32.dp)
             .background(MaterialTheme.colorScheme.background)) },

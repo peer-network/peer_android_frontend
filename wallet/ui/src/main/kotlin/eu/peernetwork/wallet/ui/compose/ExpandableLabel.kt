@@ -25,6 +25,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.core.ui.design.material.DesignCard
+import eu.peernetwork.core.ui.theme.DesignTheme
 import eu.peernetwork.core.ui.theme.PeerTheme
 import eu.peernetwork.wallet.ui.R
 
@@ -35,10 +36,10 @@ fun ExpandableLabel(
     onAnimationEnd: (Boolean) -> Unit = {},
     content: @Composable () -> Unit
 ) {
-    val border = MaterialTheme.colorScheme.tertiaryContainer
+    val border = MaterialTheme.colorScheme.surfaceVariant
     val updatedContent by rememberUpdatedState(content)
     DesignCard(
-        color = MaterialTheme.colorScheme.surfaceVariant,
+        color = MaterialTheme.colorScheme.surfaceDim,
         contentPadding = PaddingValues(0.dp),
         shape = RoundedCornerShape(24.dp)
     ) {
@@ -80,8 +81,8 @@ fun ExpandableLabel(
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun PreviewExpandableLabel() {
-    PeerTheme {
-        var showLabel = rememberSaveable { mutableStateOf(false) }
+    DesignTheme(isDarkMode = true) {
+        val showLabel = rememberSaveable { mutableStateOf(false) }
         ExpandableLabel("ExpandableLabel", showLabel) {
             Box(modifier = Modifier.padding(top = 8.dp, bottom = 16.dp)) {
                 Text("Content")

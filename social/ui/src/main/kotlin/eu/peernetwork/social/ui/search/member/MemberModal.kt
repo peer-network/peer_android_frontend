@@ -2,14 +2,15 @@ package eu.peernetwork.social.ui.search.member
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -20,15 +21,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.component.UiComponentProvider
+import eu.peernetwork.core.ui.design.luna.DesignTextField
 import eu.peernetwork.core.ui.design.material.DesignOverlay
-import eu.peernetwork.core.ui.design.material.DesignTextField
-import eu.peernetwork.core.ui.theme.PeerTheme
+import eu.peernetwork.core.ui.theme.DesignTheme
 import eu.peernetwork.social.ui.model.UiMember
 
 @Composable
@@ -44,7 +49,7 @@ fun MemberModal(
     val focus = remember { FocusRequester() }
     val handleClick by rememberUpdatedState(onClick)
     DesignOverlay(
-        showSheet,
+        state = showSheet,
         onDismiss = { showSheet.value = false }
     ) {
         MemberModal(state, showSheet, focus) {
@@ -79,39 +84,41 @@ fun MemberModal(
     Box(modifier = Modifier
         .statusBarsPadding()
         .padding(vertical = 16.dp)) {
-        Box(modifier = Modifier.padding(top = 28.dp)) {
+        Box(modifier = Modifier.padding(top = 48.dp)) {
             updateContent()
         }
         DesignTextField(
-            state,
+            state = state,
             enabled = enable.value,
-            focusRequester = focusRequester,
-            colors = TextFieldDefaults.colors(
-                unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLow,
-                focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLow,
-                focusedTextColor = MaterialTheme.colorScheme.onBackground,
-                unfocusedTextColor = MaterialTheme.colorScheme.tertiary,
-                focusedPlaceholderColor = MaterialTheme.colorScheme.surfaceDim,
-                unfocusedPlaceholderColor = MaterialTheme.colorScheme.surfaceTint,
+            keyboardOptions = KeyboardOptions(
+                capitalization = KeyboardCapitalization.Sentences,
+                keyboardType = KeyboardType.Text,
+                imeAction = ImeAction.Done
             ),
+            hint = stringResource(R.string.search_label),
+            contentPadding = PaddingValues(vertical = 16.dp),
+            minLines = 1,
             leading = {
                 Text(
                     "@",
-                    style = MaterialTheme.typography.bodyMedium.copy(
-                        color = MaterialTheme.colorScheme.tertiary
-                    ),
-                    modifier = Modifier.padding(end = 8.dp)
+                    color = MaterialTheme.colorScheme.outline,
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(
+                        start = 14.dp,
+                        end = 8.dp
+                    )
                 )
             },
-            modifier = Modifier.padding(horizontal = 24.dp)
-        ) { Text(stringResource(R.string.search_label)) }
+            modifier = Modifier.focusRequester(focusRequester)
+                .padding(horizontal = 18.dp)
+        )
     }
 }
 
 @Preview
 @Composable
 fun PreviewMemberDialog() {
-    PeerTheme {
+    DesignTheme(isDarkMode = true) {
         val state = remember { TextFieldState() }
         val enable = remember { mutableStateOf(true) }
         MemberModal(state, enable) {

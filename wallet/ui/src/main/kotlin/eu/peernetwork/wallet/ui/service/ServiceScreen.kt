@@ -33,10 +33,10 @@ import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.compose.DesignStatefulScaffold
 import eu.peernetwork.core.ui.design.compose.DesignStatefulScaffoldState
 import eu.peernetwork.core.ui.design.luna.DesignAvatar
+import eu.peernetwork.core.ui.design.luna.DesignOutlineButton
 import eu.peernetwork.core.ui.design.material.DesignCard
-import eu.peernetwork.core.ui.design.material.DesignOutlinedButton
 import eu.peernetwork.core.ui.extension.builder
-import eu.peernetwork.core.ui.theme.PeerTheme
+import eu.peernetwork.core.ui.theme.DesignTheme
 import eu.peernetwork.wallet.ui.model.UiRecipient
 import java.util.UUID
 
@@ -106,10 +106,9 @@ fun ServiceScreen(
     Crossfade(state.value) { target ->
         when(target) {
             ServiceState.Default -> {
-                DesignOutlinedButton(
+                DesignOutlineButton(
                     onClick = onClick,
                     shape = RoundedCornerShape(8.dp),
-                    textStyle = MaterialTheme.typography.bodySmall,
                     contentPadding = PaddingValues(vertical = 8.dp, horizontal = 32.dp),
                     modifier = Modifier
                         .padding(start = 4.dp)
@@ -128,7 +127,7 @@ fun ServiceScreen(
 @Composable
 fun ServiceScreen() {
     DesignCard(
-        color = MaterialTheme.colorScheme.surfaceVariant,
+        color = MaterialTheme.colorScheme.surfaceDim,
         contentPadding = PaddingValues(16.dp),
         shape = RoundedCornerShape(24.dp)
     ) {
@@ -144,7 +143,7 @@ fun ServiceScreen() {
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun PreviewServiceScreen() {
-    PeerTheme {
+    DesignTheme(isDarkMode = true) {
         Column {
             val recipient = UiRecipient(
                 id = UUID.randomUUID().toString(),
