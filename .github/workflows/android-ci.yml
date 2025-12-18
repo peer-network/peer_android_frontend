@@ -12,6 +12,60 @@ on:
       - development
 
 jobs:
+  auto_label:
+    name: Auto Label PR
+    if: github.event_name == 'pull_request'
+    uses: peer-network/.github/.github/workflows/auto-label.yml@main
+    secrets:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    with:
+      mode: soft
+      label_config: |
+        {
+          ".github/workflows/.*": "ci",
+          ".githooks/.*": "ci",
+
+          ".security/.*": "security",
+
+          "app/.*": "android",
+          "blog/.*": "android",
+          "core/.*": "android",
+          "media/.*": "android",
+          "messaging/.*": "android",
+          "persistence/.*": "android",
+          "social/.*": "android",
+          "user/.*": "android",
+          "wallet/.*": "android",
+
+          "app/src/test/.*": "tests",
+          "blog/.*/test/.*": "tests",
+          "core/.*/test/.*": "tests",
+          "media/.*/test/.*": "tests",
+          "social/.*/test/.*": "tests",
+          "user/.*/test/.*": "tests",
+          "wallet/.*/test/.*": "tests",
+
+          "app/src/main/res/.*": "assets",
+          "blog/.*/res/.*": "assets",
+          "core/.*/res/.*": "assets",
+          "media/.*/res/.*": "assets",
+          "social/.*/res/.*": "assets",
+          "user/.*/res/.*": "assets",
+          "wallet/.*/res/.*": "assets",
+
+          "^build.gradle.kts$": "build",
+          "^settings.gradle.kts$": "build",
+          "^gradle.properties$": "build",
+          "^gradlew$": "build",
+          "^gradlew.bat$": "build",
+          "^package-lock.json$": "build",
+
+          "gradle/.*": "build",
+          ".*\\.gradle\\.kts$": "build",
+
+          "README.*": "documentation"
+        }
+
   auto_update_branch:
     name: Auto-Update PR Branch
     uses: peer-network/.github/.github/workflows/auto-update-pr.yml@main
