@@ -84,7 +84,7 @@ fun PostScaffold(
     DesignBox(background = background) {
         Column(
             modifier = Modifier.padding(horizontal = 8.dp)
-                .padding(vertical = 7.dp)
+                .padding(vertical = 5.dp)
                 .clickable(onClick = onClick)
         ) {
             PostToolbar(
@@ -93,7 +93,7 @@ fun PostScaffold(
                 imageUrl = model.imageUrl,
                 pinnedBy = pinnedBy,
                 color = MaterialTheme.colorScheme.surfaceContainerLow,
-                modifier = Modifier.padding(12.dp),
+                modifier = Modifier.padding(10.dp),
                 onAuthorClick = onAuthorClick,
                 onMenu = onMenu,
                 connection = connection
@@ -102,8 +102,8 @@ fun PostScaffold(
             PostStatus(
                 time = context.format(model.time),
                 engagement = engagement,
-                modifier = Modifier.padding(horizontal = 12.dp)
-                    .padding(bottom = 12.dp)
+                modifier = Modifier.padding(horizontal = 10.dp)
+                    .padding(bottom = 10.dp)
             )
         }
     }

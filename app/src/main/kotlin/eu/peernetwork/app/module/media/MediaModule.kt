@@ -13,12 +13,14 @@ import dagger.Module
 import dagger.Provides
 import eu.peernetwork.media.core.renderer.AudioPlayer
 import eu.peernetwork.media.core.renderer.ImageView
+import eu.peernetwork.media.core.renderer.MediaController
 import eu.peernetwork.media.core.renderer.VideoPlayer
 import eu.peernetwork.media.core.renderer.VideoThumbnail
 import eu.peernetwork.media.ui.annotation.Screen
 import eu.peernetwork.media.ui.annotation.Timeline
 import eu.peernetwork.media.ui.renderer.AudioPlayerDelegate
 import eu.peernetwork.media.ui.renderer.ImageViewDelegate
+import eu.peernetwork.media.ui.renderer.MediaControllerDelegate
 import eu.peernetwork.media.ui.renderer.VideoPlayerDelegate
 import eu.peernetwork.media.ui.renderer.VideoThumbnailDelegate
 import javax.inject.Singleton
@@ -76,4 +78,8 @@ object MediaModule {
     @Provides
     @Singleton
     fun bindAudioPlayer(delegate: AudioPlayerDelegate): AudioPlayer = delegate
+
+    @Provides
+    @Singleton
+    fun provideMediaController(delegate: MediaControllerDelegate): MediaController = delegate
 }

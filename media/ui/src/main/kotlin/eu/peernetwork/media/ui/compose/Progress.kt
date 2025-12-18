@@ -32,7 +32,7 @@ import eu.peernetwork.core.ui.theme.DesignTheme
 fun Progress(
     modifier: Modifier = Modifier,
     shape: Shape = RoundedCornerShape(2.dp),
-    color: Color = MaterialTheme.colorScheme.scrim,
+    color: Color = MaterialTheme.colorScheme.surfaceContainerLow,
     progressColor: Color = MaterialTheme.colorScheme.onBackground,
     progress: State<Float>,
     length: State<Long>,

@@ -12,7 +12,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
-import eu.peernetwork.core.ui.R
+import eu.peernetwork.app.R
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.material.DesignPageHeader
 import eu.peernetwork.core.ui.design.material.DesignTitleBar
@@ -33,7 +33,7 @@ fun DesignTitleBarRegistry.ScreenTitle(
         action = {
             IconButton(onClick = onCancel) {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_cancel),
+                    painter = painterResource(id = R.drawable.ic_close),
                     contentDescription = null,
                     modifier = Modifier.size(24.dp)
                 )
@@ -60,7 +60,7 @@ fun ScreenTitle(
                 action = {
                     IconButton(onClick = onCancel) {
                         Icon(
-                            painter = painterResource(id = R.drawable.ic_cancel),
+                            painter = painterResource(id = R.drawable.ic_close),
                             contentDescription = null,
                             modifier = Modifier.size(24.dp),
                             tint = MaterialTheme.colorScheme.background

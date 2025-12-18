@@ -77,7 +77,7 @@ fun GalleryScreen(
             menu = {
                 if (post.type != UiPostType.TEXT
                     && post.type != UiPostType.IMAGE) {
-                    interactor.component().audioPlayer().Volume()
+                    interactor.component().mediaController().Volume()
                 }
             }
         ) { media ->

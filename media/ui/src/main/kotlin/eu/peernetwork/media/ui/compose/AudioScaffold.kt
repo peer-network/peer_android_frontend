@@ -69,7 +69,7 @@ fun AudioScaffold(
                 Icon(
                     painter = painterResource(icon),
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.outlineVariant,
+                    tint = MaterialTheme.colorScheme.scrim,
                     modifier = Modifier.size(18.dp)
                 )
             }
