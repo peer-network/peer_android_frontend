@@ -1,7 +1,10 @@
 package eu.peernetwork.blog.ui.gallery
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -11,10 +14,12 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.dp
 import eu.peernetwork.blog.ui.engagement.EngagementInteractor.Companion.LocalEngagementInteractor
 import eu.peernetwork.blog.ui.engagement.EngagementReaction.Companion.LocalEngagementReaction
 import eu.peernetwork.blog.ui.engagement.EngagementReactionStream
@@ -30,6 +35,7 @@ import eu.peernetwork.core.ui.design.material.DesignThumbnail
 import eu.peernetwork.media.core.model.UiMimeType
 import eu.peernetwork.media.core.renderer.AudioPlayer
 import eu.peernetwork.media.core.renderer.ImageView
+import eu.peernetwork.media.core.renderer.MediaController
 import eu.peernetwork.media.core.renderer.VideoPlayer
 
 @Composable
@@ -66,7 +72,9 @@ fun GalleryScreen(
             onEngage = { reaction(post, it) },
             onMenu = { showSheet.value = post },
             showAuthor = {
-                navigator.navigate(PostNavigator.Route.Profile(post.author.id))
+                navigator.navigate(
+                    route = PostNavigator.Route.Profile(post.author.id)
+                )
             },
             onContentClick = { spec, value -> navigator.navigate(spec.route(value)) },
             modifier = Modifier
@@ -74,13 +82,24 @@ fun GalleryScreen(
                 .background(MaterialTheme.colorScheme.background)
                 .navigationBarsPadding(),
             connection = connection,
+            bottom = {
+                if (post.type != UiPostType.TEXT
+                    && post.type != UiPostType.IMAGE) {
+                    interactor.component().mediaController().Progress(
+                        progress = progress,
+                        isPlaying = enabled,
+                        modifier = Modifier.fillMaxWidth()
+                            .height(height = 2.dp)
+                    )
+                }
+            },
             menu = {
                 if (post.type != UiPostType.TEXT
                     && post.type != UiPostType.IMAGE) {
                     interactor.component().mediaController().Volume()
                 }
             }
-        ) { media ->
+        ) { media, hasMedia ->
             if (post.type == UiPostType.VIDEO) {
                 val path = "${media.path}${UiMimeType.Video.query()}"
                 val bitmap = remember { derivedStateOf { thumbnail.value[path] } }
@@ -115,34 +134,21 @@ fun GalleryScreen(
                 )
                 interactor.component().imageView()(
                     Modifier,
-                    spec = ImageView.Spec(media.path, post.asset.ratio, zoomable = true)
+                    spec = ImageView.Spec(
+                        url = media.path,
+                        ratio = post.asset.ratio,
+                        zoomable = true
+                    )
                 )
             } else if (post.type == UiPostType.AUDIO) {
-                media.display.cover?.let {
-                    interactor.component().imageView()(
-                        Modifier,
-                        spec = ImageView.Spec(
-                            url = it,
-                            ratio = null,
-                            contentScale = ContentScale.Crop,
-                            blur = 500f,
-                        )
-                    )
-                    interactor.component().imageView()(
-                        Modifier,
-                        spec = ImageView.Spec(
-                            url = it,
-                            ratio = post.asset.ratio,
-                            zoomable = true
-                        )
-                    )
-                }
                 interactor.component().audioPlayer()(
                     Modifier,
                     spec = AudioPlayer.Spec(
                         path = media.path,
+                        cover = media.display.cover,
                         length = length,
                         modifier = Modifier,
+                        ratio = post.asset.ratio,
                         progress = progress,
                         enabled = enabled,
                         position = position
@@ -153,6 +159,21 @@ fun GalleryScreen(
                     description = post.description,
                     modifier = Modifier.fillMaxSize()
                 ) { spec, value -> navigator.navigate(spec.route(value)) }
+            }
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier.fillMaxSize()
+            ) {
+                if (post.type != UiPostType.TEXT
+                    && post.type != UiPostType.IMAGE) {
+                    interactor.component().mediaController()(
+                        Modifier.fillMaxWidth(),
+                        spec = MediaController.Spec(
+                            path = media.path,
+                            translucent = hasMedia,
+                        )
+                    )
+                }
             }
         }
     }

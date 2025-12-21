@@ -35,7 +35,7 @@ fun PostMedia(
     ratio: Float,
     enable: State<Boolean>,
     isPlaying: State<Boolean>,
-    onPlay: (Boolean) -> Unit
+    onClick: (Boolean) -> Unit
 ) {
     val interactor = LocalPostInteractor.current
     val configuration = LocalConfiguration.current
@@ -107,15 +107,15 @@ fun PostMedia(
                     )
                 )
             }
-            interactor.component().audioPlayer().Thumbnail(
+            interactor.component().mediaController().Content(
                 path = path,
-                hasControls = !expanded,
-                enable = isEnabled,
+                expanded = !expanded,
+                enabled = isEnabled,
                 length = length,
                 isPlaying = isPlaying,
                 modifier = Modifier.padding(horizontal = 16.dp)
                     .padding(bottom = 12.dp),
-                onPlay = onPlay
+                onToggle = onClick
             )
         }
     }

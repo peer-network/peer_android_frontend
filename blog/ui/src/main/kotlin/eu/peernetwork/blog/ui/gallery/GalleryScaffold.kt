@@ -15,7 +15,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -55,80 +57,90 @@ fun GalleryScaffold(
     onContentClick: (DesignRichText, String) -> Unit,
     modifier: Modifier = Modifier,
     menu: @Composable () -> Unit = {},
+    bottom: @Composable () -> Unit = {},
     connection: @Composable () -> Unit = {},
-    content: @Composable BoxWithConstraintsScope.(UiMedia) -> Unit
+    content: @Composable BoxWithConstraintsScope.(UiMedia, Boolean) -> Unit
 ) {
+    val updatedBottom by rememberUpdatedState(bottom)
+    val updatedContent by rememberUpdatedState(content)
     val borderColor = MaterialTheme.colorScheme.surfaceDim
     val hasMedia = (type == UiPostType.VIDEO ||
             type == UiPostType.IMAGE ||
             (type == UiPostType.AUDIO && asset.media.any { it.display.cover != null }))
-    Box(
-        modifier = modifier,
-        contentAlignment = Alignment.BottomStart
-    ) {
-        if (hasMedia) {
-            Box(modifier = Modifier.fillMaxSize()
-                .background(Color.Black))
-        }
-        GalleryPager(
-            asset = asset,
-            content = content
-        )
-        if (hasMedia) {
-            Image(
-                painter = painterResource(R.drawable.overlay_gradient),
-                contentDescription = null,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight(fraction = .9f),
-                contentScale = ContentScale.Crop
-            )
-        }
-        Row(
-            verticalAlignment = Alignment.Bottom,
-            modifier = if (hasMedia) {
-                Modifier.fillMaxWidth()
-            } else {
-                Modifier.fillMaxWidth()
-                    .drawBehind {
-                    val strokeWidth = 1.dp.toPx()
-                    drawLine(
-                        color = borderColor,
-                        start = Offset(0f, size.height),
-                        end = Offset(size.width, size.height),
-                        strokeWidth = strokeWidth
-                    )
-                }
-            },
+    Column {
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .then(modifier),
+            contentAlignment = Alignment.BottomStart
         ) {
-            Column(modifier = Modifier.weight(1f)) {
-                GalleryToolbar(
-                    slug = slug,
-                    username = username,
-                    imageUrl = imageUrl,
+            if (hasMedia) {
+                Box(modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black))
+            }
+            GalleryPager(
+                asset = asset,
+                content = { updatedContent(it, hasMedia) }
+            )
+            if (hasMedia) {
+                Image(
+                    painter = painterResource(R.drawable.overlay_gradient),
+                    contentDescription = null,
                     modifier = Modifier
-                        .padding(start = 12.dp)
-                        .padding(vertical = 6.dp),
-                    onClick = showAuthor,
-                    content = connection
-                )
-                GalleryDetail(
-                    title = title,
-                    time = time,
-                    description = if (type == UiPostType.TEXT) {
-                        buildAnnotatedString {  }
-                    } else { description },
-                    onClick = onContentClick
+                        .fillMaxWidth()
+                        .fillMaxHeight(fraction = .9f),
+                    contentScale = ContentScale.Crop
                 )
             }
-            GallerySidebar(
-                engagement = engagement.value,
-                onEngage = onEngage,
-                onMenu = onMenu,
-                modifier = Modifier.width(56.dp),
-                content = menu
-            )
+            Row(
+                verticalAlignment = Alignment.Bottom,
+                modifier = if (hasMedia) {
+                    Modifier.fillMaxWidth()
+                } else {
+                    Modifier
+                        .fillMaxWidth()
+                        .drawBehind {
+                            val strokeWidth = 1.dp.toPx()
+                            drawLine(
+                                color = borderColor,
+                                start = Offset(0f, size.height),
+                                end = Offset(size.width, size.height),
+                                strokeWidth = strokeWidth
+                            )
+                        }
+                },
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    GalleryToolbar(
+                        slug = slug,
+                        username = username,
+                        imageUrl = imageUrl,
+                        modifier = Modifier
+                            .padding(start = 12.dp)
+                            .padding(vertical = 6.dp),
+                        onClick = showAuthor,
+                        content = connection
+                    )
+                    GalleryDetail(
+                        title = title,
+                        time = time,
+                        description = if (type == UiPostType.TEXT) {
+                            buildAnnotatedString {  }
+                        } else { description },
+                        onClick = onContentClick
+                    )
+                }
+                GallerySidebar(
+                    engagement = engagement.value,
+                    onEngage = onEngage,
+                    onMenu = onMenu,
+                    modifier = Modifier.width(56.dp),
+                    content = menu
+                )
+            }
         }
+        updatedBottom()
     }
 }
 
@@ -173,6 +185,6 @@ fun PreviewGalleryScaffold() {
             showAuthor = {},
             onContentClick = { _,_ -> },
             modifier = Modifier.fillMaxSize()
-        ) {}
+        ) { _, _ -> }
     }
 }

@@ -12,20 +12,23 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import eu.peernetwork.media.core.renderer.AudioPlayer
+import eu.peernetwork.media.core.renderer.ImageView
 import eu.peernetwork.media.ui.compose.AudioPlayerThumbnail
 import eu.peernetwork.media.ui.interactor.MediaInteractor
+import eu.peernetwork.media.ui.player.PlayerProvider
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class AudioPlayerDelegate @Inject constructor(
+    private val imageView: ImageView,
     private val session: MediaInteractor,
 ) : AudioPlayer {
     @Composable
@@ -37,7 +40,7 @@ class AudioPlayerDelegate @Inject constructor(
         isPlaying: State<Boolean>,
         length: MutableLongState,
         modifier: Modifier,
-        onPlay: (Boolean) -> Unit
+        onToggle: (Boolean) -> Unit
     ) {
         val player = remember { session.exoPlayer() }
         val isLoading = remember { mutableStateOf(false) }
@@ -79,7 +82,7 @@ class AudioPlayerDelegate @Inject constructor(
                 length = length,
                 session = session,
                 source = { player },
-                onPlay = onPlay
+                onPlay = onToggle
             )
         }
         LaunchedEffect(Unit) {
@@ -129,33 +132,32 @@ class AudioPlayerDelegate @Inject constructor(
 
     @Composable
     @OptIn(FlowPreview::class)
-    override fun invoke(
-        modifier: Modifier,
-        spec: AudioPlayer.Spec
-    ) {
-        val player = remember { session.exoPlayer() }
-        LaunchedEffect(Unit) {
-            snapshotFlow { spec.enabled.value }
-                .distinctUntilChanged()
-                .debounce(500)
-                .collect { playing ->
-                    if (playing) {
-                        player.playWhenReady = true
-                        player.setMediaItem(
-                            MediaItem.Builder()
-                                .setUri(spec.path)
-                                .setMediaId(spec.path)
-                                .build()
-                        )
-                        player.prepare()
-                    }
-                }
-        }
-        DisposableEffect(Unit) {
-            onDispose {
-                if (player.currentMediaItem?.mediaId == spec.path) {
-                    player.pause()
-                }
+    override fun invoke(modifier: Modifier, spec: AudioPlayer.Spec) {
+        val enable = remember { mutableStateOf(true) }
+        PlayerProvider(
+            path = spec.path,
+            state = spec.enabled,
+            enabled = enable,
+            interactor = session,
+        ) { player, isEnabled ->
+            spec.cover?.let {
+                imageView(
+                    Modifier,
+                    spec = ImageView.Spec(
+                        url = it,
+                        ratio = null,
+                        contentScale = ContentScale.Crop,
+                        blur = 500f,
+                    )
+                )
+                imageView(
+                    Modifier,
+                    spec = ImageView.Spec(
+                        url = it,
+                        ratio = spec.ratio,
+                        zoomable = true
+                    )
+                )
             }
         }
     }

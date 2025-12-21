@@ -16,11 +16,13 @@ interface AudioPlayer : Renderer.Stateful<AudioPlayer.Spec> {
         isPlaying: State<Boolean>,
         length: MutableLongState,
         modifier: Modifier,
-        onPlay: (Boolean) -> Unit
+        onToggle: (Boolean) -> Unit
     )
 
     data class Spec(
         val path: String,
+        val cover: String?,
+        val ratio: Float,
         val progress: MutableFloatState,
         val length: MutableLongState,
         val enabled: State<Boolean>,

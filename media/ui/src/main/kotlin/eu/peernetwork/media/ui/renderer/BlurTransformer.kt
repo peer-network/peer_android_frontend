@@ -22,15 +22,24 @@ class BlurTransformer @Inject constructor(
         val targetHeight = (input.height * 0.3).toInt()
         val blurred = interactor.blur(input, 5)
         val scaled = blurred.scale(targetWidth, targetHeight)
-        val result =
-            createBitmap(scaled.width, scaled.height, scaled.config ?: Bitmap.Config.ARGB_8888)
+        val result = createBitmap(
+            width = scaled.width,
+            height = scaled.height,
+            config = scaled.config ?: Bitmap.Config.ARGB_8888
+        )
         val canvas = Canvas(result)
         canvas.drawBitmap(scaled, 0f, 0f, null)
         val paint = Paint().apply {
             color = Color.BLACK
             alpha = 30
         }
-        canvas.drawRect(0f, 0f, scaled.width.toFloat(), scaled.height.toFloat(), paint)
+        canvas.drawRect(
+            0f,
+            0f,
+            scaled.width.toFloat(),
+            scaled.height.toFloat(),
+            paint
+        )
         return result
     }
 }

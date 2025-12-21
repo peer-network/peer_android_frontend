@@ -48,8 +48,7 @@ fun Progress(
                 handleOnUpdate(position, (length.value * position).toLong())
             }
         )
-    }.padding(vertical = 8.dp)
-        .wrapContentSize()
+    }.wrapContentSize()
     ) {
         Box(
             modifier = modifier.clip(shape = shape)
