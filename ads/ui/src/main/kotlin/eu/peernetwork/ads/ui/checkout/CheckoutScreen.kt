@@ -49,15 +49,15 @@ fun CheckoutScreen(
     } }
     val handleFinish by rememberUpdatedState(onFinish)
     val handleProfile by rememberUpdatedState(onProfile)
-    component.checkoutBalance().Charges(viewModelStoreOwner = viewModelStoreOwner) {
+    component.checkoutBalance().Charges(viewModelStoreOwner = viewModelStoreOwner) { tax, refresh ->
         DesignStream(
-            state = it,
+            state = tax,
             loading = { CheckoutSkeleton() },
             error = { error ->
                 CheckoutError(
                     error = error,
                     component = component
-                ) { viewModel(id) }
+                ) { refresh() }
             },
         ) { charges ->
             CheckoutPage(

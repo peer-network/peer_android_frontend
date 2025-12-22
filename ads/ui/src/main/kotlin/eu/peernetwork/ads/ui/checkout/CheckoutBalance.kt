@@ -10,6 +10,6 @@ interface CheckoutBalance : Renderer.Stateless {
     @Composable
     fun Charges(
         viewModelStoreOwner: ViewModelStoreOwner,
-        content: @Composable (State<DesignStreamState<Double>>
-    ) -> Unit)
+        content: @Composable (State<DesignStreamState<Double>>, () -> Unit) -> Unit
+    )
 }

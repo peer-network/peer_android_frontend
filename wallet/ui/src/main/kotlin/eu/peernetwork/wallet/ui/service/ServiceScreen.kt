@@ -28,7 +28,7 @@ sealed interface ServiceState {
 fun ServiceScreen(
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
-    content: @Composable (State<DesignStreamState<Double>>) -> Unit
+    content: @Composable (State<DesignStreamState<Double>>, () -> Unit) -> Unit
 ) {
     val context = LocalContext.current
     val component = remember {
@@ -54,7 +54,8 @@ fun ServiceScreen(
         }
     } }
     val updatedContent by rememberUpdatedState(content)
-    updatedContent(derivedState)
+    val handleRefresh by rememberUpdatedState { viewModel.initialize() }
+    updatedContent(derivedState, handleRefresh)
     LaunchedEffect(Unit) {
         if (state is ServiceViewModel.State.Empty) {
             viewModel.initialize()
