@@ -5,7 +5,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.clearText
 import androidx.compose.material3.MaterialTheme
@@ -40,22 +42,27 @@ fun CommentForm(
     onSubmit: () -> Unit
 ) {
     Row(
-        verticalAlignment = Alignment.CenterVertically,
+        verticalAlignment = Alignment.Bottom,
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
             .padding(vertical = 8.dp),
     ) {
-        DesignAvatar {
-            DesignImage(
-                label = username,
-                imageUrl = imageUrl,
-                size = 42.dp,
-                color = MaterialTheme.colorScheme.surfaceContainerLow,
-                style = MaterialTheme.typography.bodyMedium.copy(
-                    color = MaterialTheme.colorScheme.onBackground
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier.height(48.dp)
+        ) {
+            DesignAvatar {
+                DesignImage(
+                    label = username,
+                    imageUrl = imageUrl,
+                    size = 42.dp,
+                    color = MaterialTheme.colorScheme.surfaceContainerLow,
+                    style = MaterialTheme.typography.bodyMedium.copy(
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
                 )
-            )
+            }
         }
         Box(
             contentAlignment = Alignment.CenterEnd,
@@ -64,8 +71,10 @@ fun CommentForm(
         ) {
             DesignTextField(
                 state = comment,
+                shape = RoundedCornerShape(24.dp),
                 hint = stringResource(R.string.post_reply),
                 enabled = !isLoading.value,
+                maxLength = 500,
                 contentPadding = PaddingValues(
                     top = 16.dp,
                     start = 16.dp,
@@ -81,7 +90,8 @@ fun CommentForm(
             )
             CommentButton(
                 isLoading = isLoading,
-                modifier = Modifier.padding(4.dp),
+                modifier = Modifier.padding(4.dp)
+                    .align(Alignment.BottomEnd),
                 onSubmit = onSubmit
             )
         }

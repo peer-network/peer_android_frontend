@@ -1,5 +1,6 @@
 package eu.peernetwork.blog.ui.timeline
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
@@ -13,6 +14,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import eu.peernetwork.core.ui.extension.builder
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -185,6 +187,7 @@ fun TimelineScreen(
                     val moderation = LocalModerationInteractor.current
                     LazyColumn(
                         state = listState,
+                        contentPadding = PaddingValues(bottom = 48.dp),
                         modifier = Modifier.fillMaxSize()
                     ) { updatedContent(this, component, items) }
                     TimelineSheet(
