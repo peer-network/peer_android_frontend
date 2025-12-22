@@ -7,6 +7,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModelStoreOwner
+import eu.peernetwork.ads.ui.article.ArticleNavigator
 import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.app.interactor.NavigationInteractor
 import eu.peernetwork.blog.ui.detail.DetailModal
@@ -31,7 +32,10 @@ fun ContentModal(
         onDismiss = { isVisible.value = false }
     ) { controller ->
         val navigator = remember { NavigationInteractor(context, controller) }
-        CompositionLocalProvider(PostNavigator.LocalPostNavigator provides navigator) {
+        CompositionLocalProvider(
+            PostNavigator.LocalPostNavigator provides navigator,
+            ArticleNavigator.LocalArticleNavigator provides navigator,
+        ) {
             ContentScreen(
                 provider = provider,
                 viewModelStoreOwner = viewModelStoreOwner

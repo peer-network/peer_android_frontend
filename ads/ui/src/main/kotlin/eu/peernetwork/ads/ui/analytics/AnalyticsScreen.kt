@@ -10,6 +10,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import eu.peernetwork.ads.ui.article.ArticleNavigator.Companion.LocalArticleNavigator
+import eu.peernetwork.ads.ui.extension.route
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.luna.DesignRefreshScaffold
 import eu.peernetwork.core.ui.design.luna.DesignStream
@@ -21,10 +23,10 @@ import eu.peernetwork.core.ui.extension.builder
 fun AnalyticsScreen(
     id: String,
     provider: UiComponentProvider,
-    viewModelStoreOwner: ViewModelStoreOwner,
-    onClick: (DesignRichText, String) -> Unit
+    viewModelStoreOwner: ViewModelStoreOwner
 ) {
     val context = LocalContext.current
+    val navigator = LocalArticleNavigator.current
     val component = remember { provider.builder(Analytics.Builder::class.java).build(context) }
     val viewModel = viewModel(
         modelClass = AnalyticsViewModel::class.java,
@@ -71,7 +73,9 @@ fun AnalyticsScreen(
                 to = target.value.campaign.ads.to,
                 start = target.value.campaign.ads.start,
                 end = target.value.campaign.ads.end,
-                onClick = onClick
+                onClick = { type, value ->
+                    navigator.navigate(type.route(value))
+                },
             ) {
                 AnalyticsMedia(
                     url = target.value.campaign.ads.content.path,

@@ -75,14 +75,19 @@ fun DesignText(
         modifier = modifier
             .pointerInput(Unit) {
                 detectTapGestures { offset ->
-                    handleOnTap(offset)
                     layoutResult?.let { layout ->
                         val position = layout.getOffsetForPosition(offset)
-                        val annotations = adjustedText.getStringAnnotations(expandEllipsis, position, position)
+                        val annotations = adjustedText.getStringAnnotations(
+                            tag = expandEllipsis,
+                            start = position,
+                            end = position
+                        )
                         if (annotations.isNotEmpty()) {
                             expanded = !expanded
+                        } else {
+                            handleOnTap(offset)
                         }
-                    }
+                    } ?: run { handleOnTap(offset) }
                 }
             },
         color = color,

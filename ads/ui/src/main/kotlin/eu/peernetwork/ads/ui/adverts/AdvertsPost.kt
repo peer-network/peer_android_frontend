@@ -39,6 +39,7 @@ fun AdvertsPost(
     to: String,
     status: Boolean,
     modifier: Modifier = Modifier,
+    onSelect: () -> Unit,
     onClick: (DesignRichText, String) -> Unit,
     content: @Composable () -> Unit
 ) {
@@ -67,7 +68,8 @@ fun AdvertsPost(
                     style = MaterialTheme.typography.labelLarge,
                     fontWeight = FontWeight.SemiBold,
                     maxLines = 1,
-                    onClick = onClick
+                    onClick = onClick,
+                    onTap = onSelect
                 )
             }
             Box(
@@ -80,7 +82,8 @@ fun AdvertsPost(
                     style = MaterialTheme.typography.labelMedium,
                     maxLines = 2,
                     modifier = Modifier.padding(top = 2.dp),
-                    onClick = onClick
+                    onClick = onClick,
+                    onTap = onSelect
                 )
             }
             Row(
@@ -124,7 +127,8 @@ fun PreviewAdvertsPost() {
             from = "8 Jun 2025",
             to = "10 Jun 2025",
             status = true,
-            onClick = { _,_ -> }
+            onClick = { _,_ -> },
+            onSelect = {}
         ) {}
     }
 }

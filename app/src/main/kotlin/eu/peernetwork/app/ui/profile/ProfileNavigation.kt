@@ -142,7 +142,7 @@ fun ProfileNavigation(
                 provider = component,
                 viewModelStoreOwner = backStackEntry,
                 onBack = { controller.popBackStack() }
-            ) { _,_ -> }
+            )
         }
         screen(
             route = "boost/{id}",

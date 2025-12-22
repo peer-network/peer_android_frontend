@@ -14,6 +14,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.navigation.compose.rememberNavController
+import eu.peernetwork.ads.ui.article.ArticleNavigator
 import eu.peernetwork.ads.ui.boost.BoostModal
 import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.app.interactor.NavigationInteractor
@@ -53,7 +54,8 @@ fun ProfileScreen(
     val timestamp = rememberSaveable { mutableLongStateOf(System.currentTimeMillis()) }
     val navigator = remember { NavigationInteractor(context, controller) }
     CompositionLocalProvider(
-        PostNavigator.LocalPostNavigator provides navigator
+        PostNavigator.LocalPostNavigator provides navigator,
+        ArticleNavigator.LocalArticleNavigator provides navigator,
     ) {
         ProfileScreen(provider) { component ->
             val showBoost = remember { mutableStateOf<String?>(null) }

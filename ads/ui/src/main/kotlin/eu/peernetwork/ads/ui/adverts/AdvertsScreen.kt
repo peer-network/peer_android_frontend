@@ -25,13 +25,14 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import eu.peernetwork.ads.domain.model.Filter
 import eu.peernetwork.ads.ui.R
+import eu.peernetwork.ads.ui.article.ArticleNavigator.Companion.LocalArticleNavigator
+import eu.peernetwork.ads.ui.extension.route
 import eu.peernetwork.ads.ui.overview.OverviewPage
 import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.luna.DesignPagingStream
 import eu.peernetwork.core.ui.design.luna.DesignRefreshScaffold
 import eu.peernetwork.core.ui.design.luna.DesignStreamState
-import eu.peernetwork.core.ui.design.luna.DesignRichText
 import eu.peernetwork.core.ui.design.material.DesignScaffold
 import eu.peernetwork.core.ui.extension.annotate
 import eu.peernetwork.core.ui.extension.builder
@@ -43,10 +44,10 @@ fun AdvertsScreen(
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
     onSelect: (String) -> Unit,
-    onClick: (DesignRichText, String) -> Unit,
     onBack: () -> Unit
 ) {
     val context = LocalContext.current
+    val navigator = LocalArticleNavigator.current
     val component = remember {
         provider.builder(Adverts.Builder::class.java).build(context)
     }
@@ -115,14 +116,15 @@ fun AdvertsScreen(
                             from = post.ads.from,
                             to = post.ads.to,
                             status = post.ads.status,
-                            onClick = onClick,
+                            onClick = { type, value ->
+                                navigator.navigate(type.route(value))
+                            },
+                            onSelect = { handleSelect(post.ads.id) },
                             modifier = Modifier
                                 .padding(horizontal = 16.dp)
                                 .padding(vertical = 5.dp)
                                 .clickable { handleSelect(post.ads.id) }
-                        ) {
-                            AdvertsMedia(post.ads.content.path, component)
-                        }
+                        ) { AdvertsMedia(post.ads.content.path, component) }
                     }
                 }
             }

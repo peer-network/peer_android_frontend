@@ -15,7 +15,6 @@ import eu.peernetwork.core.ui.design.material.DesignRouter
 fun DashboardNavigation(
     component: Dashboard.Component,
     navController: NavHostController,
-    onClick: (DesignRichText, String) -> Unit,
     content: @Composable () -> Unit
 ) {
     val updatedContent by rememberUpdatedState(content)
@@ -32,8 +31,7 @@ fun DashboardNavigation(
             AnalyticsScreen(
                 id = id,
                 provider = component,
-                viewModelStoreOwner = backStackEntry,
-                onClick = onClick
+                viewModelStoreOwner = backStackEntry
             )
         }
     }

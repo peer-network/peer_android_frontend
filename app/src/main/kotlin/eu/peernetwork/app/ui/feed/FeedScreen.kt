@@ -16,6 +16,7 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
+import eu.peernetwork.ads.ui.article.ArticleNavigator
 import eu.peernetwork.ads.ui.boost.BoostModal
 import eu.peernetwork.blog.domain.model.Category
 import eu.peernetwork.blog.domain.model.Filter.Criteria
@@ -65,7 +66,8 @@ fun FeedScreen(
     val selected = remember { mutableIntStateOf(-1) }
     val navigator = remember { NavigationInteractor(context, controller) }
     CompositionLocalProvider(
-        PostNavigator.LocalPostNavigator provides navigator
+        PostNavigator.LocalPostNavigator provides navigator,
+        ArticleNavigator.LocalArticleNavigator provides navigator,
     ) {
         FeedScreen(
             provider = provider,

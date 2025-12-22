@@ -13,6 +13,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import eu.peernetwork.ads.ui.article.ArticleNavigator.Companion.LocalArticleNavigator
+import eu.peernetwork.ads.ui.extension.route
 import eu.peernetwork.ads.ui.model.UiContent
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.component.UiComponentProvider
@@ -29,6 +31,7 @@ fun ArticleScreen(
     content: @Composable (UiContent) -> Unit
 ) {
     val context = LocalContext.current
+    val navigator = LocalArticleNavigator.current
     val component = remember { provider.builder(Article.Builder::class.java).build(context) }
     val viewModel = viewModel(
         modelClass = ArticleViewModel::class.java,
@@ -76,6 +79,9 @@ fun ArticleScreen(
                     ArticlePage(
                         title = targetState.value.title,
                         description = targetState.value.description,
+                        onClick = { type, value ->
+                            navigator.navigate(type.route(value))
+                        },
                     ) { ArticleMedia(targetState.value.path, component) }
                 }
             ) { updatedContent(targetState.value) }

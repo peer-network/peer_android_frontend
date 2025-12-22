@@ -9,6 +9,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModelStoreOwner
+import eu.peernetwork.ads.ui.article.ArticleNavigator
 import eu.peernetwork.ads.ui.boost.BoostModal
 import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.app.interactor.NavigationInteractor
@@ -41,7 +42,10 @@ fun FeedModal(
     ) { controller ->
         val key = listOf(category, criteria).hashCode()
         val navigator = remember { NavigationInteractor(context, controller) }
-        CompositionLocalProvider(PostNavigator.LocalPostNavigator provides navigator) {
+        CompositionLocalProvider(
+            PostNavigator.LocalPostNavigator provides navigator,
+            ArticleNavigator.LocalArticleNavigator provides navigator,
+        ) {
             FeedScreen(
                 provider = provider,
                 viewModelStoreOwner = viewModelStoreOwner

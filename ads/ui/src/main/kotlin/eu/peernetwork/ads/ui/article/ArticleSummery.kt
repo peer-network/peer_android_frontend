@@ -23,6 +23,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import eu.peernetwork.core.ui.design.luna.DesignRichText
 import eu.peernetwork.core.ui.theme.DesignTheme
 
 @Composable
@@ -30,6 +31,7 @@ fun ArticleSummery(
     title: AnnotatedString,
     description: AnnotatedString,
     modifier: Modifier = Modifier,
+    onClick: (DesignRichText, String) -> Unit,
     content: @Composable () -> Unit
 ) {
     val updatedContent by rememberUpdatedState(content)
@@ -51,24 +53,26 @@ fun ArticleSummery(
                 modifier = Modifier.fillMaxWidth()
                     .heightIn(min = 24.dp)
             ) {
-                Text(
+                DesignRichText(
                     text = title,
                     color = MaterialTheme.colorScheme.onBackground,
                     style = MaterialTheme.typography.labelLarge,
                     fontWeight = FontWeight.SemiBold,
-                    maxLines = 1
+                    maxLines = 1,
+                    onClick = onClick
                 )
             }
             Box(
                 modifier = Modifier.fillMaxWidth()
                     .heightIn(min = 32.dp)
             ) {
-                Text(
+                DesignRichText(
                     text = description,
                     color = MaterialTheme.colorScheme.onBackground,
                     style = MaterialTheme.typography.labelMedium,
                     maxLines = 2,
-                    modifier = Modifier.padding(top = 2.dp)
+                    modifier = Modifier.padding(top = 2.dp),
+                    onClick = onClick
                 )
             }
         }
@@ -81,7 +85,8 @@ fun PreviewArticleSummery() {
     DesignTheme(isDarkMode = true) {
         ArticleSummery(
             title = buildAnnotatedString { append("Title") },
-            description = buildAnnotatedString { append("There’s something about hiking that resets everything. ") }
+            description = buildAnnotatedString { append("There’s something about hiking that resets everything. ") },
+            onClick = { _, _ -> }
         ) {}
     }
 }

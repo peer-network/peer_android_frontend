@@ -14,6 +14,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.ads.ui.R
+import eu.peernetwork.core.ui.design.luna.DesignRichText
 import eu.peernetwork.core.ui.theme.DesignTheme
 
 @Composable
@@ -21,6 +22,7 @@ fun ArticlePage(
     title: AnnotatedString,
     description: AnnotatedString,
     modifier: Modifier = Modifier,
+    onClick: (DesignRichText, String) -> Unit,
     content: @Composable () -> Unit
 ) {
     Column(
@@ -40,6 +42,7 @@ fun ArticlePage(
             title = title,
             description = description,
             modifier = Modifier.padding(vertical = 12.dp),
+            onClick = onClick,
             content = content
         )
     }
@@ -51,7 +54,8 @@ fun PreviewArticlePage() {
     DesignTheme(isDarkMode = true) {
         ArticlePage(
             title = buildAnnotatedString { append("Title") },
-            description = buildAnnotatedString { append("There’s something about hiking that resets everything. ") }
+            description = buildAnnotatedString { append("There’s something about hiking that resets everything. ") },
+            onClick = { _, _ -> }
         ) {}
     }
 }

@@ -19,6 +19,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.navigation.compose.rememberNavController
+import eu.peernetwork.ads.ui.article.ArticleNavigator
 import eu.peernetwork.app.interactor.NavigationInteractor
 import eu.peernetwork.blog.ui.post.PostNavigator
 import eu.peernetwork.core.ui.R
@@ -67,7 +68,8 @@ fun SearchScreen(
         mutableStateOf(TextFieldState(query ?: ""))
     }
     CompositionLocalProvider(
-        PostNavigator.LocalPostNavigator provides navigator
+        PostNavigator.LocalPostNavigator provides navigator,
+        ArticleNavigator.LocalArticleNavigator provides navigator,
     ) {
         SearchScreen(
             provider = provider,

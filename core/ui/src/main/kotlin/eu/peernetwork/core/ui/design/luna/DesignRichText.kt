@@ -52,24 +52,29 @@ fun DesignRichText(
     maxLines: Int = Int.MAX_VALUE,
     minLines: Int = 1,
     inlineContent: Map<String, InlineTextContent> = mapOf(),
+    onTap: () -> Unit = { },
     onClick: (DesignRichText, String) -> Unit = { _,_ -> },
     onTextLayout: (TextLayoutResult) -> Unit = {},
     style: TextStyle = LocalTextStyle.current
 ) {
     var layoutResult by remember { mutableStateOf<TextLayoutResult?>(null) }
     val handleOnTextLayout by rememberUpdatedState(onTextLayout)
+    val handleOnTap by rememberUpdatedState(onTap)
     DesignText(
         text = text,
         modifier = modifier,
         onTap = { offset ->
             layoutResult?.let { layout ->
                 val position = layout.getOffsetForPosition(offset)
-                text.getStringAnnotations(
+                val hasAnnotation = text.hasStringAnnotations(
                     start = position,
                     end = position,
                     onClick = onClick
                 )
-            }
+                if (!hasAnnotation) {
+                    handleOnTap()
+                }
+            } ?: handleOnTap()
         },
         color = color,
         fontSize = fontSize,
@@ -93,18 +98,21 @@ fun DesignRichText(
     )
 }
 
-fun AnnotatedString.getStringAnnotations(
+fun AnnotatedString.hasStringAnnotations(
     start: Int,
     end: Int,
     onClick: (DesignRichText, String) -> Unit
-) {
+): Boolean {
+    var found = false
     listOf(DesignRichText.Tag, DesignRichText.Mention, DesignRichText.Link).forEach { type ->
         getStringAnnotations(tag = type.value, start = start, end = end)
             .firstOrNull()
             ?.let { annotation ->
                 onClick(type, annotation.item.trimStart(type.value[0]))
+                found = true
             }
     }
+    return found
 }
 
 @Composable

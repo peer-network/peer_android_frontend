@@ -12,6 +12,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.navigation.compose.rememberNavController
+import eu.peernetwork.ads.ui.article.ArticleNavigator
 import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.app.interactor.NavigationInteractor
 import eu.peernetwork.blog.ui.detail.DetailScreen
@@ -52,7 +53,8 @@ fun ContentScreen(
     val selected = remember { mutableIntStateOf(0) }
     val navigator = remember { NavigationInteractor(context, controller) }
     CompositionLocalProvider(
-        PostNavigator.LocalPostNavigator provides navigator
+        PostNavigator.LocalPostNavigator provides navigator,
+        ArticleNavigator.LocalArticleNavigator provides navigator,
     ) {
         ContentScreen(
             provider = provider,
