@@ -6,6 +6,7 @@ import dagger.multibindings.IntoMap
 import eu.peernetwork.ads.ui.boost.Boost
 import eu.peernetwork.ads.ui.checkout.Checkout
 import eu.peernetwork.ads.ui.checkout.CheckoutBalance
+import eu.peernetwork.app.ui.feed.Feed
 import eu.peernetwork.app.ui.profile.Profile
 import eu.peernetwork.app.ui.renderer.BalanceRenderer
 import eu.peernetwork.app.ui.renderer.EngagementRenderer
@@ -20,6 +21,7 @@ import eu.peernetwork.core.ui.factory.UiBuilderFactory
 import eu.peernetwork.social.ui.connection.Connection
 import eu.peernetwork.wallet.ui.balance.Balance
 import eu.peernetwork.wallet.ui.confirmation.Confirmation
+import eu.peernetwork.wallet.ui.service.Service
 
 @Module
 object ContentModule {
@@ -95,6 +97,14 @@ object ContentModule {
     @UiBuilder(Balance.Builder::class)
     fun provideBalanceBuilder(component: Content.Component): UiComponent.Builder {
         return Balance.Builder(component)
+    }
+
+    @Content.Scope
+    @Provides
+    @IntoMap
+    @UiBuilder(Service.Builder::class)
+    fun provideServiceBuilder(component: Content.Component): UiComponent.Builder {
+        return Service.Builder(component)
     }
 
     @Provides

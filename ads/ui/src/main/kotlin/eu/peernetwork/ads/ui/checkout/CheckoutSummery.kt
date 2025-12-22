@@ -26,7 +26,10 @@ import eu.peernetwork.ads.ui.R
 import eu.peernetwork.core.ui.theme.DesignTheme
 
 @Composable
-fun CheckoutSummery(modifier: Modifier = Modifier) {
+fun CheckoutSummery(
+    tax: Double,
+    modifier: Modifier = Modifier
+) {
     val border = MaterialTheme.colorScheme.surfaceContainerLow
     Column(
         modifier = Modifier.fillMaxWidth()
@@ -85,6 +88,7 @@ fun CheckoutSummery(modifier: Modifier = Modifier) {
             )
         }
         CheckoutFees(
+            tax = tax,
             charges = 4,
             burn = 2,
             modifier = Modifier.padding(bottom = 8.dp)
@@ -96,6 +100,6 @@ fun CheckoutSummery(modifier: Modifier = Modifier) {
 @Composable
 fun PreviewCheckoutSummery() {
     DesignTheme(isDarkMode = true) {
-        CheckoutSummery()
+        CheckoutSummery(tax = 0.1)
     }
 }

@@ -23,6 +23,7 @@ import eu.peernetwork.social.ui.search.tag.Tag
 import eu.peernetwork.social.ui.search.title.Title
 import eu.peernetwork.wallet.ui.balance.Balance
 import eu.peernetwork.wallet.ui.confirmation.Confirmation
+import eu.peernetwork.wallet.ui.service.Service
 
 @Module
 object SearchModule {
@@ -130,6 +131,14 @@ object SearchModule {
     @UiBuilder(Balance.Builder::class)
     fun provideBalanceBuilder(component: Search.Component): UiComponent.Builder {
         return Balance.Builder(component)
+    }
+
+    @Search.Scope
+    @Provides
+    @IntoMap
+    @UiBuilder(Service.Builder::class)
+    fun provideServiceBuilder(component: Search.Component): UiComponent.Builder {
+        return Service.Builder(component)
     }
 
     @Provides

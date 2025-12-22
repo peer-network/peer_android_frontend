@@ -15,6 +15,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.component.UiComponentProvider
+import eu.peernetwork.core.ui.design.luna.DesignStream
 import eu.peernetwork.core.ui.extension.builder
 
 @Composable
@@ -48,12 +49,26 @@ fun CheckoutScreen(
     } }
     val handleFinish by rememberUpdatedState(onFinish)
     val handleProfile by rememberUpdatedState(onProfile)
-    CheckoutPage(
-        isLoading = isLoading,
-        error = error,
-        onBack = onBack,
-        onPay = { viewModel.invoke(id) }
-    ) { component.checkoutBalance()(modifier = Modifier) }
+    component.checkoutBalance().Charges(viewModelStoreOwner = viewModelStoreOwner) {
+        DesignStream(
+            state = it,
+            loading = { CheckoutSkeleton() },
+            error = { error ->
+                CheckoutError(
+                    error = error,
+                    component = component
+                ) { viewModel(id) }
+            },
+        ) { charges ->
+            CheckoutPage(
+                tax = charges.value,
+                isLoading = isLoading,
+                error = error,
+                onBack = onBack,
+                onPay = { viewModel.invoke(id) }
+            ) { component.checkoutBalance()(modifier = Modifier) }
+        }
+    }
     CheckoutModal(
         state = order,
         showDialog = showDialog,

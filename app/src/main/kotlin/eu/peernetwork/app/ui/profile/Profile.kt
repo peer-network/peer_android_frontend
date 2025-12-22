@@ -20,6 +20,7 @@ import eu.peernetwork.social.ui.peers.Peers
 import eu.peernetwork.user.ui.user.User
 import eu.peernetwork.wallet.ui.balance.Balance
 import eu.peernetwork.wallet.ui.confirmation.Confirmation
+import eu.peernetwork.wallet.ui.service.Service
 
 interface Profile : ApplicationProvider {
     fun settingsEvent(): SettingsEvent
@@ -47,6 +48,7 @@ interface Profile : ApplicationProvider {
         Dashboard,
         Boost,
         Balance,
+        Service,
         Checkout,
         Feed,
         Screen

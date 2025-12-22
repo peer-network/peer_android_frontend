@@ -30,6 +30,7 @@ import eu.peernetwork.core.ui.theme.DesignTheme
 
 @Composable
 fun CheckoutPage(
+    tax: Double,
     isLoading: State<Boolean>,
     error: State<String?>,
     modifier: Modifier = Modifier,
@@ -55,7 +56,10 @@ fun CheckoutPage(
             modifier = Modifier.padding(horizontal = 8.dp)
         )
         updatedContent()
-        CheckoutSummery(modifier = Modifier.padding(vertical = 12.dp))
+        CheckoutSummery(
+            tax = tax,
+            modifier = Modifier.padding(vertical = 12.dp)
+        )
         AnimatedContent(targetState = error.value) { message ->
             if (message != null) {
                 Text(
@@ -100,6 +104,7 @@ fun PreviewCheckoutPage() {
         val isLoading = remember { mutableStateOf(false) }
         val error = remember { mutableStateOf<String?>(null) }
         CheckoutPage(
+            tax = 0.1,
             isLoading = isLoading,
             error = error,
             modifier = Modifier.padding(vertical = 16.dp),

@@ -15,6 +15,7 @@ import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.social.ui.connection.Connection
 import eu.peernetwork.wallet.ui.balance.Balance
 import eu.peernetwork.wallet.ui.confirmation.Confirmation
+import eu.peernetwork.wallet.ui.service.Service
 
 interface Feed : ApplicationProvider {
     fun settingsEvent(): SettingsEvent
@@ -36,6 +37,7 @@ interface Feed : ApplicationProvider {
         Timeline,
         Connection,
         Confirmation,
+        Service,
         Balance,
         Checkout,
         Screen {

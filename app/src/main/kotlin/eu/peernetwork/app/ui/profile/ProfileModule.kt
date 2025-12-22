@@ -26,6 +26,7 @@ import eu.peernetwork.social.ui.peers.Peers
 import eu.peernetwork.user.ui.user.User
 import eu.peernetwork.wallet.ui.balance.Balance
 import eu.peernetwork.wallet.ui.confirmation.Confirmation
+import eu.peernetwork.wallet.ui.service.Service
 
 @Module
 object ProfileModule {
@@ -165,6 +166,14 @@ object ProfileModule {
     @UiBuilder(Balance.Builder::class)
     fun provideBalanceBuilder(component: Profile.Component): UiComponent.Builder {
         return Balance.Builder(component)
+    }
+
+    @Profile.Scope
+    @Provides
+    @IntoMap
+    @UiBuilder(Service.Builder::class)
+    fun provideServiceBuilder(component: Profile.Component): UiComponent.Builder {
+        return Service.Builder(component)
     }
 
     @Provides

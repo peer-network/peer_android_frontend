@@ -12,6 +12,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -20,15 +21,18 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModelStoreOwner
 import eu.peernetwork.ads.ui.checkout.CheckoutBalance
 import eu.peernetwork.ads.ui.overview.OverviewLabel
 import eu.peernetwork.core.ui.R as CoreRes
 import eu.peernetwork.core.ui.annotation.UiViewModel
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.luna.DesignSkeleton
+import eu.peernetwork.core.ui.design.luna.DesignStreamState
 import eu.peernetwork.core.ui.theme.PeerAppRed
 import eu.peernetwork.wallet.ui.R
 import eu.peernetwork.wallet.ui.balance.BalanceScreen
+import eu.peernetwork.wallet.ui.service.ServiceScreen
 import javax.inject.Inject
 
 class BalanceRenderer @Inject constructor(
@@ -63,6 +67,18 @@ class BalanceRenderer @Inject constructor(
                     .padding(top = 10.dp)
             ) { Text(it.value.balance.toString()) }
         }
+    }
+
+    @Composable
+    override fun Charges(
+        viewModelStoreOwner: ViewModelStoreOwner,
+        content: @Composable ((State<DesignStreamState<Double>>) -> Unit)
+    ) {
+        ServiceScreen(
+            provider = provider,
+            viewModelStoreOwner = viewModelStoreOwner,
+            content = content
+        )
     }
 }
 

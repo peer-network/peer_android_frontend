@@ -33,6 +33,7 @@
     <string name="advert_position">Top of the feed</string>
 
     <string name="peer_fee_label">Peer Bank (2%)</string>
+    <string name="invitation_fee_label">To the inviter (1%)</string>
     <string name="commission_label">To the inviter (1%)</string>
     <string name="burn_label">Burn (1%)</string>
 

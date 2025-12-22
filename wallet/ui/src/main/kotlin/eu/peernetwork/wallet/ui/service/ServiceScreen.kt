@@ -1,48 +1,65 @@
 package eu.peernetwork.wallet.ui.service
 
-import android.content.res.Configuration
-import androidx.compose.animation.Crossfade
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.compose.DesignStatefulScaffold
 import eu.peernetwork.core.ui.design.compose.DesignStatefulScaffoldState
-import eu.peernetwork.core.ui.design.luna.DesignAvatar
-import eu.peernetwork.core.ui.design.luna.DesignOutlineButton
-import eu.peernetwork.core.ui.design.material.DesignCard
+import eu.peernetwork.core.ui.design.luna.DesignStreamState
 import eu.peernetwork.core.ui.extension.builder
-import eu.peernetwork.core.ui.theme.DesignTheme
 import eu.peernetwork.wallet.ui.model.UiRecipient
-import java.util.UUID
 
 sealed interface ServiceState {
     data object Default : ServiceState
     data class Transfer(val recipient: UiRecipient) : ServiceState
+}
+
+@Composable
+fun ServiceScreen(
+    provider: UiComponentProvider,
+    viewModelStoreOwner: ViewModelStoreOwner,
+    content: @Composable (State<DesignStreamState<Double>>) -> Unit
+) {
+    val context = LocalContext.current
+    val component = remember {
+        provider.builder(Service.Builder::class.java).build(context)
+    }
+    val viewModel = viewModel(
+        modelClass = ServiceViewModel::class.java,
+        viewModelStoreOwner = viewModelStoreOwner,
+        factory = component.viewModelFactory()
+    )
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    val derivedState = remember { derivedStateOf {
+        when(state) {
+            ServiceViewModel.State.Empty -> DesignStreamState.Default
+            ServiceViewModel.State.Loading -> DesignStreamState.Loading
+            is ServiceViewModel.State.Success -> {
+                val data = (state as ServiceViewModel.State.Success)
+                DesignStreamState.Success(data.tax)
+            }
+            is ServiceViewModel.State.Error -> {
+                DesignStreamState.Error((state as ServiceViewModel.State.Error).error)
+            }
+        }
+    } }
+    val updatedContent by rememberUpdatedState(content)
+    updatedContent(derivedState)
+    LaunchedEffect(Unit) {
+        if (state is ServiceViewModel.State.Empty) {
+            viewModel.initialize()
+        }
+    }
 }
 
 @Composable
@@ -80,7 +97,7 @@ fun ServiceScreen(
     DesignStatefulScaffold<Double>(
         derivedState,
         onRefresh = { viewModel.initialize() },
-        placeholder = { ServiceScreen() },
+        placeholder = { ServicePage() },
         errorContent = { ServiceError(it, component.resource()) { viewModel.initialize() } }
     ) {
         ServiceTransfer(
@@ -95,75 +112,3 @@ fun ServiceScreen(
     }
 }
 
-@Composable
-fun ServiceScreen(
-    name: String,
-    state: State<ServiceState>,
-    onClick: () -> Unit,
-    content: @Composable (ServiceState.Transfer) -> Unit
-) {
-    val updateContent by rememberUpdatedState(content)
-    Crossfade(state.value) { target ->
-        when(target) {
-            ServiceState.Default -> {
-                DesignOutlineButton(
-                    onClick = onClick,
-                    shape = RoundedCornerShape(8.dp),
-                    contentPadding = PaddingValues(vertical = 8.dp, horizontal = 32.dp),
-                    modifier = Modifier
-                        .padding(start = 4.dp)
-                        .height(36.dp)
-                        .fillMaxWidth(),
-                    content = {
-                        Text(text = name, style = MaterialTheme.typography.bodySmall)
-                    }
-                )
-            }
-            is ServiceState.Transfer -> { updateContent(target) }
-        }
-    }
-}
-
-@Composable
-fun ServiceScreen() {
-    DesignCard(
-        color = MaterialTheme.colorScheme.surfaceDim,
-        contentPadding = PaddingValues(16.dp),
-        shape = RoundedCornerShape(24.dp)
-    ) {
-        DesignAvatar {
-            Box(modifier = Modifier
-                .size(36.dp)
-                .background(MaterialTheme.colorScheme.background),
-            )
-        }
-    }
-}
-
-@Composable
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
-fun PreviewServiceScreen() {
-    DesignTheme(isDarkMode = true) {
-        Column {
-            val recipient = UiRecipient(
-                id = UUID.randomUUID().toString(),
-                slug = "1234",
-                username = "johnDoe",
-                imageUrl = "http://localhost"
-            )
-            ServiceScreen(
-                "ServiceScreen",
-                remember { mutableStateOf(ServiceState.Transfer(recipient)) },
-                {}
-            ) {
-                ServiceScreen()
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-            ServiceScreen(
-                "ServiceScreen",
-                remember { mutableStateOf(ServiceState.Default) },
-                {}
-            ) {}
-        }
-    }
-}

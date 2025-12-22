@@ -17,6 +17,7 @@ import eu.peernetwork.social.ui.search.tag.Tag
 import eu.peernetwork.social.ui.search.title.Title
 import eu.peernetwork.wallet.ui.balance.Balance
 import eu.peernetwork.wallet.ui.confirmation.Confirmation
+import eu.peernetwork.wallet.ui.service.Service
 
 interface Search : ApplicationProvider {
     fun settingsEvent(): SettingsEvent
@@ -41,6 +42,7 @@ interface Search : ApplicationProvider {
         Connection,
         Confirmation,
         Boost,
+        Service,
         Balance,
         Checkout,
         Screen

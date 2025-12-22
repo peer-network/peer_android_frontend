@@ -40,7 +40,7 @@ fun ServiceTransfer(
             state.value = lastState.value
         }
     ) {
-        ServiceScreen(
+        ServicePage(
             stringResource(R.string.recipient_selection_label),
             state,
             onClick,
