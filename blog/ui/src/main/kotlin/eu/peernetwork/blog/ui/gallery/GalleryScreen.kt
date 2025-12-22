@@ -165,7 +165,8 @@ fun GalleryScreen(
                 modifier = Modifier.fillMaxSize()
             ) {
                 if (post.type != UiPostType.TEXT
-                    && post.type != UiPostType.IMAGE) {
+                    && post.type != UiPostType.IMAGE
+                    && post.type != UiPostType.VIDEO) {
                     interactor.component().mediaController()(
                         Modifier.fillMaxWidth(),
                         spec = MediaController.Spec(
