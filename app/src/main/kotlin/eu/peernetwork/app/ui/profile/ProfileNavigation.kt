@@ -156,7 +156,7 @@ fun ProfileNavigation(
                 provider = component,
                 viewModelStoreOwner = backStackEntry,
                 onProfile = { controller.navigate("profile/${account.id}", backStackEntry) },
-                onFinish = { controller.navigate("feed", backStackEntry) }
+                onFinish = { controller.navigate("profile/${account.id}", backStackEntry) }
             ) { controller.popBackStack() }
         }
     }
