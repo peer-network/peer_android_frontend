@@ -33,7 +33,6 @@ material = "1.12.0"
 fragment = "1.8.8"
 ucrop = "2.2.9"
 permissions = "0.28.0"
-blur = "1.0.7"
 media3 = "1.6.1"
 ffmpeg = "2025.08.21"
 lrucache = "2.0.2"
@@ -91,7 +90,6 @@ turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 mockk = { module = "io.mockk:mockk-common", version.ref = "mockk" }
 mockk-jvm = { module = "io.mockk:mockk-jvm", version.ref = "mockk-jvm" }
 permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "permissions" }
-blur = { module = "com.github.Commit451:NativeStackBlur", version.ref = "blur" }
 lottie = { module = "com.airbnb.android:lottie-compose", version.ref = "lottie" }
 zoomable = { module = "net.engawapg.lib:zoomable", version.ref = "zoomable" }
 markdown = { module = "com.github.jeziellago:compose-markdown", version.ref = "markdown" }

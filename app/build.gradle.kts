@@ -4,9 +4,10 @@ plugins {
 }
 
 android {
+    ndkVersion = "26.1.10909125"
     defaultConfig {
-        versionCode = 36
-        versionName = "1.10.0"
+        versionCode = 37
+        versionName = "1.10.1"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
@@ -47,6 +48,11 @@ android {
     }
     composeOptions {
         kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
+    }
+    packaging {
+        jniLibs {
+            useLegacyPackaging = false
+        }
     }
 }
 
