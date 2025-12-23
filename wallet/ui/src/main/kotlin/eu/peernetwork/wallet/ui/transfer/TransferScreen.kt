@@ -93,7 +93,7 @@ fun TransferScreen(
                         imageUrl = recipient.imageUrl,
                         size = 36.dp,
                         style = MaterialTheme.typography.bodySmall.copy(
-                            color = MaterialTheme.colorScheme.tertiary,
+                            color = MaterialTheme.colorScheme.outline,
                         ),
                         color = MaterialTheme.colorScheme.background,
                         modifier = Modifier.clip(CircleShape)

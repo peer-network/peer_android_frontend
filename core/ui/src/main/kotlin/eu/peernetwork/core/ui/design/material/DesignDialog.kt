@@ -44,6 +44,7 @@ fun  DesignDialog(
     state: State<Boolean>,
     startDestination: String? = null,
     dim: Boolean = false,
+    dismissable: Boolean = false,
     canDismiss: () -> Boolean = { true },
     onBackPressed: () -> Unit = {},
     onShow: () -> Unit = {},
@@ -118,6 +119,8 @@ fun  DesignDialog(
             window?.apply {
                 setWindowAnimations(0)
                 setBackgroundDrawable(null)
+                setCancelable(dismissable)
+                setCanceledOnTouchOutside(dismissable)
                 addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
                 clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)
                 navigationBarColor = Color.TRANSPARENT
@@ -143,7 +146,13 @@ fun  DesignDialog(
                             val isStackEmpty = remember(navBackStackEntry?.id) {
                                 mutableStateOf(controller.visibleEntries.value.size <= 1)
                             }
-                            Box(modifier = Modifier.pointerInput(Unit) {}) {
+                            Box(modifier = Modifier.pointerInput(Unit) {
+                                if (dismissable) {
+                                    if (handleCanDismiss()) {
+                                        dismiss()
+                                    }
+                                }
+                            }) {
                                 updatedContent(controller, animation, cancelable)
                             }
                             LaunchedEffect(currentStack.value) {

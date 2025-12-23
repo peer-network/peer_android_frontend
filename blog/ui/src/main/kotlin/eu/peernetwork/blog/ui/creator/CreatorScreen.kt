@@ -99,8 +99,12 @@ fun CreatorScreen(
     component.engagementConfirmation()(
         modifier = Modifier,
         spec = EngagementDialog.Spec(
-            type,
-            viewModelStoreOwner,
+            type = type,
+            viewModelStoreOwner = viewModelStoreOwner,
+            onDismiss = {
+                type.value = null
+                draft.value = null
+            }
         ) {
             when(it) {
                 is EngagementIntent.Post -> {

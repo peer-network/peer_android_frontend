@@ -43,6 +43,7 @@ import eu.peernetwork.core.ui.theme.PeerTheme
 fun DesignBottomSheetScaffold(
     state: State<Boolean>,
     behind: Boolean = true,
+    dismissable: Boolean = false,
     color: Color = MaterialTheme.colorScheme.surfaceContainerLow,
     orientation: Orientation = Orientation.Vertical,
     confirmValueChange: (DesignBottomSheetState) -> Boolean = { true },
@@ -64,6 +65,7 @@ fun DesignBottomSheetScaffold(
         state = visible,
         dim = behind,
         onShow = onShow,
+        dismissable = dismissable,
         onDismiss = {
             visible.value = false
             handleOnDismiss()

@@ -107,7 +107,11 @@ fun EngagementScreen(
     ) { overview.value = null }
     component.engagementConfirmation()(
         Modifier,
-        spec = EngagementDialog.Spec(type, viewModelStoreOwner) {
+        spec = EngagementDialog.Spec(
+            type = type,
+            viewModelStoreOwner = viewModelStoreOwner,
+            onDismiss = { type.value = null }
+        ) {
             when(it) {
                 is EngagementIntent.Like -> viewModel.like(
                     id = it.id,

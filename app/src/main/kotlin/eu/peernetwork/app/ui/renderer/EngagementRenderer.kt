@@ -33,6 +33,7 @@ class EngagementRenderer @Inject constructor(
         DesignStream(state = streamState) { intent ->
             DesignBottomSheetScaffold(
                 state = showSheet,
+                dismissable = true,
                 color = MaterialTheme.colorScheme.surfaceDim,
                 onDismiss = { spec.type.value = null }
             ) {
@@ -40,7 +41,10 @@ class EngagementRenderer @Inject constructor(
                     token = intent.value.toUiToken(),
                     provider = provider,
                     viewModelStoreOwner = spec.viewModelStoreOwner,
-                    onDismiss = { spec.type.value = null }
+                    onDismiss = {
+                        spec.type.value = null
+                        spec.onDismiss()
+                    }
                 ) {
                     spec.type.value?.let { spec.onConfirm(it) }
                     spec.type.value = null
