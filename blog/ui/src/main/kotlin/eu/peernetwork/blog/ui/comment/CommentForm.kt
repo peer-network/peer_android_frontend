@@ -19,6 +19,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
@@ -37,6 +38,7 @@ fun CommentForm(
     username: String,
     imageUrl: String,
     comment: TextFieldState,
+    focusRequester: FocusRequester,
     isLoading: State<Boolean>,
     isSuccess: State<Boolean>,
     onSubmit: () -> Unit
@@ -81,6 +83,7 @@ fun CommentForm(
                     end = 56.dp,
                     bottom = 16.dp,
                 ),
+                focusRequester = focusRequester,
                 visualTransformation = VisualTransformation {
                     TransformedText(
                         text = comment.text.toString().annotate(),
@@ -113,10 +116,12 @@ fun PreviewCommentForm() {
         val comment = remember { TextFieldState() }
         val isLoading = remember { mutableStateOf(false) }
         val isSuccess = remember { mutableStateOf(true) }
+        val focusRequester = remember { FocusRequester() }
         CommentForm(
             username = "John Doe",
             imageUrl = "http://localhost",
             comment = comment,
+            focusRequester = focusRequester,
             isLoading = isLoading,
             isSuccess = isSuccess
         ) {}

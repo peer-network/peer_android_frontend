@@ -36,6 +36,7 @@ fun BoostNavigation(
         composable("checkout") {
             CheckoutScreen(
                 id = id,
+                description = description,
                 provider = component,
                 viewModelStoreOwner = viewModelStoreOwner,
                 onBack = { controller.popBackStack() },

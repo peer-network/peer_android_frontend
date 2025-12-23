@@ -57,7 +57,7 @@ fun RequestPage(
         verticalArrangement = Arrangement.Center,
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 24.dp)
+            .padding(horizontal = 16.dp)
     ) {
         val description = buildAnnotatedString {
             append(stringResource(R.string.forgot_instruction))

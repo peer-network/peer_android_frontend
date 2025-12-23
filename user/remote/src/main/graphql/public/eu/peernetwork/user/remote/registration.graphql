@@ -3,5 +3,10 @@ mutation Register($email: String!, $password: String!, $username: String!, $refe
         status
         ResponseCode
         userid
+        meta {
+            status
+            RequestId
+            ResponseCode
+        }
     }
 }

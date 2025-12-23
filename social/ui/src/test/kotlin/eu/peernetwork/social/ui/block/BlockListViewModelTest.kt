@@ -4,6 +4,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.paging.PagingData
 import app.cash.turbine.test
 import eu.peernetwork.core.common.paging.Pageable
+import eu.peernetwork.social.ui.blocks.BlocksViewModel
 import eu.peernetwork.social.ui.mock.BlockMock
 import eu.peernetwork.social.ui.usecase.BlockListPagingUsecase
 import io.mockk.coEvery
@@ -32,12 +33,12 @@ internal class BlockListViewModelTest {
 
     private val usecase = mockk<BlockListPagingUsecase>()
 
-    private lateinit var viewModel: BlockListViewModel
+    private lateinit var viewModel: BlocksViewModel
 
     @Before
     fun setup() {
         Dispatchers.setMain(dispatcher)
-        viewModel = BlockListViewModel(usecase)
+        viewModel = BlocksViewModel(usecase)
     }
 
     @After
@@ -58,8 +59,8 @@ internal class BlockListViewModelTest {
 
         viewModel.blockList(id, Pageable(0,1))
         viewModel.state.test {
-            assertTrue(awaitItem() is BlockListViewModel.State.Loading)
-            assertTrue(awaitItem() is BlockListViewModel.State.Success)
+            assertTrue(awaitItem() is BlocksViewModel.State.Loading)
+            assertTrue(awaitItem() is BlocksViewModel.State.Success)
         }
     }
 
@@ -74,7 +75,7 @@ internal class BlockListViewModelTest {
 
         viewModel.blockList(id, Pageable(0,1))
         viewModel.state.test {
-            assertEquals(BlockListViewModel.State.Error(error), awaitItem())
+            assertEquals(BlocksViewModel.State.Error(error), awaitItem())
         }
     }
 }

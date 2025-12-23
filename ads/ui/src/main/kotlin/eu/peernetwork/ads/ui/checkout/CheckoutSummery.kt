@@ -23,11 +23,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.ads.ui.R
+import eu.peernetwork.ads.ui.model.UiCharge
 import eu.peernetwork.core.ui.theme.DesignTheme
+import java.math.BigDecimal
 
 @Composable
 fun CheckoutSummery(
-    tax: Double,
+    price: BigDecimal,
+    charge: UiCharge,
     modifier: Modifier = Modifier
 ) {
     val border = MaterialTheme.colorScheme.surfaceContainerLow
@@ -88,9 +91,8 @@ fun CheckoutSummery(
             )
         }
         CheckoutFees(
-            tax = tax,
-            charges = 4,
-            burn = 2,
+            charge = charge,
+            price = price,
             modifier = Modifier.padding(bottom = 8.dp)
         )
     }
@@ -100,6 +102,14 @@ fun CheckoutSummery(
 @Composable
 fun PreviewCheckoutSummery() {
     DesignTheme(isDarkMode = true) {
-        CheckoutSummery(tax = 0.1)
+        CheckoutSummery(
+            price = BigDecimal.TEN,
+            charge = UiCharge(
+                percentage = 0.1,
+                peer = 0.05,
+                burn = 0.02,
+                pool = 0.1
+            )
+        )
     }
 }

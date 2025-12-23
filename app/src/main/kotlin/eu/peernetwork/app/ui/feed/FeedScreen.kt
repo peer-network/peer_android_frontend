@@ -3,7 +3,7 @@ package eu.peernetwork.app.ui.feed
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -11,6 +11,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -27,6 +28,7 @@ import eu.peernetwork.media.core.model.UiMimeType
 import eu.peernetwork.social.ui.connection.ConnectionScreen
 import eu.peernetwork.user.domain.model.Account
 import eu.peernetwork.app.interactor.NavigationInteractor
+import kotlinx.coroutines.flow.distinctUntilChanged
 
 @Composable
 fun FeedScreen(
@@ -108,10 +110,10 @@ fun FeedScreen(
                     onFilter = { viewModel.setFilter(it) },
                     onBoost = { showBoost.value = it }
                 ) { isVisible.value = true }
-                DisposableEffect(Unit) {
-                    onDispose {
-                        viewModel.lastVisited(pageState.currentPage)
-                    }
+                LaunchedEffect(Unit) {
+                    snapshotFlow { pageState.currentPage }
+                        .distinctUntilChanged()
+                        .collect { viewModel.lastVisited(it) }
                 }
             }
             FeedModal(

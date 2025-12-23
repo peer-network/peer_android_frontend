@@ -18,6 +18,7 @@ import eu.peernetwork.core.ui.design.compose.DesignStatefulScaffoldState
 import eu.peernetwork.core.ui.design.luna.DesignStreamState
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.wallet.ui.model.UiRecipient
+import eu.peernetwork.wallet.ui.model.UiTax
 
 sealed interface ServiceState {
     data object Default : ServiceState
@@ -28,7 +29,7 @@ sealed interface ServiceState {
 fun ServiceScreen(
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
-    content: @Composable (State<DesignStreamState<Double>>, () -> Unit) -> Unit
+    content: @Composable (State<DesignStreamState<UiTax>>, () -> Unit) -> Unit
 ) {
     val context = LocalContext.current
     val component = remember {
@@ -95,14 +96,14 @@ fun ServiceScreen(
             }
         }
     } }
-    DesignStatefulScaffold<Double>(
+    DesignStatefulScaffold<UiTax>(
         derivedState,
         onRefresh = { viewModel.initialize() },
         placeholder = { ServicePage() },
         errorContent = { ServiceError(it, component.resource()) { viewModel.initialize() } }
     ) {
         ServiceTransfer(
-            it,
+            tax = it.percentage,
             serviceState,
             component,
             viewModelStoreOwner,

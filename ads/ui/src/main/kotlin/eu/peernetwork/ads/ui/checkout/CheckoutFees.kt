@@ -18,26 +18,30 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.ads.ui.R
+import eu.peernetwork.ads.ui.model.UiCharge
 import eu.peernetwork.core.ui.theme.DesignTheme
+import java.math.BigDecimal
 
 @Composable
 fun CheckoutFees(
-    tax: Double,
-    charges: Int,
-    burn: Int,
+    charge: UiCharge,
+    price: BigDecimal,
     modifier: Modifier = Modifier
 ) {
+    val tax = charge.percentage * price.toDouble()
+    val peerFee = charge.peer * price.toDouble()
+    val burn = charge.burn * price.toDouble()
     Column(modifier = modifier) {
         CheckoutFees(
-            label = stringResource(R.string.peer_fee_label),
-            value = charges.toString()
+            label = stringResource(R.string.peer_fee_label, charge.peer),
+            value = peerFee.toString()
         )
         CheckoutFees(
-            label = stringResource(R.string.invitation_fee_label),
+            label = stringResource(R.string.invitation_fee_label, charge.percentage),
             value = tax.toString()
         )
         CheckoutFees(
-            label = stringResource(R.string.burn_label),
+            label = stringResource(R.string.burn_label, charge.burn),
             value = burn.toString()
         )
     }
@@ -83,9 +87,13 @@ fun CheckoutFees(
 fun PreviewCheckoutFees() {
     DesignTheme(isDarkMode = true) {
         CheckoutFees(
-            tax = 0.15,
-            charges = 2,
-            burn = 3
+            price = BigDecimal.TEN,
+            charge = UiCharge(
+                percentage = 0.1,
+                peer = 0.05,
+                burn = 0.02,
+                pool = 0.1
+            )
         )
     }
 }

@@ -1,6 +1,6 @@
-package eu.peernetwork.wallet.domain.model
+package eu.peernetwork.ads.ui.model
 
-data class Tax(
+data class UiCharge(
     val burn: Double,
     val pool: Double,
     val peer: Double,

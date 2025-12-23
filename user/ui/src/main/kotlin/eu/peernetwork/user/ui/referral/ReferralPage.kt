@@ -32,7 +32,7 @@ fun ReferralPage(
         verticalArrangement = Arrangement.Center,
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 24.dp)
+            .padding(horizontal = 16.dp)
     ) {
         FormHeader(
             title = stringResource(R.string.welcome).annotate(

@@ -24,13 +24,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.ads.ui.R
+import eu.peernetwork.ads.ui.model.UiCharge
 import eu.peernetwork.core.ui.design.luna.DesignButton
 import eu.peernetwork.core.ui.design.luna.DesignOutlineButton
 import eu.peernetwork.core.ui.theme.DesignTheme
+import java.math.BigDecimal
 
 @Composable
 fun CheckoutPage(
-    tax: Double,
+    charge: UiCharge,
+    price: BigDecimal,
     isLoading: State<Boolean>,
     error: State<String?>,
     modifier: Modifier = Modifier,
@@ -57,7 +60,8 @@ fun CheckoutPage(
         )
         updatedContent()
         CheckoutSummery(
-            tax = tax,
+            price = price,
+            charge = charge,
             modifier = Modifier.padding(vertical = 12.dp)
         )
         AnimatedContent(targetState = error.value) { message ->
@@ -104,7 +108,13 @@ fun PreviewCheckoutPage() {
         val isLoading = remember { mutableStateOf(false) }
         val error = remember { mutableStateOf<String?>(null) }
         CheckoutPage(
-            tax = 0.1,
+            price = BigDecimal.TEN,
+            charge = UiCharge(
+                percentage = 0.1,
+                peer = 0.05,
+                burn = 0.02,
+                pool = 0.1
+            ),
             isLoading = isLoading,
             error = error,
             modifier = Modifier.padding(vertical = 16.dp),

@@ -4,10 +4,12 @@ import dagger.Binds
 import dagger.Module
 import eu.peernetwork.wallet.data.api.ReferralApi
 import eu.peernetwork.wallet.data.api.RewardApi
+import eu.peernetwork.wallet.data.api.TaxApi
 import eu.peernetwork.wallet.data.api.TransferApi
 import eu.peernetwork.wallet.data.api.WalletApi
 import eu.peernetwork.wallet.remote.api.ReferralApiDelegate
 import eu.peernetwork.wallet.remote.api.RewardApiDelegate
+import eu.peernetwork.wallet.remote.api.TaxApiDelegate
 import eu.peernetwork.wallet.remote.api.TransferApiDelegate
 import eu.peernetwork.wallet.remote.api.WalletApiDelegate
 
@@ -24,4 +26,7 @@ interface ApiModule {
 
     @Binds
     fun bindRewardApi(delegate: RewardApiDelegate): RewardApi
+
+    @Binds
+    fun bindTaxApi(delegate: TaxApiDelegate): TaxApi
 }

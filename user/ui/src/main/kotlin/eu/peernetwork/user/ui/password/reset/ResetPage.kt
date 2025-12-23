@@ -75,7 +75,7 @@ fun ResetPage(
         verticalArrangement = Arrangement.Center,
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 24.dp)
+            .padding(horizontal = 16.dp)
     ) {
         Text(
             text = stringResource(R.string.password_recovery_instruction),

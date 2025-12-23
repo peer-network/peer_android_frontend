@@ -13,8 +13,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -23,7 +26,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import eu.peernetwork.ads.ui.checkout.CheckoutBalance
+import eu.peernetwork.ads.ui.model.UiCharge
 import eu.peernetwork.ads.ui.overview.OverviewLabel
+import eu.peernetwork.app.mapper.mapToCharges
 import eu.peernetwork.core.ui.R as CoreRes
 import eu.peernetwork.core.ui.annotation.UiViewModel
 import eu.peernetwork.core.ui.component.UiComponentProvider
@@ -72,13 +77,28 @@ class BalanceRenderer @Inject constructor(
     @Composable
     override fun Charges(
         viewModelStoreOwner: ViewModelStoreOwner,
-        content: @Composable ((State<DesignStreamState<Double>>, () -> Unit) -> Unit)
+        content: @Composable ((State<DesignStreamState<UiCharge>>, () -> Unit) -> Unit)
     ) {
+        val updatedContent by rememberUpdatedState(content)
         ServiceScreen(
             provider = provider,
-            viewModelStoreOwner = viewModelStoreOwner,
-            content = content
-        )
+            viewModelStoreOwner = viewModelStoreOwner
+        ) { service, action ->
+            val state = remember { derivedStateOf {
+                when(service.value) {
+                    is DesignStreamState.Default -> DesignStreamState.Default
+                    is DesignStreamState.Loading -> DesignStreamState.Loading
+                    is DesignStreamState.Success -> {
+                        val charges = (service.value as DesignStreamState.Success).data.mapToCharges()
+                        DesignStreamState.Success(charges)
+                    }
+                    is DesignStreamState.Error -> {
+                        DesignStreamState.Error((service.value as DesignStreamState.Error).error)
+                    }
+                }
+            } }
+            updatedContent(state, action)
+        }
     }
 }
 

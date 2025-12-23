@@ -57,7 +57,7 @@ fun LoginPage(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
-                .padding(horizontal = 24.dp)
+                .padding(horizontal = 16.dp)
         ) {
             Image(
                 painter = if (isDarkTheme) {

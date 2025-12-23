@@ -15,6 +15,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
@@ -57,6 +58,7 @@ fun CommentSheet(
         }
     } }
     val comment = remember { TextFieldState() }
+    val focusRequester = remember { FocusRequester() }
     CommentScreen(
         provider = provider,
         viewModelStoreOwner = viewModelStoreOwner
@@ -91,6 +93,7 @@ fun CommentSheet(
                             username = username,
                             imageUrl = imageUrl,
                             comment = comment,
+                            focusRequester = focusRequester,
                             isLoading = isLoading,
                             isSuccess = isSuccess,
                             onSubmit = {
@@ -115,6 +118,7 @@ fun CommentSheet(
                                 comment.edit {
                                     replace(0, length, "@$it")
                                 }
+                                focusRequester.requestFocus()
                             },
                             onContentClick = { spec, value ->
                                 sheetState.value = CommentSheetState.Dismissing {

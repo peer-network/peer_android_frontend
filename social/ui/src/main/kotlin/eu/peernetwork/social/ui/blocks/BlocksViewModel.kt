@@ -1,4 +1,4 @@
-package eu.peernetwork.social.ui.block
+package eu.peernetwork.social.ui.blocks
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -17,7 +17,7 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class BlockListViewModel @Inject constructor(
+class BlocksViewModel @Inject constructor(
     private val usecase: BlockListPagingUsecase
 ): ViewModel() {
     private val mutableState = MutableStateFlow<State>(State.Loading)

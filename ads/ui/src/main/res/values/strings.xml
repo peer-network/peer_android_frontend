@@ -32,10 +32,9 @@
     <string name="advert_duration_label">(%d hours from now)</string>
     <string name="advert_position">Top of the feed</string>
 
-    <string name="peer_fee_label">Peer Bank (2%)</string>
-    <string name="invitation_fee_label">To the inviter (1%)</string>
-    <string name="commission_label">To the inviter (1%)</string>
-    <string name="burn_label">Burn (1%)</string>
+    <string name="peer_fee_label">Peer Bank (%f)</string>
+    <string name="invitation_fee_label">To the inviter (%f)</string>
+    <string name="burn_label">Burn (%f)</string>
 
     <string name="view_posts">Take me to my posts</string>
     <string name="visit_post">Go to post</string>
