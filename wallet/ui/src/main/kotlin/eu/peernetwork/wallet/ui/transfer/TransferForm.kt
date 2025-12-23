@@ -31,7 +31,7 @@ import java.math.BigDecimal
 @Composable
 fun TransferForm(
     state: TextFieldState,
-    tax: Double,
+    tax: Int,
     isLoading: Boolean = false,
     onSubmit: (BigDecimal) -> Unit,
 ) {
@@ -72,7 +72,7 @@ fun TransferForm(
             ) { handleSubmission() }
         }
         Text(
-            stringResource(R.string.transfer_disclaimer, "3%"),
+            stringResource(R.string.transfer_disclaimer, tax),
             modifier = Modifier
                 .padding(top = 12.dp)
                 .padding(horizontal = 16.dp),
@@ -89,7 +89,7 @@ fun PreviewTransferForm() {
     DesignTheme {
         val state = remember { TextFieldState() }
         Box(Modifier.padding(16.dp)) {
-            TransferForm(state, 4.0) {}
+            TransferForm(state, 4) {}
         }
     }
 }

@@ -103,7 +103,7 @@ fun ServiceScreen(
         errorContent = { ServiceError(it, component.resource()) { viewModel.initialize() } }
     ) {
         ServiceTransfer(
-            tax = it.percentage,
+            tax = ((it.burn + it.peer) * 100).toInt(),
             serviceState,
             component,
             viewModelStoreOwner,

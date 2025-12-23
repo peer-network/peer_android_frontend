@@ -3,7 +3,7 @@
     <string name="wallet_title">Your account</string>
     <string name="balance_title">Your balance</string>
     <string name="transfer_label">Transfer</string>
-    <string name="transfer_disclaimer">A fee of %s applies</string>
+    <string name="transfer_disclaimer">A fee of %d%% applies</string>
     <string name="amount_text">Amount</string>
     <string name="amount_label">Amount to send</string>
     <string name="recipient_selection_label">Choose recipient</string>

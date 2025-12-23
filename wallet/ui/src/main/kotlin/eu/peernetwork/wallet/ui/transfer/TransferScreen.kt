@@ -43,7 +43,7 @@ import java.util.UUID
 
 @Composable
 fun TransferScreen(
-    tax: Double,
+    tax: Int,
     recipient: UiRecipient,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
@@ -67,7 +67,7 @@ fun TransferScreen(
         onClear = onClear,
         onClick = onRecipientClick
     ) {
-        TransferForm(amount, tax / 100) {
+        TransferForm(amount, tax) {
             viewModel.reset()
             handleOnTransfer(UiTransfer(recipient.id, it))
         }
@@ -143,7 +143,7 @@ fun PreviewTransferScreen() {
             imageUrl = "http://localhost"
         )
         TransferScreen(recipient, Modifier.padding(16.dp)) {
-            TransferForm(state, 4.0) {}
+            TransferForm(state, 4) {}
         }
     }
 }

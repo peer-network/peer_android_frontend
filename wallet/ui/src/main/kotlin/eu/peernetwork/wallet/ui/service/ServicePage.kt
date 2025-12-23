@@ -43,11 +43,10 @@ fun ServicePage(
             ServiceState.Default -> {
                 DesignOutlineButton(
                     onClick = onClick,
-                    shape = RoundedCornerShape(8.dp),
+                    minHeight = 42.dp,
                     contentPadding = PaddingValues(vertical = 8.dp, horizontal = 32.dp),
                     modifier = Modifier
                         .padding(start = 4.dp)
-                        .height(36.dp)
                         .fillMaxWidth(),
                     content = {
                         Text(text = name, style = MaterialTheme.typography.bodySmall)

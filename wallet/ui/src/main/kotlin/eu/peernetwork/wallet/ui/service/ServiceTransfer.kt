@@ -17,7 +17,7 @@ import eu.peernetwork.wallet.ui.transfer.TransferSheet
 
 @Composable
 fun ServiceTransfer(
-    tax: Double,
+    tax: Int,
     state: MutableState<ServiceState>,
     component: Service.Component,
     viewModelStoreOwner: ViewModelStoreOwner,
