@@ -1,55 +1,41 @@
 package eu.peernetwork.blog.ui.engagement
 
 import android.widget.Toast
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import eu.peernetwork.blog.ui.interaction.overview.OverviewScreen
-import eu.peernetwork.blog.ui.comment.CommentScreen
-import eu.peernetwork.blog.ui.compose.PostIcon
-import eu.peernetwork.blog.ui.event.UiEngagementEvent
-import eu.peernetwork.blog.ui.mapper.mapToEngagement
-import eu.peernetwork.blog.ui.model.UiAction
-import eu.peernetwork.blog.ui.model.UiContent
+import eu.peernetwork.blog.ui.comment.CommentSheet
+import eu.peernetwork.blog.ui.engagement.EngagementInteractor.Companion.LocalEngagementInteractor
+import eu.peernetwork.blog.ui.interaction.overview.OverviewSheet
+import eu.peernetwork.blog.ui.model.UiReaction
+import eu.peernetwork.blog.ui.model.UiEngagement
+import eu.peernetwork.blog.ui.model.UiPostDetail
+import eu.peernetwork.blog.ui.post.PostUserConnection
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.extension.builder
-import eu.peernetwork.core.ui.extension.toInt
-import eu.peernetwork.core.ui.theme.LightAccentColor
-import eu.peernetwork.core.ui.theme.PeerAppRed
 
 @Composable
 fun EngagementScreen(
-    userId: String,
-    postLimit: Int,
-    onMentionClick: (String) -> Unit = {},
-    onHashtagClick: (String) -> Unit = {},
-    onAuthorClick: (String) -> Unit = {},
+    uuid: String,
+    username: String,
+    imageUrl: String,
+    limit: Int,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
-    connection: @Composable RowScope.(Triple<String, Boolean, Boolean>) -> Unit = {},
-    content: @Composable (UiEngagementEvent) -> Unit
+    content: @Composable () -> Unit
 ) {
     val context = LocalContext.current
     val component = remember {
@@ -61,63 +47,40 @@ fun EngagementScreen(
         factory = component.viewModelFactory()
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val reactionState by viewModel.reactions.collectAsStateWithLifecycle()
+    val reactionState = viewModel.reactions.collectAsStateWithLifecycle()
     val error = remember(state) {
         derivedStateOf {
             (state as? EngagementViewModel.State.Error?)?.error
         }
     }
-    val post = remember { mutableStateOf<UiContent?>(null) }
-    val overview = remember { mutableStateOf<UiContent?>(null) }
+    val post = remember { mutableStateOf<UiPostDetail?>(null) }
+    val overview = remember { mutableStateOf<UiEngagement?>(null) }
     val errorMessage = stringResource(R.string.unknown_error_message)
     val hasError = remember { derivedStateOf { error.value != null } }
     val updatedContent by rememberUpdatedState(content)
-    val handleMentionClick by rememberUpdatedState(onMentionClick)
-    val handleHashtagClick by rememberUpdatedState(onHashtagClick)
-    val handleAuthorClick by rememberUpdatedState(onAuthorClick)
-    val type = remember { mutableStateOf<EngagementEvent?>(null) }
-    val event = remember(state) {
-        UiEngagementEvent(
-            onLoad = {
-                val isLiked = reactionState[it.id]?.isLiked
-                val isDisliked = reactionState[it.id]?.isDisliked
-                val isViewed = reactionState[it.id]?.isViewed
-                val commented = reactionState[it.id]?.commented ?: 0
-                val likeCount = it.likes + (isLiked == true && !it.isLiked).toInt()
-                val dislikeCount = it.dislikes + (isDisliked == true && !it.isDisliked).toInt()
-                val viewCount = it.views + (isViewed == true && !it.isViewed).toInt()
-                it.mapToEngagement().copy(
-                    likes = likeCount,
-                    isLiked = isLiked ?: it.isLiked,
-                    dislikes = dislikeCount,
-                    isDisliked = isDisliked ?: it.isDisliked,
-                    comment = it.comment + commented,
-                    views = viewCount
+    val type = remember { mutableStateOf<EngagementIntent?>(null) }
+    val interactor = remember { object : EngagementInteractor {
+        override fun observe(): State<Map<String, UiReaction>> = reactionState
+
+        override fun invoke(state: EngagementInteractor.State) {
+            if (state is EngagementInteractor.State.Like) {
+                type.value = EngagementIntent.Like(
+                    post = state.id,
+                    author = state.author,
+                    message = state.message
                 )
-            },
-            onLike = { type.value = EngagementEvent.Like(it) },
-            onDisLike = { type.value = EngagementEvent.DisLike(it.id) },
-            onComment = { post.value = it },
-            onView = {
-                val isLiked = reactionState[it.id]?.isLiked
-                val isDisliked = reactionState[it.id]?.isDisliked
-                val isViewed = reactionState[it.id]?.isViewed
-                val commented = reactionState[it.id]?.commented ?: 0
-                val likeCount = it.likes + (isLiked == true && !it.isLiked).toInt()
-                val dislikeCount = it.dislikes + (isDisliked == true && !it.isDisliked).toInt()
-                val viewCount = it.views + (isViewed == true && !it.isViewed).toInt()
-                overview.value = it.copy(
-                    likes = likeCount,
-                    isLiked = isLiked ?: it.isLiked,
-                    dislikes = dislikeCount,
-                    isDisliked = isDisliked ?: it.isDisliked,
-                    comment = it.comment + commented,
-                    views = viewCount
-                )
+            } else if (state is EngagementInteractor.State.Dislike) {
+                type.value = EngagementIntent.DisLike(state.id)
+            } else if (state is EngagementInteractor.State.Comment) {
+                post.value = state.model
+            } else if (state is EngagementInteractor.State.View) {
+                overview.value = state.engagement
             }
-        )
-    }
-    updatedContent(event)
+        }
+    } }
+    CompositionLocalProvider(
+        LocalEngagementInteractor provides interactor
+    ) { updatedContent() }
     LaunchedEffect(Unit) { viewModel.initialize() }
     LaunchedEffect(hasError.value) {
         if (hasError.value) {
@@ -127,164 +90,37 @@ fun EngagementScreen(
             viewModel.clear()
         }
     }
-    CommentScreen(
+    CommentSheet(
+        uuid = uuid,
+        username = username,
+        imageUrl = imageUrl,
         state = post,
-        userId = userId,
-        postLimit = postLimit,
         provider = component,
-        viewModelStoreOwner = viewModelStoreOwner,
-        onMentionClick = { handleMentionClick(it) },
-        onHashtagClick = { handleHashtagClick(it) },
-        onAuthorClick = { handleAuthorClick(it) },
-        connection = connection,
+        viewModelStoreOwner = viewModelStoreOwner
     )
-    OverviewScreen(
+    OverviewSheet(
+        uuid = uuid,
         state = overview,
-        postLimit = postLimit,
+        limit = limit,
         provider = component,
-        connection = connection,
-        onAuthorClick = { handleAuthorClick(it) }
-    )
+        viewModelStoreOwner = viewModelStoreOwner
+    ) { overview.value = null }
     component.engagementConfirmation()(
         Modifier,
-        EngagementDialog.Spec(
-            type,
-            viewModelStoreOwner,
+        spec = EngagementDialog.Spec(
+            type = type,
+            viewModelStoreOwner = viewModelStoreOwner,
+            onDismiss = { type.value = null }
         ) {
             when(it) {
-                is EngagementEvent.Like -> viewModel.like(it.content)
-                is EngagementEvent.DisLike -> viewModel.dislike(it.id)
+                is EngagementIntent.Like -> viewModel.like(
+                    id = it.id,
+                    author = it.author,
+                    message = it.message
+                )
+                is EngagementIntent.DisLike -> viewModel.dislike(it.id)
                 else -> {}
             }
         }
     )
-}
-
-@Composable
-fun EngagementScreen(
-    model: UiContent,
-    event: UiEngagementEvent,
-    size: Dp = 20.dp,
-    spacer: Dp = 0.dp,
-    color: Color = MaterialTheme.colorScheme.tertiary,
-    padding: PaddingValues = PaddingValues(2.dp),
-    orientation: Orientation = Orientation.Horizontal,
-) {
-    val engagement by remember(model) { derivedStateOf { event.onLoad(model) } }
-    if (orientation == Orientation.Horizontal) {
-        Row {
-            PostIcon(
-                action = UiAction.Like,
-                value = engagement.likes.toString(),
-                isActive = engagement.isLiked,
-                color = if (engagement.isLiked) {
-                    PeerAppRed
-                } else {
-                    color
-                },
-                size = size,
-                spacer = 4.dp,
-                padding = padding,
-                orientation = orientation
-            ) {
-                if (!engagement.isLiked) {
-                    event.onLike(model)
-                }
-            }
-            Spacer(modifier = Modifier.size(spacer))
-            PostIcon(
-                action = UiAction.Dislike,
-                value = engagement.dislikes.toString(),
-                isActive = engagement.isDisliked,
-                color = if (engagement.isDisliked) {
-                    LightAccentColor
-                } else {
-                    color
-                },
-                size = size,
-                spacer = 4.dp,
-                padding = padding,
-                orientation = orientation
-            ) {
-                if (!engagement.isDisliked) {
-                    event.onDisLike(model)
-                }
-            }
-            Spacer(modifier = Modifier.size(spacer))
-            PostIcon(
-                UiAction.Comment,
-                engagement.comment.toString(),
-                size = size,
-                spacer = 4.dp,
-                padding = padding,
-                orientation = orientation
-            ) { event.onComment(model) }
-            Spacer(modifier = Modifier.size(spacer))
-            PostIcon(
-                action = UiAction.View,
-                value = engagement.views.toString(),
-                color = color,
-                size = size,
-                spacer = 4.dp,
-                padding = padding,
-                orientation = orientation
-            ) { event.onView(model) }
-        }
-    } else {
-        Column {
-            PostIcon(
-                action = UiAction.Like,
-                value = engagement.likes.toString(),
-                isActive = engagement.isLiked,
-                color = if (engagement.isLiked) {
-                    PeerAppRed
-                } else {
-                    color
-                },
-                size = size,
-                padding = padding,
-                orientation = orientation
-            ) {
-                if (!engagement.isLiked) {
-                    event.onLike(model)
-                }
-            }
-            Spacer(modifier = Modifier.size(spacer))
-            PostIcon(
-                action = UiAction.Dislike,
-                value = engagement.dislikes.toString(),
-                isActive = engagement.isDisliked,
-                color = if (engagement.isDisliked) {
-                    LightAccentColor
-                } else {
-                    color
-                },
-                size = size,
-                padding = padding,
-                orientation = orientation
-            ) {
-                if (!engagement.isDisliked) {
-                    event.onDisLike(model)
-                }
-            }
-            Spacer(modifier = Modifier.size(spacer))
-            PostIcon(
-                UiAction.Comment,
-                engagement.comment.toString(),
-                color = color,
-                size = size,
-                padding = padding,
-                orientation = orientation
-            ) { event.onComment(model) }
-            Spacer(modifier = Modifier.size(spacer))
-            PostIcon(
-                action = UiAction.View,
-                value = engagement.views.toString(),
-                color = color,
-                size = size,
-                padding = padding,
-                orientation = orientation
-            ) { event.onView(model) }
-        }
-    }
 }

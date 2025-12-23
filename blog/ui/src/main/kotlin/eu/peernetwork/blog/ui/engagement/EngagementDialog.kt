@@ -6,8 +6,9 @@ import eu.peernetwork.core.ui.renderer.Renderer
 
 interface EngagementDialog : Renderer.Stateful<EngagementDialog.Spec> {
     data class Spec(
-        val type: MutableState<EngagementEvent?>,
+        val type: MutableState<EngagementIntent?>,
         val viewModelStoreOwner: ViewModelStoreOwner,
-        val onConfirm: (EngagementEvent) -> Unit
+        val onDismiss: () -> Unit,
+        val onConfirm: (EngagementIntent) -> Unit
     )
 }

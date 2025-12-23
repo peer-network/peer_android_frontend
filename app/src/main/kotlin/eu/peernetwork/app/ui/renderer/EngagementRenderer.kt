@@ -1,13 +1,17 @@
 package eu.peernetwork.app.ui.renderer
 
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import eu.peernetwork.app.mapper.toUiToken
 import eu.peernetwork.blog.ui.engagement.EngagementDialog
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.wallet.ui.confirmation.ConfirmationScreen
+import eu.peernetwork.core.ui.design.luna.DesignStream
+import eu.peernetwork.core.ui.design.luna.DesignStreamState
+import eu.peernetwork.core.ui.design.material.DesignBottomSheetScaffold
+import eu.peernetwork.wallet.ui.confirmation.ConfirmationModal
 import javax.inject.Inject
 
 class EngagementRenderer @Inject constructor(
@@ -18,18 +22,34 @@ class EngagementRenderer @Inject constructor(
         modifier: Modifier,
         spec: EngagementDialog.Spec
     ) {
-        val show = remember(spec.type.value) { mutableStateOf(spec.type.value != null) }
-        ConfirmationScreen(
-            spec.type.value?.toUiToken(),
-            show,
-            provider,
-            spec.viewModelStoreOwner,
-            { spec.type.value = null }
-        ) {
-            if (it) {
-                spec.type.value?.let { spec.onConfirm(it) }
+        val showSheet = remember { derivedStateOf { spec.type.value != null } }
+        val streamState = remember { derivedStateOf {
+            if (spec.type.value == null) {
+                DesignStreamState.Default
+            } else {
+                DesignStreamState.Success(spec.type.value!!)
             }
-            show.value = false
+        } }
+        DesignStream(state = streamState) { intent ->
+            DesignBottomSheetScaffold(
+                state = showSheet,
+                dismissable = true,
+                color = MaterialTheme.colorScheme.surfaceDim,
+                onDismiss = { spec.type.value = null }
+            ) {
+                ConfirmationModal(
+                    token = intent.value.toUiToken(),
+                    provider = provider,
+                    viewModelStoreOwner = spec.viewModelStoreOwner,
+                    onDismiss = {
+                        spec.type.value = null
+                        spec.onDismiss()
+                    }
+                ) {
+                    spec.type.value?.let { spec.onConfirm(it) }
+                    spec.type.value = null
+                }
+            }
         }
     }
 }

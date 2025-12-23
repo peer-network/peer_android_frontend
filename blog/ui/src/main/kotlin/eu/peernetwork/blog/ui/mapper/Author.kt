@@ -6,10 +6,10 @@ import eu.peernetwork.blog.ui.model.UiAuthor
 fun Author.mapFromDomain(): UiAuthor {
     return UiAuthor(
         id = id,
-        username = username,
         slug = slug,
+        username = username,
         imageUrl = imageUrl,
-        isfollowing = isfollowing,
-        isfollowed = isfollowed
+        following = isfollowing,
+        followed = isfollowed
     )
 }

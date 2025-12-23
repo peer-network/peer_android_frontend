@@ -1,0 +1,16 @@
+mutation AdvertisePostPinned(
+    $postId: ID!,
+    $advertisePlan: AdvertisementPinnedPlan!,
+) {
+    advertisePostPinned(postid: $postId, advertisePlan: $advertisePlan) {
+        status
+        ResponseCode
+        affectedRows {
+            type
+            timeframeStart
+            timeframeEnd
+            totalTokenCost
+            totalEuroCost
+        }
+    }
+}

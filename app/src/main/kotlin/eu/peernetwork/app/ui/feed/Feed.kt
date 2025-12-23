@@ -2,16 +2,20 @@ package eu.peernetwork.app.ui.feed
 
 import android.content.Context
 import androidx.lifecycle.ViewModelProvider
+import eu.peernetwork.ads.ui.boost.Boost
+import eu.peernetwork.ads.ui.checkout.Checkout
 import eu.peernetwork.app.provider.ApplicationProvider
 import eu.peernetwork.app.ui.profile.Profile
 import eu.peernetwork.app.ui.search.Search
 import eu.peernetwork.app.ui.settings.SettingsEvent
-import eu.peernetwork.app.ui.window.Window
-import eu.peernetwork.blog.ui.feed.timeline.Post
+import eu.peernetwork.app.ui.screen.Screen
+import eu.peernetwork.blog.ui.timeline.Timeline
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.social.ui.connection.Connection
+import eu.peernetwork.wallet.ui.balance.Balance
 import eu.peernetwork.wallet.ui.confirmation.Confirmation
+import eu.peernetwork.wallet.ui.service.Service
 
 interface Feed : ApplicationProvider {
     fun settingsEvent(): SettingsEvent
@@ -27,12 +31,16 @@ interface Feed : ApplicationProvider {
     )
     interface Component : Feed,
         UiComponentProvider,
-        Post,
         Search,
+        Boost,
         Profile,
+        Timeline,
         Connection,
         Confirmation,
-        Window {
+        Service,
+        Balance,
+        Checkout,
+        Screen {
         fun viewModelFactory(): ViewModelProvider.Factory
     }
 

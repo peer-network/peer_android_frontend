@@ -1,0 +1,52 @@
+<resources>
+    <string name="pay_label">Pay</string>
+    <string name="boost_label">Boost post</string>
+    <string name="boost_confirmation_label">Promote your post</string>
+    <string name="article_configuration_label">Post ads configuration</string>
+    <string name="article_statistics_label">Pin post statistics</string>
+    <string name="period_label">Ad period</string>
+    <string name="earning_label">Earnings</string>
+    <string name="spending_label">Spendings</string>
+    <string name="interactions_label">Interactions</string>
+    <string name="billing_label">Billing</string>
+    <string name="billing_summary_label">Billing summary</string>
+    <string name="promote_label">Promote</string>
+    <string name="promotion_cost_label">Promotion cost</string>
+    <string name="promotion_fee_label">Fees included</string>
+    <string name="promotion_start_label">Your post promotion has started.</string>
+    <string name="promotion_start_description">Your post is now pinned and will expire on</string>
+
+    <string name="pin_label">Pin</string>
+    <string name="active_label">active</string>
+    <string name="start_label">Start</string>
+    <string name="start_at_label">Start date</string>
+    <string name="stop_at_label">End date</string>
+    <string name="next_label">Next</string>
+    <string name="duration_label">Duration</string>
+    <string name="back_label">Back</string>
+    <string name="adverts_position_label">Shown</string>
+    <string name="adverts_label">All advertisements [%d]</string>
+
+    <string name="advert_start">Immediately</string>
+    <string name="advert_duration">24 hours</string>
+    <string name="advert_duration_label">(%d hours from now)</string>
+    <string name="advert_position">Top of the feed</string>
+
+    <string name="peer_fee_label">Peer Bank (%d%%)</string>
+    <string name="invitation_fee_label">To the inviter (%d%%)</string>
+    <string name="burn_label">Burn (%d%%)</string>
+
+    <string name="view_posts">Take me to my posts</string>
+    <string name="visit_post">Go to post</string>
+    <string name="visit_profile">Go to profile</string>
+
+    <string name="advert_total">total: %d</string>
+    <string name="advert_total_label">Total ad cost</string>
+    <string name="promotion_text">You haven’t promoted any posts yet. Start your first promotion to see statistics</string>
+
+    <string name="shine_label">Ready to shine?</string>
+    <string name="shine_description">Your post will go to the top of the feed. Once confirmed, it can’t be cancelled.</string>
+
+    <string name="retry_label">Try again</string>
+    <string name="cancel_label">Cancel</string>
+</resources>

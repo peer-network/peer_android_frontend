@@ -11,15 +11,26 @@ import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.factory.UiBuilderFactory
 import eu.peernetwork.social.ui.referral.Referral
-import eu.peernetwork.user.ui.password.update.PasswordUpdate
-import eu.peernetwork.user.ui.settings.account.Account
-import eu.peernetwork.user.ui.settings.address.Address
+import eu.peernetwork.user.ui.password.update.Update
+import eu.peernetwork.user.ui.account.Account
+import eu.peernetwork.user.ui.deactivate.Deactivate
+import eu.peernetwork.user.ui.email.Email
+import eu.peernetwork.user.ui.logout.Logout
+import eu.peernetwork.user.ui.user.User
 
 @Module
 object SettingsModule {
     @Provides
     @Settings.Scope
     fun provideBuilderFactory(factory: UiBuilderFactory): UiComponentProvider.Factory = factory
+
+    @Settings.Scope
+    @Provides
+    @IntoMap
+    @UiBuilder(User.Builder::class)
+    fun provideUserBuilder(component: Settings.Component): UiComponent.Builder {
+        return User.Builder(component)
+    }
 
     @Settings.Scope
     @Provides
@@ -32,17 +43,17 @@ object SettingsModule {
     @Settings.Scope
     @Provides
     @IntoMap
-    @UiBuilder(Address.Builder::class)
+    @UiBuilder(Email.Builder::class)
     fun provideAddressBuilder(component: Settings.Component): UiComponent.Builder {
-        return Address.Builder(component)
+        return Email.Builder(component)
     }
 
     @Settings.Scope
     @Provides
     @IntoMap
-    @UiBuilder(PasswordUpdate.Builder::class)
+    @UiBuilder(Update.Builder::class)
     fun providePasswordUpdateBuilder(component: Settings.Component): UiComponent.Builder {
-        return PasswordUpdate.Builder(component)
+        return Update.Builder(component)
     }
 
     @Settings.Scope
@@ -75,5 +86,21 @@ object SettingsModule {
     @UiBuilder(Version.Builder::class)
     fun provideVersionBuilder(component: Settings.Component): UiComponent.Builder {
         return Version.Builder(component)
+    }
+
+    @Settings.Scope
+    @Provides
+    @IntoMap
+    @UiBuilder(Logout.Builder::class)
+    fun provideLogoutBuilder(component: Settings.Component): UiComponent.Builder {
+        return Logout.Builder(component)
+    }
+
+    @Settings.Scope
+    @Provides
+    @IntoMap
+    @UiBuilder(Deactivate.Builder::class)
+    fun provideDeactivateBuilder(component: Settings.Component): UiComponent.Builder {
+        return Deactivate.Builder(component)
     }
 }

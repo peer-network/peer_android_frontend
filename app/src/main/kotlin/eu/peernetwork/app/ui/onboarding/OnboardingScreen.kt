@@ -20,8 +20,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import eu.peernetwork.app.model.Properties
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.compose.DesignError
-import eu.peernetwork.core.ui.design.material.DesignScene
-import eu.peernetwork.core.ui.design.material.DesignSceneState
+import eu.peernetwork.core.ui.design.luna.DesignStream
+import eu.peernetwork.core.ui.design.luna.DesignStreamState
 import eu.peernetwork.core.ui.extension.builder
 import kotlinx.collections.immutable.persistentListOf
 import java.text.NumberFormat
@@ -50,21 +50,21 @@ fun OnboardingScreen(
     val derivedState = remember {
         derivedStateOf {
             when (state) {
-                OnboardingViewModel.State.Default -> DesignSceneState.Default
-                OnboardingViewModel.State.Loading -> DesignSceneState.Loading
+                OnboardingViewModel.State.Default -> DesignStreamState.Default
+                OnboardingViewModel.State.Loading -> DesignStreamState.Loading
                 is OnboardingViewModel.State.Success -> {
                     val data = state as OnboardingViewModel.State.Success
-                    DesignSceneState.Success(data)
+                    DesignStreamState.Success(data)
                 }
                 is OnboardingViewModel.State.Error -> {
-                    DesignSceneState.Error((state as OnboardingViewModel.State.Error).error)
+                    DesignStreamState.Error((state as OnboardingViewModel.State.Error).error)
                 }
             }
         }
     }
     val handleOnFinished by rememberUpdatedState(onFinished)
     val pagerState = rememberPagerState(initialPage = 0, pageCount = { 5 })
-    DesignScene(
+    DesignStream(
         state = derivedState,
         modifier = Modifier.fillMaxSize(),
         error = { DesignError(
@@ -130,5 +130,6 @@ fun OnboardingScreen(
     }
 }
 
-private fun Int.formatThousands(): String =
-    NumberFormat.getIntegerInstance(Locale.getDefault()).format(this)
+private fun Int.formatThousands(): String {
+    return NumberFormat.getIntegerInstance(Locale.getDefault()).format(this)
+}

@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModelStoreOwner
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.compose.DesignRefreshableScaffold
@@ -28,8 +29,8 @@ import eu.peernetwork.core.ui.design.material.DesignTitle
 import eu.peernetwork.core.ui.design.material.DesignTitleBarHost
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
-import eu.peernetwork.core.ui.factory.UiViewModelStore
-import eu.peernetwork.social.ui.search.member.MemberDialog
+import eu.peernetwork.social.ui.search.member.MemberModal
+import eu.peernetwork.user.domain.model.Account
 import eu.peernetwork.wallet.ui.model.UiRecipient
 import eu.peernetwork.wallet.ui.overview.OverviewScreen
 import eu.peernetwork.wallet.ui.service.ServiceScreen
@@ -38,38 +39,42 @@ import eu.peernetwork.wallet.ui.saveable.UiRecipientSaver
 
 @Composable
 fun WalletScreen(
-    id: String,
+    account: Account,
     postLimit: Int,
     provider: UiComponentProvider,
-    viewModelState: UiViewModelStore
+    viewModelStoreOwner: ViewModelStoreOwner
 ) {
     val context = LocalContext.current
     val component = remember {
         provider.builder(Wallet.Builder::class.java).build(context)
     }
-    val viewModelStoreOwner = remember { viewModelState.get("WalletScreen") }
     val recipient = rememberSaveable(saver = UiRecipientSaver) {
-        mutableStateOf<UiRecipient?>(null)
+        mutableStateOf(null)
     }
     val service = remember(recipient.value) {
-        mutableStateOf<ServiceState>(recipient.value?.let {
+        mutableStateOf(recipient.value?.let {
             ServiceState.Transfer(it)
         } ?: ServiceState.Default)
     }
     val showSheet = rememberSaveable { mutableStateOf(false) }
     val lastUpdated = remember { mutableLongStateOf(System.currentTimeMillis()) }
     WalletNavigation(
-        id = id,
-        provider = component,
-        viewModelStore = viewModelState
+        account = account,
+        provider = component
     ) { controller ->
         WalletScreen(
             onRefresh = { lastUpdated.longValue = System.currentTimeMillis() },
             header = { OverviewScreen(lastUpdated, component, viewModelStoreOwner) }
         ) {
-            ServiceScreen(service, component, viewModelStoreOwner, {
-                controller.navigateIfNecessary("profile/${it}")
-            }, { recipient.value = null }) { showSheet.value = true }
+            ServiceScreen(
+                serviceState = service,
+                provider = component,
+                viewModelStoreOwner = viewModelStoreOwner,
+                onAccountClicked = {
+                    controller.navigateIfNecessary("profile/${it}")
+                },
+                onClear = { recipient.value = null }
+            ) { showSheet.value = true }
         }
         DesignTitleBarHost("WalletScreen") {
             titleBar {
@@ -78,7 +83,7 @@ fun WalletScreen(
                 }
             }
         }
-        MemberDialog(postLimit, showSheet, component, viewModelStoreOwner) {
+        MemberModal(postLimit, showSheet, component, viewModelStoreOwner) {
             recipient.value = UiRecipient(
                 id = it.id,
                 username = it.username,
@@ -100,7 +105,7 @@ fun WalletScreen(
     val updatedContent by rememberUpdatedState(content)
     val state = remember { derivedStateOf { DesignStatefulScaffoldState.Success(Unit) } }
     DesignRefreshableScaffold<Unit>(state, onRefresh = onRefresh) {
-        Column(modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp)
+        Column(modifier = Modifier.padding(horizontal = 18.dp, vertical = 8.dp)
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
         ) {

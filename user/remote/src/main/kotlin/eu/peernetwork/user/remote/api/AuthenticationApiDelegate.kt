@@ -27,7 +27,7 @@ class AuthenticationApiDelegate @Inject constructor(
         return userId
     }
 
-    override suspend fun login(email: String, password: String): String {
+    override suspend fun login(email: String, password: String, remember: Boolean): String {
         val query = LoginMutation(email, password)
         val response = client().mutation(query).executeOrThrow()
         val data = response.getOrThrow().login
@@ -35,7 +35,7 @@ class AuthenticationApiDelegate @Inject constructor(
         val token = data.mapToDomain()
         listener.onAuthenticationChanged(token.copy(
             expiresIn = usecase(token.access)
-        ))
+        ), remember)
         return token.access
     }
 

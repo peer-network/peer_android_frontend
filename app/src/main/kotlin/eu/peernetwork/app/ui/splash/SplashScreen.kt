@@ -28,9 +28,8 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.rememberLottieComposition
 import eu.peernetwork.app.R
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.compose.DesignError
-import eu.peernetwork.core.ui.design.compose.DesignStatefulScaffold
-import eu.peernetwork.core.ui.design.compose.DesignStatefulScaffoldState
+import eu.peernetwork.core.ui.design.luna.DesignStream
+import eu.peernetwork.core.ui.design.luna.DesignStreamState
 import eu.peernetwork.core.ui.extension.builder
 
 @Composable
@@ -51,9 +50,9 @@ fun SplashScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
     val showDialog = remember { mutableStateOf(false) }
     val derivedState = remember {
-        mutableStateOf<DesignStatefulScaffoldState>(DesignStatefulScaffoldState.Empty)
+        mutableStateOf<DesignStreamState<Unit>>(DesignStreamState.Default)
     }
-    var play = remember { mutableStateOf(true) }
+    val play = remember { mutableStateOf(true) }
     val isLoading = remember(state) { derivedStateOf { state is SplashViewModel.State.Loading } }
     val isReady = remember(state) { derivedStateOf {
         state is SplashViewModel.State.Success
@@ -64,20 +63,19 @@ fun SplashScreen(
                     .error is eu.peernetwork.app.exception.VersionException
     } }
     val onFinish by rememberUpdatedState(onAnimationFinished)
-    DesignStatefulScaffold<Unit>(
+    DesignStream(
         state = derivedState,
-        onRefresh = {
-            derivedState.value = DesignStatefulScaffoldState.Success(Unit)
-            play.value = true
-            viewModel.initialize() },
-        errorContent = { DesignError(
-            it,
-            onRetry = {
-                derivedState.value = DesignStatefulScaffoldState.Success(Unit)
-                play.value = true
-                viewModel.initialize() },
-            modifier = Modifier.fillMaxSize()
-            ) }
+        error = {
+            SplashError(
+                onRefresh = {
+                    derivedState.value = DesignStreamState.Success(Unit)
+                    play.value = true
+                    viewModel.initialize()
+                },
+                error = it,
+                component = component
+            )
+        }
     ) { SplashScreen(play, isLoading) {
         if (it == AnimationEndReason.Finished && isReady.value) {
             if (!play.value) {
@@ -86,7 +84,7 @@ fun SplashScreen(
             play.value = false
         } else if (it == AnimationEndReason.Finished && state is SplashViewModel.State.Error) {
             if (!play.value) {
-                derivedState.value = DesignStatefulScaffoldState.Error(
+                derivedState.value = DesignStreamState.Error(
                     (state as SplashViewModel.State.Error).error
                 )
             }
@@ -94,6 +92,13 @@ fun SplashScreen(
         }
     } }
     SplashConfirmation(showDialog)
+    LaunchedEffect(Unit) {
+        if (derivedState.value is DesignStreamState.Default) {
+            derivedState.value = DesignStreamState.Success(Unit)
+            play.value = true
+            viewModel.initialize()
+        }
+    }
     LaunchedEffect(isOutdated.value) {
         if (isOutdated.value) {
             showDialog.value = true

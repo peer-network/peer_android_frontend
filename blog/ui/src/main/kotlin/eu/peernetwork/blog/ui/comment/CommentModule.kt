@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
-import eu.peernetwork.blog.ui.interaction.listing.Listing
+import eu.peernetwork.blog.ui.interaction.user.User
 import eu.peernetwork.core.ui.annotation.UiBuilder
 import eu.peernetwork.core.ui.annotation.UiViewModel
 import eu.peernetwork.core.ui.component.UiComponent
@@ -38,8 +38,8 @@ object CommentModule {
     @Provides
     @IntoMap
     @Comment.Scope
-    @UiBuilder(Listing.Builder::class)
+    @UiBuilder(User.Builder::class)
     fun provideListingBuilder(component: Comment.Component): UiComponent.Builder {
-        return Listing.Builder(component)
+        return User.Builder(component)
     }
 }

@@ -1,5 +1,6 @@
 package eu.peernetwork.core.ui.extension
 
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
 
 fun NavHostController.attach(destination: String, popUpTo: Int? = null) {
@@ -18,6 +19,14 @@ fun NavHostController.attachIfNecessary(destination: String, popUpTo: Int? = nul
         return true
     }
     return false
+}
+
+fun NavHostController.navigate(destination: String, backStackEntry: NavBackStackEntry) {
+    navigate(destination) {
+        popUpTo(backStackEntry.destination.id) {
+            inclusive = true
+        }
+    }
 }
 
 fun NavHostController.navigateIfNecessary(destination: String) {

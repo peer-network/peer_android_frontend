@@ -3,10 +3,8 @@ package eu.peernetwork.app.ui.feed
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -32,7 +30,7 @@ import eu.peernetwork.core.ui.design.material.DesignTitleBarHost
 
 @Composable
 fun FeedMenu(
-    id: String,
+    uuid: String,
     default: Int,
     title: String? = null,
     onSelect: (Int, Criteria) -> Unit,
@@ -47,7 +45,7 @@ fun FeedMenu(
         UiFilter.MOST_DISLIKED to Criteria.Content(Sort.MOST_DISLIKED)
     )
     DesignTitleBarHost(
-        tag = "FeedScreen$id$title",
+        tag = "FeedScreen$uuid$title",
         listener = onHome
     ) {
         titleBar {
@@ -57,13 +55,13 @@ fun FeedMenu(
             } else {
                 DesignDropDown(
                     expanded,
-                    color = MaterialTheme.colorScheme.tertiaryContainer,
+                    color = MaterialTheme.colorScheme.surfaceVariant,
                     contentPadding = PaddingValues(vertical = 4.dp),
                     default = (UiFilter.entries.getOrNull(default) ?: UiFilter.NONE).name,
                     modifier = Modifier
                         .padding(vertical = 4.dp)
                         .clip(RoundedCornerShape(6.dp))
-                        .background(MaterialTheme.colorScheme.tertiaryContainer),
+                        .background(MaterialTheme.colorScheme.surfaceVariant),
                 ) {
                     relations.entries.forEach {
                         item(tag = it.key.name, {
@@ -73,8 +71,7 @@ fun FeedMenu(
                             val filter = UiFilter.valueOf(label)
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier.padding(start = 8.dp)
-                                    .padding(vertical = 1.dp),
+                                modifier = Modifier.padding(start = 6.dp),
                             ) {
                                 Text(
                                     stringResource(filter.value),
@@ -84,21 +81,17 @@ fun FeedMenu(
                                         )
                                     } else {
                                         MaterialTheme.typography.bodyMedium.copy(
-                                            MaterialTheme.colorScheme.tertiary
+                                            MaterialTheme.colorScheme.outline
                                         )
                                     },
                                 )
                                 if (isActive) {
-                                    Spacer(modifier = Modifier.width(2.dp))
                                     Icon(
                                         painter = painterResource(R.drawable.ic_caret_down),
                                         contentDescription = stringResource(filter.value),
                                         modifier = Modifier.size(16.dp),
-                                        tint = MaterialTheme.colorScheme.onSurface
+                                        tint = MaterialTheme.colorScheme.outline
                                     )
-                                    Spacer(modifier = Modifier.width(4.dp))
-                                } else {
-                                    Spacer(modifier = Modifier.width(8.dp))
                                 }
                             }
                         }

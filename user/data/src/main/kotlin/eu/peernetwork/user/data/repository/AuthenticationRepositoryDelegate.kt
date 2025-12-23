@@ -11,8 +11,8 @@ class AuthenticationRepositoryDelegate @Inject constructor(
         return api.authenticated()
     }
 
-    override suspend fun login(email: String, password: String): String {
-        return api.login(email, password)
+    override suspend fun login(email: String, password: String, remember: Boolean): String {
+        return api.login(email, password, remember)
     }
 
     override suspend fun logout() {

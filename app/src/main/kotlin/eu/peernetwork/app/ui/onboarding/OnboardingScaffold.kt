@@ -3,7 +3,6 @@ package eu.peernetwork.app.ui.onboarding
 import android.content.res.Configuration
 import androidx.compose.animation.core.exponentialDecay
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
@@ -27,7 +26,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -42,6 +40,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.app.R
 import eu.peernetwork.core.ui.extension.annotate
+import eu.peernetwork.core.ui.theme.DesignTheme
 import eu.peernetwork.core.ui.theme.PeerTheme
 import kotlin.math.absoluteValue
 
@@ -57,14 +56,7 @@ fun OnboardingScaffold(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    colors = listOf(
-                        MaterialTheme.colorScheme.background,
-                        MaterialTheme.colorScheme.surfaceContainerLow
-                    )
-                )
-            ).statusBarsPadding()
+            .statusBarsPadding()
             .navigationBarsPadding()
     ) {
         Spacer(modifier = Modifier.height(16.dp))
@@ -123,7 +115,7 @@ fun OnboardingContentScaffold(
             Text(
                 text = it,
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.tertiary
+                color = MaterialTheme.colorScheme.outline
             )
         }
         Box(
@@ -138,7 +130,7 @@ fun OnboardingContentScaffold(
                 style = MaterialTheme.typography.labelLarge.copy(
                     fontWeight = FontWeight.Normal
                 ),
-                color = MaterialTheme.colorScheme.surfaceTint,
+                color = MaterialTheme.colorScheme.outlineVariant,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth()
             )
@@ -160,7 +152,7 @@ fun OnboardingScaffoldPreview() {
 @Composable
 @Preview(name = "content scaffold", uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun OnboardingContentScaffoldPreview() {
-    PeerTheme {
+    DesignTheme {
         val title = buildAnnotatedString {
             append("How ")
             withStyle(style = SpanStyle(

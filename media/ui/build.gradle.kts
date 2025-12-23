@@ -23,7 +23,6 @@ dependencies {
     implementation(libs.ucrop)
 
     api(libs.lrucache)
-    implementation(libs.blur)
     implementation(libs.zoomable)
 
     implementation(libs.dagger)

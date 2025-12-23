@@ -11,5 +11,7 @@ interface ContentRepository {
 
     suspend fun getAll(filter: Filter = Filter(), page: Pageable): Page<Content>
 
+    suspend fun getAdverts(filter: Filter = Filter(), page: Pageable): Page<Content>
+
     suspend fun create(draft: Draft, meta: String): Content
 }

@@ -32,7 +32,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import eu.peernetwork.core.ui.theme.PeerTheme
+import eu.peernetwork.core.ui.theme.DesignTheme
 import eu.peernetwork.wallet.ui.R
 
 @Composable
@@ -49,7 +49,7 @@ fun OverviewScaffold(
     val verticalGradient = Brush.linearGradient(
         start = Offset(top, 0f),
         colors = listOf(
-            MaterialTheme.colorScheme.surfaceVariant,
+            MaterialTheme.colorScheme.surfaceDim,
             MaterialTheme.colorScheme.primary
         ),
         end = Offset(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY)
@@ -59,7 +59,7 @@ fun OverviewScaffold(
             .fillMaxWidth()
             .wrapContentHeight()
             .clip(RoundedCornerShape(24.dp))
-            .background(MaterialTheme.colorScheme.surfaceVariant)
+            .background(MaterialTheme.colorScheme.surfaceDim)
             .background(brush = verticalGradient)
             .padding(16.dp),
         verticalArrangement = Arrangement.Top,
@@ -107,17 +107,17 @@ fun OverviewScaffold(modifier: Modifier = Modifier) {
             rate = {
                 Box(modifier = Modifier.width(32.dp)
                     .height(12.dp)
-                    .background(MaterialTheme.colorScheme.secondary, RoundedCornerShape(4.dp)))
+                    .background(MaterialTheme.colorScheme.onBackground, RoundedCornerShape(4.dp)))
             },
             token = {
                 Box(modifier = Modifier.width(120.dp)
                     .height(16.dp)
-                    .background(MaterialTheme.colorScheme.secondary, RoundedCornerShape(4.dp)))
+                    .background(MaterialTheme.colorScheme.onBackground, RoundedCornerShape(4.dp)))
             }
         ) {
             Box(modifier = Modifier.width(72.dp)
                 .height(12.dp)
-                .background(MaterialTheme.colorScheme.secondary, RoundedCornerShape(4.dp)))
+                .background(MaterialTheme.colorScheme.onBackground, RoundedCornerShape(4.dp)))
         }
     }
 }
@@ -125,7 +125,7 @@ fun OverviewScaffold(modifier: Modifier = Modifier) {
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun PreviewOverviewScaffold() {
-    PeerTheme {
+    DesignTheme(isDarkMode = true) {
         OverviewScaffold()
     }
 }

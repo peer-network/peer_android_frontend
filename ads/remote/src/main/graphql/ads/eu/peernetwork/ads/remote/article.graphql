@@ -1,0 +1,41 @@
+query Content(
+    $postId: ID,
+    $offset: Int,
+    $limit: Int
+) {
+    listPosts(
+        postid: $postId,
+        limit: $limit,
+        offset: $offset
+    ) {
+        status
+        counter
+        ResponseCode
+        affectedRows {
+            id
+            title
+            mediadescription
+            isliked
+            isviewed
+            isdisliked
+            amountlikes
+            amountdislikes
+            amountviews
+            amountcomments
+            media
+            cover
+            contenttype
+            createdat
+            url
+            user {
+                id
+                username
+                slug
+                img
+                isfollowed
+                isfollowing
+            }
+        }
+    }
+}
+

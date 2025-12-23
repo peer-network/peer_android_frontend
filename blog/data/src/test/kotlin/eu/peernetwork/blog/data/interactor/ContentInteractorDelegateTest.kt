@@ -1,5 +1,6 @@
 package eu.peernetwork.blog.data.interactor
 
+import eu.peernetwork.blog.data.provider.CacheProvider
 import eu.peernetwork.blog.domain.interactor.ContentInteractor
 import eu.peernetwork.blog.domain.model.Draft
 import eu.peernetwork.blog.domain.repository.ContentRepository
@@ -18,6 +19,7 @@ import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
+import java.io.File
 import kotlin.test.assertEquals
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -38,6 +40,11 @@ internal class ContentInteractorDelegateTest {
     fun setup() {
         Dispatchers.setMain(dispatcher)
         interactor = ContentInteractorDelegate(
+            cache = object : CacheProvider {
+                override fun getCacheDirPath(): File {
+                    return File("/tmp")
+                }
+            },
             repository,
             multipartRepository,
             eligibilityRepository,

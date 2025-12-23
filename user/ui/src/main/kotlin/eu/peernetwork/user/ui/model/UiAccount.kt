@@ -9,7 +9,7 @@ data class UiAccount(
     val username: String,
     val bio: String?,
     val imageUrl: String,
-    val overview: UiOverview,
-    val isfollowing: Boolean,
-    val isfollowed: Boolean
+    val metric: UiMetric,
+    val isFollowing: Boolean,
+    val isFollowed: Boolean
 )

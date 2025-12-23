@@ -33,13 +33,14 @@ class AuthenticationInteractorDelegate @Inject constructor(
 
     override suspend fun getCurrentAccount(refresh: Boolean): Account {
         return try {
-            val user = if (refresh) {
-                authenticationRepository.authenticated()
+            val json = retrievable(ACCOUNT_KEY)
+            if (refresh || json == null) {
+                val user = authenticationRepository.authenticated()
+                repository.get(user, true).also {
+                    publisher(ACCOUNT_KEY, gson.toJson(it))
+                }
             } else {
-                get()
-            }
-            repository.get(user, refresh).also {
-                publisher(ACCOUNT_KEY, gson.toJson(it))
+                gson.fromJson(json, Account::class.java)
             }
         } catch (error: Throwable) {
             if (error is AccountNotFoundException) {

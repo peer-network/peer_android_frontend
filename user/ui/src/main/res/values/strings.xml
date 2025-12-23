@@ -8,6 +8,7 @@
     <string name="register_text">Register</string>
     <string name="register_now_text">Register now</string>
     <string name="deactivate_text">Deactivate</string>
+    <string name="cancel_text">Cancel</string>
 
     <string name="login_title">Hey there,\nWelcome back</string>
     <string name="login_description">It’s good to see you again! Log in to continue\nyour journey with us!</string>
@@ -42,19 +43,22 @@
     <string name="confirmation_label">Confirm</string>
     <string name="token_label">Token</string>
     <string name="address_label">Address</string>
-    <string name="preference_label">Preferences</string>
     <string name="account_label">Account</string>
 
-    <string name="posts_label">Posts</string>
+    <string name="posts_label">Publications</string>
     <string name="follow_label">Follow</string>
     <string name="follower_label">Followers</string>
     <string name="following_label">Following</string>
     <string name="peers_label">Peers</string>
+    <string name="share_label">Share</string>
+    <string name="invite_label">Invite a friend</string>
+    <string name="settings_label">Settings</string>
     <string name="successful_message"> Registration Successful! </string>
     <string name="description_placeholder">Write a description to your profile…</string>
 
     <string name="logout_message">Do you really want to log out?</string>
     <string name="empty_description_message">Biography unavailable</string>
+    <string name="profile_image">Profile image</string>
 
     <string name="referral_name_label">Referral</string>
     <string name="referral_label">Referral Code (Optional)</string>
@@ -69,6 +73,7 @@
 
     <string name="or">Or</string>
     <string name="click_here">Click here</string>
+    <string name="cancel_label">Cancel</string>
     <string name="forgot_password_text">Forgot password</string>
     <string name="forgot_password_label">Forgot password?</string>
     <string name="forgot_instruction">Please enter your email and we’ll send you a reset link.</string>
@@ -87,6 +92,8 @@
     <string name="password_uppercase_rule">1 uppercase</string>
     <string name="password_lowercase_rule">1 lowercase</string>
     <string name="password_number_rule">1 number</string>
+
+    <string name="ads_label">My ads</string>
 
     <string name="app_information_label">App Information</string>
     <string name="about_us_label">About Us</string>

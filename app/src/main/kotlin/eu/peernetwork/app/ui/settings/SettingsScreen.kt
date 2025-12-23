@@ -9,44 +9,57 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModelStoreOwner
 import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.material.DesignTitle
 import eu.peernetwork.core.ui.design.material.DesignTitleBarHost
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
-import eu.peernetwork.core.ui.factory.UiViewModelStore
-import eu.peernetwork.core.ui.theme.PeerTheme
+import eu.peernetwork.core.ui.theme.DesignTheme
+import eu.peernetwork.core.ui.theme.PeerAppRed
 import eu.peernetwork.social.ui.feedback.FeedbackScreen
+import eu.peernetwork.user.domain.model.Account
 import eu.peernetwork.user.ui.R
-import eu.peernetwork.user.ui.settings.account.AccountPreview
+import eu.peernetwork.user.ui.deactivate.DeactivateScreen
+import eu.peernetwork.user.ui.logout.LogoutScreen
+import eu.peernetwork.user.ui.user.UserBadge
 
 @Composable
 fun SettingsScreen(
-    userId: String,
+    account: Account,
     provider: UiComponentProvider,
-    viewModelStore: UiViewModelStore,
+    viewModelStoreOwner: ViewModelStoreOwner
 ) {
     val context = LocalContext.current
     val component = remember {
         provider.builder(Settings.Builder::class.java).build(context)
     }
-    val account = stringResource(R.string.account_label)
-    SettingsNavigation(userId, component, viewModelStore) { controller ->
-        SettingsScreen({
-            component.settingsEvent().invoke(SettingsEvent.Event.Tutorial)
-        }, { controller.navigateIfNecessary(it) }) {
-            AccountPreview(component, viewModelStore.get(userId)) {
-                controller.navigateIfNecessary(account)
-            }
+    val accountLabel = stringResource(R.string.account_label)
+    val showLogout = remember { mutableStateOf(false) }
+    val showDeactivation = remember { mutableStateOf(false) }
+    SettingsNavigation(account, component) { backstack, controller ->
+        SettingsScreen(
+            showLogout = showLogout,
+            showDeactivate = showDeactivation,
+            onTutorial = { component.settingsEvent().invoke(SettingsEvent.Event.Tutorial) },
+            onNavigate = { controller.navigateIfNecessary(it) }
+        ) {
+            UserBadge(
+                id = account.id,
+                provider = component,
+                viewModelStoreOwner = viewModelStoreOwner
+            ) { controller.navigateIfNecessary(accountLabel) }
         }
         DesignTitleBarHost("SettingsScreen") {
             titleBar {
@@ -55,11 +68,23 @@ fun SettingsScreen(
                 }
             }
         }
+        LogoutScreen(
+            show = showLogout,
+            provider = component,
+            viewModelStoreOwner = backstack
+        )
+        DeactivateScreen(
+            show = showDeactivation,
+            provider = component,
+            viewModelStoreOwner = backstack
+        )
     }
 }
 
 @Composable
 fun SettingsScreen(
+    showLogout: MutableState<Boolean>,
+    showDeactivate: MutableState<Boolean>,
     onTutorial: () -> Unit,
     onNavigate: (String) -> Unit,
     header: @Composable () -> Unit
@@ -68,7 +93,7 @@ fun SettingsScreen(
     val handleOnNavigate by rememberUpdatedState(onNavigate)
     val referral = stringResource(R.string.referral_name_label)
     val password = stringResource(R.string.password_label)
-    val preference = stringResource(R.string.preference_label)
+    val email = stringResource(R.string.email_label)
     val feedback = stringResource(R.string.feedback_label)
     val introduction = stringResource(R.string.how_it_works_label)
     val releaseNote = stringResource(R.string.release_notes)
@@ -86,18 +111,30 @@ fun SettingsScreen(
         SettingsItem(label = password) {
             handleOnNavigate(password)
         }
-        SettingsItem(label = preference) {
-            handleOnNavigate(preference)
+        SettingsItem(label = email) {
+            handleOnNavigate(email)
         }
         SettingsItem(label = feedback) {
             feedbackSession.longValue = System.currentTimeMillis()
         }
-        SettingsItem(label = introduction, onTutorial)
+        SettingsItem(label = introduction,  onClick = onTutorial)
         SettingsItem(label = releaseNote) {
             handleOnNavigate("version")
         }
         SettingsItem(label = aboutUsLabel) {
             handleOnNavigate("about")
+        }
+        SettingsItem(
+            color = PeerAppRed,
+            label = stringResource(R.string.logout_text)
+        ) {
+            showLogout.value = true
+        }
+        SettingsItem(
+            color = PeerAppRed,
+            label = stringResource(R.string.deactivate_text)
+        ) {
+            showDeactivate.value = true
         }
     }
     FeedbackScreen(feedbackSession, BuildConfig.FEED_BACK)
@@ -106,13 +143,20 @@ fun SettingsScreen(
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun PreviewSettingsScreen() {
-    PeerTheme {
-        SettingsScreen({}, {}) {
+    DesignTheme {
+        val showLogout = remember { mutableStateOf(false) }
+        val showDeactivation = remember { mutableStateOf(false) }
+        SettingsScreen(
+            showLogout = showLogout,
+            showDeactivate = showDeactivation,
+            onTutorial = {},
+            onNavigate = {}
+        ) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(96.dp)
-                    .background(MaterialTheme.colorScheme.tertiaryContainer)
+                    .background(MaterialTheme.colorScheme.surfaceContainerLowest)
             )
         }
     }

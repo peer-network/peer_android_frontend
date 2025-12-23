@@ -1,47 +1,35 @@
 package eu.peernetwork.social.ui.referral
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.compose.DesignErrorLabel
-import eu.peernetwork.core.ui.design.compose.DesignPagingScaffold
-import eu.peernetwork.core.ui.design.compose.DesignRefreshableScaffold
-import eu.peernetwork.core.ui.design.compose.DesignStatefulScaffoldState
-import eu.peernetwork.core.ui.design.material.DesignScaffold
+import eu.peernetwork.core.ui.design.luna.DesignPagingStream
+import eu.peernetwork.core.ui.design.luna.DesignStreamState
 import eu.peernetwork.core.ui.design.material.DesignTitle
 import eu.peernetwork.core.ui.design.material.DesignTitleBarHost
 import eu.peernetwork.core.ui.extension.builder
-import eu.peernetwork.core.ui.theme.PeerTheme
+import eu.peernetwork.core.ui.extension.error
 import eu.peernetwork.social.ui.R
-import eu.peernetwork.social.ui.compose.Peer
-import eu.peernetwork.social.ui.compose.SearchItemSkeleton
-import eu.peernetwork.social.ui.model.UiMember
-import eu.peernetwork.social.ui.model.UiReferral
+import eu.peernetwork.social.ui.connection.ConnectionButton
+import eu.peernetwork.social.ui.connection.ConnectionInteractor.Companion.LocalConnectionInteractor
+import eu.peernetwork.social.ui.connection.ConnectionScreen
 
 @Composable
 fun ReferralScreen(
@@ -49,7 +37,7 @@ fun ReferralScreen(
     postLimit: Int,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
-    onClick: (UiMember) -> Unit
+    onClick: (String) -> Unit
 ) {
     val context = LocalContext.current
     val component = remember {
@@ -64,66 +52,69 @@ fun ReferralScreen(
     val derivedState = remember {
         derivedStateOf {
             when (state) {
-                ReferralViewModel.State.Empty -> DesignStatefulScaffoldState.Empty
-                ReferralViewModel.State.Loading -> DesignStatefulScaffoldState.Loading
+                ReferralViewModel.State.Empty -> DesignStreamState.Default
+                ReferralViewModel.State.Loading -> DesignStreamState.Loading
                 is ReferralViewModel.State.Success -> {
-                    DesignStatefulScaffoldState.Success(
+                    DesignStreamState.Success(
                         (state as ReferralViewModel.State.Success).content
                     )
                 }
-                is ReferralViewModel.State.Error -> DesignStatefulScaffoldState.Error(
+                is ReferralViewModel.State.Error -> DesignStreamState.Error(
                     (state as ReferralViewModel.State.Error).error
                 )
             }
         }
     }
-    val pageState = remember { mutableStateOf(DesignStatefulScaffoldState.Success(Unit)) }
-    DesignRefreshableScaffold<Unit>(
-        state = pageState,
-        onRefresh = { viewModel.referral(userId, Pageable(0, postLimit)) }
+    val handleClick by rememberUpdatedState(onClick)
+    ReferralPage(
+        onRefresh = { viewModel.referral(userId, Pageable(0, postLimit)) },
+        header = { ReferralHeader(provider, viewModelStoreOwner) }
     ) {
-        ReferralScreen({ ReferralHeader(provider, viewModelStoreOwner) }) {
-            DesignPagingScaffold<UiReferral>(
+        ConnectionScreen(
+            provider = component,
+            viewModelStoreOwner = viewModelStoreOwner
+        ) {
+            val controller = LocalConnectionInteractor.current
+            val connection by controller.observe().collectAsState()
+            DesignPagingStream(
                 state = derivedState,
                 modifier = Modifier.fillMaxSize(),
-                onRefresh = { viewModel.referral(userId, Pageable(0, postLimit)) },
-                placeholder = {
-                    SearchItemSkeleton(modifier = Modifier.padding(horizontal = 16.dp))
-                },
-                errorContent = { error, refresh ->
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .verticalScroll(rememberScrollState())
-                    ) {
-                        Spacer(modifier = Modifier.height(8.dp))
-                        DesignErrorLabel(
-                            refresh,
-                            error,
-                            component.resource(),
-                            PaddingValues(horizontal = 16.dp)
-                        )
+                loading = { ReferralSkeleton(3) },
+                error = { error ->
+                    ReferralError(component.resource().error(error.value)) {
+                        viewModel.referral(userId, Pageable(0, postLimit))
                     }
                 }
-            ) { state, lazyPagingItems ->
+            ) { lazyPagingItems ->
                 LazyColumn(modifier = Modifier.fillMaxSize()) {
                     items(
                         count = lazyPagingItems.itemCount,
                         key = { lazyPagingItems[it]?.id ?: it }
                     ) { index ->
                         lazyPagingItems[index]?.let { referral ->
-                            val member = UiMember(
-                                id = referral.id,
-                                username = referral.username,
+                            ReferralItem(
                                 slug = referral.slug,
+                                username = referral.username,
                                 imageUrl = referral.img,
-                                isFollowed = referral.isFollowed,
-                                isFollowing = referral.isFollowing
-                            )
-                            Peer(
-                                member = member,
-                                onClick = onClick
-                            )
+                                onClick = { handleClick(referral.id) }
+                            ) {
+                                ConnectionButton(
+                                    isFollowing = connection.getOrDefault(
+                                        key = referral.id,
+                                        defaultValue = referral.isFollowing
+                                    ),
+                                    isFollowed = referral.isFollowed,
+                                    onClick = { follow ->
+                                        controller.invoke(referral.id, !follow)
+                                    },
+                                    fontWeight = FontWeight.SemiBold,
+                                    minHeight = 32.dp,
+                                    contentPadding = PaddingValues(
+                                        horizontal = 16.dp,
+                                        vertical = 8.dp
+                                    )
+                                )
+                            }
                         }
                     }
                 }
@@ -137,50 +128,9 @@ fun ReferralScreen(
             }
         }
     }
-}
-
-@Composable
-fun ReferralScreen(
-    header: @Composable () -> Unit,
-    content: @Composable () -> Unit,
-) {
-    val updatedHeader by rememberUpdatedState(header)
-    val updatedContent by rememberUpdatedState(content)
-    DesignScaffold(
-        alwaysReturn = true,
-        modifier = Modifier.fillMaxSize(),
-        header = { updatedHeader() },
-    ) { state ->
-        DesignScaffold(
-            modifier = Modifier.fillMaxSize(),
-            header = {
-                Text(
-                    text = stringResource(R.string.referrals_title),
-                    style = MaterialTheme.typography.headlineMedium.copy(
-                        color = MaterialTheme.colorScheme.tertiary
-                    ),
-                    modifier = Modifier.padding(
-                        vertical = 16.dp,
-                        horizontal = 24.dp
-                    )
-                )
-            },
-        ) { state ->
-            Box(
-                modifier = Modifier.padding(horizontal = 8.dp)
-            ) { updatedContent() }
-        }
-    }
-}
-
-@Preview
-@Composable
-fun PreviewReferralScreen() {
-    PeerTheme {
-        ReferralScreen({
-            ReferralHeader(remember { mutableStateOf(false) }) {}
-        }) {
-
+    LaunchedEffect(Unit) {
+        if (state is ReferralViewModel.State.Empty) {
+            viewModel.referral(userId, Pageable(0, postLimit))
         }
     }
 }

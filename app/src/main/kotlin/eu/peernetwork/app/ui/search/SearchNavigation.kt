@@ -2,96 +2,118 @@ package eu.peernetwork.app.ui.search
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.setValue
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
-import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import eu.peernetwork.ads.ui.boost.BoostScreen
 import eu.peernetwork.app.BuildConfig
-import eu.peernetwork.app.ui.feed.FeedExplorer
+import eu.peernetwork.app.ui.screen.screen
+import eu.peernetwork.app.ui.feed.FeedExplore
 import eu.peernetwork.app.ui.profile.ProfileScreen
-import eu.peernetwork.app.ui.window.WindowScreen
-import eu.peernetwork.blog.domain.model.Filter
-import eu.peernetwork.core.ui.design.material.DesignPageWindowMode
+import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.core.ui.design.material.DesignRouter
-import eu.peernetwork.core.ui.factory.UiViewModelStore
+import eu.peernetwork.core.ui.extension.navigate
+import eu.peernetwork.user.domain.model.Account
 
 @Composable
 fun SearchNavigation(
-    userId: String,
+    account: Account,
+    isModal: Boolean = false,
     component: Search.Component,
-    viewModelStore: UiViewModelStore,
     controller: NavHostController,
-    startDestination: String = "search",
     onCancel: () -> Unit = {},
-    content: @Composable (NavHostController) -> Unit
+    content: @Composable () -> Unit
 ) {
     val updatedContent by rememberUpdatedState(content)
-    var id by remember { mutableStateOf("") }
-    val requireUpdate = remember { mutableStateOf(false) }
-    val windowMode = if (startDestination == "overlay") {
-        DesignPageWindowMode.DOCKED
-    } else {
-        DesignPageWindowMode.HIDDEN
-    }
     DesignRouter(
         navController = controller,
-        startDestination = startDestination,
+        startDestination = "search",
     ) {
-        composable("search") { updatedContent(controller) }
-        composable("overlay") { updatedContent(controller) }
-        composable(
-            "profile/{id}",
+        screen(
+            route = "search",
+            isModal = isModal,
+            expanded = true,
+            provider = component,
+            onCancel = onCancel,
+        ) { updatedContent() }
+        screen(
+            route = "profile/{id}",
+            isModal = isModal,
+            provider = component,
+            onCancel = onCancel,
             arguments = listOf(navArgument("id") {
                 type = NavType.StringType
             })
         ) { backStackEntry ->
-            id = backStackEntry.arguments?.getString("id") ?: ""
-            WindowScreen(
-                id = userId,
+            val id = backStackEntry.arguments?.getString("id") ?: ""
+            ProfileScreen(
+                account = account,
+                userId = id,
                 provider = component,
-                viewModelStore = viewModelStore,
-                mode = windowMode,
-                onCancel = onCancel,
-            ) {
-                ProfileScreen(
-                    principal = userId,
-                    userId = id,
-                    provider = component,
-                    viewModelStore = viewModelStore,
-                )
-            }
+                viewModelStoreOwner = backStackEntry,
+            )
         }
-        composable(
-            "feed/{tag}",
-            arguments = listOf(navArgument("tag") {
+        screen(
+            route = "feed/{type}/{value}",
+            isModal = isModal,
+            provider = component,
+            onCancel = onCancel,
+            arguments = listOf(navArgument("type") {
+                type = NavType.StringType
+            }, navArgument("value") {
                 type = NavType.StringType
             })
         ) { backStackEntry ->
-            val tag = backStackEntry.arguments?.getString("tag")
-            WindowScreen(
-                id = userId,
+            val type = backStackEntry.arguments?.getString("type") ?: ""
+            val value = backStackEntry.arguments?.getString("value") ?: ""
+            val criteria = Criteria.Content(
+                tag = if (type == "tag") {
+                    value
+                } else {
+                    null
+                },
+                title = if (type == "title") {
+                    value
+                } else {
+                    null
+                }
+            )
+            FeedExplore(
+                account = account,
+                limit = BuildConfig.PAGING_LIMIT,
                 provider = component,
-                viewModelStore = viewModelStore,
-                mode = windowMode,
-                onCancel = onCancel,
-            ) {
-                FeedExplorer(
-                    id = userId,
-                    postLimit = BuildConfig.PAGING_LIMIT,
-                    provider = component,
-                    viewModelStore = viewModelStore,
-                    title = tag,
-                    criteria = tag?.let { Filter.Criteria.Content(tag = it) },
-                    hasUpdate = requireUpdate
-                )
-            }
+                viewModelStoreOwner = backStackEntry,
+                title = criteria.title,
+                criteria = criteria
+            )
         }
-        composable(
+        screen(
+            route = "boost/{id}",
+            isModal = isModal,
+            provider = component,
+            onCancel = onCancel,
+        ) { backStackEntry ->
+            val id = backStackEntry.arguments?.getString("id") ?: ""
+            BoostScreen(
+                id = id,
+                provider = component,
+                viewModelStoreOwner = backStackEntry,
+                onProfile = {
+                    controller.navigate("profile/${account.id}") {
+                        popUpTo(backStackEntry.destination.id) {
+                            inclusive = true
+                        }
+                    }
+                },
+                onFinish = { controller.navigate("feed", backStackEntry) }
+            ) { controller.popBackStack() }
+        }
+        screen(
             route = "search?query={query}",
+            isModal = isModal,
+            provider = component,
+            onCancel = onCancel,
             arguments = listOf(navArgument("query") {
                 type = NavType.StringType
                 defaultValue = ""
@@ -99,26 +121,20 @@ fun SearchNavigation(
             })
         ) { backStackEntry ->
             val query = backStackEntry.arguments?.getString("query")
-            WindowScreen(
-                id = userId,
-                provider = component,
-                viewModelStore = viewModelStore,
-                mode = windowMode,
-                onCancel = onCancel,
-            ) {
-                FeedExplorer(
-                    userId,
-                    BuildConfig.PAGING_LIMIT,
-                    component,
-                    viewModelStore = viewModelStore,
-                    title = query,
-                    criteria = query?.let { Filter.Criteria.Content(title = it) },
-                    hasUpdate = requireUpdate
-                )
-            }
+            FeedExplore(
+                account = account,
+                BuildConfig.PAGING_LIMIT,
+                component,
+                viewModelStoreOwner = backStackEntry,
+                title = query,
+                criteria = query?.let { Criteria.Content(title = it) } ?: Criteria.None
+            )
         }
-        composable(
+        screen(
             "search/{type}/{query}",
+            isModal = isModal,
+            provider = component,
+            onCancel = onCancel,
             arguments = listOf(
                 navArgument("type") { type = NavType.StringType },
                 navArgument("query") { type = NavType.StringType }
@@ -126,27 +142,18 @@ fun SearchNavigation(
         ) { backStackEntry ->
             val type = backStackEntry.arguments?.getString("type") ?: ""
             val query = backStackEntry.arguments?.getString("query") ?: ""
-            val searchState = when (type) {
-                "username" -> SearchState.Active.Username(query)
-                "tag" -> SearchState.Active.Tag(query)
-                else -> SearchState.Default
-            }
-            WindowScreen(
-                id = userId,
+            SearchScreen(
+                account = account,
+                limit = BuildConfig.PAGING_LIMIT,
                 provider = component,
-                viewModelStore = viewModelStore,
-                mode = windowMode,
-                onCancel = onCancel,
-            ) {
-                SearchScreen(
-                    id = userId,
-                    postLimit = BuildConfig.PAGING_LIMIT,
-                    provider = component,
-                    viewModelStore = viewModelStore,
-                    searchState = searchState,
-                )
-            }
+                viewModelStoreOwner = backStackEntry,
+                query = query,
+                mode = when (type) {
+                    "username" -> SearchMode.Username
+                    "tag" -> SearchMode.Tag
+                    else -> SearchMode.Default
+                },
+            )
         }
     }
 }
-

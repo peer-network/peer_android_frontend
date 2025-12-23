@@ -3,12 +3,18 @@ package eu.peernetwork.app.ui.profile
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
+import eu.peernetwork.ads.ui.boost.Boost
+import eu.peernetwork.ads.ui.checkout.Checkout
+import eu.peernetwork.ads.ui.checkout.CheckoutBalance
+import eu.peernetwork.ads.ui.dashboard.Dashboard
+import eu.peernetwork.app.ui.feed.Feed
+import eu.peernetwork.app.ui.renderer.BalanceRenderer
 import eu.peernetwork.app.ui.renderer.EngagementRenderer
 import eu.peernetwork.app.ui.search.Search
 import eu.peernetwork.app.ui.settings.Settings
-import eu.peernetwork.app.ui.window.Window
+import eu.peernetwork.app.ui.screen.Screen
 import eu.peernetwork.blog.ui.engagement.EngagementDialog
-import eu.peernetwork.blog.ui.feed.author.Post
+import eu.peernetwork.blog.ui.article.Article
 import eu.peernetwork.core.ui.annotation.UiBuilder
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
@@ -18,13 +24,31 @@ import eu.peernetwork.social.ui.followers.Followers
 import eu.peernetwork.social.ui.followings.Followings
 import eu.peernetwork.social.ui.peers.Peers
 import eu.peernetwork.user.ui.user.User
+import eu.peernetwork.wallet.ui.balance.Balance
 import eu.peernetwork.wallet.ui.confirmation.Confirmation
+import eu.peernetwork.wallet.ui.service.Service
 
 @Module
 object ProfileModule {
     @Provides
     @Profile.Scope
     fun provideBuilderFactory(factory: UiBuilderFactory): UiComponentProvider.Factory = factory
+
+    @Profile.Scope
+    @Provides
+    @IntoMap
+    @UiBuilder(Profile.Builder::class)
+    fun provideProfileBuilder(component: Profile.Component): UiComponent.Builder {
+        return Profile.Builder(component)
+    }
+
+    @Profile.Scope
+    @Provides
+    @IntoMap
+    @UiBuilder(Feed.Builder::class)
+    fun provideFeedBuilder(component: Profile.Component): UiComponent.Builder {
+        return Feed.Builder(component)
+    }
 
     @Profile.Scope
     @Provides
@@ -37,9 +61,9 @@ object ProfileModule {
     @Profile.Scope
     @Provides
     @IntoMap
-    @UiBuilder(Post.Builder::class)
+    @UiBuilder(Article.Builder::class)
     fun providePhotoBuilder(component: Profile.Component): UiComponent.Builder {
-        return Post.Builder(component)
+        return Article.Builder(component)
     }
 
     @Profile.Scope
@@ -107,8 +131,54 @@ object ProfileModule {
     @Profile.Scope
     @Provides
     @IntoMap
-    @UiBuilder(Window.Builder::class)
+    @UiBuilder(Screen.Builder::class)
     fun provideWindowBuilder(component: Profile.Component): UiComponent.Builder {
-        return Window.Builder(component)
+        return Screen.Builder(component)
+    }
+
+    @Profile.Scope
+    @Provides
+    @IntoMap
+    @UiBuilder(Dashboard.Builder::class)
+    fun provideDashboardBuilder(component: Profile.Component): UiComponent.Builder {
+        return Dashboard.Builder(component)
+    }
+
+    @Profile.Scope
+    @Provides
+    @IntoMap
+    @UiBuilder(Boost.Builder::class)
+    fun provideBoostBuilder(component: Profile.Component): UiComponent.Builder {
+        return Boost.Builder(component)
+    }
+
+    @Profile.Scope
+    @Provides
+    @IntoMap
+    @UiBuilder(Checkout.Builder::class)
+    fun provideCheckoutBuilder(component: Profile.Component): UiComponent.Builder {
+        return Checkout.Builder(component)
+    }
+
+    @Profile.Scope
+    @Provides
+    @IntoMap
+    @UiBuilder(Balance.Builder::class)
+    fun provideBalanceBuilder(component: Profile.Component): UiComponent.Builder {
+        return Balance.Builder(component)
+    }
+
+    @Profile.Scope
+    @Provides
+    @IntoMap
+    @UiBuilder(Service.Builder::class)
+    fun provideServiceBuilder(component: Profile.Component): UiComponent.Builder {
+        return Service.Builder(component)
+    }
+
+    @Provides
+    @Profile.Scope
+    fun provideCheckoutBalance(component: Profile.Component): CheckoutBalance {
+        return BalanceRenderer(component)
     }
 }

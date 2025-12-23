@@ -1,116 +1,98 @@
 package eu.peernetwork.app.ui.content
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Modifier
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.ViewModelStoreOwner
 import androidx.navigation.compose.rememberNavController
+import eu.peernetwork.ads.ui.article.ArticleNavigator
 import eu.peernetwork.app.BuildConfig
-import eu.peernetwork.app.extension.navigateToTagSearch
-import eu.peernetwork.app.extension.navigateToUsernameSearch
-import eu.peernetwork.blog.ui.feed.detail.DetailScreen
-import eu.peernetwork.blog.ui.event.UiPostListener
+import eu.peernetwork.app.interactor.NavigationInteractor
+import eu.peernetwork.blog.ui.detail.DetailScreen
+import eu.peernetwork.blog.ui.post.PostNavigator
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.material.DesignTitle
 import eu.peernetwork.core.ui.design.material.DesignTitleBarHost
 import eu.peernetwork.core.ui.extension.builder
-import eu.peernetwork.core.ui.extension.navigateIfNecessary
-import eu.peernetwork.core.ui.factory.UiViewModelStore
 import eu.peernetwork.social.ui.connection.ConnectionScreen
+import eu.peernetwork.user.domain.model.Account
 
 @Composable
 fun ContentScreen(
-    userId: String,
-    postId: String,
     provider: UiComponentProvider,
-    viewModelStore: UiViewModelStore,
+    viewModelStoreOwner: ViewModelStoreOwner,
+    content: @Composable (Content.Component) -> Unit
 ) {
     val context = LocalContext.current
     val component = remember {
         provider.builder(Content.Builder::class.java).build(context)
     }
-    val controller = rememberNavController()
-    val overlay = remember { mutableStateOf<String?>(null) }
-    val enabled = remember { derivedStateOf { overlay.value == null } }
-    val event = remember {
-        object : UiPostListener {
-            override fun invoke(event: UiPostListener.Event) {
-                when(event) {
-                    is UiPostListener.Event.Mention ->
-                        controller.navigateToUsernameSearch(event.username)
-                    is UiPostListener.Event.Hashtag ->
-                        controller.navigateToTagSearch(event.tag)
-                    is UiPostListener.Event.Author ->
-                        controller.navigateIfNecessary("profile/${event.id}")
-                    is UiPostListener.Event.Post -> {
-                        overlay.value = event.id
-                    }
-                }
-            }
-        }
-    }
+    val updatedContent by rememberUpdatedState(content)
     ConnectionScreen(
         provider = component,
-        viewModelStoreOwner = viewModelStore.get(postId)
-    ) { connectionController ->
-        ContentOverlay(
-            overlay = overlay,
-            userId = userId,
-            postLimit = BuildConfig.PAGING_LIMIT,
-            component = component,
-            viewModelStore = viewModelStore,
-            connectionController = connectionController
-        ) {
-            val connection by connectionController.value.observe().collectAsStateWithLifecycle()
+        viewModelStoreOwner = viewModelStoreOwner
+    ) { updatedContent(component) }
+}
+
+@Composable
+fun ContentScreen(
+    account: Account,
+    postId: String,
+    provider: UiComponentProvider,
+    viewModelStoreOwner: ViewModelStoreOwner,
+) {
+    val context = LocalContext.current
+    val controller = rememberNavController()
+    val selected = remember { mutableIntStateOf(0) }
+    val navigator = remember { NavigationInteractor(context, controller) }
+    CompositionLocalProvider(
+        PostNavigator.LocalPostNavigator provides navigator,
+        ArticleNavigator.LocalArticleNavigator provides navigator,
+    ) {
+        ContentScreen(
+            provider = provider,
+            viewModelStoreOwner = viewModelStoreOwner
+        ) { component ->
+            val isVisible = remember { mutableStateOf(false) }
             ContentNavigation(
-                userId = userId,
-                postLimit = BuildConfig.PAGING_LIMIT,
+                account = account,
+                limit = BuildConfig.PAGING_LIMIT,
                 component = component,
-                viewModelStore = viewModelStore,
-                controller = controller,
-                overlay = overlay
+                controller = controller
             ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .verticalScroll(rememberScrollState())
-                ) {
+                DetailScreen(
+                    uuid = account.id,
+                    username = account.username,
+                    imageUrl = account.imageUrl,
+                    limit = BuildConfig.PAGING_LIMIT,
+                    provider = component,
+                    viewModelStoreOwner = viewModelStoreOwner,
+                ) { component, viewModel ->
                     DetailScreen(
                         id = postId,
-                        userId = userId,
-                        enabled = enabled,
-                        limit = BuildConfig.PAGING_LIMIT,
-                        event = event,
-                        provider = component,
-                        viewModelStoreOwner = viewModelStore.get(postId),
-                        connection = { relation ->
-                            ConnectionScreen(
-                                isFollowing = connection.getOrDefault(
-                                    key = relation.first,
-                                    defaultValue = relation.third
-                                ),
-                                isFollowed = relation.second,
-                                onClick = { follow ->
-                                    connectionController.value(
-                                        id = relation.first,
-                                        value = !follow
-                                    )
-                                },
-                            )
-                        }
-                    )
+                        uuid = account.id,
+                        isVisible = isVisible,
+                        component = component,
+                        viewModel = viewModel,
+                        onBoost = { controller.navigate("boost/$it") }
+                    ) { isVisible.value = true }
                 }
             }
+            ContentModal(
+                account = account,
+                postId = postId,
+                selected = selected,
+                isVisible = isVisible,
+                provider = provider,
+                viewModelStoreOwner = viewModelStoreOwner
+            )
         }
     }
     DesignTitleBarHost("ContentScreen$postId") {

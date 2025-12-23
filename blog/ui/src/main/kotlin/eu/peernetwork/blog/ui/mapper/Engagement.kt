@@ -1,16 +1,16 @@
 package eu.peernetwork.blog.ui.mapper
 
-import eu.peernetwork.blog.ui.model.UiContent
 import eu.peernetwork.blog.ui.model.UiEngagement
+import eu.peernetwork.blog.ui.model.UiPost
 
-fun UiContent.mapToEngagement(): UiEngagement {
+fun UiPost.mapToEngagement(): UiEngagement {
     return UiEngagement(
         id = id,
-        likes = likes,
+        likes = likes.toString(),
+        dislikes = dislikes.toString(),
         isLiked = isLiked,
         isDisliked = isDisliked,
-        dislikes = dislikes,
-        comment = comment,
-        views = views
+        views = views.toString(),
+        comment = comment.toString()
     )
 }

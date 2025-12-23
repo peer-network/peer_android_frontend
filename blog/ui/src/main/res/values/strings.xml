@@ -12,6 +12,11 @@
     <string name="follow_label">Follow</string>
     <string name="following_label">Following</string>
     <string name="follower_label">Followers</string>
+    <string name="report_label">Report</string>
+    <string name="share_label">Share</string>
+    <string name="share_option_label">Share via</string>
+    <string name="boost_label">Boost post</string>
+    <string name="cancel_label">Cancel</string>
 
     <string name="now_label">Just now</string>
     <string name="minute_label">%d minutes ago</string>
@@ -19,8 +24,10 @@
     <string name="day_label">Yesterday</string>
     <string name="days_label">%d days ago</string>
 
-    <string name="likes_label">Comment liked by %d people</string>
-    <string name="like_by_label">Comment liked by a person</string>
+    <string name="likes_label">Liked by %d persons</string>
+    <string name="likes_by_you_label">Liked by you and %d other person(s)</string>
+    <string name="liked_by_you_label">Liked by you</string>
+    <string name="like_by_label">Liked by a user</string>
 
     <string name="action_message">Action successfully completed</string>
     <string name="point_description">You have %d Free %s</string>
@@ -37,4 +44,7 @@
     <string name="like_label">Likes</string>
     <string name="dislike_label">Dislikes</string>
     <string name="view_label">Views</string>
+
+    <string name="pin_label">Pin by</string>
+    <string name="no_content_text">No content available!</string>
 </resources>

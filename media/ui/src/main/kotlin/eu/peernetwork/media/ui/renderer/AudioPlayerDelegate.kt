@@ -1,132 +1,163 @@
 package eu.peernetwork.media.ui.renderer
 
-import android.media.MediaPlayer
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableLongState
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.media3.common.MediaItem
+import androidx.media3.common.PlaybackException
+import androidx.media3.common.Player
 import eu.peernetwork.media.core.renderer.AudioPlayer
-import eu.peernetwork.media.ui.annotation.Screen
-import eu.peernetwork.media.ui.annotation.Timeline
-import eu.peernetwork.media.ui.compose.AudioHost
+import eu.peernetwork.media.core.renderer.ImageView
 import eu.peernetwork.media.ui.compose.AudioPlayerThumbnail
-import eu.peernetwork.media.ui.compose.MediaControl
 import eu.peernetwork.media.ui.interactor.MediaInteractor
+import eu.peernetwork.media.ui.player.PlayerProvider
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
 import javax.inject.Inject
 
 class AudioPlayerDelegate @Inject constructor(
+    private val imageView: ImageView,
     private val session: MediaInteractor,
-    @Screen private val screenPlayer: MediaPlayer,
-    @Timeline private val timelinePlayer: MediaPlayer,
 ) : AudioPlayer {
     @Composable
     @OptIn(FlowPreview::class)
     override fun Thumbnail(
         path: String,
-        position: Int,
         hasControls: Boolean,
-        isActive: State<Boolean>,
         enable: State<Boolean>,
+        isPlaying: State<Boolean>,
         length: MutableLongState,
-        current: MutableState<Int>,
-        modifier: Modifier
+        modifier: Modifier,
+        onToggle: (Boolean) -> Unit
     ) {
-        AudioPlayerThumbnail(
-            path = path,
-            position = position,
-            hasControls = hasControls,
-            isActive = isActive,
-            enabled = enable,
-            length = length,
-            current = current,
-            session = session,
-            source = { timelinePlayer }
+        val player = remember { session.exoPlayer() }
+        val isLoading = remember { mutableStateOf(false) }
+        val mute = session.volume().collectAsStateWithLifecycle(
+            initialValue = session.exoPlayer().isDeviceMuted
         )
+        val handlePlay by rememberUpdatedState {
+            player.playWhenReady = true
+            player.setMediaItem(
+                MediaItem.Builder()
+                    .setUri(path)
+                    .setMediaId(path)
+                    .build()
+            )
+            player.prepare()
+        }
+        DisposableEffect(path) {
+            val listener = object : Player.Listener {
+                override fun onIsPlayingChanged(playing: Boolean) {
+                    if (playing) {
+                        isLoading.value = false
+                    }
+                }
+                override fun onPlayerError(error: PlaybackException) {
+                    if (player.currentMediaItem?.mediaId == path) {
+                        handlePlay()
+                    }
+                }
+            }
+            player.addListener(listener)
+            onDispose { player.removeListener(listener) }
+        }
+        Box(modifier = modifier) {
+            AudioPlayerThumbnail(
+                hasControls = hasControls,
+                enabled = enable,
+                isPlaying = isPlaying,
+                isLoading = isLoading,
+                length = length,
+                session = session,
+                source = { player },
+                onPlay = onToggle
+            )
+        }
+        LaunchedEffect(Unit) {
+            snapshotFlow { mute.value }
+                .distinctUntilChanged()
+                .collect { muted ->
+                    session.exoPlayer().volume = if (muted) 1f else 0f
+                    if (player.currentMediaItem?.mediaId == path) {
+                        if (mute.value) {
+                            player.play()
+                        } else {
+                            player.pause()
+                        }
+                    }
+                }
+        }
+        LaunchedEffect(Unit) {
+            snapshotFlow { isPlaying.value }
+                .distinctUntilChanged()
+                .debounce(500)
+                .collect { playing ->
+                    isLoading.value = playing
+                    if (playing) {
+                        if (player.currentMediaItem?.mediaId != path) {
+                            handlePlay()
+                        }
+                    }
+                }
+        }
+        LaunchedEffect(Unit) {
+            snapshotFlow { enable.value }
+                .distinctUntilChanged()
+                .collect { enabled ->
+                    if (!enabled && player.currentMediaItem?.mediaId == path) {
+                        player.pause()
+                    }
+                }
+        }
+        DisposableEffect(Unit) {
+            onDispose {
+                if (player.currentMediaItem?.mediaId == path) {
+                    player.pause()
+                }
+            }
+        }
     }
 
     @Composable
-    override fun invoke(
-        modifier: Modifier,
-        spec: AudioPlayer.Spec
-    ) {
-        val scope = rememberCoroutineScope()
-        val state = remember { mutableLongStateOf(System.currentTimeMillis()) }
-        val repeat = remember { mutableStateOf(true) }
-        val isPlaying = remember { mutableStateOf(false) }
-        val isActive = remember(spec.enabled) { mutableStateOf(spec.enabled) }
-        val status = remember(isPlaying.value) { mutableStateOf(isPlaying.value) }
-        AudioHost(
-            status = status,
-            enabled = isActive,
-            repeat = repeat,
-            isPlaying = isPlaying,
-            length = spec.length,
-            progress = spec.progress,
-            session = session,
-            source = { screenPlayer },
-        ) { player, isLoading, error ->
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier.fillMaxWidth()
-                    .aspectRatio(1f)
-            ) {
-                MediaControl(
-                    isLoading = isLoading,
-                    isPlaying = isPlaying,
-                    error = error,
-                    modifier = Modifier.fillMaxSize(),
-                    onPlay = {
-                        isActive.value = !isActive.value
-                        if (isActive.value && error.value != null) {
-                            state.longValue = System.currentTimeMillis()
-                            status.value = true
-                        } else if (isPlaying.value) {
-                            player.pause()
-                            status.value = false
-                            isActive.value = false
-                        } else {
-                            player.start()
-                            status.value = true
-                            isActive.value = true
-                        }
-                    }
+    @OptIn(FlowPreview::class)
+    override fun invoke(modifier: Modifier, spec: AudioPlayer.Spec) {
+        val enable = remember { mutableStateOf(true) }
+        PlayerProvider(
+            path = spec.path,
+            state = spec.enabled,
+            enabled = enable,
+            interactor = session,
+        ) { player, isEnabled ->
+            spec.cover?.let {
+                imageView(
+                    Modifier,
+                    spec = ImageView.Spec(
+                        url = it,
+                        ratio = null,
+                        contentScale = ContentScale.Crop,
+                        blur = 500f,
+                    )
                 )
-            }
-            LaunchedEffect(spec.enabled, state.longValue) {
-                if (spec.enabled) {
-                    player.reset()
-                    status.value = true
-                    isLoading.value = true
-                    spec.current.value = spec.position
-                    player.setDataSource(spec.path)
-                    player.prepareAsync()
-                    scope.launch { session.unmute(true) }
-                }
-            }
-            DisposableEffect(Unit) {
-                onDispose {
-                    if (spec.current.value == spec.position) {
-                        player.pause()
-                        repeat.value = false
-                        isActive.value = false
-                        status.value = false
-                        isPlaying.value = false
-                    }
-                }
+                imageView(
+                    Modifier,
+                    spec = ImageView.Spec(
+                        url = it,
+                        ratio = spec.ratio,
+                        zoomable = true
+                    )
+                )
             }
         }
     }

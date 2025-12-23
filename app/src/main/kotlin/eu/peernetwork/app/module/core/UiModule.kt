@@ -9,12 +9,21 @@ import eu.peernetwork.core.ui.annotation.UiBuilder
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.factory.UiBuilderFactory
+import eu.peernetwork.social.ui.connection.Connection
 import javax.inject.Singleton
 
 @Module
 object UiModule {
     @Provides
     fun provideFactory(factory: UiBuilderFactory): UiComponentProvider.Factory = factory
+
+    @Singleton
+    @Provides
+    @IntoMap
+    @UiBuilder(Connection.Builder::class)
+    fun provideConnectionBuilder(component: Peer.Component): UiComponent.Builder {
+        return Connection.Builder(component)
+    }
 
     @Singleton
     @Provides

@@ -25,6 +25,11 @@ android {
         if (isApplication) {
             applicationId = "$domain${path.replace(':', '.')}"
         }
+        externalNativeBuild {
+            cmake {
+                cppFlags "-Wl,-z,max-page-size=16384"
+            }
+        }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8

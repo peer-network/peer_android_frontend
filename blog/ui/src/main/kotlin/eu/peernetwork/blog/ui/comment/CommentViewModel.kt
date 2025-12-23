@@ -28,17 +28,17 @@ class CommentViewModel @Inject constructor(
 ) : ViewModel() {
     private val cache = mutableMapOf<String, UiComment>()
 
-    private val mutableLikes = MutableStateFlow<Map<String, UiComment>>(emptyMap())
+    private val _likes = MutableStateFlow<Map<String, UiComment>>(emptyMap())
 
-    private val mutableState = MutableStateFlow<State>(State.Empty)
+    private val _state = MutableStateFlow<State>(State.Empty)
 
-    private val mutableStatus = MutableStateFlow<Status>(Status.Empty)
+    private val _status = MutableStateFlow<Status>(Status.Empty)
 
-    val state: StateFlow<State> = mutableState.asStateFlow()
+    val state: StateFlow<State> = _state.asStateFlow()
 
-    val status: StateFlow<Status> = mutableStatus.asStateFlow()
+    val status: StateFlow<Status> = _status.asStateFlow()
 
-    val likes: StateFlow<Map<String, UiComment>> = mutableLikes.asStateFlow()
+    val likes: StateFlow<Map<String, UiComment>> = _likes.asStateFlow()
 
     fun load(postId: String, page: Pageable) {
         viewModelScope.launch {
@@ -47,26 +47,26 @@ class CommentViewModel @Inject constructor(
                     id = postId,
                     page = page
                 )
-            ).catch { mutableState.tryEmit(State.Error(it)) }
-                .onStart { mutableState.tryEmit(State.Loading) }
+            ).catch { _state.tryEmit(State.Error(it)) }
+                .onStart { _state.tryEmit(State.Loading) }
                 .cachedIn(viewModelScope)
                 .apply { collectLatest {
-                    mutableState.tryEmit(State.Success(postId,this))
+                    _state.tryEmit(State.Success(postId,this))
                 } }
         }
     }
 
     fun comment(postId: String, comment: String) {
         viewModelScope.launch {
-            mutableStatus.tryEmit(Status.Loading(Intent.Comment))
+            _status.tryEmit(Status.Loading(Intent.Comment))
             try {
-                mutableStatus.tryEmit(Status.Success(
+                _status.tryEmit(Status.Success(
                     Intent.Comment,
                     usecase(CommentUsecase.Parameter(postId, comment)).id
                 ))
                 updateUsecase(postId)
             } catch (error: Throwable) {
-                mutableStatus.tryEmit(Status.Error(Intent.Comment, error))
+                _status.tryEmit(Status.Error(Intent.Comment, error))
             }
         }
     }
@@ -79,27 +79,27 @@ class CommentViewModel @Inject constructor(
             val update = comment.copy(likes = comment.likes + 1, isLiked = true)
             try {
                 cache[update.id] = update
-                mutableStatus.tryEmit(Status.Success(Intent.Like, comment.id))
-                mutableLikes.tryEmit(cache.toMap())
+                _status.tryEmit(Status.Success(Intent.Like, comment.id))
+                _likes.tryEmit(cache.toMap())
                 likeUsecase(comment.id)
             } catch (error: Throwable) {
                 cache.remove(update.id)
-                mutableLikes.tryEmit(cache.toMap())
-                mutableStatus.tryEmit(Status.Error(Intent.Like, error))
+                _likes.tryEmit(cache.toMap())
+                _status.tryEmit(Status.Error(Intent.Like, error))
             }
         }
     }
 
     fun clear() {
         viewModelScope.launch {
-            mutableStatus.tryEmit(Status.Empty)
+            _status.tryEmit(Status.Empty)
         }
     }
 
     fun reset() {
         viewModelScope.launch {
-            mutableState.tryEmit(State.Empty)
-            mutableStatus.tryEmit(Status.Empty)
+            _state.tryEmit(State.Empty)
+            _status.tryEmit(Status.Empty)
         }
     }
 

@@ -43,7 +43,7 @@ fun DesignTabLayout(
     state: PagerState,
     modifier: Modifier = Modifier,
     strokeWidth: Dp = 1.dp,
-    color: Color = MaterialTheme.colorScheme.onTertiaryContainer,
+    color: Color = MaterialTheme.colorScheme.surfaceContainerLowest,
     fitEvenly: Boolean = false,
     contentPadding: PaddingValues = PaddingValues(bottom = 8.dp),
     indicator: @Composable () -> Unit = {},

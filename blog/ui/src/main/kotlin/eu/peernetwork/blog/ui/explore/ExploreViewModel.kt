@@ -17,16 +17,22 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.collections.plus
 
 class ExploreViewModel @Inject constructor(
     private val usecase: ExplorePostsUsecase,
     private val viewUsecase: ViewUsecase,
 ): ViewModel() {
-    private val mutableState = MutableStateFlow<State>(State.Empty)
+    private val _status = MutableStateFlow<Map<Int, Status>>(emptyMap())
 
-    val state: StateFlow<State> = mutableState.asStateFlow()
+    private val _state = MutableStateFlow<State>(State.Empty)
+
+    val status: StateFlow<Map<Int, Status>> = _status.asStateFlow()
+
+    val state: StateFlow<State> = _state.asStateFlow()
 
     fun get(page: Pageable) {
         viewModelScope.launch {
@@ -36,12 +42,12 @@ class ExploreViewModel @Inject constructor(
                     page = page
                 )
             )
-                .catch { mutableState.tryEmit(State.Error(it)) }
-                .onStart { mutableState.tryEmit(State.Loading) }
+                .catch { _state.tryEmit(State.Error(it)) }
+                .onStart { _state.tryEmit(State.Loading) }
                 .cachedIn(viewModelScope)
                 .apply {
                     collectLatest {
-                        mutableState.tryEmit(State.Success(this))
+                        _state.tryEmit(State.Success(this))
                     }
                 }
         }
@@ -55,6 +61,23 @@ class ExploreViewModel @Inject constructor(
                 error.printStackTrace()
             }
         }
+    }
+
+    fun selected(tag: Int, position: Int) {
+        viewModelScope.launch {
+            updateStatus(tag, Status.Success(position))
+        }
+    }
+
+    private fun updateStatus(tag: Int, status: Status) {
+        _status.update { it + (tag to status) }
+    }
+
+    sealed interface Status {
+        data object Empty : Status
+        data object Loading : Status
+        data class Success<T>(val data: T) : Status
+        data class Error(val error: Throwable) : Status
     }
 
     sealed interface State {

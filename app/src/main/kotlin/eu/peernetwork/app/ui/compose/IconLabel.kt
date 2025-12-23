@@ -19,6 +19,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.app.R
+import eu.peernetwork.core.ui.theme.DesignTheme
 import eu.peernetwork.core.ui.theme.PeerTheme
 
 @Composable
@@ -30,7 +31,7 @@ fun IconLabel(
     size: Dp = 72.dp,
     space: Dp = 0.dp,
     style: TextStyle = MaterialTheme.typography.bodySmall,
-    color: Color = MaterialTheme.colorScheme.tertiary
+    color: Color = MaterialTheme.colorScheme.outline
 ) {
     Column(
         modifier = modifier,
@@ -59,8 +60,8 @@ fun IconLabel(
     size: Dp = 72.dp,
     space: Dp = 0.dp,
     style: TextStyle = MaterialTheme.typography.bodySmall,
-    color: Color = MaterialTheme.colorScheme.tertiary,
-    tint: Color = MaterialTheme.colorScheme.tertiary,
+    color: Color = MaterialTheme.colorScheme.outline,
+    tint: Color = MaterialTheme.colorScheme.outline,
 ) {
     Column(
         modifier = modifier,
@@ -84,7 +85,7 @@ fun IconLabel(
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun IconLabelPreview() {
-    PeerTheme {
+    DesignTheme {
         IconLabel(
             painter = painterResource(id = R.drawable.bg_heart),
             label = "Engage",

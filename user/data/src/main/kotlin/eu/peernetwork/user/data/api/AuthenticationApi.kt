@@ -5,11 +5,11 @@ import eu.peernetwork.user.domain.model.Token
 interface AuthenticationApi {
     suspend fun authenticated(): String
 
-    suspend fun login(email: String, password: String): String
+    suspend fun login(email: String, password: String, remember: Boolean = false): String
 
     suspend fun logout()
 
     interface Listener {
-        suspend fun onAuthenticationChanged(token: Token?)
+        suspend fun onAuthenticationChanged(token: Token?, remember: Boolean = true)
     }
 }

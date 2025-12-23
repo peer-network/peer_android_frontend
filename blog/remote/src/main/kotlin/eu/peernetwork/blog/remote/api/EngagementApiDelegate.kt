@@ -2,7 +2,7 @@ package eu.peernetwork.blog.remote.api
 
 import com.apollographql.apollo3.api.Optional
 import eu.peernetwork.blog.data.api.EngagementApi
-import eu.peernetwork.blog.domain.exception.ContentException
+import eu.peernetwork.core.common.exception.ContentException
 import eu.peernetwork.blog.domain.model.Author
 import eu.peernetwork.blog.domain.model.Engagement
 import eu.peernetwork.blog.remote.engagement.LikeCommentMutation

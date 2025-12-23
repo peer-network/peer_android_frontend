@@ -3,10 +3,14 @@ package eu.peernetwork.app.ui.search
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
+import eu.peernetwork.ads.ui.boost.Boost
+import eu.peernetwork.ads.ui.checkout.Checkout
+import eu.peernetwork.ads.ui.checkout.CheckoutBalance
 import eu.peernetwork.app.ui.feed.Feed
 import eu.peernetwork.app.ui.profile.Profile
+import eu.peernetwork.app.ui.renderer.BalanceRenderer
 import eu.peernetwork.app.ui.renderer.EngagementRenderer
-import eu.peernetwork.app.ui.window.Window
+import eu.peernetwork.app.ui.screen.Screen
 import eu.peernetwork.blog.ui.engagement.EngagementDialog
 import eu.peernetwork.blog.ui.explore.Explore
 import eu.peernetwork.core.ui.annotation.UiBuilder
@@ -17,7 +21,9 @@ import eu.peernetwork.social.ui.connection.Connection
 import eu.peernetwork.social.ui.search.member.Member
 import eu.peernetwork.social.ui.search.tag.Tag
 import eu.peernetwork.social.ui.search.title.Title
+import eu.peernetwork.wallet.ui.balance.Balance
 import eu.peernetwork.wallet.ui.confirmation.Confirmation
+import eu.peernetwork.wallet.ui.service.Service
 
 @Module
 object SearchModule {
@@ -98,9 +104,9 @@ object SearchModule {
     @Search.Scope
     @Provides
     @IntoMap
-    @UiBuilder(Window.Builder::class)
+    @UiBuilder(Screen.Builder::class)
     fun provideWindowBuilder(component: Search.Component): UiComponent.Builder {
-        return Window.Builder(component)
+        return Screen.Builder(component)
     }
 
     @Search.Scope
@@ -109,5 +115,43 @@ object SearchModule {
     @UiBuilder(Search.Builder::class)
     fun provideSearchBuilder(component: Search.Component): UiComponent.Builder {
         return Search.Builder(component)
+    }
+
+    @Search.Scope
+    @Provides
+    @IntoMap
+    @UiBuilder(Checkout.Builder::class)
+    fun provideCheckoutBuilder(component: Search.Component): UiComponent.Builder {
+        return Checkout.Builder(component)
+    }
+
+    @Search.Scope
+    @Provides
+    @IntoMap
+    @UiBuilder(Balance.Builder::class)
+    fun provideBalanceBuilder(component: Search.Component): UiComponent.Builder {
+        return Balance.Builder(component)
+    }
+
+    @Search.Scope
+    @Provides
+    @IntoMap
+    @UiBuilder(Service.Builder::class)
+    fun provideServiceBuilder(component: Search.Component): UiComponent.Builder {
+        return Service.Builder(component)
+    }
+
+    @Provides
+    @Search.Scope
+    fun provideCheckoutBalance(component: Search.Component): CheckoutBalance {
+        return BalanceRenderer(component)
+    }
+
+    @Search.Scope
+    @Provides
+    @IntoMap
+    @UiBuilder(Boost.Builder::class)
+    fun provideBoostBuilder(component: Search.Component): UiComponent.Builder {
+        return Boost.Builder(component)
     }
 }

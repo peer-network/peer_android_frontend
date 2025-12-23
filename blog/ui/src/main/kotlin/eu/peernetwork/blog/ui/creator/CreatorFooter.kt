@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -20,7 +19,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.blog.ui.model.UiDraft
-import eu.peernetwork.core.ui.design.material.DesignButton
+import eu.peernetwork.core.ui.design.luna.DesignButton
+import eu.peernetwork.core.ui.design.luna.designSecondaryButtonColors
 import eu.peernetwork.core.ui.extension.isValidInput
 
 @Composable
@@ -45,18 +45,17 @@ fun CreatorFooter(
                 ) },
             isLoading = isLoading.value,
             enabled = isFormValid.value && !isLoading.value,
-            shape = RoundedCornerShape(12.dp),
             contentPadding = PaddingValues(
                 vertical = 8.dp,
-                horizontal = 24.dp
+                horizontal = 36.dp
             ),
-            modifier = Modifier.height(38.dp),
+            colors = designSecondaryButtonColors(),
+            modifier = Modifier.height(42.dp),
         ) {
             Text(
-                stringResource(eu.peernetwork.blog.ui.R.string.post_label),
-                style = MaterialTheme.typography.bodyLarge.copy(
-                    fontWeight = FontWeight.SemiBold
-                )
+                text = stringResource(eu.peernetwork.blog.ui.R.string.post_label),
+                fontWeight = FontWeight.SemiBold,
+                style = MaterialTheme.typography.bodyMedium
             )
         }
     }

@@ -2,7 +2,7 @@ package eu.peernetwork.blog.ui.comment
 
 import android.content.Context
 import androidx.lifecycle.ViewModelProvider
-import eu.peernetwork.blog.ui.interaction.listing.Listing
+import eu.peernetwork.blog.ui.interaction.user.User
 import eu.peernetwork.blog.ui.provider.BlogProvider
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
@@ -17,7 +17,7 @@ interface Comment : BlogProvider {
         dependencies = [Comment::class],
         modules = [CommentModule::class]
     )
-    interface Component : Comment, Listing, UiComponentProvider {
+    interface Component : Comment, User, UiComponentProvider {
         fun viewModelFactory(): ViewModelProvider.Factory
     }
 

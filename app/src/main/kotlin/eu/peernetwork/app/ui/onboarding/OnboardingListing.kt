@@ -23,7 +23,7 @@ import eu.peernetwork.app.ui.compose.FeatureLabel
 import eu.peernetwork.app.ui.compose.PricingLabel
 import eu.peernetwork.app.R as AppRes
 import eu.peernetwork.blog.ui.R
-import eu.peernetwork.core.ui.theme.PeerTheme
+import eu.peernetwork.core.ui.theme.DesignTheme
 import kotlinx.collections.immutable.persistentListOf
 import kotlin.math.absoluteValue
 
@@ -133,7 +133,7 @@ fun BoxScope.OnboardingFeatureListing() {
         Triple(
             painterResource(AppRes.drawable.bg_ad),
             stringResource(AppRes.string.onboarding_boost_your_content),
-            stringResource(AppRes.string.onboarding_coming_soon)
+            null
         ),
         Triple(
             painterResource(AppRes.drawable.bg_shop),
@@ -144,7 +144,7 @@ fun BoxScope.OnboardingFeatureListing() {
             painterResource(AppRes.drawable.bg_transfer),
             stringResource(AppRes.string.onboarding_cash_out),
             stringResource(AppRes.string.onboarding_cash_out_working_on_license)
-        )
+        ),
     )
     LazyVerticalStaggeredGrid(
         columns = StaggeredGridCells.Fixed(2),
@@ -167,7 +167,7 @@ fun BoxScope.OnboardingFeatureListing() {
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun OnboardingActionListingPreview() {
-    PeerTheme {
+    DesignTheme {
         OnboardingActionListing(
             actionTokenPrices = mapOf(
                 "post" to 20,
@@ -182,7 +182,7 @@ fun OnboardingActionListingPreview() {
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun OnboardingEngagementListingPreview() {
-    PeerTheme {
+    DesignTheme {
         OnboardingEngagementListing(
             actionGemsReturns = mapOf(
                 "like" to 5.0,
@@ -197,7 +197,7 @@ fun OnboardingEngagementListingPreview() {
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun OnboardingFeatureListingPreview() {
-    PeerTheme {
+    DesignTheme {
         Box { OnboardingFeatureListing() }
     }
 }

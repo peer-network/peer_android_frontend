@@ -34,7 +34,7 @@ class TitleViewModel @Inject constructor(private val usecase: TitleUsecase) : Vi
                 .onStart { mutableState.tryEmit(State.Loading) }
                 .cachedIn(viewModelScope)
                 .apply {
-                    collectLatest { mutableState.tryEmit(State.Success(this)) }
+                    collectLatest { mutableState.tryEmit(State.Success(title, this)) }
                 }
         }
     }
@@ -48,7 +48,10 @@ class TitleViewModel @Inject constructor(private val usecase: TitleUsecase) : Vi
     sealed interface State {
         data object Empty : State
         data object Loading : State
-        data class Success(val content: Flow<PagingData<UiPost>>) : State
+        data class Success(
+            val title: String,
+            val content: Flow<PagingData<UiPost>>
+        ) : State
         data class Error(val error: Throwable) : State
     }
 }

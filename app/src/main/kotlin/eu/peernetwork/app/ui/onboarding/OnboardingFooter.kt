@@ -27,7 +27,6 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -51,9 +50,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.app.R
-import eu.peernetwork.core.ui.design.material.DesignButton
-import eu.peernetwork.core.ui.design.material.DesignOutlinedButton
-import eu.peernetwork.core.ui.theme.PeerTheme
+import eu.peernetwork.core.ui.design.luna.DesignOutlineButton
+import eu.peernetwork.core.ui.design.luna.DesignButton
+import eu.peernetwork.core.ui.theme.DesignTheme
 import kotlinx.coroutines.launch
 
 enum class OnboardingFooterState {
@@ -177,20 +176,14 @@ fun OnboardingFooter(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.fillMaxSize()
     ) {
-        DesignOutlinedButton(
+        DesignOutlineButton(
             onClick = onSkipClick,
             enabled = !isLoading.value,
             isLoading = isLoading.value,
             shape = CircleShape,
-            textStyle = MaterialTheme.typography.labelLarge,
-            colors = ButtonDefaults.outlinedButtonColors(
-                containerColor = Color.Transparent,
-                contentColor = MaterialTheme.colorScheme.onBackground,
-                disabledContainerColor = Color.Transparent
-            ),
-            minHeight = 38.dp,
+            minHeight = 42.dp,
             border = BorderStroke(1.dp, MaterialTheme.colorScheme.onBackground),
-            contentPadding = PaddingValues(horizontal = 24.dp, vertical = 8.dp)
+            contentPadding = PaddingValues(horizontal = 36.dp, vertical = 8.dp)
         ) { Text(stringResource(R.string.skip_label)) }
         Spacer(modifier = Modifier.weight(1f))
         AnimatedVisibility(
@@ -284,7 +277,7 @@ fun OnboardingFooterIndicator(
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun OnboardingFooterPreview() {
-    PeerTheme {
+    DesignTheme {
         Column(modifier = Modifier.padding(
             vertical = 8.dp,
             horizontal = 24.dp

@@ -1,11 +1,13 @@
 package eu.peernetwork.app.ui.search
 
 import android.content.Context
+import eu.peernetwork.ads.ui.boost.Boost
+import eu.peernetwork.ads.ui.checkout.Checkout
 import eu.peernetwork.app.provider.ApplicationProvider
 import eu.peernetwork.app.ui.feed.Feed
 import eu.peernetwork.app.ui.profile.Profile
 import eu.peernetwork.app.ui.settings.SettingsEvent
-import eu.peernetwork.app.ui.window.Window
+import eu.peernetwork.app.ui.screen.Screen
 import eu.peernetwork.blog.ui.explore.Explore
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
@@ -13,7 +15,9 @@ import eu.peernetwork.social.ui.connection.Connection
 import eu.peernetwork.social.ui.search.member.Member
 import eu.peernetwork.social.ui.search.tag.Tag
 import eu.peernetwork.social.ui.search.title.Title
+import eu.peernetwork.wallet.ui.balance.Balance
 import eu.peernetwork.wallet.ui.confirmation.Confirmation
+import eu.peernetwork.wallet.ui.service.Service
 
 interface Search : ApplicationProvider {
     fun settingsEvent(): SettingsEvent
@@ -37,7 +41,11 @@ interface Search : ApplicationProvider {
         Explore,
         Connection,
         Confirmation,
-        Window
+        Boost,
+        Service,
+        Balance,
+        Checkout,
+        Screen
 
     class Builder(private val dependency: Search) : UiComponent.DefaultBuilder<Search, Component>() {
         override fun build(context: Context): Component {

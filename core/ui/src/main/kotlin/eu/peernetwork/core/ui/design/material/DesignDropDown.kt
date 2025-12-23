@@ -36,7 +36,7 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
-import eu.peernetwork.core.ui.theme.PeerTheme
+import eu.peernetwork.core.ui.theme.DesignTheme
 
 interface DesignDropDownBuilder {
     fun item(
@@ -130,8 +130,8 @@ fun DesignDropDown(
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun PreviewDesignDropDown() {
-    PeerTheme {
-        var expanded = remember { mutableStateOf(false) }
+    DesignTheme(isDarkMode = true) {
+        val expanded = remember { mutableStateOf(false) }
         DesignDropDown(
             expanded,
             default = "tag",

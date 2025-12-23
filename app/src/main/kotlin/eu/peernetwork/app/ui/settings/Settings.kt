@@ -8,9 +8,12 @@ import eu.peernetwork.app.ui.version.Version
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.social.ui.referral.Referral
-import eu.peernetwork.user.ui.password.update.PasswordUpdate
-import eu.peernetwork.user.ui.settings.account.Account
-import eu.peernetwork.user.ui.settings.address.Address
+import eu.peernetwork.user.ui.password.update.Update
+import eu.peernetwork.user.ui.account.Account
+import eu.peernetwork.user.ui.deactivate.Deactivate
+import eu.peernetwork.user.ui.email.Email
+import eu.peernetwork.user.ui.logout.Logout
+import eu.peernetwork.user.ui.user.User
 
 interface Settings : ApplicationProvider {
     fun settingsEvent(): SettingsEvent
@@ -25,14 +28,17 @@ interface Settings : ApplicationProvider {
         modules = [ SettingsModule::class ]
     )
     interface Component : Settings,
+        User,
         Account,
-        PasswordUpdate,
-        Address,
+        Update,
+        Email,
         About,
         UiComponentProvider,
         Referral,
         Profile,
-        Version
+        Version,
+        Logout,
+        Deactivate
 
     class Builder(private val dependency: Settings) : UiComponent.DefaultBuilder<Settings, Component>() {
         override fun build(context: Context): Component {

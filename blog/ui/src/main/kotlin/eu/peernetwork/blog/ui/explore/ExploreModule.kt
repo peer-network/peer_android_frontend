@@ -8,7 +8,7 @@ import dagger.Provides
 import dagger.multibindings.IntoMap
 import eu.peernetwork.blog.ui.engagement.Engagement
 import eu.peernetwork.blog.ui.moderation.Moderation
-import eu.peernetwork.blog.ui.content.overlay.Overlay
+import eu.peernetwork.blog.ui.post.Post
 import eu.peernetwork.core.ui.annotation.UiBuilder
 import eu.peernetwork.core.ui.annotation.UiViewModel
 import eu.peernetwork.core.ui.component.UiComponent
@@ -60,8 +60,8 @@ class ExploreModule(private val context: Context){
     @Provides
     @IntoMap
     @Explore.Scope
-    @UiBuilder(Overlay.Builder::class)
-    fun provideOverlayBuilder(component: Explore.Component): UiComponent.Builder {
-        return Overlay.Builder(component)
+    @UiBuilder(Post.Builder::class)
+    fun providePostBuilder(component: Explore.Component): UiComponent.Builder {
+        return Post.Builder(component)
     }
 }

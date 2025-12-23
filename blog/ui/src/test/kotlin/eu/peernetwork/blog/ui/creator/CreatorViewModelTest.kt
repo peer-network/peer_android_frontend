@@ -47,7 +47,6 @@ internal class CreatorViewModelTest {
         viewModel = CreatorViewModel(
             contentCreationUsecase,
             trimUsecase,
-            textEncoderUsecase,
             mediaEncoderUsecase
         )
     }

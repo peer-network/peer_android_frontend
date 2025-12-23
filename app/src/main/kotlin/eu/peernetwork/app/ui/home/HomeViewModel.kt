@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import eu.peernetwork.app.interactor.SettingsInteractor
 import eu.peernetwork.persistence.domain.publishable.PublishableInteger
 import eu.peernetwork.persistence.domain.retrievable.RetrievableInteger
+import eu.peernetwork.user.domain.model.Account
 import eu.peernetwork.user.domain.model.Preference
 import eu.peernetwork.user.domain.usecase.PreferenceUsecase
 import eu.peernetwork.user.domain.usecase.PrincipalUsecase
@@ -32,11 +33,11 @@ class HomeViewModel @Inject constructor(
             try {
                 val preference = preferenceUsecase()
                 interactor.setMode(preference.mode.value)
-                val principal = usecase(true)
+                val principal = usecase(false)
                 val lastVisitedPage = retrievableInteger(TAG) ?: 0
-                interactor.setUser(principal)
+                interactor.setUser(principal.id)
                 mutableState.tryEmit(State.Success(
-                    userId = principal,
+                    account = principal,
                     lastVisitedPage = lastVisitedPage,
                     preference = preference
                 ))
@@ -54,7 +55,7 @@ class HomeViewModel @Inject constructor(
         data object Empty : State
         data object Loading : State
         data class Success(
-            val userId: String,
+            val account: Account,
             val lastVisitedPage: Int,
             val preference: Preference
         ) : State

@@ -28,17 +28,17 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.navigation.compose.rememberNavController
 import eu.peernetwork.blog.ui.creator.CreatorScreen
+import eu.peernetwork.blog.ui.creator.CreatorPage
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.material.DesignTitle
 import eu.peernetwork.core.ui.design.material.DesignTitleBarHost
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
-import eu.peernetwork.core.ui.theme.PeerTheme
+import eu.peernetwork.core.ui.theme.DesignTheme
 import eu.peernetwork.media.core.model.UiAttachment
 import eu.peernetwork.media.core.model.UiMimeType
 import eu.peernetwork.media.ui.attachment.AttachmentScreen
 import eu.peernetwork.media.ui.saveable.UiAttachmentSaver
-import eu.peernetwork.wallet.ui.model.UiToken
 
 @Composable
 fun ComposerScreen(
@@ -53,8 +53,6 @@ fun ComposerScreen(
     val controller = rememberNavController()
     val attachment = rememberSaveable(saver = UiAttachmentSaver) { mutableStateOf<UiAttachment>(UiAttachment.Text) }
     val focus = remember { FocusRequester() }
-    val intent = UiToken.Post
-    val key = intent::class.java.name
     var title by rememberSaveable(stateSaver = TextFieldState.Saver) { mutableStateOf(TextFieldState()) }
     var description by rememberSaveable(stateSaver = TextFieldState.Saver) { mutableStateOf(TextFieldState()) }
     Box {
@@ -91,7 +89,7 @@ fun ComposerScreen(
                         viewModelStoreOwner = viewModelStoreOwner,
                         modifier = Modifier
                             .padding(top = 8.dp)
-                            .padding(horizontal = 16.dp),
+                            .padding(horizontal = 12.dp),
                         onClear = {
                             title = TextFieldState()
                             description = TextFieldState()
@@ -135,7 +133,7 @@ fun ComposerScreen(
 @Preview
 @Composable
 fun PreviewComposerScreen() {
-    PeerTheme {
+    DesignTheme {
         val focus = remember { FocusRequester() }
         val title = remember { TextFieldState() }
         val description = remember { TextFieldState() }
@@ -156,7 +154,7 @@ fun PreviewComposerScreen() {
                 )
             },
             content = {
-                CreatorScreen(
+                CreatorPage(
                     title = title,
                     description = description,
                     focus = focus,

@@ -18,9 +18,6 @@ import eu.peernetwork.media.core.renderer.VideoThumbnail
 import kotlinx.coroutines.FlowPreview
 import javax.inject.Inject
 import androidx.core.view.isVisible
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import eu.peernetwork.media.core.interactor.VideoInteractor
@@ -43,36 +40,24 @@ class VideoThumbnailDelegate @Inject constructor(
     ) {
         val context = LocalContext.current
         val scope = rememberCoroutineScope()
-        val lifecycleOwner = LocalLifecycleOwner.current
         val player = remember { session.exoPlayer() }
         val surfaceView = remember { TextureView(context) }
+        val isReady = remember { mutableStateOf(spec.isPlaying.value) }
         val dimension = session.observer.collectAsStateWithLifecycle()
-        val mute = session.volume().collectAsStateWithLifecycle(session.exoPlayer().isDeviceMuted)
-        val listener = remember {
-            object : Player.Listener {
+        val mute = session.volume().collectAsStateWithLifecycle(
+            initialValue = session.exoPlayer().isDeviceMuted
+        )
+        DisposableEffect(Unit) {
+            val listener = object : Player.Listener {
                 override fun onPlayerError(error: PlaybackException) {
                     surfaceView.surfaceTexture?.let {
                         interactor.attach(it, spec.url)
+                        player.play()
                     }
                 }
             }
-        }
-        val observer = remember {
-            LifecycleEventObserver { _, event ->
-                when (event) {
-                    Lifecycle.Event.ON_RESUME -> {
-                        if (spec.isPlaying.value) {
-                            player.play()
-                        }
-                    }
-                    Lifecycle.Event.ON_STOP -> {
-                        if (spec.isPlaying.value) {
-                            player.pause()
-                        }
-                    }
-                    else -> Unit
-                }
-            }
+            player.addListener(listener)
+            onDispose { player.removeListener(listener) }
         }
         Box(
             contentAlignment = Alignment.Center,
@@ -118,19 +103,13 @@ class VideoThumbnailDelegate @Inject constructor(
         LaunchedEffect(Unit) {
             snapshotFlow { spec.isPlaying.value }
                 .distinctUntilChanged()
-                .debounce(300)
+                .debounce(500)
                 .collect { playing ->
+                    isReady.value = playing
                     if (playing) {
                         surfaceView.surfaceTexture?.let {
                             interactor.attach(it, spec.url)
-                            player.addListener(listener)
                             player.play()
-                        }
-                    } else {
-                        surfaceView.surfaceTexture?.let {
-                            interactor.detach(it)
-                            player.removeListener(listener)
-                            player.pause()
                         }
                     }
                 }
@@ -142,10 +121,23 @@ class VideoThumbnailDelegate @Inject constructor(
                     session.exoPlayer().volume = if (muted) 1f else 0f
                 }
         }
-        DisposableEffect(lifecycleOwner) {
-            lifecycleOwner.lifecycle.addObserver(observer)
+        LaunchedEffect(Unit) {
+            snapshotFlow { spec.enabled.value }
+                .distinctUntilChanged()
+                .collect { enabled ->
+                    if (!enabled && isReady.value) {
+                        surfaceView.surfaceTexture?.let {
+                            interactor.attach(it, spec.url)
+                            player.pause()
+                        }
+                    }
+                }
+        }
+        DisposableEffect(spec.enabled.value) {
             onDispose {
-                lifecycleOwner.lifecycle.removeObserver(observer)
+                if (!spec.enabled.value) {
+                    player.pause()
+                }
             }
         }
     }

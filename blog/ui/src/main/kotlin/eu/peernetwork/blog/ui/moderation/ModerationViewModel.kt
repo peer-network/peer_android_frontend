@@ -14,37 +14,38 @@ class ModerationViewModel @Inject constructor(
     private val reportUsecase: ReportUsecase,
     private val saveUsecase: SaveUsecase
 ): ViewModel() {
-    private val mutableState = MutableStateFlow<State>(State.Default)
-    val state: StateFlow<State> = mutableState.asStateFlow()
+    private val _state = MutableStateFlow<State>(State.Default)
+
+    val state: StateFlow<State> = _state.asStateFlow()
 
     fun report(postId: String) {
         viewModelScope.launch {
-            mutableState.value = State.Loading
+            _state.value = State.Loading
             runCatching {
                 reportUsecase(postId)
             }.onSuccess {
-                mutableState.value = State.Success(postId)
+                _state.value = State.Success(postId)
             }.onFailure { error ->
-                mutableState.value = State.Error(error)
+                _state.value = State.Error(error)
             }
         }
     }
 
     fun save(postId: String) {
         viewModelScope.launch {
-            mutableState.value = State.Loading
+            _state.value = State.Loading
             runCatching {
                 saveUsecase(postId)
             }.onSuccess {
-                mutableState.value = State.Success(postId)
+                _state.value = State.Success(postId)
             }.onFailure { error ->
-                mutableState.value = State.Error(error)
+                _state.value = State.Error(error)
             }
         }
     }
 
     fun reset() {
-        mutableState.value = State.Default
+        _state.value = State.Default
     }
 
     sealed interface State {

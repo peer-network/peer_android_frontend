@@ -1,17 +1,20 @@
 package eu.peernetwork.app.ui.content
 
 import android.content.Context
+import eu.peernetwork.ads.ui.boost.Boost
+import eu.peernetwork.ads.ui.checkout.Checkout
 import eu.peernetwork.app.provider.ApplicationProvider
 import eu.peernetwork.app.ui.profile.Profile
 import eu.peernetwork.app.ui.search.Search
 import eu.peernetwork.app.ui.settings.SettingsEvent
-import eu.peernetwork.app.ui.window.Window
-import eu.peernetwork.blog.ui.feed.detail.Detail
-import eu.peernetwork.blog.ui.feed.timeline.Post
+import eu.peernetwork.app.ui.screen.Screen
+import eu.peernetwork.blog.ui.detail.Detail
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.social.ui.connection.Connection
+import eu.peernetwork.wallet.ui.balance.Balance
 import eu.peernetwork.wallet.ui.confirmation.Confirmation
+import eu.peernetwork.wallet.ui.service.Service
 
 interface Content : ApplicationProvider {
     fun settingsEvent(): SettingsEvent
@@ -27,13 +30,16 @@ interface Content : ApplicationProvider {
     )
     interface Component : Content,
         UiComponentProvider,
-        Post,
         Search,
         Profile,
         Connection,
         Confirmation,
-        Window,
-        Detail
+        Screen,
+        Detail,
+        Service,
+        Balance,
+        Checkout,
+        Boost
 
     class Builder(private val dependency: Content) : UiComponent.DefaultBuilder<Content, Component>() {
         override fun build(context: Context): Component {

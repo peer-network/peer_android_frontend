@@ -29,7 +29,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.app.R
-import eu.peernetwork.core.ui.theme.PeerTheme
+import eu.peernetwork.core.ui.theme.DesignTheme
 
 @Composable
 @SuppressLint("UnusedBoxWithConstraintsScope")
@@ -117,14 +117,14 @@ private fun RewardLabel(text: String) {
         Text(
             text = stringResource(R.string.onboarding_pie_chart_distributed_daily),
             style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.tertiary
+            color = MaterialTheme.colorScheme.outline
         )
         Spacer(modifier = Modifier.height(2.dp))
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
                 text = stringResource(R.string.onboarding_pie_chart_100_percent_of),
                 style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.tertiary
+                color = MaterialTheme.colorScheme.outline
             )
             Icon(
                 painter = painterResource(id = eu.peernetwork.blog.ui.R.drawable.ic_gem),
@@ -136,7 +136,7 @@ private fun RewardLabel(text: String) {
             Text(
                 text = stringResource(R.string.onboarding_pie_chart_gems_label),
                 style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.tertiary
+                color = MaterialTheme.colorScheme.outline
             )
         }
     }
@@ -159,7 +159,7 @@ private fun RewardLabel(
             Text(
                 text = description,
                 style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.tertiary
+                color = MaterialTheme.colorScheme.outline
             )
             Icon(
                 painter = painterResource(id = eu.peernetwork.blog.ui.R.drawable.ic_gem),
@@ -171,7 +171,7 @@ private fun RewardLabel(
             Text(
                 text = stringResource(R.string.onboarding_pie_chart_gems_label),
                 style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.tertiary
+                color = MaterialTheme.colorScheme.outline
             )
         }
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -194,7 +194,7 @@ private fun RewardLabel(
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun RewardDiagramPreview() {
-    PeerTheme {
+    DesignTheme {
         Box(modifier = Modifier.fillMaxSize()
             .padding(24.dp)) {
             RewardDiagram("5 000")

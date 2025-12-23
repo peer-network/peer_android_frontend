@@ -121,7 +121,7 @@ fun PreviewDesignTextButton() {
             onClick = {}
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.ic_home),
+                painter = painterResource(id = R.drawable.ic_more),
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.tertiary,
                 modifier = Modifier.size(28.dp)

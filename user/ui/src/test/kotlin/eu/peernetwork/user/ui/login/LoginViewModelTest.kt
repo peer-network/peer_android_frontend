@@ -3,7 +3,6 @@ package eu.peernetwork.user.ui.login
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import app.cash.turbine.test
 import eu.peernetwork.user.domain.usecase.LoginUsecase
-import eu.peernetwork.user.ui.v2.login.LoginViewModel
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -49,12 +48,12 @@ internal class LoginViewModelTest {
             delay(100)
             token
         }
-        viewModel.login("<test-email>", "<test-password>")
+        viewModel.login("<test-email>", "<test-password>", true)
         viewModel.state.test {
             assertEquals(LoginViewModel.State.Loading, awaitItem())
             assertEquals(LoginViewModel.State.Success(token), awaitItem())
         }
-        coVerify { loginUsecase(LoginUsecase.Parameter("<test-email>", "<test-password>")) }
+        coVerify { loginUsecase(LoginUsecase.Parameter("<test-email>", "<test-password>", true)) }
     }
 
     @Test
@@ -62,7 +61,7 @@ internal class LoginViewModelTest {
         val error = RuntimeException("<test-login-error>")
         coEvery { loginUsecase(any()) } throws error
 
-        viewModel.login("<test-email>", "<test-password>")
+        viewModel.login("<test-email>", "<test-password>", true)
         viewModel.state.test {
             assertEquals(LoginViewModel.State.Error(error), awaitItem())
         }
@@ -73,7 +72,7 @@ internal class LoginViewModelTest {
         val error = RuntimeException("<test-login-error>")
         coEvery { loginUsecase(any()) } throws error
 
-        viewModel.login("<test-email>", "<test-password>")
+        viewModel.login("<test-email>", "<test-password>", true)
         viewModel.state.test {
             assertEquals(LoginViewModel.State.Error(error), awaitItem())
 

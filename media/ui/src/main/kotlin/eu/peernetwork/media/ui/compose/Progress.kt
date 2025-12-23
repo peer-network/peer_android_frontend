@@ -26,13 +26,13 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import eu.peernetwork.core.ui.theme.PeerTheme
+import eu.peernetwork.core.ui.theme.DesignTheme
 
 @Composable
 fun Progress(
     modifier: Modifier = Modifier,
     shape: Shape = RoundedCornerShape(2.dp),
-    color: Color = MaterialTheme.colorScheme.onTertiaryContainer,
+    color: Color = MaterialTheme.colorScheme.surfaceContainerLow,
     progressColor: Color = MaterialTheme.colorScheme.onBackground,
     progress: State<Float>,
     length: State<Long>,
@@ -48,8 +48,7 @@ fun Progress(
                 handleOnUpdate(position, (length.value * position).toLong())
             }
         )
-    }.padding(vertical = 8.dp)
-        .wrapContentSize()
+    }.wrapContentSize()
     ) {
         Box(
             modifier = modifier.clip(shape = shape)
@@ -69,7 +68,7 @@ fun Progress(
 @Preview
 @Composable
 fun ProgressPreview() {
-    PeerTheme {
+    DesignTheme(isDarkMode = true) {
         val progress = remember { mutableFloatStateOf(0.5f) }
         val length = remember { mutableLongStateOf(10000L) }
         Box(

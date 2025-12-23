@@ -1,12 +1,16 @@
 package eu.peernetwork.blog.ui.mapper
 
 import eu.peernetwork.blog.domain.model.Media
+import eu.peernetwork.blog.ui.model.UiAsset
+import eu.peernetwork.blog.ui.model.UiDisplay
 import eu.peernetwork.blog.ui.model.UiMedia
+import eu.peernetwork.media.core.model.UiMimeType
+import kotlinx.collections.immutable.toPersistentList
 
 fun Media.mapFromDomain(): UiMedia {
     return UiMedia(
         path = path,
-        options = UiMedia.Options(
+        display = UiDisplay(
             size = options.size,
             cover = options.cover,
             resolution = options.resolution
@@ -14,14 +18,17 @@ fun Media.mapFromDomain(): UiMedia {
     )
 }
 
-fun Media.getAspectRatio(default: Float = 1f): Float {
-    return (options.resolution?.let {
-        it.first.toFloat() / it.second.toFloat()
-    } ?: default).coerceIn(0.8f, 1f)
+fun List<Media>.mapFromDomain(): UiAsset {
+    val media = map { it.mapFromDomain() }
+    return UiAsset(
+        ratio = media.getAspectRatio(),
+        hasCover = media.any { it.display.cover != null },
+        media = media.toPersistentList()
+    )
 }
 
 fun UiMedia.getAspectRatio(): Float {
-    return (options.resolution?.let {
+    return (display.resolution?.let {
         it.first.toFloat() / it.second.toFloat()
     } ?: 1f).coerceIn(0.8f, 1f)
 }
@@ -31,7 +38,10 @@ fun List<UiMedia>.getAspectRatio(): Float {
         return first().getAspectRatio()
     }
     return (minOfOrNull { media ->
-        media.options.resolution?.let { media.getAspectRatio() } ?: 1f
+        media.display.resolution?.let { media.getAspectRatio() } ?: 1f
     } ?: 1f).coerceIn(0.8f, 1f)
 }
 
+fun UiMimeType.query(): String {
+    return "?query=$id"
+}

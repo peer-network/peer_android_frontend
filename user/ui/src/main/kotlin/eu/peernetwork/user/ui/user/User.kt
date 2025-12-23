@@ -3,7 +3,9 @@ package eu.peernetwork.user.ui.user
 import android.content.Context
 import androidx.lifecycle.ViewModelProvider
 import eu.peernetwork.core.ui.component.UiComponent
+import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.media.core.provider.MediaProvider
+import eu.peernetwork.user.ui.option.Option
 import eu.peernetwork.user.ui.provider.UserProvider
 
 interface User : UserProvider, MediaProvider {
@@ -16,7 +18,7 @@ interface User : UserProvider, MediaProvider {
         dependencies = [ User::class ],
         modules = [ UserModule::class ]
     )
-    interface Component : User {
+    interface Component : User, Option, UiComponentProvider {
         fun viewModelFactory(): ViewModelProvider.Factory
     }
 

@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="wallet_title">Your account</string>
+    <string name="balance_title">Your balance</string>
     <string name="transfer_label">Transfer</string>
-    <string name="transfer_disclaimer">A fee of %s applies</string>
+    <string name="transfer_disclaimer">A fee of %d%% applies</string>
     <string name="amount_text">Amount</string>
     <string name="amount_label">Amount to send</string>
     <string name="recipient_selection_label">Choose recipient</string>
@@ -16,13 +17,22 @@
     <string name="close_label">Close</string>
     <string name="cancel_label">Cancel</string>
     <string name="post_caption">You\'re about to make a post</string>
+    <string name="no_post_caption">You\’re out of free posts!</string>
     <string name="like_caption">You\'re about to like a post</string>
+    <string name="no_like_caption">You\’re out of free likes!</string>
     <string name="dislike_caption">You\'re about to dislike a post</string>
+    <string name="no_dislike_caption">You\’re out of free dislikes!</string>
     <string name="comment_caption">You\'re about to make a comment</string>
     <string name="post_summary">Creating this post deducts %s from your balance of %s tokens.</string>
     <string name="like_summary">Liking this post deducts %s from your balance of %s tokens.</string>
+    <string name="post_price_label">Creating this post will cost</string>
+    <string name="like_price_label">Liking this post will cost</string>
+    <string name="dislike_price_label">Disliking this post will cost</string>
+    <string name="comment_price_label">Commenting on this post will cost</string>
     <string name="dislike_summary">Disliking this post deducts %s from your balance of %s tokens.</string>
     <string name="comment_summary">Commenting on this post deducts %s from your balance of %s tokens.</string>
     <string name="balance_label">Current balance %s</string>
     <string name="reward_description">You have %d Free %s</string>
+    <string name="error_title">Oops! an error occurred</string>
+    <string name="retry_label">Retry</string>
 </resources>

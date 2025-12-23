@@ -3,7 +3,7 @@ package eu.peernetwork.blog.ui.interaction.overview
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
-import eu.peernetwork.blog.ui.interaction.listing.Listing
+import eu.peernetwork.blog.ui.interaction.user.User
 import eu.peernetwork.core.ui.annotation.UiBuilder
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
@@ -18,8 +18,8 @@ object OverviewModule {
     @Provides
     @IntoMap
     @Overview.Scope
-    @UiBuilder(Listing.Builder::class)
+    @UiBuilder(User.Builder::class)
     fun provideListingBuilder(component: Overview.Component): UiComponent.Builder {
-        return Listing.Builder(component)
+        return User.Builder(component)
     }
 }

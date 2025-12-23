@@ -1,13 +1,13 @@
 package eu.peernetwork.app.mapper
 
-import eu.peernetwork.blog.ui.engagement.EngagementEvent
+import eu.peernetwork.blog.ui.engagement.EngagementIntent
 import eu.peernetwork.wallet.ui.model.UiToken
 
-fun EngagementEvent.toUiToken(): UiToken {
+fun EngagementIntent.toUiToken(): UiToken {
     return when(this) {
-        is EngagementEvent.Post -> UiToken.Post
-        is EngagementEvent.Like -> UiToken.Like
-        is EngagementEvent.DisLike -> UiToken.DisLike
-        is EngagementEvent.Comment -> UiToken.Comment
+        is EngagementIntent.Post -> UiToken.Posts
+        is EngagementIntent.Like -> UiToken.Likes
+        is EngagementIntent.DisLike -> UiToken.DisLikes
+        is EngagementIntent.Comment -> UiToken.Comments
     }
 }

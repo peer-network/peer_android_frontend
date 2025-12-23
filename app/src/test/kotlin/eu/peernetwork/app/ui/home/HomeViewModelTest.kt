@@ -6,6 +6,7 @@ import eu.peernetwork.app.interactor.SettingsInteractor
 import eu.peernetwork.persistence.domain.publishable.PublishableInteger
 import eu.peernetwork.persistence.domain.retrievable.RetrievableInteger
 import eu.peernetwork.persistence.domain.retrievable.RetrievableString
+import eu.peernetwork.user.domain.model.Account
 import eu.peernetwork.user.domain.usecase.PreferenceUsecase
 import eu.peernetwork.user.domain.usecase.PrincipalUsecase
 import io.mockk.coEvery
@@ -67,10 +68,11 @@ internal class HomeViewModelTest {
     @Test
     fun `test initialize state success`() = runTest {
         val page = 3
-        val user = "<test-user>"
+        val user = mockk<Account>()
+        every { user.id } returns "<test-user-id>"
         every { retrievableString(any()) } returns null
         every { retrievableInteger(any()) } returns page
-        coEvery { principalUsecase(true) } coAnswers {
+        coEvery { principalUsecase(any()) } coAnswers {
             delay(100)
             user
         }
@@ -88,7 +90,7 @@ internal class HomeViewModelTest {
         val error = RuntimeException("<test-error>")
         every { retrievableString(any()) } returns null
         every { retrievableInteger(any()) } returns null
-        coEvery { principalUsecase(true) } throws error
+        coEvery { principalUsecase(any()) } throws error
         viewModel()
         viewModel.state.test {
             assertEquals(HomeViewModel.State.Error(error), awaitItem())

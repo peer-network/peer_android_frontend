@@ -23,6 +23,15 @@ fun Category.mapToFilter(): PostFilterType? {
     }
 }
 
+fun Type.mapToContentType(): ContentType {
+    return when(this) {
+        Type.TEXT -> ContentType.text
+        Type.AUDIO -> ContentType.audio
+        Type.IMAGE -> ContentType.image
+        Type.VIDEO -> ContentType.video
+    }
+}
+
 fun Draft.Type.mapFromDomain(): ContentType {
     return when(this) {
         is Draft.Type.Video -> ContentType.video

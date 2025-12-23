@@ -21,6 +21,13 @@
     <string name="app_wiki">App Wiki</string>
     <string name="backend_wiki">Backend Wiki</string>
 
+    <string name="search_label">Search</string>
+    <string name="explore_label">Explore</string>
+    <string name="add_label">New post</string>
+    <string name="wallet_label">Wallet</string>
+    <string name="profile_label">Profile</string>
+    <string name="trend_label">Trend</string>
+
     <string name="version_label">Version %s</string>
     <string name="skip_label">Skip</string>
     <string name="proceed_label">Proceed</string>
@@ -47,7 +54,7 @@
     <string name="onboarding_option_extra_like">Extra like</string>
     <string name="onboarding_option_extra_comments">Extra comments</string>
     <string name="onboarding_option_dislike">Want to give a dislike?</string>
-    <string name="onboarding_invite_friends_prefix">But hey - you can also invite friends and earn 1%\nof their token income daily.</string>
+    <string name="onboarding_invite_friends_prefix">And hey - Invite friends and earn 1%\nfrom every token transaction they make!</string>
     <string name="onboarding_invite_friends_bold"> earn 1% </string>
     <string name="onboarding_skip">Skip</string>
     <string name="onboarding_back">Back</string>

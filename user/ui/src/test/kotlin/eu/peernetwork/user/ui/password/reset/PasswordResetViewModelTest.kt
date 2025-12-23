@@ -3,7 +3,6 @@ package eu.peernetwork.user.ui.password.reset
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import app.cash.turbine.test
 import eu.peernetwork.user.domain.usecase.PasswordResetUsecase
-import eu.peernetwork.user.ui.v2.password.reset.ResetViewModel
 import io.mockk.coEvery
 import io.mockk.mockk
 import junit.framework.TestCase.assertEquals

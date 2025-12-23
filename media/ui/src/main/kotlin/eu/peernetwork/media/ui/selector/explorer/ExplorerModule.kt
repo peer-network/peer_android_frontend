@@ -7,7 +7,6 @@ import eu.peernetwork.core.ui.annotation.UiBuilder
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.factory.UiBuilderFactory
-import eu.peernetwork.media.ui.camera.Camera
 import eu.peernetwork.media.ui.selector.audio.Audio
 import eu.peernetwork.media.ui.selector.directory.Directory
 import eu.peernetwork.media.ui.selector.photo.Photo
@@ -53,13 +52,5 @@ object ExplorerModule {
     @UiBuilder(Directory.Builder::class)
     fun provideDirectoryBuilder(component: Explorer.Component): UiComponent.Builder {
         return Directory.Builder(component)
-    }
-
-    @Explorer.Scope
-    @Provides
-    @IntoMap
-    @UiBuilder(Camera.Builder::class)
-    fun provideCameraBuilder(component: Explorer.Component): UiComponent.Builder {
-        return Camera.Builder(component)
     }
 }

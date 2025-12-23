@@ -1,88 +1,137 @@
 package eu.peernetwork.app.ui.feed
 
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
+import eu.peernetwork.ads.ui.article.ArticleNavigator
+import eu.peernetwork.ads.ui.boost.BoostModal
+import eu.peernetwork.blog.domain.model.Category
 import eu.peernetwork.blog.domain.model.Filter.Criteria
+import eu.peernetwork.blog.ui.post.PostNavigator
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.extension.builder
-import eu.peernetwork.core.ui.factory.UiViewModelStore
+import eu.peernetwork.media.core.model.UiMimeType
 import eu.peernetwork.social.ui.connection.ConnectionScreen
+import eu.peernetwork.user.domain.model.Account
+import eu.peernetwork.app.interactor.NavigationInteractor
+import kotlinx.coroutines.flow.distinctUntilChanged
 
 @Composable
 fun FeedScreen(
-    id: String,
-    postLimit: Int,
     provider: UiComponentProvider,
-    viewModelStore: UiViewModelStore,
-    title: String? = null,
-    criteria: Criteria? = null,
-    hasUpdate: MutableState<Boolean>,
-    onExplore: () -> Unit = {},
+    viewModelStoreOwner: ViewModelStoreOwner,
+    content: @Composable (Feed.Component, FeedViewModel) -> Unit
 ) {
     val context = LocalContext.current
     val component = remember {
         provider.builder(Feed.Builder::class.java).build(context)
     }
-    val viewModelStoreOwner = viewModelStore.get(criteria?.toString() ?: id)
     val viewModel = viewModel(
         modelClass = FeedViewModel::class.java,
         viewModelStoreOwner = viewModelStoreOwner,
         factory = component.viewModelFactory()
     )
-    val state by viewModel.state.collectAsStateWithLifecycle()
-    val pageState = remember { mutableIntStateOf(state.page) }
-    val ordinal = remember {
-        derivedStateOf {
-            (state as? FeedViewModel.State.Initialize?)?.filter ?: 0
-        }
-    }
-    val controller = rememberNavController()
-    val overlay = remember { mutableStateOf<FeedOverlayState>(FeedOverlayState.Empty) }
+    val updatedContent by rememberUpdatedState(content)
     ConnectionScreen(
         provider = component,
         viewModelStoreOwner = viewModelStoreOwner
-    ) { connectionController ->
-        FeedOverlay(
-            overlay = overlay,
-            userId = id,
-            criteria = criteria,
-            postLimit = postLimit,
-            component = component,
-            viewModelStore = viewModelStore,
-            connectionController = connectionController,
-        ) {
-            FeedNavigation(
-                userId = id,
-                postLimit = postLimit,
-                controller = controller,
-                component = component,
-                viewModelStore = viewModelStore,
-            ) {
-                FeedPreview(
-                    id = id,
-                    ordinal = ordinal.value,
-                    state = pageState,
-                    selected = overlay,
-                    requireUpdate = hasUpdate,
-                    component = component,
-                    viewModelStore = viewModelStore,
-                    controller = controller,
-                    connectionController = connectionController,
-                    title = title,
-                    onNavigate = { viewModel.lastVisited(it) },
-                    onFilter = { viewModel.setFilter(it) },
-                    onExplore = onExplore
-                )
+    ) { updatedContent(component, viewModel) }
+}
+
+@Composable
+fun FeedScreen(
+    account: Account,
+    limit: Int,
+    provider: UiComponentProvider,
+    viewModelStoreOwner: ViewModelStoreOwner,
+    refresh: MutableState<Boolean>,
+    title: String? = null,
+    criteria: Criteria = Criteria.None,
+    onExplore: () -> Unit
+) {
+    val context = LocalContext.current
+    val controller = rememberNavController()
+    val selected = remember { mutableIntStateOf(-1) }
+    val navigator = remember { NavigationInteractor(context, controller) }
+    CompositionLocalProvider(
+        PostNavigator.LocalPostNavigator provides navigator,
+        ArticleNavigator.LocalArticleNavigator provides navigator,
+    ) {
+        FeedScreen(
+            provider = provider,
+            viewModelStoreOwner = viewModelStoreOwner,
+        ) { component, viewModel ->
+            val state by viewModel.state.collectAsStateWithLifecycle()
+            val isVisible = remember { mutableStateOf(false) }
+            val showBoost = remember { mutableStateOf<String?>(null) }
+            val ordinal = remember {
+                derivedStateOf {
+                    (state as? FeedViewModel.State.Initialize?)?.filter ?: 0
+                }
             }
+            val pageState = rememberPagerState(
+                pageCount = { UiMimeType.TYPES.size },
+                initialPage = state.page
+            )
+            FeedNavigation(
+                account = account,
+                component = component,
+                controller = controller,
+            ) {
+                FeedPage(
+                    uuid = account.id,
+                    username = account.username,
+                    imageUrl = account.imageUrl,
+                    title = title,
+                    isVisible = isVisible,
+                    selected = selected,
+                    limit = limit,
+                    ordinal = ordinal.value,
+                    criteria = criteria,
+                    refresh = refresh,
+                    pageState = pageState,
+                    component = component,
+                    viewModelStoreOwner = viewModelStoreOwner,
+                    onExplore = onExplore,
+                    onFilter = { viewModel.setFilter(it) },
+                    onBoost = { showBoost.value = it }
+                ) { isVisible.value = true }
+                LaunchedEffect(Unit) {
+                    snapshotFlow { pageState.currentPage }
+                        .distinctUntilChanged()
+                        .collect { viewModel.lastVisited(it) }
+                }
+            }
+            FeedModal(
+                account = account,
+                selected = selected,
+                isVisible = isVisible,
+                criteria = criteria,
+                category = if (pageState.currentPage == 0) {
+                    Category.FOLLOWED
+                } else {
+                    Category.FOLLOWER
+                },
+                provider = provider,
+                viewModelStoreOwner = viewModelStoreOwner
+            )
+            BoostModal(
+                state = showBoost
+            ) { controller.navigate("boost/$it") }
         }
     }
 }

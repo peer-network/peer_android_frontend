@@ -3,6 +3,8 @@ package eu.peernetwork.social.ui.referral
 import android.content.Context
 import androidx.lifecycle.ViewModelProvider
 import eu.peernetwork.core.ui.component.UiComponent
+import eu.peernetwork.core.ui.component.UiComponentProvider
+import eu.peernetwork.social.ui.connection.Connection
 import eu.peernetwork.social.ui.provider.SocialProvider
 
 interface Referral: SocialProvider {
@@ -15,7 +17,7 @@ interface Referral: SocialProvider {
         dependencies = [Referral::class],
         modules = [ReferralModule::class]
     )
-    interface Component : Referral {
+    interface Component : Referral, Connection, UiComponentProvider {
         fun viewModelFactory(): ViewModelProvider.Factory
     }
 

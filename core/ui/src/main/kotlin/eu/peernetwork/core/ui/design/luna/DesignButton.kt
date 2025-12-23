@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -76,6 +77,16 @@ fun designSecondaryButtonColors(): DesignButtonColors {
 }
 
 @Composable
+fun designTertiaryButtonColors(): DesignButtonColors {
+    return DesignButtonColors(
+        containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+        contentColor = MaterialTheme.colorScheme.onBackground,
+        disabledContainerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
+        disabledContentColor = MaterialTheme.colorScheme.outlineVariant
+    )
+}
+
+@Composable
 fun DesignButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -96,6 +107,8 @@ fun DesignButton(
         vertical = 16.dp,
         horizontal = 24.dp
     ),
+    leading: @Composable () -> Unit = {},
+    trailing: @Composable () -> Unit = {},
     loading: @Composable () -> Unit = {
         Icon(
             painter = painterResource(R.drawable.ic_more),
@@ -107,6 +120,8 @@ fun DesignButton(
     content: @Composable () -> Unit
 ) {
     val clickHandler by rememberUpdatedState(onClick)
+    val updatedLeading by rememberUpdatedState(leading)
+    val updatedTrailing by rememberUpdatedState(trailing)
     val updatedLoading by rememberUpdatedState(loading)
     val updatedContent by rememberUpdatedState(content)
     val contentColor = if (enabled) colors.contentColor else colors.disabledContentColor
@@ -143,23 +158,29 @@ fun DesignButton(
                     repeatMode = RepeatMode.Reverse
                 )
             )
-            Box(
-                modifier = Modifier.graphicsLayer {
-                    this.alpha = if (isLoading) alpha else 0f },
-            ) {
-                CompositionLocalProvider(
-                    LocalContentColor provides contentColor,
-                    LocalTextStyle provides style.copy(
-                        color = contentColor
-                    )
-                ) { updatedLoading() }
-            }
-            Box(modifier = Modifier.graphicsLayer {
-                this.alpha = if (!isLoading) 1f else 0f }) {
-                CompositionLocalProvider(
-                    LocalContentColor provides contentColor,
-                    LocalTextStyle provides style
-                ) { updatedContent() }
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                updatedLeading()
+                Box(contentAlignment = Alignment.Center) {
+                    Box(
+                        modifier = Modifier.graphicsLayer {
+                            this.alpha = if (isLoading) alpha else 0f },
+                    ) {
+                        CompositionLocalProvider(
+                            LocalContentColor provides contentColor,
+                            LocalTextStyle provides style.copy(
+                                color = contentColor
+                            )
+                        ) { updatedLoading() }
+                    }
+                    Box(modifier = Modifier.graphicsLayer {
+                        this.alpha = if (!isLoading) 1f else 0f }) {
+                        CompositionLocalProvider(
+                            LocalContentColor provides contentColor,
+                            LocalTextStyle provides style
+                        ) { updatedContent() }
+                    }
+                }
+                updatedTrailing()
             }
         }
     }
@@ -204,6 +225,17 @@ fun DarkPreviewDesignButton() {
                 colors = designSecondaryButtonColors(),
                 modifier = Modifier.sizeIn(minHeight = 56.dp, minWidth = 200.dp)
             ) { Text("Large Button") }
+            DesignButton(
+                onClick = {},
+                colors = designTertiaryButtonColors(),
+                modifier = Modifier.sizeIn(minHeight = 56.dp, minWidth = 200.dp)
+            ) { Text("Large Button") }
+            DesignButton(
+                onClick = {},
+                enabled = false,
+                colors = designTertiaryButtonColors(),
+                modifier = Modifier.sizeIn(minHeight = 56.dp, minWidth = 200.dp)
+            ) { Text("Large Button") }
         }
     }
 }
@@ -245,6 +277,17 @@ fun LightPreviewDesignButton() {
                 onClick = {},
                 enabled = false,
                 colors = designSecondaryButtonColors(),
+                modifier = Modifier.sizeIn(minHeight = 56.dp, minWidth = 200.dp)
+            ) { Text("Large Button") }
+            DesignButton(
+                onClick = {},
+                colors = designTertiaryButtonColors(),
+                modifier = Modifier.sizeIn(minHeight = 56.dp, minWidth = 200.dp)
+            ) { Text("Large Button") }
+            DesignButton(
+                onClick = {},
+                enabled = false,
+                colors = designTertiaryButtonColors(),
                 modifier = Modifier.sizeIn(minHeight = 56.dp, minWidth = 200.dp)
             ) { Text("Large Button") }
         }

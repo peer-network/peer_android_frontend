@@ -1,8 +1,10 @@
 package eu.peernetwork.social.ui.referral
 
 import android.widget.Toast
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -35,10 +37,9 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.material.DesignOutlinedButton
+import eu.peernetwork.core.ui.design.luna.DesignOutlineButton
 import eu.peernetwork.core.ui.extension.builder
-import eu.peernetwork.core.ui.theme.PeerTheme
-import eu.peernetwork.social.domain.model.Invite
+import eu.peernetwork.core.ui.theme.DesignTheme
 import eu.peernetwork.social.ui.R
 
 @Composable
@@ -57,7 +58,7 @@ fun ReferralHeader(
     )
     val clipboardManager = LocalClipboardManager.current
     val state by viewModel.invite.collectAsState()
-    val invitation = remember { mutableStateOf<Invite?>(
+    val invitation = remember { mutableStateOf(
         (state as? ReferralViewModel.Status.Success)?.invite
     ) }
     val isLoading = remember { derivedStateOf {
@@ -101,7 +102,7 @@ fun ReferralHeader(
     isLoading: State<Boolean>,
     onClick: () -> Unit
 ) {
-    val border = MaterialTheme.colorScheme.tertiaryContainer
+    val border = MaterialTheme.colorScheme.surfaceDim
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -113,7 +114,7 @@ fun ReferralHeader(
                     end = Offset(size.width, size.height),
                     strokeWidth = strokeWidth
                 )
-            }.padding(vertical = 8.dp, horizontal = 24.dp)
+            }.padding(vertical = 8.dp, horizontal = 18.dp)
     ) {
         Text(
             text = stringResource(R.string.referrals_header),
@@ -125,15 +126,20 @@ fun ReferralHeader(
         Text(
             text = stringResource(R.string.referrals_description),
             style = MaterialTheme.typography.labelLarge.copy(
-                color = MaterialTheme.colorScheme.tertiary
+                color = MaterialTheme.colorScheme.outline
             )
         )
         Spacer(modifier = Modifier.height(24.dp))
-        DesignOutlinedButton(
+        DesignOutlineButton(
             onClick = onClick,
             isLoading = isLoading.value,
             enabled = !isLoading.value,
-            minHeight = 42.dp
+            minHeight = 42.dp,
+            contentPadding = PaddingValues(horizontal = 16.dp),
+            border = BorderStroke(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.outline
+            )
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -142,15 +148,13 @@ fun ReferralHeader(
             ) {
                 Text(
                     stringResource(R.string.referrals_link),
-                    style = MaterialTheme.typography.bodySmall.copy(
-                        color = MaterialTheme.colorScheme.tertiary
-                    )
+                    style = MaterialTheme.typography.bodySmall
                 )
                 Spacer(modifier = Modifier.width(6.dp))
                 Icon(
                     painter = painterResource(eu.peernetwork.core.ui.R.drawable.ic_copy),
                     contentDescription = stringResource(R.string.referrals_link),
-                    tint = MaterialTheme.colorScheme.surfaceTint,
+                    tint = MaterialTheme.colorScheme.outline,
                     modifier = Modifier.size(16.dp)
                 )
             }
@@ -162,7 +166,7 @@ fun ReferralHeader(
 @Preview
 @Composable
 fun PreviewReferralHeader() {
-    PeerTheme {
+    DesignTheme(isDarkMode = true) {
         ReferralHeader(remember { mutableStateOf(false) }) {}
     }
 }

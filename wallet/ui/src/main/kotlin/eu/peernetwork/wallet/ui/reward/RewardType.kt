@@ -15,7 +15,7 @@ sealed class RewardType(
         label = R.string.comment_label
     )
     data object Posts : RewardType(
-        icon = R.drawable.ic_add_outline,
+        icon = R.drawable.ic_add,
         label = R.string.add_label
     )
     companion object {

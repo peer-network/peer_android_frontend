@@ -32,18 +32,18 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.ViewModelStoreOwner
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.material.DesignAsyncImage
-import eu.peernetwork.core.ui.design.material.DesignAvatar
+import eu.peernetwork.core.ui.design.luna.DesignImage
+import eu.peernetwork.core.ui.design.luna.DesignAvatar
 import eu.peernetwork.core.ui.design.material.DesignDetailLayout
 import eu.peernetwork.core.ui.extension.builder
-import eu.peernetwork.core.ui.theme.PeerTheme
+import eu.peernetwork.core.ui.theme.DesignTheme
 import eu.peernetwork.wallet.ui.model.UiRecipient
 import eu.peernetwork.wallet.ui.model.UiTransfer
 import java.util.UUID
 
 @Composable
 fun TransferScreen(
-    tax: Double,
+    tax: Int,
     recipient: UiRecipient,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
@@ -88,12 +88,12 @@ fun TransferScreen(
         DesignDetailLayout(
             lead = {
                 DesignAvatar {
-                    DesignAsyncImage(
+                    DesignImage(
                         label = recipient.username,
                         imageUrl = recipient.imageUrl,
                         size = 36.dp,
                         style = MaterialTheme.typography.bodySmall.copy(
-                            color = MaterialTheme.colorScheme.tertiary,
+                            color = MaterialTheme.colorScheme.outline,
                         ),
                         color = MaterialTheme.colorScheme.background,
                         modifier = Modifier.clip(CircleShape)
@@ -123,7 +123,7 @@ fun TransferScreen(
                     modifier = Modifier.size(12.dp).graphicsLayer {
                         rotationZ = 45f
                     }.clickable(role = Role.Button, onClick = onClear),
-                    tint = MaterialTheme.colorScheme.surfaceDim
+                    tint = MaterialTheme.colorScheme.outlineVariant
                 )
             }
         }
@@ -134,7 +134,7 @@ fun TransferScreen(
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun PreviewTransferScreen() {
-    PeerTheme {
+    DesignTheme {
         val state = remember { TextFieldState() }
         val recipient = UiRecipient(
             id = UUID.randomUUID().toString(),
@@ -143,7 +143,7 @@ fun PreviewTransferScreen() {
             imageUrl = "http://localhost"
         )
         TransferScreen(recipient, Modifier.padding(16.dp)) {
-            TransferForm(state, 4.0) {}
+            TransferForm(state, 4) {}
         }
     }
 }

@@ -1,107 +1,196 @@
 package eu.peernetwork.user.ui.login
 
 import android.content.res.Configuration
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldState
-import androidx.compose.foundation.text.input.TextObfuscationMode
+import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import eu.peernetwork.core.ui.design.material.DesignLabel
-import eu.peernetwork.core.ui.design.material.DesignSecureTextField
-import eu.peernetwork.core.ui.design.material.DesignTextField
-import eu.peernetwork.core.ui.theme.PeerTheme
+import eu.peernetwork.core.ui.design.luna.DesignButton
+import eu.peernetwork.core.ui.design.luna.DesignTextField
+import eu.peernetwork.core.ui.design.luna.designSecondaryButtonColors
+import eu.peernetwork.core.ui.extension.annotate
+import eu.peernetwork.core.ui.extension.isValidEmail
+import eu.peernetwork.core.ui.extension.isValidInput
+import eu.peernetwork.core.ui.theme.DesignTheme
 import eu.peernetwork.user.ui.R
+import eu.peernetwork.user.ui.form.FormError
+import eu.peernetwork.user.ui.form.FormCheckBox
+import eu.peernetwork.user.ui.form.FormPassword
 
 @Composable
-internal fun LoginForm(
+fun LoginForm(
     email: TextFieldState,
     password: TextFieldState,
+    isLoading: State<Boolean>,
+    error: State<String?>,
     modifier: Modifier = Modifier,
-    error: String? = null,
-    enabled: Boolean,
-    onForgotPassword: (String) -> Unit,
+    rememberMe: MutableState<Boolean>,
+    onLogin: () -> Unit,
+    onPasswordReset: () -> Unit,
+    onRegister: () -> Unit
 ) {
-    val handleOnForgotPassword by rememberUpdatedState(onForgotPassword)
-    Column (modifier = modifier) {
+    val isValidated = remember { derivedStateOf {
+        email.isValidEmail() && password.isValidInput()
+    } }
+    Column(modifier = modifier) {
         DesignTextField(
             state = email,
-            enabled = enabled,
+            enabled = !isLoading.value,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Email,
                 imeAction = ImeAction.Next
             ),
-            placeholder = { Text(stringResource(id = R.string.email_label)) },
-            modifier = Modifier.padding(horizontal = 24.dp)
+            hint = stringResource(id = R.string.email_label),
+            leading = {
+                Icon(
+                    painter = painterResource(R.drawable.ic_email),
+                    contentDescription = stringResource(id = R.string.email_label),
+                    modifier = Modifier.padding(end = 8.dp)
+                        .size(22.dp),
+                    tint = LocalContentColor.current
+                )
+            }
         )
-        DesignLabel(
-            label = {
-                Box {
-                    Text(
-                        text = stringResource(R.string.forgot_password_label),
-                        modifier = Modifier.padding(horizontal = 24.dp)
-                            .padding(horizontal = 16.dp)
-                            .padding(top = 8.dp)
-                            .clickable { handleOnForgotPassword(email.text.toString()) }
-                    )
-                }
-            },
-            visible = true,
-            textStyle = MaterialTheme.typography.bodySmall.copy(
-                color = MaterialTheme.colorScheme.tertiary
-            )
+        FormPassword(
+            state = password,
+            enabled = !isLoading.value,
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Password,
+                imeAction = ImeAction.Done
+            ),
+            modifier = Modifier.padding(top = 12.dp)
+        )
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
+                .padding(top = 10.dp, bottom = 8.dp)
         ) {
-            DesignSecureTextField(
-                state = password,
-                enabled = enabled,
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Password,
-                    imeAction = ImeAction.Done
-                ),
-                showLabel = error != null,
-                label = { error?.run {
-                    Text(
-                        text = this,
-                        modifier = Modifier
-                            .padding(horizontal = 16.dp)
-                            .padding(top = 8.dp)
-                    )
-                } },
-                placeholder = { Text(stringResource(id = R.string.password_label)) },
-                textObfuscationMode = TextObfuscationMode.Hidden,
-                modifier = Modifier
-                    .padding(horizontal = 24.dp)
-                    .padding(top = 12.dp)
+            FormCheckBox(
+                state = rememberMe,
+                label = stringResource(R.string.remember_me).annotate(),
+                modifier = Modifier.padding(horizontal = 18.dp)
+            )
+            Text(
+                text = stringResource(R.string.forgot_password_label),
+                color = MaterialTheme.colorScheme.scrim,
+                style = MaterialTheme.typography.labelMedium,
+                textDecoration = TextDecoration.Underline,
+                modifier = Modifier.clickable(
+                    indication = null,
+                    interactionSource = remember { MutableInteractionSource() },
+                    onClick = onPasswordReset
+                )
             )
         }
+        FormError(
+            error = error,
+            modifier = Modifier.padding(horizontal = 18.dp)
+        )
+        DesignButton(
+            onClick = onLogin,
+            enabled = !isLoading.value && isValidated.value,
+            isLoading = isLoading.value,
+            modifier = Modifier.fillMaxWidth()
+                .padding(top = 10.dp),
+        ) { Text(stringResource(R.string.login_text)) }
+        Divider(modifier = Modifier.padding(top = 16.dp))
+        DesignButton(
+            onClick = onRegister,
+            colors = designSecondaryButtonColors(),
+            modifier = Modifier.fillMaxWidth()
+                .padding(top = 16.dp)
+        ) {
+            Row {
+                Text(stringResource(R.string.register_now_text))
+                Icon(
+                    painter = painterResource(R.drawable.ic_right),
+                    contentDescription = null,
+                    modifier = Modifier.padding(start = 8.dp)
+                        .size(18.dp),
+                    tint = LocalContentColor.current
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun Divider(modifier: Modifier = Modifier) {
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Spacer(modifier = Modifier.weight(1f)
+            .height(1.dp)
+            .padding(end = 10.dp)
+            .background(
+                color = MaterialTheme.colorScheme.surfaceContainerLow,
+                shape = CircleShape
+            ))
+        Text(
+            text = stringResource(R.string.or),
+            color = MaterialTheme.colorScheme.outlineVariant,
+            style = MaterialTheme.typography.labelMedium
+        )
+        Spacer(modifier = Modifier.weight(1f)
+            .height(1.dp)
+            .padding(start = 10.dp)
+            .background(
+                color = MaterialTheme.colorScheme.surfaceContainerLow,
+                shape = CircleShape
+            ))
     }
 }
 
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun PreviewLoginForm() {
-    val email = remember { TextFieldState("johnDoe@domain.com") }
-    val password = remember { TextFieldState("*********") }
-    PeerTheme {
+    DesignTheme {
+        val email = remember { TextFieldState("johnDoe@domain.com") }
+        val password = remember { TextFieldState("*********") }
+        val isLoading = remember { mutableStateOf(false) }
+        val error = remember { mutableStateOf(null) }
+        val rememberMe = remember { mutableStateOf(true) }
         LoginForm(
             email = email,
             password = password,
-            modifier = Modifier.fillMaxWidth(),
-            enabled = true
-        ) {}
+            isLoading = isLoading,
+            error = error,
+            modifier = Modifier.padding(24.dp),
+            rememberMe = rememberMe,
+            onLogin = {},
+            onPasswordReset = {},
+            onRegister = {}
+        )
     }
 }

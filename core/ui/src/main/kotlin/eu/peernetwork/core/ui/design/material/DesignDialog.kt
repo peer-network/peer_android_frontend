@@ -37,13 +37,14 @@ import androidx.navigation.compose.rememberNavController
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.extension.isLightTheme
-import eu.peernetwork.core.ui.theme.PeerTheme
+import eu.peernetwork.core.ui.theme.DesignTheme
 
 @Composable
 fun  DesignDialog(
     state: State<Boolean>,
     startDestination: String? = null,
     dim: Boolean = false,
+    dismissable: Boolean = false,
     canDismiss: () -> Boolean = { true },
     onBackPressed: () -> Unit = {},
     onShow: () -> Unit = {},
@@ -118,6 +119,8 @@ fun  DesignDialog(
             window?.apply {
                 setWindowAnimations(0)
                 setBackgroundDrawable(null)
+                setCancelable(dismissable)
+                setCanceledOnTouchOutside(dismissable)
                 addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
                 clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)
                 navigationBarColor = Color.TRANSPARENT
@@ -134,7 +137,7 @@ fun  DesignDialog(
                     setViewTreeViewModelStoreOwner(viewModelStoreOwner)
                     setViewTreeSavedStateRegistryOwner(savedStateRegistryOwner)
                     setContent {
-                        PeerTheme(isDarkMode = isDarkMode) {
+                        DesignTheme(isDarkMode = isDarkMode) {
                             val controller = rememberNavController()
                             val navBackStackEntry by controller.currentBackStackEntryAsState()
                             val currentStack = remember(navBackStackEntry?.id) {
@@ -143,9 +146,14 @@ fun  DesignDialog(
                             val isStackEmpty = remember(navBackStackEntry?.id) {
                                 mutableStateOf(controller.visibleEntries.value.size <= 1)
                             }
-                            Box(modifier = Modifier.pointerInput(Unit) {}) {
-                                updatedContent(controller, animation, cancelable)
-                            }
+                            Box(modifier = Modifier.pointerInput(Unit) {
+                                if (dismissable) {
+                                    if (handleCanDismiss()) {
+                                        dismiss()
+                                    }
+                                }
+                            })
+                            updatedContent(controller, animation, cancelable)
                             LaunchedEffect(currentStack.value) {
                                 cancelable.value = currentStack.value == startDestination || isStackEmpty.value
                             }

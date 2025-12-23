@@ -48,7 +48,7 @@ fun DesignCollapsibleBottomSheet(
     behind: Boolean = true,
     peekHeight: Dp = 250.dp,
     canDismiss: () -> Boolean = { true },
-    color: Color = MaterialTheme.colorScheme.tertiaryContainer,
+    color: Color = MaterialTheme.colorScheme.surfaceDim,
     orientation: Orientation = Orientation.Vertical,
     confirmValueChange: (DesignBottomSheetState) -> Boolean = { true },
     onStateChanged: (DesignBottomSheetState) -> Unit = {},
