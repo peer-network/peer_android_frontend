@@ -4,6 +4,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import app.cash.turbine.test
 import eu.peernetwork.wallet.domain.model.Tax
 import eu.peernetwork.wallet.domain.usecase.TaxUsecase
+import eu.peernetwork.wallet.ui.mapper.mapFromDomain
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
@@ -43,7 +44,12 @@ internal class ServiceViewModelTest {
 
     @Test
     fun `test initialize success`() = runTest {
-        val tax = Tax(5.0)
+        val tax = Tax(
+            peer = 5.0,
+            pool = 3.0,
+            burn = 2.0,
+            percentage = 10.0
+        )
         coEvery { usecase() } coAnswers {
             delay(100)
             tax
@@ -51,7 +57,7 @@ internal class ServiceViewModelTest {
         viewModel.initialize()
         viewModel.state.test {
             assertEquals(ServiceViewModel.State.Loading, awaitItem())
-            assertEquals(ServiceViewModel.State.Success(tax.percentage), awaitItem())
+            assertEquals(ServiceViewModel.State.Success(tax.mapFromDomain()), awaitItem())
         }
     }
 

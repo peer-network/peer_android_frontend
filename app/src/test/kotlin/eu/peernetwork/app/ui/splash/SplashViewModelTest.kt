@@ -64,8 +64,6 @@ internal class SplashViewModelTest {
 
     @Test
     fun `test initialize state - Outdated`() = runTest {
-        val url = "<test-url>"
-
         coEvery { logDeviceModelUsecase() } returns Unit
         coEvery { versionUseCase() } returns Unit
 

@@ -43,7 +43,12 @@ object AccountMock {
         return RegisterMutation.Register(
             status = Status.SUCCESS.value,
             ResponseCode = null,
-            userid = "<test-status>"
+            userid = "<test-status>",
+            meta = RegisterMutation.Meta(
+                status = Status.SUCCESS.value,
+                ResponseCode = null,
+                RequestId = "<test-request-id>"
+            )
         )
     }
 
