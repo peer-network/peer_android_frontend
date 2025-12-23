@@ -31,7 +31,7 @@ import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.compose.DesignStatefulScaffoldState
 import eu.peernetwork.core.ui.design.material.DesignBottomSheetScaffold
 import eu.peernetwork.core.ui.extension.builder
-import eu.peernetwork.core.ui.theme.PeerTheme
+import eu.peernetwork.core.ui.theme.DesignTheme
 import eu.peernetwork.wallet.ui.R
 import eu.peernetwork.wallet.ui.model.UiRecipient
 import eu.peernetwork.wallet.ui.model.UiTransfer
@@ -168,7 +168,7 @@ fun TransferSheet(
                     painter = painterResource(R.drawable.ic_transfer),
                     contentDescription = null,
                     modifier = Modifier.size(18.dp),
-                    tint = MaterialTheme.colorScheme.surfaceDim
+                    tint = MaterialTheme.colorScheme.outlineVariant
                 )
             }
         }
@@ -178,7 +178,7 @@ fun TransferSheet(
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun PreviewTransferSheet() {
-    PeerTheme {
+    DesignTheme {
         Column {
             val recipient = UiRecipient(
                 id = UUID.randomUUID().toString(),

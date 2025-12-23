@@ -66,13 +66,15 @@ fun TransferForm(
             TransferButton(
                 enabled = isValidated.value,
                 isLoading = isLoading,
-                modifier = Modifier.padding(4.dp)
+                modifier = Modifier
+                    .padding(4.dp)
                     .align(Alignment.BottomEnd),
             ) { handleSubmission() }
         }
         Text(
-            stringResource(R.string.transfer_disclaimer, "$tax%"),
-            modifier = Modifier.padding(top = 12.dp)
+            stringResource(R.string.transfer_disclaimer, "3%"),
+            modifier = Modifier
+                .padding(top = 12.dp)
                 .padding(horizontal = 16.dp),
             style = MaterialTheme.typography.bodySmall.copy(
                 color = MaterialTheme.colorScheme.outline,

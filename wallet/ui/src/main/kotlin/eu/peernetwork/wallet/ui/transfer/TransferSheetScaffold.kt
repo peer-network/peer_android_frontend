@@ -21,9 +21,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import eu.peernetwork.core.ui.design.material.DesignButton
+import eu.peernetwork.core.ui.design.luna.DesignButton
 import eu.peernetwork.core.ui.design.material.DesignLabel
-import eu.peernetwork.core.ui.theme.PeerTheme
+import eu.peernetwork.core.ui.theme.DesignTheme
 import eu.peernetwork.wallet.ui.R
 import eu.peernetwork.wallet.ui.model.UiRecipient
 import java.math.BigDecimal
@@ -55,7 +55,7 @@ fun TransferSheetScaffold(
         Text(
             stringResource(R.string.amount_text),
             style = MaterialTheme.typography.bodySmall.copy(
-                color = MaterialTheme.colorScheme.tertiary
+                color = MaterialTheme.colorScheme.outline
             ),
             modifier = Modifier.padding(horizontal = 12.dp)
         )
@@ -69,9 +69,8 @@ fun TransferSheetScaffold(
         Spacer(modifier = Modifier.height(6.dp))
         Text(
             title,
-            style = MaterialTheme.typography.bodySmall.copy(
-                color = MaterialTheme.colorScheme.tertiary
-            ),
+            color = MaterialTheme.colorScheme.outline,
+            style = MaterialTheme.typography.bodySmall,
             modifier = Modifier.padding(horizontal = 12.dp)
         )
         Spacer(modifier = Modifier.height(8.dp))
@@ -105,9 +104,8 @@ fun TransferSheetScaffold(
         ) {
             Text(
                 text = action,
-                style = MaterialTheme.typography.bodyMedium.copy(
-                    fontWeight = FontWeight.Bold
-                )
+                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.bodyMedium
             )
         }
         Spacer(modifier = Modifier.height(24.dp))
@@ -117,7 +115,7 @@ fun TransferSheetScaffold(
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun PreviewTransferSheetScaffold() {
-    PeerTheme {
+    DesignTheme {
         val recipient = UiRecipient(
             id = UUID.randomUUID().toString(),
             slug = "1234",

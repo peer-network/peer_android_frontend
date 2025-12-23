@@ -67,7 +67,7 @@ fun TransferScreen(
         onClear = onClear,
         onClick = onRecipientClick
     ) {
-        TransferForm(amount, tax) {
+        TransferForm(amount, tax / 100) {
             viewModel.reset()
             handleOnTransfer(UiTransfer(recipient.id, it))
         }
