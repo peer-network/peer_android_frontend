@@ -152,9 +152,8 @@ fun  DesignDialog(
                                         dismiss()
                                     }
                                 }
-                            }) {
-                                updatedContent(controller, animation, cancelable)
-                            }
+                            })
+                            updatedContent(controller, animation, cancelable)
                             LaunchedEffect(currentStack.value) {
                                 cancelable.value = currentStack.value == startDestination || isStackEmpty.value
                             }

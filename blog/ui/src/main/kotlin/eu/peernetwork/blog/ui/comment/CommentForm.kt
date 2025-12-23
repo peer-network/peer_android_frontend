@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.input.TextFieldState
@@ -83,6 +84,8 @@ fun CommentForm(
                     end = 56.dp,
                     bottom = 16.dp,
                 ),
+                modifier = Modifier.fillMaxWidth()
+                    .heightIn(max = 160.dp),
                 focusRequester = focusRequester,
                 visualTransformation = VisualTransformation {
                     TransformedText(
