@@ -36,7 +36,7 @@ import eu.peernetwork.core.ui.design.luna.DesignImage
 import eu.peernetwork.core.ui.design.luna.DesignAvatar
 import eu.peernetwork.core.ui.design.material.DesignDetailLayout
 import eu.peernetwork.core.ui.extension.builder
-import eu.peernetwork.core.ui.theme.PeerTheme
+import eu.peernetwork.core.ui.theme.DesignTheme
 import eu.peernetwork.wallet.ui.model.UiRecipient
 import eu.peernetwork.wallet.ui.model.UiTransfer
 import java.util.UUID
@@ -123,7 +123,7 @@ fun TransferScreen(
                     modifier = Modifier.size(12.dp).graphicsLayer {
                         rotationZ = 45f
                     }.clickable(role = Role.Button, onClick = onClear),
-                    tint = MaterialTheme.colorScheme.surfaceDim
+                    tint = MaterialTheme.colorScheme.outlineVariant
                 )
             }
         }
@@ -134,7 +134,7 @@ fun TransferScreen(
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun PreviewTransferScreen() {
-    PeerTheme {
+    DesignTheme {
         val state = remember { TextFieldState() }
         val recipient = UiRecipient(
             id = UUID.randomUUID().toString(),
