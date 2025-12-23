@@ -31,17 +31,22 @@ fun CheckoutFees(
     val tax = charge.percentage * price.toDouble()
     val peerFee = charge.peer * price.toDouble()
     val burn = charge.burn * price.toDouble()
+    val taxPercent = (charge.percentage * 100).toInt()
+    val peerPercent = (charge.peer * 100).toInt()
+    val burnPercent = (charge.burn * 100).toInt()
     Column(modifier = modifier) {
         CheckoutFees(
-            label = stringResource(R.string.peer_fee_label, charge.peer),
+            label = stringResource(R.string.peer_fee_label, peerPercent),
             value = peerFee.toString()
         )
+        if (charge.percentage > 0) {
+            CheckoutFees(
+                label = stringResource(R.string.invitation_fee_label, taxPercent),
+                value = tax.toString()
+            )
+        }
         CheckoutFees(
-            label = stringResource(R.string.invitation_fee_label, charge.percentage),
-            value = tax.toString()
-        )
-        CheckoutFees(
-            label = stringResource(R.string.burn_label, charge.burn),
+            label = stringResource(R.string.burn_label, burnPercent),
             value = burn.toString()
         )
     }
