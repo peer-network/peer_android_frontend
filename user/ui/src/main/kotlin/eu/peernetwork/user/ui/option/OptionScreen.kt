@@ -23,6 +23,7 @@ fun OptionScreen(
     isAdmin: Boolean,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
+    onBlock: () -> Unit,
     onMenuClicked: () -> Unit,
     onSettings: () -> Unit,
     content: @Composable () -> Unit
@@ -62,6 +63,7 @@ fun OptionScreen(
     OptionSheet(
         isAdmin = isAdmin,
         state = showOption,
+        onBlock = onBlock,
         onMenuClicked = onMenuClicked
     )
     LaunchedEffect(isInvited.value) {

@@ -7,17 +7,17 @@ import eu.peernetwork.core.remote.api.RequestClient
 import eu.peernetwork.core.remote.extension.assertOrThrow
 import eu.peernetwork.core.remote.extension.executeOrThrow
 import eu.peernetwork.core.remote.extension.getOrThrow
-import eu.peernetwork.social.data.api.BlockApi
+import eu.peernetwork.social.data.api.ModerationApi
 import eu.peernetwork.social.domain.model.Block
 import social.social.eu.peernetwork.social.remote.ListBlockedUsersQuery
 import social.social.eu.peernetwork.social.remote.ToggleBlockUserStatusMutation
 import javax.inject.Inject
 import javax.inject.Named
 
-class BlockApiDelegate @Inject constructor(
+class ModerationApiDelegate @Inject constructor(
     @Named("mediaUrl") private val url: String,
     private val client: RequestClient
-): BlockApi {
+): ModerationApi {
     override suspend fun get(userId: String, pageable: Pageable): Page<Block> {
         val query = ListBlockedUsersQuery(
             offset = Optional.present(pageable.offset),
@@ -47,7 +47,10 @@ class BlockApiDelegate @Inject constructor(
         val response = client().mutation(mutation).executeOrThrow()
         val data = response.getOrThrow().toggleBlockUserStatus
         response.assertOrThrow(data.status, data.ResponseCode)
+        return true
+    }
 
-        return data.ResponseCode?.trim() == "11105" // Success response code
+    override suspend fun report(userId: String): Boolean {
+        TODO("Not yet implemented")
     }
 }

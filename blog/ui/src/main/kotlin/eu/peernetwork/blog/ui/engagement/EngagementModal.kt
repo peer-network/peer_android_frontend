@@ -4,7 +4,7 @@ import androidx.compose.runtime.MutableState
 import androidx.lifecycle.ViewModelStoreOwner
 import eu.peernetwork.core.ui.renderer.Renderer
 
-interface EngagementDialog : Renderer.Stateful<EngagementDialog.Spec> {
+interface EngagementModal : Renderer.Stateful<EngagementModal.Spec> {
     data class Spec(
         val type: MutableState<EngagementIntent?>,
         val viewModelStoreOwner: ViewModelStoreOwner,

@@ -27,6 +27,7 @@ fun DesignItem(
     label: String,
     painter: Painter? = null,
     size: Dp = 28.dp,
+    minSize: Dp = size,
     divider: Dp = 6.dp,
     color: Color = MaterialTheme.colorScheme.onBackground,
     tint: Color = MaterialTheme.colorScheme.outline,
@@ -50,14 +51,17 @@ fun DesignItem(
                 )
             }.padding(horizontal = 24.dp, vertical = 12.dp)
     ) {
-        Box(modifier = Modifier
-            .size(size)) {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .sizeIn(minWidth = minSize, minHeight = minSize)
+        ) {
             painter?.let {
                 Icon(
                     painter,
                     contentDescription = label,
                     tint = tint,
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier.size(size)
                 )
             }
         }

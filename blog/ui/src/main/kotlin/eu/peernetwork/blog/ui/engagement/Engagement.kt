@@ -9,7 +9,7 @@ import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
 
 interface Engagement : BlogProvider {
-    fun engagementConfirmation(): EngagementDialog
+    fun engagementConfirmation(): EngagementModal
 
     @javax.inject.Scope
     @Retention(AnnotationRetention.RUNTIME)

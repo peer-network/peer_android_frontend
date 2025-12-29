@@ -19,7 +19,7 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import eu.peernetwork.blog.ui.R
-import eu.peernetwork.blog.ui.engagement.EngagementDialog
+import eu.peernetwork.blog.ui.engagement.EngagementModal
 import eu.peernetwork.blog.ui.engagement.EngagementIntent
 import eu.peernetwork.blog.ui.model.UiDraft
 import eu.peernetwork.core.ui.component.UiComponentProvider
@@ -98,7 +98,7 @@ fun CreatorScreen(
     )
     component.engagementConfirmation()(
         modifier = Modifier,
-        spec = EngagementDialog.Spec(
+        spec = EngagementModal.Spec(
             type = type,
             viewModelStoreOwner = viewModelStoreOwner,
             onDismiss = {

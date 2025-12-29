@@ -26,6 +26,7 @@ import eu.peernetwork.core.ui.design.material.DesignTitle
 import eu.peernetwork.core.ui.design.material.DesignTitleBarHost
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.social.ui.connection.ConnectionStatus
+import eu.peernetwork.social.ui.report.ReportSheet
 import kotlinx.coroutines.launch
 
 @Composable
@@ -50,10 +51,11 @@ fun ProfilePage(
     onClick: () -> Unit,
     controller: NavHostController,
 ) {
+    val scope = rememberCoroutineScope()
     val requireUpdate = rememberSaveable { mutableStateOf(false) }
     val requirePostUpdate = rememberSaveable { mutableStateOf(false) }
+    val report = remember { mutableStateOf<String?>(null) }
     val connection = remember { mutableStateOf<ConnectionStatus?>(null) }
-    val coroutine = rememberCoroutineScope()
     val handleClick by rememberUpdatedState(onClick)
     val handleBoost by rememberUpdatedState(onBoost)
     ProfileScaffold(
@@ -69,6 +71,7 @@ fun ProfilePage(
                 connection = connection,
                 timestamp = timestamp,
                 onSettings = onSettings,
+                onBlock = { report.value = user },
                 onMenuClicked = { controller.navigate("adverts") },
                 component = component,
                 viewModelStoreOwner = viewModelStoreOwner
@@ -104,6 +107,11 @@ fun ProfilePage(
             }
         )
     }
+    ReportSheet(
+        state = report,
+        provider = component,
+        viewModelStoreOwner = viewModelStoreOwner
+    )
     ProfileSheet(
         id = user,
         state = connection,
@@ -112,7 +120,7 @@ fun ProfilePage(
         viewModelStoreOwner = viewModelStoreOwner
     ) { controller.navigateIfNecessary("profile/$it") }
     DesignTitleBarHost("ProfileScreen$user", {
-        coroutine.launch {
+        scope.launch {
             if (pageState.currentPage == 0) {
                 postState.animateScrollToItem(0)
             } else {

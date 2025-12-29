@@ -13,7 +13,7 @@ import eu.peernetwork.app.ui.renderer.BalanceRenderer
 import eu.peernetwork.app.ui.renderer.EngagementRenderer
 import eu.peernetwork.app.ui.search.Search
 import eu.peernetwork.app.ui.screen.Screen
-import eu.peernetwork.blog.ui.engagement.EngagementDialog
+import eu.peernetwork.blog.ui.engagement.EngagementModal
 import eu.peernetwork.blog.ui.timeline.Timeline
 import eu.peernetwork.core.ui.annotation.UiBuilder
 import eu.peernetwork.core.ui.annotation.UiViewModel
@@ -98,7 +98,7 @@ object FeedModule {
 
     @Feed.Scope
     @Provides
-    fun provideEngagementRenderer(component: Feed.Component): EngagementDialog {
+    fun provideEngagementRenderer(component: Feed.Component): EngagementModal {
         return EngagementRenderer(component)
     }
 

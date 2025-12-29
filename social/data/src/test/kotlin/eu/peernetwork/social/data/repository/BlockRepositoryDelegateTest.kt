@@ -2,9 +2,9 @@ package eu.peernetwork.social.data.repository
 
 import eu.peernetwork.core.common.paging.Page
 import eu.peernetwork.core.common.paging.Pageable
-import eu.peernetwork.social.data.api.BlockApi
+import eu.peernetwork.social.data.api.ModerationApi
 import eu.peernetwork.social.domain.model.Block
-import eu.peernetwork.social.domain.repository.BlockRepository
+import eu.peernetwork.social.domain.repository.ModerationRepository
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -21,14 +21,14 @@ import kotlin.test.assertEquals
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class BlockRepositoryDelegateTest {
-    private val api = mockk<BlockApi>()
+    private val api = mockk<ModerationApi>()
     private val dispatcher = StandardTestDispatcher()
-    private lateinit var repository: BlockRepository
+    private lateinit var repository: ModerationRepository
 
     @Before
     fun setup() {
         Dispatchers.setMain(dispatcher)
-        repository = BlockRepositoryDelegate(api)
+        repository = ModerationRepositoryDelegate(api)
     }
 
     @After
