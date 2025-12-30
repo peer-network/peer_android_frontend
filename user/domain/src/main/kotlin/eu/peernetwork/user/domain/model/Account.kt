@@ -7,6 +7,7 @@ data class Account(
     val bio: String,
     val imageUrl: String,
     val overview: Overview,
-    val isfollowing: Boolean,
-    val isfollowed: Boolean
+    val following: Boolean,
+    val followed: Boolean,
+    val reported: Boolean = false
 )

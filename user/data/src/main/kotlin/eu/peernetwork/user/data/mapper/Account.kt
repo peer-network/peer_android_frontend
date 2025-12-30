@@ -17,7 +17,8 @@ fun AccountModel.mapToDomain(): Account {
             followers = follower,
             peers = peers
         ),
-        isfollowed = isfollowed,
-        isfollowing = isfollowing
+        followed = isfollowed,
+        following = isfollowing,
+        reported = hasActiveReports
     )
 }

@@ -73,8 +73,8 @@ internal class AuthenticationInteractorDelegateTest {
             username = "<test-username>",
             bio = "<test-bio>",
             imageUrl = "<test-image-url>",
-            isfollowed = false,
-            isfollowing = false,
+            followed = false,
+            following = false,
             overview = Overview(
                 posts = 0,
                 peers = 0,
@@ -99,8 +99,8 @@ internal class AuthenticationInteractorDelegateTest {
             username = "<test-username>",
             bio = "<test-bio>",
             imageUrl = "<test-image-url>",
-            isfollowed = false,
-            isfollowing = false,
+            followed = false,
+            following = false,
             overview = Overview(
                 posts = 0,
                 peers = 0,

@@ -95,6 +95,7 @@
 
     <string name="ads_label">My ads</string>
     <string name="report_label">Report</string>
+    <string name="reported_label">Reported</string>
 
     <string name="app_information_label">App Information</string>
     <string name="about_us_label">About Us</string>

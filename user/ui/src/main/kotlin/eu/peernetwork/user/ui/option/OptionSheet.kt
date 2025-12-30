@@ -44,7 +44,7 @@ fun OptionSheet(
                 confirmed.value = false
             } else if (isBlock.value) {
                 handleBlock()
-                confirmed.value = false
+                isBlock.value = false
             }
         }
     ) {

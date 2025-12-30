@@ -10,6 +10,7 @@ data class AccountModel(
     val follower: Int,
     val isfollowing: Boolean,
     val isfollowed: Boolean,
+    val hasActiveReports: Boolean = false,
     val posts: Int,
     val peers: Int
 )
