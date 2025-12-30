@@ -14,6 +14,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,6 +35,7 @@ import eu.peernetwork.social.ui.R
 
 @Composable
 fun ReportPage(
+    isLoading: State<Boolean>,
     modifier: Modifier = Modifier,
     onCancel: () -> Unit,
     onConfirm: () -> Unit
@@ -79,6 +83,8 @@ fun ReportPage(
             DesignButton(
                 onClick = onConfirm,
                 minHeight = 42.dp,
+                enabled = !isLoading.value,
+                isLoading = isLoading.value,
                 style = MaterialTheme.typography.bodyMedium.copy(
                     fontWeight = FontWeight.SemiBold
                 ),
@@ -94,6 +100,10 @@ fun ReportPage(
 @Composable
 fun PreviewReportSheet() {
     DesignTheme(isDarkMode = true) {
-        ReportPage(onCancel = {}) {}
+        val isLoading = remember { mutableStateOf(false) }
+        ReportPage(
+            isLoading = isLoading,
+            onCancel = {}
+        ) {}
     }
 }

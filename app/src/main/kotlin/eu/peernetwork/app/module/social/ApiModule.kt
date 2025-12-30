@@ -27,7 +27,7 @@ interface ApiModule {
     fun bindsReferralApi(delegate: ReferralApiDelegate): ReferralApi
 
     @Binds
-    fun bindsBlockApi(delegate: ModerationApiDelegate): ModerationApi
+    fun bindsModerationApi(delegate: ModerationApiDelegate): ModerationApi
 
     @Binds
     fun bindsInviteApi(delegate: InviteApiDelegate): InviteApi

@@ -9,5 +9,5 @@ interface ModerationApi {
 
     suspend fun block(userId: String): Boolean
 
-    suspend fun report(userId: String): Boolean
+    suspend fun report(userId: String): String
 }

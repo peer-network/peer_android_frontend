@@ -18,7 +18,7 @@ class ModerationRepositoryDelegate @Inject constructor(
         return api.block(userId)
     }
 
-    override suspend fun report(userId: String): Boolean {
+    override suspend fun report(userId: String): String {
         return api.report(userId)
     }
 }

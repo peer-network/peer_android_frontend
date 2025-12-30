@@ -25,7 +25,7 @@ interface RepositoryModule {
     fun bindReferralRepository(delegate: ReferralRepositoryDelegate): ReferralRepository
 
     @Binds
-    fun bindBlockRepository(delegate: ModerationRepositoryDelegate): ModerationRepository
+    fun bindModerationRepository(delegate: ModerationRepositoryDelegate): ModerationRepository
 
     @Binds
     fun bindInviteRepository(delegate: InviteRepositoryDelegate): InviteRepository

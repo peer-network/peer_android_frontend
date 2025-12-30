@@ -10,6 +10,7 @@ import eu.peernetwork.core.remote.extension.getOrThrow
 import eu.peernetwork.social.data.api.ModerationApi
 import eu.peernetwork.social.domain.model.Block
 import social.social.eu.peernetwork.social.remote.ListBlockedUsersQuery
+import social.social.eu.peernetwork.social.remote.ReportUserMutation
 import social.social.eu.peernetwork.social.remote.ToggleBlockUserStatusMutation
 import javax.inject.Inject
 import javax.inject.Named
@@ -34,7 +35,6 @@ class ModerationApiDelegate @Inject constructor(
                 image = "$url/${it.img!!}".removeSuffix("/")
             )
         }
-
         return Page(
             count = data.counter,
             items = blocked ?: emptyList(),
@@ -50,7 +50,11 @@ class ModerationApiDelegate @Inject constructor(
         return true
     }
 
-    override suspend fun report(userId: String): Boolean {
-        TODO("Not yet implemented")
+    override suspend fun report(userId: String): String {
+        val mutation = ReportUserMutation(userId)
+        val response = client().mutation(mutation).executeOrThrow()
+        val data = response.getOrThrow().reportUser
+        response.assertOrThrow(data.status, data.ResponseCode)
+        return data.ResponseCode ?: userId
     }
 }
