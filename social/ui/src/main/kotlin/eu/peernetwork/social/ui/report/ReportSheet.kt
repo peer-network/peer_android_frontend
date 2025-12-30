@@ -55,6 +55,7 @@ fun ReportSheet(
         DesignStream(streamState) { post ->
             DesignBottomSheetScaffold(
                 state = showSheet,
+                dismissable = true,
                 onDismiss = {
                     state.value = null
                     viewModel.reset()

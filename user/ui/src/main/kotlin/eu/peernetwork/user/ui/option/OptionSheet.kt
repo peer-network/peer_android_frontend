@@ -30,7 +30,9 @@ fun OptionSheet(
     onMenuClicked: () -> Unit
 ) {
     val confirmed = remember { mutableStateOf(false) }
+    val handleBlock by rememberUpdatedState(onBlock)
     val handleConfirm by rememberUpdatedState(onMenuClicked)
+    val isBlock = remember { mutableStateOf(false) }
     DesignBottomSheetScaffold(
         state = state,
         color = MaterialTheme.colorScheme.surfaceDim,
@@ -40,12 +42,18 @@ fun OptionSheet(
             if (confirmed.value) {
                 handleConfirm()
                 confirmed.value = false
+            } else if (isBlock.value) {
+                handleBlock()
+                confirmed.value = false
             }
         }
     ) {
         OptionSheet(
             isAdmin = isAdmin,
-            onBlock = onBlock,
+            onBlock = {
+                isBlock.value = true
+                state.value = false
+            },
             onMenuClicked = {
                 confirmed.value = true
                 state.value = false

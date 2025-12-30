@@ -27,8 +27,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.core.ui.design.luna.DesignButton
-import eu.peernetwork.core.ui.design.luna.DesignOutlineButton
 import eu.peernetwork.core.ui.design.luna.designSecondaryButtonColors
+import eu.peernetwork.core.ui.design.luna.designTertiaryButtonColors
 import eu.peernetwork.core.ui.theme.DesignTheme
 import eu.peernetwork.core.ui.theme.PeerAppDarkRed
 import eu.peernetwork.social.ui.R
@@ -71,13 +71,14 @@ fun ReportPage(
             modifier = Modifier.padding(top = 20.dp)
                 .padding(bottom = 6.dp)
         ) {
-            DesignOutlineButton(
+            DesignButton(
                 onClick = onCancel,
                 minHeight = 42.dp,
                 style = MaterialTheme.typography.bodyMedium.copy(
                     fontWeight = FontWeight.SemiBold
                 ),
-                contentPadding = PaddingValues(horizontal = 12.dp),
+                colors = designTertiaryButtonColors(),
+                contentPadding = PaddingValues(14.dp),
                 modifier = Modifier.weight(1f)
             ) { Text(stringResource(R.string.cancel_label)) }
             DesignButton(
@@ -89,7 +90,7 @@ fun ReportPage(
                     fontWeight = FontWeight.SemiBold
                 ),
                 colors = designSecondaryButtonColors(),
-                contentPadding = PaddingValues(horizontal = 12.dp),
+                contentPadding = PaddingValues(14.dp),
                 modifier = Modifier.weight(1f)
             ) { Text(stringResource(R.string.report_label)) }
         }
