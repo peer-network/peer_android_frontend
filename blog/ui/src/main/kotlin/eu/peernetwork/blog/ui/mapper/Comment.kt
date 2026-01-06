@@ -11,6 +11,7 @@ fun Comment.mapToComment(): UiComment {
         content = content.annotate(),
         createdAt = createdAt,
         likes = likes,
-        isLiked = isLiked
+        isLiked = isLiked,
+        isReported = isReported
     )
 }

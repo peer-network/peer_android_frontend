@@ -142,7 +142,7 @@ fun PostExpandedScaffold(
             imageUrl = model.imageUrl,
             modifier = Modifier
                 .padding(horizontal = 16.dp)
-                .padding(vertical = 10.dp),
+                .padding(vertical = 8.dp),
             pinnedBy = pinnedBy,
             onAuthorClick = onAuthorClick,
             onMenu = onMenu,

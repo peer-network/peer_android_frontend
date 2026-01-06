@@ -1,5 +1,6 @@
 package eu.peernetwork.blog.ui.comment
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
@@ -96,9 +97,7 @@ fun CommentScreen(
             CommentError(
                 isSuccess = isSuccess,
                 error = component.resource().error(it.value),
-            ) {
-                viewModel.load(id, Pageable(0, limit))
-            }
+            ) { viewModel.load(id, Pageable(0, limit)) }
         }
     ) { updatedContent(component, interactor, it) }
     LaunchedEffect(Unit) {
@@ -125,12 +124,14 @@ fun CommentScreen(
     onUserClick: (String) -> Unit,
     content: LazyListScope.(Comment.Component, CommentInteractor, LazyPagingItems<UiComment>) -> Unit
 ) {
+    val context = LocalContext.current
     val updatedContent by rememberUpdatedState(content)
     CommentScreen(
         provider = provider,
         viewModelStoreOwner = viewModelStoreOwner
     ) { component, viewModel ->
         val status = viewModel.status.collectAsStateWithLifecycle()
+        val hasError = remember { derivedStateOf { status.value is CommentViewModel.Status.Error } }
         CommentScreen(
             id = id,
             limit = limit,
@@ -152,6 +153,18 @@ fun CommentScreen(
                     if (status.value is CommentViewModel.Status.Success<*>) {
                         items.refresh()
                     }
+                }
+            }
+        }
+        LaunchedEffect(hasError.value) {
+            if (hasError.value) {
+                (status.value as CommentViewModel.Status.Error).error.message?.let {
+                    Toast.makeText(
+                        context,
+                        component.resource().string(it),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    viewModel.clear()
                 }
             }
         }

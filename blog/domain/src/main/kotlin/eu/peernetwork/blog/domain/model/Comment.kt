@@ -7,4 +7,5 @@ data class Comment(
     val createdAt: Long,
     val likes: Int,
     val isLiked: Boolean,
+    val isReported: Boolean = false
 )

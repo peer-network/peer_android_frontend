@@ -1,6 +1,7 @@
 package eu.peernetwork.blog.ui.comment
 
 import android.content.res.Configuration
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
@@ -46,6 +47,7 @@ fun CommentItem(
     imageUrl: String,
     comment: AnnotatedString,
     isLiked: Boolean,
+    isReported: Boolean,
     likes: Int,
     color: Color = MaterialTheme.colorScheme.outline,
     onReply: () -> Unit,
@@ -103,21 +105,45 @@ fun CommentItem(
                 maxLines = 3,
                 onClick = onContentClick
             )
-            if (likes > 0 || isLiked) {
-                Text(
-                    text = if (isLiked && likes > 1) {
-                        stringResource(R.string.likes_by_you_label, likes - 1)
-                    } else if (likes > 1) {
-                        stringResource(R.string.likes_label, likes)
-                    } else if (isLiked) {
-                        stringResource(R.string.liked_by_you_label)
-                    } else {
-                        stringResource(R.string.like_by_label)
-                    },
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.outlineVariant,
-                    modifier = Modifier.clickable(onClick = onViewLikes)
-                )
+            Row(
+                modifier = Modifier.padding(top = 2.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                if (isReported) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_flag),
+                        contentDescription = stringResource(R.string.report_label),
+                        tint = PeerAppDarkRed,
+                        modifier = Modifier.size(12.dp)
+                    )
+                    Text(
+                        text = stringResource(R.string.reported_label),
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.outlineVariant,
+                        modifier = Modifier.padding(start = 4.dp)
+                    )
+                }
+                if (isReported && (likes > 0 || isLiked)) {
+                    Box(modifier = Modifier.padding(horizontal = 6.dp)
+                        .size(2.dp)
+                        .background(MaterialTheme.colorScheme.outlineVariant))
+                }
+                if (likes > 0 || isLiked) {
+                    Text(
+                        text = if (isLiked && likes > 1) {
+                            stringResource(R.string.likes_by_you_label, likes - 1)
+                        } else if (likes > 1) {
+                            stringResource(R.string.likes_label, likes)
+                        } else if (isLiked) {
+                            stringResource(R.string.liked_by_you_label)
+                        } else {
+                            stringResource(R.string.like_by_label)
+                        },
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.outlineVariant,
+                        modifier = Modifier.clickable(onClick = onViewLikes)
+                    )
+                }
             }
         }
         Box(
@@ -161,6 +187,7 @@ fun PreviewCommentItem() {
             imageUrl = "http://localhost",
             comment = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum accumsan elementum commodo.".annotate(),
             isLiked = true,
+            isReported = true,
             likes = 1,
             onReply = {},
             onViewLikes = {},

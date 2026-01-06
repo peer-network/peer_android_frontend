@@ -104,6 +104,12 @@ class CommentViewModel @Inject constructor(
         }
     }
 
+    fun clear() {
+        viewModelScope.launch {
+            _status.tryEmit(Status.Empty)
+        }
+    }
+
     fun reset() {
         viewModelScope.launch {
             _state.tryEmit(State.Empty)

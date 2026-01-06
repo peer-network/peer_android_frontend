@@ -45,6 +45,7 @@ fun CommentList(
                         imageUrl = comment.author.imageUrl,
                         comment = comment.content,
                         isLiked = interactor.observe().value[comment.id]?.isLiked ?: comment.isLiked,
+                        isReported = comment.isReported,
                         likes = comment.likes,
                         onViewLikes = { interactor.viewLike(comment.id) },
                         onLike = { interactor.like(comment) },
