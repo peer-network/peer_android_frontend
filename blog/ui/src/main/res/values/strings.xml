@@ -47,4 +47,6 @@
 
     <string name="pin_label">Pin by</string>
     <string name="no_content_text">No content available!</string>
+
+    <string name="comment_report_prompt">Are you sure you want to report this comment?</string>
 </resources>

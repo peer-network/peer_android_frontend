@@ -13,10 +13,12 @@ import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.anchoredDraggable
 import androidx.compose.foundation.gestures.animateTo
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -80,6 +82,7 @@ fun DesignBottomSheet(
         easing = CubicBezierEasing(0.2f, 0f, 0f, 1f)
     ),
     footer: @Composable () -> Unit = {},
+    overlay: @Composable BoxScope.() -> Unit = {},
     content: @Composable (State<Size>) -> Unit
 ) {
     val visible = remember { mutableStateOf(false) }
@@ -112,7 +115,8 @@ fun DesignBottomSheet(
                 handleOnDismiss()
             },
             snapAnimationSpec = snapAnimationSpec,
-            footer = footer
+            footer = footer,
+            overlay = overlay
         ) { updatedContent(it) }
         LaunchedEffect(isDismissed.value) {
             if (isDismissed.value) {
@@ -154,10 +158,12 @@ fun DesignBottomSheet(
         easing = CubicBezierEasing(0.2f, 0f, 0f, 1f)
     ),
     footer: @Composable () -> Unit = {},
+    overlay: @Composable BoxScope.() -> Unit = {},
     content: @Composable (State<Size>) -> Unit
 ) {
     val density = LocalDensity.current
     val updatedFooter by rememberUpdatedState(footer)
+    val updatedOverlay by rememberUpdatedState(overlay)
     val updatedContent by rememberUpdatedState(content)
     val handleStateChanged by rememberUpdatedState(onStateChanged)
     val handleDismiss by rememberUpdatedState(onDismiss)
@@ -210,6 +216,13 @@ fun DesignBottomSheet(
                 footerHeight.value = size
                 translationY = (position + delta).coerceIn(position, height)
             }) { updatedFooter() }
+        Box(
+            modifier = Modifier.heightIn(min = peekHeight)
+                .graphicsLayer {
+                    val position = (height - size.height)
+                    translationY = (position + draggableState.offset).coerceIn(position, height)
+                }.clip(shape)
+        ) { updatedOverlay() }
     }
     LaunchedEffect(state) {
         if (state != draggableState.currentValue) {

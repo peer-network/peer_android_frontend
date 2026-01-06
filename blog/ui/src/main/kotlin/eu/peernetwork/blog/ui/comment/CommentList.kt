@@ -17,11 +17,13 @@ fun CommentList(
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
     onContentClick: (DesignRichText, String) -> Unit,
+    onReport: (String) -> Unit,
     onReply: (String) -> Unit,
     onClick: (String) -> Unit
 ) {
     val handleReply by rememberUpdatedState(onReply)
     val handleClick by rememberUpdatedState(onClick)
+    val handleReport by rememberUpdatedState(onReport)
     CommentScreen(
         id = id,
         uuid = uuid,
@@ -36,20 +38,22 @@ fun CommentList(
             key = { index -> items[index]?.id?.let { "$it;$index" } ?: index }
         ) { index ->
             items[index]?.let { comment ->
-                CommentItem(
-                    slug = comment.author.slug.toString(),
-                    username = comment.author.username,
-                    imageUrl = comment.author.imageUrl,
-                    comment = comment.content,
-                    isLiked = interactor.observe().value[comment.id]?.isLiked ?: comment.isLiked,
-                    likes = comment.likes,
-                    onViewLikes = { interactor.viewLike(comment.id) },
-                    onLike = { interactor.like(comment) },
-                    onReply = {
-                        handleReply(comment.author.username)
-                    },
-                    onContentClick = onContentClick
-                ) { handleClick(comment.author.id) }
+                CommentOption({ handleReport(comment.id) }) {
+                    CommentItem(
+                        slug = comment.author.slug.toString(),
+                        username = comment.author.username,
+                        imageUrl = comment.author.imageUrl,
+                        comment = comment.content,
+                        isLiked = interactor.observe().value[comment.id]?.isLiked ?: comment.isLiked,
+                        likes = comment.likes,
+                        onViewLikes = { interactor.viewLike(comment.id) },
+                        onLike = { interactor.like(comment) },
+                        onReply = {
+                            handleReply(comment.author.username)
+                        },
+                        onContentClick = onContentClick
+                    ) { handleClick(comment.author.id) }
+                }
             }
         }
     }
