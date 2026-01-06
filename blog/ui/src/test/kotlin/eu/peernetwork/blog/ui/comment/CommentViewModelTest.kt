@@ -108,7 +108,8 @@ internal class CommentViewModelTest {
             content = mockk<AnnotatedString>(relaxed = true),
             createdAt = System.currentTimeMillis(),
             likes = 0,
-            isLiked = false
+            isLiked = false,
+            isReported = false
         )
         val mockData = mockk<UiComment>()
         val pager = PagingData.from(listOf(mockData))
