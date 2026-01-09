@@ -74,21 +74,6 @@ fun PostMedia(
             )
         }
     } else if (type == UiPostType.VIDEO) {
-        DesignThumbnail(
-            enable = enable,
-            thumbnail = path,
-            bitmap = thumbnail,
-            modifier = Modifier
-                .fillMaxWidth()
-                .aspectRatio(ratio)
-        ) {
-            interactor.background(
-                media = path,
-                aspectRatio = ratio,
-                width = configuration.screenWidthDp,
-                height = (configuration.screenWidthDp / ratio).toInt()
-            )
-        }
         PostMask(
             status = status,
             isAuthor = isAdmin,
@@ -96,6 +81,21 @@ fun PostMedia(
             modifier = Modifier
                 .fillMaxWidth()
                 .aspectRatio(ratio)) {
+            DesignThumbnail(
+                enable = enable,
+                thumbnail = path,
+                bitmap = thumbnail,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(ratio)
+            ) {
+                interactor.background(
+                    media = path,
+                    aspectRatio = ratio,
+                    width = configuration.screenWidthDp,
+                    height = (configuration.screenWidthDp / ratio).toInt()
+                )
+            }
             interactor.component().videoThumbnail()(
                 Modifier,
                 spec = VideoThumbnail.Spec(
