@@ -28,7 +28,7 @@ import eu.peernetwork.blog.ui.post.PostMedia
 import eu.peernetwork.blog.ui.post.PostNavigator
 import eu.peernetwork.blog.ui.post.PostNavigator.Companion.LocalPostNavigator
 import eu.peernetwork.blog.ui.post.PostSkeleton
-import eu.peernetwork.blog.ui.post.PostUserConnection
+import eu.peernetwork.blog.ui.post.PostFollow
 import eu.peernetwork.core.ui.component.UiComponentProvider
 
 @Composable
@@ -101,7 +101,7 @@ fun TimelineList(
                         if (uuid != post.author.id) {
                             component.postUserFollow()(
                                 modifier = Modifier,
-                                PostUserConnection.Spec(
+                                PostFollow.Spec(
                                     id = post.author.id,
                                     isFollowing = post.author.following,
                                     isFollowed = post.author.followed,
@@ -115,6 +115,9 @@ fun TimelineList(
                             type = post.type,
                             path = media.path,
                             expanded = expanded,
+                            isAdmin = uuid == post.author.id,
+                            isAccessible = post.isAccessible,
+                            status = post.status,
                             cover = media.display.cover ?: post.author.imageUrl,
                             ratio = post.asset.ratio,
                             enable = enable,

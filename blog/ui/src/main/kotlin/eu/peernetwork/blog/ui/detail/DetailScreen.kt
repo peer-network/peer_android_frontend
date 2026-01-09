@@ -29,7 +29,7 @@ import eu.peernetwork.blog.ui.post.PostNavigator
 import eu.peernetwork.blog.ui.post.PostNavigator.Companion.LocalPostNavigator
 import eu.peernetwork.blog.ui.post.PostScreen
 import eu.peernetwork.blog.ui.post.PostSkeleton
-import eu.peernetwork.blog.ui.post.PostUserConnection
+import eu.peernetwork.blog.ui.post.PostFollow
 import eu.peernetwork.blog.ui.timeline.TimelineSheet
 import eu.peernetwork.blog.ui.timeline.TimelineSheetMenuItem
 import eu.peernetwork.core.ui.component.UiComponentProvider
@@ -160,7 +160,7 @@ fun DetailScreen(
                 if (uuid != post.author.id) {
                     component.postUserFollow()(
                         modifier = Modifier,
-                        PostUserConnection.Spec(
+                        PostFollow.Spec(
                             id = post.author.id,
                             isFollowing = post.author.following,
                             isFollowed = post.author.followed,
@@ -172,7 +172,10 @@ fun DetailScreen(
                 PostMedia(
                     type = post.type,
                     path = media.path,
+                    status = post.status,
                     expanded = expanded,
+                    isAdmin = uuid == post.author.id,
+                    isAccessible = post.isAccessible,
                     cover = media.display.cover ?: post.author.imageUrl,
                     ratio = post.asset.ratio,
                     enable = isVisible,

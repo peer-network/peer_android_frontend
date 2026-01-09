@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.lifecycle.ViewModelStoreOwner
 import eu.peernetwork.core.ui.renderer.Renderer
 
-interface PostUserConnection : Renderer.Stateful<PostUserConnection.Spec> {
+interface PostFollow : Renderer.Stateful<PostFollow.Spec> {
     @Composable
     fun Compose(
         viewModelStoreOwner: ViewModelStoreOwner,

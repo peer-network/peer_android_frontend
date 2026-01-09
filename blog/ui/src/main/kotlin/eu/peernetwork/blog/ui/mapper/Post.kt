@@ -4,6 +4,7 @@ import eu.peernetwork.blog.domain.model.Content
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.model.UiPostDetail
 import eu.peernetwork.blog.ui.model.UiPostType
+import eu.peernetwork.blog.ui.model.UiStatus
 import eu.peernetwork.core.ui.mapper.annotate
 
 fun Content.mapFromDomain(): UiPost {
@@ -19,8 +20,11 @@ fun Content.mapFromDomain(): UiPost {
         isDisliked = isDisliked,
         isViewed = isViewed,
         dislikes = dislikes,
+        isAccessible = isAccessible,
         views = views,
         comment = comment,
+        reported = reported,
+        status = status.mapFromDomain(),
         url = url,
         time = createdAt.mapFromDomain(),
         createdAt = createdAt

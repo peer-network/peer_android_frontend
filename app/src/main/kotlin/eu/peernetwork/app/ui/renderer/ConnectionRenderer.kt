@@ -10,7 +10,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import eu.peernetwork.app.Peer
-import eu.peernetwork.blog.ui.post.PostUserConnection
+import eu.peernetwork.blog.ui.post.PostFollow
 import eu.peernetwork.social.ui.connection.ConnectionButton
 import eu.peernetwork.social.ui.connection.ConnectionInteractor.Companion.LocalConnectionInteractor
 import eu.peernetwork.social.ui.connection.ConnectionScreen
@@ -18,7 +18,7 @@ import javax.inject.Inject
 
 class ConnectionRenderer @Inject constructor(
     val component: Peer.Component
-) : PostUserConnection {
+) : PostFollow {
     @Composable
     override fun Compose(
         viewModelStoreOwner: ViewModelStoreOwner,
@@ -34,7 +34,7 @@ class ConnectionRenderer @Inject constructor(
     @Composable
     override fun invoke(
         modifier: Modifier,
-        spec: PostUserConnection.Spec
+        spec: PostFollow.Spec
     ) {
         val controller = LocalConnectionInteractor.current
         val connection = controller.observe().collectAsStateWithLifecycle()
