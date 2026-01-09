@@ -79,6 +79,7 @@ fun DetailModal(
                 }
             ) {
                 GalleryScreen(
+                    uuid = uuid,
                     position = selected.intValue,
                     enabled = enabled,
                     post = postState.value,

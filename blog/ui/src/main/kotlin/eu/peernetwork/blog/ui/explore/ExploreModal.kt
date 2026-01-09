@@ -40,6 +40,7 @@ fun ExploreModal(
         ) { component, item, index, pagerState ->
             val enabled = remember { derivedStateOf { pagerState.currentPage == index } }
             GalleryScreen(
+                uuid = uuid,
                 position = index,
                 enabled = enabled,
                 post = item,

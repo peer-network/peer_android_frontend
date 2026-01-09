@@ -45,11 +45,13 @@
     <string name="like_label">Likes</string>
     <string name="dislike_label">Dislikes</string>
     <string name="view_label">Views</string>
+    <string name="show_label">Show</string>
 
     <string name="pin_label">Pin by</string>
     <string name="hidden_content_action">View content</string>
     <string name="hidden_content_label">Sensitive content</string>
-    <string name="hidden_content_description">This content may be sensitive or abusive.\nDo you want to view it anyway?</string>
+    <string name="hidden_content_description">This content may be sensitive or abusive.</string>
+    <string name="hidden_content_prompt">Do you want to view it anyway?</string>
     <string name="illegal_content_description">This content was removed as illegal</string>
     <string name="no_content_text">No content available!</string>
 

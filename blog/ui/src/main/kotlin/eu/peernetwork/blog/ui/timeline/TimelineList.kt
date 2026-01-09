@@ -81,6 +81,9 @@ fun TimelineList(
                     pinnedBy = post.pinnedBy,
                     model = post.mapToDetail(),
                     asset = post.asset,
+                    isAuthor = uuid == post.author.id,
+                    isAccessible = post.isAccessible,
+                    status = post.status,
                     onMenu = { showSheet.value = post },
                     onClick = { selected.intValue = index },
                     onContentClick = { type, value ->
