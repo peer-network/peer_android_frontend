@@ -9,5 +9,6 @@ data class Account(
     val overview: Overview,
     val following: Boolean,
     val followed: Boolean,
+    val status: Status,
     val reported: Boolean = false
 )

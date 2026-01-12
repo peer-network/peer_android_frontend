@@ -1,7 +1,7 @@
 package eu.peernetwork.blog.ui.post
 
-import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -38,24 +38,37 @@ import eu.peernetwork.core.ui.theme.DesignTheme
 fun PostStatus(
     time: String,
     modifier: Modifier = Modifier,
+    reported: Boolean = false,
+    label: @Composable (() -> Unit)? = null,
     engagement: @Composable () -> Unit
 ) {
     val updatedEngagement by rememberUpdatedState(engagement)
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-        modifier = modifier
-    ) {
-        updatedEngagement()
-        Text(
-            text = time,
-            style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.outline,
-            textAlign = TextAlign.End,
-            modifier = Modifier
-                .weight(1f)
-                .padding(start = 10.dp)
-        )
+    val updatedLabel by rememberUpdatedState(label)
+    Column(modifier = modifier) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Box(modifier = Modifier.weight(1f)) {
+                updatedLabel?.invoke()
+            }
+            if (reported) {
+                PostReportLabel()
+            }
+        }
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            modifier = Modifier.padding(top = 2.dp)
+        ) {
+            updatedEngagement()
+            Text(
+                text = time,
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.outline,
+                textAlign = TextAlign.End,
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(start = 10.dp)
+            )
+        }
     }
 }
 
@@ -64,6 +77,7 @@ fun PostStatus(
     time: String,
     pinnedBy: String,
     modifier: Modifier = Modifier,
+    reported: Boolean = false,
     engagement: @Composable () -> Unit
 ) {
     Column(modifier = modifier) {
@@ -74,14 +88,17 @@ fun PostStatus(
                 fontWeight = FontWeight.SemiBold
             )) { append(pinnedBy) }
         }
-        Text(
-            text = pinnedText,
-            style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.outline,
-        )
         PostStatus(
             time = time,
             engagement = engagement,
+            reported = reported,
+            label = {
+                Text(
+                    text = pinnedText,
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.outline,
+                )
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 10.dp)
@@ -97,20 +114,12 @@ fun PostStatus(
     description: AnnotatedString,
     modifier: Modifier = Modifier,
     pinnedBy: String? = null,
+    reported: Boolean = false,
     onClick: (DesignRichText, String) -> Unit,
     engagement: @Composable () -> Unit
 ) {
     val configuration = LocalConfiguration.current
     val titleWidth = (configuration.screenWidthDp * .3).dp
-    val pinnedText = buildAnnotatedString {
-        pinnedBy?.let {
-            append(stringResource(R.string.pin_label))
-            append(" ")
-            withStyle(style = SpanStyle(
-                fontWeight = FontWeight.SemiBold
-            )) { append(pinnedBy) }
-        }
-    }
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -139,13 +148,22 @@ fun PostStatus(
                     .padding(start = 10.dp)
                     .padding(bottom = 10.dp)
             ) {
-                DesignRichText(
-                    text = title,
-                    maxLines = 1,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onBackground,
-                    onClick = onClick
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    DesignRichText(
+                        text = title,
+                        maxLines = 1,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onBackground,
+                        onClick = onClick,
+                        modifier = Modifier.weight(1f)
+                    )
+                    if (reported) {
+                        PostReportLabel()
+                    }
+                }
                 if (description.isNotEmpty()) {
                     DesignRichText(
                         text = description,
@@ -161,8 +179,8 @@ fun PostStatus(
     }
 }
 
+@Preview
 @Composable
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, showBackground = true)
 fun PreviewPostStatus() {
     val engagement = UiEngagement(
         id = "<test-id>",
@@ -173,12 +191,13 @@ fun PreviewPostStatus() {
         views = "3k",
         comment = "1k"
     )
-    DesignTheme(isDarkMode = false) {
+    DesignTheme(isDarkMode = true) {
         Column {
             Spacer(modifier = Modifier.height(8.dp))
             PostStatus(
                 time = "2h ago",
                 pinnedBy = "Thomas",
+                reported = true,
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
             ) { EngagementReaction(engagement) {} }
@@ -186,6 +205,7 @@ fun PreviewPostStatus() {
                 time = "2h ago",
                 username = "John",
                 pinnedBy = "Thomas",
+                reported = true,
                 title = buildAnnotatedString { append("Title") },
                 description = buildAnnotatedString { append("Description") },
                 modifier = Modifier

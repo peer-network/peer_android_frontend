@@ -11,10 +11,11 @@ query Profile($userid: ID, $contentFilterBy: ContentFilterType) {
             amountfollowed
             amountfollower
             amountposts
-            amountfriends,
-            isfollowed,
-            isfollowing,
+            amountfriends
+            isfollowed
+            isfollowing
             hasActiveReports
+            visibilityStatus
         }
     }
 }

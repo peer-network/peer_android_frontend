@@ -19,6 +19,7 @@ fun AccountModel.mapToDomain(): Account {
         ),
         followed = isfollowed,
         following = isfollowing,
+        status = status,
         reported = hasActiveReports
     )
 }

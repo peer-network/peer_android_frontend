@@ -27,6 +27,7 @@ import eu.peernetwork.core.ui.theme.DesignTheme
 import eu.peernetwork.user.ui.R
 import eu.peernetwork.user.ui.model.UiAccount
 import eu.peernetwork.user.ui.model.UiMetric
+import eu.peernetwork.user.ui.model.UiStatus
 
 @Composable
 fun UserPage(
@@ -108,7 +109,8 @@ fun PreviewUserPage() {
             ),
             isFollowing = false,
             isFollowed = false,
-            reported = true
+            reported = true,
+            status = UiStatus.VISIBLE
         )
         UserPage(
             account = model,

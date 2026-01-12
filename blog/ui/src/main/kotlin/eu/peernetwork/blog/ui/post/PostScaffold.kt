@@ -101,6 +101,7 @@ fun PostScaffold(
             PostStatus(
                 time = context.format(model.time),
                 engagement = engagement,
+                reported = model.reported,
                 modifier = Modifier.padding(horizontal = 10.dp)
                     .padding(bottom = 10.dp)
             )
@@ -154,6 +155,7 @@ fun PostExpandedScaffold(
         PostStatus(
             username = model.username,
             pinnedBy = pinnedBy,
+            reported = model.reported,
             title = model.title,
             description = model.description,
             time = context.format(model.time),
@@ -178,7 +180,8 @@ fun PreviewPostScaffold() {
             description = buildAnnotatedString {
                 append("This is a mock description for a content post. It's purely for testing.")
             },
-            time = UiTimer.Date("Oct 20, 2023")
+            time = UiTimer.Date("Oct 20, 2023"),
+            reported = true,
         )
         val engagement = UiEngagement(
             id = "<test-id>",

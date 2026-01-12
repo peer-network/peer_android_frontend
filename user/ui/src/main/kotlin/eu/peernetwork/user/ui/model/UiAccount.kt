@@ -12,5 +12,6 @@ data class UiAccount(
     val metric: UiMetric,
     val isFollowing: Boolean,
     val isFollowed: Boolean,
+    val status: UiStatus,
     val reported: Boolean = false
 )

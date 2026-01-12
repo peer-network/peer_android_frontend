@@ -19,6 +19,7 @@ fun Account.mapFromDomain(): UiAccount {
         ),
         isFollowing = following,
         isFollowed = followed,
+        status = status.mapFromDomain(),
         reported = reported
     )
 }

@@ -1,0 +1,54 @@
+package eu.peernetwork.blog.ui.post
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import eu.peernetwork.blog.ui.R
+import eu.peernetwork.core.ui.theme.DesignTheme
+import eu.peernetwork.core.ui.theme.PeerAppRed
+
+@Composable
+fun PostReportLabel() {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(2.dp),
+        modifier = Modifier.clip(CircleShape)
+            .background(MaterialTheme.colorScheme.surfaceContainerLowest)
+            .padding(vertical = 2.dp)
+            .padding(horizontal = 6.dp)
+    ) {
+        Icon(
+            painter = painterResource(R.drawable.ic_flag),
+            contentDescription = stringResource(R.string.reported_label),
+            tint = PeerAppRed,
+            modifier = Modifier.size(10.dp)
+        )
+        Text(
+            text = stringResource(R.string.reported_label),
+            style = MaterialTheme.typography.labelSmall,
+            color = PeerAppRed
+        )
+    }
+}
+
+@Preview
+@Composable
+fun PreviewPostReportLabel() {
+    DesignTheme(isDarkMode = true) {
+        PostReportLabel()
+    }
+}

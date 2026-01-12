@@ -17,5 +17,6 @@ fun ProfileQuery.AffectedRows.mapToDomain(): AccountModel {
         hasActiveReports = hasActiveReports,
         isfollowing = isfollowing == true,
         isfollowed = isfollowed == true,
+        status = visibilityStatus.mapToDomain()
     )
 }

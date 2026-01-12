@@ -49,5 +49,6 @@ fun UiPost.mapToDetail(): UiPostDetail {
         description = description,
         imageUrl = author.imageUrl,
         time = time,
+        reported = reported,
     )
 }
