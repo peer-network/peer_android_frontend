@@ -10,5 +10,6 @@ data class Account(
     val following: Boolean,
     val followed: Boolean,
     val status: Status,
+    val isAccessible: Boolean,
     val reported: Boolean = false
 )

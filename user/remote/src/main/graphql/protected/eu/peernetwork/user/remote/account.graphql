@@ -14,6 +14,7 @@ query Profile($userid: ID, $contentFilterBy: ContentFilterType) {
             amountfriends
             isfollowed
             isfollowing
+            isHiddenForUsers
             hasActiveReports
             visibilityStatus
         }

@@ -13,6 +13,7 @@ data class AccountModel(
     val isfollowing: Boolean,
     val isfollowed: Boolean,
     val status: Status,
+    val isAccessible: Boolean,
     val hasActiveReports: Boolean = false,
     val posts: Int,
     val peers: Int

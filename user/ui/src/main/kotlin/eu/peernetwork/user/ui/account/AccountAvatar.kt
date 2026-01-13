@@ -123,6 +123,7 @@ fun PreviewAccountAvatar() {
             ),
             isFollowing = false,
             isFollowed = false,
+            isAccessible = true,
             status = UiStatus.VISIBLE
         )
         AccountAvatar(

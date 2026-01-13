@@ -1,6 +1,7 @@
 package eu.peernetwork.user.ui.user
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
@@ -96,16 +97,25 @@ fun UserScreen(
                 .padding(top = 10.dp)
         ) }
     ) { data ->
-        UserPage(
-            account = data.value.first,
-            isAdmin = data.value.second,
-            selectedImage = selectedImage,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp)
-                .padding(top = 10.dp),
-            onClick = onClick
-        ) {
+        Column {
+            UserMask(
+                metric = data.value.first.metric,
+                status = data.value.first.status,
+                isAuthor = data.value.second,
+                isAccessible = data.value.first.isAccessible,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp)
+                    .padding(top = 10.dp),
+            ) {
+                UserPage(
+                    account = data.value.first,
+                    isAdmin = data.value.second,
+                    selectedImage = selectedImage,
+                    modifier = Modifier,
+                    onClick = onClick
+                )
+            }
             Box(modifier = Modifier.padding(start = 20.dp)
                 .padding(end = 12.dp)) {
                 OptionScreen(

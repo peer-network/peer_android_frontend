@@ -44,6 +44,7 @@
     <string name="token_label">Token</string>
     <string name="address_label">Address</string>
     <string name="account_label">Account</string>
+    <string name="illegal_profile">Profile data is removed as illegal</string>
 
     <string name="posts_label">Publications</string>
     <string name="follow_label">Follow</string>

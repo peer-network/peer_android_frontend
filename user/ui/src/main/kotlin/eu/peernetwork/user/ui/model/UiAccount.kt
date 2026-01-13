@@ -13,5 +13,6 @@ data class UiAccount(
     val isFollowing: Boolean,
     val isFollowed: Boolean,
     val status: UiStatus,
+    val isAccessible: Boolean,
     val reported: Boolean = false
 )
