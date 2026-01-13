@@ -3,8 +3,8 @@ package eu.peernetwork.user.ui.user
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -19,11 +19,14 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.core.ui.design.luna.DesignAvatar
+import eu.peernetwork.core.ui.design.luna.DesignOutlineButton
 import eu.peernetwork.core.ui.design.luna.DesignSkeleton
 import eu.peernetwork.core.ui.theme.DesignTheme
 import eu.peernetwork.user.ui.R
@@ -61,28 +64,80 @@ fun UserMask(
     isAuthor: Boolean,
     isAccessible: Boolean,
     modifier: Modifier = Modifier,
+    onClick: (UserMetric) -> Unit,
     content: @Composable () -> Unit
 ) {
-    UserMask(
-        status = status,
-        isAuthor = isAuthor,
-        isAccessible = isAccessible,
-        modifier = modifier,
-        mask = { isIllegal ->
-            if (isIllegal) {
-                UserMask(
-                    metric = metric,
-                    isAuthor = isAuthor,
-                    modifier = Modifier.fillMaxWidth(),
-                    onClick = {},
-                ) {}
-            } else {
-                // blured overlay
-                Box(modifier = Modifier.fillMaxWidth()) {}
+    val isVisible = rememberSaveable { mutableStateOf(false) }
+    val updatedContent by rememberUpdatedState(content)
+    if (isVisible.value) {
+        Box(modifier = modifier) {
+            updatedContent()
+        }
+    } else {
+        UserMask(
+            status = status,
+            isAuthor = isAuthor,
+            isAccessible = isAccessible,
+            modifier = modifier,
+            mask = { isIllegal ->
+                if (isIllegal) {
+                    UserMask(
+                        metric = metric,
+                        isAuthor = isAuthor,
+                        modifier = Modifier.fillMaxWidth(),
+                        onClick = onClick,
+                    )
+                } else {
+                    Box(contentAlignment = Alignment.CenterStart) {
+                        Box(modifier = Modifier.fillMaxWidth()
+                            .blur(radius = 4.dp)) {
+                            updatedContent()
+                        }
+                        UserMask { isVisible.value = true }
+                    }
+                }
+            },
+            content = content
+        )
+    }
+}
+
+@Composable
+fun UserMask(onClick: () -> Unit) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Column(modifier = Modifier.weight(1f)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_eye_closed),
+                    contentDescription = stringResource(R.string.sensitive_title),
+                    modifier = Modifier.size(16.dp),
+                    tint = MaterialTheme.colorScheme.onBackground,
+                )
+                Text(
+                    text = stringResource(R.string.sensitive_title),
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    fontWeight = FontWeight.SemiBold,
+                    modifier = Modifier.padding(start = 8.dp)
+                )
             }
-        },
-        content = content
-    )
+            Text(
+                text = stringResource(R.string.sensitive_description),
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onBackground,
+                modifier = Modifier.padding(top = 6.dp)
+            )
+        }
+        DesignOutlineButton(
+            onClick = onClick,
+            minHeight = 36.dp,
+            contentPadding = PaddingValues(
+                horizontal = 24.dp,
+                vertical = 8.dp
+            ),
+            modifier = Modifier.padding(top = 8.dp)
+        ) { Text(stringResource(R.string.show_label)) }
+    }
 }
 
 @Composable
@@ -91,67 +146,58 @@ fun UserMask(
     isAuthor: Boolean,
     modifier: Modifier = Modifier,
     onClick: (UserMetric) -> Unit,
-    content: @Composable () -> Unit
 ) {
-    val isVisible = rememberSaveable { mutableStateOf(false) }
-    val updatedContent by rememberUpdatedState(content)
     val handleOnClick by rememberUpdatedState(onClick)
-    if (isVisible.value) {
-        updatedContent()
-    } else {
-        Column {
-            Column(modifier = modifier) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    DesignAvatar {
-                        DesignSkeleton(
-                            modifier = Modifier.size(56.dp),
-                            color = MaterialTheme.colorScheme.surfaceContainerLow,
-                        )
-                    }
-                    Column(modifier = Modifier.padding(start = 16.dp)) {
-                        DesignSkeleton(
-                            modifier = Modifier.fillMaxWidth(fraction = .3f)
-                                .height(12.dp),
-                            color = MaterialTheme.colorScheme.surfaceContainerLowest,
-                        )
-                        UserMetric(
-                            overview = metric,
-                            labelColor = MaterialTheme.colorScheme.outline,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(top = 6.dp),
-                            onClick = {
-                                if (!(!isAuthor && it == UserMetric.PEER)) {
-                                    handleOnClick(it)
-                                }
-                            }
-                        )
-                    }
-                }
+    Column(modifier = modifier) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            DesignAvatar {
                 DesignSkeleton(
-                    modifier = Modifier.padding(top = 16.dp),
+                    modifier = Modifier.size(56.dp),
                     color = MaterialTheme.colorScheme.surfaceContainerLow,
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(10.dp),
-                        modifier = Modifier.padding(horizontal = 12.dp)
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_trash),
-                            contentDescription = null,
-                            modifier = Modifier.size(16.dp),
-                            tint = MaterialTheme.colorScheme.onBackground,
-                        )
-                        Text(
-                            text = stringResource(R.string.illegal_profile),
-                            style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.onBackground,
-                            modifier = Modifier.padding(vertical = 6.dp)
-                                .padding(end = 8.dp)
-                        )
+                )
+            }
+            Column(modifier = Modifier.padding(start = 16.dp)) {
+                DesignSkeleton(
+                    modifier = Modifier.fillMaxWidth(fraction = .3f)
+                        .height(12.dp),
+                    color = MaterialTheme.colorScheme.surfaceContainerLowest,
+                )
+                UserMetric(
+                    overview = metric,
+                    labelColor = MaterialTheme.colorScheme.outline,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 6.dp),
+                    onClick = {
+                        if (!(!isAuthor && it == UserMetric.PEER)) {
+                            handleOnClick(it)
+                        }
                     }
-                }
+                )
+            }
+        }
+        DesignSkeleton(
+            modifier = Modifier.padding(top = 16.dp),
+            color = MaterialTheme.colorScheme.surfaceContainerLow,
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                modifier = Modifier.padding(horizontal = 8.dp)
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_trash),
+                    contentDescription = null,
+                    modifier = Modifier.size(12.dp),
+                    tint = MaterialTheme.colorScheme.onBackground,
+                )
+                Text(
+                    text = stringResource(R.string.illegal_profile),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    modifier = Modifier.padding(vertical = 4.dp)
+                        .padding(end = 8.dp)
+                )
             }
         }
     }
@@ -167,14 +213,19 @@ fun PreviewUserMask() {
             followers = 0,
             followed = 0
         )
-        UserMask(
-            metric = metric,
-            status = UiStatus.ILLEGAL,
-            isAuthor = false,
-            isAccessible = true,
-            modifier = Modifier.padding(16.dp)
-                .fillMaxWidth()
-                .aspectRatio(1f),
-        ) {}
+        Column {
+            UserMask(
+                metric = metric,
+                status = UiStatus.ILLEGAL,
+                isAuthor = false,
+                isAccessible = true,
+                onClick = {},
+                modifier = Modifier.padding(16.dp)
+                    .fillMaxWidth(),
+            ) {}
+            Box(modifier = Modifier.padding(16.dp)) {
+                UserMask {}
+            }
+        }
     }
 }

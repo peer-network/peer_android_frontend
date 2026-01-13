@@ -103,6 +103,7 @@ fun UserScreen(
                 status = data.value.first.status,
                 isAuthor = data.value.second,
                 isAccessible = data.value.first.isAccessible,
+                onClick = onClick,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 20.dp)

@@ -112,6 +112,10 @@
     <string name="profile_update_message">Profile updated successfully!</string>
     <string name="profile_deactivation_message">Account deactivated successfully!</string>
 
+    <string name="show_label">Show</string>
+    <string name="sensitive_title">Sensitive content</string>
+    <string name="sensitive_description">This content may be sensitive or abusive. \nDo you want to view it anyway?</string>
+
     <string name="privacy_text">Privacy Policy</string>
     <string name="agreement">I agree to the</string>
     <string name="privacy_agreement">Privacy Policy.</string>
