@@ -7,6 +7,7 @@ import eu.peernetwork.persistence.domain.retrievable.RetrievableString
 import eu.peernetwork.user.domain.interactor.AuthenticationInteractor
 import eu.peernetwork.user.domain.model.Account
 import eu.peernetwork.user.domain.model.Overview
+import eu.peernetwork.user.domain.model.Status
 import eu.peernetwork.user.domain.repository.AccountRepository
 import eu.peernetwork.user.domain.repository.AuthenticationRepository
 import io.mockk.coEvery
@@ -75,6 +76,8 @@ internal class AuthenticationInteractorDelegateTest {
             imageUrl = "<test-image-url>",
             followed = false,
             following = false,
+            isAccessible = true,
+            status = Status.ILLEGAL,
             overview = Overview(
                 posts = 0,
                 peers = 0,
@@ -101,6 +104,8 @@ internal class AuthenticationInteractorDelegateTest {
             imageUrl = "<test-image-url>",
             followed = false,
             following = false,
+            isAccessible = true,
+            status = Status.ILLEGAL,
             overview = Overview(
                 posts = 0,
                 peers = 0,

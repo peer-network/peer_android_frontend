@@ -5,6 +5,7 @@ import eu.peernetwork.user.domain.model.UserDetail
 import protected.eu.peernetwork.user.remote.DeleteAccountMutation
 import protected.eu.peernetwork.user.remote.ProfileQuery
 import protected.eu.peernetwork.user.remote.UpdatePasswordMutation
+import protected.type.ContentVisibilityStatus
 import public.eu.peernetwork.user.remote.RegisterMutation
 import public.eu.peernetwork.user.remote.RequestPasswordResetMutation
 import public.eu.peernetwork.user.remote.ResetPasswordMutation
@@ -35,6 +36,8 @@ object AccountMock {
                 amountfriends = 0,
                 isfollowing = false,
                 isfollowed = false,
+                isHiddenForUsers = true,
+                visibilityStatus = ContentVisibilityStatus.ILLEGAL,
                 hasActiveReports = false
             )
         )
