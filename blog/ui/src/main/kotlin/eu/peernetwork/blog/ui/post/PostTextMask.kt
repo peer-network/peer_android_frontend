@@ -88,13 +88,18 @@ fun PostTextMask() {
 
 @Composable
 fun PostTextMask(onClick: () -> Unit) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
+    Row(
+        modifier = Modifier.padding(top = 4.dp)
+            .padding(horizontal = 8.dp)
+            .padding(bottom = 16.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
         Icon(
             painter = painterResource(R.drawable.ic_hidden),
             contentDescription = stringResource(R.string.hidden_content_label),
             tint = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier
-                .size(42.dp)
+                .size(36.dp)
                 .clip(CircleShape)
                 .background(MaterialTheme.colorScheme.surfaceContainerLowest)
                 .padding(10.dp)
@@ -105,19 +110,19 @@ fun PostTextMask(onClick: () -> Unit) {
             Text(
                 text = stringResource(R.string.hidden_content_label),
                 color = MaterialTheme.colorScheme.onBackground,
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.labelLarge,
                 fontWeight = FontWeight.SemiBold
             )
             Text(
                 text = stringResource(R.string.hidden_content_description),
-                style = MaterialTheme.typography.labelLarge,
+                style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.outline,
                 modifier = Modifier.padding(top = 4.dp)
             )
         }
         DesignOutlineButton(
             onClick = onClick,
-            minHeight = 42.dp,
+            minHeight = 36.dp,
             contentPadding = PaddingValues(
                 horizontal = 24.dp,
                 vertical = 8.dp
