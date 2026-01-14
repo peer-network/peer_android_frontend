@@ -48,6 +48,7 @@
     <string name="show_label">Show</string>
 
     <string name="pin_label">Pin by</string>
+    <string name="hidden_label">Hidden</string>
     <string name="hidden_content_action">View content</string>
     <string name="hidden_content_label">Sensitive content</string>
     <string name="hidden_content_description">This content may be sensitive or abusive.</string>

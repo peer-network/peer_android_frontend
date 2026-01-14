@@ -2,6 +2,7 @@ package eu.peernetwork.blog.ui.post
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -13,6 +14,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -22,7 +25,11 @@ import eu.peernetwork.core.ui.theme.DesignTheme
 import eu.peernetwork.core.ui.theme.PeerAppRed
 
 @Composable
-fun PostReportLabel() {
+fun PostLabel(
+    color: Color,
+    painter: Painter,
+    contentDescription: String,
+) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(2.dp),
@@ -32,23 +39,44 @@ fun PostReportLabel() {
             .padding(horizontal = 6.dp)
     ) {
         Icon(
-            painter = painterResource(R.drawable.ic_flag),
-            contentDescription = stringResource(R.string.reported_label),
-            tint = PeerAppRed,
+            painter = painter,
+            contentDescription = contentDescription,
+            tint = color,
             modifier = Modifier.size(10.dp)
         )
         Text(
-            text = stringResource(R.string.reported_label),
+            text = contentDescription,
             style = MaterialTheme.typography.labelSmall,
-            color = PeerAppRed
+            color = color
         )
     }
+}
+
+@Composable
+fun PostReportLabel() {
+    PostLabel(
+        color = PeerAppRed,
+        painter = painterResource(R.drawable.ic_flag),
+        contentDescription = stringResource(R.string.reported_label)
+    )
+}
+
+@Composable
+fun PostVisibilityLabel() {
+    PostLabel(
+        color = MaterialTheme.colorScheme.outline,
+        painter = painterResource(R.drawable.ic_hidden),
+        contentDescription = stringResource(R.string.hidden_label)
+    )
 }
 
 @Preview
 @Composable
 fun PreviewPostReportLabel() {
     DesignTheme(isDarkMode = true) {
-        PostReportLabel()
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            PostReportLabel()
+            PostVisibilityLabel()
+        }
     }
 }

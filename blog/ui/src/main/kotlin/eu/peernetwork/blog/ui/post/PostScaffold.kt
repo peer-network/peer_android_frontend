@@ -72,6 +72,7 @@ fun PostScaffold(
 @Composable
 fun PostScaffold(
     model: UiPostDetail,
+    isAuthor: Boolean = false,
     pinnedBy: String? = null,
     onMenu: () -> Unit,
     onClick: () -> Unit,
@@ -103,10 +104,12 @@ fun PostScaffold(
             updatedContent()
             PostStatus(
                 time = context.format(model.time),
-                engagement = engagement,
+                content = engagement,
                 reported = model.reported,
+                isAccessible = if (isAuthor) {
+                    model.isAccessible
+                } else { true },
                 modifier = Modifier.padding(horizontal = 10.dp)
-                    .padding(bottom = 10.dp)
             )
         }
     }
@@ -127,6 +130,7 @@ fun BoxScope.PostScaffoldBackground(
 @Composable
 fun PostExpandedScaffold(
     model: UiPostDetail,
+    isAuthor: Boolean = false,
     pinnedBy: String? = null,
     onMenu: () -> Unit,
     onClick: () -> Unit,
@@ -161,6 +165,9 @@ fun PostExpandedScaffold(
             reported = model.reported,
             title = model.title,
             isVisible = isVisible.value,
+            isAccessible = if (isAuthor) {
+                model.isAccessible
+            } else { true },
             description = model.description,
             time = context.format(model.time),
             engagement = engagement,
@@ -186,6 +193,7 @@ fun PreviewPostScaffold() {
             },
             time = UiTimer.Date("Oct 20, 2023"),
             reported = true,
+            isAccessible = true,
         )
         val engagement = UiEngagement(
             id = "<test-id>",

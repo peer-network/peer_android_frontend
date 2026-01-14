@@ -17,18 +17,14 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import eu.peernetwork.blog.ui.R
 import eu.peernetwork.blog.ui.engagement.EngagementReaction
 import eu.peernetwork.blog.ui.model.UiEngagement
 import eu.peernetwork.core.ui.design.luna.DesignRichText
@@ -46,7 +42,8 @@ fun PostStatus(
     val updatedLabel by rememberUpdatedState(label)
     Column(modifier = modifier) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Box(modifier = Modifier.weight(1f)) {
+            Box(modifier = Modifier.weight(1f)
+                .padding(bottom = 2.dp)) {
                 updatedLabel?.invoke()
             }
             if (reported) {
@@ -75,29 +72,20 @@ fun PostStatus(
 @Composable
 fun PostStatus(
     time: String,
-    pinnedBy: String,
     modifier: Modifier = Modifier,
     reported: Boolean = false,
-    engagement: @Composable () -> Unit
+    isAccessible: Boolean = false,
+    content: @Composable () -> Unit
 ) {
     Column(modifier = modifier) {
-        val pinnedText = buildAnnotatedString {
-            append(stringResource(R.string.pin_label))
-            append(" ")
-            withStyle(style = SpanStyle(
-                fontWeight = FontWeight.SemiBold
-            )) { append(pinnedBy) }
-        }
         PostStatus(
             time = time,
-            engagement = engagement,
+            engagement = content,
             reported = reported,
             label = {
-                Text(
-                    text = pinnedText,
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.outline,
-                )
+                if (!isAccessible) {
+                    PostVisibilityLabel()
+                }
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -113,7 +101,8 @@ fun PostStatus(
     title: AnnotatedString,
     description: AnnotatedString,
     modifier: Modifier = Modifier,
-    isVisible: Boolean = false,
+    isVisible: Boolean = true,
+    isAccessible: Boolean = false,
     reported: Boolean = false,
     onClick: (DesignRichText, String) -> Unit,
     engagement: @Composable () -> Unit
@@ -130,7 +119,7 @@ fun PostStatus(
             engagement = engagement,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 10.dp)
+                .padding(vertical = 8.dp)
         )
         Row {
             Text(
@@ -164,7 +153,9 @@ fun PostStatus(
                             onClick = onClick,
                         )
                     }
-                    if (reported) {
+                    if (!isAccessible) {
+                        PostVisibilityLabel()
+                    } else if (reported) {
                         PostReportLabel()
                     }
                 }
@@ -205,11 +196,11 @@ fun PreviewPostStatus() {
             Spacer(modifier = Modifier.height(8.dp))
             PostStatus(
                 time = "2h ago",
-                pinnedBy = "Thomas",
                 reported = true,
                 modifier = Modifier
-                    .padding(horizontal = 16.dp)
-            ) { EngagementReaction(engagement) {} }
+                    .padding(horizontal = 16.dp),
+                content = { EngagementReaction(engagement) {} }
+            )
             PostStatus(
                 time = "2h ago",
                 username = "John",

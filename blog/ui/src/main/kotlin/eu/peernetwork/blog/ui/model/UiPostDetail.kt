@@ -13,5 +13,6 @@ data class UiPostDetail(
     val imageUrl: String,
     val time: UiTimer,
     val reported: Boolean,
+    val isAccessible: Boolean,
     val pinnedBy: String? = null,
 )
