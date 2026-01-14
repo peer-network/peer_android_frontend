@@ -113,7 +113,7 @@ fun PostStatus(
     title: AnnotatedString,
     description: AnnotatedString,
     modifier: Modifier = Modifier,
-    pinnedBy: String? = null,
+    isVisible: Boolean = false,
     reported: Boolean = false,
     onClick: (DesignRichText, String) -> Unit,
     engagement: @Composable () -> Unit
@@ -152,27 +152,36 @@ fun PostStatus(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    DesignRichText(
-                        text = title,
-                        maxLines = 1,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onBackground,
-                        onClick = onClick,
+                    PostTextMask(
+                        isVisible = isVisible,
                         modifier = Modifier.weight(1f)
-                    )
+                    ) {
+                        DesignRichText(
+                            text = title,
+                            maxLines = 1,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onBackground,
+                            onClick = onClick,
+                        )
+                    }
                     if (reported) {
                         PostReportLabel()
                     }
                 }
                 if (description.isNotEmpty()) {
-                    DesignRichText(
-                        text = description,
-                        maxLines = 3,
-                        style = MaterialTheme.typography.labelLarge,
-                        color = MaterialTheme.colorScheme.outline,
-                        lineHeight = 18.sp,
-                        onClick = onClick
-                    )
+                    PostTextMask(
+                        isVisible = isVisible,
+                        fraction = .6f
+                    ) {
+                        DesignRichText(
+                            text = description,
+                            maxLines = 3,
+                            style = MaterialTheme.typography.labelLarge,
+                            color = MaterialTheme.colorScheme.outline,
+                            lineHeight = 18.sp,
+                            onClick = onClick
+                        )
+                    }
                 }
             }
         }
@@ -204,7 +213,6 @@ fun PreviewPostStatus() {
             PostStatus(
                 time = "2h ago",
                 username = "John",
-                pinnedBy = "Thomas",
                 reported = true,
                 title = buildAnnotatedString { append("Title") },
                 description = buildAnnotatedString { append("Description") },

@@ -14,6 +14,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberUpdatedState
@@ -38,11 +39,11 @@ fun PostMask(
     status: UiStatus,
     isAuthor: Boolean,
     isAccessible: Boolean,
+    isVisible: MutableState<Boolean>,
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit
 ) {
     val updatedContent by rememberUpdatedState(content)
-    val isVisible = rememberSaveable { mutableStateOf(false) }
     Box(
         modifier = modifier,
         contentAlignment = Alignment.Center
@@ -131,10 +132,12 @@ fun PostMask(onClick: () -> Unit) {
 @Preview
 fun PreviewPostMask() {
     DesignTheme(isDarkMode = true) {
+        val isVisible = rememberSaveable { mutableStateOf(false) }
         PostMask(
             status = UiStatus.ILLEGAL,
             isAuthor = false,
             isAccessible = false,
+            isVisible = isVisible,
             Modifier.fillMaxWidth()
             .aspectRatio(1f)) {
         }

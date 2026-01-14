@@ -17,7 +17,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -128,6 +131,7 @@ fun PostExpandedScaffold(
     onMenu: () -> Unit,
     onClick: () -> Unit,
     onAuthorClick: () -> Unit,
+    isVisible: State<Boolean>,
     engagement: @Composable () -> Unit,
     onContentClick: (DesignRichText, String) -> Unit,
     connection: @Composable RowScope.() -> Unit,
@@ -154,9 +158,9 @@ fun PostExpandedScaffold(
         ) { updatedContent() }
         PostStatus(
             username = model.username,
-            pinnedBy = pinnedBy,
             reported = model.reported,
             title = model.title,
+            isVisible = isVisible.value,
             description = model.description,
             time = context.format(model.time),
             engagement = engagement,
@@ -192,6 +196,7 @@ fun PreviewPostScaffold() {
             views = "3k",
             comment = "1k"
         )
+        val isVisible = remember { mutableStateOf(true) }
         Column(modifier = Modifier.fillMaxSize()) {
             Spacer(modifier = Modifier.height(8.dp))
             PostScaffold(
@@ -235,6 +240,7 @@ fun PreviewPostScaffold() {
                 pinnedBy = "Thomas",
                 onMenu = {},
                 onClick = {},
+                isVisible = isVisible,
                 onAuthorClick = {},
                 engagement = { EngagementReaction(engagement) {} },
                 connection = {

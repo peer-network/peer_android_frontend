@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableFloatState
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableLongStateOf
@@ -38,6 +39,7 @@ fun BoxWithConstraintsScope.GalleryMedia(
     hasMedia: Boolean,
     isAccessible: Boolean,
     enabled: State<Boolean>,
+    isVisible: MutableState<Boolean>,
     progress: MutableFloatState,
 ) {
     val density = LocalDensity.current
@@ -60,7 +62,8 @@ fun BoxWithConstraintsScope.GalleryMedia(
         PostMask(
             status = post.status,
             isAuthor = isAdmin,
-            isAccessible = isAccessible
+            isAccessible = isAccessible,
+            isVisible = isVisible,
         ) {
             interactor.component().videoPlayer()(
                 Modifier,
@@ -86,7 +89,8 @@ fun BoxWithConstraintsScope.GalleryMedia(
         PostMask(
             status = post.status,
             isAuthor = isAdmin,
-            isAccessible = isAccessible
+            isAccessible = isAccessible,
+            isVisible = isVisible,
         ) {
             interactor.component().imageView()(
                 Modifier,
@@ -101,7 +105,8 @@ fun BoxWithConstraintsScope.GalleryMedia(
         PostMask(
             status = post.status,
             isAuthor = isAdmin,
-            isAccessible = isAccessible
+            isAccessible = isAccessible,
+            isVisible = isVisible,
         ) {
             interactor.component().audioPlayer()(
                 Modifier,
@@ -121,7 +126,8 @@ fun BoxWithConstraintsScope.GalleryMedia(
         PostMask(
             status = post.status,
             isAuthor = isAdmin,
-            isAccessible = isAccessible
+            isAccessible = isAccessible,
+            isVisible = isVisible,
         ) {
             GalleryCaption(
                 description = post.description,

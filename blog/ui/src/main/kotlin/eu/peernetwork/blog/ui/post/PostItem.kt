@@ -8,7 +8,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -28,6 +32,7 @@ fun PostItem(
     status: UiStatus,
     isAuthor: Boolean,
     isAccessible: Boolean,
+    isVisible: MutableState<Boolean>,
     onMenu: () -> Unit,
     onClick: () -> Unit,
     onAuthorClick: () -> Unit,
@@ -51,6 +56,7 @@ fun PostItem(
             PostTextMask(
                 status = status,
                 isAuthor = isAuthor,
+                isVisible = isVisible,
                 isAccessible = isAccessible
             ) {
                 PostText(
@@ -73,6 +79,7 @@ fun PostItem(
             PostTextMask(
                 status = status,
                 isAuthor = isAuthor,
+                isVisible = isVisible,
                 isAccessible = isAccessible
             ) {
                 Column {
@@ -93,6 +100,7 @@ fun PostItem(
             pinnedBy = pinnedBy,
             onMenu = onMenu,
             onClick = onClick,
+            isVisible = isVisible,
             onAuthorClick = onAuthorClick,
             onContentClick = onContentClick,
             connection = connection,

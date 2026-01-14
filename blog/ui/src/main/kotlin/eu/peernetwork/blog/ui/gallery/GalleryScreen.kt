@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -85,14 +86,17 @@ fun GalleryScreen(
                 }
             }
         ) { media, hasMedia ->
+            val isAuthor = uuid == post.author.id
+            val isVisible = remember { mutableStateOf(!post.isAccessible || isAuthor) }
             GalleryMedia(
                 media = media,
                 post = post,
                 position = position,
-                isAdmin = uuid == post.author.id,
+                isAdmin = isAuthor,
                 hasMedia = hasMedia,
                 isAccessible = post.isAccessible,
                 enabled = enabled,
+                isVisible = isVisible,
                 progress = progress
             )
         }
