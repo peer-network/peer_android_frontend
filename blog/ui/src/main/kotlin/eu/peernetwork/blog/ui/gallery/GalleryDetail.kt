@@ -6,6 +6,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.buildAnnotatedString
@@ -13,6 +16,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import eu.peernetwork.blog.ui.post.PostTextMask
 import eu.peernetwork.core.ui.design.luna.DesignRichText
 import eu.peernetwork.core.ui.theme.DesignTheme
 
@@ -21,29 +25,40 @@ fun GalleryDetail(
     title: AnnotatedString,
     description: AnnotatedString,
     time: String,
+    isVisible: MutableState<Boolean>,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(12.dp),
     onClick: (DesignRichText, String) -> Unit,
 ) {
     Column(modifier = Modifier.then(modifier)
         .padding(contentPadding)) {
-        DesignRichText(
-            text = title,
-            maxLines = 1,
-            color = MaterialTheme.colorScheme.onBackground,
-            style = MaterialTheme.typography.bodyMedium,
-            onClick = onClick
-        )
-        if (description.trim().isNotEmpty()) {
+        PostTextMask(
+            isVisible = isVisible.value,
+            fraction = .3f
+        ) {
             DesignRichText(
-                text = description,
-                maxLines = 2,
-                lineHeight = 18.sp,
-                style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.outline,
-                modifier = Modifier.padding(top = 4.dp),
+                text = title,
+                maxLines = 1,
+                color = MaterialTheme.colorScheme.onBackground,
+                style = MaterialTheme.typography.bodyMedium,
                 onClick = onClick
             )
+        }
+        if (description.trim().isNotEmpty()) {
+            PostTextMask(
+                isVisible = isVisible.value,
+                fraction = .6f,
+                modifier = Modifier.padding(top = 4.dp),
+            ) {
+                DesignRichText(
+                    text = description,
+                    maxLines = 2,
+                    lineHeight = 18.sp,
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.outline,
+                    onClick = onClick
+                )
+            }
         }
         Text(
             text = time,
@@ -59,8 +74,10 @@ fun GalleryDetail(
 @Preview
 fun PreviewGalleryDetail() {
     DesignTheme(isDarkMode = true) {
+        val isVisible = remember { mutableStateOf(true) }
         GalleryDetail(
             time = "2hr ago",
+            isVisible = isVisible,
             title = buildAnnotatedString { append("John Doe") },
             description = buildAnnotatedString {
                 append("This is a mock description for a content post. It's purely for testing.")

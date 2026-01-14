@@ -41,6 +41,8 @@ fun GalleryScreen(
     val engagementInteractor = LocalEngagementInteractor.current
     val interactor = LocalPostInteractor.current
     val progress = remember { mutableFloatStateOf(0f) }
+    val isAuthor = uuid == post.author.id
+    val isVisible = remember { mutableStateOf(post.isAccessible || isAuthor) }
     EngagementReactionStream(
         post = post,
         state = engagementInteractor.observe()
@@ -54,6 +56,7 @@ fun GalleryScreen(
             imageUrl = post.author.imageUrl,
             time = context.format(post.time),
             asset = post.asset,
+            isVisible = isVisible,
             engagement = engagement,
             onEngage = { reaction(post, it) },
             onMenu = { showSheet.value = post },
@@ -86,8 +89,6 @@ fun GalleryScreen(
                 }
             }
         ) { media, hasMedia ->
-            val isAuthor = uuid == post.author.id
-            val isVisible = remember { mutableStateOf(!post.isAccessible || isAuthor) }
             GalleryMedia(
                 media = media,
                 post = post,

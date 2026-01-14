@@ -13,9 +13,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
@@ -50,6 +52,7 @@ fun GalleryScaffold(
     imageUrl: String,
     time: String,
     asset: UiAsset,
+    isVisible: MutableState<Boolean>,
     engagement: State<UiEngagement>,
     onEngage: (EngagementReaction.State) -> Unit,
     onMenu: () -> Unit,
@@ -125,6 +128,7 @@ fun GalleryScaffold(
                     GalleryDetail(
                         title = title,
                         time = time,
+                        isVisible = isVisible,
                         description = if (type == UiPostType.TEXT) {
                             buildAnnotatedString {  }
                         } else { description },
@@ -154,6 +158,7 @@ fun PreviewGalleryScaffold() {
             UiMedia("http://localhost", UiDisplay("", null)),
         )
     )
+    val isVisible = remember { mutableStateOf(true) }
     val engagement = remember {
         derivedStateOf {
             UiEngagement(
@@ -179,6 +184,7 @@ fun PreviewGalleryScaffold() {
             imageUrl = "http://localhost",
             time = "2hr ago",
             asset = asset,
+            isVisible = isVisible,
             engagement = engagement,
             onEngage = {},
             onMenu = {},
