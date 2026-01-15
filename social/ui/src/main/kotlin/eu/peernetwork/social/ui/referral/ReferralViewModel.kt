@@ -23,43 +23,43 @@ class ReferralViewModel @Inject constructor(
     private val usecase: ReferralPagingUsecase,
     private val inviteUsecase: InviteUsecase
 ) : ViewModel() {
-    private val mutableState = MutableStateFlow<State>(State.Empty)
+    private val _state = MutableStateFlow<State>(State.Empty)
 
-    private val mutableInviteState = MutableStateFlow<Status>(Status.Empty)
+    private val _inviteState = MutableStateFlow<Status>(Status.Empty)
 
-    val state: StateFlow<State> = mutableState.asStateFlow()
+    val state: StateFlow<State> = _state.asStateFlow()
 
-    val invite: StateFlow<Status> = mutableInviteState.asStateFlow()
+    val invite: StateFlow<Status> = _inviteState.asStateFlow()
 
     fun referral(userId:String, pageable: Pageable) {
         viewModelScope.launch {
-            mutableState.emit(State.Loading)
+            _state.emit(State.Loading)
             usecase(
                 ReferralPagingUsecase.Parameter(userId, pageable)
-            ).catch { mutableState.tryEmit(State.Error(it)) }
-                .onStart { mutableState.tryEmit(State.Loading) }
+            ).catch { _state.tryEmit(State.Error(it)) }
+                .onStart { _state.tryEmit(State.Loading) }
                 .cachedIn(viewModelScope)
                 .apply {
-                    collectLatest { mutableState.tryEmit(State.Success(this)) }
+                    collectLatest { _state.tryEmit(State.Success(this)) }
                 }
         }
     }
 
     fun invite() {
         viewModelScope.launch {
-            mutableInviteState.value = Status.Loading
+            _inviteState.value = Status.Loading
             try {
                 val result = inviteUsecase()
-                mutableInviteState.value = Status.Success(result)
+                _inviteState.value = Status.Success(result)
             } catch (error: Throwable) {
-                mutableInviteState.value = Status.Error(error)
+                _inviteState.value = Status.Error(error)
             }
         }
     }
 
     fun reset() {
         viewModelScope.launch {
-            mutableState.tryEmit(State.Empty)
+            _state.tryEmit(State.Empty)
         }
     }
 

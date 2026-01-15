@@ -34,7 +34,8 @@ object AccountMock {
                 amountfollower = 0,
                 amountfriends = 0,
                 isfollowing = false,
-                isfollowed = false
+                isfollowed = false,
+                hasActiveReports = false
             )
         )
     }

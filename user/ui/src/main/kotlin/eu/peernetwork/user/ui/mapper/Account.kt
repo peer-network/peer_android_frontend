@@ -17,7 +17,8 @@ fun Account.mapFromDomain(): UiAccount {
             followed = overview.followed,
             peers = overview.peers
         ),
-        isFollowing = isfollowing,
-        isFollowed = isfollowed
+        isFollowing = following,
+        isFollowed = followed,
+        reported = reported
     )
 }

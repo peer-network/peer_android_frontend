@@ -6,7 +6,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import eu.peernetwork.app.mapper.toUiToken
-import eu.peernetwork.blog.ui.engagement.EngagementDialog
+import eu.peernetwork.blog.ui.engagement.EngagementModal
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.luna.DesignStream
 import eu.peernetwork.core.ui.design.luna.DesignStreamState
@@ -16,11 +16,11 @@ import javax.inject.Inject
 
 class EngagementRenderer @Inject constructor(
     private val provider: UiComponentProvider
-) : EngagementDialog {
+) : EngagementModal {
     @Composable
     override fun invoke(
         modifier: Modifier,
-        spec: EngagementDialog.Spec
+        spec: EngagementModal.Spec
     ) {
         val showSheet = remember { derivedStateOf { spec.type.value != null } }
         val streamState = remember { derivedStateOf {

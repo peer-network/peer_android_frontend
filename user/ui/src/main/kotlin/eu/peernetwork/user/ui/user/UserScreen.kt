@@ -32,6 +32,7 @@ fun UserScreen(
     provider: UiComponentProvider,
     connection: @Composable (Pair<Boolean, Boolean>) -> Unit,
     onClick: (UserMetric) -> Unit,
+    onBlock: () -> Unit,
     onSettings: () -> Unit,
     onMenuClicked: () -> Unit,
     viewModelStoreOwner: ViewModelStoreOwner,
@@ -112,6 +113,7 @@ fun UserScreen(
                     provider = component,
                     viewModelStoreOwner = viewModelStoreOwner,
                     onSettings = onSettings,
+                    onBlock = onBlock,
                     onMenuClicked = onMenuClicked
                 ) {
                     updatedConnection(data.value.first.isFollowing

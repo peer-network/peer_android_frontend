@@ -19,7 +19,6 @@ import eu.peernetwork.app.ui.profile.Profile
 import eu.peernetwork.app.ui.renderer.EngagementRenderer
 import eu.peernetwork.app.ui.search.Search
 import eu.peernetwork.app.ui.wallet.Wallet
-import eu.peernetwork.blog.ui.engagement.EngagementDialog
 import eu.peernetwork.messaging.ui.chat.Chat
 import eu.peernetwork.social.ui.feedback.Feedback
 import eu.peernetwork.wallet.ui.confirmation.Confirmation
@@ -137,7 +136,7 @@ object HomeModule {
 
     @Provides
     @Home.Scope
-    fun provideEngagementRenderer(component: Home.Component): EngagementDialog {
+    fun provideEngagementRenderer(component: Home.Component): eu.peernetwork.blog.ui.engagement.EngagementModal {
         return EngagementRenderer(component)
     }
 }

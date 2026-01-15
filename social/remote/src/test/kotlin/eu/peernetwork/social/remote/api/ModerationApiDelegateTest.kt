@@ -7,7 +7,7 @@ import com.apollographql.apollo3.api.Optional
 import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.core.remote.api.RequestClient
 import eu.peernetwork.core.remote.model.Status
-import eu.peernetwork.social.data.api.BlockApi
+import eu.peernetwork.social.data.api.ModerationApi
 import eu.peernetwork.social.remote.mock.BlockMock
 import io.mockk.coEvery
 import io.mockk.every
@@ -23,14 +23,14 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 
-internal class BlockApiDelegateTest {
+internal class ModerationApiDelegateTest {
     private val client = mockk<ApolloClient>()
     private val url = "http://localhost"
-    private lateinit var api: BlockApi
+    private lateinit var api: ModerationApi
 
     @Before
     fun setup() {
-        api = BlockApiDelegate(url, object : RequestClient {
+        api = ModerationApiDelegate(url, object : RequestClient {
             override fun invoke(): ApolloClient = client
         })
     }

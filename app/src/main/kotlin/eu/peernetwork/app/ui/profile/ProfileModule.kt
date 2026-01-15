@@ -13,7 +13,6 @@ import eu.peernetwork.app.ui.renderer.EngagementRenderer
 import eu.peernetwork.app.ui.search.Search
 import eu.peernetwork.app.ui.settings.Settings
 import eu.peernetwork.app.ui.screen.Screen
-import eu.peernetwork.blog.ui.engagement.EngagementDialog
 import eu.peernetwork.blog.ui.article.Article
 import eu.peernetwork.core.ui.annotation.UiBuilder
 import eu.peernetwork.core.ui.component.UiComponent
@@ -23,6 +22,7 @@ import eu.peernetwork.social.ui.connection.Connection
 import eu.peernetwork.social.ui.followers.Followers
 import eu.peernetwork.social.ui.followings.Followings
 import eu.peernetwork.social.ui.peers.Peers
+import eu.peernetwork.social.ui.report.Report
 import eu.peernetwork.user.ui.user.User
 import eu.peernetwork.wallet.ui.balance.Balance
 import eu.peernetwork.wallet.ui.confirmation.Confirmation
@@ -40,6 +40,14 @@ object ProfileModule {
     @UiBuilder(Profile.Builder::class)
     fun provideProfileBuilder(component: Profile.Component): UiComponent.Builder {
         return Profile.Builder(component)
+    }
+
+    @Profile.Scope
+    @Provides
+    @IntoMap
+    @UiBuilder(Report.Builder::class)
+    fun provideReportBuilder(component: Profile.Component): UiComponent.Builder {
+        return Report.Builder(component)
     }
 
     @Profile.Scope
@@ -124,7 +132,7 @@ object ProfileModule {
 
     @Profile.Scope
     @Provides
-    fun provideEngagementRenderer(component: Profile.Component): EngagementDialog {
+    fun provideEngagementRenderer(component: Profile.Component): eu.peernetwork.blog.ui.engagement.EngagementModal {
         return EngagementRenderer(component)
     }
 

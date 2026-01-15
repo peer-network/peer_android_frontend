@@ -26,23 +26,34 @@ import eu.peernetwork.user.ui.R
 fun OptionSheet(
     isAdmin: Boolean,
     state: MutableState<Boolean>,
+    onBlock: () -> Unit,
     onMenuClicked: () -> Unit
 ) {
     val confirmed = remember { mutableStateOf(false) }
+    val handleBlock by rememberUpdatedState(onBlock)
     val handleConfirm by rememberUpdatedState(onMenuClicked)
+    val isBlock = remember { mutableStateOf(false) }
     DesignBottomSheetScaffold(
         state = state,
         color = MaterialTheme.colorScheme.surfaceDim,
+        dismissable = true,
         onDismiss = {
             state.value = false
             if (confirmed.value) {
                 handleConfirm()
                 confirmed.value = false
+            } else if (isBlock.value) {
+                handleBlock()
+                isBlock.value = false
             }
         }
     ) {
         OptionSheet(
             isAdmin = isAdmin,
+            onBlock = {
+                isBlock.value = true
+                state.value = false
+            },
             onMenuClicked = {
                 confirmed.value = true
                 state.value = false
@@ -54,6 +65,7 @@ fun OptionSheet(
 @Composable
 fun OptionSheet(
     isAdmin: Boolean,
+    onBlock: () -> Unit,
     onMenuClicked: () -> Unit,
     onCancel: () -> Unit,
 ) {
@@ -68,6 +80,14 @@ fun OptionSheet(
                 label = stringResource(R.string.ads_label),
                 painter = painterResource(R.drawable.ic_ads),
                 onClick = onMenuClicked
+            )
+        } else {
+            DesignItem(
+                label = stringResource(R.string.report_label),
+                size = 20.dp,
+                minSize = 28.dp,
+                painter = painterResource(R.drawable.ic_report),
+                onClick = onBlock
             )
         }
         DesignItem(
@@ -85,6 +105,6 @@ fun OptionSheet(
 @OptIn(ExperimentalMaterial3Api::class)
 fun PreviewOptionSheet() {
     DesignTheme(isDarkMode = true) {
-        OptionSheet(true, {}) {}
+        OptionSheet(true, {}, {}) {}
     }
 }

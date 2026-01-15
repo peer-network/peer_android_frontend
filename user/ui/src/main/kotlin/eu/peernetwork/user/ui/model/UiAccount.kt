@@ -11,5 +11,6 @@ data class UiAccount(
     val imageUrl: String,
     val metric: UiMetric,
     val isFollowing: Boolean,
-    val isFollowed: Boolean
+    val isFollowed: Boolean,
+    val reported: Boolean = false
 )

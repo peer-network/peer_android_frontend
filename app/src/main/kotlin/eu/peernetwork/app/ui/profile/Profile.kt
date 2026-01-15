@@ -17,6 +17,7 @@ import eu.peernetwork.social.ui.connection.Connection
 import eu.peernetwork.social.ui.followers.Followers
 import eu.peernetwork.social.ui.followings.Followings
 import eu.peernetwork.social.ui.peers.Peers
+import eu.peernetwork.social.ui.report.Report
 import eu.peernetwork.user.ui.user.User
 import eu.peernetwork.wallet.ui.balance.Balance
 import eu.peernetwork.wallet.ui.confirmation.Confirmation
@@ -51,6 +52,7 @@ interface Profile : ApplicationProvider {
         Service,
         Checkout,
         Feed,
+        Report,
         Screen
 
     class Builder(private val dependency: Profile) : UiComponent.DefaultBuilder<Profile, Component>() {

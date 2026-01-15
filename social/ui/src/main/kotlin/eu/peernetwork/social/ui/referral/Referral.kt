@@ -7,7 +7,7 @@ import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.social.ui.connection.Connection
 import eu.peernetwork.social.ui.provider.SocialProvider
 
-interface Referral: SocialProvider {
+interface Referral : SocialProvider {
     @javax.inject.Scope
     @Retention(AnnotationRetention.RUNTIME)
     annotation class Scope

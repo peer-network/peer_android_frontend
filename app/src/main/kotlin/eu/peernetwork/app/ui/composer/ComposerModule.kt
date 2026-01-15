@@ -5,7 +5,7 @@ import dagger.Provides
 import dagger.multibindings.IntoMap
 import eu.peernetwork.app.ui.renderer.EngagementRenderer
 import eu.peernetwork.blog.ui.creator.Creator
-import eu.peernetwork.blog.ui.engagement.EngagementDialog
+import eu.peernetwork.blog.ui.engagement.EngagementModal
 import eu.peernetwork.core.ui.annotation.UiBuilder
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
@@ -60,7 +60,7 @@ object ComposerModule {
 
     @Composer.Scope
     @Provides
-    fun provideEngagementRenderer(component: Composer.Component): EngagementDialog {
+    fun provideEngagementRenderer(component: Composer.Component): EngagementModal {
         return EngagementRenderer(component)
     }
 
