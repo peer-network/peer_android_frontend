@@ -42,6 +42,7 @@ fun Content.Type.mapFromDomain(): UiPostType {
 fun UiPost.mapToDetail(): UiPostDetail {
     return UiPostDetail(
         id = id,
+        uuid = author.id,
         slug = "#${author.slug}",
         username = author.username,
         title = title,

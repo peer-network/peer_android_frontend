@@ -48,18 +48,16 @@ fun PostMask(
         modifier = modifier,
         contentAlignment = Alignment.Center
     ) {
-        if (isAuthor) {
-            updatedContent()
-        } else if (!isAccessible) {
+        if (status == UiStatus.ILLEGAL) {
+            PostMask()
+        } else if (!isAccessible && !isAuthor) {
             if (isVisible.value) {
                 updatedContent()
             } else {
                 PostMask { isVisible.value = true }
             }
-        } else if (status == UiStatus.VISIBLE) {
-            updatedContent()
         } else {
-            PostMask()
+            updatedContent()
         }
     }
 }
@@ -133,13 +131,23 @@ fun PostMask(onClick: () -> Unit) {
 fun PreviewPostMask() {
     DesignTheme(isDarkMode = true) {
         val isVisible = remember { mutableStateOf(false) }
-        PostMask(
-            status = UiStatus.ILLEGAL,
-            isAuthor = false,
-            isAccessible = false,
-            isVisible = isVisible,
-            Modifier.fillMaxWidth()
-            .aspectRatio(1f)) {
+        Column(verticalArrangement = Arrangement.spacedBy(16.dp)){
+            PostMask(
+                status = UiStatus.ILLEGAL,
+                isAuthor = false,
+                isAccessible = false,
+                isVisible = isVisible,
+                Modifier.fillMaxWidth()
+                    .aspectRatio(1f)) {
+            }
+            PostMask(
+                status = UiStatus.HIDDEN,
+                isAuthor = false,
+                isAccessible = false,
+                isVisible = isVisible,
+                Modifier.fillMaxWidth()
+                    .aspectRatio(1f)) {
+            }
         }
     }
 }

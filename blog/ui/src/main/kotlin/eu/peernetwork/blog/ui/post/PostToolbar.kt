@@ -55,6 +55,7 @@ fun PostToolbar(
         isAccessible = isAccessible,
         pinnedBy = pinnedBy,
         onMenu = onMenu,
+        onClick = onAuthorClick,
         connection = connection,
     ) {
         PostToolbar(

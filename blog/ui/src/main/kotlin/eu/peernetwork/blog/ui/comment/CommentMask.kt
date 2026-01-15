@@ -2,6 +2,7 @@ package eu.peernetwork.blog.ui.comment
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -40,18 +41,16 @@ fun CommentMask(
     val updatedContent by rememberUpdatedState(content)
     val isVisible = remember { mutableStateOf(false) }
     Box(modifier = modifier) {
-        if (isAuthor) {
-            updatedContent()
-        } else if (!isAccessible) {
+        if (status == UiStatus.ILLEGAL) {
+            CommentMask()
+        } else if (!isAccessible && !isAuthor) {
             if (isVisible.value) {
                 updatedContent()
             } else {
                 CommentMask { isVisible.value = true }
             }
-        } else if (status == UiStatus.VISIBLE) {
-            updatedContent()
         } else {
-            CommentMask()
+            updatedContent()
         }
     }
 }
@@ -127,13 +126,17 @@ fun CommentMask() {
 @Preview
 fun PreviewCommentMask() {
     DesignTheme(isDarkMode = true) {
-        Column {
+        Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+            CommentMask(
+                status = UiStatus.ILLEGAL,
+                isAuthor = false,
+                isAccessible = false,
+            ) {}
             CommentMask(
                 status = UiStatus.HIDDEN,
                 isAuthor = false,
                 isAccessible = false,
             ) {}
-            CommentMask()
         }
     }
 }

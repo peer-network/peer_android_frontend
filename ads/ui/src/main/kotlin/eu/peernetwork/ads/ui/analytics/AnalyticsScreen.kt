@@ -12,6 +12,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import eu.peernetwork.ads.ui.article.ArticleNavigator.Companion.LocalArticleNavigator
 import eu.peernetwork.ads.ui.extension.route
+import eu.peernetwork.ads.ui.model.UiStatus
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.luna.DesignRefreshScaffold
 import eu.peernetwork.core.ui.design.luna.DesignStream
@@ -72,6 +73,11 @@ fun AnalyticsScreen(
                 to = target.value.campaign.ads.to,
                 start = target.value.campaign.ads.start,
                 end = target.value.campaign.ads.end,
+                isAccessible = target.value.campaign.ads.content.status != UiStatus.ILLEGAL,
+                label = if (!target.value.campaign.ads.content.isAccessible
+                    || target.value.campaign.ads.content.status != UiStatus.VISIBLE) {
+                    { AnalyticsVisibilityLabel(target.value.campaign.ads.content.status) }
+                } else { null },
                 onClick = { type, value ->
                     navigator.navigate(type.route(value))
                 },

@@ -1,6 +1,7 @@
 package eu.peernetwork.blog.ui.post
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -47,18 +48,16 @@ fun PostTextMask(
         modifier = modifier,
         contentAlignment = Alignment.Center
     ) {
-        if (isAuthor) {
-            updatedContent()
-        } else if (!isAccessible) {
+        if (status == UiStatus.ILLEGAL) {
+            PostTextMask()
+        } else if (!isAccessible && !isAuthor) {
             if (isVisible.value) {
                 updatedContent()
             } else {
                 PostTextMask { isVisible.value = true }
             }
-        } else if (status == UiStatus.VISIBLE) {
-            updatedContent()
         } else {
-            PostTextMask()
+            updatedContent()
         }
     }
 }
@@ -159,14 +158,24 @@ fun PostTextMask(
 @Preview
 fun PreviewPostTextMask() {
     DesignTheme(isDarkMode = true) {
-        val isVisible = remember { mutableStateOf(true) }
-        PostTextMask(
-            status = UiStatus.ILLEGAL,
-            isAuthor = false,
-            isAccessible = true,
-            isVisible = isVisible,
-            Modifier.fillMaxWidth()
-                .padding(8.dp)
-        ) {}
+        val isVisible = remember { mutableStateOf(false) }
+        Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+            PostTextMask(
+                status = UiStatus.ILLEGAL,
+                isAuthor = false,
+                isAccessible = true,
+                isVisible = isVisible,
+                Modifier.fillMaxWidth()
+                    .padding(8.dp)
+            ) {}
+            PostTextMask(
+                status = UiStatus.HIDDEN,
+                isAuthor = false,
+                isAccessible = false,
+                isVisible = isVisible,
+                Modifier.fillMaxWidth()
+                    .padding(8.dp)
+            ) { }
+        }
     }
 }

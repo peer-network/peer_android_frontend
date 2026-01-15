@@ -74,6 +74,7 @@ fun PostStatus(
     time: String,
     modifier: Modifier = Modifier,
     reported: Boolean = false,
+    isAuthor: Boolean = false,
     isAccessible: Boolean = false,
     content: @Composable () -> Unit
 ) {
@@ -81,11 +82,11 @@ fun PostStatus(
         PostStatus(
             time = time,
             engagement = content,
-            reported = reported,
-            label = {
-                if (!isAccessible) {
-                    PostVisibilityLabel()
-                }
+            reported = reported && !(!isAccessible && isAuthor),
+            label = if (!isAccessible && isAuthor) {
+                { PostVisibilityLabel() }
+            } else {
+                null
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -102,6 +103,7 @@ fun PostStatus(
     description: AnnotatedString,
     modifier: Modifier = Modifier,
     isVisible: Boolean = true,
+    isAuthor: Boolean = false,
     isAccessible: Boolean = false,
     reported: Boolean = false,
     onClick: (DesignRichText, String) -> Unit,
@@ -153,7 +155,7 @@ fun PostStatus(
                             onClick = onClick,
                         )
                     }
-                    if (!isAccessible) {
+                    if (!isAccessible && isAuthor) {
                         PostVisibilityLabel()
                     } else if (reported) {
                         PostReportLabel()
@@ -205,6 +207,7 @@ fun PreviewPostStatus() {
                 time = "2h ago",
                 username = "John",
                 reported = true,
+                isAuthor = true,
                 title = buildAnnotatedString { append("Title") },
                 description = buildAnnotatedString { append("Description") },
                 modifier = Modifier

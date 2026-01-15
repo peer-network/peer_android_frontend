@@ -1,8 +1,7 @@
-package eu.peernetwork.blog.ui.post
+package eu.peernetwork.ads.ui.adverts
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -20,12 +19,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import eu.peernetwork.blog.ui.R
+import eu.peernetwork.ads.ui.R
 import eu.peernetwork.core.ui.theme.DesignTheme
-import eu.peernetwork.core.ui.theme.PeerAppRed
 
 @Composable
-fun PostLabel(
+fun AdvertsLabel(
     color: Color,
     painter: Painter,
     contentDescription: String,
@@ -53,17 +51,8 @@ fun PostLabel(
 }
 
 @Composable
-fun PostReportLabel() {
-    PostLabel(
-        color = PeerAppRed,
-        painter = painterResource(R.drawable.ic_flag),
-        contentDescription = stringResource(R.string.reported_label)
-    )
-}
-
-@Composable
-fun PostVisibilityLabel() {
-    PostLabel(
+fun AdvertsVisibilityLabel() {
+    AdvertsLabel(
         color = MaterialTheme.colorScheme.outline,
         painter = painterResource(R.drawable.ic_hidden),
         contentDescription = stringResource(R.string.hidden_label)
@@ -72,11 +61,8 @@ fun PostVisibilityLabel() {
 
 @Preview
 @Composable
-fun PreviewPostLabel() {
+fun PreviewAdvertsLabel() {
     DesignTheme(isDarkMode = true) {
-        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            PostReportLabel()
-            PostVisibilityLabel()
-        }
+        AdvertsVisibilityLabel()
     }
 }

@@ -66,7 +66,7 @@ fun CommentSheet(
     CommentScreen(
         provider = provider,
         viewModelStoreOwner = viewModelStoreOwner
-    ) { component, viewModel ->
+    ) { _, viewModel ->
         val status = viewModel.status.collectAsStateWithLifecycle()
         val navigator = LocalPostNavigator.current
         val isLoading = remember { derivedStateOf { status.value is CommentViewModel.Status.Loading } }
@@ -139,6 +139,7 @@ fun CommentSheet(
                             id = post.value.id,
                             uuid = uuid,
                             limit = 10,
+                            isAuthor = uuid == post.value.uuid,
                             controller = controller,
                             provider = provider,
                             viewModelStoreOwner = viewModelStoreOwner,

@@ -6,6 +6,7 @@ import androidx.compose.ui.text.AnnotatedString
 @Stable
 data class UiPostDetail(
     val id: String,
+    val uuid: String,
     val slug: String,
     val username: String,
     val title: AnnotatedString,

@@ -27,6 +27,8 @@ query Content(
             contenttype
             createdat
             url
+            isHiddenForUsers
+            visibilityStatus
             user {
                 id
                 username

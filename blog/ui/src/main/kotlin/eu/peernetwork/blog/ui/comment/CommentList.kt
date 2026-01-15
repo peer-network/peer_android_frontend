@@ -13,6 +13,7 @@ fun CommentList(
     id: String,
     uuid: String,
     limit: Int,
+    isAuthor: Boolean,
     controller: NavHostController,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
@@ -32,14 +33,14 @@ fun CommentList(
         provider = provider,
         viewModelStoreOwner = viewModelStoreOwner,
         onUserClick = { handleClick(it) }
-    ) { component, interactor, items ->
+    ) { _, interactor, items ->
         items(
             count = items.itemCount,
             key = { index -> items[index]?.id?.let { "$it;$index" } ?: index }
         ) { index ->
             items[index]?.let { comment ->
                 CommentMask(
-                    isAuthor = comment.author.id == uuid,
+                    isAuthor = isAuthor,
                     status = comment.status,
                     isAccessible = comment.isAccessible,
                 ) {

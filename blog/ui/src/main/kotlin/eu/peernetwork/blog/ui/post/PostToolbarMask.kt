@@ -24,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -39,6 +40,7 @@ fun PostToolbarMask(
     isAccessible: Boolean,
     modifier: Modifier = Modifier,
     pinnedBy: String? = null,
+    onClick: () -> Unit,
     onMenu: () -> Unit,
     connection: @Composable RowScope.() -> Unit,
     content: @Composable () -> Unit
@@ -46,9 +48,14 @@ fun PostToolbarMask(
     val updatedContent by rememberUpdatedState(content)
     val isVisible = remember { mutableStateOf(false) }
     Box(modifier = modifier) {
-        if (isAuthor) {
-            updatedContent()
-        } else if (!isAccessible) {
+        if (status == UiStatus.ILLEGAL) {
+            PostIllegalToolbarMask(
+                pinnedBy = pinnedBy,
+                onMenu = onMenu,
+                onClick = onClick,
+                connection = connection
+            )
+        } else if (!isAccessible && !isAuthor) {
             if (isVisible.value) {
                 updatedContent()
             } else {
@@ -59,14 +66,8 @@ fun PostToolbarMask(
                     connection = connection
                 )
             }
-        } else if (status == UiStatus.VISIBLE) {
-            updatedContent()
         } else {
-            PostToolbarMask(
-                pinnedBy = pinnedBy,
-                onMenu = onMenu,
-                connection = connection
-            )
+            updatedContent()
         }
     }
 }
@@ -120,8 +121,9 @@ fun PostToolbarMask(
 }
 
 @Composable
-fun PostToolbarMask(
+fun PostIllegalToolbarMask(
     pinnedBy: String? = null,
+    onClick: () -> Unit,
     onMenu: () -> Unit,
     connection: @Composable RowScope.() -> Unit,
 ) {
@@ -141,6 +143,10 @@ fun PostToolbarMask(
                 .clip(CircleShape)
                 .background(MaterialTheme.colorScheme.surfaceContainerLowest)
                 .padding(10.dp)
+                .clickable(
+                    role = Role.Button,
+                    onClick = onClick
+                )
         )
         Column(modifier = Modifier
             .weight(1f)
@@ -177,11 +183,13 @@ fun PreviewPostToolbarMask() {
                 isAuthor = false,
                 isAccessible = false,
                 onMenu = {},
+                onClick = {},
                 connection = {}
             ) {}
-            PostToolbarMask(
+            PostIllegalToolbarMask(
                 pinnedBy = "JohnDoe",
                 onMenu = { },
+                onClick = { },
                 connection = { }
             )
         }

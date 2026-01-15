@@ -91,9 +91,8 @@ fun PostScaffold(
                 time = context.format(model.time),
                 content = engagement,
                 reported = model.reported,
-                isAccessible = if (isAuthor) {
-                    model.isAccessible
-                } else { true },
+                isAuthor = isAuthor,
+                isAccessible = model.isAccessible,
                 modifier = Modifier.padding(horizontal = 10.dp)
             )
         }
@@ -116,7 +115,7 @@ fun BoxScope.PostScaffoldBackground(
 @Composable
 fun PostExpandedScaffold(
     model: UiPostDetail,
-    isAuthor: Boolean = false,
+    isAuthor: Boolean,
     onClick: () -> Unit,
     isVisible: State<Boolean>,
     toolbar: @Composable () -> Unit,
@@ -138,10 +137,9 @@ fun PostExpandedScaffold(
             username = model.username,
             reported = model.reported,
             title = model.title,
+            isAuthor = isAuthor,
             isVisible = isVisible.value,
-            isAccessible = if (isAuthor) {
-                model.isAccessible
-            } else { true },
+            isAccessible = model.isAccessible,
             description = model.description,
             time = context.format(model.time),
             engagement = engagement,
@@ -158,6 +156,7 @@ fun PreviewPostScaffold() {
     DesignTheme(isDarkMode = true) {
         val model = UiPostDetail(
             id = "#test",
+            uuid = "#test",
             title = buildAnnotatedString { append("John Doe") },
             slug = "#12034",
             username = "JohnDoe",
@@ -214,7 +213,7 @@ fun PreviewPostScaffold() {
             PostScaffold(
                 model = model,
                 onClick = {},
-                isAuthor = false,
+                isAuthor = true,
                 engagement = { EngagementReaction(engagement) {} },
                 toolbar = {
                     PostToolbar(
@@ -245,9 +244,10 @@ fun PreviewPostScaffold() {
                     .height(56.dp))
             }
             PostExpandedScaffold(
-                model = model,
+                model = model.copy(isAccessible = false),
                 onClick = {},
                 isVisible = isVisible,
+                isAuthor = true,
                 engagement = { EngagementReaction(engagement) {} },
                 toolbar = {
                     PostToolbar(

@@ -1,4 +1,4 @@
-package eu.peernetwork.ads.ui.adverts
+package eu.peernetwork.ads.ui.analytics
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -21,30 +21,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.ads.ui.R
-import eu.peernetwork.core.ui.design.luna.DesignRichText
+import eu.peernetwork.core.ui.design.luna.DesignSkeleton
 import eu.peernetwork.core.ui.theme.DesignTheme
 import eu.peernetwork.core.ui.theme.PeerAppGreen
 
 @Composable
-fun AdvertsPost(
-    title: AnnotatedString,
-    description: AnnotatedString,
-    from: String,
-    to: String,
+fun AnalyticsMask(
     status: Boolean,
     modifier: Modifier = Modifier,
-    onSelect: () -> Unit,
-    onClick: (DesignRichText, String) -> Unit,
-    label: (@Composable () -> Unit)?,
     content: @Composable () -> Unit
 ) {
-    val updatedLabel by rememberUpdatedState(label)
     val updatedContent by rememberUpdatedState(content)
     Row(modifier = Modifier.fillMaxWidth()
         .then(modifier)
@@ -64,36 +53,24 @@ fun AdvertsPost(
                 modifier = Modifier.fillMaxWidth()
                     .heightIn(min = 24.dp)
             ) {
-                DesignRichText(
-                    text = title,
-                    color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.labelLarge,
-                    fontWeight = FontWeight.SemiBold,
-                    maxLines = 1,
-                    onClick = onClick,
-                    onTap = onSelect
+                DesignSkeleton(
+                    modifier = Modifier
+                        .fillMaxWidth(fraction = .3f)
+                        .height(12.dp),
+                    color = MaterialTheme.colorScheme.surfaceContainerLowest,
                 )
             }
-            if (description.isNotBlank()) {
-                Box(
-                    modifier = Modifier.fillMaxWidth()
-                        .heightIn(min = 32.dp)
-                ) {
-                    DesignRichText(
-                        text = description,
-                        color = MaterialTheme.colorScheme.onBackground,
-                        style = MaterialTheme.typography.labelMedium,
-                        maxLines = 2,
-                        modifier = Modifier.padding(top = 2.dp),
-                        onClick = onClick,
-                        onTap = onSelect
-                    )
-                }
-            }
-            updatedLabel?.let {
-                Box(
-                    modifier = Modifier.padding(top = 6.dp)
-                ) { it() }
+            Box(
+                modifier = Modifier.fillMaxWidth()
+                    .heightIn(min = 32.dp)
+            ) {
+                DesignSkeleton(
+                    modifier = Modifier
+                        .padding(top = 4.dp)
+                        .fillMaxWidth(fraction = .6f)
+                        .height(12.dp),
+                    color = MaterialTheme.colorScheme.surfaceContainerLowest,
+                )
             }
             Row(
                 verticalAlignment = Alignment.Bottom,
@@ -101,15 +78,9 @@ fun AdvertsPost(
                 modifier = Modifier.fillMaxWidth()
                     .heightIn(min = 24.dp)
             ) {
-                Text(
-                    text = "$from - $to",
-                    color = MaterialTheme.colorScheme.outline,
-                    style = MaterialTheme.typography.labelMedium
-                )
                 if (status) {
                     Box(
-                        modifier = Modifier.padding(start = 6.dp)
-                            .clip(CircleShape)
+                        modifier = Modifier.clip(CircleShape)
                             .background(MaterialTheme.colorScheme.surfaceDim)
                             .padding(vertical = 2.dp)
                             .padding(horizontal = 8.dp)
@@ -128,17 +99,8 @@ fun AdvertsPost(
 
 @Preview
 @Composable
-fun PreviewAdvertsPost() {
+fun PreviewAnalyticsMask() {
     DesignTheme(isDarkMode = true) {
-        AdvertsPost(
-            title = buildAnnotatedString { append("Title") },
-            description = buildAnnotatedString { append("There’s something about hiking that resets everything. ") },
-            from = "8 Jun 2025",
-            to = "10 Jun 2025",
-            status = true,
-            onClick = { _,_ -> },
-            label = { AdvertsVisibilityLabel() },
-            onSelect = {}
-        ) {}
+        AnalyticsMask(status = true) {}
     }
 }
