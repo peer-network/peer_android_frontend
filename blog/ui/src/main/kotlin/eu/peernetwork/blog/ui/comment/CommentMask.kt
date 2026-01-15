@@ -1,13 +1,11 @@
-package eu.peernetwork.blog.ui.post
+package eu.peernetwork.blog.ui.comment
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -29,18 +27,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.blog.ui.R
 import eu.peernetwork.blog.ui.model.UiStatus
-import eu.peernetwork.core.ui.design.luna.DesignSkeleton
 import eu.peernetwork.core.ui.theme.DesignTheme
 
 @Composable
-fun PostToolbarMask(
+fun CommentMask(
     status: UiStatus,
     isAuthor: Boolean,
     isAccessible: Boolean,
     modifier: Modifier = Modifier,
-    pinnedBy: String? = null,
-    onMenu: () -> Unit,
-    connection: @Composable RowScope.() -> Unit,
     content: @Composable () -> Unit
 ) {
     val updatedContent by rememberUpdatedState(content)
@@ -52,33 +46,18 @@ fun PostToolbarMask(
             if (isVisible.value) {
                 updatedContent()
             } else {
-                PostToolbarMask(
-                    pinnedBy = pinnedBy,
-                    onMenu = onMenu,
-                    onClick = { isVisible.value = true },
-                    connection = connection
-                )
+                CommentMask { isVisible.value = true }
             }
         } else if (status == UiStatus.VISIBLE) {
             updatedContent()
         } else {
-            PostToolbarMask(
-                pinnedBy = pinnedBy,
-                onMenu = onMenu,
-                connection = connection
-            )
+            CommentMask()
         }
     }
 }
 
 @Composable
-fun PostToolbarMask(
-    pinnedBy: String? = null,
-    onMenu: () -> Unit,
-    onClick: () -> Unit,
-    connection: @Composable RowScope.() -> Unit,
-) {
-    val updatedConnection by rememberUpdatedState(connection)
+fun CommentMask(onClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -111,21 +90,11 @@ fun PostToolbarMask(
                 modifier = Modifier.clickable(onClick = onClick)
             )
         }
-        updatedConnection()
-        PostToolbarOption(
-            pinnedBy = pinnedBy,
-            onMenu = onMenu
-        )
     }
 }
 
 @Composable
-fun PostToolbarMask(
-    pinnedBy: String? = null,
-    onMenu: () -> Unit,
-    connection: @Composable RowScope.() -> Unit,
-) {
-    val updatedConnection by rememberUpdatedState(connection)
+fun CommentMask() {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -142,48 +111,29 @@ fun PostToolbarMask(
                 .background(MaterialTheme.colorScheme.surfaceContainerLowest)
                 .padding(10.dp)
         )
-        Column(modifier = Modifier
-            .weight(1f)
-            .padding(horizontal = 10.dp)) {
-            Text(
-                text = stringResource(R.string.illegal_username),
-                color = MaterialTheme.colorScheme.onBackground,
-                style = MaterialTheme.typography.labelLarge,
-                fontWeight = FontWeight.SemiBold
-            )
-            DesignSkeleton(
-                modifier = Modifier
-                    .padding(top = 2.dp)
-                    .fillMaxWidth(fraction = .3f)
-                    .height(8.dp),
-                color = MaterialTheme.colorScheme.surfaceContainerLowest,
-            )
-        }
-        updatedConnection()
-        PostToolbarOption(
-            pinnedBy = pinnedBy,
-            onMenu = onMenu
+        Text(
+            text = stringResource(R.string.illegal_content_description),
+            color = MaterialTheme.colorScheme.onBackground,
+            style = MaterialTheme.typography.labelLarge,
+            fontWeight = FontWeight.SemiBold,
+            modifier = Modifier
+                .weight(1f)
+                .padding(horizontal = 10.dp)
         )
     }
 }
 
 @Composable
 @Preview
-fun PreviewPostToolbarMask() {
+fun PreviewCommentMask() {
     DesignTheme(isDarkMode = true) {
         Column {
-            PostToolbarMask(
+            CommentMask(
                 status = UiStatus.HIDDEN,
                 isAuthor = false,
                 isAccessible = false,
-                onMenu = {},
-                connection = {}
             ) {}
-            PostToolbarMask(
-                pinnedBy = "JohnDoe",
-                onMenu = { },
-                connection = { }
-            )
+            CommentMask()
         }
     }
 }

@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -45,26 +44,18 @@ import eu.peernetwork.core.ui.theme.DesignTheme
 @Composable
 fun PostScaffold(
     model: UiPostDetail,
-    status: UiStatus,
-    isAccessible: Boolean,
-    pinnedBy: String? = null,
-    onMenu: () -> Unit,
+    isAuthor: Boolean,
     onClick: () -> Unit,
-    onAuthorClick: () -> Unit,
     onContentClick: (DesignRichText, String) -> Unit,
+    toolbar: @Composable () -> Unit,
     engagement: @Composable () -> Unit,
-    connection: @Composable RowScope.() -> Unit,
 ) {
     PostScaffold(
         model = model,
-        status = status,
-        isAccessible = isAccessible,
-        onMenu = onMenu,
+        isAuthor = isAuthor,
         onClick = onClick,
-        onAuthorClick = onAuthorClick,
-        engagement = engagement,
-        pinnedBy = pinnedBy,
-        connection = connection
+        toolbar = toolbar,
+        engagement = engagement
     ) {
         PostText(
             model = model,
@@ -77,40 +68,24 @@ fun PostScaffold(
 @Composable
 fun PostScaffold(
     model: UiPostDetail,
-    status: UiStatus,
-    isAccessible: Boolean,
     isAuthor: Boolean = false,
-    pinnedBy: String? = null,
-    onMenu: () -> Unit,
     onClick: () -> Unit,
-    onAuthorClick: () -> Unit,
+    toolbar: @Composable () -> Unit,
     engagement: @Composable () -> Unit,
-    connection: @Composable RowScope.() -> Unit,
     background: @Composable BoxScope.() -> Unit = { PostScaffoldBackground() },
     content: @Composable () -> Unit
 ) {
     val context = LocalContext.current
+    val updatedToolbar by rememberUpdatedState(toolbar)
     val updatedContent by rememberUpdatedState(content)
     DesignBox(background = background) {
         Column(
-            modifier = Modifier.padding(horizontal = 8.dp)
+            modifier = Modifier
+                .padding(horizontal = 8.dp)
                 .padding(vertical = 5.dp)
                 .clickable(onClick = onClick)
         ) {
-            PostToolbar(
-                slug = model.slug,
-                status = status,
-                isAccessible = isAccessible,
-                isAuthor = isAuthor,
-                username = model.username,
-                imageUrl = model.imageUrl,
-                pinnedBy = pinnedBy,
-                color = MaterialTheme.colorScheme.surfaceContainerLow,
-                modifier = Modifier.padding(10.dp),
-                onAuthorClick = onAuthorClick,
-                onMenu = onMenu,
-                connection = connection
-            )
+            updatedToolbar()
             updatedContent()
             PostStatus(
                 time = context.format(model.time),
@@ -129,7 +104,8 @@ fun PostScaffold(
 fun BoxScope.PostScaffoldBackground(
     color: Color = MaterialTheme.colorScheme.surfaceDim
 ) {
-    Box(modifier = Modifier.fillMaxSize()
+    Box(modifier = Modifier
+        .fillMaxSize()
         .padding(vertical = 7.dp)
         .padding(horizontal = 8.dp)
         .clip(shape = RoundedCornerShape(size = 24.dp))
@@ -140,39 +116,22 @@ fun BoxScope.PostScaffoldBackground(
 @Composable
 fun PostExpandedScaffold(
     model: UiPostDetail,
-    status: UiStatus,
-    isAccessible: Boolean,
     isAuthor: Boolean = false,
-    pinnedBy: String? = null,
-    onMenu: () -> Unit,
     onClick: () -> Unit,
-    onAuthorClick: () -> Unit,
     isVisible: State<Boolean>,
+    toolbar: @Composable () -> Unit,
     engagement: @Composable () -> Unit,
     onContentClick: (DesignRichText, String) -> Unit,
-    connection: @Composable RowScope.() -> Unit,
     content: @Composable () -> Unit
 ) {
     val context = LocalContext.current
+    val updatedToolbar by rememberUpdatedState(toolbar)
     val updatedContent by rememberUpdatedState(content)
     Column {
-        PostToolbar(
-            slug = model.slug,
-            status = status,
-            isAccessible = isAccessible,
-            isAuthor = isAuthor,
-            username = model.username,
-            imageUrl = model.imageUrl,
-            modifier = Modifier
-                .padding(horizontal = 16.dp)
-                .padding(vertical = 8.dp),
-            pinnedBy = pinnedBy,
-            onAuthorClick = onAuthorClick,
-            onMenu = onMenu,
-            connection = connection
-        )
+        updatedToolbar()
         Box(
-            modifier = Modifier.background(MaterialTheme.colorScheme.surfaceDim)
+            modifier = Modifier
+                .background(MaterialTheme.colorScheme.surfaceDim)
                 .clickable(onClick = onClick)
         ) { updatedContent() }
         PostStatus(
@@ -224,66 +183,99 @@ fun PreviewPostScaffold() {
             Spacer(modifier = Modifier.height(8.dp))
             PostScaffold(
                 model = model,
-                status = UiStatus.VISIBLE,
-                isAccessible = true,
-                onMenu = {},
+                isAuthor = true,
                 onClick = {},
-                onAuthorClick = {},
+                toolbar = {
+                    PostToolbar(
+                        slug = model.slug,
+                        status = UiStatus.VISIBLE,
+                        isAccessible = true,
+                        isAuthor = false,
+                        username = model.username,
+                        imageUrl = model.imageUrl,
+                        color = MaterialTheme.colorScheme.surfaceContainerLow,
+                        modifier = Modifier.padding(10.dp),
+                        onAuthorClick = {  },
+                        onMenu = {  },
+                        connection = {
+                            DesignButton(
+                                minHeight = 32.dp,
+                                onClick = { },
+                                style = MaterialTheme.typography.labelMedium
+                                    .copy(fontWeight = FontWeight.Bold),
+                                contentPadding = PaddingValues(horizontal = 16.dp)
+                            ) { Text("peer") }
+                        }
+                    )
+                },
                 engagement = { EngagementReaction(engagement) {} },
                 onContentClick = { _,_ -> }
-            ) {
-                DesignButton(
-                    minHeight = 32.dp,
-                    onClick = { },
-                    style = MaterialTheme.typography.labelMedium
-                        .copy(fontWeight = FontWeight.Bold),
-                    contentPadding = PaddingValues(horizontal = 16.dp)
-                ) { Text("peer") }
-            }
+            )
             PostScaffold(
                 model = model,
-                status = UiStatus.VISIBLE,
-                isAccessible = true,
-                onMenu = {},
                 onClick = {},
-                onAuthorClick = {},
+                isAuthor = false,
                 engagement = { EngagementReaction(engagement) {} },
-                pinnedBy = "Thomas",
-                connection = {
-                    DesignButton(
-                        minHeight = 32.dp,
-                        onClick = {  },
-                        style = MaterialTheme.typography.labelMedium
-                            .copy(fontWeight = FontWeight.Bold),
-                        contentPadding = PaddingValues(horizontal = 16.dp)
-                    ) { Text("peer") }
+                toolbar = {
+                    PostToolbar(
+                        slug = model.slug,
+                        status = UiStatus.VISIBLE,
+                        isAccessible = true,
+                        isAuthor = false,
+                        username = model.username,
+                        imageUrl = model.imageUrl,
+                        color = MaterialTheme.colorScheme.surfaceContainerLow,
+                        modifier = Modifier.padding(10.dp),
+                        onAuthorClick = {  },
+                        onMenu = {  },
+                        connection = {
+                            DesignButton(
+                                minHeight = 32.dp,
+                                onClick = { },
+                                style = MaterialTheme.typography.labelMedium
+                                    .copy(fontWeight = FontWeight.Bold),
+                                contentPadding = PaddingValues(horizontal = 16.dp)
+                            ) { Text("peer") }
+                        }
+                    )
                 }
             ) {
-                Box(modifier = Modifier.fillMaxWidth()
+                Box(modifier = Modifier
+                    .fillMaxWidth()
                     .height(56.dp))
             }
             PostExpandedScaffold(
                 model = model,
-                status = UiStatus.VISIBLE,
-                isAccessible = true,
-                pinnedBy = "Thomas",
-                onMenu = {},
                 onClick = {},
                 isVisible = isVisible,
-                onAuthorClick = {},
                 engagement = { EngagementReaction(engagement) {} },
-                connection = {
-                    DesignButton(
-                        minHeight = 32.dp,
-                        onClick = {  },
-                        style = MaterialTheme.typography.labelMedium
-                            .copy(fontWeight = FontWeight.Bold),
-                        contentPadding = PaddingValues(horizontal = 16.dp)
-                    ) { Text("peer") }
+                toolbar = {
+                    PostToolbar(
+                        slug = model.slug,
+                        status = UiStatus.VISIBLE,
+                        isAccessible = true,
+                        isAuthor = false,
+                        username = model.username,
+                        imageUrl = model.imageUrl,
+                        color = MaterialTheme.colorScheme.surfaceContainerLow,
+                        modifier = Modifier.padding(10.dp),
+                        onAuthorClick = {  },
+                        onMenu = {  },
+                        connection = {
+                            DesignButton(
+                                minHeight = 32.dp,
+                                onClick = { },
+                                style = MaterialTheme.typography.labelMedium
+                                    .copy(fontWeight = FontWeight.Bold),
+                                contentPadding = PaddingValues(horizontal = 16.dp)
+                            ) { Text("peer") }
+                        }
+                    )
                 },
                 onContentClick = { _,_ -> }
             ) {
-                Box(modifier = Modifier.fillMaxWidth()
+                Box(modifier = Modifier
+                    .fillMaxWidth()
                     .height(260.dp))
             }
         }

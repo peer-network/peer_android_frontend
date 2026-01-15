@@ -38,22 +38,28 @@ fun CommentList(
             key = { index -> items[index]?.id?.let { "$it;$index" } ?: index }
         ) { index ->
             items[index]?.let { comment ->
-                CommentOption({ handleReport(comment.id) }) {
-                    CommentItem(
-                        slug = comment.author.slug.toString(),
-                        username = comment.author.username,
-                        imageUrl = comment.author.imageUrl,
-                        comment = comment.content,
-                        isLiked = interactor.observe().value[comment.id]?.isLiked ?: comment.isLiked,
-                        isReported = comment.isReported,
-                        likes = comment.likes,
-                        onViewLikes = { interactor.viewLike(comment.id) },
-                        onLike = { interactor.like(comment) },
-                        onReply = {
-                            handleReply(comment.author.username)
-                        },
-                        onContentClick = onContentClick
-                    ) { handleClick(comment.author.id) }
+                CommentMask(
+                    isAuthor = comment.author.id == uuid,
+                    status = comment.status,
+                    isAccessible = comment.isAccessible,
+                ) {
+                    CommentOption({ handleReport(comment.id) }) {
+                        CommentItem(
+                            slug = comment.author.slug.toString(),
+                            username = comment.author.username,
+                            imageUrl = comment.author.imageUrl,
+                            comment = comment.content,
+                            isLiked = interactor.observe().value[comment.id]?.isLiked ?: comment.isLiked,
+                            isReported = comment.isReported,
+                            likes = comment.likes,
+                            onViewLikes = { interactor.viewLike(comment.id) },
+                            onLike = { interactor.like(comment) },
+                            onReply = {
+                                handleReply(comment.author.username)
+                            },
+                            onContentClick = onContentClick
+                        ) { handleClick(comment.author.id) }
+                    }
                 }
             }
         }

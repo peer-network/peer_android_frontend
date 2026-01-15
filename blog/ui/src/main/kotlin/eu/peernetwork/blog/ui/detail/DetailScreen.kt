@@ -141,6 +141,7 @@ fun DetailScreen(
             pinnedBy = post.pinnedBy,
             model = post.mapToDetail(),
             asset = post.asset,
+            author = post.author,
             isAuthor = isAuthor,
             isAccessible = post.isAccessible,
             isVisible = isVisible,

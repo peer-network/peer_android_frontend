@@ -82,6 +82,7 @@ fun ArticleList(
                     model = post.mapToDetail(),
                     asset = post.asset,
                     isAuthor = isAuthor,
+                    author = post.author,
                     isAccessible = post.isAccessible,
                     isVisible = isVisible,
                     status = post.status,

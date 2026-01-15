@@ -6,7 +6,9 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -14,6 +16,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.blog.ui.model.UiAsset
+import eu.peernetwork.blog.ui.model.UiAuthor
 import eu.peernetwork.blog.ui.model.UiMedia
 import eu.peernetwork.blog.ui.model.UiPostDetail
 import eu.peernetwork.blog.ui.model.UiPostType
@@ -28,6 +31,7 @@ fun PostItem(
     asset: UiAsset,
     status: UiStatus,
     isAuthor: Boolean,
+    author: UiAuthor,
     isAccessible: Boolean,
     isVisible: MutableState<Boolean>,
     onMenu: () -> Unit,
@@ -44,14 +48,24 @@ fun PostItem(
         PostScaffold(
             model = model,
             isAuthor = isAuthor,
-            pinnedBy = pinnedBy,
-            status = status,
-            isAccessible = isAccessible,
-            onMenu = onMenu,
             onClick = onClick,
-            onAuthorClick = onAuthorClick,
             engagement = engagement,
-            connection = connection,
+            toolbar = {
+                PostToolbar(
+                    slug = model.slug,
+                    status = author.status,
+                    pinnedBy = pinnedBy,
+                    isAccessible = author.isAccessible,
+                    isAuthor = isAuthor,
+                    username = model.username,
+                    imageUrl = model.imageUrl,
+                    color = MaterialTheme.colorScheme.surfaceContainerLow,
+                    modifier = Modifier.padding(10.dp),
+                    onAuthorClick = onAuthorClick,
+                    onMenu = onMenu,
+                    connection = connection
+                )
+            }
         ) {
             PostTextMask(
                 status = status,
@@ -70,14 +84,24 @@ fun PostItem(
         PostScaffold(
             model = model,
             isAuthor = isAuthor,
-            pinnedBy = pinnedBy,
-            status = status,
-            isAccessible = isAccessible,
-            onMenu = onMenu,
             onClick = onClick,
-            onAuthorClick = onAuthorClick,
             engagement = engagement,
-            connection = connection,
+            toolbar = {
+                PostToolbar(
+                    slug = model.slug,
+                    status = author.status,
+                    pinnedBy = pinnedBy,
+                    isAccessible = author.isAccessible,
+                    isAuthor = isAuthor,
+                    username = model.username,
+                    imageUrl = model.imageUrl,
+                    color = MaterialTheme.colorScheme.surfaceContainerLow,
+                    modifier = Modifier.padding(10.dp),
+                    onAuthorClick = onAuthorClick,
+                    onMenu = onMenu,
+                    connection = connection
+                )
+            }
         ) {
             PostTextMask(
                 status = status,
@@ -101,16 +125,26 @@ fun PostItem(
         PostExpandedScaffold(
             model = model,
             isAuthor = isAuthor,
-            pinnedBy = pinnedBy,
-            status = status,
-            isAccessible = isAccessible,
-            onMenu = onMenu,
             onClick = onClick,
             isVisible = isVisible,
-            onAuthorClick = onAuthorClick,
             onContentClick = onContentClick,
-            connection = connection,
-            engagement = engagement
+            engagement = engagement,
+            toolbar = {
+                PostToolbar(
+                    slug = model.slug,
+                    status = author.status,
+                    pinnedBy = pinnedBy,
+                    isAccessible = author.isAccessible,
+                    isAuthor = isAuthor,
+                    username = model.username,
+                    imageUrl = model.imageUrl,
+                    color = MaterialTheme.colorScheme.surfaceContainerLow,
+                    modifier = Modifier.padding(10.dp),
+                    onAuthorClick = onAuthorClick,
+                    onMenu = onMenu,
+                    connection = connection
+                )
+            }
         ) {
             Box(modifier = Modifier.fillMaxWidth()) {
                 if (asset.media.size == 1) {

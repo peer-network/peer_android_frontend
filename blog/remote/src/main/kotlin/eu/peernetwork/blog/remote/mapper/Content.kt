@@ -62,8 +62,8 @@ fun GetallpostsQuery.AffectedRow.mapToDomain(url: String, media: List<Media>): C
             imageUrl = "$url${user.img}",
             following = user.isfollowing!!,
             followed = user.isfollowed!!,
-            isAccessible = !isHiddenForUsers,
-            status = visibilityStatus.mapToDomain()
+            isAccessible = !user.isHiddenForUsers,
+            status = user.visibilityStatus.mapToDomain()
         ),
         createdAt = createdat.toString().toTimestamp(),
         type = contenttype.mapToDomain(),
