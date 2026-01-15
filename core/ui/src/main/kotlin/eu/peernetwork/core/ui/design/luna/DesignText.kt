@@ -14,6 +14,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -69,7 +70,7 @@ fun DesignText(
     var layoutResult by remember { mutableStateOf<TextLayoutResult?>(null) }
     var adjustedText by remember { mutableStateOf(text) }
     var hasOverflow by remember { mutableStateOf(false) }
-    var expanded by remember { mutableStateOf(false) }
+    var expanded by rememberSaveable { mutableStateOf(false) }
     Text(
         text = adjustedText,
         modifier = modifier

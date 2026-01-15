@@ -103,7 +103,7 @@ class VideoThumbnailDelegate @Inject constructor(
         LaunchedEffect(Unit) {
             snapshotFlow { spec.isPlaying.value }
                 .distinctUntilChanged()
-                .debounce(500)
+                .debounce(300)
                 .collect { playing ->
                     isReady.value = playing
                     if (playing) {

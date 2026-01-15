@@ -28,7 +28,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.core.ui.extension.annotate
 import eu.peernetwork.core.ui.extension.isValidEmail
-import eu.peernetwork.core.ui.theme.PeerTheme
+import eu.peernetwork.core.ui.theme.DesignTheme
 import eu.peernetwork.user.ui.R
 import eu.peernetwork.user.ui.form.FormHeader
 
@@ -113,7 +113,7 @@ fun LoginPage(
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun PreviewLoginPage() {
-    PeerTheme {
+    DesignTheme {
         val isLoading = remember { mutableStateOf(false) }
         val error = remember { mutableStateOf(null) }
         LoginPage(

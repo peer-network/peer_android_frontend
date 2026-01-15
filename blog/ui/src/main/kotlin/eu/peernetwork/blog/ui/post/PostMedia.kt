@@ -21,6 +21,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import eu.peernetwork.blog.ui.model.UiPostType
+import eu.peernetwork.blog.ui.model.UiStatus
 import eu.peernetwork.blog.ui.post.PostInteractor.Companion.LocalPostInteractor
 import eu.peernetwork.core.ui.design.material.DesignThumbnail
 import eu.peernetwork.media.core.renderer.ImageView
@@ -32,7 +33,10 @@ fun PostMedia(
     path: String,
     cover: String,
     expanded: Boolean,
+    isAdmin: Boolean,
+    isAccessible: Boolean,
     ratio: Float,
+    status: UiStatus,
     enable: State<Boolean>,
     isPlaying: State<Boolean>,
     onClick: (Boolean) -> Unit
@@ -54,38 +58,54 @@ fun PostMedia(
                 blur = 500f,
             )
         )
-        interactor.component().imageView()(
-            modifier = Modifier,
-            spec = ImageView.Spec(
-                url = path,
-                ratio = ratio
-            )
-        )
-    } else if (type == UiPostType.VIDEO) {
-        DesignThumbnail(
-            enable = enable,
-            thumbnail = path,
-            bitmap = thumbnail,
+        PostMask(
+            status = status,
+            isAuthor = isAdmin,
+            isAccessible = isAccessible,
             modifier = Modifier
                 .fillMaxWidth()
-                .aspectRatio(ratio)
-        ) {
-            interactor.background(
-                media = path,
-                aspectRatio = ratio,
-                width = configuration.screenWidthDp,
-                height = (configuration.screenWidthDp / ratio).toInt()
+                .aspectRatio(ratio)) {
+            interactor.component().imageView()(
+                modifier = Modifier,
+                spec = ImageView.Spec(
+                    url = path,
+                    ratio = ratio
+                )
             )
         }
-        interactor.component().videoThumbnail()(
-            Modifier,
-            spec = VideoThumbnail.Spec(
-                url = path,
-                ratio = ratio,
-                enabled = isEnabled,
-                isPlaying = isPlaying
+    } else if (type == UiPostType.VIDEO) {
+        PostMask(
+            status = status,
+            isAuthor = isAdmin,
+            isAccessible = isAccessible,
+            modifier = Modifier
+                .fillMaxWidth()
+                .aspectRatio(ratio)) {
+            DesignThumbnail(
+                enable = enable,
+                thumbnail = path,
+                bitmap = thumbnail,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(ratio)
+            ) {
+                interactor.background(
+                    media = path,
+                    aspectRatio = ratio,
+                    width = configuration.screenWidthDp,
+                    height = (configuration.screenWidthDp / ratio).toInt()
+                )
+            }
+            interactor.component().videoThumbnail()(
+                Modifier,
+                spec = VideoThumbnail.Spec(
+                    url = path,
+                    ratio = ratio,
+                    enabled = isEnabled,
+                    isPlaying = isPlaying
+                )
             )
-        )
+        }
     } else if (type == UiPostType.AUDIO) {
         Box(contentAlignment = Alignment.BottomEnd) {
             val length = remember { mutableLongStateOf(0L) }
@@ -99,24 +119,34 @@ fun PostMedia(
                         blur = 500f,
                     )
                 )
-                interactor.component().imageView()(
-                    modifier = Modifier,
-                    spec = ImageView.Spec(
-                        url = cover,
-                        ratio = ratio
+                PostMask(
+                    status = status,
+                    isAuthor = isAdmin,
+                    isAccessible = isAccessible,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(ratio)) {
+                    interactor.component().imageView()(
+                        modifier = Modifier,
+                        spec = ImageView.Spec(
+                            url = cover,
+                            ratio = ratio
+                        )
                     )
+                }
+            }
+            if (isAccessible) {
+                interactor.component().mediaController().Content(
+                    path = path,
+                    expanded = !expanded,
+                    enabled = isEnabled,
+                    length = length,
+                    isPlaying = isPlaying,
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                        .padding(bottom = 12.dp),
+                    onToggle = onClick
                 )
             }
-            interactor.component().mediaController().Content(
-                path = path,
-                expanded = !expanded,
-                enabled = isEnabled,
-                length = length,
-                isPlaying = isPlaying,
-                modifier = Modifier.padding(horizontal = 16.dp)
-                    .padding(bottom = 12.dp),
-                onToggle = onClick
-            )
         }
     }
     val lifecycleObserver = remember {

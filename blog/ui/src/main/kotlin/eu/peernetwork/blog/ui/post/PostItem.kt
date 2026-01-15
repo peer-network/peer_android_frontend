@@ -1,9 +1,11 @@
 package eu.peernetwork.blog.ui.post
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -14,6 +16,7 @@ import eu.peernetwork.blog.ui.model.UiAsset
 import eu.peernetwork.blog.ui.model.UiMedia
 import eu.peernetwork.blog.ui.model.UiPostDetail
 import eu.peernetwork.blog.ui.model.UiPostType
+import eu.peernetwork.blog.ui.model.UiStatus
 import eu.peernetwork.core.ui.design.luna.DesignRichText
 
 @Composable
@@ -22,6 +25,9 @@ fun PostItem(
     pinnedBy: String?,
     model: UiPostDetail,
     asset: UiAsset,
+    status: UiStatus,
+    isAuthor: Boolean,
+    isAccessible: Boolean,
     onMenu: () -> Unit,
     onClick: () -> Unit,
     onAuthorClick: () -> Unit,
@@ -39,10 +45,21 @@ fun PostItem(
             onMenu = onMenu,
             onClick = onClick,
             onAuthorClick = onAuthorClick,
-            onContentClick = onContentClick,
             engagement = engagement,
             connection = connection,
-        )
+        ) {
+            PostTextMask(
+                status = status,
+                isAuthor = isAuthor,
+                isAccessible = isAccessible
+            ) {
+                PostText(
+                    model = model,
+                    modifier = Modifier.heightIn(min = 36.dp),
+                    onClick = onContentClick
+                )
+            }
+        }
     } else if (type == UiPostType.AUDIO && !asset.hasCover) {
         PostScaffold(
             model = model,
@@ -53,13 +70,21 @@ fun PostItem(
             engagement = engagement,
             connection = connection,
         ) {
-            PostText(
-                model = model,
-                onClick = onContentClick,
-                contentPadding = PaddingValues(horizontal = 12.dp)
-            )
-            Box(modifier = Modifier.fillMaxWidth()) {
-                updatedContent(asset.media.first(), false)
+            PostTextMask(
+                status = status,
+                isAuthor = isAuthor,
+                isAccessible = isAccessible
+            ) {
+                Column {
+                    PostText(
+                        model = model,
+                        onClick = onContentClick,
+                        contentPadding = PaddingValues(horizontal = 12.dp)
+                    )
+                    Box(modifier = Modifier.fillMaxWidth()) {
+                        updatedContent(asset.media.first(), false)
+                    }
+                }
             }
         }
     } else {

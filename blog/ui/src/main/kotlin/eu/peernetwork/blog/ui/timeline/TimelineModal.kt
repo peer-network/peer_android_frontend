@@ -25,7 +25,7 @@ import eu.peernetwork.blog.ui.mapper.mapToDetail
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.moderation.ModerationInteractor.Companion.LocalModerationInteractor
 import eu.peernetwork.blog.ui.post.PostScreen
-import eu.peernetwork.blog.ui.post.PostUserConnection
+import eu.peernetwork.blog.ui.post.PostFollow
 import eu.peernetwork.core.ui.component.UiComponentProvider
 
 @Composable
@@ -57,6 +57,7 @@ fun TimelineModal(
     ) { component, post, index, pagerState ->
         val enabled = remember { derivedStateOf { pagerState.currentPage == index } }
         GalleryScreen(
+            uuid = uuid,
             position = index,
             enabled = enabled,
             post = post,
@@ -65,7 +66,7 @@ fun TimelineModal(
             if (uuid != post.author.id) {
                 component.postUserFollow()(
                     modifier = Modifier,
-                    PostUserConnection.Spec(
+                    PostFollow.Spec(
                         id = post.author.id,
                         isFollowing = post.author.following,
                         isFollowed = post.author.followed

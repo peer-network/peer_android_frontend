@@ -13,6 +13,9 @@ data class Content(
     val isLiked: Boolean,
     val isDisliked: Boolean,
     val isViewed: Boolean,
+    val isAccessible: Boolean,
+    val status: Status,
+    val reported: Boolean,
     val views: Int,
     val comment: Int,
     val url: String

@@ -1,6 +1,5 @@
 package eu.peernetwork.blog.ui.post
 
-import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -167,9 +166,9 @@ fun PostExpandedScaffold(
 }
 
 @Composable
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, showBackground = true)
-fun PreviewUserOption() {
-    DesignTheme(isDarkMode = false) {
+@Preview
+fun PreviewPostScaffold() {
+    DesignTheme(isDarkMode = true) {
         val model = UiPostDetail(
             id = "#test",
             title = buildAnnotatedString { append("John Doe") },

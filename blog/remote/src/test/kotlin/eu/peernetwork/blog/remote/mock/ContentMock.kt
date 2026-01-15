@@ -3,6 +3,7 @@ package eu.peernetwork.blog.remote.mock
 import eu.peernetwork.blog.remote.content.CreatePostMutation
 import eu.peernetwork.blog.remote.content.GetallpostsQuery
 import eu.peernetwork.core.remote.model.Status
+import type.ContentVisibilityStatus
 
 object ContentMock {
     fun content(): CreatePostMutation.CreatePost {
@@ -59,13 +60,16 @@ object ContentMock {
                     contenttype = "<test-contenttype>",
                     createdat = "2025-03-24 00:05:09.334000",
                     url = "<test-url>",
+                    isreported = false,
+                    visibilityStatus = ContentVisibilityStatus.HIDDEN,
+                    isHiddenForUsers = false,
                     user = GetallpostsQuery.User(
                         id = "<test-userid>",
                         username = "<test-username>",
                         img = "<test-avatar>",
                         slug = 0,
                         isfollowed = false,
-                        isfollowing = false
+                        isfollowing = false,
                     )
                 )
             )

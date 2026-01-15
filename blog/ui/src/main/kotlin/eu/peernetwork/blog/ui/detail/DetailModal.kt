@@ -19,7 +19,7 @@ import eu.peernetwork.blog.ui.mapper.mapToDetail
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.moderation.ModerationInteractor.Companion.LocalModerationInteractor
 import eu.peernetwork.blog.ui.post.PostScreen
-import eu.peernetwork.blog.ui.post.PostUserConnection
+import eu.peernetwork.blog.ui.post.PostFollow
 import eu.peernetwork.blog.ui.timeline.TimelineSheet
 import eu.peernetwork.blog.ui.timeline.TimelineSheetMenuItem
 import eu.peernetwork.core.ui.component.UiComponentProvider
@@ -79,6 +79,7 @@ fun DetailModal(
                 }
             ) {
                 GalleryScreen(
+                    uuid = uuid,
                     position = selected.intValue,
                     enabled = enabled,
                     post = postState.value,
@@ -87,7 +88,7 @@ fun DetailModal(
                     if (uuid != postState.value.author.id) {
                         component.postUserFollow()(
                             modifier = Modifier,
-                            spec = PostUserConnection.Spec(
+                            spec = PostFollow.Spec(
                                 id = postState.value.author.id,
                                 isFollowing = postState.value.author.following,
                                 isFollowed = postState.value.author.followed
