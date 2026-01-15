@@ -17,8 +17,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -132,7 +132,7 @@ fun PostMask(onClick: () -> Unit) {
 @Preview
 fun PreviewPostMask() {
     DesignTheme(isDarkMode = true) {
-        val isVisible = rememberSaveable { mutableStateOf(false) }
+        val isVisible = remember { mutableStateOf(false) }
         PostMask(
             status = UiStatus.ILLEGAL,
             isAuthor = false,

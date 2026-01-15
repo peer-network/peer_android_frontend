@@ -35,6 +35,7 @@ import eu.peernetwork.blog.ui.engagement.EngagementReaction
 import eu.peernetwork.blog.ui.mapper.format
 import eu.peernetwork.blog.ui.model.UiEngagement
 import eu.peernetwork.blog.ui.model.UiPostDetail
+import eu.peernetwork.blog.ui.model.UiStatus
 import eu.peernetwork.blog.ui.model.UiTimer
 import eu.peernetwork.core.ui.design.luna.DesignBox
 import eu.peernetwork.core.ui.design.luna.DesignButton
@@ -44,6 +45,8 @@ import eu.peernetwork.core.ui.theme.DesignTheme
 @Composable
 fun PostScaffold(
     model: UiPostDetail,
+    status: UiStatus,
+    isAccessible: Boolean,
     pinnedBy: String? = null,
     onMenu: () -> Unit,
     onClick: () -> Unit,
@@ -54,6 +57,8 @@ fun PostScaffold(
 ) {
     PostScaffold(
         model = model,
+        status = status,
+        isAccessible = isAccessible,
         onMenu = onMenu,
         onClick = onClick,
         onAuthorClick = onAuthorClick,
@@ -72,6 +77,8 @@ fun PostScaffold(
 @Composable
 fun PostScaffold(
     model: UiPostDetail,
+    status: UiStatus,
+    isAccessible: Boolean,
     isAuthor: Boolean = false,
     pinnedBy: String? = null,
     onMenu: () -> Unit,
@@ -92,6 +99,9 @@ fun PostScaffold(
         ) {
             PostToolbar(
                 slug = model.slug,
+                status = status,
+                isAccessible = isAccessible,
+                isAuthor = isAuthor,
                 username = model.username,
                 imageUrl = model.imageUrl,
                 pinnedBy = pinnedBy,
@@ -130,6 +140,8 @@ fun BoxScope.PostScaffoldBackground(
 @Composable
 fun PostExpandedScaffold(
     model: UiPostDetail,
+    status: UiStatus,
+    isAccessible: Boolean,
     isAuthor: Boolean = false,
     pinnedBy: String? = null,
     onMenu: () -> Unit,
@@ -146,6 +158,9 @@ fun PostExpandedScaffold(
     Column {
         PostToolbar(
             slug = model.slug,
+            status = status,
+            isAccessible = isAccessible,
+            isAuthor = isAuthor,
             username = model.username,
             imageUrl = model.imageUrl,
             modifier = Modifier
@@ -209,6 +224,8 @@ fun PreviewPostScaffold() {
             Spacer(modifier = Modifier.height(8.dp))
             PostScaffold(
                 model = model,
+                status = UiStatus.VISIBLE,
+                isAccessible = true,
                 onMenu = {},
                 onClick = {},
                 onAuthorClick = {},
@@ -225,6 +242,8 @@ fun PreviewPostScaffold() {
             }
             PostScaffold(
                 model = model,
+                status = UiStatus.VISIBLE,
+                isAccessible = true,
                 onMenu = {},
                 onClick = {},
                 onAuthorClick = {},
@@ -245,6 +264,8 @@ fun PreviewPostScaffold() {
             }
             PostExpandedScaffold(
                 model = model,
+                status = UiStatus.VISIBLE,
+                isAccessible = true,
                 pinnedBy = "Thomas",
                 onMenu = {},
                 onClick = {},

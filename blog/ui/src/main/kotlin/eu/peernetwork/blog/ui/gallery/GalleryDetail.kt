@@ -16,6 +16,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import eu.peernetwork.blog.ui.extension.normalizeWhitespaces
 import eu.peernetwork.blog.ui.post.PostTextMask
 import eu.peernetwork.core.ui.design.luna.DesignRichText
 import eu.peernetwork.core.ui.theme.DesignTheme
@@ -51,11 +52,11 @@ fun GalleryDetail(
                 modifier = Modifier.padding(top = 4.dp),
             ) {
                 DesignRichText(
-                    text = description,
+                    text = description.normalizeWhitespaces(),
                     maxLines = 2,
                     lineHeight = 18.sp,
                     style = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.outline,
+                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = .8f),
                     onClick = onClick
                 )
             }

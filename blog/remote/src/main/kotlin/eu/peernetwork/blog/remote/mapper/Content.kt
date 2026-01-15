@@ -24,8 +24,10 @@ fun CreatePostMutation.AffectedRows.mapToDomain(url: String, media: List<Media>)
             slug = user.slug!!,
             username = user.username!!,
             imageUrl = "$url${user.img}?${System.currentTimeMillis()}",
-            isfollowing = user.isfollowing!!,
-            isfollowed = user.isfollowed!!
+            following = user.isfollowing!!,
+            followed = user.isfollowed!!,
+            isAccessible = true,
+            status = Status.VISIBLE
         ),
         createdAt = createdat.toString().toTimestamp(),
         type = contenttype.mapToDomain(),
@@ -58,8 +60,10 @@ fun GetallpostsQuery.AffectedRow.mapToDomain(url: String, media: List<Media>): C
             slug = user.slug!!,
             username = user.username!!,
             imageUrl = "$url${user.img}",
-            isfollowing = user.isfollowing!!,
-            isfollowed = user.isfollowed!!
+            following = user.isfollowing!!,
+            followed = user.isfollowed!!,
+            isAccessible = !isHiddenForUsers,
+            status = visibilityStatus.mapToDomain()
         ),
         createdAt = createdat.toString().toTimestamp(),
         type = contenttype.mapToDomain(),
@@ -90,8 +94,10 @@ fun ListAdvertisementPostsQuery.Post.mapToDomain(url: String, media: List<Media>
             slug = user.slug!!,
             username = user.username!!,
             imageUrl = "$url${user.img}",
-            isfollowing = user.isfollowing!!,
-            isfollowed = user.isfollowed!!
+            following = user.isfollowing!!,
+            followed = user.isfollowed!!,
+            isAccessible = !isHiddenForUsers,
+            status = visibilityStatus.mapToDomain()
         ),
         createdAt = createdat.toString().toTimestamp(),
         type = contenttype.mapToDomain(),
@@ -100,7 +106,7 @@ fun ListAdvertisementPostsQuery.Post.mapToDomain(url: String, media: List<Media>
         isDisliked = isdisliked,
         dislikes = amountdislikes,
         isViewed = isviewed,
-        isAccessible = isHiddenForUsers,
+        isAccessible = !isHiddenForUsers,
         reported = isreported,
         status = visibilityStatus.mapToDomain(),
         views = amountviews,

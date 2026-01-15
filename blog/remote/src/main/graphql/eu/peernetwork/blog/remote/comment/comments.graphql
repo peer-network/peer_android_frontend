@@ -24,6 +24,8 @@ query GetComments(
                 amountlikes
                 isliked
                 hasActiveReports
+                isHiddenForUsers
+                visibilityStatus
                 user {
                     id
                     username
@@ -31,6 +33,8 @@ query GetComments(
                     img
                     isfollowed
                     isfollowing
+                    isHiddenForUsers
+                    visibilityStatus
                 }
             }
         }

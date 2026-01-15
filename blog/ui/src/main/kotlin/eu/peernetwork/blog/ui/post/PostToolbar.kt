@@ -28,10 +28,48 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.blog.ui.R
+import eu.peernetwork.blog.ui.model.UiStatus
 import eu.peernetwork.core.ui.design.luna.DesignAvatar
 import eu.peernetwork.core.ui.design.luna.DesignButton
 import eu.peernetwork.core.ui.design.luna.DesignImage
 import eu.peernetwork.core.ui.theme.DesignTheme
+
+@Composable
+fun PostToolbar(
+    slug: String,
+    username: String,
+    imageUrl: String,
+    modifier: Modifier = Modifier,
+    pinnedBy: String? = null,
+    status: UiStatus,
+    isAuthor: Boolean,
+    isAccessible: Boolean,
+    color: Color = MaterialTheme.colorScheme.surfaceContainerLow,
+    onAuthorClick: () -> Unit,
+    onMenu: () -> Unit,
+    connection: @Composable RowScope.() -> Unit
+) {
+    PostToolbarMask(
+        status = status,
+        isAuthor = isAuthor,
+        isAccessible = isAccessible,
+        pinnedBy = pinnedBy,
+        onMenu = onMenu,
+        connection = connection,
+    ) {
+        PostToolbar(
+            slug = slug,
+            username = username,
+            imageUrl = imageUrl,
+            modifier = modifier,
+            pinnedBy = pinnedBy,
+            color = color,
+            onAuthorClick = onAuthorClick,
+            onMenu = onMenu,
+            connection = connection
+        )
+    }
+}
 
 @Composable
 fun PostToolbar(
@@ -89,7 +127,7 @@ fun PostToolbar(
             )
         }
         updatedConnection()
-        PostHeaderOption(
+        PostToolbarOption(
             pinnedBy = pinnedBy,
             onMenu = onMenu
         )
@@ -97,7 +135,7 @@ fun PostToolbar(
 }
 
 @Composable
-private fun PostHeaderOption(
+fun PostToolbarOption(
     pinnedBy: String? = null,
     onMenu: () -> Unit
 ) {
@@ -132,6 +170,9 @@ fun PreviewPostHeader() {
             slug = "#239100",
             username = "John",
             imageUrl = "http://localhost",
+            status = UiStatus.VISIBLE,
+            isAuthor = true,
+            isAccessible = true,
             modifier = Modifier
                 .padding(horizontal = 16.dp)
                 .padding(vertical = 8.dp),
