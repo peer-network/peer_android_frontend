@@ -13,6 +13,7 @@ fun CommentList(
     id: String,
     uuid: String,
     limit: Int,
+    isAuthor: Boolean,
     controller: NavHostController,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
@@ -32,28 +33,35 @@ fun CommentList(
         provider = provider,
         viewModelStoreOwner = viewModelStoreOwner,
         onUserClick = { handleClick(it) }
-    ) { component, interactor, items ->
+    ) { _, interactor, items ->
         items(
             count = items.itemCount,
             key = { index -> items[index]?.id?.let { "$it;$index" } ?: index }
         ) { index ->
             items[index]?.let { comment ->
-                CommentOption({ handleReport(comment.id) }) {
-                    CommentItem(
-                        slug = comment.author.slug.toString(),
-                        username = comment.author.username,
-                        imageUrl = comment.author.imageUrl,
-                        comment = comment.content,
-                        isLiked = interactor.observe().value[comment.id]?.isLiked ?: comment.isLiked,
-                        isReported = comment.isReported,
-                        likes = comment.likes,
-                        onViewLikes = { interactor.viewLike(comment.id) },
-                        onLike = { interactor.like(comment) },
-                        onReply = {
-                            handleReply(comment.author.username)
-                        },
-                        onContentClick = onContentClick
-                    ) { handleClick(comment.author.id) }
+                CommentMask(
+                    isAuthor = isAuthor,
+                    status = comment.status,
+                    onClick = { handleClick(comment.id) },
+                    isAccessible = comment.isAccessible,
+                ) {
+                    CommentOption({ handleReport(comment.id) }) {
+                        CommentItem(
+                            slug = comment.author.slug.toString(),
+                            username = comment.author.username,
+                            imageUrl = comment.author.imageUrl,
+                            comment = comment.content,
+                            isLiked = interactor.observe().value[comment.id]?.isLiked ?: comment.isLiked,
+                            isReported = comment.isReported,
+                            likes = comment.likes,
+                            onViewLikes = { interactor.viewLike(comment.id) },
+                            onLike = { interactor.like(comment) },
+                            onReply = {
+                                handleReply(comment.author.username)
+                            },
+                            onContentClick = onContentClick
+                        ) { handleClick(comment.author.id) }
+                    }
                 }
             }
         }

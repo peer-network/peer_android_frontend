@@ -27,6 +27,7 @@ import eu.peernetwork.core.ui.theme.DesignTheme
 import eu.peernetwork.user.ui.R
 import eu.peernetwork.user.ui.model.UiAccount
 import eu.peernetwork.user.ui.model.UiMetric
+import eu.peernetwork.user.ui.model.UiStatus
 
 @Composable
 fun UserPage(
@@ -35,10 +36,8 @@ fun UserPage(
     selectedImage: MutableState<String?>,
     modifier: Modifier = Modifier,
     onClick: (UserMetric) -> Unit,
-    content: @Composable () -> Unit,
 ) {
     val handleOnClick by rememberUpdatedState(onClick)
-    val updatedContent by rememberUpdatedState(content)
     val emptyDescription = stringResource(R.string.empty_description_message)
     Column {
         Column(modifier = modifier) {
@@ -85,12 +84,11 @@ fun UserPage(
                 modifier = Modifier.padding(top = 16.dp)
             )
         }
-        updatedContent()
     }
 }
 
-@Composable
 @Preview
+@Composable
 fun PreviewUserPage() {
     DesignTheme(isDarkMode = true) {
         val selectedImage = remember { mutableStateOf<String?>(null) }
@@ -108,7 +106,9 @@ fun PreviewUserPage() {
             ),
             isFollowing = false,
             isFollowed = false,
-            reported = true
+            reported = true,
+            isAccessible = true,
+            status = UiStatus.VISIBLE
         )
         UserPage(
             account = model,
@@ -119,6 +119,6 @@ fun PreviewUserPage() {
                 .padding(horizontal = 24.dp)
                 .padding(vertical = 16.dp),
             onClick = {}
-        ) {}
+        )
     }
 }

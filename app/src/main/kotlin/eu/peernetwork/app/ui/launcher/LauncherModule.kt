@@ -9,6 +9,7 @@ import eu.peernetwork.app.ui.home.Home
 import eu.peernetwork.app.ui.onboarding.Onboarding
 import eu.peernetwork.app.ui.welcome.Welcome
 import eu.peernetwork.core.ui.annotation.UiBuilder
+import eu.peernetwork.core.ui.annotation.UiViewModel
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.factory.UiBuilderFactory
@@ -29,6 +30,12 @@ object LauncherModule {
     ): ViewModelProvider.Factory {
         return UiViewModelFactory(classToViewModel)
     }
+
+    @Provides
+    @IntoMap
+    @Launcher.Scope
+    @UiViewModel(LauncherViewModel::class)
+    fun viewModel(viewModel: LauncherViewModel): ViewModel = viewModel
 
     @Launcher.Scope
     @Provides

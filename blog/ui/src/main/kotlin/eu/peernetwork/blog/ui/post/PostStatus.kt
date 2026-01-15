@@ -1,7 +1,7 @@
 package eu.peernetwork.blog.ui.post
 
-import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -17,18 +17,14 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import eu.peernetwork.blog.ui.R
 import eu.peernetwork.blog.ui.engagement.EngagementReaction
 import eu.peernetwork.blog.ui.model.UiEngagement
 import eu.peernetwork.core.ui.design.luna.DesignRichText
@@ -38,50 +34,60 @@ import eu.peernetwork.core.ui.theme.DesignTheme
 fun PostStatus(
     time: String,
     modifier: Modifier = Modifier,
+    reported: Boolean = false,
+    label: @Composable (() -> Unit)? = null,
     engagement: @Composable () -> Unit
 ) {
     val updatedEngagement by rememberUpdatedState(engagement)
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-        modifier = modifier
-    ) {
-        updatedEngagement()
-        Text(
-            text = time,
-            style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.outline,
-            textAlign = TextAlign.End,
-            modifier = Modifier
-                .weight(1f)
-                .padding(start = 10.dp)
-        )
+    val updatedLabel by rememberUpdatedState(label)
+    Column(modifier = modifier) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Box(modifier = Modifier.weight(1f)
+                .padding(bottom = 2.dp)) {
+                updatedLabel?.invoke()
+            }
+            if (reported) {
+                PostReportLabel()
+            }
+        }
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            modifier = Modifier.padding(top = 2.dp)
+        ) {
+            updatedEngagement()
+            Text(
+                text = time,
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.outline,
+                textAlign = TextAlign.End,
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(start = 10.dp)
+            )
+        }
     }
 }
 
 @Composable
 fun PostStatus(
     time: String,
-    pinnedBy: String,
     modifier: Modifier = Modifier,
-    engagement: @Composable () -> Unit
+    reported: Boolean = false,
+    isAuthor: Boolean = false,
+    isAccessible: Boolean = false,
+    content: @Composable () -> Unit
 ) {
     Column(modifier = modifier) {
-        val pinnedText = buildAnnotatedString {
-            append(stringResource(R.string.pin_label))
-            append(" ")
-            withStyle(style = SpanStyle(
-                fontWeight = FontWeight.SemiBold
-            )) { append(pinnedBy) }
-        }
-        Text(
-            text = pinnedText,
-            style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.outline,
-        )
         PostStatus(
             time = time,
-            engagement = engagement,
+            engagement = content,
+            reported = reported && !(!isAccessible && isAuthor),
+            label = if (!isAccessible && isAuthor) {
+                { PostVisibilityLabel() }
+            } else {
+                null
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 10.dp)
@@ -96,21 +102,15 @@ fun PostStatus(
     title: AnnotatedString,
     description: AnnotatedString,
     modifier: Modifier = Modifier,
-    pinnedBy: String? = null,
+    isVisible: Boolean = true,
+    isAuthor: Boolean = false,
+    isAccessible: Boolean = false,
+    reported: Boolean = false,
     onClick: (DesignRichText, String) -> Unit,
     engagement: @Composable () -> Unit
 ) {
     val configuration = LocalConfiguration.current
     val titleWidth = (configuration.screenWidthDp * .3).dp
-    val pinnedText = buildAnnotatedString {
-        pinnedBy?.let {
-            append(stringResource(R.string.pin_label))
-            append(" ")
-            withStyle(style = SpanStyle(
-                fontWeight = FontWeight.SemiBold
-            )) { append(pinnedBy) }
-        }
-    }
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -121,7 +121,7 @@ fun PostStatus(
             engagement = engagement,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 10.dp)
+                .padding(vertical = 8.dp)
         )
         Row {
             Text(
@@ -139,30 +139,50 @@ fun PostStatus(
                     .padding(start = 10.dp)
                     .padding(bottom = 10.dp)
             ) {
-                DesignRichText(
-                    text = title,
-                    maxLines = 1,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onBackground,
-                    onClick = onClick
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    PostTextMask(
+                        isVisible = isVisible,
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        DesignRichText(
+                            text = title,
+                            maxLines = 1,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onBackground,
+                            onClick = onClick,
+                        )
+                    }
+                    if (!isAccessible && isAuthor) {
+                        PostVisibilityLabel()
+                    } else if (reported) {
+                        PostReportLabel()
+                    }
+                }
                 if (description.isNotEmpty()) {
-                    DesignRichText(
-                        text = description,
-                        maxLines = 3,
-                        style = MaterialTheme.typography.labelLarge,
-                        color = MaterialTheme.colorScheme.outline,
-                        lineHeight = 18.sp,
-                        onClick = onClick
-                    )
+                    PostTextMask(
+                        isVisible = isVisible,
+                        fraction = .6f
+                    ) {
+                        DesignRichText(
+                            text = description,
+                            maxLines = 3,
+                            style = MaterialTheme.typography.labelLarge,
+                            color = MaterialTheme.colorScheme.outline,
+                            lineHeight = 18.sp,
+                            onClick = onClick
+                        )
+                    }
                 }
             }
         }
     }
 }
 
+@Preview
 @Composable
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, showBackground = true)
 fun PreviewPostStatus() {
     val engagement = UiEngagement(
         id = "<test-id>",
@@ -173,19 +193,21 @@ fun PreviewPostStatus() {
         views = "3k",
         comment = "1k"
     )
-    DesignTheme(isDarkMode = false) {
+    DesignTheme(isDarkMode = true) {
         Column {
             Spacer(modifier = Modifier.height(8.dp))
             PostStatus(
                 time = "2h ago",
-                pinnedBy = "Thomas",
+                reported = true,
                 modifier = Modifier
-                    .padding(horizontal = 16.dp)
-            ) { EngagementReaction(engagement) {} }
+                    .padding(horizontal = 16.dp),
+                content = { EngagementReaction(engagement) {} }
+            )
             PostStatus(
                 time = "2h ago",
                 username = "John",
-                pinnedBy = "Thomas",
+                reported = true,
+                isAuthor = true,
                 title = buildAnnotatedString { append("Title") },
                 description = buildAnnotatedString { append("Description") },
                 modifier = Modifier

@@ -4,6 +4,7 @@ import eu.peernetwork.core.common.paging.Page
 import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.social.domain.interactor.SearchInteractor
 import eu.peernetwork.social.domain.model.Member
+import eu.peernetwork.user.domain.model.Status
 import eu.peernetwork.user.domain.repository.SearchRepository
 import javax.inject.Inject
 
@@ -25,7 +26,13 @@ class SearchInteractorDelegate @Inject constructor(
                     username = it.username,
                     imageUrl = it.imageUrl,
                     isFollowed = false,
-                    isFollowing = false
+                    isFollowing = false,
+                    isAccessible = it.isAccessible,
+                    status = when(it.status) {
+                        Status.VISIBLE -> eu.peernetwork.social.domain.model.Status.VISIBLE
+                        Status.HIDDEN -> eu.peernetwork.social.domain.model.Status.HIDDEN
+                        Status.ILLEGAL -> eu.peernetwork.social.domain.model.Status.ILLEGAL
+                    }
                 )
             }
         )

@@ -40,6 +40,8 @@ mutation CreatePost(
                 img
                 isfollowed
                 isfollowing
+                isHiddenForUsers
+                visibilityStatus
             }
         }
     }

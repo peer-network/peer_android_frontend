@@ -1,5 +1,6 @@
 package eu.peernetwork.blog.data.interactor
 
+import eu.peernetwork.blog.data.mapper.mapToDomain
 import eu.peernetwork.blog.domain.interactor.AuthorInteractor
 import eu.peernetwork.blog.domain.model.Author
 import eu.peernetwork.user.domain.usecase.AuthUserUsecase
@@ -17,8 +18,10 @@ class AuthorInteractorDelegate @Inject constructor(
             slug = account.slug,
             username = account.username,
             imageUrl = account.imageUrl,
-            isfollowing = account.following,
-            isfollowed = account.followed
+            following = account.following,
+            followed = account.followed,
+            isAccessible = account.isAccessible,
+            status = account.status.mapToDomain()
         )
     }
 
@@ -29,8 +32,10 @@ class AuthorInteractorDelegate @Inject constructor(
             slug = account.slug,
             username = account.username,
             imageUrl = account.imageUrl,
-            isfollowing = account.following,
-            isfollowed = account.followed
+            following = account.following,
+            followed = account.followed,
+            isAccessible = account.isAccessible,
+            status = account.status.mapToDomain()
         )
     }
 }

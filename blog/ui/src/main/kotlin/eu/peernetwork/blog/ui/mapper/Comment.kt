@@ -12,6 +12,8 @@ fun Comment.mapToComment(): UiComment {
         createdAt = createdAt,
         likes = likes,
         isLiked = isLiked,
-        isReported = isReported
+        isReported = isReported,
+        isAccessible = isAccessible,
+        status = status.mapFromDomain()
     )
 }

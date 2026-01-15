@@ -113,7 +113,6 @@ fun DetailScreen(
 fun DetailScreen(
     id: String,
     uuid: String,
-    isVisible: State<Boolean>,
     component: Detail.Component,
     viewModel: DetailViewModel,
     onBoost: (String) -> Unit,
@@ -135,13 +134,17 @@ fun DetailScreen(
         val reaction = LocalEngagementReaction.current
         val navigator = LocalPostNavigator.current
         val moderation = LocalModerationInteractor.current
+        val isAuthor = uuid == post.author.id
+        val isVisible = remember { mutableStateOf(post.isAccessible || isAuthor) }
         PostItem(
             type = post.type,
             pinnedBy = post.pinnedBy,
             model = post.mapToDetail(),
             asset = post.asset,
-            isAuthor = uuid == post.author.id,
+            author = post.author,
+            isAuthor = isAuthor,
             isAccessible = post.isAccessible,
+            isVisible = isVisible,
             status = post.status,
             onMenu = { showSheet.value = post },
             onClick = onClick,
@@ -179,6 +182,7 @@ fun DetailScreen(
                     expanded = expanded,
                     isAdmin = uuid == post.author.id,
                     isAccessible = post.isAccessible,
+                    isVisible = isVisible,
                     cover = media.display.cover ?: post.author.imageUrl,
                     ratio = post.asset.ratio,
                     enable = isVisible,

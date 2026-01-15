@@ -2,6 +2,7 @@ package eu.peernetwork.user.remote.mock
 
 import eu.peernetwork.core.remote.model.Status
 import protected.eu.peernetwork.user.remote.SearchuserQuery
+import protected.type.ContentVisibilityStatus
 
 object SearchMock {
     fun users(): SearchuserQuery.SearchUser {
@@ -15,7 +16,9 @@ object SearchMock {
                     username = "<test-username>",
                     slug = System.currentTimeMillis().toInt(),
                     img = "<test-img>",
-                    biography = "<test-biography>"
+                    biography = "<test-biography>",
+                    isHiddenForUsers = false,
+                    visibilityStatus = ContentVisibilityStatus.ILLEGAL
                 )
             )
         )

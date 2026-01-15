@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableLongStateOf
@@ -35,6 +36,7 @@ fun PostMedia(
     expanded: Boolean,
     isAdmin: Boolean,
     isAccessible: Boolean,
+    isVisible: MutableState<Boolean>,
     ratio: Float,
     status: UiStatus,
     enable: State<Boolean>,
@@ -62,6 +64,7 @@ fun PostMedia(
             status = status,
             isAuthor = isAdmin,
             isAccessible = isAccessible,
+            isVisible = isVisible,
             modifier = Modifier
                 .fillMaxWidth()
                 .aspectRatio(ratio)) {
@@ -78,6 +81,7 @@ fun PostMedia(
             status = status,
             isAuthor = isAdmin,
             isAccessible = isAccessible,
+            isVisible = isVisible,
             modifier = Modifier
                 .fillMaxWidth()
                 .aspectRatio(ratio)) {
@@ -123,6 +127,7 @@ fun PostMedia(
                     status = status,
                     isAuthor = isAdmin,
                     isAccessible = isAccessible,
+                    isVisible = isVisible,
                     modifier = Modifier
                         .fillMaxWidth()
                         .aspectRatio(ratio)) {

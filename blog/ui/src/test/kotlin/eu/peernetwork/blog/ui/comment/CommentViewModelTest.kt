@@ -11,6 +11,7 @@ import eu.peernetwork.blog.domain.usecase.CommentUsecase
 import eu.peernetwork.blog.domain.usecase.ReportCommentUsecase
 import eu.peernetwork.blog.ui.model.UiAuthor
 import eu.peernetwork.blog.ui.model.UiComment
+import eu.peernetwork.blog.ui.model.UiStatus
 import eu.peernetwork.blog.ui.usecase.CommentsUsecase
 import eu.peernetwork.core.common.paging.Pageable
 import io.mockk.coEvery
@@ -109,7 +110,9 @@ internal class CommentViewModelTest {
             createdAt = System.currentTimeMillis(),
             likes = 0,
             isLiked = false,
-            isReported = false
+            isReported = false,
+            isAccessible = true,
+            status = UiStatus.VISIBLE
         )
         val mockData = mockk<UiComment>()
         val pager = PagingData.from(listOf(mockData))

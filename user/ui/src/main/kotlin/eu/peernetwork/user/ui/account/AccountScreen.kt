@@ -46,6 +46,7 @@ import eu.peernetwork.user.ui.model.UiAccount
 import eu.peernetwork.user.ui.model.UiMetric
 import eu.peernetwork.user.ui.model.UiSettings
 import eu.peernetwork.user.ui.mapper.mapToModels
+import eu.peernetwork.user.ui.model.UiStatus
 
 @Composable
 fun AccountScreen(
@@ -198,7 +199,9 @@ fun PreviewAccountScreen() {
                 followed = 0
             ),
             isFollowing = false,
-            isFollowed = false
+            isFollowed = false,
+            isAccessible = true,
+            status = UiStatus.VISIBLE
         )
         AccountScreen(
             account = model,

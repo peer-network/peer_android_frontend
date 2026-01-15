@@ -11,5 +11,7 @@ data class UiComment (
     val createdAt: Long,
     val likes: Int,
     val isLiked: Boolean,
-    val isReported: Boolean
+    val isReported: Boolean,
+    val isAccessible: Boolean,
+    val status: UiStatus,
 )

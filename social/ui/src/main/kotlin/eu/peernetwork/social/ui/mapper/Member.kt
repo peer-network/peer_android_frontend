@@ -10,6 +10,8 @@ fun Member.mapFromDomain(): UiMember {
         username = username,
         imageUrl = imageUrl,
         isFollowed = isFollowed,
-        isFollowing = isFollowing
+        isFollowing = isFollowing,
+        isAccessible = isAccessible,
+        status = status.mapFromDomain()
     )
 }

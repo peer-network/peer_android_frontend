@@ -13,19 +13,24 @@ fun GetCommentsQuery.AffectedRow.mapToDomain(): List<Comment> {
     return comments.map {
         Comment(
             id = it.commentid,
-            content = StringEscapeUtils.unescapeJava(it.content).replace("\\'", "'"),
+            content = StringEscapeUtils.unescapeJava(it.content)
+                .replace("\\'", "'"),
             author = Author(
                 id = it.user.id,
                 slug = it.user.slug!!,
                 username = it.user.username!!,
                 imageUrl = it.user.img!!,
-                isfollowing = it.user.isfollowing!!,
-                isfollowed = it.user.isfollowed!!
-                ),
+                following = it.user.isfollowing!!,
+                followed = it.user.isfollowed!!,
+                isAccessible = !it.user.isHiddenForUsers,
+                status = it.user.visibilityStatus.mapToDomain()
+            ),
             createdAt = 0L,
             likes = it.amountlikes,
             isLiked = it.isliked,
-            isReported = it.hasActiveReports
+            isReported = it.hasActiveReports,
+            isAccessible = !it.isHiddenForUsers,
+            status = it.user.visibilityStatus.mapToDomain()
         )
     }
 }
@@ -33,18 +38,23 @@ fun GetCommentsQuery.AffectedRow.mapToDomain(): List<Comment> {
 fun CreateCommentMutation.AffectedRow.mapToDomain(): Comment {
     return Comment(
         id = commentid,
-        content = StringEscapeUtils.unescapeJava(content).replace("\\'", "'"),
+        content = StringEscapeUtils.unescapeJava(content)
+            .replace("\\'", "'"),
         author = Author(
             id = user.id,
             slug = user.slug!!,
             username = user.username!!,
             imageUrl = user.img!!,
-            isfollowing = user.isfollowing!!,
-            isfollowed = user.isfollowed!!
+            following = user.isfollowing!!,
+            followed = user.isfollowed!!,
+            isAccessible = !user.isHiddenForUsers,
+            status = user.visibilityStatus.mapToDomain()
         ),
         createdAt = (createdat.toString()).mapToTimestamp(),
         likes = amountlikes,
-        isLiked = isliked
+        isLiked = isliked,
+        isAccessible = !isHiddenForUsers,
+        status = visibilityStatus.mapToDomain()
     )
 }
 

@@ -4,7 +4,6 @@ import eu.peernetwork.blog.domain.model.Content
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.model.UiPostDetail
 import eu.peernetwork.blog.ui.model.UiPostType
-import eu.peernetwork.blog.ui.model.UiStatus
 import eu.peernetwork.core.ui.mapper.annotate
 
 fun Content.mapFromDomain(): UiPost {
@@ -43,11 +42,14 @@ fun Content.Type.mapFromDomain(): UiPostType {
 fun UiPost.mapToDetail(): UiPostDetail {
     return UiPostDetail(
         id = id,
+        uuid = author.id,
         slug = "#${author.slug}",
         username = author.username,
         title = title,
         description = description,
         imageUrl = author.imageUrl,
         time = time,
+        reported = reported,
+        isAccessible = isAccessible,
     )
 }

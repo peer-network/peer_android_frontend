@@ -74,13 +74,17 @@ fun ArticleList(
             val reaction = LocalEngagementReaction.current
             val navigator = LocalPostNavigator.current
             items[index]?.let { post ->
+                val isAuthor = uuid == post.author.id
+                val isVisible = remember { mutableStateOf(post.isAccessible || isAuthor) }
                 PostItem(
                     type = post.type,
                     pinnedBy = post.pinnedBy,
                     model = post.mapToDetail(),
                     asset = post.asset,
-                    isAuthor = uuid == post.author.id,
+                    isAuthor = isAuthor,
+                    author = post.author,
                     isAccessible = post.isAccessible,
+                    isVisible = isVisible,
                     status = post.status,
                     onMenu = { showSheet.value = post },
                     onClick = { selected.intValue = index },
@@ -104,6 +108,7 @@ fun ArticleList(
                             status = post.status,
                             isAdmin = uuid == post.author.id,
                             isAccessible = post.isAccessible,
+                            isVisible = isVisible,
                             cover = media.display.cover ?: post.author.imageUrl,
                             ratio = post.asset.ratio,
                             enable = enable,

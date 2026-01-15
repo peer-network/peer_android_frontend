@@ -26,6 +26,8 @@ query Getallposts(
             cover
             contenttype
             createdat
+            isHiddenForUsers
+            visibilityStatus
             user {
                 id
                 username

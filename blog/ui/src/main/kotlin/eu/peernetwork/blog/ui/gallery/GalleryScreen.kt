@@ -5,11 +5,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -40,33 +42,49 @@ fun GalleryScreen(
     val engagementInteractor = LocalEngagementInteractor.current
     val interactor = LocalPostInteractor.current
     val progress = remember { mutableFloatStateOf(0f) }
+    val isAuthor = uuid == post.author.id
+    val isVisible = remember { mutableStateOf(post.isAccessible || isAuthor) }
     EngagementReactionStream(
         post = post,
         state = engagementInteractor.observe()
     ) { engagement ->
         GalleryScaffold(
-            slug = post.author.slug.toString(),
             type = post.type,
-            username = post.author.username,
             title = post.title,
             description = post.description,
-            imageUrl = post.author.imageUrl,
             time = context.format(post.time),
             asset = post.asset,
+            isVisible = isVisible,
             engagement = engagement,
             onEngage = { reaction(post, it) },
             onMenu = { showSheet.value = post },
-            showAuthor = {
-                navigator.navigate(
-                    route = PostNavigator.Route.Profile(post.author.id)
-                )
-            },
             onContentClick = { spec, value -> navigator.navigate(spec.route(value)) },
             modifier = Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
                 .navigationBarsPadding(),
-            connection = connection,
+            toolbar = {
+                GalleryToolbarMask(
+                    isAuthor = post.author.id == uuid,
+                    status = post.author.status,
+                    isAccessible = post.author.isAccessible,
+                ) {
+                    GalleryToolbar(
+                        slug = post.author.slug.toString(),
+                        username = post.author.username,
+                        imageUrl = post.author.imageUrl,
+                        modifier = Modifier
+                            .padding(start = 12.dp)
+                            .padding(vertical = 6.dp),
+                        onClick = {
+                            navigator.navigate(
+                                route = PostNavigator.Route.Profile(post.author.id)
+                            )
+                        },
+                        content = connection
+                    )
+                }
+            },
             bottom = {
                 if (post.type != UiPostType.TEXT
                     && post.type != UiPostType.IMAGE) {
@@ -89,10 +107,11 @@ fun GalleryScreen(
                 media = media,
                 post = post,
                 position = position,
-                isAdmin = uuid == post.author.id,
+                isAdmin = isAuthor,
                 hasMedia = hasMedia,
                 isAccessible = post.isAccessible,
                 enabled = enabled,
+                isVisible = isVisible,
                 progress = progress
             )
         }

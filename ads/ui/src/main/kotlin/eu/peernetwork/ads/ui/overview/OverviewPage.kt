@@ -39,7 +39,7 @@ fun OverviewPage(metrics: UiMetrics) {
         )
         OverviewMetrics(
             metrics = metrics,
-            modifier = Modifier.padding(top = 12.dp)
+            modifier = Modifier.padding(top = 10.dp)
         )
     }
 }

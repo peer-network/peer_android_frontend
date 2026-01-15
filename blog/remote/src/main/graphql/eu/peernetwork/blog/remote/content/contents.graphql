@@ -49,6 +49,8 @@ query Getallposts(
                 img
                 isfollowed
                 isfollowing
+                isHiddenForUsers
+                visibilityStatus
             }
         }
     }

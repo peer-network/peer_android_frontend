@@ -28,11 +28,10 @@ import eu.peernetwork.core.ui.extension.error
 import eu.peernetwork.social.ui.connection.ConnectionButton
 import eu.peernetwork.social.ui.connection.ConnectionInteractor.Companion.LocalConnectionInteractor
 import eu.peernetwork.social.ui.connection.ConnectionScreen
-import eu.peernetwork.social.ui.referral.ReferralItem
 
 @Composable
 fun FollowersScreen(
-    userId: String,
+    uuid: String,
     postLimit: Int,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
@@ -74,7 +73,7 @@ fun FollowersScreen(
                 error = component.resource().error(error.value),
                 onRefresh = {
                     viewModel.followers(
-                        userId = userId,
+                        userId = uuid,
                         pageable = Pageable(offset = 0, limit = postLimit)
                     )
                 },
@@ -87,28 +86,35 @@ fun FollowersScreen(
             LazyColumn(modifier = Modifier.fillMaxSize()) {
                 items(lazyPagingItems.itemCount) { index ->
                     lazyPagingItems[index]?.let { member ->
-                        ReferralItem(
-                            slug = member.slug,
-                            username = member.username,
-                            imageUrl = member.imageUrl,
-                            onClick = { handleClick(member.id) }
+                        FollowersMask(
+                            isAuthor = uuid == member.id,
+                            status = member.status,
+                            onClick = { handleClick(member.id) },
+                            isAccessible = member.isAccessible,
                         ) {
-                            ConnectionButton(
-                                isFollowing = connection.getOrDefault(
-                                    key = member.id,
-                                    defaultValue = member.isFollowing
-                                ),
-                                isFollowed = member.isFollowed,
-                                onClick = { follow ->
-                                    controller.invoke(member.id, !follow)
-                                },
-                                fontWeight = FontWeight.SemiBold,
-                                minHeight = 32.dp,
-                                contentPadding = PaddingValues(
-                                    horizontal = 16.dp,
-                                    vertical = 8.dp
+                            FollowersItem(
+                                slug = member.slug,
+                                username = member.username,
+                                imageUrl = member.imageUrl,
+                                onClick = { handleClick(member.id) }
+                            ) {
+                                ConnectionButton(
+                                    isFollowing = connection.getOrDefault(
+                                        key = member.id,
+                                        defaultValue = member.isFollowed
+                                    ),
+                                    isFollowed = member.isFollowing,
+                                    onClick = { follow ->
+                                        controller.invoke(member.id, !follow)
+                                    },
+                                    fontWeight = FontWeight.SemiBold,
+                                    minHeight = 32.dp,
+                                    contentPadding = PaddingValues(
+                                        horizontal = 16.dp,
+                                        vertical = 8.dp
+                                    )
                                 )
-                            )
+                            }
                         }
                     }
                 }
@@ -118,7 +124,7 @@ fun FollowersScreen(
     }
     LaunchedEffect(Unit) {
         if (state is FollowersViewModel.State.Empty) {
-            viewModel.followers(userId, pageable = Pageable(offset = 0, limit = postLimit))
+            viewModel.followers(uuid, pageable = Pageable(offset = 0, limit = postLimit))
         }
     }
     DisposableEffect(Unit) {

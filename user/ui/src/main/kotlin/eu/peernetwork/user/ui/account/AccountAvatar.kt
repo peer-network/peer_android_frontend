@@ -39,6 +39,7 @@ import eu.peernetwork.user.ui.model.UiAccount
 import eu.peernetwork.user.ui.model.UiMetric
 import eu.peernetwork.core.ui.design.luna.DesignImage
 import eu.peernetwork.user.ui.activity.CropActivity
+import eu.peernetwork.user.ui.model.UiStatus
 import java.io.File
 
 @Composable
@@ -121,7 +122,9 @@ fun PreviewAccountAvatar() {
                 followed = 0
             ),
             isFollowing = false,
-            isFollowed = false
+            isFollowed = false,
+            isAccessible = true,
+            status = UiStatus.VISIBLE
         )
         AccountAvatar(
             name = model.username,

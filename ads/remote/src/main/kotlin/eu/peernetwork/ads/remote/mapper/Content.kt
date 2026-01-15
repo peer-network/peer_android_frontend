@@ -8,9 +8,11 @@ import eu.peernetwork.ads.remote.model.ContentModel
 fun ContentModel.mapToDomain(): Content {
     return Content(
         id = id,
-        title = this.title,
-        description = this.description,
-        path = this.path
+        title = title,
+        description = description,
+        path = path,
+        isAccessible = isAccessible,
+        status = status
     )
 }
 
@@ -19,15 +21,19 @@ fun AdvertisementHistoryQuery.Advertisement.mapToContent(): ContentModel {
         id = post.id,
         title = post.title,
         description = post.mediadescription,
-        path = post.media
+        path = post.media,
+        isAccessible = !post.isHiddenForUsers,
+        status = post.visibilityStatus.mapToDomain()
     )
 }
 
 fun ContentQuery.AffectedRow.mapToDomain(): Content {
     return Content(
         id = id,
-        title = this.title,
-        description = this.mediadescription,
-        path = this.media
+        title = title,
+        description = mediadescription,
+        path = media,
+        isAccessible = !isHiddenForUsers,
+        status = visibilityStatus.mapToDomain()
     )
 }

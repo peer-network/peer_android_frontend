@@ -5,6 +5,7 @@ import social.social.eu.peernetwork.social.remote.ListFollowRelationsQuery
 import social.social.eu.peernetwork.social.remote.ListFollowingsRelationsQuery
 import social.social.eu.peernetwork.social.remote.ListPeersQuery
 import social.social.eu.peernetwork.social.remote.UserFollowMutation
+import social.type.ContentVisibilityStatus
 
 object FollowMock {
     fun follow(): UserFollowMutation.ToggleUserFollowStatus {
@@ -27,7 +28,9 @@ object FollowMock {
                     slug = 1,
                     img = "<test-image>",
                     isfollowing = false,
-                    isfollowed = false
+                    isfollowed = false,
+                    isHiddenForUsers = true,
+                    visibilityStatus = ContentVisibilityStatus.ILLEGAL
                 )
             ))
         )
@@ -45,7 +48,9 @@ object FollowMock {
                     slug = 1,
                     img = "<test-image>",
                     isfollowing = false,
-                    isfollowed = false
+                    isfollowed = false,
+                    isHiddenForUsers = true,
+                    visibilityStatus = ContentVisibilityStatus.ILLEGAL
                 )
             ))
         )
@@ -63,7 +68,9 @@ object FollowMock {
                     slug = 1,
                     img = "<test-image>",
                     biography = "<test-biography>",
-                    updatedat = "<test-updated-at>"
+                    updatedat = "<test-updated-at>",
+                    isHiddenForUsers = true,
+                    visibilityStatus = ContentVisibilityStatus.ILLEGAL
                 )
             )
         )

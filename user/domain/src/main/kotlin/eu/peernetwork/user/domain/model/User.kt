@@ -5,7 +5,9 @@ data class User(
     val slug: Int,
     val username: String,
     val bio: String,
-    val imageUrl: String
+    val imageUrl: String,
+    val isAccessible: Boolean,
+    val status: Status
 ) {
     data class Profile(
         val id: String,

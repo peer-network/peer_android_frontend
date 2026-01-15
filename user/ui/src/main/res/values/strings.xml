@@ -44,6 +44,7 @@
     <string name="token_label">Token</string>
     <string name="address_label">Address</string>
     <string name="account_label">Account</string>
+    <string name="illegal_profile">Profile data is removed as illegal</string>
 
     <string name="posts_label">Publications</string>
     <string name="follow_label">Follow</string>
@@ -110,6 +111,10 @@
 
     <string name="profile_update_message">Profile updated successfully!</string>
     <string name="profile_deactivation_message">Account deactivated successfully!</string>
+
+    <string name="show_label">Show</string>
+    <string name="sensitive_title">Sensitive content</string>
+    <string name="sensitive_description">This content may be sensitive or abusive. \nDo you want to view it anyway?</string>
 
     <string name="privacy_text">Privacy Policy</string>
     <string name="agreement">I agree to the</string>

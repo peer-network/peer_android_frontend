@@ -27,6 +27,7 @@ import eu.peernetwork.ads.domain.model.Filter
 import eu.peernetwork.ads.ui.R
 import eu.peernetwork.ads.ui.article.ArticleNavigator.Companion.LocalArticleNavigator
 import eu.peernetwork.ads.ui.extension.route
+import eu.peernetwork.ads.ui.model.UiStatus
 import eu.peernetwork.ads.ui.overview.OverviewPage
 import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.core.ui.component.UiComponentProvider
@@ -120,6 +121,10 @@ fun AdvertsScreen(
                                 navigator.navigate(type.route(value))
                             },
                             onSelect = { handleSelect(post.ads.id) },
+                            label = if (!post.ads.content.isAccessible ||
+                                post.ads.content.status != UiStatus.VISIBLE) {
+                                { AdvertsVisibilityLabel() }
+                            } else { null },
                             modifier = Modifier
                                 .padding(horizontal = 16.dp)
                                 .padding(vertical = 5.dp)

@@ -32,7 +32,9 @@ object ContentMock {
                     img = "<test-avatar>",
                     slug = 0,
                     isfollowed = false,
-                    isfollowing = false
+                    isfollowing = false,
+                    isHiddenForUsers = true,
+                    visibilityStatus = ContentVisibilityStatus.HIDDEN
                 )
             )
         )
@@ -70,6 +72,8 @@ object ContentMock {
                         slug = 0,
                         isfollowed = false,
                         isfollowing = false,
+                        isHiddenForUsers = true,
+                        visibilityStatus = ContentVisibilityStatus.HIDDEN
                     )
                 )
             )

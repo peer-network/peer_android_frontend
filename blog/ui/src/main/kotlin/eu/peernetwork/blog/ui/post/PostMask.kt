@@ -14,10 +14,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -38,27 +39,25 @@ fun PostMask(
     status: UiStatus,
     isAuthor: Boolean,
     isAccessible: Boolean,
+    isVisible: MutableState<Boolean>,
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit
 ) {
     val updatedContent by rememberUpdatedState(content)
-    val isVisible = rememberSaveable { mutableStateOf(false) }
     Box(
         modifier = modifier,
         contentAlignment = Alignment.Center
     ) {
-        if (isAuthor) {
-            updatedContent()
-        } else if (!isAccessible) {
+        if (status == UiStatus.ILLEGAL) {
+            PostMask()
+        } else if (!isAccessible && !isAuthor) {
             if (isVisible.value) {
                 updatedContent()
             } else {
                 PostMask { isVisible.value = true }
             }
-        } else if (status == UiStatus.VISIBLE) {
-            updatedContent()
         } else {
-            PostMask()
+            updatedContent()
         }
     }
 }
@@ -131,12 +130,24 @@ fun PostMask(onClick: () -> Unit) {
 @Preview
 fun PreviewPostMask() {
     DesignTheme(isDarkMode = true) {
-        PostMask(
-            status = UiStatus.ILLEGAL,
-            isAuthor = false,
-            isAccessible = false,
-            Modifier.fillMaxWidth()
-            .aspectRatio(1f)) {
+        val isVisible = remember { mutableStateOf(false) }
+        Column(verticalArrangement = Arrangement.spacedBy(16.dp)){
+            PostMask(
+                status = UiStatus.ILLEGAL,
+                isAuthor = false,
+                isAccessible = false,
+                isVisible = isVisible,
+                Modifier.fillMaxWidth()
+                    .aspectRatio(1f)) {
+            }
+            PostMask(
+                status = UiStatus.HIDDEN,
+                isAuthor = false,
+                isAccessible = false,
+                isVisible = isVisible,
+                Modifier.fillMaxWidth()
+                    .aspectRatio(1f)) {
+            }
         }
     }
 }

@@ -10,6 +10,7 @@ import eu.peernetwork.core.remote.extension.getOrThrow
 import eu.peernetwork.core.remote.api.RequestClient
 import eu.peernetwork.social.data.api.FollowApi
 import eu.peernetwork.social.domain.model.Member
+import eu.peernetwork.social.remote.mapper.mapToDomain
 import eu.peernetwork.social.remote.mapper.mapToMode
 import social.social.eu.peernetwork.social.remote.ListFollowRelationsQuery
 import social.social.eu.peernetwork.social.remote.ListFollowingsRelationsQuery
@@ -51,7 +52,9 @@ class FollowApiDelegate @Inject constructor(
                 username = it.username!!,
                 imageUrl = "$url/${it.img!!}".removeSuffix("/"),
                 isFollowing = it.isfollowing ?: false,
-                isFollowed = it.isfollowed ?: false
+                isFollowed = it.isfollowed ?: false,
+                isAccessible = !it.isHiddenForUsers,
+                status = it.visibilityStatus.mapToDomain()
             )
         }
         return Page(
@@ -81,7 +84,9 @@ class FollowApiDelegate @Inject constructor(
                 username = it.username!!,
                 imageUrl = "$url/${it.img!!}".removeSuffix("/"),
                 isFollowing = it.isfollowing ?: false,
-                isFollowed = it.isfollowed ?: false
+                isFollowed = it.isfollowed ?: false,
+                isAccessible = !it.isHiddenForUsers,
+                status = it.visibilityStatus.mapToDomain()
             )
         }
         return Page(
@@ -109,7 +114,9 @@ class FollowApiDelegate @Inject constructor(
                 username = it.username ?: "Unknown",
                 imageUrl = "$url/${it.img!!}".removeSuffix("/"),
                 isFollowing = true,
-                isFollowed = true
+                isFollowed = true,
+                isAccessible = !it.isHiddenForUsers,
+                status = it.visibilityStatus.mapToDomain()
             )
         }
         return Page(
