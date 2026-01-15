@@ -42,6 +42,7 @@ fun CommentList(
                 CommentMask(
                     isAuthor = isAuthor,
                     status = comment.status,
+                    onClick = { handleClick(comment.id) },
                     isAccessible = comment.isAccessible,
                 ) {
                     CommentOption({ handleReport(comment.id) }) {

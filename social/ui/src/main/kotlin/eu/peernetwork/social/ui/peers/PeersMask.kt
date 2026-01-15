@@ -1,4 +1,4 @@
-package eu.peernetwork.blog.ui.comment
+package eu.peernetwork.social.ui.peers
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -26,12 +26,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import eu.peernetwork.blog.ui.R
-import eu.peernetwork.blog.ui.model.UiStatus
 import eu.peernetwork.core.ui.theme.DesignTheme
+import eu.peernetwork.social.ui.R
+import eu.peernetwork.social.ui.model.UiStatus
 
 @Composable
-fun CommentMask(
+fun PeersMask(
     status: UiStatus,
     isAuthor: Boolean,
     isAccessible: Boolean,
@@ -43,12 +43,12 @@ fun CommentMask(
     val isVisible = remember { mutableStateOf(false) }
     Box(modifier = modifier) {
         if (status == UiStatus.ILLEGAL) {
-            CommentMask(modifier = Modifier.clickable(onClick = onClick))
+            PeersMask(modifier = Modifier.clickable(onClick = onClick))
         } else if (!isAccessible && !isAuthor) {
             if (isVisible.value) {
                 updatedContent()
             } else {
-                CommentMask { isVisible.value = true }
+                PeersMask { isVisible.value = true }
             }
         } else {
             updatedContent()
@@ -57,7 +57,7 @@ fun CommentMask(
 }
 
 @Composable
-fun CommentMask(onClick: () -> Unit) {
+fun PeersMask(onClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -94,7 +94,7 @@ fun CommentMask(onClick: () -> Unit) {
 }
 
 @Composable
-fun CommentMask(modifier: Modifier = Modifier) {
+fun PeersMask(modifier: Modifier = Modifier) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -113,7 +113,7 @@ fun CommentMask(modifier: Modifier = Modifier) {
                 .padding(10.dp)
         )
         Text(
-            text = stringResource(R.string.illegal_content_description),
+            text = stringResource(R.string.illegal_username),
             color = MaterialTheme.colorScheme.onBackground,
             style = MaterialTheme.typography.labelLarge,
             fontWeight = FontWeight.SemiBold,
@@ -129,13 +129,13 @@ fun CommentMask(modifier: Modifier = Modifier) {
 fun PreviewCommentMask() {
     DesignTheme(isDarkMode = true) {
         Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            CommentMask(
+            PeersMask(
                 status = UiStatus.ILLEGAL,
                 isAuthor = false,
                 onClick = {},
                 isAccessible = false,
             ) {}
-            CommentMask(
+            PeersMask(
                 status = UiStatus.HIDDEN,
                 isAuthor = false,
                 onClick = {},

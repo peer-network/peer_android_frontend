@@ -1,4 +1,4 @@
-package eu.peernetwork.blog.ui.comment
+package eu.peernetwork.social.ui.followings
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -26,12 +26,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import eu.peernetwork.blog.ui.R
-import eu.peernetwork.blog.ui.model.UiStatus
 import eu.peernetwork.core.ui.theme.DesignTheme
+import eu.peernetwork.social.ui.R
+import eu.peernetwork.social.ui.model.UiStatus
 
 @Composable
-fun CommentMask(
+fun FollowingsMask(
     status: UiStatus,
     isAuthor: Boolean,
     isAccessible: Boolean,
@@ -43,12 +43,12 @@ fun CommentMask(
     val isVisible = remember { mutableStateOf(false) }
     Box(modifier = modifier) {
         if (status == UiStatus.ILLEGAL) {
-            CommentMask(modifier = Modifier.clickable(onClick = onClick))
+            FollowingsMask(modifier = Modifier.clickable(onClick = onClick))
         } else if (!isAccessible && !isAuthor) {
             if (isVisible.value) {
                 updatedContent()
             } else {
-                CommentMask { isVisible.value = true }
+                FollowingsMask { isVisible.value = true }
             }
         } else {
             updatedContent()
@@ -57,11 +57,12 @@ fun CommentMask(
 }
 
 @Composable
-fun CommentMask(onClick: () -> Unit) {
+fun FollowingsMask(onClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp),
+            .padding(vertical = 8.dp)
+            .padding(horizontal = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
@@ -69,7 +70,7 @@ fun CommentMask(onClick: () -> Unit) {
             contentDescription = stringResource(R.string.hidden_content_label),
             tint = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier
-                .size(36.dp)
+                .size(42.dp)
                 .clip(CircleShape)
                 .background(MaterialTheme.colorScheme.surfaceContainerLowest)
                 .padding(10.dp)
@@ -94,11 +95,12 @@ fun CommentMask(onClick: () -> Unit) {
 }
 
 @Composable
-fun CommentMask(modifier: Modifier = Modifier) {
+fun FollowingsMask(modifier: Modifier = Modifier) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp)
+            .padding(vertical = 8.dp)
+            .padding(horizontal = 12.dp)
             .then(modifier),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -107,13 +109,13 @@ fun CommentMask(modifier: Modifier = Modifier) {
             contentDescription = stringResource(R.string.hidden_content_label),
             tint = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier
-                .size(36.dp)
+                .size(42.dp)
                 .clip(CircleShape)
                 .background(MaterialTheme.colorScheme.surfaceContainerLowest)
-                .padding(10.dp)
+                .padding(12.dp)
         )
         Text(
-            text = stringResource(R.string.illegal_content_description),
+            text = stringResource(R.string.illegal_username),
             color = MaterialTheme.colorScheme.onBackground,
             style = MaterialTheme.typography.labelLarge,
             fontWeight = FontWeight.SemiBold,
@@ -129,13 +131,13 @@ fun CommentMask(modifier: Modifier = Modifier) {
 fun PreviewCommentMask() {
     DesignTheme(isDarkMode = true) {
         Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            CommentMask(
+            FollowingsMask(
                 status = UiStatus.ILLEGAL,
                 isAuthor = false,
                 onClick = {},
                 isAccessible = false,
             ) {}
-            CommentMask(
+            FollowingsMask(
                 status = UiStatus.HIDDEN,
                 isAuthor = false,
                 onClick = {},

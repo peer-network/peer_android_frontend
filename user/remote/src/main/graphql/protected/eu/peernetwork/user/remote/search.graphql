@@ -9,6 +9,8 @@ query Searchuser($username: String!, $contentFilterBy: ContentFilterType, $offse
             username
             img
             biography
+            isHiddenForUsers
+            visibilityStatus
         }
     }
 }
