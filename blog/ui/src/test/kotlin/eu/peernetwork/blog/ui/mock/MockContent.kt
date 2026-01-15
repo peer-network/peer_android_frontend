@@ -19,7 +19,9 @@ object MockContent {
                 slug = 0,
                 imageUrl = "http://localhost",
                 followed = false,
-                following = false
+                following = false,
+                isAccessible = true,
+                status = UiStatus.VISIBLE
             ),
             type = UiPostType.IMAGE,
             createdAt = System.currentTimeMillis(),
