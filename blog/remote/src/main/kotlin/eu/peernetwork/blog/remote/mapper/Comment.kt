@@ -24,7 +24,8 @@ fun GetCommentsQuery.AffectedRow.mapToDomain(): List<Comment> {
                 ),
             createdAt = 0L,
             likes = it.amountlikes,
-            isLiked = it.isliked
+            isLiked = it.isliked,
+            isReported = it.hasActiveReports
         )
     }
 }

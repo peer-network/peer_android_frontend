@@ -13,6 +13,7 @@
     <string name="following_label">Following</string>
     <string name="follower_label">Followers</string>
     <string name="report_label">Report</string>
+    <string name="reported_label">Reported</string>
     <string name="share_label">Share</string>
     <string name="share_option_label">Share via</string>
     <string name="boost_label">Boost post</string>
@@ -47,4 +48,6 @@
 
     <string name="pin_label">Pin by</string>
     <string name="no_content_text">No content available!</string>
+
+    <string name="comment_report_prompt">Are you sure you want to report this comment?</string>
 </resources>

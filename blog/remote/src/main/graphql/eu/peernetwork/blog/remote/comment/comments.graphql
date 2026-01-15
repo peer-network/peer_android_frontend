@@ -23,6 +23,7 @@ query GetComments(
                 createdat
                 amountlikes
                 isliked
+                hasActiveReports
                 user {
                     id
                     username

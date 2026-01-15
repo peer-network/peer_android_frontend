@@ -7,6 +7,7 @@ import androidx.paging.cachedIn
 import eu.peernetwork.blog.domain.usecase.CommentLikeUsecase
 import eu.peernetwork.blog.domain.usecase.CommentUpdateUsecase
 import eu.peernetwork.blog.domain.usecase.CommentUsecase
+import eu.peernetwork.blog.domain.usecase.ReportCommentUsecase
 import eu.peernetwork.blog.ui.model.UiComment
 import eu.peernetwork.blog.ui.usecase.CommentsUsecase
 import eu.peernetwork.core.common.paging.Pageable
@@ -24,7 +25,8 @@ class CommentViewModel @Inject constructor(
     private val usecase: CommentUsecase,
     private val commentsUsecase: CommentsUsecase,
     private val updateUsecase: CommentUpdateUsecase,
-    private val likeUsecase: CommentLikeUsecase
+    private val likeUsecase: CommentLikeUsecase,
+    private val reportCommentUsecase: ReportCommentUsecase,
 ) : ViewModel() {
     private val cache = mutableMapOf<String, UiComment>()
 
@@ -90,6 +92,18 @@ class CommentViewModel @Inject constructor(
         }
     }
 
+    fun report(id: String) {
+        viewModelScope.launch {
+            try {
+                _status.tryEmit(Status.Loading(Intent.Report))
+                reportCommentUsecase(id)
+                _status.tryEmit(Status.Success(Intent.Report, id))
+            } catch (error: Throwable) {
+                _status.tryEmit(Status.Error(Intent.Report, error))
+            }
+        }
+    }
+
     fun clear() {
         viewModelScope.launch {
             _status.tryEmit(Status.Empty)
@@ -106,6 +120,7 @@ class CommentViewModel @Inject constructor(
     sealed interface Intent {
         data object Idle: Intent
         data object Like: Intent
+        data object Report: Intent
         data object Comment: Intent
     }
 
