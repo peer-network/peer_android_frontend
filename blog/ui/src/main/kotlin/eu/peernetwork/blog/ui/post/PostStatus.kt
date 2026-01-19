@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -16,7 +15,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -98,7 +96,6 @@ fun PostStatus(
 @Composable
 fun PostStatus(
     time: String,
-    username: String,
     title: AnnotatedString,
     description: AnnotatedString,
     modifier: Modifier = Modifier,
@@ -107,10 +104,10 @@ fun PostStatus(
     isAccessible: Boolean = false,
     reported: Boolean = false,
     onClick: (DesignRichText, String) -> Unit,
-    engagement: @Composable () -> Unit
+    label: @Composable () -> Unit,
+    engagement: @Composable () -> Unit,
 ) {
-    val configuration = LocalConfiguration.current
-    val titleWidth = (configuration.screenWidthDp * .3).dp
+    val updatedLabel by rememberUpdatedState(label)
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -124,15 +121,7 @@ fun PostStatus(
                 .padding(vertical = 8.dp)
         )
         Row {
-            Text(
-                text = username,
-                style = MaterialTheme.typography.bodyMedium,
-                fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onBackground,
-                modifier = Modifier.widthIn(max = titleWidth),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
+            updatedLabel()
             Column(
                 modifier = Modifier
                     .weight(1f)
@@ -205,14 +194,23 @@ fun PreviewPostStatus() {
             )
             PostStatus(
                 time = "2h ago",
-                username = "John",
                 reported = true,
                 isAuthor = true,
                 title = buildAnnotatedString { append("Title") },
                 description = buildAnnotatedString { append("Description") },
                 modifier = Modifier
                     .padding(horizontal = 16.dp),
-                onClick = { _,_ -> }
+                onClick = { _,_ -> },
+                label =  {
+                    Text(
+                        text = "John",
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.onBackground,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
             ) { EngagementReaction(engagement) {} }
         }
     }

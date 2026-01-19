@@ -49,6 +49,7 @@
     <string name="click_to_see_label">Click to see</string>
 
     <string name="pin_label">Pin by</string>
+    <string name="removed_label">removed</string>
     <string name="hidden_label">Hidden</string>
     <string name="hidden_content_action">View content</string>
     <string name="hidden_content_label">Sensitive content</string>

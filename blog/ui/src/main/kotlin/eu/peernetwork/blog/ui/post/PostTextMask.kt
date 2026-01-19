@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -23,9 +25,11 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.blog.ui.R
@@ -155,6 +159,62 @@ fun PostTextMask(
 }
 
 @Composable
+fun PostLabelMask(
+    text: String,
+    status: UiStatus,
+    isAccessible: Boolean,
+    isVisible: MutableState<Boolean>,
+    modifier: Modifier = Modifier,
+) {
+    val configuration = LocalConfiguration.current
+    val titleWidth = (configuration.screenWidthDp * .3).dp
+    if (status == UiStatus.ILLEGAL) {
+        Text(
+            text = stringResource(R.string.removed_label),
+            style = MaterialTheme.typography.bodyMedium,
+            fontWeight = FontWeight.SemiBold,
+            color = MaterialTheme.colorScheme.onBackground,
+            modifier = Modifier.then(modifier)
+                .widthIn(max = titleWidth),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+    } else if (!isAccessible) {
+        if (isVisible.value) {
+            Text(
+                text = text,
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.onBackground,
+                modifier = Modifier.then(modifier)
+                    .widthIn(max = titleWidth),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        } else {
+            DesignSkeleton(
+                modifier = Modifier.then(modifier)
+                    .padding(vertical = 2.dp)
+                    .width(titleWidth)
+                    .height(12.dp),
+                color = MaterialTheme.colorScheme.surfaceContainerLowest,
+            )
+        }
+    } else {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.bodyMedium,
+            fontWeight = FontWeight.SemiBold,
+            color = MaterialTheme.colorScheme.onBackground,
+            modifier = Modifier.then(modifier)
+                .widthIn(max = titleWidth),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+    }
+}
+
+@Composable
 @Preview
 fun PreviewPostTextMask() {
     DesignTheme(isDarkMode = true) {
@@ -176,6 +236,20 @@ fun PreviewPostTextMask() {
                 Modifier.fillMaxWidth()
                     .padding(8.dp)
             ) { }
+            PostLabelMask(
+                text = "John",
+                status = UiStatus.HIDDEN,
+                isAccessible = false,
+                isVisible = isVisible,
+                Modifier.padding(8.dp)
+            )
+            PostLabelMask(
+                text = "John",
+                status = UiStatus.ILLEGAL,
+                isAccessible = false,
+                isVisible = isVisible,
+                Modifier.padding(8.dp)
+            )
         }
     }
 }

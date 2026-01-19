@@ -35,11 +35,13 @@ fun UserPage(
     isAdmin: Boolean,
     selectedImage: MutableState<String?>,
     modifier: Modifier = Modifier,
+    onContentClick: (DesignRichText, String) -> Unit,
     onClick: (UserMetric) -> Unit,
 ) {
     val handleOnClick by rememberUpdatedState(onClick)
     val emptyDescription = stringResource(R.string.empty_description_message)
     Column {
+        UserStatusRibbon(account)
         Column(modifier = modifier) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 DesignAvatar {
@@ -81,7 +83,8 @@ fun UserPage(
                 maxLines = 1,
                 color = MaterialTheme.colorScheme.outline,
                 style = MaterialTheme.typography.bodySmall,
-                modifier = Modifier.padding(top = 16.dp)
+                modifier = Modifier.padding(top = 16.dp),
+                onClick = onContentClick
             )
         }
     }
@@ -118,7 +121,8 @@ fun PreviewUserPage() {
                 .fillMaxWidth()
                 .padding(horizontal = 24.dp)
                 .padding(vertical = 16.dp),
-            onClick = {}
+            onClick = {},
+            onContentClick = { _,_ -> }
         )
     }
 }

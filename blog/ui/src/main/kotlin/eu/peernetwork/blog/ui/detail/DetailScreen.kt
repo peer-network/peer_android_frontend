@@ -8,6 +8,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -135,7 +136,7 @@ fun DetailScreen(
         val navigator = LocalPostNavigator.current
         val moderation = LocalModerationInteractor.current
         val isAuthor = uuid == post.author.id
-        val isVisible = remember { mutableStateOf(post.isAccessible || isAuthor) }
+        val isVisible = rememberSaveable { mutableStateOf(post.isAccessible || isAuthor) }
         PostItem(
             type = post.type,
             pinnedBy = post.pinnedBy,

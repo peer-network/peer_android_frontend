@@ -15,6 +15,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,6 +40,7 @@ fun PostToolbarMask(
     status: UiStatus,
     isAuthor: Boolean,
     isAccessible: Boolean,
+    isVisible: MutableState<Boolean>,
     modifier: Modifier = Modifier,
     pinnedBy: String? = null,
     onClick: () -> Unit,
@@ -46,7 +49,6 @@ fun PostToolbarMask(
     content: @Composable () -> Unit
 ) {
     val updatedContent by rememberUpdatedState(content)
-    val isVisible = remember { mutableStateOf(false) }
     Box(modifier = modifier) {
         if (status == UiStatus.ILLEGAL) {
             PostIllegalToolbarMask(
@@ -177,12 +179,14 @@ fun PostIllegalToolbarMask(
 @Preview
 fun PreviewPostToolbarMask() {
     DesignTheme(isDarkMode = true) {
+        val isVisible = remember { mutableStateOf(false) }
         Column {
             PostToolbarMask(
                 status = UiStatus.HIDDEN,
                 isAuthor = false,
                 isAccessible = false,
                 onMenu = {},
+                isVisible = isVisible,
                 onClick = {},
                 connection = {}
             ) {}

@@ -28,6 +28,7 @@ import eu.peernetwork.media.core.model.UiMimeType
 import eu.peernetwork.social.ui.connection.ConnectionScreen
 import eu.peernetwork.user.domain.model.Account
 import eu.peernetwork.app.interactor.NavigationInteractor
+import eu.peernetwork.user.ui.user.UserNavigator
 import kotlinx.coroutines.flow.distinctUntilChanged
 
 @Composable
@@ -70,6 +71,7 @@ fun FeedScreen(
     CompositionLocalProvider(
         PostNavigator.LocalPostNavigator provides navigator,
         ArticleNavigator.LocalArticleNavigator provides navigator,
+        UserNavigator.LocalUserNavigator provides navigator,
     ) {
         FeedScreen(
             provider = provider,

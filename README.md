@@ -58,7 +58,7 @@ peer_android_frontend/
 │   ├── data/
 │   └── ui/
 ├── user/                 # User management (Auth, Profile)
-├── wallet/               # Crypto wallet features
+├── wallet/               # Token wallet features
 ├── messaging/            # Chat features
 └── ...
 ```

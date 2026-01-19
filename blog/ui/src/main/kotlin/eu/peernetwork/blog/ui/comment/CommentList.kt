@@ -1,8 +1,10 @@
 package eu.peernetwork.blog.ui.comment
 
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.navigation.NavHostController
 import eu.peernetwork.core.ui.component.UiComponentProvider
@@ -39,28 +41,58 @@ fun CommentList(
             key = { index -> items[index]?.id?.let { "$it;$index" } ?: index }
         ) { index ->
             items[index]?.let { comment ->
-                CommentMask(
+                CommentUserMask(
                     isAuthor = isAuthor,
-                    status = comment.status,
-                    onClick = { handleClick(comment.id) },
-                    isAccessible = comment.isAccessible,
+                    status = comment.author.status,
+                    isAccessible = comment.author.isAccessible,
+                    onClick = { handleClick(comment.author.id) },
+                    description = {
+                        CommentMask(
+                            status = comment.status,
+                            isAccessible = comment.isAccessible,
+                        ) {
+                            CommentOption({ handleReport(comment.id) }) {
+                                DesignRichText(
+                                    text = comment.content,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.outline,
+                                    overflow = TextOverflow.Ellipsis,
+                                    maxLines = 3,
+                                    onClick = onContentClick
+                                )
+                            }
+                        }
+                    }
                 ) {
-                    CommentOption({ handleReport(comment.id) }) {
-                        CommentItem(
-                            slug = comment.author.slug.toString(),
-                            username = comment.author.username,
-                            imageUrl = comment.author.imageUrl,
-                            comment = comment.content,
-                            isLiked = interactor.observe().value[comment.id]?.isLiked ?: comment.isLiked,
-                            isReported = comment.isReported,
-                            likes = comment.likes,
-                            onViewLikes = { interactor.viewLike(comment.id) },
-                            onLike = { interactor.like(comment) },
-                            onReply = {
-                                handleReply(comment.author.username)
-                            },
-                            onContentClick = onContentClick
-                        ) { handleClick(comment.author.id) }
+                    CommentItem(
+                        slug = comment.author.slug.toString(),
+                        username = comment.author.username,
+                        imageUrl = comment.author.imageUrl,
+                        isLiked = interactor.observe().value[comment.id]?.isLiked ?: comment.isLiked,
+                        isReported = comment.isReported,
+                        likes = comment.likes,
+                        onViewLikes = { interactor.viewLike(comment.id) },
+                        onLike = { interactor.like(comment) },
+                        onReply = {
+                            handleReply(comment.author.username)
+                        },
+                        onClick = { handleClick(comment.author.id) }
+                    ) {
+                        CommentMask(
+                            status = comment.status,
+                            isAccessible = comment.isAccessible,
+                        ) {
+                            CommentOption({ handleReport(comment.id) }) {
+                                DesignRichText(
+                                    text = comment.content,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.outline,
+                                    overflow = TextOverflow.Ellipsis,
+                                    maxLines = 3,
+                                    onClick = onContentClick
+                                )
+                            }
+                        }
                     }
                 }
             }

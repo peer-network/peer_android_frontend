@@ -22,6 +22,7 @@ import eu.peernetwork.blog.ui.timeline.TimelineScreen
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.material.DesignOverlay
 import eu.peernetwork.user.domain.model.Account
+import eu.peernetwork.user.ui.user.UserNavigator
 
 @Composable
 fun FeedModal(
@@ -45,6 +46,7 @@ fun FeedModal(
         CompositionLocalProvider(
             PostNavigator.LocalPostNavigator provides navigator,
             ArticleNavigator.LocalArticleNavigator provides navigator,
+            UserNavigator.LocalUserNavigator provides navigator,
         ) {
             FeedScreen(
                 provider = provider,
