@@ -101,6 +101,9 @@ fun UserScreen(
         ) }
     ) { data ->
         Column {
+            if (data.value.second) {
+                UserStatusRibbon(data.value.first)
+            }
             UserMask(
                 metric = data.value.first.metric,
                 status = data.value.first.status,

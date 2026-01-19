@@ -41,7 +41,6 @@ fun UserPage(
     val handleOnClick by rememberUpdatedState(onClick)
     val emptyDescription = stringResource(R.string.empty_description_message)
     Column {
-        UserStatusRibbon(account)
         Column(modifier = modifier) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 DesignAvatar {

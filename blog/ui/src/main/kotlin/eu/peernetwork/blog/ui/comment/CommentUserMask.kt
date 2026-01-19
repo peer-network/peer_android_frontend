@@ -18,6 +18,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -43,7 +44,7 @@ fun CommentUserMask(
 ) {
     val updatedDescription by rememberUpdatedState(description)
     val updatedContent by rememberUpdatedState(content)
-    val isVisible = remember { mutableStateOf(!isAuthor) }
+    val isVisible = rememberSaveable { mutableStateOf(isAuthor) }
     Box(modifier = modifier) {
         if (status == UiStatus.ILLEGAL) {
             CommentUserMask(
@@ -78,7 +79,8 @@ fun CommentUserMask(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp),
+            .padding(horizontal = 16.dp)
+            .padding(vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(

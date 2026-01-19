@@ -134,6 +134,7 @@ fun PostItem(
     } else {
         PostExpandedScaffold(
             model = model,
+            status = status,
             isAuthor = isAuthor,
             onClick = onClick,
             isVisible = isVisible,

@@ -114,6 +114,7 @@ fun BoxScope.PostScaffoldBackground(
 
 @Composable
 fun PostExpandedScaffold(
+    status: UiStatus,
     model: UiPostDetail,
     isAuthor: Boolean,
     onClick: () -> Unit,
@@ -138,7 +139,7 @@ fun PostExpandedScaffold(
             reported = model.reported,
             title = model.title,
             isAuthor = isAuthor,
-            isVisible = isVisible.value,
+            isVisible = isVisible.value && status != UiStatus.ILLEGAL,
             isAccessible = model.isAccessible,
             description = model.description,
             time = context.format(model.time),
@@ -247,6 +248,7 @@ fun PreviewPostScaffold() {
                     .height(56.dp))
             }
             PostExpandedScaffold(
+                status = UiStatus.VISIBLE,
                 model = model.copy(isAccessible = false),
                 onClick = {},
                 isVisible = isVisible,

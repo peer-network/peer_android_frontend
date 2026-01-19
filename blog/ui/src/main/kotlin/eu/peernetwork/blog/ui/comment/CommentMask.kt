@@ -16,6 +16,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
@@ -42,7 +43,7 @@ fun CommentMask(
     content: @Composable () -> Unit
 ) {
     val updatedContent by rememberUpdatedState(content)
-    val isVisible = remember { mutableStateOf(false) }
+    val isVisible = rememberSaveable { mutableStateOf(false) }
     Box(modifier = modifier) {
         if (status == UiStatus.ILLEGAL) {
             CommentMask()

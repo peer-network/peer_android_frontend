@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import eu.peernetwork.blog.ui.R
 import eu.peernetwork.blog.ui.model.UiStatus
 import eu.peernetwork.core.ui.design.luna.DesignSkeleton
+import eu.peernetwork.core.ui.extension.tap
 import eu.peernetwork.core.ui.theme.DesignTheme
 
 @Composable
@@ -97,6 +98,7 @@ fun PostToolbarMask(
                 .clip(CircleShape)
                 .background(MaterialTheme.colorScheme.surfaceContainerLowest)
                 .padding(10.dp)
+                .tap(onClick)
         )
         Column(modifier = Modifier
             .weight(1f)
