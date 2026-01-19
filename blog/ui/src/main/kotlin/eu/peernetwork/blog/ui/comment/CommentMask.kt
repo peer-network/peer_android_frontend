@@ -75,7 +75,7 @@ fun CommentMask(onClick: () -> Unit) {
     }
     Column(
         modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(4.dp)
+        verticalArrangement = Arrangement.spacedBy(2.dp)
     ) {
         Text(
             text = stringResource(R.string.hidden_content_description),
