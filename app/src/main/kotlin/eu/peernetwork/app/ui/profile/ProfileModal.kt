@@ -22,6 +22,7 @@ import eu.peernetwork.blog.ui.post.PostNavigator
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.material.DesignOverlay
 import eu.peernetwork.user.domain.model.Account
+import eu.peernetwork.user.ui.user.UserNavigator
 
 @Composable
 fun ProfileModal(
@@ -46,6 +47,7 @@ fun ProfileModal(
         CompositionLocalProvider(
             PostNavigator.LocalPostNavigator provides navigator,
             ArticleNavigator.LocalArticleNavigator provides navigator,
+            UserNavigator.LocalUserNavigator provides navigator,
         ) {
             ProfileScreen(provider) { component ->
                 ProfileNavigation(

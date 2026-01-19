@@ -77,7 +77,7 @@ fun TimelineList(
                 val reaction = LocalEngagementReaction.current
                 val navigator = LocalPostNavigator.current
                 val isAuthor = uuid == post.author.id
-                val isVisible = remember { mutableStateOf(post.isAccessible || isAuthor) }
+                val isVisible = rememberSaveable { mutableStateOf(post.isAccessible || isAuthor) }
                 PostItem(
                     type = post.type,
                     pinnedBy = post.pinnedBy,

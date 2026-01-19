@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.sp
 import eu.peernetwork.blog.ui.engagement.EngagementReaction
 import eu.peernetwork.blog.ui.model.UiEngagement
 import eu.peernetwork.core.ui.design.luna.DesignRichText
+import eu.peernetwork.core.ui.extension.tap
 import eu.peernetwork.core.ui.theme.DesignTheme
 
 @Composable
@@ -106,6 +107,7 @@ fun PostStatus(
     isAuthor: Boolean = false,
     isAccessible: Boolean = false,
     reported: Boolean = false,
+    onAuthorClick: () -> Unit,
     onClick: (DesignRichText, String) -> Unit,
     engagement: @Composable () -> Unit
 ) {
@@ -129,7 +131,8 @@ fun PostStatus(
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.onBackground,
-                modifier = Modifier.widthIn(max = titleWidth),
+                modifier = Modifier.widthIn(max = titleWidth)
+                    .tap(onAuthorClick),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
@@ -212,6 +215,7 @@ fun PreviewPostStatus() {
                 description = buildAnnotatedString { append("Description") },
                 modifier = Modifier
                     .padding(horizontal = 16.dp),
+                onAuthorClick = {},
                 onClick = { _,_ -> }
             ) { EngagementReaction(engagement) {} }
         }

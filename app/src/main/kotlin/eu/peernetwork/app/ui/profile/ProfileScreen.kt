@@ -25,6 +25,7 @@ import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.media.core.model.UiMimeType
 import eu.peernetwork.user.domain.model.Account
+import eu.peernetwork.user.ui.user.UserNavigator
 
 @Composable
 fun ProfileScreen(
@@ -56,6 +57,7 @@ fun ProfileScreen(
     CompositionLocalProvider(
         PostNavigator.LocalPostNavigator provides navigator,
         ArticleNavigator.LocalArticleNavigator provides navigator,
+        UserNavigator.LocalUserNavigator provides navigator,
     ) {
         ProfileScreen(provider) { component ->
             val showBoost = remember { mutableStateOf<String?>(null) }

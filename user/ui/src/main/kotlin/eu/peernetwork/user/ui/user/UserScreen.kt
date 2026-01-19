@@ -23,7 +23,9 @@ import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.design.luna.DesignStream
 import eu.peernetwork.core.ui.design.luna.DesignStreamState
+import eu.peernetwork.user.ui.extension.route
 import eu.peernetwork.user.ui.option.OptionScreen
+import eu.peernetwork.user.ui.user.UserNavigator.Companion.LocalUserNavigator
 
 @Composable
 fun UserScreen(
@@ -39,6 +41,7 @@ fun UserScreen(
     viewModelStoreOwner: ViewModelStoreOwner,
 ) {
     val context = LocalContext.current
+    val navigator = LocalUserNavigator.current
     val component = remember {
         provider.builder(User.Builder::class.java).build(context)
     }
@@ -114,6 +117,7 @@ fun UserScreen(
                     isAdmin = data.value.second,
                     selectedImage = selectedImage,
                     modifier = Modifier,
+                    onContentClick = { type, value -> navigator.navigate(type.route(value)) },
                     onClick = onClick
                 )
             }

@@ -32,6 +32,7 @@ import eu.peernetwork.blog.ui.model.UiStatus
 import eu.peernetwork.core.ui.design.luna.DesignAvatar
 import eu.peernetwork.core.ui.design.luna.DesignButton
 import eu.peernetwork.core.ui.design.luna.DesignImage
+import eu.peernetwork.core.ui.extension.tap
 import eu.peernetwork.core.ui.theme.DesignTheme
 
 @Composable
@@ -118,6 +119,7 @@ fun PostToolbar(
                 overflow = TextOverflow.Ellipsis,
                 fontWeight = FontWeight.SemiBold,
                 maxLines = 1,
+                modifier = Modifier.tap(onAuthorClick)
             )
             Text(
                 text = slug,

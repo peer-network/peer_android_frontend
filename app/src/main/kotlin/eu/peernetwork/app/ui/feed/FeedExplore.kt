@@ -31,6 +31,7 @@ import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.material.DesignTitle
 import eu.peernetwork.core.ui.design.material.DesignTitleBarHost
 import eu.peernetwork.user.domain.model.Account
+import eu.peernetwork.user.ui.user.UserNavigator
 import kotlinx.coroutines.launch
 
 @Composable
@@ -75,6 +76,7 @@ fun FeedExplore(
     CompositionLocalProvider(
         PostNavigator.LocalPostNavigator provides navigator,
         ArticleNavigator.LocalArticleNavigator provides navigator,
+        UserNavigator.LocalUserNavigator provides navigator,
     ) {
         FeedExplore(
             account = account,

@@ -75,7 +75,7 @@ fun ArticleList(
             val navigator = LocalPostNavigator.current
             items[index]?.let { post ->
                 val isAuthor = uuid == post.author.id
-                val isVisible = remember { mutableStateOf(post.isAccessible || isAuthor) }
+                val isVisible = rememberSaveable { mutableStateOf(post.isAccessible || isAuthor) }
                 PostItem(
                     type = post.type,
                     pinnedBy = post.pinnedBy,

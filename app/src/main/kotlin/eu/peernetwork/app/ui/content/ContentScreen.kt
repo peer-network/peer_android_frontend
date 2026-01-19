@@ -23,6 +23,7 @@ import eu.peernetwork.core.ui.design.material.DesignTitleBarHost
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.social.ui.connection.ConnectionScreen
 import eu.peernetwork.user.domain.model.Account
+import eu.peernetwork.user.ui.user.UserNavigator
 
 @Composable
 fun ContentScreen(
@@ -55,6 +56,7 @@ fun ContentScreen(
     CompositionLocalProvider(
         PostNavigator.LocalPostNavigator provides navigator,
         ArticleNavigator.LocalArticleNavigator provides navigator,
+        UserNavigator.LocalUserNavigator provides navigator,
     ) {
         ContentScreen(
             provider = provider,

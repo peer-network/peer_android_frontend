@@ -127,6 +127,7 @@ fun PostItem(
             isAuthor = isAuthor,
             onClick = onClick,
             isVisible = isVisible,
+            onAuthorClick = onAuthorClick,
             onContentClick = onContentClick,
             engagement = engagement,
             toolbar = {

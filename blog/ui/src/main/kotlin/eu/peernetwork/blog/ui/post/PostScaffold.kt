@@ -120,6 +120,7 @@ fun PostExpandedScaffold(
     isVisible: State<Boolean>,
     toolbar: @Composable () -> Unit,
     engagement: @Composable () -> Unit,
+    onAuthorClick: () -> Unit,
     onContentClick: (DesignRichText, String) -> Unit,
     content: @Composable () -> Unit
 ) {
@@ -143,6 +144,7 @@ fun PostExpandedScaffold(
             description = model.description,
             time = context.format(model.time),
             engagement = engagement,
+            onAuthorClick = onAuthorClick,
             modifier = Modifier
                 .padding(horizontal = 16.dp),
             onClick = onContentClick
@@ -246,6 +248,7 @@ fun PreviewPostScaffold() {
             PostExpandedScaffold(
                 model = model.copy(isAccessible = false),
                 onClick = {},
+                onAuthorClick = {},
                 isVisible = isVisible,
                 isAuthor = true,
                 engagement = { EngagementReaction(engagement) {} },
