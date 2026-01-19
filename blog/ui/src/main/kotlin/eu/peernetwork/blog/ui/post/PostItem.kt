@@ -7,13 +7,17 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.blog.ui.model.UiAsset
 import eu.peernetwork.blog.ui.model.UiAuthor
@@ -22,6 +26,7 @@ import eu.peernetwork.blog.ui.model.UiPostDetail
 import eu.peernetwork.blog.ui.model.UiPostType
 import eu.peernetwork.blog.ui.model.UiStatus
 import eu.peernetwork.core.ui.design.luna.DesignRichText
+import eu.peernetwork.core.ui.extension.tap
 
 @Composable
 fun PostItem(
@@ -42,8 +47,11 @@ fun PostItem(
     connection: @Composable RowScope.() -> Unit,
     content: @Composable (UiMedia, Boolean) -> Unit
 ) {
+    val configuration = LocalConfiguration.current
+    val titleWidth = (configuration.screenWidthDp * .3).dp
     val updatedContent by rememberUpdatedState(content)
     val pagerState = rememberPagerState(initialPage = 0) { asset.media.size }
+    val isAuthorVisible = rememberSaveable { mutableStateOf(author.isAccessible || isAuthor) }
     if (type == UiPostType.TEXT) {
         PostScaffold(
             model = model,
@@ -57,6 +65,7 @@ fun PostItem(
                     pinnedBy = pinnedBy,
                     isAccessible = author.isAccessible,
                     isAuthor = isAuthor,
+                    isVisible = isAuthorVisible,
                     username = model.username,
                     imageUrl = model.imageUrl,
                     color = MaterialTheme.colorScheme.surfaceContainerLow,
@@ -91,6 +100,7 @@ fun PostItem(
                     slug = model.slug,
                     status = author.status,
                     pinnedBy = pinnedBy,
+                    isVisible = isAuthorVisible,
                     isAccessible = author.isAccessible,
                     isAuthor = isAuthor,
                     username = model.username,
@@ -127,14 +137,24 @@ fun PostItem(
             isAuthor = isAuthor,
             onClick = onClick,
             isVisible = isVisible,
-            onAuthorClick = onAuthorClick,
             onContentClick = onContentClick,
             engagement = engagement,
+            label = {
+                PostLabelMask(
+                    text = author.username,
+                    status = author.status,
+                    isAccessible = author.isAccessible,
+                    isVisible = isAuthorVisible,
+                    modifier = Modifier.widthIn(max = titleWidth)
+                        .tap(onAuthorClick),
+                )
+            },
             toolbar = {
                 PostToolbar(
                     slug = model.slug,
                     status = author.status,
                     pinnedBy = pinnedBy,
+                    isVisible = isAuthorVisible,
                     isAccessible = author.isAccessible,
                     isAuthor = isAuthor,
                     username = model.username,

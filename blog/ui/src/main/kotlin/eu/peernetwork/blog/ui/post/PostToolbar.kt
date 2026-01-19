@@ -16,7 +16,10 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,6 +43,7 @@ fun PostToolbar(
     slug: String,
     username: String,
     imageUrl: String,
+    isVisible: MutableState<Boolean>,
     modifier: Modifier = Modifier,
     pinnedBy: String? = null,
     status: UiStatus,
@@ -54,6 +58,7 @@ fun PostToolbar(
         status = status,
         isAuthor = isAuthor,
         isAccessible = isAccessible,
+        isVisible = isVisible,
         pinnedBy = pinnedBy,
         onMenu = onMenu,
         onClick = onAuthorClick,
@@ -169,6 +174,7 @@ fun PostToolbarOption(
 @Preview
 fun PreviewPostHeader() {
     DesignTheme(isDarkMode = true) {
+        val isVisible = remember { mutableStateOf(false) }
         PostToolbar(
             slug = "#239100",
             username = "John",
@@ -176,6 +182,7 @@ fun PreviewPostHeader() {
             status = UiStatus.VISIBLE,
             isAuthor = true,
             isAccessible = true,
+            isVisible = isVisible,
             modifier = Modifier
                 .padding(horizontal = 16.dp)
                 .padding(vertical = 8.dp),

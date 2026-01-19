@@ -38,18 +38,20 @@ fun CommentUserMask(
     isAccessible: Boolean,
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
+    description: @Composable () -> Unit,
     content: @Composable () -> Unit
 ) {
+    val updatedDescription by rememberUpdatedState(description)
     val updatedContent by rememberUpdatedState(content)
-    val isVisible = remember { mutableStateOf(false) }
+    val isVisible = remember { mutableStateOf(!isAuthor) }
     Box(modifier = modifier) {
         if (status == UiStatus.ILLEGAL) {
             CommentUserMask(
                 icon = painterResource(R.drawable.ic_delete),
                 title = stringResource(R.string.illegal_username),
                 onClick = onClick
-            ) { updatedContent() }
-        } else if (!isAccessible && !isAuthor) {
+            ) { updatedDescription() }
+        } else if (!isAccessible) {
             if (isVisible.value) {
                 updatedContent()
             } else {
@@ -57,7 +59,7 @@ fun CommentUserMask(
                     icon = painterResource(R.drawable.ic_hidden),
                     title = stringResource(R.string.hidden_content_label),
                     onClick = { isVisible.value = true }
-                ) { updatedContent() }
+                ) { updatedDescription() }
             }
         } else {
             updatedContent()
@@ -114,6 +116,7 @@ fun PreviewCommentUserMask() {
                 isAuthor = false,
                 onClick = {},
                 isAccessible = false,
+                description = {}
             ) {
                 Text(
                     text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
@@ -126,6 +129,7 @@ fun PreviewCommentUserMask() {
                 isAuthor = false,
                 onClick = {},
                 isAccessible = false,
+                description = {}
             ) {
                 Text(
                     text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",

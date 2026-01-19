@@ -37,7 +37,6 @@ private const val tag = "CLICK_TO_SEE"
 @Composable
 fun CommentMask(
     status: UiStatus,
-    isAuthor: Boolean,
     isAccessible: Boolean,
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit
@@ -47,7 +46,7 @@ fun CommentMask(
     Box(modifier = modifier) {
         if (status == UiStatus.ILLEGAL) {
             CommentMask()
-        } else if (!isAccessible && !isAuthor) {
+        } else if (!isAccessible) {
             if (isVisible.value) {
                 updatedContent()
             } else {
@@ -117,7 +116,7 @@ fun CommentMask(modifier: Modifier = Modifier) {
             painter = painterResource(R.drawable.ic_delete),
             contentDescription = stringResource(R.string.hidden_content_label),
             tint = MaterialTheme.colorScheme.outline,
-            modifier = Modifier.size(16.dp)
+            modifier = Modifier.size(12.dp)
         )
         Text(
             text = stringResource(R.string.illegal_content_description),
@@ -125,7 +124,7 @@ fun CommentMask(modifier: Modifier = Modifier) {
             color = MaterialTheme.colorScheme.outline,
             modifier = Modifier
                 .weight(1f)
-                .padding(horizontal = 6.dp)
+                .padding(horizontal = 4.dp)
         )
     }
 }
@@ -137,13 +136,11 @@ fun PreviewCommentMask() {
         Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
             CommentMask(
                 status = UiStatus.ILLEGAL,
-                isAuthor = false,
                 isAccessible = false,
                 modifier = Modifier.padding(16.dp)
             ) {}
             CommentMask(
                 status = UiStatus.HIDDEN,
-                isAuthor = false,
                 isAccessible = false,
                 modifier = Modifier.padding(16.dp)
             ) {}

@@ -119,8 +119,8 @@ fun PostExpandedScaffold(
     onClick: () -> Unit,
     isVisible: State<Boolean>,
     toolbar: @Composable () -> Unit,
+    label: @Composable () -> Unit,
     engagement: @Composable () -> Unit,
-    onAuthorClick: () -> Unit,
     onContentClick: (DesignRichText, String) -> Unit,
     content: @Composable () -> Unit
 ) {
@@ -135,7 +135,6 @@ fun PostExpandedScaffold(
                 .clickable(onClick = onClick)
         ) { updatedContent() }
         PostStatus(
-            username = model.username,
             reported = model.reported,
             title = model.title,
             isAuthor = isAuthor,
@@ -144,7 +143,7 @@ fun PostExpandedScaffold(
             description = model.description,
             time = context.format(model.time),
             engagement = engagement,
-            onAuthorClick = onAuthorClick,
+            label = label,
             modifier = Modifier
                 .padding(horizontal = 16.dp),
             onClick = onContentClick
@@ -192,6 +191,7 @@ fun PreviewPostScaffold() {
                         status = UiStatus.VISIBLE,
                         isAccessible = true,
                         isAuthor = false,
+                        isVisible = isVisible,
                         username = model.username,
                         imageUrl = model.imageUrl,
                         color = MaterialTheme.colorScheme.surfaceContainerLow,
@@ -223,6 +223,7 @@ fun PreviewPostScaffold() {
                         status = UiStatus.VISIBLE,
                         isAccessible = true,
                         isAuthor = false,
+                        isVisible = isVisible,
                         username = model.username,
                         imageUrl = model.imageUrl,
                         color = MaterialTheme.colorScheme.surfaceContainerLow,
@@ -248,16 +249,19 @@ fun PreviewPostScaffold() {
             PostExpandedScaffold(
                 model = model.copy(isAccessible = false),
                 onClick = {},
-                onAuthorClick = {},
                 isVisible = isVisible,
                 isAuthor = true,
                 engagement = { EngagementReaction(engagement) {} },
+                label = {
+
+                },
                 toolbar = {
                     PostToolbar(
                         slug = model.slug,
                         status = UiStatus.VISIBLE,
                         isAccessible = true,
                         isAuthor = false,
+                        isVisible = isVisible,
                         username = model.username,
                         imageUrl = model.imageUrl,
                         color = MaterialTheme.colorScheme.surfaceContainerLow,
