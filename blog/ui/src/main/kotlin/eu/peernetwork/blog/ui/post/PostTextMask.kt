@@ -195,7 +195,7 @@ fun PostLabelMask(
             DesignSkeleton(
                 modifier = Modifier.then(modifier)
                     .padding(vertical = 2.dp)
-                    .width(titleWidth)
+                    .width((configuration.screenWidthDp * .15).dp)
                     .height(12.dp),
                 color = MaterialTheme.colorScheme.surfaceContainerLowest,
             )
