@@ -30,7 +30,7 @@ fun GetCommentsQuery.AffectedRow.mapToDomain(): List<Comment> {
             isLiked = it.isliked,
             isReported = it.hasActiveReports,
             isAccessible = !it.isHiddenForUsers,
-            status = it.user.visibilityStatus.mapToDomain()
+            status = it.visibilityStatus.mapToDomain()
         )
     }
 }

@@ -1,4 +1,4 @@
-package eu.peernetwork.ads.ui.analytics
+package eu.peernetwork.ads.ui.adverts
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -31,7 +31,7 @@ import eu.peernetwork.core.ui.theme.DesignTheme
 import eu.peernetwork.core.ui.theme.PeerAppGreen
 
 @Composable
-fun AnalyticsMask(
+fun AdvertsMask(
     status: UiStatus,
     isActive: Boolean,
     modifier: Modifier = Modifier,
@@ -41,7 +41,7 @@ fun AnalyticsMask(
     val updatedContent by rememberUpdatedState(content)
     Box(modifier = modifier) {
         if (status == UiStatus.ILLEGAL) {
-            AnalyticsMask(
+            AdvertsMask(
                 isActive = isActive,
                 modifier = Modifier.clickable(onClick = onClick),
                 content = { }
@@ -53,7 +53,7 @@ fun AnalyticsMask(
 }
 
 @Composable
-fun AnalyticsMask(
+fun AdvertsMask(
     isActive: Boolean,
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit
@@ -130,8 +130,8 @@ fun AnalyticsMask(
 
 @Preview
 @Composable
-fun PreviewAnalyticsMask() {
+fun PreviewAdvertsMask() {
     DesignTheme(isDarkMode = true) {
-        AnalyticsMask(isActive = true) {}
+        AdvertsMask(isActive = true) {}
     }
 }

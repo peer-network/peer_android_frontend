@@ -24,6 +24,7 @@ import eu.peernetwork.blog.ui.mapper.mapToDetail
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.moderation.ModerationInteractor.Companion.LocalModerationInteractor
 import eu.peernetwork.blog.ui.post.PostScreen
+import eu.peernetwork.blog.ui.timeline.TimelineEvent
 import eu.peernetwork.blog.ui.timeline.TimelineSheet
 import eu.peernetwork.blog.ui.timeline.TimelineSheetMenuItem
 import eu.peernetwork.core.common.paging.Pageable
@@ -106,7 +107,7 @@ fun ExploreFullScreen(
     component: Explore.Component,
     viewModel: ExploreViewModel,
     viewModelStoreOwner: ViewModelStoreOwner,
-    onBoost: (String) -> Unit,
+    onBoost: (TimelineEvent.Boost) -> Unit,
     content: @Composable PagerScope.(Explore.Component, UiPost, Int, PagerState) -> Unit
 ) {
     val context = LocalContext.current
@@ -137,7 +138,11 @@ fun ExploreFullScreen(
                     when (sheetState) {
                         TimelineSheetMenuItem.REPORT -> moderation.onReport(post.id)
                         TimelineSheetMenuItem.SHARE -> { context.share(post.url, shareTitle) }
-                        TimelineSheetMenuItem.BOOST -> { handleBoost(post.id) }
+                        TimelineSheetMenuItem.BOOST -> { handleBoost(TimelineEvent.Boost(
+                            id = post.id,
+                            isReported = post.reported,
+                            isAccessible = post.isAccessible
+                        )) }
                     }
                 }
             }

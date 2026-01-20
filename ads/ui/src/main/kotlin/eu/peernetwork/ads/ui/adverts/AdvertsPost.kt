@@ -37,7 +37,7 @@ fun AdvertsPost(
     description: AnnotatedString,
     from: String,
     to: String,
-    status: Boolean,
+    isActive: Boolean,
     modifier: Modifier = Modifier,
     onSelect: () -> Unit,
     onClick: (DesignRichText, String) -> Unit,
@@ -106,7 +106,7 @@ fun AdvertsPost(
                     color = MaterialTheme.colorScheme.outline,
                     style = MaterialTheme.typography.labelMedium
                 )
-                if (status) {
+                if (isActive) {
                     Box(
                         modifier = Modifier.padding(start = 6.dp)
                             .clip(CircleShape)
@@ -135,7 +135,7 @@ fun PreviewAdvertsPost() {
             description = buildAnnotatedString { append("There’s something about hiking that resets everything. ") },
             from = "8 Jun 2025",
             to = "10 Jun 2025",
-            status = true,
+            isActive = true,
             onClick = { _,_ -> },
             label = { AdvertsVisibilityLabel() },
             onSelect = {}

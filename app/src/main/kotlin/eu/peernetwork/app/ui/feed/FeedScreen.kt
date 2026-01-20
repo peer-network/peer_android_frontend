@@ -19,6 +19,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import eu.peernetwork.ads.ui.article.ArticleNavigator
 import eu.peernetwork.ads.ui.boost.BoostModal
+import eu.peernetwork.ads.ui.model.UiBoost
 import eu.peernetwork.blog.domain.model.Category
 import eu.peernetwork.blog.domain.model.Filter.Criteria
 import eu.peernetwork.blog.ui.post.PostNavigator
@@ -79,7 +80,7 @@ fun FeedScreen(
         ) { component, viewModel ->
             val state by viewModel.state.collectAsStateWithLifecycle()
             val isVisible = remember { mutableStateOf(false) }
-            val showBoost = remember { mutableStateOf<String?>(null) }
+            val showBoost = remember { mutableStateOf<UiBoost?>(null) }
             val ordinal = remember {
                 derivedStateOf {
                     (state as? FeedViewModel.State.Initialize?)?.filter ?: 0
@@ -110,7 +111,13 @@ fun FeedScreen(
                     viewModelStoreOwner = viewModelStoreOwner,
                     onExplore = onExplore,
                     onFilter = { viewModel.setFilter(it) },
-                    onBoost = { showBoost.value = it }
+                    onBoost = {
+                        showBoost.value = UiBoost(
+                            id = it.id,
+                            isReported = it.isReported,
+                            isAccessible = it.isAccessible
+                        )
+                    }
                 ) { isVisible.value = true }
                 LaunchedEffect(Unit) {
                     snapshotFlow { pageState.currentPage }

@@ -37,6 +37,7 @@ fun CommentNavigation(
             val id = backStackEntry.arguments?.getString("id") ?: ""
             UserList(
                 id = id,
+                uuid = uuid,
                 limit = limit,
                 engagement = Engagement.Content.LikedComment,
                 provider = component,

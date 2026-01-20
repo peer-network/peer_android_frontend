@@ -11,6 +11,7 @@ import eu.peernetwork.blog.remote.engagement.PostInteractionsQuery
 import eu.peernetwork.blog.remote.engagement.ReportCommentMutation
 import eu.peernetwork.blog.remote.engagement.ResolveActionPostMutation
 import eu.peernetwork.blog.remote.mapper.mapToAction
+import eu.peernetwork.blog.remote.mapper.mapToDomain
 import eu.peernetwork.blog.remote.mapper.mapToInteraction
 import eu.peernetwork.core.common.paging.Page
 import eu.peernetwork.core.common.paging.Pageable
@@ -75,8 +76,8 @@ class EngagementApiDelegate @Inject constructor(
                 imageUrl = "$url${it.img}",
                 following = it.isfollowing!!,
                 followed = it.isfollowed!!,
-                isAccessible = true,
-                status = Status.VISIBLE
+                isAccessible = !it.isHiddenForUsers,
+                status = it.visibilityStatus.mapToDomain()
             )
         }
         return Page(

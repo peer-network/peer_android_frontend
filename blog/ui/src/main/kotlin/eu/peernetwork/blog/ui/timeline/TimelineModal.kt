@@ -130,7 +130,11 @@ fun TimelineModal(
                         when (sheetState) {
                             TimelineSheetMenuItem.REPORT -> moderation.onReport(post.id)
                             TimelineSheetMenuItem.SHARE -> { context.share(post.url, shareTitle) }
-                            TimelineSheetMenuItem.BOOST -> { handleEvent(TimelineEvent.Boost(post.id)) }
+                            TimelineSheetMenuItem.BOOST -> { handleEvent(TimelineEvent.Boost(
+                                id = post.id,
+                                isReported = post.reported,
+                                isAccessible = post.isAccessible
+                            )) }
                         }
                     }
                 }

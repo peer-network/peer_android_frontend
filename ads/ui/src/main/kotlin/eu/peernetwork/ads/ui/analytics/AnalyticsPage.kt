@@ -29,14 +29,14 @@ import eu.peernetwork.core.ui.theme.DesignTheme
 
 @Composable
 fun AnalyticsPage(
+    status: UiStatus,
     title: AnnotatedString,
     description: AnnotatedString,
     from: String,
     to: String,
     start: String,
     end: String,
-    status: Boolean,
-    isAccessible: Boolean,
+    isActive: Boolean,
     metrics: UiMetrics,
     modifier: Modifier = Modifier,
     onClick: (DesignRichText, String) -> Unit,
@@ -45,7 +45,8 @@ fun AnalyticsPage(
 ) {
     val updatedLabel by rememberUpdatedState(label)
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
             .padding(horizontal = 12.dp)
             .padding(top = 12.dp)
             .padding(bottom = 4.dp)
@@ -64,16 +65,16 @@ fun AnalyticsPage(
                 modifier = Modifier.padding(top = 10.dp)
             ) { it() }
         }
-        if (!isAccessible) {
-            AnalyticsMask(
-                status = status,
-                modifier = Modifier.padding(vertical = 10.dp),
-            ) {}
-        } else {
+        AnalyticsMask(
+            status = status,
+            isActive = isActive,
+            modifier = Modifier.padding(vertical = 10.dp),
+            onClick = { onClick }
+        ) {
             AnalyticsPost(
                 title = title,
                 description = description,
-                status = status,
+                status = isActive,
                 modifier = Modifier.padding(vertical = 10.dp),
                 onClick = onClick,
                 content = content
@@ -81,7 +82,8 @@ fun AnalyticsPage(
         }
         OverviewStatistics(
             metrics = metrics,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
                 .padding(bottom = 12.dp)
         )
         AnalyticsItem(
@@ -97,7 +99,8 @@ fun AnalyticsPage(
         }
         AnalyticsItem(
             label = stringResource(R.string.stop_at_label),
-            modifier = Modifier.padding(top = 10.dp)
+            modifier = Modifier
+                .padding(top = 10.dp)
                 .fillMaxWidth()
         ) {
             Text(
@@ -110,7 +113,8 @@ fun AnalyticsPage(
         AnalyticsItem(
             label = stringResource(R.string.advert_total_label),
             value = metrics.token.toString(),
-            modifier = Modifier.padding(top = 10.dp)
+            modifier = Modifier
+                .padding(top = 10.dp)
                 .fillMaxWidth()
         )
     }
@@ -132,8 +136,8 @@ fun PreviewAnalyticsPage() {
         AnalyticsPage(
             title = buildAnnotatedString { append("Title") },
             description = buildAnnotatedString { append("There’s something about hiking that resets everything. ") },
-            status = true,
-            isAccessible = true,
+            isActive = true,
+            status = UiStatus.HIDDEN,
             from = "8 Jun 2025",
             to = "8 Jun 2025",
             start = "14:23",
@@ -141,7 +145,8 @@ fun PreviewAnalyticsPage() {
             metrics = metrics,
             onClick = { _,_ -> },
             label = { AnalyticsVisibilityLabel(UiStatus.HIDDEN) },
-            modifier = Modifier.background(MaterialTheme.colorScheme.background)
+            modifier = Modifier
+                .background(MaterialTheme.colorScheme.background)
                 .padding(12.dp),
         ) {}
     }

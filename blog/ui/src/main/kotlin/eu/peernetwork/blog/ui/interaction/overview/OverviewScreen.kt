@@ -74,6 +74,7 @@ fun OverviewScreen(
                 }
                 UserList(
                     id = state.id,
+                    uuid = uuid,
                     limit = postLimit,
                     engagement = engagement,
                     provider = component,

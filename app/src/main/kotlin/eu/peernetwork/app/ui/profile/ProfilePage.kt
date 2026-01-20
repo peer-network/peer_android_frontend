@@ -47,7 +47,7 @@ fun ProfilePage(
     component: Profile.Component,
     viewModelStoreOwner: ViewModelStoreOwner,
     onSettings: () -> Unit,
-    onBoost: (String) -> Unit,
+    onBoost: (ArticleEvent.Boost) -> Unit,
     onClick: () -> Unit,
     controller: NavHostController,
 ) {
@@ -96,7 +96,7 @@ fun ProfilePage(
             viewModelStoreOwner = viewModelStoreOwner,
             onEvent = { event ->
                 when(event) {
-                    is ArticleEvent.Boost -> handleBoost(event.id)
+                    is ArticleEvent.Boost -> handleBoost(event)
                     is ArticleEvent.Post -> handleClick()
                 }
             },

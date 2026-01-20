@@ -14,6 +14,7 @@ import eu.peernetwork.core.ui.component.UiComponentProvider
 @Composable
 fun UserList(
     id: String,
+    uuid: String,
     limit: Int,
     engagement: Engagement.Content,
     provider: UiComponentProvider,
@@ -36,12 +37,19 @@ fun UserList(
                 key = { index -> items[index]?.id?.let { "$it;$index" } ?: index }
             ) { index ->
                 items[index]?.let { user ->
-                    UserItem(
-                        slug = user.slug.toString(),
-                        username = user.username,
-                        imageUrl = user.imageUrl,
-                        onClick = { handleClick(user.id) }
-                    ) { updatedConnection(user) }
+                    UserMask(
+                        isAuthor = uuid == user.id,
+                        status = user.status,
+                        onClick = { handleClick(user.id) },
+                        isAccessible = user.isAccessible,
+                    ) {
+                        UserItem(
+                            slug = user.slug.toString(),
+                            username = user.username,
+                            imageUrl = user.imageUrl,
+                            onClick = { handleClick(user.id) }
+                        ) { updatedConnection(user) }
+                    }
                 }
             }
         }

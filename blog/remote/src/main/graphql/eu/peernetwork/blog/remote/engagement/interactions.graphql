@@ -19,6 +19,8 @@ query PostInteractions(
             img
             isfollowed
             isfollowing
+            isHiddenForUsers
+            visibilityStatus
         }
     }
 }

@@ -144,9 +144,7 @@ fun CommentSheet(
                             provider = provider,
                             viewModelStoreOwner = viewModelStoreOwner,
                             onReply = {
-                                comment.edit {
-                                    replace(0, length, "@$it")
-                                }
+                                comment.edit { replace(0, length, "@$it") }
                                 focusRequester.requestFocus()
                             },
                             onReport = { requestReport.value = it },

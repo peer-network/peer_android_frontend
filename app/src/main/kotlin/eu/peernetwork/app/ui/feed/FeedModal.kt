@@ -11,6 +11,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModelStoreOwner
 import eu.peernetwork.ads.ui.article.ArticleNavigator
 import eu.peernetwork.ads.ui.boost.BoostModal
+import eu.peernetwork.ads.ui.model.UiBoost
 import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.app.interactor.NavigationInteractor
 import eu.peernetwork.blog.domain.model.Category
@@ -35,7 +36,7 @@ fun FeedModal(
     viewModelStoreOwner: ViewModelStoreOwner
 ) {
     val context = LocalContext.current
-    val showBoost = remember { mutableStateOf<String?>(null) }
+    val showBoost = remember { mutableStateOf<UiBoost?>(null) }
     DesignOverlay(
         state = isVisible,
         startDestination = "content",
@@ -73,7 +74,11 @@ fun FeedModal(
                             when(event) {
                                 is TimelineEvent.Post -> {}
                                 is TimelineEvent.Boost -> {
-                                    showBoost.value = event.id
+                                    showBoost.value = UiBoost(
+                                        id = event.id,
+                                        isReported = event.isReported,
+                                        isAccessible = event.isAccessible
+                                    )
                                 }
                             }
                         }

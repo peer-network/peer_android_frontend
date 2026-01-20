@@ -39,6 +39,7 @@ fun DeactivateScreen(
     val focus = remember { FocusRequester() }
     DesignBottomSheetScaffold(
         state = show,
+        dismissable = true,
         color = MaterialTheme.colorScheme.surfaceDim,
         onShow = { focus.requestFocus() },
         onDismiss = { show.value = false }

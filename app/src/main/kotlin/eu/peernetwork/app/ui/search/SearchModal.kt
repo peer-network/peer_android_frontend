@@ -11,6 +11,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModelStoreOwner
 import eu.peernetwork.ads.ui.article.ArticleNavigator
 import eu.peernetwork.ads.ui.boost.BoostModal
+import eu.peernetwork.ads.ui.model.UiBoost
 import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.app.interactor.NavigationInteractor
 import eu.peernetwork.blog.ui.explore.ExploreModal
@@ -30,7 +31,7 @@ fun SearchModal(
     viewModelStoreOwner: ViewModelStoreOwner
 ) {
     val context = LocalContext.current
-    val showBoost = remember { mutableStateOf<String?>(null) }
+    val showBoost = remember { mutableStateOf<UiBoost?>(null) }
     DesignOverlay(
         state = isVisible,
         startDestination = "search",
@@ -61,7 +62,11 @@ fun SearchModal(
                         imageUrl = account.imageUrl,
                         username = account.username,
                         viewModelStoreOwner = viewModelStoreOwner
-                    ) { showBoost.value = it }
+                    ) { showBoost.value = UiBoost(
+                        id = it.id,
+                        isReported = it.isReported,
+                        isAccessible = it.isAccessible
+                    ) }
                 }
                 ExploreScreen(
                     provider = component,
