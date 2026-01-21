@@ -86,8 +86,8 @@ fun OverviewScreen(
                             modifier = Modifier,
                             spec = PostFollow.Spec(
                                 id = user.id,
-                                isFollowing = user.following,
-                                isFollowed = user.followed
+                                isFollowing = user.followed,
+                                isFollowed = user.following
                             )
                         )
                     }
