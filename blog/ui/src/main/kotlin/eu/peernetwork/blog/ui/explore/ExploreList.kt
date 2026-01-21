@@ -32,6 +32,7 @@ import eu.peernetwork.media.core.renderer.ImageView
 @Composable
 @Suppress("UNCHECKED_CAST")
 fun ExploreList(
+    uuid: String,
     limit: Int,
     selected: MutableIntState,
     provider: UiComponentProvider,
@@ -73,15 +74,32 @@ fun ExploreList(
                                 .background(MaterialTheme.colorScheme.surfaceDim)
                                 .clickable { selected.intValue = index }
                         ) {
-                            component.imageView()(
-                                Modifier,
-                                ImageView.Spec(
-                                    post.asset.media.first().path,
-                                    null,
-                                    ContentScale.Crop,
-                                    width = 250
+                            ExploreMask(
+                                status = post.status,
+                                isAuthor = post.author.id == uuid,
+                                isAccessible = post.isAccessible,
+                                placeholder = {
+                                    component.imageView()(
+                                        modifier = Modifier,
+                                        spec = ImageView.Spec(
+                                            url = post.asset.media.first().path,
+                                            ratio = post.asset.ratio,
+                                            contentScale = ContentScale.Crop,
+                                            blur = 500f,
+                                        )
+                                    )
+                                }
+                            ) {
+                                component.imageView()(
+                                    Modifier,
+                                    ImageView.Spec(
+                                        post.asset.media.first().path,
+                                        null,
+                                        ContentScale.Crop,
+                                        width = 250
+                                    )
                                 )
-                            )
+                            }
                         }
                     }
                 }

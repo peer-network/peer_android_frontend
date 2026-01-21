@@ -50,6 +50,7 @@ fun ProfileSheet(
     val handleOnClick by rememberUpdatedState(onClick)
     DesignBottomSheet(
         state = showSheet,
+        dismissable = true,
         onDismiss = {
             if (sheetState.value is ProfileSheetState.Dismissing) {
                 (sheetState.value as ProfileSheetState.Dismissing).action.invoke()

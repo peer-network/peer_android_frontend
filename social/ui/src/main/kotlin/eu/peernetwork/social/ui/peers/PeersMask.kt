@@ -26,6 +26,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import eu.peernetwork.core.ui.extension.tap
 import eu.peernetwork.core.ui.theme.DesignTheme
 import eu.peernetwork.social.ui.R
 import eu.peernetwork.social.ui.model.UiStatus
@@ -73,6 +74,7 @@ fun PeersMask(onClick: () -> Unit) {
                 .clip(CircleShape)
                 .background(MaterialTheme.colorScheme.surfaceContainerLowest)
                 .padding(10.dp)
+                .tap(onClick)
         )
         Column(modifier = Modifier
             .weight(1f)

@@ -70,6 +70,7 @@ enum class DesignBottomSheetState { EXPAND, COLLAPSE, HIDE }
 fun DesignBottomSheet(
     state: State<Boolean>,
     dim: Boolean = true,
+    dismissable: Boolean = false,
     canDismiss: () -> Boolean = { true },
     color: Color = MaterialTheme.colorScheme.surfaceDim,
     peekHeight: Dp = 400.dp,
@@ -92,6 +93,7 @@ fun DesignBottomSheet(
     DesignDialog(
         state = visible,
         dim = dim,
+        dismissable = dismissable,
         onDismiss = {
             visible.value = false
             handleOnDismiss()

@@ -28,6 +28,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.blog.ui.R
 import eu.peernetwork.blog.ui.model.UiStatus
+import eu.peernetwork.core.ui.extension.tap
 import eu.peernetwork.core.ui.theme.DesignTheme
 
 @Composable
@@ -70,10 +71,11 @@ fun UserMask(onClick: () -> Unit) {
             contentDescription = stringResource(R.string.hidden_content_label),
             tint = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier
-                .size(42.dp)
+                .size(36.dp)
                 .clip(CircleShape)
                 .background(MaterialTheme.colorScheme.surfaceContainerLowest)
                 .padding(10.dp)
+                .tap(onClick)
         )
         Column(modifier = Modifier
             .weight(1f)

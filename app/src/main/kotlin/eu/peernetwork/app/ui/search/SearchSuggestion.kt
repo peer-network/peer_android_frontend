@@ -21,6 +21,7 @@ import eu.peernetwork.social.ui.search.title.TitleScreen
 
 @Composable
 fun SearchSuggestion(
+    uuid: String,
     state: TextFieldState,
     selected: MutableIntState,
     mode: SearchMode,
@@ -74,6 +75,7 @@ fun SearchSuggestion(
                     .navigationBarsPadding()
             ) {
                 ExploreList(
+                    uuid = uuid,
                     limit = limit,
                     selected = selected,
                     provider = component,

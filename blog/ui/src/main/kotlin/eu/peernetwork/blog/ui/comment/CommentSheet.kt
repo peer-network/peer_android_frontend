@@ -75,6 +75,7 @@ fun CommentSheet(
         DesignStream(streamState) { post ->
             DesignBottomSheet(
                 state = showSheet,
+                dismissable = true,
                 canDismiss = {
                     val dismissable = controller.previousBackStackEntry == null
                     val hasOverlay = requestReport.value == null

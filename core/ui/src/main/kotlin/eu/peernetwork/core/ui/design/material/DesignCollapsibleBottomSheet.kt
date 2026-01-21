@@ -46,6 +46,7 @@ import kotlinx.coroutines.launch
 fun DesignCollapsibleBottomSheet(
     state: State<Boolean>,
     behind: Boolean = true,
+    dismissable: Boolean = false,
     peekHeight: Dp = 250.dp,
     canDismiss: () -> Boolean = { true },
     color: Color = MaterialTheme.colorScheme.surfaceDim,
@@ -67,6 +68,7 @@ fun DesignCollapsibleBottomSheet(
     DesignDialog(
         state = visible,
         dim = behind,
+        dismissable = dismissable,
         onDismiss = {
             visible.value = false
             handleOnDismiss()

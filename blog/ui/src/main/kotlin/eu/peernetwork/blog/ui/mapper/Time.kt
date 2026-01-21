@@ -21,7 +21,7 @@ fun Long.mapFromDomain(): UiTimer {
         days < 7 -> UiTimer.Days(days)
         else -> {
             val calendar = Calendar.getInstance()
-            calendar.timeInMillis = current
+            calendar.timeInMillis = this
             val date = String.format(Locale.getDefault(), "%1\$tb %1\$td, %1\$tY", calendar)
             UiTimer.Date(date)
         }

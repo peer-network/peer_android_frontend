@@ -118,7 +118,7 @@ fun PostStatus(
             engagement = engagement,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 8.dp)
+                .padding(vertical = 6.dp)
         )
         Row {
             updatedLabel()

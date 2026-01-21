@@ -87,6 +87,7 @@ fun SearchScreen(
                     currentMode
                 ) {
                     SearchSuggestion(
+                        uuid = account.id,
                         state = state,
                         selected = selected,
                         mode = currentMode.value,

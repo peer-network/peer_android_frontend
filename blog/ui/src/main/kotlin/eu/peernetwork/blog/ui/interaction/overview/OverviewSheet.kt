@@ -49,6 +49,7 @@ fun OverviewSheet(
         DesignCollapsibleBottomSheet(
             state = showSheet,
             peekHeight = 400.dp,
+            dismissable = true,
             onDismiss = {
                 if (sheetState.value is OverviewSheetState.Dismissing) {
                     (sheetState.value as OverviewSheetState.Dismissing).action.invoke()
