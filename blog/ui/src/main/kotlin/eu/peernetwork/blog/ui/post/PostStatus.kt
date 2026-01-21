@@ -138,7 +138,7 @@ fun PostStatus(
                     ) {
                         DesignRichText(
                             text = title,
-                            maxLines = 1,
+                            maxLines = 2,
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onBackground,
                             onClick = onClick,
