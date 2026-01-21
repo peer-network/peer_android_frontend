@@ -130,10 +130,7 @@ fun AdvertsScreen(
                                 label = if (!post.ads.content.isAccessible) {
                                     { AdvertsVisibilityLabel() }
                                 } else { null },
-                                modifier = Modifier
-                                    .padding(horizontal = 16.dp)
-                                    .padding(vertical = 5.dp)
-                                    .clickable { handleSelect(post.ads.id) }
+                                modifier = Modifier.clickable { handleSelect(post.ads.id) }
                             ) { AdvertsMedia(post.ads.content.path, component) }
                         }
                     }
