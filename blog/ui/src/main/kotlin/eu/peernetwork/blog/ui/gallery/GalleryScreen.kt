@@ -1,45 +1,35 @@
 package eu.peernetwork.blog.ui.gallery
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.blog.ui.engagement.EngagementInteractor.Companion.LocalEngagementInteractor
 import eu.peernetwork.blog.ui.engagement.EngagementReaction.Companion.LocalEngagementReaction
 import eu.peernetwork.blog.ui.engagement.EngagementReactionStream
 import eu.peernetwork.blog.ui.extension.route
 import eu.peernetwork.blog.ui.mapper.format
-import eu.peernetwork.blog.ui.mapper.query
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.model.UiPostType
 import eu.peernetwork.blog.ui.post.PostInteractor.Companion.LocalPostInteractor
 import eu.peernetwork.blog.ui.post.PostNavigator
 import eu.peernetwork.blog.ui.post.PostNavigator.Companion.LocalPostNavigator
-import eu.peernetwork.core.ui.design.material.DesignThumbnail
-import eu.peernetwork.media.core.model.UiMimeType
-import eu.peernetwork.media.core.renderer.AudioPlayer
-import eu.peernetwork.media.core.renderer.ImageView
-import eu.peernetwork.media.core.renderer.MediaController
-import eu.peernetwork.media.core.renderer.VideoPlayer
 
 @Composable
 fun GalleryScreen(
+    uuid: String,
     position: Int,
     enabled: State<Boolean>,
     showSheet: MutableState<UiPost?>,
@@ -47,41 +37,54 @@ fun GalleryScreen(
     connection: @Composable () -> Unit,
 ) {
     val context = LocalContext.current
-    val density = LocalDensity.current
     val navigator = LocalPostNavigator.current
     val reaction = LocalEngagementReaction.current
     val engagementInteractor = LocalEngagementInteractor.current
     val interactor = LocalPostInteractor.current
-    val thumbnail = interactor.observe()
-    val length = remember { mutableLongStateOf(0L) }
     val progress = remember { mutableFloatStateOf(0f) }
+    val isAuthor = uuid == post.author.id
+    val isVisible = remember { mutableStateOf(post.isAccessible || isAuthor) }
     EngagementReactionStream(
         post = post,
         state = engagementInteractor.observe()
     ) { engagement ->
         GalleryScaffold(
-            slug = post.author.slug.toString(),
             type = post.type,
-            username = post.author.username,
             title = post.title,
             description = post.description,
-            imageUrl = post.author.imageUrl,
             time = context.format(post.time),
             asset = post.asset,
+            isVisible = isVisible,
             engagement = engagement,
             onEngage = { reaction(post, it) },
             onMenu = { showSheet.value = post },
-            showAuthor = {
-                navigator.navigate(
-                    route = PostNavigator.Route.Profile(post.author.id)
-                )
-            },
             onContentClick = { spec, value -> navigator.navigate(spec.route(value)) },
             modifier = Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
                 .navigationBarsPadding(),
-            connection = connection,
+            toolbar = {
+                GalleryToolbarMask(
+                    isAuthor = post.author.id == uuid,
+                    status = post.author.status,
+                    isAccessible = post.author.isAccessible,
+                ) {
+                    GalleryToolbar(
+                        slug = post.author.slug.toString(),
+                        username = post.author.username,
+                        imageUrl = post.author.imageUrl,
+                        modifier = Modifier
+                            .padding(start = 12.dp)
+                            .padding(vertical = 6.dp),
+                        onClick = {
+                            navigator.navigate(
+                                route = PostNavigator.Route.Profile(post.author.id)
+                            )
+                        },
+                        content = connection
+                    )
+                }
+            },
             bottom = {
                 if (post.type != UiPostType.TEXT
                     && post.type != UiPostType.IMAGE) {
@@ -100,82 +103,17 @@ fun GalleryScreen(
                 }
             }
         ) { media, hasMedia ->
-            if (post.type == UiPostType.VIDEO) {
-                val path = "${media.path}${UiMimeType.Video.query()}"
-                val bitmap = remember { derivedStateOf { thumbnail.value[path] } }
-                DesignThumbnail(media.path, bitmap) {
-                    interactor.background(
-                        media = path,
-                        aspectRatio = post.asset.ratio,
-                        width = with(density) { maxWidth.roundToPx() },
-                        height = with(density) { maxHeight.roundToPx() },
-                        fit = true
-                    )
-                }
-                interactor.component().videoPlayer()(
-                    Modifier,
-                    spec = VideoPlayer.Spec(
-                        url = media.path,
-                        ratio = post.asset.ratio,
-                        progress = progress,
-                        length = length,
-                        enabled = enabled.value,
-                    )
-                )
-            } else if (post.type == UiPostType.IMAGE) {
-                interactor.component().imageView()(
-                    Modifier,
-                    spec = ImageView.Spec(
-                        url = media.path,
-                        ratio = null,
-                        contentScale = ContentScale.Crop,
-                        blur = 500f,
-                    )
-                )
-                interactor.component().imageView()(
-                    Modifier,
-                    spec = ImageView.Spec(
-                        url = media.path,
-                        ratio = post.asset.ratio,
-                        zoomable = true
-                    )
-                )
-            } else if (post.type == UiPostType.AUDIO) {
-                interactor.component().audioPlayer()(
-                    Modifier,
-                    spec = AudioPlayer.Spec(
-                        path = media.path,
-                        cover = media.display.cover,
-                        length = length,
-                        modifier = Modifier,
-                        ratio = post.asset.ratio,
-                        progress = progress,
-                        enabled = enabled,
-                        position = position
-                    )
-                )
-            } else {
-                GalleryCaption(
-                    description = post.description,
-                    modifier = Modifier.fillMaxSize()
-                ) { spec, value -> navigator.navigate(spec.route(value)) }
-            }
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier.fillMaxSize()
-            ) {
-                if (post.type != UiPostType.TEXT
-                    && post.type != UiPostType.IMAGE
-                    && post.type != UiPostType.VIDEO) {
-                    interactor.component().mediaController()(
-                        Modifier.fillMaxWidth(),
-                        spec = MediaController.Spec(
-                            path = media.path,
-                            translucent = hasMedia,
-                        )
-                    )
-                }
-            }
+            GalleryMedia(
+                media = media,
+                post = post,
+                position = position,
+                isAdmin = isAuthor,
+                hasMedia = hasMedia,
+                isAccessible = post.isAccessible,
+                enabled = enabled,
+                isVisible = isVisible,
+                progress = progress
+            )
         }
     }
 }

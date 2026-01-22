@@ -34,7 +34,7 @@ fun OverviewStatistics(
         )
         OverviewMetrics(
             metrics = metrics,
-            modifier = Modifier.padding(top = 12.dp)
+            modifier = Modifier.padding(top = 10.dp)
         )
     }
 }

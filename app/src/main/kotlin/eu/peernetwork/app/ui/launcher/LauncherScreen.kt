@@ -21,6 +21,7 @@ import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.extension.route
 import androidx.core.net.toUri
 import androidx.lifecycle.ViewModelStoreOwner
+import androidx.lifecycle.viewmodel.compose.viewModel
 import eu.peernetwork.app.ui.onboarding.OnboardingScreen
 
 @Composable
@@ -36,6 +37,11 @@ fun LauncherScreen(
     val component = remember {
         provider.builder(Launcher.Builder::class.java).build(context)
     }
+    val viewModel = viewModel(
+        modelClass = LauncherViewModel::class.java,
+        viewModelStoreOwner = viewModelStoreOwner,
+        factory = component.viewModelFactory()
+    )
     val controller = rememberNavController()
     DesignNavigation(
         navController = controller,
@@ -165,6 +171,7 @@ fun LauncherScreen(
                 controller.route("home")
             }
         } else {
+            viewModel.reset()
             controller.route("welcome")
         }
     }

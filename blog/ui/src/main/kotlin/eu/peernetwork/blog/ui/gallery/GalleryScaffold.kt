@@ -13,9 +13,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
@@ -42,26 +44,24 @@ import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 fun GalleryScaffold(
-    slug: String,
-    username: String,
     type: UiPostType,
     title: AnnotatedString,
     description: AnnotatedString,
-    imageUrl: String,
     time: String,
     asset: UiAsset,
+    isVisible: MutableState<Boolean>,
     engagement: State<UiEngagement>,
     onEngage: (EngagementReaction.State) -> Unit,
     onMenu: () -> Unit,
-    showAuthor: () -> Unit,
     onContentClick: (DesignRichText, String) -> Unit,
+    toolbar: @Composable () -> Unit,
     modifier: Modifier = Modifier,
     menu: @Composable () -> Unit = {},
     bottom: @Composable () -> Unit = {},
-    connection: @Composable () -> Unit = {},
     content: @Composable BoxWithConstraintsScope.(UiMedia, Boolean) -> Unit
 ) {
     val updatedBottom by rememberUpdatedState(bottom)
+    val updatedToolbar by rememberUpdatedState(toolbar)
     val updatedContent by rememberUpdatedState(content)
     val borderColor = MaterialTheme.colorScheme.surfaceDim
     val hasMedia = (type == UiPostType.VIDEO ||
@@ -112,19 +112,11 @@ fun GalleryScaffold(
                 },
             ) {
                 Column(modifier = Modifier.weight(1f)) {
-                    GalleryToolbar(
-                        slug = slug,
-                        username = username,
-                        imageUrl = imageUrl,
-                        modifier = Modifier
-                            .padding(start = 12.dp)
-                            .padding(vertical = 6.dp),
-                        onClick = showAuthor,
-                        content = connection
-                    )
+                    updatedToolbar()
                     GalleryDetail(
                         title = title,
                         time = time,
+                        isVisible = isVisible,
                         description = if (type == UiPostType.TEXT) {
                             buildAnnotatedString {  }
                         } else { description },
@@ -154,6 +146,7 @@ fun PreviewGalleryScaffold() {
             UiMedia("http://localhost", UiDisplay("", null)),
         )
     )
+    val isVisible = remember { mutableStateOf(true) }
     val engagement = remember {
         derivedStateOf {
             UiEngagement(
@@ -169,21 +162,30 @@ fun PreviewGalleryScaffold() {
     }
     DesignTheme(isDarkMode = true) {
         GalleryScaffold(
-            slug = "239100",
-            username = "John",
             type = UiPostType.IMAGE,
             title = buildAnnotatedString { append("John Doe") },
             description = buildAnnotatedString {
                 append("This is a mock description for a content post. It's purely for testing.")
             },
-            imageUrl = "http://localhost",
             time = "2hr ago",
             asset = asset,
+            isVisible = isVisible,
             engagement = engagement,
             onEngage = {},
             onMenu = {},
-            showAuthor = {},
             onContentClick = { _,_ -> },
+            toolbar = {
+                GalleryToolbar(
+                    slug = "239100",
+                    username = "John",
+                    imageUrl = "http://localhost",
+                    modifier = Modifier
+                        .padding(start = 12.dp)
+                        .padding(vertical = 6.dp),
+                    onClick = {  },
+                    content = {  }
+                )
+            },
             modifier = Modifier.fillMaxSize()
         ) { _, _ -> }
     }

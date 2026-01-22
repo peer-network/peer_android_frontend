@@ -37,12 +37,14 @@ fun AdvertsPost(
     description: AnnotatedString,
     from: String,
     to: String,
-    status: Boolean,
+    isActive: Boolean,
     modifier: Modifier = Modifier,
     onSelect: () -> Unit,
     onClick: (DesignRichText, String) -> Unit,
+    label: (@Composable () -> Unit)?,
     content: @Composable () -> Unit
 ) {
+    val updatedLabel by rememberUpdatedState(label)
     val updatedContent by rememberUpdatedState(content)
     Row(modifier = Modifier.fillMaxWidth()
         .then(modifier)
@@ -72,19 +74,26 @@ fun AdvertsPost(
                     onTap = onSelect
                 )
             }
-            Box(
-                modifier = Modifier.fillMaxWidth()
-                    .heightIn(min = 32.dp)
-            ) {
-                DesignRichText(
-                    text = description,
-                    color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.labelMedium,
-                    maxLines = 2,
-                    modifier = Modifier.padding(top = 2.dp),
-                    onClick = onClick,
-                    onTap = onSelect
-                )
+            if (description.isNotBlank()) {
+                Box(
+                    modifier = Modifier.fillMaxWidth()
+                        .heightIn(min = 32.dp)
+                ) {
+                    DesignRichText(
+                        text = description,
+                        color = MaterialTheme.colorScheme.onBackground,
+                        style = MaterialTheme.typography.labelMedium,
+                        maxLines = 2,
+                        modifier = Modifier.padding(top = 2.dp),
+                        onClick = onClick,
+                        onTap = onSelect
+                    )
+                }
+            }
+            updatedLabel?.let {
+                Box(
+                    modifier = Modifier.padding(top = 6.dp)
+                ) { it() }
             }
             Row(
                 verticalAlignment = Alignment.Bottom,
@@ -97,7 +106,7 @@ fun AdvertsPost(
                     color = MaterialTheme.colorScheme.outline,
                     style = MaterialTheme.typography.labelMedium
                 )
-                if (status) {
+                if (isActive) {
                     Box(
                         modifier = Modifier.padding(start = 6.dp)
                             .clip(CircleShape)
@@ -126,8 +135,9 @@ fun PreviewAdvertsPost() {
             description = buildAnnotatedString { append("There’s something about hiking that resets everything. ") },
             from = "8 Jun 2025",
             to = "10 Jun 2025",
-            status = true,
+            isActive = true,
             onClick = { _,_ -> },
+            label = { AdvertsVisibilityLabel() },
             onSelect = {}
         ) {}
     }

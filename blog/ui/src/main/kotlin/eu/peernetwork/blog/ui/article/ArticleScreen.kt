@@ -203,7 +203,11 @@ fun ArticleScreen(
                     state = showSheet
                 ) { sheetState, post ->
                     when (sheetState) {
-                        ArticleSheetMenuItem.BOOST -> handleEvent(ArticleEvent.Boost(post.id))
+                        ArticleSheetMenuItem.BOOST -> handleEvent(ArticleEvent.Boost(
+                            id = post.id,
+                            isReported = post.reported,
+                            isAccessible = post.isAccessible
+                        ))
                         ArticleSheetMenuItem.REPORT -> moderation.onReport(post.id)
                         ArticleSheetMenuItem.SHARE -> { context.share(post.url, shareTitle) }
                     }
@@ -265,7 +269,11 @@ fun ArticleFullScreen(
                         state = showSheet
                     ) { sheetState, post ->
                         when (sheetState) {
-                            ArticleSheetMenuItem.BOOST -> handleEvent(ArticleEvent.Boost(post.id))
+                            ArticleSheetMenuItem.BOOST -> handleEvent(ArticleEvent.Boost(
+                                id = post.id,
+                                isReported = post.reported,
+                                isAccessible = post.isAccessible
+                            ))
                             ArticleSheetMenuItem.REPORT -> moderation.onReport(post.id)
                             ArticleSheetMenuItem.SHARE -> { context.share(post.url, shareTitle) }
                         }

@@ -2,6 +2,7 @@ package eu.peernetwork.social.remote.mapper
 
 import eu.peernetwork.social.domain.model.Member
 import eu.peernetwork.social.domain.model.Post
+import eu.peernetwork.social.domain.model.Status
 import social.social.eu.peernetwork.social.remote.GetallpostsQuery
 
 fun GetallpostsQuery.AffectedRow.mapToDomain(url: String): Post {
@@ -16,7 +17,9 @@ fun GetallpostsQuery.AffectedRow.mapToDomain(url: String): Post {
             username = user.username!!,
             imageUrl = "$url${user.img}",
             isFollowed = user.isfollowed ?: false,
-            isFollowing = user.isfollowing ?: false
+            isFollowing = user.isfollowing ?: false,
+            isAccessible = !isHiddenForUsers,
+            status = visibilityStatus.mapToDomain()
         )
     )
 }

@@ -44,6 +44,7 @@
     <string name="token_label">Token</string>
     <string name="address_label">Address</string>
     <string name="account_label">Account</string>
+    <string name="illegal_profile">Profile data is removed as illegal</string>
 
     <string name="posts_label">Publications</string>
     <string name="follow_label">Follow</string>
@@ -94,6 +95,8 @@
     <string name="password_number_rule">1 number</string>
 
     <string name="ads_label">My ads</string>
+    <string name="report_label">Report</string>
+    <string name="reported_label">Reported</string>
 
     <string name="app_information_label">App Information</string>
     <string name="about_us_label">About Us</string>
@@ -106,8 +109,15 @@
     <string name="copyright_label">© 2024 Peer Network.</string>
     <string name="about_us_description_label">The first social platform Returning 96% of ad revenue to creators through blockchain technology.</string>
 
+    <string name="hidden_profile_message">Profile data is hidden due to report</string>
+    <string name="removed_profile_message">Profile data is removed as illegal</string>
+
     <string name="profile_update_message">Profile updated successfully!</string>
     <string name="profile_deactivation_message">Account deactivated successfully!</string>
+
+    <string name="show_label">Show</string>
+    <string name="sensitive_title">Sensitive content</string>
+    <string name="sensitive_description">This content may be sensitive or abusive. \nDo you want to view it anyway?</string>
 
     <string name="privacy_text">Privacy Policy</string>
     <string name="agreement">I agree to the</string>

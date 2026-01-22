@@ -4,6 +4,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import eu.peernetwork.blog.ui.model.UiAuthor
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.model.UiPostType
+import eu.peernetwork.blog.ui.model.UiStatus
 import eu.peernetwork.blog.ui.model.UiTimer
 import io.mockk.mockk
 
@@ -18,7 +19,9 @@ object MockContent {
                 slug = 0,
                 imageUrl = "http://localhost",
                 followed = false,
-                following = false
+                following = false,
+                isAccessible = true,
+                status = UiStatus.VISIBLE
             ),
             type = UiPostType.IMAGE,
             createdAt = System.currentTimeMillis(),
@@ -32,7 +35,10 @@ object MockContent {
             isViewed = false,
             asset = mockk(),
             url = "http://localhost/photo.jpg",
-            time = UiTimer.Now
+            time = UiTimer.Now,
+            isAccessible = true,
+            reported = false,
+            status = UiStatus.HIDDEN
         )
     }
 }

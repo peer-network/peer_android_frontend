@@ -16,6 +16,7 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.navigation.compose.rememberNavController
 import eu.peernetwork.ads.ui.article.ArticleNavigator
 import eu.peernetwork.ads.ui.boost.BoostModal
+import eu.peernetwork.ads.ui.model.UiBoost
 import eu.peernetwork.app.BuildConfig
 import eu.peernetwork.app.interactor.NavigationInteractor
 import eu.peernetwork.blog.domain.usecase.PostUsecase
@@ -25,6 +26,7 @@ import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.media.core.model.UiMimeType
 import eu.peernetwork.user.domain.model.Account
+import eu.peernetwork.user.ui.user.UserNavigator
 
 @Composable
 fun ProfileScreen(
@@ -56,9 +58,10 @@ fun ProfileScreen(
     CompositionLocalProvider(
         PostNavigator.LocalPostNavigator provides navigator,
         ArticleNavigator.LocalArticleNavigator provides navigator,
+        UserNavigator.LocalUserNavigator provides navigator,
     ) {
         ProfileScreen(provider) { component ->
-            val showBoost = remember { mutableStateOf<String?>(null) }
+            val showBoost = remember { mutableStateOf<UiBoost?>(null) }
             val pageState = rememberPagerState(
                 pageCount = { UiMimeType.TYPES.size },
                 initialPage = 0
@@ -88,7 +91,13 @@ fun ProfileScreen(
                     mediaState = mediaState,
                     controller = controller,
                     pageState = pageState,
-                    onBoost = { showBoost.value = it },
+                    onBoost = {
+                        showBoost.value = UiBoost(
+                            id = it.id,
+                            isReported = it.isReported,
+                            isAccessible = it.isAccessible
+                        )
+                    },
                     onClick = { isVisible.value = true }
                 )
             }

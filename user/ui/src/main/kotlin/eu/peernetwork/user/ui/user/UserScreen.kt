@@ -1,6 +1,7 @@
 package eu.peernetwork.user.ui.user
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
@@ -22,7 +23,9 @@ import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.design.luna.DesignStream
 import eu.peernetwork.core.ui.design.luna.DesignStreamState
+import eu.peernetwork.user.ui.extension.route
 import eu.peernetwork.user.ui.option.OptionScreen
+import eu.peernetwork.user.ui.user.UserNavigator.Companion.LocalUserNavigator
 
 @Composable
 fun UserScreen(
@@ -32,11 +35,13 @@ fun UserScreen(
     provider: UiComponentProvider,
     connection: @Composable (Pair<Boolean, Boolean>) -> Unit,
     onClick: (UserMetric) -> Unit,
+    onBlock: () -> Unit,
     onSettings: () -> Unit,
     onMenuClicked: () -> Unit,
     viewModelStoreOwner: ViewModelStoreOwner,
 ) {
     val context = LocalContext.current
+    val navigator = LocalUserNavigator.current
     val component = remember {
         provider.builder(User.Builder::class.java).build(context)
     }
@@ -95,16 +100,30 @@ fun UserScreen(
                 .padding(top = 10.dp)
         ) }
     ) { data ->
-        UserPage(
-            account = data.value.first,
-            isAdmin = data.value.second,
-            selectedImage = selectedImage,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp)
-                .padding(top = 10.dp),
-            onClick = onClick
-        ) {
+        Column {
+            if (data.value.second) {
+                UserStatusRibbon(data.value.first)
+            }
+            UserMask(
+                metric = data.value.first.metric,
+                status = data.value.first.status,
+                isAuthor = data.value.second,
+                isAccessible = data.value.first.isAccessible,
+                onClick = onClick,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp)
+                    .padding(top = 10.dp),
+            ) {
+                UserPage(
+                    account = data.value.first,
+                    isAdmin = data.value.second,
+                    selectedImage = selectedImage,
+                    modifier = Modifier,
+                    onContentClick = { type, value -> navigator.navigate(type.route(value)) },
+                    onClick = onClick
+                )
+            }
             Box(modifier = Modifier.padding(start = 20.dp)
                 .padding(end = 12.dp)) {
                 OptionScreen(
@@ -112,6 +131,7 @@ fun UserScreen(
                     provider = component,
                     viewModelStoreOwner = viewModelStoreOwner,
                     onSettings = onSettings,
+                    onBlock = onBlock,
                     onMenuClicked = onMenuClicked
                 ) {
                     updatedConnection(data.value.first.isFollowing

@@ -9,7 +9,9 @@ fun Author.mapFromDomain(): UiAuthor {
         slug = slug,
         username = username,
         imageUrl = imageUrl,
-        following = isfollowing,
-        followed = isfollowed
+        following = following,
+        followed = followed,
+        isAccessible = isAccessible,
+        status = status.mapFromDomain()
     )
 }

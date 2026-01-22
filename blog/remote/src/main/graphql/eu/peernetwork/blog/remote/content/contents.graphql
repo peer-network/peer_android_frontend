@@ -36,6 +36,9 @@ query Getallposts(
             amountcomments
             media
             cover
+            isreported
+            isHiddenForUsers
+            visibilityStatus
             contenttype
             createdat
             url
@@ -46,6 +49,8 @@ query Getallposts(
                 img
                 isfollowed
                 isfollowing
+                isHiddenForUsers
+                visibilityStatus
             }
         }
     }

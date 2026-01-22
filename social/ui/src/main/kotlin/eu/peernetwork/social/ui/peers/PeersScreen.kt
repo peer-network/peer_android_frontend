@@ -28,7 +28,6 @@ import eu.peernetwork.core.ui.extension.error
 import eu.peernetwork.social.ui.connection.ConnectionButton
 import eu.peernetwork.social.ui.connection.ConnectionInteractor.Companion.LocalConnectionInteractor
 import eu.peernetwork.social.ui.connection.ConnectionScreen
-import eu.peernetwork.social.ui.referral.ReferralItem
 
 @Composable
 fun PeersScreen(
@@ -86,28 +85,35 @@ fun PeersScreen(
                     key = { index -> index }
                 ) { index ->
                     lazyPagingItems[index]?.let { member ->
-                        ReferralItem(
-                            slug = member.slug,
-                            username = member.username,
-                            imageUrl = member.imageUrl,
-                            onClick = { handleClick(member.id) }
+                        PeersMask(
+                            isAuthor = false,
+                            status = member.status,
+                            onClick = { handleClick(member.id) },
+                            isAccessible = member.isAccessible,
                         ) {
-                            ConnectionButton(
-                                isFollowing = connection.getOrDefault(
-                                    key = member.id,
-                                    defaultValue = member.isFollowing
-                                ),
-                                isFollowed = member.isFollowed,
-                                onClick = { follow ->
-                                    controller.invoke(member.id, !follow)
-                                },
-                                fontWeight = FontWeight.SemiBold,
-                                minHeight = 32.dp,
-                                contentPadding = PaddingValues(
-                                    horizontal = 16.dp,
-                                    vertical = 8.dp
+                            PeersItem(
+                                slug = member.slug,
+                                username = member.username,
+                                imageUrl = member.imageUrl,
+                                onClick = { handleClick(member.id) }
+                            ) {
+                                ConnectionButton(
+                                    isFollowing = connection.getOrDefault(
+                                        key = member.id,
+                                        defaultValue = member.isFollowing
+                                    ),
+                                    isFollowed = member.isFollowed,
+                                    onClick = { follow ->
+                                        controller.invoke(member.id, !follow)
+                                    },
+                                    fontWeight = FontWeight.SemiBold,
+                                    minHeight = 32.dp,
+                                    contentPadding = PaddingValues(
+                                        horizontal = 16.dp,
+                                        vertical = 8.dp
+                                    )
                                 )
-                            )
+                            }
                         }
                     }
                 }

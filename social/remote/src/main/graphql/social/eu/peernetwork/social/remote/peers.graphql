@@ -17,7 +17,9 @@ query ListPeers(
             username
             slug
             biography
-            updatedat,
+            updatedat
+            isHiddenForUsers
+            visibilityStatus
         }
     }
 }

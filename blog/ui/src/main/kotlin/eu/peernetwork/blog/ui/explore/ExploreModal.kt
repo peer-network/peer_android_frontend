@@ -8,6 +8,7 @@ import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModelStoreOwner
 import eu.peernetwork.blog.ui.gallery.GalleryScreen
 import eu.peernetwork.blog.ui.model.UiPost
+import eu.peernetwork.blog.ui.timeline.TimelineEvent
 import eu.peernetwork.core.ui.component.UiComponentProvider
 
 @Composable
@@ -19,7 +20,7 @@ fun ExploreModal(
     limit: Int,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
-    onBoost: (String) -> Unit
+    onBoost: (TimelineEvent.Boost) -> Unit
 ) {
     val showSheet = remember { mutableStateOf<UiPost?>(null) }
     ExploreScreen(
@@ -40,6 +41,7 @@ fun ExploreModal(
         ) { component, item, index, pagerState ->
             val enabled = remember { derivedStateOf { pagerState.currentPage == index } }
             GalleryScreen(
+                uuid = uuid,
                 position = index,
                 enabled = enabled,
                 post = item,

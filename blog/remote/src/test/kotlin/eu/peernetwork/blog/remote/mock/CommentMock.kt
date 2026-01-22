@@ -3,6 +3,7 @@ package eu.peernetwork.blog.remote.mock
 import eu.peernetwork.blog.remote.comment.CreateCommentMutation
 import eu.peernetwork.blog.remote.comment.GetCommentsQuery
 import eu.peernetwork.core.remote.model.Status
+import type.ContentVisibilityStatus
 
 object CommentMock {
     fun comment(): CreateCommentMutation.CreateComment {
@@ -19,13 +20,17 @@ object CommentMock {
                     createdat = "2025-03-24 00:05:09.334000",
                     amountlikes = 42,
                     isliked = true,
+                    isHiddenForUsers = true,
+                    visibilityStatus = ContentVisibilityStatus.HIDDEN,
                     user = CreateCommentMutation.User(
                         id = "<test-userid>",
                         username = "<test-username>",
                         img = "<test-avatar>",
                         slug = 0,
                         isfollowed = false,
-                        isfollowing = false
+                        isfollowing = false,
+                        isHiddenForUsers = true,
+                        visibilityStatus = ContentVisibilityStatus.HIDDEN
                     )
                 )
             )
@@ -49,13 +54,18 @@ object CommentMock {
                             createdat = "2025-03-24 00:05:09.334000",
                             amountlikes = 42,
                             isliked = true,
+                            hasActiveReports = false,
+                            isHiddenForUsers = true,
+                            visibilityStatus = ContentVisibilityStatus.HIDDEN,
                             user = GetCommentsQuery.User(
                                 id = "<test-userid>",
                                 username = "<test-username>",
                                 img = "<test-avatar>",
                                 slug = 0,
                                 isfollowed = false,
-                                isfollowing = false
+                                isfollowing = false,
+                                isHiddenForUsers = true,
+                                visibilityStatus = ContentVisibilityStatus.HIDDEN
                             )
                         )
                     )

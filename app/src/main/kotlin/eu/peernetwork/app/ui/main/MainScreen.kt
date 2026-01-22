@@ -20,15 +20,18 @@ fun MainScreen(
     component: Main.Component,
     viewModelStoreOwner: ViewModelStoreOwner
 ) {
-    val controller = rememberNavController()
     val viewModel = viewModel(
         modelClass = MainViewModel::class.java,
         viewModelStoreOwner = viewModelStoreOwner,
         factory = component.viewModelFactory()
     )
+    val controller = rememberNavController()
     val state by viewModel.state.collectAsStateWithLifecycle()
     val derivedState = remember(state.token) { derivedStateOf { state.token?.access } }
-    DesignNavigation(navController = controller, startDestination = "splash") {
+    DesignNavigation(
+        navController = controller,
+        startDestination = "splash"
+    ) {
         composable(
             "splash",
             deepLinks = listOf(

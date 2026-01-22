@@ -22,6 +22,7 @@ fun ProfileDetail(
     id: String,
     connection: MutableState<ConnectionStatus?>,
     timestamp: State<Long>,
+    onBlock: () -> Unit = {},
     onSettings: () -> Unit = {},
     onMenuClicked: () -> Unit = {},
     component: Profile.Component,
@@ -43,8 +44,8 @@ fun ProfileDetail(
                         key = id,
                         defaultValue = it.first
                     ),
-                    onClick = { follow ->
-                        controller.invoke(id, !follow)
+                    onClick = { state ->
+                        controller.invoke(id, !state)
                     },
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -59,6 +60,7 @@ fun ProfileDetail(
             },
             onSettings = onSettings,
             onMenuClicked = onMenuClicked,
+            onBlock = onBlock,
             provider = component,
             viewModelStoreOwner = viewModelStoreOwner,
             modifier = Modifier.padding(bottom = 8.dp)

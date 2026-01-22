@@ -10,5 +10,8 @@ data class UiComment (
     val content: AnnotatedString,
     val createdAt: Long,
     val likes: Int,
-    val isLiked: Boolean
+    val isLiked: Boolean,
+    val isReported: Boolean,
+    val isAccessible: Boolean,
+    val status: UiStatus,
 )

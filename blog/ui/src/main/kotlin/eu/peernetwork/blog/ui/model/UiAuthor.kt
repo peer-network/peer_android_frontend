@@ -9,5 +9,7 @@ data class UiAuthor(
     val username: String,
     val imageUrl: String,
     val following: Boolean,
-    val followed: Boolean
+    val followed: Boolean,
+    val isAccessible: Boolean,
+    val status: UiStatus,
 )

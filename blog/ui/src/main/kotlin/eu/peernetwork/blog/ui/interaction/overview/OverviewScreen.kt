@@ -21,7 +21,7 @@ import eu.peernetwork.blog.ui.R
 import eu.peernetwork.blog.ui.engagement.EngagementMetric
 import eu.peernetwork.blog.ui.interaction.user.UserList
 import eu.peernetwork.blog.ui.model.UiEngagement
-import eu.peernetwork.blog.ui.post.PostUserConnection
+import eu.peernetwork.blog.ui.post.PostFollow
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.theme.PeerTheme
@@ -74,6 +74,7 @@ fun OverviewScreen(
                 }
                 UserList(
                     id = state.id,
+                    uuid = uuid,
                     limit = postLimit,
                     engagement = engagement,
                     provider = component,
@@ -83,10 +84,10 @@ fun OverviewScreen(
                     if (uuid != user.id) {
                         component.postUserFollow()(
                             modifier = Modifier,
-                            spec = PostUserConnection.Spec(
+                            spec = PostFollow.Spec(
                                 id = user.id,
-                                isFollowing = user.following,
-                                isFollowed = user.followed
+                                isFollowing = user.followed,
+                                isFollowed = user.following
                             )
                         )
                     }

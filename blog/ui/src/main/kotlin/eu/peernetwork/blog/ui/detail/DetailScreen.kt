@@ -8,6 +8,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -29,7 +30,7 @@ import eu.peernetwork.blog.ui.post.PostNavigator
 import eu.peernetwork.blog.ui.post.PostNavigator.Companion.LocalPostNavigator
 import eu.peernetwork.blog.ui.post.PostScreen
 import eu.peernetwork.blog.ui.post.PostSkeleton
-import eu.peernetwork.blog.ui.post.PostUserConnection
+import eu.peernetwork.blog.ui.post.PostFollow
 import eu.peernetwork.blog.ui.timeline.TimelineSheet
 import eu.peernetwork.blog.ui.timeline.TimelineSheetMenuItem
 import eu.peernetwork.core.ui.component.UiComponentProvider
@@ -113,7 +114,6 @@ fun DetailScreen(
 fun DetailScreen(
     id: String,
     uuid: String,
-    isVisible: State<Boolean>,
     component: Detail.Component,
     viewModel: DetailViewModel,
     onBoost: (String) -> Unit,
@@ -135,11 +135,18 @@ fun DetailScreen(
         val reaction = LocalEngagementReaction.current
         val navigator = LocalPostNavigator.current
         val moderation = LocalModerationInteractor.current
+        val isAuthor = uuid == post.author.id
+        val isVisible = rememberSaveable { mutableStateOf(post.isAccessible || isAuthor) }
         PostItem(
             type = post.type,
             pinnedBy = post.pinnedBy,
             model = post.mapToDetail(),
             asset = post.asset,
+            author = post.author,
+            isAuthor = isAuthor,
+            isAccessible = post.isAccessible,
+            isVisible = isVisible,
+            status = post.status,
             onMenu = { showSheet.value = post },
             onClick = onClick,
             onContentClick = { type, value ->
@@ -160,7 +167,7 @@ fun DetailScreen(
                 if (uuid != post.author.id) {
                     component.postUserFollow()(
                         modifier = Modifier,
-                        PostUserConnection.Spec(
+                        PostFollow.Spec(
                             id = post.author.id,
                             isFollowing = post.author.following,
                             isFollowed = post.author.followed,
@@ -172,7 +179,11 @@ fun DetailScreen(
                 PostMedia(
                     type = post.type,
                     path = media.path,
+                    status = post.status,
                     expanded = expanded,
+                    isAdmin = uuid == post.author.id,
+                    isAccessible = post.isAccessible,
+                    isVisible = isVisible,
                     cover = media.display.cover ?: post.author.imageUrl,
                     ratio = post.asset.ratio,
                     enable = isVisible,

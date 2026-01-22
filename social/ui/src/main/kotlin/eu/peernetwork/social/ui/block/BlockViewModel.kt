@@ -12,17 +12,18 @@ import javax.inject.Inject
 class BlockViewModel @Inject constructor(
     private val usecase: BlockUsecase
 ): ViewModel() {
-    private val mutableState = MutableStateFlow<State>(State.Empty)
-    val state: StateFlow<State> = mutableState.asStateFlow()
+    private val _state = MutableStateFlow<State>(State.Empty)
+
+    val state: StateFlow<State> = _state.asStateFlow()
 
     fun block(userId: String) {
         viewModelScope.launch {
-            mutableState.tryEmit(State.Loading)
+            _state.tryEmit(State.Loading)
             try {
                 usecase(param = userId)
-                mutableState.emit(State.Success(true))
+                _state.emit(State.Success(true))
             } catch (error: Throwable) {
-                mutableState.tryEmit(State.Error(error))
+                _state.tryEmit(State.Error(error))
             }
         }
     }

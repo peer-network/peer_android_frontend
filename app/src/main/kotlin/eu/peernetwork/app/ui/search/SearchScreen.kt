@@ -29,6 +29,7 @@ import eu.peernetwork.core.ui.design.material.DesignTitleBarHost
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.social.ui.connection.ConnectionScreen
 import eu.peernetwork.user.domain.model.Account
+import eu.peernetwork.user.ui.user.UserNavigator
 import kotlinx.coroutines.launch
 
 @Composable
@@ -70,6 +71,7 @@ fun SearchScreen(
     CompositionLocalProvider(
         PostNavigator.LocalPostNavigator provides navigator,
         ArticleNavigator.LocalArticleNavigator provides navigator,
+        UserNavigator.LocalUserNavigator provides navigator,
     ) {
         SearchScreen(
             provider = provider,
@@ -85,6 +87,7 @@ fun SearchScreen(
                     currentMode
                 ) {
                     SearchSuggestion(
+                        uuid = account.id,
                         state = state,
                         selected = selected,
                         mode = currentMode.value,

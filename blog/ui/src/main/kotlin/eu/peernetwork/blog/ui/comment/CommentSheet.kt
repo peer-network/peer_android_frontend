@@ -1,10 +1,13 @@
 package eu.peernetwork.blog.ui.comment
 
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.MaterialTheme
@@ -16,6 +19,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
@@ -62,25 +66,31 @@ fun CommentSheet(
     CommentScreen(
         provider = provider,
         viewModelStoreOwner = viewModelStoreOwner
-    ) { component, viewModel ->
+    ) { _, viewModel ->
         val status = viewModel.status.collectAsStateWithLifecycle()
         val navigator = LocalPostNavigator.current
         val isLoading = remember { derivedStateOf { status.value is CommentViewModel.Status.Loading } }
         val isSuccess = remember { derivedStateOf { status.value is CommentViewModel.Status.Success<*> } }
+        val requestReport = remember { mutableStateOf<String?>(null) }
         DesignStream(streamState) { post ->
             DesignBottomSheet(
                 state = showSheet,
+                dismissable = true,
                 canDismiss = {
                     val dismissable = controller.previousBackStackEntry == null
+                    val hasOverlay = requestReport.value == null
                     if (!dismissable) {
                         controller.popBackStack()
+                    } else if (!hasOverlay) {
+                        requestReport.value = null
                     }
-                    dismissable
+                    dismissable && hasOverlay
                 },
                 onDismiss = {
                     if (sheetState.value is CommentSheetState.Dismissing) {
                         (sheetState.value as CommentSheetState.Dismissing).action.invoke()
                     }
+                    requestReport.value = null
                     sheetState.value = CommentSheetState.Hidden
                 },
                 color = MaterialTheme.colorScheme.surfaceDim,
@@ -102,6 +112,25 @@ fun CommentSheet(
                         )
                     }
                 },
+                overlay = {
+                    Crossfade(
+                        targetState = requestReport.value,
+                        animationSpec = tween(250)
+                    ) { target ->
+                        if (target != null) {
+                            CommentOption(
+                                onCancel = { requestReport.value = null },
+                                modifier = Modifier.fillMaxSize()
+                                    .background(MaterialTheme.colorScheme.surfaceDim)
+                                    .statusBarsPadding()
+                                    .padding(16.dp)
+                            ) {
+                                viewModel.report(target)
+                                requestReport.value = null
+                            }
+                        }
+                    }
+                },
                 content = {
                     Box(modifier = Modifier
                         .fillMaxSize()
@@ -111,15 +140,15 @@ fun CommentSheet(
                             id = post.value.id,
                             uuid = uuid,
                             limit = 10,
+                            isAuthor = uuid == post.value.uuid,
                             controller = controller,
                             provider = provider,
                             viewModelStoreOwner = viewModelStoreOwner,
                             onReply = {
-                                comment.edit {
-                                    replace(0, length, "@$it")
-                                }
+                                comment.edit { replace(0, length, "@$it") }
                                 focusRequester.requestFocus()
                             },
+                            onReport = { requestReport.value = it },
                             onContentClick = { spec, value ->
                                 sheetState.value = CommentSheetState.Dismissing {
                                     navigator.navigate(spec.route(value))

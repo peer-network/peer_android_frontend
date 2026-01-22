@@ -44,7 +44,7 @@ fun DesignBottomSheetScaffold(
     state: State<Boolean>,
     behind: Boolean = true,
     dismissable: Boolean = false,
-    color: Color = MaterialTheme.colorScheme.surfaceContainerLow,
+    color: Color = MaterialTheme.colorScheme.surfaceDim,
     orientation: Orientation = Orientation.Vertical,
     confirmValueChange: (DesignBottomSheetState) -> Boolean = { true },
     onStateChanged: (DesignBottomSheetState) -> Unit = {},

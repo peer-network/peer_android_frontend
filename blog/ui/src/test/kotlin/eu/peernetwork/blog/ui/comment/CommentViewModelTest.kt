@@ -8,8 +8,10 @@ import eu.peernetwork.blog.domain.model.Comment
 import eu.peernetwork.blog.domain.usecase.CommentLikeUsecase
 import eu.peernetwork.blog.domain.usecase.CommentUpdateUsecase
 import eu.peernetwork.blog.domain.usecase.CommentUsecase
+import eu.peernetwork.blog.domain.usecase.ReportCommentUsecase
 import eu.peernetwork.blog.ui.model.UiAuthor
 import eu.peernetwork.blog.ui.model.UiComment
+import eu.peernetwork.blog.ui.model.UiStatus
 import eu.peernetwork.blog.ui.usecase.CommentsUsecase
 import eu.peernetwork.core.common.paging.Pageable
 import io.mockk.coEvery
@@ -42,13 +44,21 @@ internal class CommentViewModelTest {
 
     private val commentLikeUsecase = mockk<CommentLikeUsecase>()
 
+    private val reportCommentUsecase = mockk<ReportCommentUsecase>()
+
     private lateinit var viewModel: CommentViewModel
 
     @Before
     fun setup() {
         Dispatchers.setMain(dispatcher)
         coEvery { updateUsecase(any()) } returns Unit
-        viewModel = CommentViewModel(usecase, commentsUsecase, updateUsecase, commentLikeUsecase)
+        viewModel = CommentViewModel(
+            usecase,
+            commentsUsecase,
+            updateUsecase,
+            commentLikeUsecase,
+            reportCommentUsecase
+        )
     }
 
     @Test
@@ -99,7 +109,10 @@ internal class CommentViewModelTest {
             content = mockk<AnnotatedString>(relaxed = true),
             createdAt = System.currentTimeMillis(),
             likes = 0,
-            isLiked = false
+            isLiked = false,
+            isReported = false,
+            isAccessible = true,
+            status = UiStatus.VISIBLE
         )
         val mockData = mockk<UiComment>()
         val pager = PagingData.from(listOf(mockData))

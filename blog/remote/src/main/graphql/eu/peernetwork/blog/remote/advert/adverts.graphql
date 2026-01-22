@@ -36,6 +36,8 @@ query ListAdvertisementPosts(
                 isreported
                 isdisliked
                 issaved
+                isHiddenForUsers
+                visibilityStatus
                 tags
                 url
                 user {

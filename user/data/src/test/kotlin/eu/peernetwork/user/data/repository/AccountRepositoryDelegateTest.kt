@@ -5,6 +5,7 @@ import eu.peernetwork.user.data.api.SettingsApi
 import eu.peernetwork.user.data.mapper.mapToDomain
 import eu.peernetwork.user.data.model.AccountModel
 import eu.peernetwork.user.data.provider.SettingsProvider
+import eu.peernetwork.user.domain.model.Status
 import eu.peernetwork.user.domain.model.UserDetail
 import eu.peernetwork.user.domain.repository.AccountRepository
 import io.mockk.coEvery
@@ -42,7 +43,9 @@ internal class AccountRepositoryDelegateTest {
             follower = 0,
             isfollowed = false,
             isfollowing = false,
-            peers = 0
+            peers = 0,
+            isAccessible = true,
+            status = Status.ILLEGAL,
         )
         coEvery { api.get(any()) } returns mockResponse
 

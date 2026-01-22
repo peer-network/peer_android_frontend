@@ -9,6 +9,8 @@ fun Content.mapToDomain(): UiContent {
         id = id,
         title = title.annotate(),
         description = description.annotate(),
-        path = path
+        path = path,
+        isAccessible = isAccessible,
+        status = status.mapFromDomain()
     )
 }

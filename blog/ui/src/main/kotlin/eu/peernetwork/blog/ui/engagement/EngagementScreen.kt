@@ -22,7 +22,6 @@ import eu.peernetwork.blog.ui.interaction.overview.OverviewSheet
 import eu.peernetwork.blog.ui.model.UiReaction
 import eu.peernetwork.blog.ui.model.UiEngagement
 import eu.peernetwork.blog.ui.model.UiPostDetail
-import eu.peernetwork.blog.ui.post.PostUserConnection
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.extension.builder
@@ -107,7 +106,7 @@ fun EngagementScreen(
     ) { overview.value = null }
     component.engagementConfirmation()(
         Modifier,
-        spec = EngagementDialog.Spec(
+        spec = EngagementModal.Spec(
             type = type,
             viewModelStoreOwner = viewModelStoreOwner,
             onDismiss = { type.value = null }

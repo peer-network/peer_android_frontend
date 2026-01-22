@@ -11,7 +11,7 @@ import eu.peernetwork.app.ui.profile.Profile
 import eu.peernetwork.app.ui.renderer.BalanceRenderer
 import eu.peernetwork.app.ui.renderer.EngagementRenderer
 import eu.peernetwork.app.ui.screen.Screen
-import eu.peernetwork.blog.ui.engagement.EngagementDialog
+import eu.peernetwork.blog.ui.engagement.EngagementModal
 import eu.peernetwork.blog.ui.explore.Explore
 import eu.peernetwork.core.ui.annotation.UiBuilder
 import eu.peernetwork.core.ui.component.UiComponent
@@ -97,7 +97,7 @@ object SearchModule {
 
     @Search.Scope
     @Provides
-    fun provideEngagementRenderer(component: Search.Component): EngagementDialog {
+    fun provideEngagementRenderer(component: Search.Component): EngagementModal {
         return EngagementRenderer(component)
     }
 

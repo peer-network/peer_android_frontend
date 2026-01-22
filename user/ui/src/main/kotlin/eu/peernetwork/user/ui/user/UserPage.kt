@@ -1,13 +1,11 @@
 package eu.peernetwork.user.ui.user
 
-import android.content.res.Configuration
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -18,12 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.core.ui.design.luna.DesignRichText
@@ -34,6 +27,7 @@ import eu.peernetwork.core.ui.theme.DesignTheme
 import eu.peernetwork.user.ui.R
 import eu.peernetwork.user.ui.model.UiAccount
 import eu.peernetwork.user.ui.model.UiMetric
+import eu.peernetwork.user.ui.model.UiStatus
 
 @Composable
 fun UserPage(
@@ -41,11 +35,10 @@ fun UserPage(
     isAdmin: Boolean,
     selectedImage: MutableState<String?>,
     modifier: Modifier = Modifier,
+    onContentClick: (DesignRichText, String) -> Unit,
     onClick: (UserMetric) -> Unit,
-    content: @Composable () -> Unit,
 ) {
     val handleOnClick by rememberUpdatedState(onClick)
-    val updatedContent by rememberUpdatedState(content)
     val emptyDescription = stringResource(R.string.empty_description_message)
     Column {
         Column(modifier = modifier) {
@@ -63,24 +56,11 @@ fun UserPage(
                     )
                 }
                 Column(modifier = Modifier.padding(start = 16.dp)) {
-                    Text(
-                        text = buildAnnotatedString {
-                            append(account.username)
-                            append(" ")
-                            withStyle(
-                                SpanStyle(
-                                    fontStyle = FontStyle.Italic,
-                                    fontWeight = FontWeight.Normal,
-                                    fontSize = MaterialTheme.typography.bodySmall.fontSize,
-                                    color = MaterialTheme.colorScheme.outline
-                                )
-                            ) { append("#${account.slug}") }
-                        },
-                        style = MaterialTheme.typography.bodyMedium.copy(
-                            fontWeight = FontWeight.Bold,
-                        ),
-                        color = MaterialTheme.colorScheme.onBackground,
-                        overflow = TextOverflow.Ellipsis,
+                    UserLabel(
+                        slug = account.slug,
+                        username = account.username,
+                        reported = account.reported && !isAdmin,
+                        modifier = Modifier
                     )
                     UserMetric(
                         overview = account.metric,
@@ -102,17 +82,17 @@ fun UserPage(
                 maxLines = 1,
                 color = MaterialTheme.colorScheme.outline,
                 style = MaterialTheme.typography.bodySmall,
-                modifier = Modifier.padding(top = 16.dp)
+                modifier = Modifier.padding(top = 16.dp),
+                onClick = onContentClick
             )
         }
-        updatedContent()
     }
 }
 
+@Preview
 @Composable
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, showBackground = true)
 fun PreviewUserPage() {
-    DesignTheme(isDarkMode = false) {
+    DesignTheme(isDarkMode = true) {
         val selectedImage = remember { mutableStateOf<String?>(null) }
         val model = UiAccount(
             id = System.currentTimeMillis().toString(),
@@ -127,17 +107,21 @@ fun PreviewUserPage() {
                 followed = 0
             ),
             isFollowing = false,
-            isFollowed = false
+            isFollowed = false,
+            reported = true,
+            isAccessible = true,
+            status = UiStatus.VISIBLE
         )
         UserPage(
             account = model,
-            isAdmin = true,
+            isAdmin = false,
             selectedImage = selectedImage,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 24.dp)
                 .padding(vertical = 16.dp),
-            onClick = {}
-        ) {}
+            onClick = {},
+            onContentClick = { _,_ -> }
+        )
     }
 }

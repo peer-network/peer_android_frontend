@@ -41,6 +41,7 @@ fun LogoutSheet(
     val action = remember { mutableStateOf<(() -> Unit)?>(null) }
     DesignBottomSheetScaffold(
         state = state,
+        dismissable = true,
         color = MaterialTheme.colorScheme.surfaceDim,
         onDismiss = {
             action.value?.invoke()

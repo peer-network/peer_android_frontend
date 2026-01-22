@@ -5,8 +5,7 @@ mutation AdvertisePostPinned(
 ) {
     advertisePostPinned(
         postid: $postId,
-        advertisePlan: $advertisePlan,
-        forceUpdate: $forceUpdate
+        advertisePlan: $advertisePlan
     ) {
         status
         ResponseCode

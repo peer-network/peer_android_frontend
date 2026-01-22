@@ -5,11 +5,13 @@ import eu.peernetwork.blog.data.api.EngagementApi
 import eu.peernetwork.core.common.exception.ContentException
 import eu.peernetwork.blog.domain.model.Author
 import eu.peernetwork.blog.domain.model.Engagement
+import eu.peernetwork.blog.domain.model.Status
 import eu.peernetwork.blog.remote.engagement.LikeCommentMutation
 import eu.peernetwork.blog.remote.engagement.PostInteractionsQuery
 import eu.peernetwork.blog.remote.engagement.ReportCommentMutation
 import eu.peernetwork.blog.remote.engagement.ResolveActionPostMutation
 import eu.peernetwork.blog.remote.mapper.mapToAction
+import eu.peernetwork.blog.remote.mapper.mapToDomain
 import eu.peernetwork.blog.remote.mapper.mapToInteraction
 import eu.peernetwork.core.common.paging.Page
 import eu.peernetwork.core.common.paging.Pageable
@@ -72,8 +74,10 @@ class EngagementApiDelegate @Inject constructor(
                 slug = it.slug!!,
                 username = it.username!!,
                 imageUrl = "$url${it.img}",
-                isfollowing = it.isfollowing!!,
-                isfollowed = it.isfollowed!!
+                following = it.isfollowing!!,
+                followed = it.isfollowed!!,
+                isAccessible = !it.isHiddenForUsers,
+                status = it.visibilityStatus.mapToDomain()
             )
         }
         return Page(

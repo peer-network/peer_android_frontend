@@ -47,6 +47,16 @@
     <string name="shine_label">Ready to shine?</string>
     <string name="shine_description">Your post will go to the top of the feed. Once confirmed, it can’t be cancelled.</string>
 
+    <string name="hidden_label">Hidden</string>
+    <string name="hidden_boost_label">Your post is currently hidden</string>
+    <string name="hidden_boost_prompt">Promote anyway</string>
+    <string name="hidden_boost_description">Your post has been reported and is temporarily hidden.\nYour promotion won’t be visible for all.</string>
+
+    <string name="reported_boost_label">Your post is under review</string>
+    <string name="reported_boost_description">Heads up: Your post was reported. When reviewed, its promotion might be hidden.</string>
+
     <string name="retry_label">Try again</string>
+    <string name="hidden_description">This post is shown as sensitive content.</string>
+    <string name="illegal_description">The post is removed as illegal</string>
     <string name="cancel_label">Cancel</string>
 </resources>

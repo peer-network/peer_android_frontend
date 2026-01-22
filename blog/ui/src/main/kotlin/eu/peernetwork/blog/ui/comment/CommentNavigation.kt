@@ -10,7 +10,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import eu.peernetwork.blog.domain.model.Engagement
 import eu.peernetwork.blog.ui.interaction.user.UserList
-import eu.peernetwork.blog.ui.post.PostUserConnection
+import eu.peernetwork.blog.ui.post.PostFollow
 import eu.peernetwork.core.ui.design.material.DesignRouter
 
 @Composable
@@ -37,6 +37,7 @@ fun CommentNavigation(
             val id = backStackEntry.arguments?.getString("id") ?: ""
             UserList(
                 id = id,
+                uuid = uuid,
                 limit = limit,
                 engagement = Engagement.Content.LikedComment,
                 provider = component,
@@ -46,7 +47,7 @@ fun CommentNavigation(
                 if (uuid != user.id) {
                     component.postUserFollow()(
                         modifier = Modifier,
-                        PostUserConnection.Spec(
+                        PostFollow.Spec(
                             id = user.id,
                             isFollowing = user.following,
                             isFollowed = user.followed

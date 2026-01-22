@@ -7,4 +7,6 @@ data class Member(
     val imageUrl: String,
     val isFollowed: Boolean,
     val isFollowing: Boolean,
+    val isAccessible: Boolean,
+    val status: Status,
 )

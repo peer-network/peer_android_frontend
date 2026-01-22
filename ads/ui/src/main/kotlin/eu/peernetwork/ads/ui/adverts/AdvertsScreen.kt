@@ -110,21 +110,29 @@ fun AdvertsScreen(
                     }
                 ) { index ->
                     lazyPagingItems[index]?.let { post ->
-                        AdvertsPost(
-                            title = post.ads.content.title,
-                            description = post.ads.content.description,
-                            from = post.ads.from,
-                            to = post.ads.to,
-                            status = post.ads.status,
-                            onClick = { type, value ->
-                                navigator.navigate(type.route(value))
-                            },
-                            onSelect = { handleSelect(post.ads.id) },
-                            modifier = Modifier
-                                .padding(horizontal = 16.dp)
-                                .padding(vertical = 5.dp)
-                                .clickable { handleSelect(post.ads.id) }
-                        ) { AdvertsMedia(post.ads.content.path, component) }
+                        AdvertsMask(
+                            status = post.ads.content.status,
+                            isActive = post.ads.status,
+                            modifier = Modifier.padding(horizontal = 16.dp)
+                                .padding(vertical = 5.dp),
+                            onClick = { handleSelect(post.ads.id) }
+                        ) {
+                            AdvertsPost(
+                                title = post.ads.content.title,
+                                description = post.ads.content.description,
+                                from = post.ads.from,
+                                to = post.ads.to,
+                                isActive = post.ads.status,
+                                onClick = { type, value ->
+                                    navigator.navigate(type.route(value))
+                                },
+                                onSelect = { handleSelect(post.ads.id) },
+                                label = if (!post.ads.content.isAccessible) {
+                                    { AdvertsVisibilityLabel() }
+                                } else { null },
+                                modifier = Modifier.clickable { handleSelect(post.ads.id) }
+                            ) { AdvertsMedia(post.ads.content.path, component) }
+                        }
                     }
                 }
             }

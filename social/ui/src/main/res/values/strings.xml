@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="peer_label">Peers</string>
+
     <string name="follow_label">Follow</string>
     <string name="following_label">Following</string>
+
     <string name="referrals_label">Referral</string>
     <string name="referrals_header">Referral program</string>
     <string name="referrals_title">Referred people</string>
@@ -10,4 +12,18 @@
     <string name="referrals_description">
         Invite a friend and earn 1% of their earnings every time they transfer or cash out — forever. The more you refer, the more you earn! \n\nCopy your referral link or code and share it with the person. Make sure they enter it during registration.
     </string>
+
+    <string name="report_label">Report</string>
+    <string name="report_prompt">Are you sure you want to report this user?</string>
+
+    <string name="cancel_label">Cancel</string>
+    <string name="click_to_see_label">Click to see</string>
+
+    <string name="hidden_label">Hidden</string>
+    <string name="hidden_content_action">View content</string>
+    <string name="hidden_content_label">Sensitive content</string>
+    <string name="hidden_content_description">This content may be sensitive or abusive.</string>
+    <string name="hidden_content_prompt">Do you want to view it anyway?</string>
+    <string name="illegal_content_description">This content was removed as illegal</string>
+    <string name="illegal_username">removed</string>
 </resources>

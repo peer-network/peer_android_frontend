@@ -50,6 +50,7 @@ fun ProfileSheet(
     val handleOnClick by rememberUpdatedState(onClick)
     DesignBottomSheet(
         state = showSheet,
+        dismissable = true,
         onDismiss = {
             if (sheetState.value is ProfileSheetState.Dismissing) {
                 (sheetState.value as ProfileSheetState.Dismissing).action.invoke()
@@ -63,7 +64,7 @@ fun ProfileSheet(
             Box(modifier = Modifier.statusBarsPadding()) {
                 when (status.value) {
                     ConnectionStatus.FOLLOWER -> FollowersScreen(
-                        userId = id,
+                        uuid = id,
                         provider = provider,
                         viewModelStoreOwner = viewModelStoreOwner,
                         postLimit = limit,
@@ -75,7 +76,7 @@ fun ProfileSheet(
                         }
                     )
                     ConnectionStatus.FOLLOWING -> FollowingsScreen(
-                        userId = id,
+                        uuid = id,
                         provider = provider,
                         viewModelStoreOwner = viewModelStoreOwner,
                         postLimit = limit,

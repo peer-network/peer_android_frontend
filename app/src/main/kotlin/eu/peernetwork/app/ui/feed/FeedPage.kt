@@ -41,7 +41,7 @@ fun FeedPage(
     right: LazyListState = rememberLazyListState(),
     onExplore: () -> Unit,
     onFilter: (Int) -> Unit,
-    onBoost: (String) -> Unit,
+    onBoost: (TimelineEvent.Boost) -> Unit,
     onClick: () -> Unit,
 ) {
     val scope = rememberCoroutineScope()
@@ -77,7 +77,7 @@ fun FeedPage(
             onEvent = { event ->
                 when(event) {
                     is TimelineEvent.Post -> handleClick()
-                    is TimelineEvent.Boost -> handleOnBoost(event.id)
+                    is TimelineEvent.Boost -> handleOnBoost(event)
                 }
             },
             listState = if (it == 0) {

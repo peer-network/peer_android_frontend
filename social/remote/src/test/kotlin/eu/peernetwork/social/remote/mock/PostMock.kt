@@ -2,6 +2,7 @@ package eu.peernetwork.social.remote.mock
 
 import eu.peernetwork.core.remote.model.Status
 import social.social.eu.peernetwork.social.remote.GetallpostsQuery
+import social.type.ContentVisibilityStatus
 
 object PostMock {
     fun posts(): GetallpostsQuery.ListPosts {
@@ -25,13 +26,15 @@ object PostMock {
                     cover = "<test-cover>",
                     contenttype = "<test-contenttype>",
                     createdat = "2025-03-24 00:05:09.334000",
+                    isHiddenForUsers = false,
+                    visibilityStatus = ContentVisibilityStatus.ILLEGAL,
                     user = GetallpostsQuery.User(
                         id = "<test-userid>",
                         username = "<test-username>",
                         img = "<test-avatar>",
                         slug = 0,
                         isfollowed = false,
-                        isfollowing = false
+                        isfollowing = false,
                     )
                 )
             )

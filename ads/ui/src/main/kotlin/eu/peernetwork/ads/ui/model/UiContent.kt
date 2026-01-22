@@ -6,5 +6,7 @@ data class UiContent(
     val id: String,
     val title: AnnotatedString,
     val description: AnnotatedString,
-    val path: String
+    val path: String,
+    val isAccessible: Boolean,
+    val status: UiStatus,
 )

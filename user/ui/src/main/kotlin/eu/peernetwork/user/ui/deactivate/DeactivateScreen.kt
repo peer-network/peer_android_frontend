@@ -24,9 +24,7 @@ fun DeactivateScreen(
     viewModelStoreOwner: ViewModelStoreOwner
 ) {
     val context = LocalContext.current
-    val component = remember {
-        provider.builder(Deactivate.Builder::class.java).build(context)
-    }
+    val component = remember { provider.builder(Deactivate.Builder::class.java).build(context) }
     val viewModel = viewModel(
         modelClass = DeactivateViewModel::class.java,
         viewModelStoreOwner = viewModelStoreOwner,
@@ -39,6 +37,7 @@ fun DeactivateScreen(
     val focus = remember { FocusRequester() }
     DesignBottomSheetScaffold(
         state = show,
+        dismissable = true,
         color = MaterialTheme.colorScheme.surfaceDim,
         onShow = { focus.requestFocus() },
         onDismiss = { show.value = false }

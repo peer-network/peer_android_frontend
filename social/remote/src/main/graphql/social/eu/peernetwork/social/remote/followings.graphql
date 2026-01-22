@@ -21,6 +21,8 @@ query ListFollowingsRelations(
                 img
                 isfollowed
                 isfollowing
+                isHiddenForUsers
+                visibilityStatus
             }
         }
     }

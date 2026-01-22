@@ -16,7 +16,9 @@ fun Post.mapFromDomain(): UiPost {
             username = author.username,
             imageUrl = author.imageUrl,
             isFollowed = author.isFollowed,
-            isFollowing = author.isFollowing
+            isFollowing = author.isFollowing,
+            isAccessible = author.isAccessible,
+            status = author.status.mapFromDomain()
         )
     )
 }
