@@ -1,20 +1,37 @@
 package eu.peernetwork.wallet.remote.api
 
+import eu.peernetwork.core.common.paging.Page
+import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.core.remote.api.RequestClient
 import eu.peernetwork.core.remote.extension.assertOrThrow
+import eu.peernetwork.core.remote.extension.executeOrThrow
 import eu.peernetwork.core.remote.extension.getOrThrow
 import eu.peernetwork.wallet.data.api.TransferApi
+import eu.peernetwork.wallet.domain.model.Filter
 import eu.peernetwork.wallet.domain.model.Token
 import eu.peernetwork.wallet.domain.model.Quote
 import eu.peernetwork.wallet.domain.model.Receipt
+import eu.peernetwork.wallet.domain.model.Sort
+import eu.peernetwork.wallet.domain.model.Transaction
 import wallet.wallet.eu.peernetwork.wallet.remote.GetActionPricesQuery
 import wallet.wallet.eu.peernetwork.wallet.remote.ResolveTransferMutation
+import wallet.wallet.eu.peernetwork.wallet.remote.TransactionHistoryQuery
 import java.math.BigDecimal
 import javax.inject.Inject
 
 class TransferApiDelegate @Inject constructor(
     private val client: RequestClient
 ) : TransferApi {
+    override suspend fun getAll(filter: Filter, sort: Sort, page: Pageable): Page<Transaction> {
+        val query = TransactionHistoryQuery(
+
+        )
+        val response = client().query(query).executeOrThrow()
+        val data = response.getOrThrow().transactionHistory
+        response.assertOrThrow(data.meta?.status, data.meta?.ResponseCode)
+        TODO("Not yet implemented")
+    }
+
     override suspend fun getQuote(token: Token): Quote {
         val response = client().query(GetActionPricesQuery()).execute()
         val data = response.getOrThrow().getActionPrices

@@ -1,0 +1,32 @@
+query TransactionHistory(
+    $type: TokenMovementFilterType,
+    $start: String,
+    $end: String,
+    $limit: Int,
+    $offset: Int,
+    $sort: SortFilterType,
+) {
+    transactionHistory(
+        type: $type
+        start_date: null
+        end_date: null
+        limit: null
+        offset: null
+        sort: null
+    ) {
+        meta {
+            status
+            ResponseCode
+        }
+        affectedRows {
+            operationid
+            transactionId
+            transactionCategory
+            transactiontype
+            tokenamount
+            netTokenAmount
+            message
+            createdat
+        }
+    }
+}
