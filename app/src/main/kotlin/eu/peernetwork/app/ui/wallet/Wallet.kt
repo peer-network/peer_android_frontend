@@ -8,7 +8,7 @@ import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.social.ui.search.member.Member
 import eu.peernetwork.wallet.ui.overview.Overview
-import eu.peernetwork.wallet.ui.service.Service
+import eu.peernetwork.wallet.ui.dashboard.Dashboard
 import eu.peernetwork.wallet.ui.transfer.Transfer
 
 interface Wallet : ApplicationProvider {
@@ -23,7 +23,7 @@ interface Wallet : ApplicationProvider {
         dependencies = [ Wallet::class ],
         modules = [ WalletModule::class ]
     )
-    interface Component : Wallet, Overview, Transfer, Member, Profile, Service, UiComponentProvider
+    interface Component : Wallet, Overview, Transfer, Member, Profile, Dashboard, UiComponentProvider
 
     class Builder(private val dependency: Wallet): UiComponent.DefaultBuilder<Wallet, Component>() {
         override fun build(context: Context): Component {

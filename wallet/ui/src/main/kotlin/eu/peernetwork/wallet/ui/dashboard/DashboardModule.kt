@@ -1,4 +1,4 @@
-package eu.peernetwork.wallet.ui.service
+package eu.peernetwork.wallet.ui.dashboard
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -15,16 +15,16 @@ import eu.peernetwork.wallet.ui.transfer.Transfer
 import javax.inject.Provider
 
 @Module
-object ServiceModule {
+object DashboardModule {
     @Provides
-    @Service.Scope
+    @Dashboard.Scope
     fun provideBuilderFactory(factory: Map<Class<out UiComponent.Builder>,
             @JvmSuppressWildcards Provider<UiComponent.Builder>>): UiComponentProvider.Factory {
         return UiBuilderFactory(factory)
     }
 
     @Provides
-    @Service.Scope
+    @Dashboard.Scope
     fun provideViewModelFactory(
         classToViewModel: @JvmSuppressWildcards Map<Class<out ViewModel>, Provider<ViewModel>>
     ): ViewModelProvider.Factory {
@@ -33,15 +33,15 @@ object ServiceModule {
 
     @Provides
     @IntoMap
-    @Service.Scope
-    @UiViewModel(ServiceViewModel::class)
-    fun viewModel(viewModel: ServiceViewModel): ViewModel = viewModel
+    @Dashboard.Scope
+    @UiViewModel(DashboardViewModel::class)
+    fun viewModel(viewModel: DashboardViewModel): ViewModel = viewModel
 
     @Provides
-    @Service.Scope
+    @Dashboard.Scope
     @IntoMap
     @UiBuilder(Transfer.Builder::class)
-    fun provideTransferBuilder(component: Service.Component): UiComponent.Builder {
+    fun provideTransferBuilder(component: Dashboard.Component): UiComponent.Builder {
         return Transfer.Builder(component)
     }
 }

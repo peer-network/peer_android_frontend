@@ -1,4 +1,4 @@
-package eu.peernetwork.wallet.ui.service
+package eu.peernetwork.wallet.ui.dashboard
 
 import android.content.res.Configuration
 import androidx.compose.animation.Crossfade
@@ -31,16 +31,16 @@ import eu.peernetwork.wallet.ui.model.UiRecipient
 import java.util.UUID
 
 @Composable
-fun ServicePage(
+fun DashboardPage(
     name: String,
-    state: State<ServiceState>,
+    state: State<DashboardState>,
     onClick: () -> Unit,
-    content: @Composable (ServiceState.Transfer) -> Unit
+    content: @Composable (DashboardState.Transfer) -> Unit
 ) {
     val updateContent by rememberUpdatedState(content)
     Crossfade(state.value) { target ->
         when(target) {
-            ServiceState.Default -> {
+            DashboardState.Default -> {
                 DesignOutlineButton(
                     onClick = onClick,
                     minHeight = 42.dp,
@@ -53,13 +53,13 @@ fun ServicePage(
                     }
                 )
             }
-            is ServiceState.Transfer -> { updateContent(target) }
+            is DashboardState.Transfer -> { updateContent(target) }
         }
     }
 }
 
 @Composable
-fun ServicePage() {
+fun DashboardPage() {
     DesignCard(
         color = MaterialTheme.colorScheme.surfaceDim,
         contentPadding = PaddingValues(16.dp),
@@ -85,17 +85,17 @@ fun PreviewServicePage() {
                 username = "johnDoe",
                 imageUrl = "http://localhost"
             )
-            ServicePage(
+            DashboardPage(
                 "ServiceScreen",
-                remember { mutableStateOf(ServiceState.Transfer(recipient)) },
+                remember { mutableStateOf(DashboardState.Transfer(recipient)) },
                 {}
             ) {
-                ServicePage()
+                DashboardPage()
             }
             Spacer(modifier = Modifier.height(16.dp))
-            ServicePage(
+            DashboardPage(
                 "ServiceScreen",
-                remember { mutableStateOf(ServiceState.Default) },
+                remember { mutableStateOf(DashboardState.Default) },
                 {}
             ) {}
         }

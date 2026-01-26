@@ -4,6 +4,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import app.cash.turbine.test
 import eu.peernetwork.wallet.domain.model.Tax
 import eu.peernetwork.wallet.domain.usecase.TaxUsecase
+import eu.peernetwork.wallet.ui.dashboard.DashboardViewModel
 import eu.peernetwork.wallet.ui.mapper.mapFromDomain
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -29,12 +30,12 @@ internal class ServiceViewModelTest {
 
     private val usecase = mockk<TaxUsecase>()
 
-    private lateinit var viewModel: ServiceViewModel
+    private lateinit var viewModel: DashboardViewModel
 
     @Before
     fun setup() {
         Dispatchers.setMain(dispatcher)
-        viewModel = ServiceViewModel(usecase)
+        viewModel = DashboardViewModel(usecase)
     }
 
     @After
@@ -56,8 +57,8 @@ internal class ServiceViewModelTest {
         }
         viewModel.initialize()
         viewModel.state.test {
-            assertEquals(ServiceViewModel.State.Loading, awaitItem())
-            assertEquals(ServiceViewModel.State.Success(tax.mapFromDomain()), awaitItem())
+            assertEquals(DashboardViewModel.State.Loading, awaitItem())
+            assertEquals(DashboardViewModel.State.Success(tax.mapFromDomain()), awaitItem())
         }
     }
 
@@ -67,7 +68,7 @@ internal class ServiceViewModelTest {
         coEvery { usecase() } throws exception
         viewModel.initialize()
         viewModel.state.test {
-            assertEquals(ServiceViewModel.State.Error(exception), awaitItem())
+            assertEquals(DashboardViewModel.State.Error(exception), awaitItem())
         }
     }
 }

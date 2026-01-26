@@ -1,4 +1,4 @@
-package eu.peernetwork.wallet.ui.service
+package eu.peernetwork.wallet.ui.dashboard
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -16,10 +16,10 @@ import eu.peernetwork.wallet.ui.transfer.TransferScreen
 import eu.peernetwork.wallet.ui.transfer.TransferSheet
 
 @Composable
-fun ServiceTransfer(
+fun DashboardTransfer(
     tax: Int,
-    state: MutableState<ServiceState>,
-    component: Service.Component,
+    state: MutableState<DashboardState>,
+    component: Dashboard.Component,
     viewModelStoreOwner: ViewModelStoreOwner,
     onAccountClicked: (String) -> Unit,
     onClear: () -> Unit,
@@ -34,13 +34,13 @@ fun ServiceTransfer(
         stringResource(R.string.transfer_label),
         showTransfer,
         {
-            if (lastState.value is ServiceState.Default && !it) {
+            if (lastState.value is DashboardState.Default && !it) {
                 handleOnClear()
             }
             state.value = lastState.value
         }
     ) {
-        ServicePage(
+        DashboardPage(
             stringResource(R.string.recipient_selection_label),
             state,
             onClick,
@@ -51,13 +51,13 @@ fun ServiceTransfer(
                 provider = component,
                 viewModelStoreOwner = viewModelStoreOwner,
                 onClear = {
-                    lastState.value = ServiceState.Default
+                    lastState.value = DashboardState.Default
                     showTransfer.value = false },
                 onTransfer = { transaction.value = it }
             ) { handleOnAccountClicked(it.id) }
         }
     }
-    (state.value as? ServiceState.Transfer?)?.let {
+    (state.value as? DashboardState.Transfer?)?.let {
         TransferSheet(
             transaction,
             component,
@@ -65,7 +65,7 @@ fun ServiceTransfer(
             it.recipient,
             {
                 transaction.value = null
-                lastState.value = ServiceState.Default
+                lastState.value = DashboardState.Default
                 showTransfer.value = false
             }
         ) { handleOnAccountClicked(it.id) }

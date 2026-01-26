@@ -24,7 +24,7 @@ import eu.peernetwork.core.ui.factory.UiViewModelFactory
 import eu.peernetwork.social.ui.connection.Connection
 import eu.peernetwork.wallet.ui.balance.Balance
 import eu.peernetwork.wallet.ui.confirmation.Confirmation
-import eu.peernetwork.wallet.ui.service.Service
+import eu.peernetwork.wallet.ui.dashboard.Dashboard
 import javax.inject.Provider
 
 @Module
@@ -129,9 +129,9 @@ object FeedModule {
     @Feed.Scope
     @Provides
     @IntoMap
-    @UiBuilder(Service.Builder::class)
+    @UiBuilder(Dashboard.Builder::class)
     fun provideServiceBuilder(component: Feed.Component): UiComponent.Builder {
-        return Service.Builder(component)
+        return Dashboard.Builder(component)
     }
 
     @Provides

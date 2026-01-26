@@ -1,4 +1,4 @@
-package eu.peernetwork.wallet.ui.service
+package eu.peernetwork.wallet.ui.dashboard
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class ServiceViewModel @Inject constructor(
+class DashboardViewModel @Inject constructor(
     private val usecase: TaxUsecase
 ) : ViewModel() {
     private val mutableState = MutableStateFlow<State>(State.Empty)

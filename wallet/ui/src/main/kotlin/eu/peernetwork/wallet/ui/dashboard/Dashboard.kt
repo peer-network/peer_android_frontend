@@ -1,4 +1,4 @@
-package eu.peernetwork.wallet.ui.service
+package eu.peernetwork.wallet.ui.dashboard
 
 import android.content.Context
 import androidx.lifecycle.ViewModelProvider
@@ -8,23 +8,23 @@ import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.wallet.ui.provider.WalletProvider
 import eu.peernetwork.wallet.ui.transfer.Transfer
 
-interface Service : WalletProvider, CoreProvider {
+interface Dashboard : WalletProvider, CoreProvider {
     @javax.inject.Scope
     @Retention(AnnotationRetention.RUNTIME)
     annotation class Scope
 
     @Scope
     @dagger.Component(
-        dependencies = [ Service::class ],
-        modules = [ ServiceModule::class ]
+        dependencies = [ Dashboard::class ],
+        modules = [ DashboardModule::class ]
     )
-    interface Component : Service, Transfer, UiComponentProvider {
+    interface Component : Dashboard, Transfer, UiComponentProvider {
         fun viewModelFactory(): ViewModelProvider.Factory
     }
 
-    class Builder(private val dependency: Service): UiComponent.DefaultBuilder<Service, Component>() {
+    class Builder(private val dependency: Dashboard): UiComponent.DefaultBuilder<Dashboard, Component>() {
         override fun build(context: Context): Component {
-            return DaggerService_Component.builder().service(dependency).build()
+            return DaggerDashboard_Component.builder().dashboard(dependency).build()
         }
     }
 }

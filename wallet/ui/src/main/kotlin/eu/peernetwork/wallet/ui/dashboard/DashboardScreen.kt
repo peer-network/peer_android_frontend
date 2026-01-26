@@ -1,4 +1,4 @@
-package eu.peernetwork.wallet.ui.service
+package eu.peernetwork.wallet.ui.dashboard
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -20,37 +20,37 @@ import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.wallet.ui.model.UiRecipient
 import eu.peernetwork.wallet.ui.model.UiTax
 
-sealed interface ServiceState {
-    data object Default : ServiceState
-    data class Transfer(val recipient: UiRecipient) : ServiceState
+sealed interface DashboardState {
+    data object Default : DashboardState
+    data class Transfer(val recipient: UiRecipient) : DashboardState
 }
 
 @Composable
-fun ServiceScreen(
+fun DashboardScreen(
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
     content: @Composable (State<DesignStreamState<UiTax>>, () -> Unit) -> Unit
 ) {
     val context = LocalContext.current
     val component = remember {
-        provider.builder(Service.Builder::class.java).build(context)
+        provider.builder(Dashboard.Builder::class.java).build(context)
     }
     val viewModel = viewModel(
-        modelClass = ServiceViewModel::class.java,
+        modelClass = DashboardViewModel::class.java,
         viewModelStoreOwner = viewModelStoreOwner,
         factory = component.viewModelFactory()
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
     val derivedState = remember { derivedStateOf {
         when(state) {
-            ServiceViewModel.State.Empty -> DesignStreamState.Default
-            ServiceViewModel.State.Loading -> DesignStreamState.Loading
-            is ServiceViewModel.State.Success -> {
-                val data = (state as ServiceViewModel.State.Success)
+            DashboardViewModel.State.Empty -> DesignStreamState.Default
+            DashboardViewModel.State.Loading -> DesignStreamState.Loading
+            is DashboardViewModel.State.Success -> {
+                val data = (state as DashboardViewModel.State.Success)
                 DesignStreamState.Success(data.tax)
             }
-            is ServiceViewModel.State.Error -> {
-                DesignStreamState.Error((state as ServiceViewModel.State.Error).error)
+            is DashboardViewModel.State.Error -> {
+                DesignStreamState.Error((state as DashboardViewModel.State.Error).error)
             }
         }
     } }
@@ -58,15 +58,15 @@ fun ServiceScreen(
     val handleRefresh by rememberUpdatedState { viewModel.initialize() }
     updatedContent(derivedState, handleRefresh)
     LaunchedEffect(Unit) {
-        if (state is ServiceViewModel.State.Empty) {
+        if (state is DashboardViewModel.State.Empty) {
             viewModel.initialize()
         }
     }
 }
 
 @Composable
-fun ServiceScreen(
-    serviceState: MutableState<ServiceState>,
+fun DashboardScreen(
+    dashboardState: MutableState<DashboardState>,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
     onAccountClicked: (String) -> Unit,
@@ -75,36 +75,36 @@ fun ServiceScreen(
 ) {
     val context = LocalContext.current
     val component = remember {
-        provider.builder(Service.Builder::class.java).build(context)
+        provider.builder(Dashboard.Builder::class.java).build(context)
     }
     val viewModel = viewModel(
-        modelClass = ServiceViewModel::class.java,
+        modelClass = DashboardViewModel::class.java,
         viewModelStoreOwner = viewModelStoreOwner,
         factory = component.viewModelFactory()
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
     val derivedState = remember { derivedStateOf {
         when(state) {
-            ServiceViewModel.State.Empty -> DesignStatefulScaffoldState.Empty
-            ServiceViewModel.State.Loading -> DesignStatefulScaffoldState.Loading
-            is ServiceViewModel.State.Success -> {
-                val data = (state as ServiceViewModel.State.Success)
+            DashboardViewModel.State.Empty -> DesignStatefulScaffoldState.Empty
+            DashboardViewModel.State.Loading -> DesignStatefulScaffoldState.Loading
+            is DashboardViewModel.State.Success -> {
+                val data = (state as DashboardViewModel.State.Success)
                 DesignStatefulScaffoldState.Success(data.tax)
             }
-            is ServiceViewModel.State.Error -> {
-                DesignStatefulScaffoldState.Error((state as ServiceViewModel.State.Error).error)
+            is DashboardViewModel.State.Error -> {
+                DesignStatefulScaffoldState.Error((state as DashboardViewModel.State.Error).error)
             }
         }
     } }
     DesignStatefulScaffold<UiTax>(
         derivedState,
         onRefresh = { viewModel.initialize() },
-        placeholder = { ServicePage() },
-        errorContent = { ServiceError(it, component.resource()) { viewModel.initialize() } }
+        placeholder = { DashboardPage() },
+        errorContent = { DashboardError(it, component.resource()) { viewModel.initialize() } }
     ) {
-        ServiceTransfer(
+        DashboardTransfer(
             tax = ((it.burn + it.peer) * 100).toInt(),
-            serviceState,
+            dashboardState,
             component,
             viewModelStoreOwner,
             onAccountClicked,

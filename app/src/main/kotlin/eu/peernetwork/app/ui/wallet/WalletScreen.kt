@@ -9,7 +9,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -23,8 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.compose.DesignRefreshableScaffold
-import eu.peernetwork.core.ui.design.compose.DesignStatefulScaffoldState
+import eu.peernetwork.core.ui.design.luna.DesignRefreshScaffold
 import eu.peernetwork.core.ui.design.material.DesignTitle
 import eu.peernetwork.core.ui.design.material.DesignTitleBarHost
 import eu.peernetwork.core.ui.extension.builder
@@ -33,8 +31,8 @@ import eu.peernetwork.social.ui.search.member.MemberModal
 import eu.peernetwork.user.domain.model.Account
 import eu.peernetwork.wallet.ui.model.UiRecipient
 import eu.peernetwork.wallet.ui.overview.OverviewScreen
-import eu.peernetwork.wallet.ui.service.ServiceScreen
-import eu.peernetwork.wallet.ui.service.ServiceState
+import eu.peernetwork.wallet.ui.dashboard.DashboardScreen
+import eu.peernetwork.wallet.ui.dashboard.DashboardState
 import eu.peernetwork.wallet.ui.saveable.UiRecipientSaver
 
 @Composable
@@ -53,8 +51,8 @@ fun WalletScreen(
     }
     val service = remember(recipient.value) {
         mutableStateOf(recipient.value?.let {
-            ServiceState.Transfer(it)
-        } ?: ServiceState.Default)
+            DashboardState.Transfer(it)
+        } ?: DashboardState.Default)
     }
     val showSheet = rememberSaveable { mutableStateOf(false) }
     val lastUpdated = remember { mutableLongStateOf(System.currentTimeMillis()) }
@@ -66,8 +64,8 @@ fun WalletScreen(
             onRefresh = { lastUpdated.longValue = System.currentTimeMillis() },
             header = { OverviewScreen(lastUpdated, component, viewModelStoreOwner) }
         ) {
-            ServiceScreen(
-                serviceState = service,
+            DashboardScreen(
+                dashboardState = service,
                 provider = component,
                 viewModelStoreOwner = viewModelStoreOwner,
                 onAccountClicked = {
@@ -103,8 +101,8 @@ fun WalletScreen(
 ) {
     val updatedHeader by rememberUpdatedState(header)
     val updatedContent by rememberUpdatedState(content)
-    val state = remember { derivedStateOf { DesignStatefulScaffoldState.Success(Unit) } }
-    DesignRefreshableScaffold<Unit>(state, onRefresh = onRefresh) {
+    val isRefreshing = remember { mutableStateOf(false) }
+    DesignRefreshScaffold(isRefreshing, onRefresh = onRefresh) {
         Column(modifier = Modifier.padding(horizontal = 18.dp, vertical = 8.dp)
             .fillMaxSize()
             .verticalScroll(rememberScrollState())

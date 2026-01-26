@@ -1,4 +1,4 @@
-package eu.peernetwork.wallet.ui.service
+package eu.peernetwork.wallet.ui.dashboard
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background
@@ -31,7 +31,7 @@ import eu.peernetwork.core.ui.design.material.DesignDetailLayout
 import eu.peernetwork.core.ui.theme.PeerTheme
 
 @Composable
-fun ServiceError(
+fun DashboardError(
     error: Throwable,
     resource: ResourceInteractor,
     onRetry: () -> Unit
@@ -95,6 +95,6 @@ fun PreviewErrorLabel() {
             override fun getBaseUrl(): String = ""
             override fun string(key: String): String = key
         } }
-        ServiceError(RuntimeException(), resource) {}
+        DashboardError(RuntimeException(), resource) {}
     }
 }
