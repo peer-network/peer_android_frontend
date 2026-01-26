@@ -2,7 +2,7 @@ package eu.peernetwork.wallet.domain.model
 
 import java.math.BigDecimal
 
-data class Fee(
+data class Fees(
     val total: BigDecimal,
     val burn: BigDecimal,
     val peer: BigDecimal,

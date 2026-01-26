@@ -1,5 +1,13 @@
 package eu.peernetwork.wallet.domain.model
 
-data class Category(
-    val name: String
-)
+enum class Category {
+    AD,
+    MINT,
+    POST,
+    PURCHASE,
+    TRANSFER,
+    COMMENT,
+    LIKE,
+    DISLIKE,
+    DEFAULT,
+}

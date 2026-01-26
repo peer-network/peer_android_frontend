@@ -69,7 +69,7 @@ peer_android_frontend/
 The UI acts as a composition of three distinct layers:
 1.  **Stateful Components (Screens)**: Composition roots (e.g., `LoginScreen`) responsible for Dependency Injection, ViewModel creation, and state collection.
 2.  **Stateless Components**: Complex UI compositions (e.g., `LoginPage`) that define the layout and behavioral contracts. They are pure functions receiving state and event callbacks.
-3.  **View Components**: Reusable, atomic building blocks (e.g., `ConnectionButton`, `DesignOutlinedButton`) shared across the application.
+3.  **View Components**: Reusable, atomic building blocks (e.g., `DesignTextField`, `DesignButton`) shared across the application.
 
 ## 🚀 Build & Setup
 

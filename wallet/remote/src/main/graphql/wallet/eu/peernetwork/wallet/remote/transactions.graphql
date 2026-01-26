@@ -25,6 +25,34 @@ query TransactionHistory(
             transactiontype
             tokenamount
             netTokenAmount
+            sender {
+                userid
+                img
+                username
+                slug
+                biography
+                visibilityStatus
+                isHiddenForUsers
+                hasActiveReports
+                updatedat
+            }
+            recipient {
+                userid
+                img
+                username
+                slug
+                biography
+                visibilityStatus
+                isHiddenForUsers
+                hasActiveReports
+                updatedat
+            }
+            fees {
+                total
+                burn
+                peer
+                inviter
+            }
             message
             createdat
         }

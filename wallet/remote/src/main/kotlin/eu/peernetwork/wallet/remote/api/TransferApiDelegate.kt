@@ -13,6 +13,7 @@ import eu.peernetwork.wallet.domain.model.Quote
 import eu.peernetwork.wallet.domain.model.Receipt
 import eu.peernetwork.wallet.domain.model.Sort
 import eu.peernetwork.wallet.domain.model.Transaction
+import eu.peernetwork.wallet.remote.mapper.mapToDomain
 import wallet.wallet.eu.peernetwork.wallet.remote.GetActionPricesQuery
 import wallet.wallet.eu.peernetwork.wallet.remote.ResolveTransferMutation
 import wallet.wallet.eu.peernetwork.wallet.remote.TransactionHistoryQuery
@@ -29,7 +30,14 @@ class TransferApiDelegate @Inject constructor(
         val response = client().query(query).executeOrThrow()
         val data = response.getOrThrow().transactionHistory
         response.assertOrThrow(data.meta?.status, data.meta?.ResponseCode)
-        TODO("Not yet implemented")
+        val transactions = data.affectedRows?.map { transaction ->
+            transaction.mapToDomain()
+        }
+        return Page(
+            count = transactions?.size ?: 0,
+            offset = page.offset,
+            items = transactions ?: emptyList()
+        )
     }
 
     override suspend fun getQuote(token: Token): Quote {
