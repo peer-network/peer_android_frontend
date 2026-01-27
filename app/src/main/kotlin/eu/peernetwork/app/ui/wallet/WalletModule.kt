@@ -9,7 +9,7 @@ import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.factory.UiBuilderFactory
 import eu.peernetwork.social.ui.search.member.Member
-import eu.peernetwork.wallet.ui.overview.Overview
+import eu.peernetwork.wallet.ui.balance.Balance
 import eu.peernetwork.wallet.ui.dashboard.Dashboard
 import eu.peernetwork.wallet.ui.transactions.Transactions
 import eu.peernetwork.wallet.ui.transfer.Transfer
@@ -27,9 +27,9 @@ object WalletModule {
     @Provides
     @Wallet.Scope
     @IntoMap
-    @UiBuilder(Overview.Builder::class)
-    fun provideOverviewBuilder(component: Wallet.Component): UiComponent.Builder {
-        return Overview.Builder(component)
+    @UiBuilder(Balance.Builder::class)
+    fun provideBalanceBuilder(component: Wallet.Component): UiComponent.Builder {
+        return Balance.Builder(component)
     }
 
     @Provides

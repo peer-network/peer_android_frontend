@@ -7,6 +7,7 @@ import eu.peernetwork.app.ui.settings.SettingsEvent
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.social.ui.search.member.Member
+import eu.peernetwork.wallet.ui.balance.Balance
 import eu.peernetwork.wallet.ui.overview.Overview
 import eu.peernetwork.wallet.ui.dashboard.Dashboard
 import eu.peernetwork.wallet.ui.transactions.Transactions
@@ -25,10 +26,10 @@ interface Wallet : ApplicationProvider {
         modules = [ WalletModule::class ]
     )
     interface Component : Wallet,
-        Overview,
         Transfer,
         Member,
         Profile,
+        Balance,
         Dashboard,
         Transactions,
         UiComponentProvider

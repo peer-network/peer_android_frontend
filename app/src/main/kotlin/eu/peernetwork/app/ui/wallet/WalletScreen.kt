@@ -29,8 +29,8 @@ import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.social.ui.search.member.MemberModal
 import eu.peernetwork.user.domain.model.Account
+import eu.peernetwork.wallet.ui.balance.BalanceOverview
 import eu.peernetwork.wallet.ui.model.UiRecipient
-import eu.peernetwork.wallet.ui.overview.OverviewScreen
 import eu.peernetwork.wallet.ui.dashboard.DashboardScreen
 import eu.peernetwork.wallet.ui.dashboard.DashboardState
 import eu.peernetwork.wallet.ui.saveable.UiRecipientSaver
@@ -62,7 +62,7 @@ fun WalletScreen(
     ) { controller ->
         WalletScreen(
             onRefresh = { lastUpdated.longValue = System.currentTimeMillis() },
-            header = { OverviewScreen(lastUpdated, component, viewModelStoreOwner) }
+            header = { BalanceOverview(lastUpdated, component, viewModelStoreOwner) }
         ) {
             DashboardScreen(
                 dashboardState = service,

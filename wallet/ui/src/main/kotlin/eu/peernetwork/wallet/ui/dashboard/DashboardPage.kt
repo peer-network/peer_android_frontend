@@ -1,6 +1,5 @@
 package eu.peernetwork.wallet.ui.dashboard
 
-import android.content.res.Configuration
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -58,24 +57,8 @@ fun DashboardPage(
     }
 }
 
+@Preview
 @Composable
-fun DashboardPage() {
-    DesignCard(
-        color = MaterialTheme.colorScheme.surfaceDim,
-        contentPadding = PaddingValues(16.dp),
-        shape = RoundedCornerShape(24.dp)
-    ) {
-        DesignAvatar {
-            Box(modifier = Modifier
-                .size(36.dp)
-                .background(MaterialTheme.colorScheme.background),
-            )
-        }
-    }
-}
-
-@Composable
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun PreviewServicePage() {
     DesignTheme(isDarkMode = true) {
         Column {
@@ -98,6 +81,22 @@ fun PreviewServicePage() {
                 remember { mutableStateOf(DashboardState.Default) },
                 {}
             ) {}
+        }
+    }
+}
+
+@Composable
+fun DashboardPage() {
+    DesignCard(
+        color = MaterialTheme.colorScheme.surfaceDim,
+        contentPadding = PaddingValues(16.dp),
+        shape = RoundedCornerShape(24.dp)
+    ) {
+        DesignAvatar {
+            Box(modifier = Modifier
+                .size(36.dp)
+                .background(MaterialTheme.colorScheme.background),
+            )
         }
     }
 }
