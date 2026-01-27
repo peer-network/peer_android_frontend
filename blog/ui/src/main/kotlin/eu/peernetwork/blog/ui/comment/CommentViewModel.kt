@@ -118,17 +118,16 @@ class CommentViewModel @Inject constructor(
     }
 
     sealed interface Intent {
-        data object Idle: Intent
         data object Like: Intent
         data object Report: Intent
         data object Comment: Intent
     }
 
-    sealed class Status(val intent: Intent) {
-        data object Empty: Status(Intent.Idle)
-        data class Loading(val action: Intent): Status(action)
-        data class Success<T>(val action: Intent, val content: T): Status(action)
-        data class Error(val action: Intent, val error: Throwable): Status(action)
+    sealed interface Status {
+        data object Empty: Status
+        data class Loading(val action: Intent): Status
+        data class Success<T>(val action: Intent, val content: T): Status
+        data class Error(val action: Intent, val error: Throwable): Status
     }
 
     sealed interface State {

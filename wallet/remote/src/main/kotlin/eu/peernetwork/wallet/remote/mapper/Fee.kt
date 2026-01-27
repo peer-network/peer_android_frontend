@@ -9,6 +9,6 @@ fun TransactionHistoryQuery.Fees.mapFromDomain(): Fees {
         total = total.toBigDecimalOrNull() ?: BigDecimal.ZERO,
         burn = burn.toBigDecimalOrNull() ?: BigDecimal.ZERO,
         peer = peer.toBigDecimalOrNull() ?: BigDecimal.ZERO,
-        commission = inviter.toBigDecimalOrNull() ?: BigDecimal.ZERO,
+        commission = inviter?.toBigDecimalOrNull() ?: BigDecimal.ZERO,
     )
 }

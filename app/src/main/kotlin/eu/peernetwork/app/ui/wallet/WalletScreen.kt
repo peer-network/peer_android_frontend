@@ -1,28 +1,16 @@
 package eu.peernetwork.app.ui.wallet
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.luna.DesignRefreshScaffold
 import eu.peernetwork.core.ui.design.material.DesignTitle
 import eu.peernetwork.core.ui.design.material.DesignTitleBarHost
 import eu.peernetwork.core.ui.extension.builder
@@ -34,6 +22,7 @@ import eu.peernetwork.wallet.ui.model.UiRecipient
 import eu.peernetwork.wallet.ui.dashboard.DashboardScreen
 import eu.peernetwork.wallet.ui.dashboard.DashboardState
 import eu.peernetwork.wallet.ui.saveable.UiRecipientSaver
+import eu.peernetwork.wallet.ui.transactions.TransactionsList
 
 @Composable
 fun WalletScreen(
@@ -60,17 +49,23 @@ fun WalletScreen(
         account = account,
         provider = component
     ) { controller ->
-        WalletScreen(
+        WalletPage(
             onRefresh = { lastUpdated.longValue = System.currentTimeMillis() },
-            header = { BalanceOverview(lastUpdated, component, viewModelStoreOwner) }
+            header = { BalanceOverview(lastUpdated, component, viewModelStoreOwner) },
+            transactions = {
+                TransactionsList(
+                    limit = postLimit,
+                    lastUpdated = lastUpdated,
+                    provider = component,
+                    viewModelStoreOwner = viewModelStoreOwner
+                )
+            }
         ) {
             DashboardScreen(
                 dashboardState = service,
                 provider = component,
                 viewModelStoreOwner = viewModelStoreOwner,
-                onAccountClicked = {
-                    controller.navigateIfNecessary("profile/${it}")
-                },
+                onAccountClicked = { controller.navigateIfNecessary("profile/${it}") },
                 onClear = { recipient.value = null }
             ) { showSheet.value = true }
         }
@@ -89,27 +84,6 @@ fun WalletScreen(
                 imageUrl = it.imageUrl
             )
             true
-        }
-    }
-}
-
-@Composable
-fun WalletScreen(
-    onRefresh: () -> Unit,
-    header: @Composable () -> Unit,
-    content: @Composable () -> Unit,
-) {
-    val updatedHeader by rememberUpdatedState(header)
-    val updatedContent by rememberUpdatedState(content)
-    val isRefreshing = remember { mutableStateOf(false) }
-    DesignRefreshScaffold(isRefreshing, onRefresh = onRefresh) {
-        Column(modifier = Modifier.padding(horizontal = 18.dp, vertical = 8.dp)
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-        ) {
-            updatedHeader()
-            Spacer(modifier = Modifier.height(16.dp))
-            updatedContent()
         }
     }
 }

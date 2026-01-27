@@ -15,6 +15,7 @@
     <string name="transaction_label">Transaction successful</string>
     <string name="transaction_amount_label">Transaction amount</string>
     <string name="transaction_base_label">Base amount</string>
+    <string name="transactions_label">Transactions</string>
     <string name="transfer_caption">peer tokens to %s</string>
     <string name="recipient_label">Recipient address</string>
     <string name="sent_label">Transferred to</string>
@@ -41,4 +42,14 @@
     <string name="reward_description">You have %d Free %s</string>
     <string name="error_title">Oops! an error occurred</string>
     <string name="retry_label">Retry</string>
+
+    <string name="user_transaction_label">To %s</string>
+    <string name="mint_transaction_label">Daily Mint</string>
+    <string name="post_transaction_label">Extra post</string>
+    <string name="purchase_transaction_label">Purchase</string>
+    <string name="like_transaction_label">Extra like</string>
+    <string name="dislike_transaction_label">Post dislike</string>
+    <string name="comment_transaction_label">Extra comment</string>
+    <string name="default_transaction_label">Transaction</string>
+    <string name="pinned_post_transaction_label">Pinned post promo</string>
 </resources>

@@ -7,12 +7,12 @@ query TransactionHistory(
     $sort: SortFilterType,
 ) {
     transactionHistory(
-        type: $type
-        start_date: null
-        end_date: null
-        limit: null
-        offset: null
-        sort: null
+        type: $type,
+        start_date: $start,
+        end_date: $end,
+        limit: $limit,
+        offset: $offset,
+        sort: $sort
     ) {
         meta {
             status

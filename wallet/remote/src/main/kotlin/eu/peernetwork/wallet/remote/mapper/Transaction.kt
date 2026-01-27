@@ -17,5 +17,6 @@ fun TransactionHistoryQuery.AffectedRow.mapToDomain(): Transaction {
             gross = tokenamount.mapToAmount(),
         ),
         fees = fees?.mapFromDomain(),
+        createdAt = createdat
     )
 }

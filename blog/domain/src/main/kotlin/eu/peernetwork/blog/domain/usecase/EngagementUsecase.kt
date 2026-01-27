@@ -8,9 +8,9 @@ import eu.peernetwork.core.common.paging.Pageable
 import eu.peernetwork.core.common.usecase.ParameterizedSuspendableUseCase
 import javax.inject.Inject
 
-class ContentInteractorUsecase @Inject constructor(
+class EngagementUsecase @Inject constructor(
     private val repository: EngagementRepository
-) : ParameterizedSuspendableUseCase<ContentInteractorUsecase.Parameter, Page<Author>> {
+) : ParameterizedSuspendableUseCase<EngagementUsecase.Parameter, Page<Author>> {
     override suspend fun invoke(param: Parameter): Page<Author> {
         return repository.reactors(
             id = param.id,

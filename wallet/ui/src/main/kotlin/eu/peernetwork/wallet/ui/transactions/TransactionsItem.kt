@@ -45,8 +45,8 @@ import eu.peernetwork.wallet.ui.R
 
 @Composable
 fun TransactionsItem(
-    title: AnnotatedString,
-    description: AnnotatedString,
+    title: String,
+    description: AnnotatedString?,
     createAt: String,
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
@@ -86,13 +86,15 @@ fun TransactionsItem(
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.outline
                 )
-                DesignText(
-                    text = description,
-                    maxLines = 1,
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.outline,
-                    fontWeight = FontWeight.SemiBold
-                )
+                description?.let {
+                    DesignText(
+                        text = it,
+                        maxLines = 1,
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.outline,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
             }
             updatedTrailing()
         }
@@ -102,8 +104,8 @@ fun TransactionsItem(
 
 @Composable
 fun TransactionsItem(
-    title: AnnotatedString,
-    description: AnnotatedString,
+    title: String,
+    description: AnnotatedString?,
     price: String,
     createAt: String,
     modifier: Modifier = Modifier,
@@ -200,7 +202,7 @@ fun TransactionsItemTrailing(
 fun PreviewTransactionsItem() {
     DesignTheme(isDarkMode = true) {
         TransactionsItem(
-            title = buildAnnotatedString { append("To @removed") },
+            title = "To @removed",
             description = buildAnnotatedString { append("Hey! Thank you so much for all your help with the project presentation yesterday. I really appreciate how you stayed late to help me finalize the slides and practice the pitch. Your feedback was invaluable and I couldn't have done it without your support. The client loved it! Here's a little something to show my gratitude. Let's celebrate this weekend!") },
             price = "+534",
             createAt = "10 Jun 2025, 04:20",
