@@ -54,7 +54,7 @@ fun BalanceSkeleton(
         ) {
             DesignSkeleton(
                 modifier.fillMaxWidth(fraction = .4f)
-                    .height(36.dp),
+                    .height(24.dp),
                 color = MaterialTheme.colorScheme.onBackground,
             )
             DesignSkeleton(

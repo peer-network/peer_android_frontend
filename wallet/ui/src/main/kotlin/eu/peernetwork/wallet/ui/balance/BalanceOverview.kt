@@ -51,9 +51,7 @@ fun BalanceOverview(
             BalancePreview(balance.value.toString())
         }
         LaunchedEffect(lastUpdated.value) {
-            if (state !is BalanceViewModel.State.Success) {
-                viewModel()
-            }
+            viewModel()
         }
     }
 }
