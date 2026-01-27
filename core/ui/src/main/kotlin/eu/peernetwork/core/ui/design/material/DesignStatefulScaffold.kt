@@ -1,4 +1,4 @@
-package eu.peernetwork.core.ui.design.compose
+package eu.peernetwork.core.ui.design.material
 
 import android.content.res.Configuration
 import androidx.compose.animation.core.Easing

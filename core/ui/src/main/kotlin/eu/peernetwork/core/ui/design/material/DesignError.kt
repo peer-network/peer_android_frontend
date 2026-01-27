@@ -1,4 +1,4 @@
-package eu.peernetwork.core.ui.design.compose
+package eu.peernetwork.core.ui.design.material
 
 import android.content.res.Configuration
 import androidx.compose.foundation.Image
@@ -30,7 +30,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.core.common.interactor.ResourceInteractor
 import eu.peernetwork.core.ui.R
-import eu.peernetwork.core.ui.design.material.DesignOutlinedButton
 import eu.peernetwork.core.ui.exception.NoContentException
 import eu.peernetwork.core.ui.theme.PeerTheme
 

@@ -24,7 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.core.common.interactor.ResourceInteractor
 import eu.peernetwork.core.ui.R
-import eu.peernetwork.core.ui.design.compose.DesignErrorText
+import eu.peernetwork.core.ui.design.material.DesignErrorText
 import eu.peernetwork.core.ui.design.luna.DesignAvatar
 import eu.peernetwork.core.ui.design.material.DesignCard
 import eu.peernetwork.core.ui.design.material.DesignDetailLayout
