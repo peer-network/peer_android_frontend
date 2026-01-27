@@ -2,13 +2,19 @@
 <resources>
     <string name="wallet_title">Your account</string>
     <string name="balance_title">Your balance</string>
+    <string name="message_label">Message:</string>
     <string name="transfer_label">Transfer</string>
     <string name="transfer_disclaimer">A fee of %d%% applies</string>
     <string name="amount_text">Amount</string>
     <string name="amount_label">Amount to send</string>
+    <string name="token_label">Token</string>
+    <string name="debit_label">Debit</string>
+    <string name="credit_label">Credit</string>
     <string name="recipient_selection_label">Choose recipient</string>
     <string name="checkout_label">Confirm transaction</string>
     <string name="transaction_label">Transaction successful</string>
+    <string name="transaction_amount_label">Transaction amount</string>
+    <string name="transaction_base_label">Base amount</string>
     <string name="transfer_caption">peer tokens to %s</string>
     <string name="recipient_label">Recipient address</string>
     <string name="sent_label">Transferred to</string>
