@@ -43,13 +43,21 @@
     <string name="error_title">Oops! an error occurred</string>
     <string name="retry_label">Retry</string>
 
+    <string name="sent_to">To @%s</string>
+    <string name="received_from">From @%s</string>
     <string name="user_transaction_label">To %s</string>
     <string name="mint_transaction_label">Daily Mint</string>
     <string name="post_transaction_label">Extra post</string>
     <string name="purchase_transaction_label">Purchase</string>
     <string name="like_transaction_label">Extra like</string>
-    <string name="dislike_transaction_label">Post dislike</string>
+    <string name="dislike_transaction_label">Dislike</string>
     <string name="comment_transaction_label">Extra comment</string>
     <string name="default_transaction_label">Transaction</string>
     <string name="pinned_post_transaction_label">Pinned post promo</string>
+
+    <string name="illegal_username">Remove</string>
+
+    <string name="hidden_username">Hidden</string>
+    <string name="hidden_content_description">This content may be sensitive or abusive.</string>
+    <string name="illegal_content_description">This content was removed as illegal</string>
 </resources>

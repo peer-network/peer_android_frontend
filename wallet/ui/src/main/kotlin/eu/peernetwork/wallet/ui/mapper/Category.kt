@@ -20,13 +20,13 @@ fun Category.mapFromDomain(): UiCategory {
 }
 
 @StringRes
-fun Category.toResource(): Int {
+fun Category.toResource(): Int? {
     return when (this) {
         Category.AD -> R.string.pinned_post_transaction_label
         Category.MINT -> R.string.mint_transaction_label
         Category.POST -> R.string.post_transaction_label
         Category.PURCHASE -> R.string.purchase_transaction_label
-        Category.TRANSFER -> R.string.user_transaction_label
+        Category.TRANSFER -> null
         Category.COMMENT -> R.string.comment_transaction_label
         Category.LIKE -> R.string.like_transaction_label
         Category.DISLIKE -> R.string.dislike_transaction_label
@@ -35,16 +35,14 @@ fun Category.toResource(): Int {
 }
 
 @StringRes
-fun Category.toIcon(): Int {
+fun Category.toIcon(): Int? {
     return when (this) {
-        Category.AD -> R.drawable.ic_love
-        Category.MINT -> R.drawable.ic_love
-        Category.POST -> R.drawable.ic_love
-        Category.PURCHASE -> R.drawable.ic_love
-        Category.TRANSFER -> R.drawable.ic_love
-        Category.COMMENT -> R.drawable.ic_love
+        Category.AD -> R.drawable.ic_pin
+        Category.POST -> R.drawable.ic_transaction_post
+        Category.TRANSFER -> null
+        Category.COMMENT -> R.drawable.ic_comment
         Category.LIKE -> R.drawable.ic_love
         Category.DISLIKE -> R.drawable.ic_hate
-        Category.DEFAULT -> R.drawable.ic_love
+        else -> R.drawable.ic_mint
     }
 }

@@ -210,7 +210,6 @@ fun PreviewTransactionsItem() {
             leading = {
                 TransactionsAvatar(
                     icon = painterResource(R.drawable.ic_transfer_direction),
-                    color = MaterialTheme.colorScheme.primary
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.ic_love),

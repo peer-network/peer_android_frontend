@@ -1,10 +1,12 @@
 package eu.peernetwork.app.ui.wallet
 
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -23,6 +25,7 @@ import eu.peernetwork.wallet.ui.dashboard.DashboardScreen
 import eu.peernetwork.wallet.ui.dashboard.DashboardState
 import eu.peernetwork.wallet.ui.saveable.UiRecipientSaver
 import eu.peernetwork.wallet.ui.transactions.TransactionsList
+import kotlinx.coroutines.launch
 
 @Composable
 fun WalletScreen(
@@ -32,6 +35,7 @@ fun WalletScreen(
     viewModelStoreOwner: ViewModelStoreOwner
 ) {
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
     val component = remember {
         provider.builder(Wallet.Builder::class.java).build(context)
     }
@@ -43,8 +47,9 @@ fun WalletScreen(
             DashboardState.Transfer(it)
         } ?: DashboardState.Default)
     }
+    val listState = rememberLazyListState()
     val showSheet = rememberSaveable { mutableStateOf(false) }
-    val lastUpdated = remember { mutableLongStateOf(System.currentTimeMillis()) }
+    val lastUpdated = rememberSaveable { mutableLongStateOf(System.currentTimeMillis()) }
     WalletNavigation(
         account = account,
         provider = component
@@ -57,6 +62,7 @@ fun WalletScreen(
                     uuid = account.id,
                     limit = postLimit,
                     lastUpdated = lastUpdated,
+                    listState = listState,
                     provider = component,
                     viewModelStoreOwner = viewModelStoreOwner
                 )
@@ -70,7 +76,14 @@ fun WalletScreen(
                 onClear = { recipient.value = null }
             ) { showSheet.value = true }
         }
-        DesignTitleBarHost("WalletScreen") {
+        DesignTitleBarHost(
+            tag = "WalletScreen",
+            listener = {
+                scope.launch {
+                    listState.animateScrollToItem(0)
+                }
+            }
+        ) {
             titleBar {
                 DesignTitle {
                     Text(stringResource(R.string.wallet_label))

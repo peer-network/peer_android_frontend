@@ -31,23 +31,20 @@ fun WalletPage(
     val isRefreshing = remember { mutableStateOf(false) }
     DesignRefreshScaffold(isRefreshing, onRefresh = onRefresh) {
         DesignScaffold(
-            alwaysReturn = false,
+            alwaysReturn = true,
             modifier = Modifier.fillMaxSize()
                 .padding(horizontal = 18.dp),
             header = {
-                Box(modifier = Modifier.padding(top = 8.dp)) {
-                    updatedHeader()
-                }
+                Box(
+                    modifier = Modifier.padding(top = 8.dp)
+                        .padding(bottom = 16.dp)
+                ) { updatedHeader() }
             }
         ) {
             DesignScaffold(
                 alwaysReturn = true,
                 modifier = Modifier.fillMaxSize(),
-                header = {
-                    Box(modifier = Modifier.padding(top= 16.dp)) {
-                        updatedContent()
-                    }
-                }
+                header = { updatedContent() }
             ) {
                 Column {
                     Text(
