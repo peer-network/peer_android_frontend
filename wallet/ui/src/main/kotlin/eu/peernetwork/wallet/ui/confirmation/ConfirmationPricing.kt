@@ -48,7 +48,7 @@ fun ConfirmationPricing(
             fontWeight = FontWeight.SemiBold
         )
         Icon(
-            painter = painterResource(R.drawable.ic_token),
+            painter = painterResource(R.drawable.ic_peer_token),
             contentDescription = label,
             tint = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier.size(24.dp)

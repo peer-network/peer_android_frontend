@@ -33,3 +33,18 @@ fun Category.toResource(): Int {
         Category.DEFAULT -> R.string.default_transaction_label
     }
 }
+
+@StringRes
+fun Category.toIcon(): Int {
+    return when (this) {
+        Category.AD -> R.drawable.ic_love
+        Category.MINT -> R.drawable.ic_love
+        Category.POST -> R.drawable.ic_love
+        Category.PURCHASE -> R.drawable.ic_love
+        Category.TRANSFER -> R.drawable.ic_love
+        Category.COMMENT -> R.drawable.ic_love
+        Category.LIKE -> R.drawable.ic_love
+        Category.DISLIKE -> R.drawable.ic_hate
+        Category.DEFAULT -> R.drawable.ic_love
+    }
+}

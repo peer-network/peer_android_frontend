@@ -12,6 +12,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -25,6 +26,8 @@ import eu.peernetwork.wallet.ui.R
 fun TransactionsAvatar(
     icon: Painter,
     color: Color,
+    contentDescription: String? = null,
+    isRecipient: Boolean = false,
     content: @Composable () -> Unit
 ) {
     val updatedContent by rememberUpdatedState(content)
@@ -32,12 +35,15 @@ fun TransactionsAvatar(
         icon = {
             Icon(
                 painter = icon,
-                contentDescription = null,
+                contentDescription = contentDescription,
                 tint = MaterialTheme.colorScheme.onBackground,
-                modifier = Modifier.size(10.dp)
+                modifier = Modifier.size(12.dp)
                     .clip(CircleShape)
                     .background(color)
                     .padding(1.dp)
+                    .graphicsLayer {
+                        rotationZ = if (isRecipient) 180f else 0f
+                    }
             )
         },
     ) { updatedContent() }
@@ -48,7 +54,7 @@ fun TransactionsAvatar(
 fun PreviewTransactionsAvatar() {
     DesignTheme(isDarkMode = true) {
         TransactionsAvatar(
-            icon = painterResource(R.drawable.ic_forward),
+            icon = painterResource(R.drawable.ic_transfer_direction),
             color = MaterialTheme.colorScheme.primary,
         ) {
             Icon(

@@ -5,6 +5,7 @@ import androidx.compose.ui.text.AnnotatedString
 data class UiTransaction(
     val id: String,
     val res: Int,
+    val icon: Int,
     val sender: UiUser,
     val recipient: UiUser,
     val category: UiCategory,

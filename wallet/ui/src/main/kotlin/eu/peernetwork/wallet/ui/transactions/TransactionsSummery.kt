@@ -47,7 +47,7 @@ fun TransactionsSummeryItem(
             fontWeight = priceColor?.let { FontWeight.Medium } ?: FontWeight.SemiBold
         )
         Icon(
-            painter = painterResource(R.drawable.ic_token),
+            painter = painterResource(R.drawable.ic_peer_token),
             contentDescription = stringResource(R.string.token_label),
             tint = priceColor ?: MaterialTheme.colorScheme.onBackground,
             modifier = Modifier.padding(start = 2.dp)

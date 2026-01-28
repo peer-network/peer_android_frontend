@@ -33,9 +33,12 @@ fun WalletPage(
         DesignScaffold(
             alwaysReturn = false,
             modifier = Modifier.fillMaxSize()
-                .padding(horizontal = 18.dp)
-                .padding(vertical = 8.dp),
-            header = { updatedHeader() }
+                .padding(horizontal = 18.dp),
+            header = {
+                Box(modifier = Modifier.padding(top = 8.dp)) {
+                    updatedHeader()
+                }
+            }
         ) {
             DesignScaffold(
                 alwaysReturn = true,

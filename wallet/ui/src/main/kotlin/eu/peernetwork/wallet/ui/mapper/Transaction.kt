@@ -8,6 +8,7 @@ fun Transaction.mapToTransaction(): UiTransaction {
     return UiTransaction(
         id = id,
         res = category.toResource(),
+        icon = category.toIcon(),
         sender = sender.mapFromDomain(),
         recipient = recipient.mapFromDomain(),
         message = message?.annotate(),

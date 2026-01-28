@@ -62,8 +62,8 @@ fun TransactionsItem(
             .then(modifier)
             .clip(RoundedCornerShape(16.dp))
             .background(MaterialTheme.colorScheme.surfaceDim)
-            .padding(10.dp)
             .clickable(onClick = onClick)
+            .padding(10.dp)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -77,20 +77,21 @@ fun TransactionsItem(
             ) {
                 Text(
                     text = title,
-                    style = MaterialTheme.typography.bodySmall,
+                    style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.onBackground,
                     fontWeight = FontWeight.SemiBold
                 )
                 Text(
                     text = createAt,
-                    style = MaterialTheme.typography.labelSmall,
+                    style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.outline
                 )
-                description?.let {
+                if (description != null
+                    && description.isNotEmpty()) {
                     DesignText(
-                        text = it,
+                        text = description,
                         maxLines = 1,
-                        style = MaterialTheme.typography.labelSmall,
+                        style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.outline,
                         fontWeight = FontWeight.SemiBold
                     )
@@ -175,20 +176,20 @@ fun TransactionsItemTrailing(
     Row(verticalAlignment = Alignment.CenterVertically) {
         Text(
             text = price,
-            style = MaterialTheme.typography.bodySmall,
+            style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onBackground,
             fontWeight = FontWeight.SemiBold
         )
         Icon(
-            painter = painterResource(R.drawable.ic_token),
+            painter = painterResource(R.drawable.ic_peer_token),
             contentDescription = price,
             tint = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier
                 .padding(start = 4.dp)
-                .size(16.dp)
+                .size(20.dp)
         )
         Icon(
-            painter = painterResource(R.drawable.ic_right),
+            painter = painterResource(R.drawable.ic_caret_right),
             contentDescription = null,
             tint = MaterialTheme.colorScheme.outlineVariant,
             modifier = Modifier.size(16.dp)
@@ -208,7 +209,7 @@ fun PreviewTransactionsItem() {
             createAt = "10 Jun 2025, 04:20",
             leading = {
                 TransactionsAvatar(
-                    icon = painterResource(R.drawable.ic_forward),
+                    icon = painterResource(R.drawable.ic_transfer_direction),
                     color = MaterialTheme.colorScheme.primary
                 ) {
                     Icon(

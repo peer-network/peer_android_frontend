@@ -54,6 +54,7 @@ fun WalletScreen(
             header = { BalanceOverview(lastUpdated, component, viewModelStoreOwner) },
             transactions = {
                 TransactionsList(
+                    uuid = account.id,
                     limit = postLimit,
                     lastUpdated = lastUpdated,
                     provider = component,
