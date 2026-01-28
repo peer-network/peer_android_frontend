@@ -3,6 +3,7 @@ package eu.peernetwork.app.ui.wallet
 import android.content.Context
 import eu.peernetwork.app.provider.ApplicationProvider
 import eu.peernetwork.app.ui.profile.Profile
+import eu.peernetwork.app.ui.search.Search
 import eu.peernetwork.app.ui.settings.SettingsEvent
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
@@ -31,6 +32,7 @@ interface Wallet : ApplicationProvider {
         Balance,
         Dashboard,
         Transactions,
+        Search,
         UiComponentProvider
 
     class Builder(private val dependency: Wallet): UiComponent.DefaultBuilder<Wallet, Component>() {

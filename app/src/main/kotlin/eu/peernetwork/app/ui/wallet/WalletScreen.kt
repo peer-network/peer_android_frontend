@@ -3,6 +3,7 @@ package eu.peernetwork.app.ui.wallet
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -11,6 +12,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModelStoreOwner
+import androidx.navigation.compose.rememberNavController
+import eu.peernetwork.app.interactor.NavigationInteractor
 import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.material.DesignTitle
@@ -25,6 +28,7 @@ import eu.peernetwork.wallet.ui.dashboard.DashboardScreen
 import eu.peernetwork.wallet.ui.dashboard.DashboardState
 import eu.peernetwork.wallet.ui.saveable.UiRecipientSaver
 import eu.peernetwork.wallet.ui.transactions.TransactionsList
+import eu.peernetwork.wallet.ui.transactions.TransactionsNavigator
 import kotlinx.coroutines.launch
 
 @Composable
@@ -48,56 +52,61 @@ fun WalletScreen(
         } ?: DashboardState.Default)
     }
     val listState = rememberLazyListState()
+    val controller = rememberNavController()
     val showSheet = rememberSaveable { mutableStateOf(false) }
     val lastUpdated = rememberSaveable { mutableLongStateOf(System.currentTimeMillis()) }
-    WalletNavigation(
-        account = account,
-        provider = component
-    ) { controller ->
-        WalletPage(
-            onRefresh = { lastUpdated.longValue = System.currentTimeMillis() },
-            header = { BalanceOverview(lastUpdated, component, viewModelStoreOwner) },
-            transactions = {
-                TransactionsList(
-                    uuid = account.id,
-                    limit = postLimit,
-                    lastUpdated = lastUpdated,
-                    listState = listState,
+    val navigator = remember { NavigationInteractor(context, controller) }
+    CompositionLocalProvider(TransactionsNavigator.LocalTransactionsNavigator provides navigator) {
+        WalletNavigation(
+            account = account,
+            controller = controller,
+            provider = component
+        ) { controller ->
+            WalletPage(
+                onRefresh = { lastUpdated.longValue = System.currentTimeMillis() },
+                header = { BalanceOverview(lastUpdated, component, viewModelStoreOwner) },
+                transactions = {
+                    TransactionsList(
+                        uuid = account.id,
+                        limit = postLimit,
+                        lastUpdated = lastUpdated,
+                        listState = listState,
+                        provider = component,
+                        viewModelStoreOwner = viewModelStoreOwner
+                    ) { controller.navigateIfNecessary("profile/${it}") }
+                }
+            ) {
+                DashboardScreen(
+                    dashboardState = service,
                     provider = component,
-                    viewModelStoreOwner = viewModelStoreOwner
+                    viewModelStoreOwner = viewModelStoreOwner,
+                    onAccountClicked = { controller.navigateIfNecessary("profile/${it}") },
+                    onClear = { recipient.value = null }
+                ) { showSheet.value = true }
+            }
+            DesignTitleBarHost(
+                tag = "WalletScreen",
+                listener = {
+                    scope.launch {
+                        listState.animateScrollToItem(0)
+                    }
+                }
+            ) {
+                titleBar {
+                    DesignTitle {
+                        Text(stringResource(R.string.wallet_label))
+                    }
+                }
+            }
+            MemberModal(postLimit, showSheet, component, viewModelStoreOwner) {
+                recipient.value = UiRecipient(
+                    id = it.id,
+                    username = it.username,
+                    slug = it.slug,
+                    imageUrl = it.imageUrl
                 )
+                true
             }
-        ) {
-            DashboardScreen(
-                dashboardState = service,
-                provider = component,
-                viewModelStoreOwner = viewModelStoreOwner,
-                onAccountClicked = { controller.navigateIfNecessary("profile/${it}") },
-                onClear = { recipient.value = null }
-            ) { showSheet.value = true }
-        }
-        DesignTitleBarHost(
-            tag = "WalletScreen",
-            listener = {
-                scope.launch {
-                    listState.animateScrollToItem(0)
-                }
-            }
-        ) {
-            titleBar {
-                DesignTitle {
-                    Text(stringResource(R.string.wallet_label))
-                }
-            }
-        }
-        MemberModal(postLimit, showSheet, component, viewModelStoreOwner) {
-            recipient.value = UiRecipient(
-                id = it.id,
-                username = it.username,
-                slug = it.slug,
-                imageUrl = it.imageUrl
-            )
-            true
         }
     }
 }

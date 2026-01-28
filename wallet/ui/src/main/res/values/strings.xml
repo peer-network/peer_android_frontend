@@ -43,6 +43,10 @@
     <string name="error_title">Oops! an error occurred</string>
     <string name="retry_label">Retry</string>
 
+    <string name="base_amount">Base amount</string>
+    <string name="platform_charge">%s%% to Peer Bank (platform fee)</string>
+    <string name="burn_charge">%s%% Burned (removed from supply)</string>
+
     <string name="sent_to">To @%s</string>
     <string name="received_from">From @%s</string>
     <string name="user_transaction_label">To %s</string>

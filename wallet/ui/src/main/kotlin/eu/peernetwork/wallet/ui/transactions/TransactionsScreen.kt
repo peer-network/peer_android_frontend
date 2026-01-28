@@ -20,6 +20,7 @@ import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.wallet.ui.model.UiTransaction
 
 @Composable
+@Suppress("UNCHECKED_CAST")
 fun TransactionsScreen(
     limit: Int,
     lastUpdated: State<Long>,
@@ -37,6 +38,7 @@ fun TransactionsScreen(
         factory = component.viewModelFactory()
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val status by viewModel.status.collectAsStateWithLifecycle()
     val derivedState = remember { derivedStateOf {
         when(state) {
             TransactionsViewModel.State.Default -> DesignStreamState.Default
@@ -61,6 +63,11 @@ fun TransactionsScreen(
         updatedContent(component, items)
     }
     LaunchedEffect(lastUpdated.value) {
-        viewModel(Pageable(0, limit))
+        (status as? TransactionsViewModel.Status.Success<Long>?)?.let {
+            if (it.data != lastUpdated.value) {
+                viewModel(Pageable(0, limit))
+            }
+        } ?: viewModel(Pageable(0, limit))
+        viewModel.updatedAt(lastUpdated.value)
     }
 }

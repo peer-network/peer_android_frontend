@@ -60,7 +60,7 @@ fun TransactionsAvatar(
 }
 
 @Composable
-fun TransactionsUserAvatar(
+fun TransactionsProfile(
     user: UiUser,
     isVisible: MutableState<Boolean>,
     onClick: () -> Unit
@@ -80,7 +80,7 @@ fun TransactionsUserAvatar(
         }
     } else if (!user.isAccessible) {
         if (isVisible.value) {
-            TransactionsUserAvatar(
+            TransactionsProfile(
                 user = user,
                 onClick = onClick
             )
@@ -100,7 +100,7 @@ fun TransactionsUserAvatar(
             }
         }
     } else {
-        TransactionsUserAvatar(
+        TransactionsProfile(
             user = user,
             onClick = onClick
         )
@@ -108,7 +108,7 @@ fun TransactionsUserAvatar(
 }
 
 @Composable
-fun TransactionsUserAvatar(
+fun TransactionsProfile(
     user: UiUser,
     onClick: () -> Unit
 ) {
@@ -146,7 +146,7 @@ fun PreviewTransactionsAvatar() {
                         .padding(8.dp)
                 )
             }
-            TransactionsUserAvatar(
+            TransactionsProfile(
                 user = UiUser(
                     id = "123",
                     username = "test",
@@ -157,7 +157,7 @@ fun PreviewTransactionsAvatar() {
                 ),
                 isVisible = isVisible,
             ) {}
-            TransactionsUserAvatar(
+            TransactionsProfile(
                 user = UiUser(
                     id = "123",
                     username = "test",

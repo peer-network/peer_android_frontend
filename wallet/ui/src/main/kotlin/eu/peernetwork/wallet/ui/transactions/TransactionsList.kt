@@ -10,8 +10,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -19,6 +21,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.wallet.ui.R
+import eu.peernetwork.wallet.ui.extension.route
+import eu.peernetwork.wallet.ui.transactions.TransactionsNavigator.Companion.LocalTransactionsNavigator
 
 @Composable
 fun TransactionsList(
@@ -27,8 +31,11 @@ fun TransactionsList(
     lastUpdated: State<Long>,
     listState: LazyListState,
     provider: UiComponentProvider,
-    viewModelStoreOwner: ViewModelStoreOwner
+    viewModelStoreOwner: ViewModelStoreOwner,
+    onClick: (String) -> Unit
 ) {
+    val navigator = LocalTransactionsNavigator.current
+    val handleClick by rememberUpdatedState(onClick)
     TransactionsScreen(
         limit = limit,
         lastUpdated = lastUpdated,
@@ -52,22 +59,16 @@ fun TransactionsList(
                     } else {
                         transaction.recipient
                     }
-                    val title = if (isRecipient) {
-                        stringResource(R.string.received_from, profile.username)
-                    } else {
-                        stringResource(R.string.sent_to, profile.username)
-                    }
+                    val title = transactionsUsername(
+                        isVisible = isVisible,
+                        isRecipient = isRecipient,
+                        user = profile
+                    )
                     TransactionsItem(
-                        title = transaction.res?.let { stringResource(it) }
-                            ?: transactionsUsername(
-                                isVisible = isVisible,
-                                isRecipient = isRecipient,
-                                user = profile
-                            ),
+                        title = transaction.res?.let { stringResource(it) } ?: title,
                         description = transaction.message,
                         createAt = transaction.createdAt,
-                        price = transaction.amount.net.toString(),
-                        onClick = {},
+                        price = "${transaction.amount.net}",
                         leading = {
                             TransactionsAvatar(
                                 icon = painterResource(R.drawable.ic_transfer_direction),
@@ -85,15 +86,34 @@ fun TransactionsList(
                                             .padding(8.dp)
                                     )
                                 } else {
-                                    TransactionsUserAvatar(
+                                    TransactionsProfile(
                                         user = profile,
                                         isVisible = isVisible,
-                                    ) { isVisible.value = true }
+                                    ) { handleClick(profile.id) }
                                 }
                             }
                         },
+                        onProfileClicked = { handleClick(profile.id) },
+                        onMessageClicked = { spec, value -> navigator.navigate(spec.route(value)) },
                         modifier = Modifier.padding(bottom = 10.dp)
-                    ) {}
+                    ) {
+                        TransactionsSummeryItem(
+                            title = stringResource(R.string.base_amount),
+                            price = "${transaction.amount.gross}",
+                        )
+                        transaction.fees?.let {
+                            val peer = (transaction.tax.peer * 100).toInt()
+                            val burn = (transaction.tax.burn * 100).toInt()
+                            TransactionsSummeryItem(
+                                title = stringResource(R.string.platform_charge, "$peer"),
+                                price = "${it.peer}",
+                            )
+                            TransactionsSummeryItem(
+                                title = stringResource(R.string.burn_charge, "$burn"),
+                                price = "${it.burn}",
+                            )
+                        }
+                    }
                 }
             }
         }

@@ -10,16 +10,22 @@ import eu.peernetwork.core.ui.exception.NoContentException
 import eu.peernetwork.core.ui.usecase.PagingUsecase
 import eu.peernetwork.wallet.domain.model.Filter
 import eu.peernetwork.wallet.domain.model.Sort
+import eu.peernetwork.wallet.domain.model.Tax
+import eu.peernetwork.wallet.domain.usecase.TaxUsecase
 import eu.peernetwork.wallet.domain.usecase.TransactionsUsecase
+import eu.peernetwork.wallet.ui.mapper.mapFromDomain
 import eu.peernetwork.wallet.ui.mapper.mapToTransaction
 import eu.peernetwork.wallet.ui.model.UiTransaction
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class TransactionListingUsecase @Inject constructor(
-    private val usecase: TransactionsUsecase
+    private val usecase: TransactionsUsecase,
+    private val taxUsecase: TaxUsecase,
 ) : PagingUsecase<TransactionListingUsecase.Parameter, UiTransaction>() {
     private lateinit var param: Parameter
+
+    private lateinit var tax: Tax
 
     override fun invoke(param: Parameter): Flow<PagingData<UiTransaction>> {
         this.param = param
@@ -50,8 +56,17 @@ class TransactionListingUsecase @Inject constructor(
         return if (response.items.isEmpty() && currentPage.offset == 0) {
             LoadResult.Error(NoContentException())
         } else {
+            if (!this::tax.isInitialized) {
+                try {
+                    tax = taxUsecase()
+                } catch (error: Throwable) {
+                    return LoadResult.Error(error)
+                }
+            }
             LoadResult.Page(
-                data = response.items.map { it.mapToTransaction() },
+                data = response.items.map {
+                    it.mapToTransaction().copy(tax = tax.mapFromDomain())
+                },
                 prevKey = if (currentOffset <= 0) null else currentOffset - 1,
                 nextKey = if (response.items.isEmpty()) null else currentOffset + response.items.size
             )

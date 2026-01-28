@@ -7,12 +7,13 @@ import androidx.navigation.NavHostController
 import eu.peernetwork.ads.ui.article.ArticleNavigator
 import eu.peernetwork.blog.ui.post.PostNavigator
 import eu.peernetwork.user.ui.user.UserNavigator
+import eu.peernetwork.wallet.ui.transactions.TransactionsNavigator
 import java.net.URLEncoder
 
 class NavigationInteractor(
     private val context: Context,
     private val controller: NavHostController
-) : PostNavigator, ArticleNavigator, UserNavigator {
+) : PostNavigator, ArticleNavigator, UserNavigator, TransactionsNavigator {
     override fun navigate(route: PostNavigator.Route) {
         when(route) {
             is PostNavigator.Route.Profile -> {
@@ -75,6 +76,30 @@ class NavigationInteractor(
                 }
             }
             is UserNavigator.Route.Link -> {
+                val url = if (!route.url.startsWith("http")) {
+                    "https://${route.url}"
+                } else {
+                    route.url
+                }
+                context.startActivity(Intent(Intent.ACTION_VIEW, url.toUri()))
+            }
+        }
+    }
+
+    override fun navigate(route: TransactionsNavigator.Route) {
+        when(route) {
+            is TransactionsNavigator.Route.Profile -> {
+                controller.navigate("profile/${route.id}") {
+                    launchSingleTop = true
+                }
+            }
+            is TransactionsNavigator.Route.Search -> {
+                val encoded = URLEncoder.encode(route.query, "UTF-8")
+                controller.navigate("search/${route.type}/$encoded") {
+                    launchSingleTop = true
+                }
+            }
+            is TransactionsNavigator.Route.Link -> {
                 val url = if (!route.url.startsWith("http")) {
                     "https://${route.url}"
                 } else {

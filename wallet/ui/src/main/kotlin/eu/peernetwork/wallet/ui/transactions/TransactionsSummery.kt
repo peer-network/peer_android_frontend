@@ -28,7 +28,7 @@ fun TransactionsSummeryItem(
     modifier: Modifier = Modifier,
     priceColor: Color? = null,
     color: Color = priceColor ?: MaterialTheme.colorScheme.outline,
-    style: TextStyle = MaterialTheme.typography.labelMedium
+    style: TextStyle = MaterialTheme.typography.bodySmall
 ) {
     Row(
         modifier = modifier,

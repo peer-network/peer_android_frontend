@@ -4,6 +4,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
 import eu.peernetwork.app.ui.profile.Profile
+import eu.peernetwork.app.ui.search.Search
 import eu.peernetwork.core.ui.annotation.UiBuilder
 import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
@@ -70,5 +71,13 @@ object WalletModule {
     @UiBuilder(Transactions.Builder::class)
     fun provideTransactionsBuilder(component: Wallet.Component): UiComponent.Builder {
         return Transactions.Builder(component)
+    }
+
+    @Wallet.Scope
+    @Provides
+    @IntoMap
+    @UiBuilder(Search.Builder::class)
+    fun provideSearchBuilder(component: Wallet.Component): UiComponent.Builder {
+        return Search.Builder(component)
     }
 }

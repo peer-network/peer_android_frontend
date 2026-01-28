@@ -11,8 +11,10 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -38,7 +40,8 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import eu.peernetwork.core.ui.design.luna.DesignText
+import eu.peernetwork.core.ui.design.luna.DesignRichText
+import eu.peernetwork.core.ui.extension.tap
 import eu.peernetwork.core.ui.theme.DesignTheme
 import eu.peernetwork.core.ui.theme.PeerAppDarkRed
 import eu.peernetwork.wallet.ui.R
@@ -50,6 +53,8 @@ fun TransactionsItem(
     createAt: String,
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
+    onProfileClicked: () -> Unit,
+    onMessageClicked: (DesignRichText, String) -> Unit,
     leading: @Composable () -> Unit,
     trailing: @Composable () -> Unit,
     content: @Composable () -> Unit,
@@ -79,7 +84,8 @@ fun TransactionsItem(
                     text = title,
                     style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.onBackground,
-                    fontWeight = FontWeight.SemiBold
+                    fontWeight = FontWeight.SemiBold,
+                    modifier = Modifier.tap(onProfileClicked)
                 )
                 Text(
                     text = createAt,
@@ -88,12 +94,13 @@ fun TransactionsItem(
                 )
                 if (description != null
                     && description.isNotEmpty()) {
-                    DesignText(
+                    DesignRichText(
                         text = description,
                         maxLines = 1,
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.outline,
-                        fontWeight = FontWeight.SemiBold
+                        fontWeight = FontWeight.SemiBold,
+                        onClick = onMessageClicked
                     )
                 }
             }
@@ -109,18 +116,20 @@ fun TransactionsItem(
     description: AnnotatedString?,
     price: String,
     createAt: String,
+    onProfileClicked: () -> Unit,
+    onMessageClicked: (DesignRichText, String) -> Unit,
     modifier: Modifier = Modifier,
-    onClick: () -> Unit,
     leading: @Composable () -> Unit,
-    content: @Composable () -> Unit
+    content: @Composable ColumnScope.() -> Unit
 ) {
-    val handleClick by rememberUpdatedState(onClick)
     val updatedContent by rememberUpdatedState(content)
     val isVisible = rememberSaveable { mutableStateOf(false) }
     TransactionsItem(
         title = title,
         description = description,
         createAt = createAt,
+        onProfileClicked = onProfileClicked,
+        onMessageClicked = onMessageClicked,
         modifier = modifier,
         leading = leading,
         trailing = {
@@ -129,10 +138,7 @@ fun TransactionsItem(
                 isVisible = isVisible
             )
         },
-        onClick = {
-            isVisible.value = !isVisible.value
-            handleClick()
-        }
+        onClick = { isVisible.value = !isVisible.value }
     ) {
         AnimatedContent(
             targetState = isVisible.value,
@@ -150,8 +156,13 @@ fun TransactionsItem(
             },
         ) { visible ->
             if (visible) {
-                Column {
-                    Box(modifier = Modifier.height(1.dp)
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(4.dp),
+                    modifier = Modifier.padding(top = 10.dp)
+                ) {
+                    Box(modifier = Modifier.padding(bottom = 4.dp)
+                        .fillMaxWidth()
+                        .height(1.dp)
                         .background(MaterialTheme.colorScheme.surfaceContainerLow))
                     updatedContent()
                 }
@@ -207,6 +218,8 @@ fun PreviewTransactionsItem() {
             description = buildAnnotatedString { append("Hey! Thank you so much for all your help with the project presentation yesterday. I really appreciate how you stayed late to help me finalize the slides and practice the pitch. Your feedback was invaluable and I couldn't have done it without your support. The client loved it! Here's a little something to show my gratitude. Let's celebrate this weekend!") },
             price = "+534",
             createAt = "10 Jun 2025, 04:20",
+            onProfileClicked = {},
+            onMessageClicked = { _,_ -> },
             leading = {
                 TransactionsAvatar(
                     icon = painterResource(R.drawable.ic_transfer_direction),
@@ -221,7 +234,6 @@ fun PreviewTransactionsItem() {
                     )
                 }
             },
-            onClick = {}
         ) {
             Box(modifier = Modifier
                 .fillMaxWidth()

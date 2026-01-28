@@ -14,6 +14,7 @@ import eu.peernetwork.core.ui.design.luna.DesignStreamState
 import java.math.RoundingMode
 
 @Composable
+@Suppress("UNCHECKED_CAST")
 fun BalanceOverview(
     lastUpdated: State<Long>,
     provider: UiComponentProvider,
@@ -24,6 +25,7 @@ fun BalanceOverview(
         viewModelStoreOwner = viewModelStoreOwner,
     ) { component, viewModel ->
         val state by viewModel.state.collectAsStateWithLifecycle()
+        val status by viewModel.status.collectAsStateWithLifecycle()
         val derivedState = remember {
             derivedStateOf {
                 when (state) {
@@ -51,7 +53,12 @@ fun BalanceOverview(
             BalancePreview(balance.value.toString())
         }
         LaunchedEffect(lastUpdated.value) {
-            viewModel()
+            (status as? BalanceViewModel.Status.Success<Long>?)?.let {
+                if (it.data != lastUpdated.value) {
+                    viewModel()
+                }
+            } ?: viewModel()
+            viewModel.updatedAt(lastUpdated.value)
         }
     }
 }

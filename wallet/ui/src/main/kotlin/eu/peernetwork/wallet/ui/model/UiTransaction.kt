@@ -10,6 +10,7 @@ data class UiTransaction(
     val recipient: UiUser,
     val category: UiCategory,
     val amount: UiAmount,
+    val tax: UiTax,
     val fees: UiFees?,
     val message: AnnotatedString?,
     val createdAt: String,

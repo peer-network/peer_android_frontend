@@ -73,7 +73,7 @@ fun BalanceScreen(
             error = error
         ) { updatedContent(it) }
         LaunchedEffect(lastUpdated.value) {
-            if (state !is BalanceViewModel.State.Success) {
+            if (state is BalanceViewModel.State.Empty) {
                 viewModel()
             }
         }

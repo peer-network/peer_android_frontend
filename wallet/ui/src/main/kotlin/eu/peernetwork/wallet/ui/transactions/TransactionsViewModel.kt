@@ -24,7 +24,11 @@ class TransactionsViewModel @Inject constructor(
 ) : ViewModel() {
     private val _state = MutableStateFlow<State>(State.Default)
 
+    private val _status = MutableStateFlow<Status>(Status.Empty)
+
     val state: StateFlow<State> = _state.asStateFlow()
+
+    val status: StateFlow<Status> = _status.asStateFlow()
 
     operator fun invoke(
         page: Pageable,
@@ -45,6 +49,19 @@ class TransactionsViewModel @Inject constructor(
                     _state.tryEmit(State.Success(this))
                 } }
         }
+    }
+
+    fun updatedAt(timestamp: Long) {
+        viewModelScope.launch {
+            _status.tryEmit(Status.Success(timestamp))
+        }
+    }
+
+    sealed interface Status {
+        data object Empty : Status
+        data object Loading : Status
+        data class Success<T>(val data: T) : Status
+        data class Error(val error: Throwable) : Status
     }
 
     sealed interface State {
