@@ -8,7 +8,7 @@ data class Transaction(
     val category: Category,
     val amount: Amount,
     val fees: Fees?,
-    val createdAt: String
+    val createdAt: Long
 ) {
     enum class Type {
         TRANSACTION,

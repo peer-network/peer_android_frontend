@@ -14,6 +14,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -52,7 +53,8 @@ fun TransactionsList(
                 key = { index -> items[index]?.id?.let { "$it;$index" } ?: index }
             ) { index ->
                 items[index]?.let { transaction ->
-                    val isVisible = remember { mutableStateOf(false) }
+                    val isVisible = rememberSaveable { mutableStateOf(false) }
+                    val expanded = rememberSaveable { mutableStateOf(false) }
                     val isRecipient = transaction.recipient.id == uuid
                     val profile = if (isRecipient) {
                         transaction.sender
@@ -69,6 +71,7 @@ fun TransactionsList(
                         description = transaction.message,
                         createAt = transaction.createdAt,
                         price = "${transaction.amount.net}",
+                        expanded = expanded,
                         leading = {
                             TransactionsAvatar(
                                 icon = painterResource(R.drawable.ic_transfer_direction),
@@ -93,7 +96,13 @@ fun TransactionsList(
                                 }
                             }
                         },
-                        onProfileClicked = { handleClick(profile.id) },
+                        onProfileClicked = {
+                            if (transaction.res == null) {
+                                handleClick(profile.id)
+                            } else {
+                                expanded.value = !expanded.value
+                            }
+                        },
                         onMessageClicked = { spec, value -> navigator.navigate(spec.route(value)) },
                         modifier = Modifier.padding(bottom = 10.dp)
                     ) {

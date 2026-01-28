@@ -28,7 +28,7 @@ import eu.peernetwork.core.ui.theme.DesignTheme
 @SuppressLint("UnusedBoxWithConstraintsScope")
 fun BalanceSkeleton(
     modifier: Modifier = Modifier,
-    contentPadding: PaddingValues = PaddingValues(24.dp),
+    contentPadding: PaddingValues = PaddingValues(28.dp),
 ) {
     BoxWithConstraints {
         val vertical = with(LocalDensity.current) { maxHeight.toPx() * .15f }

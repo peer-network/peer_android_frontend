@@ -25,11 +25,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -116,6 +117,7 @@ fun TransactionsItem(
     description: AnnotatedString?,
     price: String,
     createAt: String,
+    expanded: MutableState<Boolean>,
     onProfileClicked: () -> Unit,
     onMessageClicked: (DesignRichText, String) -> Unit,
     modifier: Modifier = Modifier,
@@ -123,7 +125,6 @@ fun TransactionsItem(
     content: @Composable ColumnScope.() -> Unit
 ) {
     val updatedContent by rememberUpdatedState(content)
-    val isVisible = rememberSaveable { mutableStateOf(false) }
     TransactionsItem(
         title = title,
         description = description,
@@ -135,13 +136,13 @@ fun TransactionsItem(
         trailing = {
             TransactionsItemTrailing(
                 price = price,
-                isVisible = isVisible
+                isVisible = expanded
             )
         },
-        onClick = { isVisible.value = !isVisible.value }
+        onClick = { expanded.value = !expanded.value }
     ) {
         AnimatedContent(
-            targetState = isVisible.value,
+            targetState = expanded.value,
             transitionSpec = {
                 fadeIn(animationSpec = tween(300)) +
                         expandVertically(
@@ -213,6 +214,7 @@ fun TransactionsItemTrailing(
 @Preview
 fun PreviewTransactionsItem() {
     DesignTheme(isDarkMode = true) {
+        val expanded = remember { mutableStateOf(false) }
         TransactionsItem(
             title = "To @removed",
             description = buildAnnotatedString { append("Hey! Thank you so much for all your help with the project presentation yesterday. I really appreciate how you stayed late to help me finalize the slides and practice the pitch. Your feedback was invaluable and I couldn't have done it without your support. The client loved it! Here's a little something to show my gratitude. Let's celebrate this weekend!") },
@@ -220,6 +222,7 @@ fun PreviewTransactionsItem() {
             createAt = "10 Jun 2025, 04:20",
             onProfileClicked = {},
             onMessageClicked = { _,_ -> },
+            expanded = expanded,
             leading = {
                 TransactionsAvatar(
                     icon = painterResource(R.drawable.ic_transfer_direction),

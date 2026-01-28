@@ -2,10 +2,13 @@ package eu.peernetwork.wallet.ui.transactions
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -17,6 +20,20 @@ import androidx.compose.ui.unit.dp
 import eu.peernetwork.core.ui.theme.DesignTheme
 
 @Composable
+fun TransactionsSkeleton(count: Int) {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(bottom = 36.dp),
+    ) {
+        items(count) {
+            TransactionsSkeleton(
+                modifier = Modifier.padding(bottom = 10.dp)
+            )
+        }
+    }
+}
+
+@Composable
 fun TransactionsSkeleton(modifier: Modifier = Modifier) {
     Row(
         modifier = Modifier
@@ -26,9 +43,11 @@ fun TransactionsSkeleton(modifier: Modifier = Modifier) {
             .background(MaterialTheme.colorScheme.surfaceDim)
             .padding(10.dp)
     ) {
-        Box(modifier = Modifier.size(36.dp)
+        Box(modifier = Modifier.padding(vertical = 4.dp)
+            .size(36.dp)
             .clip(CircleShape)
-            .background(MaterialTheme.colorScheme.background))
+            .background(MaterialTheme.colorScheme.background)
+        )
     }
 }
 
@@ -36,8 +55,6 @@ fun TransactionsSkeleton(modifier: Modifier = Modifier) {
 @Preview
 fun PreviewTransactionsSkeleton() {
     DesignTheme(isDarkMode = true) {
-        TransactionsSkeleton(
-            modifier = Modifier.padding(16.dp)
-        )
+        TransactionsSkeleton(3)
     }
 }

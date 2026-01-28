@@ -55,7 +55,7 @@ fun TransactionsScreen(
     val updatedContent by rememberUpdatedState(content)
     DesignPagingStream(
         state = derivedState,
-        loading = { TransactionsSkeleton() },
+        loading = { TransactionsSkeleton(3) },
         error = { TransactionsError(it, component) {
             viewModel(Pageable(0, limit))
         } }
