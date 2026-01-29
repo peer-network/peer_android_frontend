@@ -2,11 +2,17 @@ package eu.peernetwork.wallet.ui.transactions
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.core.ui.theme.DesignTheme
@@ -19,25 +25,39 @@ fun transactionsUsername(
     user: UiUser,
     isRecipient: Boolean,
     isVisible: MutableState<Boolean>,
-): String {
-    return if (user.status == UiStatus.ILLEGAL) {
-        stringResource(R.string.illegal_username)
-    } else if (!user.isAccessible) {
-        if (isVisible.value) {
-            if (isRecipient) {
-                stringResource(R.string.received_from, user.username)
+): AnnotatedString {
+    return buildAnnotatedString {
+        if (user.status == UiStatus.ILLEGAL) {
+            append(stringResource(R.string.illegal_username))
+        } else if (!user.isAccessible) {
+            if (isVisible.value) {
+                Label(user, isRecipient)
             } else {
-                stringResource(R.string.sent_to, user.username)
+                append(stringResource(R.string.hidden_username))
             }
         } else {
-            stringResource(R.string.hidden_username)
+            Label(user, isRecipient)
         }
+    }
+}
+
+@Composable
+private fun AnnotatedString.Builder.Label(
+    user: UiUser,
+    isRecipient: Boolean
+) {
+    append(if (isRecipient) {
+        stringResource(R.string.received_from, user.username)
     } else {
-        if (isRecipient) {
-            stringResource(R.string.received_from, user.username)
-        } else {
-            stringResource(R.string.sent_to, user.username)
-        }
+        stringResource(R.string.sent_to, user.username)
+    })
+    append(" ")
+    withStyle(SpanStyle(
+        color = MaterialTheme.colorScheme.outline,
+        fontWeight = FontWeight.Medium,
+        fontSize = MaterialTheme.typography.labelMedium.fontSize
+    )) {
+        append("#${user.slug}")
     }
 }
 

@@ -12,12 +12,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import eu.peernetwork.core.ui.component.UiComponentProvider
@@ -67,7 +67,9 @@ fun TransactionsList(
                         user = profile
                     )
                     TransactionsItem(
-                        title = transaction.res?.let { stringResource(it) } ?: title,
+                        title = transaction.res?.let {
+                            buildAnnotatedString { append(stringResource(it)) }
+                        } ?: title,
                         description = transaction.message,
                         createAt = transaction.createdAt,
                         price = "${transaction.amount.gross}",
@@ -76,7 +78,7 @@ fun TransactionsList(
                             TransactionsAvatar(
                                 icon = painterResource(R.drawable.ic_transfer_direction),
                                 contentDescription = transaction.res?.let { stringResource(it) }
-                                    ?: title,
+                                    ?: title.text,
                                 isRecipient = isRecipient
                             ) {
                                 if (transaction.icon != null && transaction.res != null) {
