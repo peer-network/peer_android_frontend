@@ -70,7 +70,7 @@ fun TransactionsList(
                         title = transaction.res?.let { stringResource(it) } ?: title,
                         description = transaction.message,
                         createAt = transaction.createdAt,
-                        price = "${transaction.amount.net}",
+                        price = "${transaction.amount.gross}",
                         expanded = expanded,
                         leading = {
                             TransactionsAvatar(
@@ -107,8 +107,8 @@ fun TransactionsList(
                         modifier = Modifier.padding(bottom = 10.dp)
                     ) {
                         TransactionsSummeryItem(
-                            title = stringResource(R.string.base_amount),
-                            price = "${transaction.amount.gross}",
+                            title = stringResource(R.string.transaction_amount_label),
+                            price = "${transaction.amount.net}",
                         )
                         transaction.fees?.let {
                             val peer = (transaction.tax.peer * 100).toInt()

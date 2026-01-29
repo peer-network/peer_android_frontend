@@ -37,7 +37,7 @@ fun WalletPage(
             header = {
                 Box(
                     modifier = Modifier.padding(top = 8.dp)
-                        .padding(bottom = 16.dp)
+                        .padding(bottom = 10.dp)
                 ) { updatedHeader() }
             }
         ) {
