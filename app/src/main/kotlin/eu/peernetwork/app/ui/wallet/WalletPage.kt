@@ -13,20 +13,21 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.core.ui.design.luna.DesignRefreshScaffold
 import eu.peernetwork.core.ui.design.material.DesignScaffold
+import eu.peernetwork.core.ui.theme.DesignTheme
 import eu.peernetwork.wallet.ui.R
 
 @Composable
 fun WalletPage(
+    onClick: () -> Unit,
     onRefresh: () -> Unit,
     header: @Composable () -> Unit,
-    transactions: @Composable () -> Unit,
     content: @Composable () -> Unit,
 ) {
     val updatedHeader by rememberUpdatedState(header)
-    val updatedTransactions by rememberUpdatedState(transactions)
     val updatedContent by rememberUpdatedState(content)
     val isRefreshing = remember { mutableStateOf(false) }
     DesignRefreshScaffold(isRefreshing, onRefresh = onRefresh) {
@@ -44,7 +45,7 @@ fun WalletPage(
             DesignScaffold(
                 alwaysReturn = true,
                 modifier = Modifier.fillMaxSize(),
-                header = { updatedContent() }
+                header = { WalletTransferButton(onClick = onClick) }
             ) {
                 Column {
                     Text(
@@ -55,9 +56,21 @@ fun WalletPage(
                             .padding(horizontal = 8.dp)
                             .padding(bottom = 10.dp)
                     )
-                    updatedTransactions()
+                    updatedContent()
                 }
             }
         }
+    }
+}
+
+@Preview
+@Composable
+fun PreviewWalletPage() {
+    DesignTheme(isDarkMode = true) {
+        WalletPage(
+            onClick = {},
+            onRefresh = {},
+            header = {  },
+        ) { }
     }
 }

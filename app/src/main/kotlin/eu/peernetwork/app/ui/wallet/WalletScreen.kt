@@ -9,6 +9,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModelStoreOwner
@@ -24,8 +25,6 @@ import eu.peernetwork.social.ui.search.member.MemberModal
 import eu.peernetwork.user.domain.model.Account
 import eu.peernetwork.wallet.ui.balance.BalanceOverview
 import eu.peernetwork.wallet.ui.model.UiRecipient
-import eu.peernetwork.wallet.ui.dashboard.DashboardScreen
-import eu.peernetwork.wallet.ui.dashboard.DashboardState
 import eu.peernetwork.wallet.ui.saveable.UiRecipientSaver
 import eu.peernetwork.wallet.ui.transactions.TransactionsList
 import eu.peernetwork.wallet.ui.transactions.TransactionsNavigator
@@ -46,43 +45,39 @@ fun WalletScreen(
     val recipient = rememberSaveable(saver = UiRecipientSaver) {
         mutableStateOf(null)
     }
-    val service = remember(recipient.value) {
-        mutableStateOf(recipient.value?.let {
-            DashboardState.Transfer(it)
-        } ?: DashboardState.Default)
-    }
     val listState = rememberLazyListState()
     val controller = rememberNavController()
+    val focusRequester = remember { FocusRequester() }
     val showSheet = rememberSaveable { mutableStateOf(false) }
     val lastUpdated = rememberSaveable { mutableLongStateOf(System.currentTimeMillis()) }
     val navigator = remember { NavigationInteractor(context, controller) }
     CompositionLocalProvider(TransactionsNavigator.LocalTransactionsNavigator provides navigator) {
         WalletNavigation(
             account = account,
+            disable = showSheet,
+            recipient = recipient,
+            focusRequester = focusRequester,
             controller = controller,
-            provider = component
+            provider = component,
+            viewModelStoreOwner = viewModelStoreOwner,
+            onSearch = { showSheet.value = true }
         ) { controller ->
             WalletPage(
+                onClick = {
+                    recipient.value = null
+                    controller.navigateIfNecessary("transfer")
+                },
                 onRefresh = { lastUpdated.longValue = System.currentTimeMillis() },
                 header = { BalanceOverview(lastUpdated, component, viewModelStoreOwner) },
-                transactions = {
-                    TransactionsList(
-                        uuid = account.id,
-                        limit = postLimit,
-                        lastUpdated = lastUpdated,
-                        listState = listState,
-                        provider = component,
-                        viewModelStoreOwner = viewModelStoreOwner
-                    ) { controller.navigateIfNecessary("profile/${it}") }
-                }
             ) {
-                DashboardScreen(
-                    dashboardState = service,
+                TransactionsList(
+                    uuid = account.id,
+                    limit = postLimit,
+                    lastUpdated = lastUpdated,
+                    listState = listState,
                     provider = component,
-                    viewModelStoreOwner = viewModelStoreOwner,
-                    onAccountClicked = { controller.navigateIfNecessary("profile/${it}") },
-                    onClear = { recipient.value = null }
-                ) { showSheet.value = true }
+                    viewModelStoreOwner = viewModelStoreOwner
+                ) { controller.navigateIfNecessary("profile/${it}") }
             }
             DesignTitleBarHost(
                 tag = "WalletScreen",
@@ -98,15 +93,20 @@ fun WalletScreen(
                     }
                 }
             }
-            MemberModal(postLimit, showSheet, component, viewModelStoreOwner) {
-                recipient.value = UiRecipient(
-                    id = it.id,
-                    username = it.username,
-                    slug = it.slug,
-                    imageUrl = it.imageUrl
-                )
-                true
-            }
+        }
+        MemberModal(
+            postLimit = postLimit,
+            showSheet = showSheet,
+            provider = component,
+            viewModelStoreOwner = viewModelStoreOwner
+        ) {
+            recipient.value = UiRecipient(
+                id = it.id,
+                username = it.username,
+                slug = it.slug,
+                imageUrl = it.imageUrl
+            )
+            true
         }
     }
 }

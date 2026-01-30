@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.lifecycle.ViewModelProvider
 import eu.peernetwork.core.common.provider.CoreProvider
 import eu.peernetwork.core.ui.component.UiComponent
+import eu.peernetwork.core.ui.component.UiComponentProvider
+import eu.peernetwork.wallet.ui.balance.Balance
 import eu.peernetwork.wallet.ui.provider.WalletProvider
 
 interface Transfer : WalletProvider, CoreProvider {
@@ -16,7 +18,7 @@ interface Transfer : WalletProvider, CoreProvider {
         dependencies = [ Transfer::class ],
         modules = [ TransferModule::class ]
     )
-    interface Component : Transfer {
+    interface Component : Transfer, Balance, UiComponentProvider {
         fun viewModelFactory(): ViewModelProvider.Factory
     }
 
