@@ -6,7 +6,7 @@ import androidx.paging.PagingData
 import androidx.paging.PagingSource.LoadParams
 import androidx.paging.PagingSource.LoadResult
 import eu.peernetwork.blog.domain.model.Engagement
-import eu.peernetwork.blog.domain.usecase.ContentInteractorUsecase
+import eu.peernetwork.blog.domain.usecase.EngagementUsecase
 import eu.peernetwork.blog.ui.mapper.mapFromDomain
 import eu.peernetwork.blog.ui.model.UiAuthor
 import eu.peernetwork.core.common.paging.Pageable
@@ -19,7 +19,7 @@ import javax.inject.Inject
 
 class InteractionUsecase @Inject constructor(
     private val dispatcher: Dispatcher,
-    private val usecase: ContentInteractorUsecase
+    private val usecase: EngagementUsecase
 ) : PagingUsecase<InteractionUsecase.Parameter, UiAuthor>() {
     private lateinit var param: Parameter
 
@@ -41,7 +41,7 @@ class InteractionUsecase @Inject constructor(
             limit = param.page.limit
         )
         val response = usecase(
-            ContentInteractorUsecase.Parameter(
+            EngagementUsecase.Parameter(
                 id = param.id,
                 engagement = param.engagement,
                 page = currentPage

@@ -38,9 +38,10 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import eu.peernetwork.core.ui.R
 import eu.peernetwork.core.ui.component.UiComponentProvider
-import eu.peernetwork.core.ui.design.compose.DesignStatefulScaffold
-import eu.peernetwork.core.ui.design.compose.DesignStatefulScaffoldState
+import eu.peernetwork.core.ui.design.material.DesignStatefulScaffold
+import eu.peernetwork.core.ui.design.material.DesignStatefulScaffoldState
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.media.core.model.UiAttachment
 import eu.peernetwork.media.core.model.UiFile
@@ -142,7 +143,7 @@ fun AudioScreen(
                             verticalArrangement = Arrangement.Center
                         ) {
                             Image(
-                                painter = painterResource(id = eu.peernetwork.core.ui.R.drawable.ic_music),
+                                painter = painterResource(id = R.drawable.ic_music),
                                 contentDescription = "Audio Icon",
                                 modifier = Modifier
                                     .weight(1f)

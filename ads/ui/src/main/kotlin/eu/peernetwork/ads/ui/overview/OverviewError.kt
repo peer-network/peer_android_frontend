@@ -13,10 +13,12 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
@@ -31,11 +33,21 @@ fun OverviewError(
     Column(modifier = Modifier.fillMaxSize()
         .padding(horizontal = 16.dp)
         .padding(vertical = 12.dp)) {
-        Box(modifier = Modifier.padding(bottom = 10.dp)
-            .fillMaxWidth()
-            .height(48.dp)
-            .clip(CircleShape)
-            .background(MaterialTheme.colorScheme.surfaceContainerLowest))
+        Box(
+            contentAlignment = Alignment.CenterStart,
+            modifier = Modifier.padding(bottom = 10.dp)
+                .fillMaxWidth()
+                .height(48.dp)
+                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.surfaceContainerLowest)
+                .padding(horizontal = 20.dp)
+        ) {
+            CompositionLocalProvider(
+                LocalTextStyle provides MaterialTheme.typography.bodySmall.copy(
+                    color = MaterialTheme.colorScheme.error
+                )
+            ) { updatedContent() }
+        }
         Box(modifier = Modifier.fillMaxWidth()
             .height(48.dp)
             .clip(CircleShape)
@@ -52,13 +64,7 @@ fun OverviewError(
             .clip(RoundedCornerShape(24.dp))
             .background(MaterialTheme.colorScheme.surfaceContainerLowest)
             .padding(16.dp)
-        ) {
-            CompositionLocalProvider(
-                LocalTextStyle provides MaterialTheme.typography.bodySmall.copy(
-                    color = MaterialTheme.colorScheme.error
-                )
-            ) { updatedContent() }
-        }
+        )
     }
 }
 
@@ -66,6 +72,6 @@ fun OverviewError(
 @Composable
 fun PreviewOverviewError() {
     DesignTheme(isDarkMode = true) {
-        OverviewError {}
+        OverviewError { Text("Error occurred!...") }
     }
 }

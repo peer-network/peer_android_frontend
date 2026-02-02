@@ -6,8 +6,8 @@ plugins {
 android {
     ndkVersion = "26.1.10909125"
     defaultConfig {
-        versionCode = 38
-        versionName = "1.11.0"
+        versionCode = 39
+        versionName = "1.11.1"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
@@ -25,8 +25,8 @@ android {
             isMinifyEnabled = false
             applicationIdSuffix = ".debug"
             versionNameSuffix = "-DEBUG"
-            buildConfigField("String", "BASE_URL", "\"https://backend.peerapp.eu\"")
-            buildConfigField("String", "MEDIA_URL", "\"https://media.peerapp.eu\"")
+            buildConfigField("String", "BASE_URL", "\"https://getpeer.eu\"")
+            buildConfigField("String", "MEDIA_URL", "\"https://media.getpeer.eu\"")
             buildConfigField("boolean", "USE_SYSTEM_THEME", "false")
             buildConfigField("String","PRIVACY_POLICY_URL","\"https://www.freeprivacypolicy.com/live/02865c3a-79db-4baf-9ca1-7d91e2cf1724\"")
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
