@@ -33,15 +33,16 @@ import eu.peernetwork.wallet.ui.R
 import eu.peernetwork.wallet.ui.model.UiRecipient
 
 @Composable
-fun TransferRecipient(recipient: UiRecipient) {
+fun TransferRecipient(
+    recipient: UiRecipient,
+    onClick: () -> Unit
+) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.fillMaxWidth()
             .clip(CircleShape)
             .background(MaterialTheme.colorScheme.surfaceDim)
-            .padding(10.dp)
-            .padding(vertical = 4.dp)
-            .padding(horizontal = 8.dp)
+            .padding(18.dp)
     ) {
         Text(
             text = stringResource(R.string.sending_to),
@@ -61,7 +62,8 @@ fun TransferRecipient(recipient: UiRecipient) {
             },
             style = MaterialTheme.typography.bodySmall,
             fontWeight = FontWeight.SemiBold,
-            color = MaterialTheme.colorScheme.onBackground
+            color = MaterialTheme.colorScheme.onBackground,
+            modifier = Modifier.tap(onClick)
         )
     }
 }
@@ -173,7 +175,7 @@ fun PreviewTransferRecipient() {
             )
             TransferRecipient {}
             TransferRecipient(recipient, {}) {}
-            TransferRecipient(recipient)
+            TransferRecipient(recipient) {}
         }
     }
 }

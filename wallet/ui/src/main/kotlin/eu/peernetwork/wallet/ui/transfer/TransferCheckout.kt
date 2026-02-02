@@ -23,6 +23,8 @@ import eu.peernetwork.core.ui.design.luna.DesignStream
 import eu.peernetwork.core.ui.design.luna.DesignStreamState
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.wallet.ui.balance.BalanceOverview
+import eu.peernetwork.wallet.ui.extension.route
+import eu.peernetwork.wallet.ui.transactions.TransactionsNavigator.Companion.LocalTransactionsNavigator
 import java.math.RoundingMode
 
 @Composable
@@ -34,6 +36,7 @@ fun TransferCheckout(
     onFinish: () -> Unit
 ) {
     val context = LocalContext.current
+    val navigator = LocalTransactionsNavigator.current
     val component = remember {
         provider.builder(Transfer.Builder::class.java).build(context)
     }
@@ -45,6 +48,7 @@ fun TransferCheckout(
     val state by viewModel.state.collectAsStateWithLifecycle()
     val status by viewModel.status.collectAsStateWithLifecycle()
     val handleFinish by rememberUpdatedState(onFinish)
+    val handleUserClick by rememberUpdatedState(onUserClicked)
     val streamState = remember { derivedStateOf {
         if (status is TransferViewModel.Status.Empty) {
             DesignStreamState.Default
@@ -76,6 +80,8 @@ fun TransferCheckout(
             isLoading = isLoading,
             onRefresh = { lastUpdated.longValue = System.currentTimeMillis() },
             onBack = onBack,
+            onAuthorClicked = { handleUserClick(it.value.recipient.id) },
+            onMessageClicked = { spec, value -> navigator.navigate(spec.route(value)) },
             onSend = {
                 viewModel.transfer(
                     price = it.value.amount,

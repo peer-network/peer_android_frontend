@@ -5,23 +5,35 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.OffsetMapping
+import androidx.compose.ui.text.input.TransformedText
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import eu.peernetwork.core.ui.design.luna.DesignRichText
 import eu.peernetwork.core.ui.design.luna.DesignTextField
+import eu.peernetwork.core.ui.extension.value
+import eu.peernetwork.core.ui.mapper.annotate
 import eu.peernetwork.core.ui.theme.DesignTheme
 import eu.peernetwork.wallet.ui.R
 
@@ -38,12 +50,23 @@ fun TransferMessage(
             .padding(10.dp)
             .padding(vertical = 4.dp)
     ) {
-        Text(
-            text = stringResource(R.string.transaction_message_label),
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onBackground,
-            modifier = Modifier.padding(horizontal = 8.dp)
-        )
+        Row(
+            modifier = Modifier.padding(horizontal = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.ic_message),
+                contentDescription = stringResource(R.string.transaction_message_label),
+                modifier = Modifier.size(16.dp),
+                tint = MaterialTheme.colorScheme.onBackground
+            )
+            Text(
+                text = stringResource(R.string.transaction_message_label),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onBackground,
+                modifier = Modifier.padding(horizontal = 8.dp)
+            )
+        }
         DesignTextField(
             state = state,
             contentPadding = PaddingValues(
@@ -57,6 +80,12 @@ fun TransferMessage(
             modifier = Modifier.fillMaxWidth()
                 .padding(top = 8.dp),
             hint = stringResource(R.string.transaction_message_placeholder),
+            visualTransformation = VisualTransformation {
+                TransformedText(
+                    text = state.value.annotate(),
+                    offsetMapping = OffsetMapping.Identity
+                )
+            },
         )
     }
 }
@@ -64,7 +93,8 @@ fun TransferMessage(
 @Composable
 fun TransferMessage(
     message: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClick: (DesignRichText, String) -> Unit = { _,_ -> },
 ) {
     Column(
         modifier = Modifier.then(modifier)
@@ -74,22 +104,39 @@ fun TransferMessage(
             .padding(10.dp)
             .padding(vertical = 4.dp)
     ) {
-        Text(
-            text = stringResource(R.string.message_title),
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onBackground,
-            modifier = Modifier.padding(horizontal = 8.dp)
-        )
+        Row(
+            modifier = Modifier.padding(horizontal = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.ic_message),
+                contentDescription = stringResource(R.string.message_title),
+                modifier = Modifier.size(16.dp),
+                tint = MaterialTheme.colorScheme.onBackground
+            )
+            Text(
+                text = stringResource(R.string.message_title),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onBackground,
+                modifier = Modifier.padding(horizontal = 8.dp)
+            )
+        }
         Box(modifier = Modifier.padding(vertical = 8.dp)
             .fillMaxWidth()
             .height(1.dp)
             .background(MaterialTheme.colorScheme.surfaceContainerLow))
-        Text(
-            text = message,
-            style = MaterialTheme.typography.labelLarge,
-            color = MaterialTheme.colorScheme.onBackground,
+        Box(
+            contentAlignment = Alignment.CenterStart,
             modifier = Modifier.padding(horizontal = 8.dp)
-        )
+                .heightIn(min = 56.dp)
+        ) {
+            DesignRichText(
+                text = message.annotate(),
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.onBackground,
+                onClick = onClick
+            )
+        }
     }
 }
 

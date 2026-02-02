@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import eu.peernetwork.core.ui.design.luna.DesignButton
 import eu.peernetwork.core.ui.design.luna.DesignOutlineButton
 import eu.peernetwork.core.ui.design.luna.DesignRefreshScaffold
+import eu.peernetwork.core.ui.design.luna.DesignRichText
 import eu.peernetwork.core.ui.design.material.DesignScaffold
 import eu.peernetwork.core.ui.theme.DesignTheme
 import eu.peernetwork.wallet.ui.R
@@ -36,6 +37,8 @@ fun TransferPreview(
     onRefresh: () -> Unit,
     onBack: () -> Unit,
     onSend: () -> Unit,
+    onAuthorClicked: () -> Unit,
+    onMessageClicked: (DesignRichText, String) -> Unit,
     content: @Composable () -> Unit,
 ) {
     val isRefreshing = remember { mutableStateOf(false) }
@@ -55,15 +58,19 @@ fun TransferPreview(
             }
         ) {
             Column {
-                TransferRecipient(recipient)
+                TransferRecipient(
+                    recipient = recipient,
+                    onClick = onAuthorClicked
+                )
                 TransferSummary(
                     amount = price,
                     modifier = Modifier.padding(top = 10.dp)
                 )
                 if (message.isNotEmpty()) {
                     TransferMessage(
-                        message,
-                        modifier = Modifier.padding(top = 10.dp)
+                        message = message,
+                        onClick = onMessageClicked,
+                        modifier = Modifier.padding(top = 10.dp),
                     )
                 }
                 Row(
@@ -110,7 +117,9 @@ fun PreviewTransferPreview() {
             isLoading = isLoading,
             onRefresh = {},
             onBack = {},
-            onSend = {}
+            onSend = {},
+            onAuthorClicked = {},
+            onMessageClicked = { _,_ -> }
         ) {}
     }
 }
