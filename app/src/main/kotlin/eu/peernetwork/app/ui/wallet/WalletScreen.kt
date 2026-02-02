@@ -92,6 +92,37 @@ fun WalletScreen(
                         Text(stringResource(R.string.wallet_label))
                     }
                 }
+            ) {
+                DashboardScreen(
+                    dashboardState = service,
+                    provider = component,
+                    viewModelStoreOwner = viewModelStoreOwner,
+                    onAccountClicked = { controller.navigateIfNecessary("profile/${it}") },
+                    onClear = { recipient.value = null }
+                ) { showSheet.value = true }
+            }
+            DesignTitleBarHost(
+                tag = "WalletScreen",
+                listener = {
+                    scope.launch {
+                        listState.animateScrollToItem(0)
+                    }
+                }
+            ) {
+                titleBar {
+                    DesignTitle {
+                        Text(stringResource(R.string.wallet_label))
+                    }
+                }
+            }
+            MemberModal(postLimit, showSheet, component, viewModelStoreOwner) {
+                recipient.value = UiRecipient(
+                    id = it.id,
+                    username = it.username,
+                    slug = it.slug,
+                    imageUrl = it.imageUrl
+                )
+                true
             }
         }
         MemberModal(
