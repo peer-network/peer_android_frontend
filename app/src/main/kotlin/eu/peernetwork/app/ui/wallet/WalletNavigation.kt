@@ -20,8 +20,8 @@ import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.core.ui.extension.route
 import eu.peernetwork.user.domain.model.Account
 import eu.peernetwork.wallet.ui.model.UiRecipient
-import eu.peernetwork.wallet.ui.transfer.v2.TransferCheckout
-import eu.peernetwork.wallet.ui.transfer.v2.TransferScreen
+import eu.peernetwork.wallet.ui.transfer.TransferCheckout
+import eu.peernetwork.wallet.ui.transfer.TransferScreen
 
 @Composable
 fun WalletNavigation(

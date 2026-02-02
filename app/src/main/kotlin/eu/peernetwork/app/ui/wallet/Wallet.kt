@@ -9,7 +9,7 @@ import eu.peernetwork.core.ui.component.UiComponent
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.social.ui.search.member.Member
 import eu.peernetwork.wallet.ui.balance.Balance
-import eu.peernetwork.wallet.ui.dashboard.Dashboard
+import eu.peernetwork.wallet.ui.rate.Rate
 import eu.peernetwork.wallet.ui.transactions.Transactions
 import eu.peernetwork.wallet.ui.transfer.Transfer
 
@@ -30,7 +30,7 @@ interface Wallet : ApplicationProvider {
         Member,
         Profile,
         Balance,
-        Dashboard,
+        Rate,
         Transactions,
         Search,
         UiComponentProvider

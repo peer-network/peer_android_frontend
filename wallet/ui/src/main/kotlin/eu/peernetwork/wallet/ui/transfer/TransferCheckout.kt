@@ -1,4 +1,4 @@
-package eu.peernetwork.wallet.ui.transfer.v2
+package eu.peernetwork.wallet.ui.transfer
 
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
@@ -23,7 +23,6 @@ import eu.peernetwork.core.ui.design.luna.DesignStream
 import eu.peernetwork.core.ui.design.luna.DesignStreamState
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.wallet.ui.balance.BalanceOverview
-import eu.peernetwork.wallet.ui.transfer.Transfer
 import java.math.RoundingMode
 
 @Composable

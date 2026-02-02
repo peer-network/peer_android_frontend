@@ -1,4 +1,4 @@
-package eu.peernetwork.wallet.ui.transfer.v2
+package eu.peernetwork.wallet.ui.transfer
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -37,7 +37,6 @@ import eu.peernetwork.core.ui.design.material.DesignBottomSheetScaffold
 import eu.peernetwork.core.ui.theme.DesignTheme
 import eu.peernetwork.core.ui.theme.PeerAppDarkRed
 import eu.peernetwork.wallet.ui.R
-import eu.peernetwork.wallet.ui.transfer.Transfer
 
 @Composable
 fun TransferError(

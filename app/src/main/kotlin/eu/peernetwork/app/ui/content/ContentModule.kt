@@ -19,7 +19,7 @@ import eu.peernetwork.core.ui.factory.UiBuilderFactory
 import eu.peernetwork.social.ui.connection.Connection
 import eu.peernetwork.wallet.ui.balance.Balance
 import eu.peernetwork.wallet.ui.confirmation.Confirmation
-import eu.peernetwork.wallet.ui.dashboard.Dashboard
+import eu.peernetwork.wallet.ui.rate.Rate
 
 @Module
 object ContentModule {
@@ -100,9 +100,9 @@ object ContentModule {
     @Content.Scope
     @Provides
     @IntoMap
-    @UiBuilder(Dashboard.Builder::class)
+    @UiBuilder(Rate.Builder::class)
     fun provideServiceBuilder(component: Content.Component): UiComponent.Builder {
-        return Dashboard.Builder(component)
+        return Rate.Builder(component)
     }
 
     @Provides

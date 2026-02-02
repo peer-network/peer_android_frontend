@@ -1,4 +1,4 @@
-package eu.peernetwork.wallet.ui.dashboard
+package eu.peernetwork.wallet.ui.rate
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class DashboardViewModel @Inject constructor(
+class RateViewModel @Inject constructor(
     private val usecase: TaxUsecase
 ) : ViewModel() {
     private val mutableState = MutableStateFlow<State>(State.Empty)

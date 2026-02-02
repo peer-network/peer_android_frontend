@@ -35,13 +35,7 @@ object TransferModule {
     @IntoMap
     @Transfer.Scope
     @UiViewModel(TransferViewModel::class)
-    fun viewModel(viewModel: TransferViewModel): ViewModel = viewModel
-
-    @Provides
-    @IntoMap
-    @Transfer.Scope
-    @UiViewModel(eu.peernetwork.wallet.ui.transfer.v2.TransferViewModel::class)
-    fun v2ViewModel(viewModel: eu.peernetwork.wallet.ui.transfer.v2.TransferViewModel): ViewModel = viewModel
+    fun v2ViewModel(viewModel: TransferViewModel): ViewModel = viewModel
 
     @Provides
     @Transfer.Scope

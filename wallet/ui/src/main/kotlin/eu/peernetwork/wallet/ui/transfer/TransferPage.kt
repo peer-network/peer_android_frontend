@@ -1,4 +1,4 @@
-package eu.peernetwork.wallet.ui.transfer.v2
+package eu.peernetwork.wallet.ui.transfer
 
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.Animatable
