@@ -24,7 +24,7 @@ class TransactionRepositoryDelegate @Inject constructor(
         return api.getQuote(token)
     }
 
-    override suspend fun send(recipient: String, price: BigDecimal): Receipt {
-        return api.send(recipient, price)
+    override suspend fun send(recipient: String, price: BigDecimal, message: String?): Receipt {
+        return api.send(recipient, price, message)
     }
 }

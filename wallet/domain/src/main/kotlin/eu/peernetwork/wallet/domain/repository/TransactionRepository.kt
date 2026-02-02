@@ -19,5 +19,5 @@ interface TransactionRepository {
 
     suspend fun getQuote(token: Token): Quote
 
-    suspend fun send(recipient: String, price: BigDecimal): Receipt
+    suspend fun send(recipient: String, price: BigDecimal, message: String? = null): Receipt
 }

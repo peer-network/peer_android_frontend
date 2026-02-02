@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -33,6 +34,7 @@ import eu.peernetwork.wallet.ui.R
 fun BalancePreview(
     balance: String,
     modifier: Modifier = Modifier,
+    color: Color? = null,
     contentPadding: PaddingValues = PaddingValues(24.dp),
 ) {
     BoxWithConstraints {
@@ -51,8 +53,12 @@ fun BalancePreview(
             modifier = Modifier.then(modifier)
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(24.dp))
-                .background(MaterialTheme.colorScheme.surfaceDim)
-                .background(brush = verticalGradient)
+                .background(color ?: MaterialTheme.colorScheme.surfaceDim)
+                .then(if (color != null) {
+                    Modifier
+                } else {
+                    Modifier.background(brush = verticalGradient)
+                })
                 .padding(contentPadding),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center

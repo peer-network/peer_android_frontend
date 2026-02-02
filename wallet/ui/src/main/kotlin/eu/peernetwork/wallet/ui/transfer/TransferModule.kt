@@ -38,6 +38,12 @@ object TransferModule {
     fun viewModel(viewModel: TransferViewModel): ViewModel = viewModel
 
     @Provides
+    @IntoMap
+    @Transfer.Scope
+    @UiViewModel(eu.peernetwork.wallet.ui.transfer.v2.TransferViewModel::class)
+    fun v2ViewModel(viewModel: eu.peernetwork.wallet.ui.transfer.v2.TransferViewModel): ViewModel = viewModel
+
+    @Provides
     @Transfer.Scope
     @IntoMap
     @UiBuilder(Balance.Builder::class)

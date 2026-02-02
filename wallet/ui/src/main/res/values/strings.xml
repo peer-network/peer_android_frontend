@@ -27,8 +27,10 @@
     <string name="send_to">Send to</string>
     <string name="sending_to">Sending to</string>
     <string name="confirm_label">Confirm</string>
+    <string name="continue_label">Continue</string>
     <string name="close_label">Close</string>
     <string name="cancel_label">Cancel</string>
+    <string name="back_label">Back</string>
     <string name="post_caption">You\'re about to make a post</string>
     <string name="no_post_caption">You\’re out of free posts!</string>
     <string name="like_caption">You\'re about to like a post</string>

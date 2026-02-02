@@ -10,5 +10,5 @@ interface WalletInteractor {
 
     fun observe(): Flow<Wallet>
 
-    suspend fun send(recipient: String, token: BigDecimal): Receipt
+    suspend fun send(recipient: String, token: BigDecimal, message: String? = null): Receipt
 }

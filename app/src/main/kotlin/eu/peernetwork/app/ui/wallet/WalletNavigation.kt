@@ -17,8 +17,10 @@ import eu.peernetwork.app.ui.search.SearchScreen
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.material.DesignRouter
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
+import eu.peernetwork.core.ui.extension.route
 import eu.peernetwork.user.domain.model.Account
 import eu.peernetwork.wallet.ui.model.UiRecipient
+import eu.peernetwork.wallet.ui.transfer.v2.TransferCheckout
 import eu.peernetwork.wallet.ui.transfer.v2.TransferScreen
 
 @Composable
@@ -47,9 +49,16 @@ fun WalletNavigation(
                 focusRequester = focusRequester,
                 viewModelStoreOwner = viewModelStoreOwner,
                 onUserClicked = { controller.navigateIfNecessary("profile/${it}") },
-                onClear = { recipient.value = null },
                 onClick = onSearch
-            )
+            ) { controller.navigateIfNecessary("checkout") }
+        }
+        composable("checkout") {
+            TransferCheckout(
+                provider = provider,
+                viewModelStoreOwner = viewModelStoreOwner,
+                onUserClicked = { controller.navigateIfNecessary("profile/${it}") },
+                onBack = { controller.popBackStack() }
+            ) { controller.route("wallet") }
         }
         composable(
             "profile/{id}",

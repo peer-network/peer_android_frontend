@@ -7,6 +7,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import eu.peernetwork.core.ui.component.UiComponentProvider
@@ -17,6 +18,7 @@ import java.math.RoundingMode
 @Composable
 @Suppress("UNCHECKED_CAST")
 fun BalanceOverview(
+    color: Color? = null,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
     content: @Composable (Balance.Component, BalanceViewModel) -> Unit
@@ -49,9 +51,12 @@ fun BalanceOverview(
             error = { BalanceError(it, component) { viewModel() } }
         ) {
             val balance = remember { derivedStateOf {
-                it.value.balance.setScale(4, RoundingMode.HALF_UP)
+                it.value.balance.setScale(2, RoundingMode.HALF_UP)
             } }
-            BalancePreview(balance.value.toString())
+            BalancePreview(
+                color = color,
+                balance = balance.value.toString()
+            )
         }
         updatedContent(component, viewModel)
     }
