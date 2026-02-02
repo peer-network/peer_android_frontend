@@ -1,6 +1,5 @@
 package eu.peernetwork.wallet.ui.transfer.v2
 
-import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -31,6 +30,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.core.ui.design.luna.DesignButton
+import eu.peernetwork.core.ui.design.luna.DesignStream
+import eu.peernetwork.core.ui.design.luna.DesignStreamState
 import eu.peernetwork.core.ui.design.luna.designTertiaryButtonColors
 import eu.peernetwork.core.ui.design.material.DesignBottomSheetScaffold
 import eu.peernetwork.core.ui.theme.DesignTheme
@@ -51,15 +52,21 @@ fun TransferError(
     val handleReset by rememberUpdatedState(onReset)
     DesignBottomSheetScaffold(
         state = isVisible,
-        dismissable = false,
+        dismissable = true,
         onDismiss = {
             isVisible.value = false
             handleReset()
         }
     ) {
-        val target = remember { mutableStateOf(error.value) }
-        Crossfade(target.value) { state ->
-            val message = state?.message?.let {
+        val streamState = remember { derivedStateOf {
+            if (error.value == null) {
+                DesignStreamState.Default
+            } else {
+                DesignStreamState.Success(error.value)
+            }
+        } }
+        DesignStream(streamState) { stream ->
+            val message = stream.value?.message?.let {
                 component.resource().string(it)
             } ?: stringResource(R.string.error_message)
             TransferError(
