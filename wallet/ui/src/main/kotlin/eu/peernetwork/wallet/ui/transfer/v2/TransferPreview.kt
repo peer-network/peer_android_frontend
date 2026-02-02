@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -32,6 +31,7 @@ fun TransferPreview(
     price: String,
     message: String,
     recipient: UiRecipient,
+    enabled: State<Boolean>,
     isLoading: State<Boolean>,
     onRefresh: () -> Unit,
     onBack: () -> Unit,
@@ -79,7 +79,7 @@ fun TransferPreview(
                     DesignButton(
                         onClick = onSend,
                         minHeight = 48.dp,
-                        enabled = !isLoading.value,
+                        enabled = !isLoading.value && enabled.value,
                         isLoading = isLoading.value,
                         contentPadding = PaddingValues(horizontal = 16.dp),
                         modifier = Modifier.weight(1f),
@@ -94,6 +94,7 @@ fun TransferPreview(
 @Composable
 fun PreviewTransferPreview() {
     DesignTheme(isDarkMode = true) {
+        val enabled = remember { mutableStateOf(false) }
         val isLoading = remember { mutableStateOf(false) }
         val recipient = UiRecipient(
             id = "1",
@@ -105,6 +106,7 @@ fun PreviewTransferPreview() {
             price = "1 760",
             recipient = recipient,
             message = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris vel egestas urna, vitae molestie neque.",
+            enabled = enabled,
             isLoading = isLoading,
             onRefresh = {},
             onBack = {},

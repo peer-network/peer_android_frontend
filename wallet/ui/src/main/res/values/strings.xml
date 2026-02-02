@@ -15,7 +15,9 @@
     <string name="credit_label">Credit</string>
     <string name="recipient_selection_label">Choose recipient</string>
     <string name="checkout_label">Confirm transaction</string>
+    <string name="transaction_status">Completed</string>
     <string name="transaction_label">Transaction successful</string>
+    <string name="transaction_message">Your transfer was sent successfully.</string>
     <string name="transaction_amount_label">Transaction amount</string>
     <string name="transaction_base_label">Base amount</string>
     <string name="transactions_label">Transactions</string>
@@ -27,6 +29,7 @@
     <string name="send_to">Send to</string>
     <string name="sending_to">Sending to</string>
     <string name="confirm_label">Confirm</string>
+    <string name="got_it_label">Got it</string>
     <string name="continue_label">Continue</string>
     <string name="close_label">Close</string>
     <string name="cancel_label">Cancel</string>
@@ -49,7 +52,10 @@
     <string name="balance_label">Current balance %s</string>
     <string name="reward_description">You have %d Free %s</string>
     <string name="error_title">Oops! an error occurred</string>
+    <string name="error_label">Something went wrong</string>
+    <string name="error_message">We were not able to make your transfer. Please try again later.</string>
     <string name="retry_label">Retry</string>
+    <string name="retry_again_label">Try again</string>
 
     <string name="base_amount">Base amount</string>
     <string name="recipient_username">Recipient username</string>

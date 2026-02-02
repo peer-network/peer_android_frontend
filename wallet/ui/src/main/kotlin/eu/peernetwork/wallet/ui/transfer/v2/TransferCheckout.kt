@@ -1,5 +1,7 @@
 package eu.peernetwork.wallet.ui.transfer.v2
 
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -10,7 +12,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -55,6 +59,9 @@ fun TransferCheckout(
     val initialized = remember { mutableStateOf(false) }
     val lastUpdated = rememberSaveable { mutableLongStateOf(System.currentTimeMillis()) }
     val isLoading = remember { derivedStateOf { state is TransferViewModel.State.Loading } }
+    val isSuccess = remember { derivedStateOf { state is TransferViewModel.State.Success } }
+    val enabled = remember { derivedStateOf { !isSuccess.value } }
+    val error = remember { derivedStateOf { (state as? TransferViewModel.State.Error?)?.error } }
     DesignStream(
         state = streamState,
         default = { LaunchedEffect(Unit) { handleFinish() } }
@@ -66,6 +73,7 @@ fun TransferCheckout(
             price = price.value.toString(),
             recipient = it.value.recipient,
             message = it.value.message,
+            enabled = enabled,
             isLoading = isLoading,
             onRefresh = { lastUpdated.longValue = System.currentTimeMillis() },
             onBack = onBack,
@@ -89,22 +97,33 @@ fun TransferCheckout(
                         initialized.value = true
                     }
                 }
-                LaunchedEffect(state) {
-                    if (state is TransferViewModel.State.Success) {
-                        model()
-                    }
+                TransferSuccess(
+                    showSheet = isSuccess,
+                    modifier = Modifier.navigationBarsPadding()
+                        .padding(16.dp)
+                ) {
+                    model()
+                    viewModel.reset()
                 }
             }
+        }
+        TransferError(
+            error = error,
+            component = component,
+            modifier = Modifier.navigationBarsPadding()
+                .padding(16.dp),
+            onReset = { viewModel.cancel() }
+        ) {
+            viewModel.transfer(
+                price = it.value.amount,
+                recipient = it.value.recipient.id,
+                message = it.value.message,
+            )
         }
     }
     LaunchedEffect(Unit) {
         (status as? TransferViewModel.Status.Confirmation?)?.let {
             viewModel.checkout(it.detail)
-        }
-    }
-    LaunchedEffect(state) {
-        if (state is TransferViewModel.State.Success) {
-            viewModel.reset()
         }
     }
 }

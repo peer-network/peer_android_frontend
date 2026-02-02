@@ -59,6 +59,12 @@ class TransferViewModel @Inject constructor(
         }
     }
 
+    fun cancel() {
+        viewModelScope.launch {
+            _state.tryEmit(State.Empty)
+        }
+    }
+
     sealed interface Status {
         data object Empty: Status
         data class Confirmation(val detail: UiTransferDetail): Status
