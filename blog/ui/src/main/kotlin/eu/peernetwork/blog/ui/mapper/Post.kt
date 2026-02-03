@@ -1,6 +1,7 @@
 package eu.peernetwork.blog.ui.mapper
 
 import eu.peernetwork.blog.domain.model.Content
+import eu.peernetwork.blog.ui.extension.normalizeWhitespaces
 import eu.peernetwork.blog.ui.model.UiPost
 import eu.peernetwork.blog.ui.model.UiPostDetail
 import eu.peernetwork.blog.ui.model.UiPostType
@@ -12,7 +13,8 @@ fun Content.mapFromDomain(): UiPost {
         type = type.mapFromDomain(),
         author = author.mapFromDomain(),
         title = title.annotate(),
-        description = description.annotate(),
+        description = description.normalizeWhitespaces()
+            .annotate(),
         asset = media.mapFromDomain(),
         likes = likes,
         isLiked = isLiked,

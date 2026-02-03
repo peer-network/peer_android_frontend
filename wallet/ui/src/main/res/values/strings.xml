@@ -62,6 +62,7 @@
     <string name="recipient_search">Search user…</string>
     <string name="platform_charge">%s%% to Peer Bank (platform fee)</string>
     <string name="burn_charge">%s%% Burned (removed from supply)</string>
+    <string name="invite_charge">%s%% to your Inviter</string>
 
     <string name="min_token_placeholder">min: 0.000001</string>
 

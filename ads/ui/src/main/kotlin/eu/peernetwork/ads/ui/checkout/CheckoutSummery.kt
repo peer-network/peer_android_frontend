@@ -63,7 +63,7 @@ fun CheckoutSummery(
             )
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    text = "200",
+                    text = "${price.toInt()}",
                     style = MaterialTheme.typography.labelLarge,
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.onBackground

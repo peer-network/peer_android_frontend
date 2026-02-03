@@ -118,6 +118,7 @@ fun TransactionsList(
                         transaction.fees?.let {
                             val peer = (rate.peer * 100).toInt()
                             val burn = (rate.burn * 100).toInt()
+                            val invite = (rate.percentage * 100).toInt()
                             TransactionsSummeryItem(
                                 title = stringResource(R.string.platform_charge, "$peer"),
                                 price = "${it.peer}",
@@ -126,6 +127,12 @@ fun TransactionsList(
                                 title = stringResource(R.string.burn_charge, "$burn"),
                                 price = "${it.burn}",
                             )
+                            if (rate.percentage > 0) {
+                                TransactionsSummeryItem(
+                                    title = stringResource(R.string.invite_charge, "$invite"),
+                                    price = "${it.commission}",
+                                )
+                            }
                         }
                     }
                 }

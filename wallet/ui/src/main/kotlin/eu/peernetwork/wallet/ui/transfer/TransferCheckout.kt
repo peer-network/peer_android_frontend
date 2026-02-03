@@ -101,6 +101,7 @@ fun TransferCheckout(
                     rate = {
                         val peer = (rate.value.peer * 100).toInt()
                         val burn = (rate.value.burn * 100).toInt()
+                        val invite = (rate.value.percentage * 100).toInt()
                         TransactionsSummeryItem(
                             title = stringResource(R.string.platform_charge, "$peer"),
                             price = "${(price.value * rate.value.peer.toBigDecimal())
@@ -113,6 +114,14 @@ fun TransferCheckout(
                                 .setScale(2, RoundingMode.HALF_UP)}",
                             modifier = Modifier.padding(horizontal = 8.dp)
                         )
+                        if (rate.value.percentage > 0) {
+                            TransactionsSummeryItem(
+                                title = stringResource(R.string.invite_charge, "$invite"),
+                                price = "${(price.value * rate.value.percentage.toBigDecimal())
+                                    .setScale(2, RoundingMode.HALF_UP)}",
+                                modifier = Modifier.padding(horizontal = 8.dp)
+                            )
+                        }
                     }
                 ) {
                     BalanceOverview(
