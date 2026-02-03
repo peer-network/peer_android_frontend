@@ -14,6 +14,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -22,9 +23,12 @@ import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.luna.DesignStream
 import eu.peernetwork.core.ui.design.luna.DesignStreamState
 import eu.peernetwork.core.ui.extension.builder
+import eu.peernetwork.wallet.ui.R
 import eu.peernetwork.wallet.ui.balance.BalanceOverview
 import eu.peernetwork.wallet.ui.extension.route
+import eu.peernetwork.wallet.ui.rate.RateScreen
 import eu.peernetwork.wallet.ui.transactions.TransactionsNavigator.Companion.LocalTransactionsNavigator
+import eu.peernetwork.wallet.ui.transactions.TransactionsSummeryItem
 import java.math.RoundingMode
 
 @Composable
@@ -72,58 +76,81 @@ fun TransferCheckout(
         val price = remember { derivedStateOf {
             it.value.amount.setScale(2, RoundingMode.HALF_UP)
         } }
-        TransferPreview(
-            price = price.value.toString(),
-            recipient = it.value.recipient,
-            message = it.value.message,
-            enabled = enabled,
-            isLoading = isLoading,
-            onRefresh = { lastUpdated.longValue = System.currentTimeMillis() },
-            onBack = onBack,
-            onAuthorClicked = { handleUserClick(it.value.recipient.id) },
-            onMessageClicked = { spec, value -> navigator.navigate(spec.route(value)) },
-            onSend = {
-                viewModel.transfer(
-                    price = it.value.amount,
-                    recipient = it.value.recipient.id,
+        RateScreen(
+            provider = component,
+            viewModelStoreOwner = viewModelStoreOwner
+        ) { service, action ->
+            DesignStream(state = service) { rate ->
+                TransferPreview(
+                    price = price.value.toString(),
+                    recipient = it.value.recipient,
                     message = it.value.message,
-                )
-            }
-        ) {
-            BalanceOverview(
-                color = MaterialTheme.colorScheme.surfaceContainerLowest,
-                provider = component,
-                viewModelStoreOwner = viewModelStoreOwner
-            ) { component, model ->
-                LaunchedEffect(lastUpdated.longValue) {
-                    if (initialized.value) {
-                        model()
-                    } else {
-                        initialized.value = true
+                    enabled = enabled,
+                    isLoading = isLoading,
+                    onRefresh = { lastUpdated.longValue = System.currentTimeMillis() },
+                    onBack = onBack,
+                    onAuthorClicked = { handleUserClick(it.value.recipient.id) },
+                    onMessageClicked = { spec, value -> navigator.navigate(spec.route(value)) },
+                    onSend = {
+                        viewModel.transfer(
+                            price = it.value.amount,
+                            recipient = it.value.recipient.id,
+                            message = it.value.message,
+                        )
+                    },
+                    rate = {
+                        val peer = (rate.value.peer * 100).toInt()
+                        val burn = (rate.value.burn * 100).toInt()
+                        TransactionsSummeryItem(
+                            title = stringResource(R.string.platform_charge, "$peer"),
+                            price = "${(price.value * rate.value.peer.toBigDecimal())
+                                .setScale(2, RoundingMode.HALF_UP)}",
+                            modifier = Modifier.padding(horizontal = 8.dp)
+                        )
+                        TransactionsSummeryItem(
+                            title = stringResource(R.string.burn_charge, "$burn"),
+                            price = "${(price.value * rate.value.burn.toBigDecimal())
+                                .setScale(2, RoundingMode.HALF_UP)}",
+                            modifier = Modifier.padding(horizontal = 8.dp)
+                        )
+                    }
+                ) {
+                    BalanceOverview(
+                        color = MaterialTheme.colorScheme.surfaceContainerLowest,
+                        provider = component,
+                        viewModelStoreOwner = viewModelStoreOwner
+                    ) { component, model ->
+                        LaunchedEffect(lastUpdated.longValue) {
+                            if (initialized.value) {
+                                model()
+                            } else {
+                                initialized.value = true
+                            }
+                        }
+                        TransferSuccess(
+                            showSheet = isSuccess,
+                            modifier = Modifier.navigationBarsPadding()
+                                .padding(16.dp)
+                        ) {
+                            model()
+                            handleFinish()
+                        }
                     }
                 }
-                TransferSuccess(
-                    showSheet = isSuccess,
+                TransferError(
+                    error = error,
+                    component = component,
                     modifier = Modifier.navigationBarsPadding()
-                        .padding(16.dp)
+                        .padding(16.dp),
+                    onReset = { viewModel.cancel() }
                 ) {
-                    model()
-                    viewModel.reset()
+                    viewModel.transfer(
+                        price = it.value.amount,
+                        recipient = it.value.recipient.id,
+                        message = it.value.message,
+                    )
                 }
             }
-        }
-        TransferError(
-            error = error,
-            component = component,
-            modifier = Modifier.navigationBarsPadding()
-                .padding(16.dp),
-            onReset = { viewModel.cancel() }
-        ) {
-            viewModel.transfer(
-                price = it.value.amount,
-                recipient = it.value.recipient.id,
-                message = it.value.message,
-            )
         }
     }
     LaunchedEffect(Unit) {

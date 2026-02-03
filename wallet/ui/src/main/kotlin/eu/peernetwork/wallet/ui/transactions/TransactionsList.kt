@@ -33,6 +33,7 @@ fun TransactionsList(
     listState: LazyListState,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
+    onTransaction: () -> Unit,
     onClick: (String) -> Unit
 ) {
     val navigator = LocalTransactionsNavigator.current
@@ -41,8 +42,9 @@ fun TransactionsList(
         limit = limit,
         lastUpdated = lastUpdated,
         provider = provider,
+        onClick = onTransaction,
         viewModelStoreOwner = viewModelStoreOwner
-    ) { component, items ->
+    ) { component, items, rate ->
         LazyColumn(
             state = listState,
             modifier = Modifier.fillMaxSize(),
@@ -77,8 +79,9 @@ fun TransactionsList(
                         leading = {
                             TransactionsAvatar(
                                 icon = painterResource(R.drawable.ic_transfer_direction),
-                                contentDescription = transaction.res?.let { stringResource(it) }
-                                    ?: title.text,
+                                contentDescription = transaction.res?.let {
+                                    stringResource(it)
+                                } ?: title.text,
                                 isRecipient = isRecipient
                             ) {
                                 if (transaction.icon != null && transaction.res != null) {
@@ -113,8 +116,8 @@ fun TransactionsList(
                             price = "${transaction.amount.net}",
                         )
                         transaction.fees?.let {
-                            val peer = (transaction.tax.peer * 100).toInt()
-                            val burn = (transaction.tax.burn * 100).toInt()
+                            val peer = (rate.peer * 100).toInt()
+                            val burn = (rate.burn * 100).toInt()
                             TransactionsSummeryItem(
                                 title = stringResource(R.string.platform_charge, "$peer"),
                                 price = "${it.peer}",

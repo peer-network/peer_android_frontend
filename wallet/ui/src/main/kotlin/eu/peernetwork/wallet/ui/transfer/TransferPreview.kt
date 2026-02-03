@@ -3,6 +3,7 @@ package eu.peernetwork.wallet.ui.transfer
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -39,6 +40,7 @@ fun TransferPreview(
     onSend: () -> Unit,
     onAuthorClicked: () -> Unit,
     onMessageClicked: (DesignRichText, String) -> Unit,
+    rate: @Composable ColumnScope.() -> Unit = {},
     content: @Composable () -> Unit,
 ) {
     val isRefreshing = remember { mutableStateOf(false) }
@@ -64,7 +66,8 @@ fun TransferPreview(
                 )
                 TransferSummary(
                     amount = price,
-                    modifier = Modifier.padding(top = 10.dp)
+                    modifier = Modifier.padding(top = 10.dp),
+                    content = rate
                 )
                 if (message.isNotEmpty()) {
                     TransferMessage(

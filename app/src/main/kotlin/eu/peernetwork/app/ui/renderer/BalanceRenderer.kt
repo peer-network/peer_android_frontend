@@ -75,7 +75,7 @@ class BalanceRenderer @Inject constructor(
     }
 
     @Composable
-    override fun Charges(
+    override fun Rate(
         viewModelStoreOwner: ViewModelStoreOwner,
         content: @Composable ((State<DesignStreamState<UiCharge>>, () -> Unit) -> Unit)
     ) {

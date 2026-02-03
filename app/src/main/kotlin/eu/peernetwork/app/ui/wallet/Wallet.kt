@@ -30,7 +30,6 @@ interface Wallet : ApplicationProvider {
         Member,
         Profile,
         Balance,
-        Rate,
         Transactions,
         Search,
         UiComponentProvider

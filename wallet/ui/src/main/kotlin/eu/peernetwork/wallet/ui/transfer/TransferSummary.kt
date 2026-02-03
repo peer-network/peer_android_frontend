@@ -11,6 +11,7 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -21,7 +22,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,8 +43,9 @@ import eu.peernetwork.wallet.ui.R
 fun TransferSummary(
     amount: String,
     modifier: Modifier = Modifier,
+    content: @Composable ColumnScope.() -> Unit
 ) {
-    val isVisible = rememberSaveable { mutableStateOf(false) }
+    val isVisible = rememberSaveable { mutableStateOf(true) }
     val rotation = animateFloatAsState(
         targetValue = if (isVisible.value) -90f else 0f,
         animationSpec = tween(
@@ -50,6 +54,7 @@ fun TransferSummary(
         ),
         label = "TransactionsItemTrailingIndication"
     )
+    val updatedContent by rememberUpdatedState(content)
     Column(
         modifier = Modifier.then(modifier)
             .fillMaxWidth()
@@ -123,7 +128,9 @@ fun TransferSummary(
             },
         ) { visible ->
             if (visible) {
-                Text("....", modifier = Modifier.padding(horizontal = 8.dp))
+                Column(modifier = Modifier.padding(vertical = 4.dp)) {
+                    updatedContent()
+                }
             }
         }
     }
@@ -133,6 +140,6 @@ fun TransferSummary(
 @Composable
 fun PreviewTransferSummary() {
     DesignTheme(isDarkMode = true) {
-        TransferSummary(amount = "1 760")
+        TransferSummary(amount = "1 760") {}
     }
 }

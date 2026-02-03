@@ -12,6 +12,7 @@ import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.factory.UiBuilderFactory
 import eu.peernetwork.core.ui.factory.UiViewModelFactory
 import eu.peernetwork.wallet.ui.balance.Balance
+import eu.peernetwork.wallet.ui.rate.Rate
 import javax.inject.Provider
 
 @Module
@@ -35,7 +36,7 @@ object TransferModule {
     @IntoMap
     @Transfer.Scope
     @UiViewModel(TransferViewModel::class)
-    fun v2ViewModel(viewModel: TransferViewModel): ViewModel = viewModel
+    fun viewModel(viewModel: TransferViewModel): ViewModel = viewModel
 
     @Provides
     @Transfer.Scope
@@ -43,5 +44,13 @@ object TransferModule {
     @UiBuilder(Balance.Builder::class)
     fun provideBalanceBuilder(component: Transfer.Component): UiComponent.Builder {
         return Balance.Builder(component)
+    }
+
+    @Provides
+    @Transfer.Scope
+    @IntoMap
+    @UiBuilder(Rate.Builder::class)
+    fun provideRateBuilder(component: Transfer.Component): UiComponent.Builder {
+        return Rate.Builder(component)
     }
 }

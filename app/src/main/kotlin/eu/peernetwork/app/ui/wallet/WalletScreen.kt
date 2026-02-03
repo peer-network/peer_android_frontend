@@ -63,10 +63,6 @@ fun WalletScreen(
             onSearch = { showSheet.value = true }
         ) { controller ->
             WalletPage(
-                onClick = {
-                    recipient.value = null
-                    controller.navigateIfNecessary("transfer")
-                },
                 onRefresh = { lastUpdated.longValue = System.currentTimeMillis() },
                 header = { BalanceOverview(lastUpdated, component, viewModelStoreOwner) },
             ) {
@@ -76,6 +72,10 @@ fun WalletScreen(
                     lastUpdated = lastUpdated,
                     listState = listState,
                     provider = component,
+                    onTransaction = {
+                        recipient.value = null
+                        controller.navigateIfNecessary("transfer")
+                    },
                     viewModelStoreOwner = viewModelStoreOwner
                 ) { controller.navigateIfNecessary("profile/${it}") }
             }

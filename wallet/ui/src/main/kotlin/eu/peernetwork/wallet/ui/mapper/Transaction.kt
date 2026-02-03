@@ -2,7 +2,6 @@ package eu.peernetwork.wallet.ui.mapper
 
 import eu.peernetwork.core.ui.mapper.annotate
 import eu.peernetwork.wallet.domain.model.Transaction
-import eu.peernetwork.wallet.ui.model.UiTax
 import eu.peernetwork.wallet.ui.model.UiTransaction
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -19,7 +18,6 @@ fun Transaction.mapToTransaction(): UiTransaction {
         category = category.mapFromDomain(),
         amount = amount.mapFromDomain(),
         fees = fees?.mapFromDomain(),
-        tax = UiTax.Free,
         createdAt = createdAt.toFormattedDate()
     )
 }
