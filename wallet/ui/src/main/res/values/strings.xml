@@ -77,6 +77,8 @@
     <string name="default_transaction_label">Transaction</string>
     <string name="pinned_post_transaction_label">Pinned post promo</string>
 
+    <string name="message_counter_label">%d/%d</string>
+
     <string name="transaction_message_label">Add a message (optional)</string>
     <string name="transaction_message_placeholder">e.g., Thanks for the coffee! ☕</string>
 

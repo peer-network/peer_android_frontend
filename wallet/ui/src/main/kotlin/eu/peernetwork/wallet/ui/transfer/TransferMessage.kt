@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
@@ -35,12 +36,14 @@ import eu.peernetwork.core.ui.design.luna.DesignTextField
 import eu.peernetwork.core.ui.extension.value
 import eu.peernetwork.core.ui.mapper.annotate
 import eu.peernetwork.core.ui.theme.DesignTheme
+import eu.peernetwork.core.ui.theme.PeerAppDarkRed
 import eu.peernetwork.wallet.ui.R
 
 @Composable
 fun TransferMessage(
     state: TextFieldState,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    maxLength: Int = 500
 ) {
     Column(
         modifier = Modifier.then(modifier)
@@ -57,13 +60,24 @@ fun TransferMessage(
             Icon(
                 painter = painterResource(R.drawable.ic_message),
                 contentDescription = stringResource(R.string.transaction_message_label),
-                modifier = Modifier.size(16.dp),
+                modifier = Modifier.size(18.dp),
                 tint = MaterialTheme.colorScheme.onBackground
             )
             Text(
                 text = stringResource(R.string.transaction_message_label),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onBackground,
+                modifier = Modifier.padding(horizontal = 8.dp)
+            )
+            Spacer(modifier = Modifier.weight(1f))
+            Text(
+                text = stringResource(R.string.message_counter_label, state.text.length, maxLength),
+                style = MaterialTheme.typography.labelSmall,
+                color = if (state.text.length >= maxLength) {
+                    PeerAppDarkRed
+                } else {
+                    MaterialTheme.colorScheme.outline
+                },
                 modifier = Modifier.padding(horizontal = 8.dp)
             )
         }
@@ -75,6 +89,7 @@ fun TransferMessage(
                 end = 16.dp,
                 bottom = 56.dp,
             ),
+            maxLength = maxLength,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
             shape = RoundedCornerShape(16.dp),
             modifier = Modifier.fillMaxWidth()
@@ -111,7 +126,7 @@ fun TransferMessage(
             Icon(
                 painter = painterResource(R.drawable.ic_message),
                 contentDescription = stringResource(R.string.message_title),
-                modifier = Modifier.size(16.dp),
+                modifier = Modifier.size(18.dp),
                 tint = MaterialTheme.colorScheme.onBackground
             )
             Text(
