@@ -14,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -39,6 +40,7 @@ import java.math.BigDecimal
 
 @Composable
 fun TransferPage(
+    balance: State<BigDecimal>,
     disable: MutableState<Boolean>,
     isLoading: MutableState<Boolean>,
     recipient: MutableState<UiRecipient?>,
@@ -60,6 +62,7 @@ fun TransferPage(
         recipient.value != null
                 && currentAmount != null
                 && currentAmount > BigDecimal.ZERO
+                && currentAmount <= balance.value
     } }
     val message by rememberSaveable(stateSaver = TextFieldState.Saver) { mutableStateOf(TextFieldState()) }
     DesignRefreshScaffold(isRefreshing, onRefresh = onRefresh) {
@@ -143,11 +146,13 @@ fun TransferPage(
 @Composable
 fun PreviewTransferPage() {
     val disable = remember { mutableStateOf(false) }
+    val balance = remember { mutableStateOf(BigDecimal.ZERO) }
     val isLoading = remember { mutableStateOf(false) }
     val recipient = remember { mutableStateOf<UiRecipient?>(null) }
     val focusRequester = FocusRequester()
     DesignTheme(isDarkMode = true) {
         TransferPage(
+            balance = balance,
             disable = disable,
             isLoading = isLoading,
             recipient = recipient,
