@@ -56,7 +56,10 @@ fun TransferPage(
     val isRefreshing = remember { mutableStateOf(false) }
     val amount by rememberSaveable(stateSaver = TextFieldState.Saver) { mutableStateOf(TextFieldState()) }
     val isEnabled = remember { derivedStateOf {
-        recipient.value != null && amount.value.toBigDecimalOrNull() != null
+        val currentAmount = amount.value.toBigDecimalOrNull()
+        recipient.value != null
+                && currentAmount != null
+                && currentAmount > BigDecimal.ZERO
     } }
     val message by rememberSaveable(stateSaver = TextFieldState.Saver) { mutableStateOf(TextFieldState()) }
     DesignRefreshScaffold(isRefreshing, onRefresh = onRefresh) {

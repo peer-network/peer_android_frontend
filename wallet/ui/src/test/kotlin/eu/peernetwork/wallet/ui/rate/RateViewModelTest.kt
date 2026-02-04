@@ -1,10 +1,9 @@
-package eu.peernetwork.wallet.ui.service
+package eu.peernetwork.wallet.ui.rate
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import app.cash.turbine.test
 import eu.peernetwork.wallet.domain.model.Tax
 import eu.peernetwork.wallet.domain.usecase.TaxUsecase
-import eu.peernetwork.wallet.ui.rate.RateViewModel
 import eu.peernetwork.wallet.ui.mapper.mapFromDomain
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -22,7 +21,7 @@ import org.junit.Test
 import kotlin.test.assertEquals
 
 @OptIn(ExperimentalCoroutinesApi::class)
-internal class ServiceViewModelTest {
+internal class RateViewModelTest {
     @get:Rule
     val instantExecutorRule = InstantTaskExecutorRule()
 

@@ -102,6 +102,12 @@ fun TransferCheckout(
                         val peer = (rate.value.peer * 100).toInt()
                         val burn = (rate.value.burn * 100).toInt()
                         val invite = (rate.value.percentage * 100).toInt()
+                        val total = remember { derivedStateOf {
+                            price.value +
+                            (price.value * rate.value.percentage.toBigDecimal()) +
+                                    (price.value * rate.value.burn.toBigDecimal()) +
+                                    (price.value * rate.value.peer.toBigDecimal())
+                        } }
                         TransactionsSummeryItem(
                             title = stringResource(R.string.platform_charge, "$peer"),
                             price = "${(price.value * rate.value.peer.toBigDecimal())
@@ -122,6 +128,13 @@ fun TransferCheckout(
                                 modifier = Modifier.padding(horizontal = 8.dp)
                             )
                         }
+                        TransactionsSummeryItem(
+                            title = stringResource(R.string.total_amount),
+                            color = MaterialTheme.colorScheme.onBackground,
+                            price = "${total.value.setScale(2, RoundingMode.HALF_UP)}",
+                            modifier = Modifier.padding(horizontal = 8.dp)
+                                .padding(top = 4.dp)
+                        )
                     }
                 ) {
                     BalanceOverview(

@@ -81,6 +81,7 @@ fun TransferScreen(
             }
         }
     }
+    LaunchedEffect(Unit) { viewModel.reset() }
     LaunchedEffect(status) {
         if (status is TransferViewModel.Status.Confirmation) {
             handleSubmit()

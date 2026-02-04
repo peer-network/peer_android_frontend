@@ -93,7 +93,8 @@ fun TransferMessage(
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
             shape = RoundedCornerShape(16.dp),
             modifier = Modifier.fillMaxWidth()
-                .padding(top = 8.dp),
+                .padding(top = 8.dp)
+                .heightIn(max = 200.dp),
             hint = stringResource(R.string.transaction_message_placeholder),
             visualTransformation = VisualTransformation {
                 TransformedText(
