@@ -127,8 +127,13 @@ fun DesignText(
         } else if (hasOverflow) {
             hasOverflow = false
             layoutResult?.let { result ->
-                val lastVisibleCharIndex = result.getLineEnd(maxLines - 1, visibleEnd = true)
-                val cutoffIndex = (lastVisibleCharIndex - expandEllipsis.length).coerceAtLeast(0)
+                 try {
+                    result.getLineEnd(maxLines - 1, visibleEnd = true)
+                } catch (_: Throwable) {
+                   null
+                }
+            }?.let { result ->
+                val cutoffIndex = (result - expandEllipsis.length).coerceAtLeast(0)
                 adjustedText = buildAnnotatedString {
                     append(text.subSequence(0, cutoffIndex))
                     pushStringAnnotation(tag = expandEllipsis, annotation = expandEllipsis)
@@ -143,8 +148,13 @@ fun DesignText(
     LaunchedEffect(hasOverflow, text, expandEllipsis) {
         if (hasOverflow) {
             layoutResult?.let { result ->
-                val lastVisibleCharIndex = result.getLineEnd(maxLines - 1, visibleEnd = true)
-                val cutoffIndex = (lastVisibleCharIndex - expandEllipsis.length).coerceAtLeast(0)
+                try {
+                    result.getLineEnd(maxLines - 1, visibleEnd = true)
+                } catch (_: Throwable) {
+                    null
+                }
+            }?.let { result ->
+                val cutoffIndex = (result - expandEllipsis.length).coerceAtLeast(0)
                 adjustedText = buildAnnotatedString {
                     append(text.subSequence(0, cutoffIndex))
                     pushStringAnnotation(tag = expandEllipsis, annotation = expandEllipsis)

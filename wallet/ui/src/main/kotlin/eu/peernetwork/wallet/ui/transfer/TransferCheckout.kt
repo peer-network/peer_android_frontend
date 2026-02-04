@@ -74,7 +74,7 @@ fun TransferCheckout(
         default = { LaunchedEffect(Unit) { handleFinish() } }
     ) {
         val price = remember { derivedStateOf {
-            it.value.amount.setScale(2, RoundingMode.HALF_UP)
+            it.value.amount.setScale(6, RoundingMode.HALF_UP)
         } }
         RateScreen(
             provider = component,
@@ -111,27 +111,27 @@ fun TransferCheckout(
                         TransactionsSummeryItem(
                             title = stringResource(R.string.platform_charge, "$peer"),
                             price = "${(price.value * rate.value.peer.toBigDecimal())
-                                .setScale(2, RoundingMode.HALF_UP)}",
+                                .setScale(6, RoundingMode.HALF_UP)}",
                             modifier = Modifier.padding(horizontal = 8.dp)
                         )
                         TransactionsSummeryItem(
                             title = stringResource(R.string.burn_charge, "$burn"),
                             price = "${(price.value * rate.value.burn.toBigDecimal())
-                                .setScale(2, RoundingMode.HALF_UP)}",
+                                .setScale(6, RoundingMode.HALF_UP)}",
                             modifier = Modifier.padding(horizontal = 8.dp)
                         )
                         if (rate.value.percentage > 0) {
                             TransactionsSummeryItem(
                                 title = stringResource(R.string.invite_charge, "$invite"),
                                 price = "${(price.value * rate.value.percentage.toBigDecimal())
-                                    .setScale(2, RoundingMode.HALF_UP)}",
+                                    .setScale(6, RoundingMode.HALF_UP)}",
                                 modifier = Modifier.padding(horizontal = 8.dp)
                             )
                         }
                         TransactionsSummeryItem(
                             title = stringResource(R.string.total_amount),
                             color = MaterialTheme.colorScheme.onBackground,
-                            price = "${total.value.setScale(2, RoundingMode.HALF_UP)}",
+                            price = "${total.value.setScale(6, RoundingMode.HALF_UP)}",
                             modifier = Modifier.padding(horizontal = 8.dp)
                                 .padding(top = 4.dp)
                         )

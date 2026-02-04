@@ -68,7 +68,7 @@ class TransferApiDelegate @Inject constructor(
             ResolveTransferMutation(
                 recipient = recipient,
                 message = Optional.presentIfNotNull(message),
-                numberoftokens = tokens.toInt()
+                numberoftokens = tokens.toString()
             )
         ).execute()
         val data = response.getOrThrow().resolveTransferV2

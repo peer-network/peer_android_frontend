@@ -26,6 +26,7 @@ import eu.peernetwork.core.ui.design.luna.DesignRichText
 import eu.peernetwork.core.ui.design.material.DesignScaffold
 import eu.peernetwork.core.ui.theme.DesignTheme
 import eu.peernetwork.wallet.ui.R
+import eu.peernetwork.wallet.ui.extension.normalizeWhitespaces
 import eu.peernetwork.wallet.ui.model.UiRecipient
 
 @Composable
@@ -71,7 +72,7 @@ fun TransferPreview(
                 )
                 if (message.isNotEmpty()) {
                     TransferMessage(
-                        message = message,
+                        message = message.normalizeWhitespaces(),
                         onClick = onMessageClicked,
                         modifier = Modifier.padding(top = 10.dp),
                     )

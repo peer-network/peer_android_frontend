@@ -12,9 +12,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -141,17 +143,22 @@ fun TransferMessage(
             .fillMaxWidth()
             .height(1.dp)
             .background(MaterialTheme.colorScheme.surfaceContainerLow))
-        Box(
-            contentAlignment = Alignment.CenterStart,
-            modifier = Modifier.padding(horizontal = 8.dp)
-                .heightIn(min = 56.dp)
+        Column(Modifier.fillMaxWidth()
+            .heightIn(max = 180.dp)
+            .verticalScroll(rememberScrollState())
         ) {
-            DesignRichText(
-                text = message.annotate(),
-                style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.onBackground,
-                onClick = onClick
-            )
+            Box(
+                contentAlignment = Alignment.CenterStart,
+                modifier = Modifier.padding(horizontal = 8.dp)
+                    .heightIn(min = 56.dp)
+            ) {
+                DesignRichText(
+                    text = message.annotate(),
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    onClick = onClick
+                )
+            }
         }
     }
 }
