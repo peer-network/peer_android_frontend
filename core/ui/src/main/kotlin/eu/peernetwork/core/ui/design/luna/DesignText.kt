@@ -115,14 +115,17 @@ fun DesignText(
         style = style
     )
     LaunchedEffect(expanded) {
-        if (expanded || maxLines == Int.MAX_VALUE) {
+        val isMax = maxLines == Int.MAX_VALUE
+        if (expanded || isMax) {
             adjustedText = buildAnnotatedString {
                 append(text)
-                pushStringAnnotation(tag = expandEllipsis, annotation = expandEllipsis)
-                withStyle(style = SpanStyle(fontWeight = FontWeight.SemiBold)) {
-                    append(collapseEllipsis)
+                if (!isMax) {
+                    pushStringAnnotation(tag = expandEllipsis, annotation = expandEllipsis)
+                    withStyle(style = SpanStyle(fontWeight = FontWeight.SemiBold)) {
+                        append(collapseEllipsis)
+                    }
+                    pop()
                 }
-                pop()
             }
         } else if (hasOverflow) {
             hasOverflow = false
