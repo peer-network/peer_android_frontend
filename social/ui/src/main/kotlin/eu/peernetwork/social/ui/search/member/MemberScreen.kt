@@ -1,5 +1,7 @@
 package eu.peernetwork.social.ui.search.member
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.input.TextFieldState
@@ -14,6 +16,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -79,12 +82,18 @@ fun MemberScreen(
             .then(modifier),
         loading = { MemberSkeleton(3, header) },
         error = { error ->
-            MemberError(component.resource().error(error.value)) {
-                viewModel.search(query.text.toString(), page)
+            Column {
+                updatedHeader()
+                MemberError(component.resource().error(error.value)) {
+                    viewModel.search(query.text.toString(), page)
+                }
             }
         }
     ) { lazyPagingItems ->
-        LazyColumn(modifier = Modifier.fillMaxSize()) {
+        LazyColumn(
+            contentPadding = PaddingValues(bottom = 48.dp),
+            modifier = Modifier.fillMaxSize()
+        ) {
             item { updatedHeader() }
             items(
                 count = lazyPagingItems.itemCount,

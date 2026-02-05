@@ -1,5 +1,5 @@
-mutation ResolveTransfer($recipient: ID!, $numberoftokens: Int!) {
-    resolveTransfer(recipient: $recipient, numberoftokens: $numberoftokens) {
+mutation ResolveTransfer($recipient: ID!, $numberoftokens: Decimal!, $message: String) {
+    resolveTransferV2(recipient: $recipient, numberoftokens: $numberoftokens, message: $message) {
         status
         ResponseCode
     }

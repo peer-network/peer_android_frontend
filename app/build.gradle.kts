@@ -6,8 +6,8 @@ plugins {
 android {
     ndkVersion = "26.1.10909125"
     defaultConfig {
-        versionCode = 39
-        versionName = "1.11.1"
+        versionCode = 40
+        versionName = "1.12.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true

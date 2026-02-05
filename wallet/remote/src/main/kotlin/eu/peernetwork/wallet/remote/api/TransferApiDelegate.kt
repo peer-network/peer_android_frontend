@@ -63,14 +63,15 @@ class TransferApiDelegate @Inject constructor(
         }
     }
 
-    override suspend fun send(recipient: String, tokens: BigDecimal): Receipt {
+    override suspend fun send(recipient: String, tokens: BigDecimal, message: String?): Receipt {
         val response = client().mutation(
             ResolveTransferMutation(
                 recipient = recipient,
-                numberoftokens = tokens.toInt()
+                message = Optional.presentIfNotNull(message),
+                numberoftokens = tokens.toString()
             )
         ).execute()
-        val data = response.getOrThrow().resolveTransfer
+        val data = response.getOrThrow().resolveTransferV2
         response.assertOrThrow(data.status, data.ResponseCode)
         return Receipt(
             recipient = recipient,

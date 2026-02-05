@@ -27,6 +27,7 @@
     <string name="wallet_label">Wallet</string>
     <string name="profile_label">Profile</string>
     <string name="trend_label">Trend</string>
+    <string name="transfer_label">Transfer</string>
 
     <string name="version_label">Version %s</string>
     <string name="skip_label">Skip</string>

@@ -37,7 +37,7 @@ import eu.peernetwork.core.ui.design.luna.DesignStreamState
 import eu.peernetwork.core.ui.theme.PeerAppRed
 import eu.peernetwork.wallet.ui.R
 import eu.peernetwork.wallet.ui.balance.BalanceScreen
-import eu.peernetwork.wallet.ui.dashboard.DashboardScreen
+import eu.peernetwork.wallet.ui.rate.RateScreen
 import javax.inject.Inject
 
 class BalanceRenderer @Inject constructor(
@@ -75,12 +75,12 @@ class BalanceRenderer @Inject constructor(
     }
 
     @Composable
-    override fun Charges(
+    override fun Rate(
         viewModelStoreOwner: ViewModelStoreOwner,
         content: @Composable ((State<DesignStreamState<UiCharge>>, () -> Unit) -> Unit)
     ) {
         val updatedContent by rememberUpdatedState(content)
-        DashboardScreen(
+        RateScreen(
             provider = provider,
             viewModelStoreOwner = viewModelStoreOwner
         ) { service, action ->

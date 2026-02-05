@@ -9,7 +9,7 @@ import eu.peernetwork.core.ui.renderer.Renderer
 
 interface CheckoutBalance : Renderer.Stateless {
     @Composable
-    fun Charges(
+    fun Rate(
         viewModelStoreOwner: ViewModelStoreOwner,
         content: @Composable (State<DesignStreamState<UiCharge>>, () -> Unit) -> Unit
     )

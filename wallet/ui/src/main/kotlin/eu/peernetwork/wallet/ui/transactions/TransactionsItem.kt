@@ -39,6 +39,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.core.ui.design.luna.DesignRichText
@@ -75,7 +76,11 @@ fun TransactionsItem(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth()
         ) {
-            updatedLead()
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier.height(48.dp)
+                    .align(Alignment.Top)
+            ) { updatedLead() }
             Column(
                 modifier = Modifier
                     .weight(1f)
@@ -86,6 +91,8 @@ fun TransactionsItem(
                     style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.onBackground,
                     fontWeight = FontWeight.SemiBold,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.tap(onProfileClicked)
                 )
                 Text(
@@ -105,7 +112,11 @@ fun TransactionsItem(
                     )
                 }
             }
-            updatedTrailing()
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier.height(48.dp)
+                    .align(Alignment.Top)
+            ) { updatedTrailing() }
         }
         updatedContent()
     }

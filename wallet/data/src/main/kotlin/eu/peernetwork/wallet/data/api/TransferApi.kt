@@ -15,5 +15,5 @@ interface TransferApi {
 
     suspend fun getQuote(token: Token): Quote
 
-    suspend fun send(recipient: String, tokens: BigDecimal): Receipt
+    suspend fun send(recipient: String, tokens: BigDecimal, message: String? = null): Receipt
 }

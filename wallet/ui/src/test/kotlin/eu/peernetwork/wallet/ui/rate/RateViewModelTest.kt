@@ -1,10 +1,9 @@
-package eu.peernetwork.wallet.ui.service
+package eu.peernetwork.wallet.ui.rate
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import app.cash.turbine.test
 import eu.peernetwork.wallet.domain.model.Tax
 import eu.peernetwork.wallet.domain.usecase.TaxUsecase
-import eu.peernetwork.wallet.ui.dashboard.DashboardViewModel
 import eu.peernetwork.wallet.ui.mapper.mapFromDomain
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -22,7 +21,7 @@ import org.junit.Test
 import kotlin.test.assertEquals
 
 @OptIn(ExperimentalCoroutinesApi::class)
-internal class ServiceViewModelTest {
+internal class RateViewModelTest {
     @get:Rule
     val instantExecutorRule = InstantTaskExecutorRule()
 
@@ -30,12 +29,12 @@ internal class ServiceViewModelTest {
 
     private val usecase = mockk<TaxUsecase>()
 
-    private lateinit var viewModel: DashboardViewModel
+    private lateinit var viewModel: RateViewModel
 
     @Before
     fun setup() {
         Dispatchers.setMain(dispatcher)
-        viewModel = DashboardViewModel(usecase)
+        viewModel = RateViewModel(usecase)
     }
 
     @After
@@ -57,8 +56,8 @@ internal class ServiceViewModelTest {
         }
         viewModel.initialize()
         viewModel.state.test {
-            assertEquals(DashboardViewModel.State.Loading, awaitItem())
-            assertEquals(DashboardViewModel.State.Success(tax.mapFromDomain()), awaitItem())
+            assertEquals(RateViewModel.State.Loading, awaitItem())
+            assertEquals(RateViewModel.State.Success(tax.mapFromDomain()), awaitItem())
         }
     }
 
@@ -68,7 +67,7 @@ internal class ServiceViewModelTest {
         coEvery { usecase() } throws exception
         viewModel.initialize()
         viewModel.state.test {
-            assertEquals(DashboardViewModel.State.Error(exception), awaitItem())
+            assertEquals(RateViewModel.State.Error(exception), awaitItem())
         }
     }
 }

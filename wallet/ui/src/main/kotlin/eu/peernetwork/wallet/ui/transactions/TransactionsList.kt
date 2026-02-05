@@ -23,6 +23,7 @@ import androidx.lifecycle.ViewModelStoreOwner
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.wallet.ui.R
 import eu.peernetwork.wallet.ui.extension.route
+import eu.peernetwork.wallet.ui.mapper.format
 import eu.peernetwork.wallet.ui.transactions.TransactionsNavigator.Companion.LocalTransactionsNavigator
 
 @Composable
@@ -33,6 +34,7 @@ fun TransactionsList(
     listState: LazyListState,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
+    onTransaction: () -> Unit,
     onClick: (String) -> Unit
 ) {
     val navigator = LocalTransactionsNavigator.current
@@ -41,8 +43,9 @@ fun TransactionsList(
         limit = limit,
         lastUpdated = lastUpdated,
         provider = provider,
+        onClick = onTransaction,
         viewModelStoreOwner = viewModelStoreOwner
-    ) { component, items ->
+    ) { component, items, rate ->
         LazyColumn(
             state = listState,
             modifier = Modifier.fillMaxSize(),
@@ -72,13 +75,18 @@ fun TransactionsList(
                         } ?: title,
                         description = transaction.message,
                         createAt = transaction.createdAt,
-                        price = "${transaction.amount.gross}",
+                        price = if (isRecipient) {
+                            transaction.amount.net.format()
+                        } else {
+                            transaction.amount.gross.format()
+                        },
                         expanded = expanded,
                         leading = {
                             TransactionsAvatar(
                                 icon = painterResource(R.drawable.ic_transfer_direction),
-                                contentDescription = transaction.res?.let { stringResource(it) }
-                                    ?: title.text,
+                                contentDescription = transaction.res?.let {
+                                    stringResource(it)
+                                } ?: title.text,
                                 isRecipient = isRecipient
                             ) {
                                 if (transaction.icon != null && transaction.res != null) {
@@ -110,19 +118,30 @@ fun TransactionsList(
                     ) {
                         TransactionsSummeryItem(
                             title = stringResource(R.string.transaction_amount_label),
-                            price = "${transaction.amount.net}",
+                            price = if (isRecipient) {
+                                transaction.amount.gross.format()
+                            } else {
+                                transaction.amount.net.format()
+                            },
                         )
                         transaction.fees?.let {
-                            val peer = (transaction.tax.peer * 100).toInt()
-                            val burn = (transaction.tax.burn * 100).toInt()
+                            val peer = (rate.peer * 100).toInt()
+                            val burn = (rate.burn * 100).toInt()
+                            val invite = (rate.percentage * 100).toInt()
                             TransactionsSummeryItem(
                                 title = stringResource(R.string.platform_charge, "$peer"),
-                                price = "${it.peer}",
+                                price = it.peer.format(),
                             )
                             TransactionsSummeryItem(
                                 title = stringResource(R.string.burn_charge, "$burn"),
-                                price = "${it.burn}",
+                                price = it.burn.format(),
                             )
+                            if (rate.percentage > 0) {
+                                TransactionsSummeryItem(
+                                    title = stringResource(R.string.invite_charge, "$invite"),
+                                    price = it.commission.format(),
+                                )
+                            }
                         }
                     }
                 }

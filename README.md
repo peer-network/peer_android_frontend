@@ -2,6 +2,9 @@
 
 The official Android client for Peer Network, built with modern Android development standards.
 
+📱 **Get it on Google Play**  
+https://play.google.com/store/apps/details?id=eu.peernetwork.app
+
 [![Contributing](https://img.shields.io/badge/Contributing-Guidelines-blue.svg)](https://github.com/peer-network/.github/blob/main/CONTRIBUTING.md)
 
 ## 🏗 Technology Stack
