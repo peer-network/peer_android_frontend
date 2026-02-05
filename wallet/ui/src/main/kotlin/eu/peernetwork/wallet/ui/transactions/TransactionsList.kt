@@ -23,6 +23,7 @@ import androidx.lifecycle.ViewModelStoreOwner
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.wallet.ui.R
 import eu.peernetwork.wallet.ui.extension.route
+import eu.peernetwork.wallet.ui.mapper.format
 import eu.peernetwork.wallet.ui.transactions.TransactionsNavigator.Companion.LocalTransactionsNavigator
 
 @Composable
@@ -74,7 +75,11 @@ fun TransactionsList(
                         } ?: title,
                         description = transaction.message,
                         createAt = transaction.createdAt,
-                        price = "${transaction.amount.gross}",
+                        price = if (isRecipient) {
+                            transaction.amount.net.format()
+                        } else {
+                            transaction.amount.gross.format()
+                        },
                         expanded = expanded,
                         leading = {
                             TransactionsAvatar(
@@ -113,7 +118,11 @@ fun TransactionsList(
                     ) {
                         TransactionsSummeryItem(
                             title = stringResource(R.string.transaction_amount_label),
-                            price = "${transaction.amount.net}",
+                            price = if (isRecipient) {
+                                transaction.amount.gross.format()
+                            } else {
+                                transaction.amount.net.format()
+                            },
                         )
                         transaction.fees?.let {
                             val peer = (rate.peer * 100).toInt()
@@ -121,16 +130,16 @@ fun TransactionsList(
                             val invite = (rate.percentage * 100).toInt()
                             TransactionsSummeryItem(
                                 title = stringResource(R.string.platform_charge, "$peer"),
-                                price = "${it.peer}",
+                                price = it.peer.format(),
                             )
                             TransactionsSummeryItem(
                                 title = stringResource(R.string.burn_charge, "$burn"),
-                                price = "${it.burn}",
+                                price = it.burn.format(),
                             )
                             if (rate.percentage > 0) {
                                 TransactionsSummeryItem(
                                     title = stringResource(R.string.invite_charge, "$invite"),
-                                    price = "${it.commission}",
+                                    price = it.commission.format(),
                                 )
                             }
                         }

@@ -13,12 +13,15 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.luna.DesignStream
 import eu.peernetwork.core.ui.design.luna.DesignStreamState
+import eu.peernetwork.wallet.ui.mapper.format
+import java.math.BigDecimal
 import java.math.RoundingMode
 
 @Composable
 @Suppress("UNCHECKED_CAST")
 fun BalanceOverview(
     color: Color? = null,
+    offset: BigDecimal = BigDecimal.ZERO,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
     content: @Composable (Balance.Component, BalanceViewModel) -> Unit
@@ -51,11 +54,11 @@ fun BalanceOverview(
             error = { BalanceError(it, component) { viewModel() } }
         ) {
             val balance = remember { derivedStateOf {
-                it.value.balance.setScale(2, RoundingMode.HALF_UP)
+                (it.value.balance - offset).setScale(8, RoundingMode.HALF_UP)
             } }
             BalancePreview(
                 color = color,
-                balance = balance.value.toString()
+                balance = balance.value.format()
             )
         }
         updatedContent(component, viewModel)

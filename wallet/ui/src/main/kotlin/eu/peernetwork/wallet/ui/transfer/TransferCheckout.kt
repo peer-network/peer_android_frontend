@@ -81,6 +81,15 @@ fun TransferCheckout(
             viewModelStoreOwner = viewModelStoreOwner
         ) { service, action ->
             DesignStream(state = service) { rate ->
+                val peer = (rate.value.peer * 100).toInt()
+                val burn = (rate.value.burn * 100).toInt()
+                val invite = (rate.value.percentage * 100).toInt()
+                val total = remember { derivedStateOf {
+                    price.value +
+                            (price.value * rate.value.percentage.toBigDecimal()) +
+                            (price.value * rate.value.burn.toBigDecimal()) +
+                            (price.value * rate.value.peer.toBigDecimal())
+                } }
                 TransferPreview(
                     price = price.value.toString(),
                     recipient = it.value.recipient,
@@ -99,32 +108,25 @@ fun TransferCheckout(
                         )
                     },
                     rate = {
-                        val peer = (rate.value.peer * 100).toInt()
-                        val burn = (rate.value.burn * 100).toInt()
-                        val invite = (rate.value.percentage * 100).toInt()
-                        val total = remember { derivedStateOf {
-                            price.value +
-                            (price.value * rate.value.percentage.toBigDecimal()) +
-                                    (price.value * rate.value.burn.toBigDecimal()) +
-                                    (price.value * rate.value.peer.toBigDecimal())
-                        } }
                         TransactionsSummeryItem(
                             title = stringResource(R.string.platform_charge, "$peer"),
                             price = "${(price.value * rate.value.peer.toBigDecimal())
-                                .setScale(6, RoundingMode.HALF_UP)}",
+                                .setScale(8, RoundingMode.HALF_UP)
+                                .toPlainString()}",
                             modifier = Modifier.padding(horizontal = 8.dp)
                         )
                         TransactionsSummeryItem(
                             title = stringResource(R.string.burn_charge, "$burn"),
                             price = "${(price.value * rate.value.burn.toBigDecimal())
-                                .setScale(6, RoundingMode.HALF_UP)}",
+                                .setScale(8, RoundingMode.HALF_UP)
+                                .toPlainString()}",
                             modifier = Modifier.padding(horizontal = 8.dp)
                         )
                         if (rate.value.percentage > 0) {
                             TransactionsSummeryItem(
                                 title = stringResource(R.string.invite_charge, "$invite"),
                                 price = "${(price.value * rate.value.percentage.toBigDecimal())
-                                    .setScale(6, RoundingMode.HALF_UP)}",
+                                    .setScale(8, RoundingMode.HALF_UP)}",
                                 modifier = Modifier.padding(horizontal = 8.dp)
                             )
                         }
@@ -139,6 +141,7 @@ fun TransferCheckout(
                 ) {
                     BalanceOverview(
                         color = MaterialTheme.colorScheme.surfaceContainerLowest,
+                        offset = total.value,
                         provider = component,
                         viewModelStoreOwner = viewModelStoreOwner
                     ) { component, model ->

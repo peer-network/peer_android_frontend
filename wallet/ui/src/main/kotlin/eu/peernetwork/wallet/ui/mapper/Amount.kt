@@ -6,7 +6,7 @@ import java.math.RoundingMode
 
 fun Amount.mapFromDomain(): UiAmount {
     return UiAmount(
-        net = net.setScale(2, RoundingMode.HALF_UP),
-        gross = gross.setScale(2, RoundingMode.HALF_UP)
+        net = net.setScale(8, RoundingMode.HALF_UP),
+        gross = gross.setScale(8, RoundingMode.HALF_UP)
     )
 }
