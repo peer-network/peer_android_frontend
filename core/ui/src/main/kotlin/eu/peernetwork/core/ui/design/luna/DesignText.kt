@@ -115,7 +115,7 @@ fun DesignText(
         style = style
     )
     LaunchedEffect(expanded) {
-        if (expanded) {
+        if (expanded || maxLines == Int.MAX_VALUE) {
             adjustedText = buildAnnotatedString {
                 append(text)
                 pushStringAnnotation(tag = expandEllipsis, annotation = expandEllipsis)
@@ -127,13 +127,13 @@ fun DesignText(
         } else if (hasOverflow) {
             hasOverflow = false
             layoutResult?.let { result ->
-                 try {
+                try {
                     result.getLineEnd(maxLines - 1, visibleEnd = true)
                 } catch (_: Throwable) {
-                   null
+                    null
                 }
-            }?.let { result ->
-                val cutoffIndex = (result - expandEllipsis.length).coerceAtLeast(0)
+            }?.let { lastVisibleCharIndex ->
+                val cutoffIndex = (lastVisibleCharIndex - expandEllipsis.length).coerceAtLeast(0)
                 adjustedText = buildAnnotatedString {
                     append(text.subSequence(0, cutoffIndex))
                     pushStringAnnotation(tag = expandEllipsis, annotation = expandEllipsis)
@@ -146,15 +146,15 @@ fun DesignText(
         }
     }
     LaunchedEffect(hasOverflow, text, expandEllipsis) {
-        if (hasOverflow) {
+        if (hasOverflow && maxLines != Int.MAX_VALUE) {
             layoutResult?.let { result ->
                 try {
                     result.getLineEnd(maxLines - 1, visibleEnd = true)
                 } catch (_: Throwable) {
                     null
                 }
-            }?.let { result ->
-                val cutoffIndex = (result - expandEllipsis.length).coerceAtLeast(0)
+            }?.let { lastVisibleCharIndex ->
+                val cutoffIndex = (lastVisibleCharIndex - expandEllipsis.length).coerceAtLeast(0)
                 adjustedText = buildAnnotatedString {
                     append(text.subSequence(0, cutoffIndex))
                     pushStringAnnotation(tag = expandEllipsis, annotation = expandEllipsis)

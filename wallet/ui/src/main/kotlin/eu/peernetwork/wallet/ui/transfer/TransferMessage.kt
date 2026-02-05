@@ -139,7 +139,7 @@ fun TransferMessage(
                 modifier = Modifier.padding(horizontal = 8.dp)
             )
         }
-        Box(modifier = Modifier.padding(vertical = 8.dp)
+        Box(modifier = Modifier.padding(top = 8.dp)
             .fillMaxWidth()
             .height(1.dp)
             .background(MaterialTheme.colorScheme.surfaceContainerLow))
@@ -149,7 +149,8 @@ fun TransferMessage(
         ) {
             Box(
                 contentAlignment = Alignment.CenterStart,
-                modifier = Modifier.padding(horizontal = 8.dp)
+                modifier = Modifier.padding(top = 8.dp)
+                    .padding(horizontal = 8.dp)
                     .heightIn(min = 56.dp)
             ) {
                 DesignRichText(
