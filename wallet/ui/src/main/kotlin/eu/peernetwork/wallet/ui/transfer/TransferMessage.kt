@@ -12,11 +12,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -143,23 +141,19 @@ fun TransferMessage(
             .fillMaxWidth()
             .height(1.dp)
             .background(MaterialTheme.colorScheme.surfaceContainerLow))
-        Column(Modifier.fillMaxWidth()
-            .heightIn(max = 180.dp)
-            .verticalScroll(rememberScrollState())
+        Box(
+            contentAlignment = Alignment.CenterStart,
+            modifier = Modifier.padding(top = 8.dp)
+                .padding(horizontal = 8.dp)
+                .heightIn(min = 56.dp)
         ) {
-            Box(
-                contentAlignment = Alignment.CenterStart,
-                modifier = Modifier.padding(top = 8.dp)
-                    .padding(horizontal = 8.dp)
-                    .heightIn(min = 56.dp)
-            ) {
-                DesignRichText(
-                    text = message.annotate(),
-                    style = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.onBackground,
-                    onClick = onClick
-                )
-            }
+            DesignRichText(
+                text = message.annotate(),
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.onBackground,
+                maxLines = 4,
+                onClick = onClick
+            )
         }
     }
 }

@@ -8,8 +8,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -79,7 +82,10 @@ fun TransferPage(
                 ) { updatedContent() }
             }
         ) {
-            Column {
+            Column(
+                modifier = Modifier.verticalScroll(rememberScrollState())
+                .imePadding()
+            ) {
                 Crossfade(recipient.value) { targetState ->
                     targetState?.let {
                         TransferRecipient(
@@ -114,7 +120,7 @@ fun TransferPage(
                     contentPadding = PaddingValues(horizontal = 16.dp),
                     colors = designSecondaryButtonColors(),
                     modifier = Modifier
-                        .padding(top = 16.dp)
+                        .padding(vertical = 16.dp)
                         .fillMaxWidth()
                 ) { Text(stringResource(R.string.continue_label)) }
             }
