@@ -7,6 +7,7 @@ import eu.peernetwork.persistence.domain.retrievable.RetrievableString
 import eu.peernetwork.user.domain.exception.AccountNotFoundException
 import eu.peernetwork.user.domain.interactor.AuthenticationInteractor
 import eu.peernetwork.user.domain.model.Account
+import eu.peernetwork.user.domain.model.Status
 import eu.peernetwork.user.domain.repository.AccountRepository
 import eu.peernetwork.user.domain.repository.AuthenticationRepository
 import kotlinx.coroutines.flow.Flow
@@ -47,7 +48,7 @@ class AuthenticationInteractorDelegate @Inject constructor(
                 logout()
             }
             throw error
-        }
+        }.let { it.copy(status = it.status ?: Status.VISIBLE) }
     }
 
     override fun observeAccount(): Flow<Account?> = observable(ACCOUNT_KEY).map {

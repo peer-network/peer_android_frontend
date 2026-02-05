@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import eu.peernetwork.blog.ui.engagement.EngagementInteractor.Companion.LocalEngagementInteractor
 import eu.peernetwork.blog.ui.engagement.EngagementReaction.Companion.LocalEngagementReaction
 import eu.peernetwork.blog.ui.engagement.EngagementReactionStream
+import eu.peernetwork.blog.ui.extension.normalizeWhitespaces
 import eu.peernetwork.blog.ui.extension.route
 import eu.peernetwork.blog.ui.mapper.format
 import eu.peernetwork.blog.ui.model.UiPost
@@ -26,6 +27,7 @@ import eu.peernetwork.blog.ui.model.UiPostType
 import eu.peernetwork.blog.ui.post.PostInteractor.Companion.LocalPostInteractor
 import eu.peernetwork.blog.ui.post.PostNavigator
 import eu.peernetwork.blog.ui.post.PostNavigator.Companion.LocalPostNavigator
+import eu.peernetwork.core.ui.mapper.annotate
 
 @Composable
 fun GalleryScreen(
@@ -51,7 +53,8 @@ fun GalleryScreen(
         GalleryScaffold(
             type = post.type,
             title = post.title,
-            description = post.description,
+            description = post.description.normalizeWhitespaces()
+                .annotate(),
             time = context.format(post.time),
             asset = post.asset,
             isVisible = isVisible,

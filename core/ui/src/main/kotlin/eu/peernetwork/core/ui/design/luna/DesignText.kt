@@ -115,19 +115,27 @@ fun DesignText(
         style = style
     )
     LaunchedEffect(expanded) {
-        if (expanded) {
+        val isMax = maxLines == Int.MAX_VALUE
+        if (expanded || isMax) {
             adjustedText = buildAnnotatedString {
                 append(text)
-                pushStringAnnotation(tag = expandEllipsis, annotation = expandEllipsis)
-                withStyle(style = SpanStyle(fontWeight = FontWeight.SemiBold)) {
-                    append(collapseEllipsis)
+                if (!isMax) {
+                    pushStringAnnotation(tag = expandEllipsis, annotation = expandEllipsis)
+                    withStyle(style = SpanStyle(fontWeight = FontWeight.SemiBold)) {
+                        append(collapseEllipsis)
+                    }
+                    pop()
                 }
-                pop()
             }
         } else if (hasOverflow) {
             hasOverflow = false
             layoutResult?.let { result ->
-                val lastVisibleCharIndex = result.getLineEnd(maxLines - 1, visibleEnd = true)
+                try {
+                    result.getLineEnd(maxLines - 1, visibleEnd = true)
+                } catch (_: Throwable) {
+                    null
+                }
+            }?.let { lastVisibleCharIndex ->
                 val cutoffIndex = (lastVisibleCharIndex - expandEllipsis.length).coerceAtLeast(0)
                 adjustedText = buildAnnotatedString {
                     append(text.subSequence(0, cutoffIndex))
@@ -141,9 +149,14 @@ fun DesignText(
         }
     }
     LaunchedEffect(hasOverflow, text, expandEllipsis) {
-        if (hasOverflow) {
+        if (hasOverflow && maxLines != Int.MAX_VALUE) {
             layoutResult?.let { result ->
-                val lastVisibleCharIndex = result.getLineEnd(maxLines - 1, visibleEnd = true)
+                try {
+                    result.getLineEnd(maxLines - 1, visibleEnd = true)
+                } catch (_: Throwable) {
+                    null
+                }
+            }?.let { lastVisibleCharIndex ->
                 val cutoffIndex = (lastVisibleCharIndex - expandEllipsis.length).coerceAtLeast(0)
                 adjustedText = buildAnnotatedString {
                     append(text.subSequence(0, cutoffIndex))

@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import eu.peernetwork.wallet.domain.usecase.TransferUsecase
 import eu.peernetwork.wallet.ui.mapper.mapFromDomain
 import eu.peernetwork.wallet.ui.model.UiTransfer
+import eu.peernetwork.wallet.ui.model.UiTransferDetail
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -15,26 +16,60 @@ import javax.inject.Inject
 class TransferViewModel @Inject constructor(
     private val usecase: TransferUsecase
 ) : ViewModel() {
-    private val mutableState = MutableStateFlow<State>(State.Empty)
+    private val _status = MutableStateFlow<Status>(Status.Empty)
 
-    val state: StateFlow<State> = mutableState.asStateFlow()
+    private val _state = MutableStateFlow<State>(State.Empty)
 
-    fun transfer(recipient: String, price: BigDecimal) {
+    val state: StateFlow<State> = _state.asStateFlow()
+
+    val status: StateFlow<Status> = _status.asStateFlow()
+
+    fun transfer(recipient: String, price: BigDecimal, message: String? = null) {
         viewModelScope.launch {
-            mutableState.tryEmit(State.Loading)
+            _state.tryEmit(State.Loading)
             try {
-                val result = usecase(TransferUsecase.Parameter(recipient, price)).mapFromDomain()
-                mutableState.tryEmit(State.Success(result))
+                val result = usecase(
+                    TransferUsecase.Parameter(
+                    recipient = recipient,
+                    tokens = price,
+                    message = message
+                )).mapFromDomain()
+                _state.tryEmit(State.Success(result))
             } catch (error: Throwable) {
-                mutableState.tryEmit(State.Error(error))
+                _state.tryEmit(State.Error(error))
             }
+        }
+    }
+
+    fun proceed(detail: UiTransferDetail) {
+        viewModelScope.launch {
+            _status.tryEmit(Status.Confirmation(detail))
+        }
+    }
+
+    fun checkout(detail: UiTransferDetail) {
+        viewModelScope.launch {
+            _status.tryEmit(Status.Checkout(detail))
         }
     }
 
     fun reset() {
         viewModelScope.launch {
-            mutableState.tryEmit(State.Empty)
+            _status.tryEmit(Status.Empty)
+            _state.tryEmit(State.Empty)
         }
+    }
+
+    fun cancel() {
+        viewModelScope.launch {
+            _state.tryEmit(State.Empty)
+        }
+    }
+
+    sealed interface Status {
+        data object Empty: Status
+        data class Confirmation(val detail: UiTransferDetail): Status
+        data class Checkout(val detail: UiTransferDetail): Status
     }
 
     sealed interface State {

@@ -5,9 +5,9 @@ import eu.peernetwork.wallet.ui.model.UiTax
 
 fun Tax.mapFromDomain(): UiTax {
     return UiTax(
-        burn = this.burn,
-        pool = this.pool,
-        peer = this.peer,
-        percentage = this.percentage
+        burn = burn,
+        pool = pool,
+        peer = peer,
+        percentage = percentage
     )
 }

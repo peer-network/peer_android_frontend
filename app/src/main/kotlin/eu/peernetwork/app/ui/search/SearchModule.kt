@@ -23,7 +23,7 @@ import eu.peernetwork.social.ui.search.tag.Tag
 import eu.peernetwork.social.ui.search.title.Title
 import eu.peernetwork.wallet.ui.balance.Balance
 import eu.peernetwork.wallet.ui.confirmation.Confirmation
-import eu.peernetwork.wallet.ui.service.Service
+import eu.peernetwork.wallet.ui.rate.Rate
 
 @Module
 object SearchModule {
@@ -136,9 +136,9 @@ object SearchModule {
     @Search.Scope
     @Provides
     @IntoMap
-    @UiBuilder(Service.Builder::class)
+    @UiBuilder(Rate.Builder::class)
     fun provideServiceBuilder(component: Search.Component): UiComponent.Builder {
-        return Service.Builder(component)
+        return Rate.Builder(component)
     }
 
     @Provides

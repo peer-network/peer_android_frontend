@@ -54,7 +54,7 @@ fun CheckoutScreen(
     } }
     val handleFinish by rememberUpdatedState(onFinish)
     val handleProfile by rememberUpdatedState(onProfile)
-    component.checkoutBalance().Charges(
+    component.checkoutBalance().Rate(
         viewModelStoreOwner = viewModelStoreOwner
     ) { tax, refresh ->
         val price = remember { derivedStateOf {

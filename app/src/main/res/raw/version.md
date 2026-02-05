@@ -1,49 +1,37 @@
 # 📝 Release Notes
 
-### 🚀 Highlights
-This release focuses on strengthening content moderation, reporting flows, and visibility controls for illegal and hidden content, ensuring better compliance, transparency, and safety across the platform.
+## What’s New
+
+### A Clear Transaction History
+
+Your wallet now gives you a complete, transparent view of every transaction — making it easier to track how your Peer Tokens move.
+
+Each transaction includes:
+
+* **Total Peer Token amount** (including fees)
+* **Fee breakdown** (Peer Bank, Burns, Inviter)
+* **Timestamp**
+* **Message** (if added)
+
+You can expand any transaction to see full details, or collapse it to keep things clean.
+
+This is the first iteration of **Transaction History**. Some transaction types (such as **Daily Mint**) are not included yet and will be added in a future update.
+
+For now, most transactions shown are from the **last month**. Older transactions will be migrated and made visible in the next iteration.
+
+Everything you earn or spend is now easier to **track, understand, and trust**.
 
 ---
 
-### ✨ New Features & Updates
+### Send Peer Tokens with a Personal Touch
 
-- **Reported Content Moderation**  
-  Introduced a unified moderation flow to handle reported posts, comments, and profiles more effectively.
+Transferring Peer Tokens just got more expressive.
+You can now add an optional message when sending Peer Tokens to another user — whether it’s a thank-you, a shoutout, or just an emoji.
 
-- **Report a Profile**  
-  Users can now report profiles directly, enabling faster detection of abusive or illegal accounts.
+What’s new in the transfer flow:
 
-- **Report a Post**  
-  Added the ability to report individual posts for policy violations or illegal content.
-
-- **Report a Comment**  
-  Comments can now be reported independently, improving moderation granularity.
-
-- **Hidden Content Settings (Backend)**  
-  Implemented backend settings to manage hidden content visibility and behavior across the system.
-
-- **Display an "Illegal" Post**  
-  Posts marked as illegal can now be displayed with appropriate handling (e.g., warnings, restricted views).
-
-- **Display an "Illegal" Profile**  
-  Profiles flagged as illegal are now handled explicitly in the UI and backend logic.
-
-- **Display an "Illegal" Comment**  
-  Added support for displaying comments marked as illegal with proper moderation states.
-
-- **Warnings for Promoting Reported Content**  
-  Users are now warned when attempting to promote content that has been reported.
-
-- **Display Illegal/Hidden Content in Ad Stats**  
-  Advertising statistics now include visibility into illegal or hidden content to ensure accurate reporting.
-
----
-
-### 🧩 Technical Improvements
-- Improved moderation workflows and state handling.
-- Better alignment between moderation status and advertising analytics.
-
----
-
-### 🧠 Known Issues
-- None reported at this time.
+* Add a note up to **500 characters** (letters, numbers, emojis & most symbols allowed)
+* Clear **transaction summary** before sending
+* Improved **error messages** that guide you to the next step
+* Messages appear in **both users’ Transaction History**
+* Safe, transparent, and now more personal

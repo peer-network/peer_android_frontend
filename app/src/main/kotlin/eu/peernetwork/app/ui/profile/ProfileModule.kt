@@ -26,7 +26,7 @@ import eu.peernetwork.social.ui.report.Report
 import eu.peernetwork.user.ui.user.User
 import eu.peernetwork.wallet.ui.balance.Balance
 import eu.peernetwork.wallet.ui.confirmation.Confirmation
-import eu.peernetwork.wallet.ui.service.Service
+import eu.peernetwork.wallet.ui.rate.Rate as WalletDashboard
 
 @Module
 object ProfileModule {
@@ -179,9 +179,9 @@ object ProfileModule {
     @Profile.Scope
     @Provides
     @IntoMap
-    @UiBuilder(Service.Builder::class)
-    fun provideServiceBuilder(component: Profile.Component): UiComponent.Builder {
-        return Service.Builder(component)
+    @UiBuilder(WalletDashboard.Builder::class)
+    fun provideWalletDashboardBuilder(component: Profile.Component): UiComponent.Builder {
+        return WalletDashboard.Builder(component)
     }
 
     @Provides

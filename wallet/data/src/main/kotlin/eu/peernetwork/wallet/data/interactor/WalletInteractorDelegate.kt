@@ -25,8 +25,8 @@ class WalletInteractorDelegate @Inject constructor(
 
     override fun observe(): Flow<Wallet> = mutableWallet
 
-    override suspend fun send(recipient: String, token: BigDecimal): Receipt {
-        val transfer = transactionRepository.send(recipient, token)
+    override suspend fun send(recipient: String, token: BigDecimal, message: String?): Receipt {
+        val transfer = transactionRepository.send(recipient, token, message)
         if (mutableWallet.replayCache.isNotEmpty()) {
             mutableWallet.firstOrNull()?.let {
                 mutableWallet.tryEmit(it.copy(balance = it.balance - token))

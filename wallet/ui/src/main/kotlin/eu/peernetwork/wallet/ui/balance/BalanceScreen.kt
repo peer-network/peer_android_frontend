@@ -19,12 +19,9 @@ import eu.peernetwork.wallet.ui.model.UiWallet
 
 @Composable
 fun BalanceScreen(
-    lastUpdated: State<Long>,
     provider: UiComponentProvider,
     viewModelStoreOwner: ViewModelStoreOwner,
-    loading: @Composable () -> Unit = {},
-    error: @Composable (error: State<Throwable>) -> Unit = {},
-    content: @Composable (State<UiWallet>) -> Unit
+    content: @Composable (Balance.Component, BalanceViewModel) -> Unit
 ) {
     val context = LocalContext.current
     val component = remember {
@@ -35,32 +32,50 @@ fun BalanceScreen(
         viewModelStoreOwner = viewModelStoreOwner,
         factory = component.viewModelFactory()
     )
-    val state by viewModel.state.collectAsStateWithLifecycle()
-    val derivedState = remember {
-        derivedStateOf {
-            when (state) {
-                BalanceViewModel.State.Empty -> DesignStreamState.Default
-                BalanceViewModel.State.Loading -> DesignStreamState.Loading
-                is BalanceViewModel.State.Success -> {
-                    DesignStreamState.Success(
-                        (state as BalanceViewModel.State.Success).wallet
+    val updatedContent by rememberUpdatedState(content)
+    updatedContent(component, viewModel)
+}
+
+@Composable
+fun BalanceScreen(
+    lastUpdated: State<Long>,
+    provider: UiComponentProvider,
+    viewModelStoreOwner: ViewModelStoreOwner,
+    loading: @Composable () -> Unit = {},
+    error: @Composable (error: State<Throwable>) -> Unit = {},
+    content: @Composable (State<UiWallet>) -> Unit
+) {
+    BalanceScreen(
+        provider = provider,
+        viewModelStoreOwner = viewModelStoreOwner
+    ) { component, viewModel ->
+        val state by viewModel.state.collectAsStateWithLifecycle()
+        val derivedState = remember {
+            derivedStateOf {
+                when (state) {
+                    BalanceViewModel.State.Empty -> DesignStreamState.Default
+                    BalanceViewModel.State.Loading -> DesignStreamState.Loading
+                    is BalanceViewModel.State.Success -> {
+                        DesignStreamState.Success(
+                            (state as BalanceViewModel.State.Success).wallet
+                        )
+                    }
+                    is BalanceViewModel.State.Error -> DesignStreamState.Error(
+                        (state as BalanceViewModel.State.Error).error
                     )
                 }
-                is BalanceViewModel.State.Error -> DesignStreamState.Error(
-                    (state as BalanceViewModel.State.Error).error
-                )
             }
         }
-    }
-    val updatedContent by rememberUpdatedState(content)
-    DesignStream(
-        state = derivedState,
-        loading = loading,
-        error = error
-    ) { updatedContent(it) }
-    LaunchedEffect(lastUpdated.value) {
-        if (state !is BalanceViewModel.State.Success) {
-            viewModel()
+        val updatedContent by rememberUpdatedState(content)
+        DesignStream(
+            state = derivedState,
+            loading = loading,
+            error = error
+        ) { updatedContent(it) }
+        LaunchedEffect(lastUpdated.value) {
+            if (state is BalanceViewModel.State.Empty) {
+                viewModel()
+            }
         }
     }
 }

@@ -1,0 +1,60 @@
+query TransactionHistory(
+    $type: TokenMovementFilterType,
+    $start: String,
+    $end: String,
+    $limit: Int,
+    $offset: Int,
+    $sort: SortFilterType,
+) {
+    transactionHistory(
+        type: $type,
+        start_date: $start,
+        end_date: $end,
+        limit: $limit,
+        offset: $offset,
+        sort: $sort
+    ) {
+        meta {
+            status
+            ResponseCode
+        }
+        affectedRows {
+            operationid
+            transactionId
+            transactionCategory
+            transactiontype
+            tokenamount
+            netTokenAmount
+            sender {
+                userid
+                img
+                username
+                slug
+                biography
+                visibilityStatus
+                isHiddenForUsers
+                hasActiveReports
+                updatedat
+            }
+            recipient {
+                userid
+                img
+                username
+                slug
+                biography
+                visibilityStatus
+                isHiddenForUsers
+                hasActiveReports
+                updatedat
+            }
+            fees {
+                total
+                burn
+                peer
+                inviter
+            }
+            message
+            createdat
+        }
+    }
+}

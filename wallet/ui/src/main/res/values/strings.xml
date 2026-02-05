@@ -2,20 +2,38 @@
 <resources>
     <string name="wallet_title">Your account</string>
     <string name="balance_title">Your balance</string>
+    <string name="message_label">Message:</string>
+    <string name="message_title">Message</string>
     <string name="transfer_label">Transfer</string>
     <string name="transfer_disclaimer">A fee of %d%% applies</string>
     <string name="amount_text">Amount</string>
     <string name="amount_label">Amount to send</string>
+    <string name="amount_entry">Enter Amount</string>
+    <string name="total_amount">Total amount</string>
+    <string name="token_label">Token</string>
+    <string name="debit_label">Debit</string>
+    <string name="credit_label">Credit</string>
     <string name="recipient_selection_label">Choose recipient</string>
     <string name="checkout_label">Confirm transaction</string>
+    <string name="transaction_status">Completed</string>
     <string name="transaction_label">Transaction successful</string>
+    <string name="transaction_message">Your transfer was sent successfully.</string>
+    <string name="transaction_amount_label">Transaction amount</string>
+    <string name="transaction_base_label">Base amount</string>
+    <string name="transactions_label">Transactions</string>
+    <string name="transfer_fee">Transfer fee</string>
     <string name="transfer_caption">peer tokens to %s</string>
     <string name="recipient_label">Recipient address</string>
     <string name="sent_label">Transferred to</string>
     <string name="send_label">Send</string>
+    <string name="send_to">Send to</string>
+    <string name="sending_to">Sending to</string>
     <string name="confirm_label">Confirm</string>
+    <string name="got_it_label">Got it</string>
+    <string name="continue_label">Continue</string>
     <string name="close_label">Close</string>
     <string name="cancel_label">Cancel</string>
+    <string name="back_label">Back</string>
     <string name="post_caption">You\'re about to make a post</string>
     <string name="no_post_caption">You\’re out of free posts!</string>
     <string name="like_caption">You\'re about to like a post</string>
@@ -34,5 +52,40 @@
     <string name="balance_label">Current balance %s</string>
     <string name="reward_description">You have %d Free %s</string>
     <string name="error_title">Oops! an error occurred</string>
+    <string name="error_label">Something went wrong</string>
+    <string name="error_message">We were not able to make your transfer. Please try again later.</string>
     <string name="retry_label">Retry</string>
+    <string name="retry_again_label">Try again</string>
+
+    <string name="base_amount">Base amount</string>
+    <string name="recipient_username">Recipient username</string>
+    <string name="recipient_search">Search user…</string>
+    <string name="platform_charge">%s%% to Peer Bank (platform fee)</string>
+    <string name="burn_charge">%s%% Burned (removed from supply)</string>
+    <string name="invite_charge">%s%% to your Inviter</string>
+
+    <string name="min_token_placeholder">min: 0.000001</string>
+
+    <string name="sent_to">To @%s</string>
+    <string name="received_from">From @%s</string>
+    <string name="user_transaction_label">To %s</string>
+    <string name="mint_transaction_label">Daily Mint</string>
+    <string name="post_transaction_label">Extra post</string>
+    <string name="purchase_transaction_label">Purchase</string>
+    <string name="like_transaction_label">Extra like</string>
+    <string name="dislike_transaction_label">Dislike</string>
+    <string name="comment_transaction_label">Extra comment</string>
+    <string name="default_transaction_label">Transaction</string>
+    <string name="pinned_post_transaction_label">Pinned post promo</string>
+
+    <string name="message_counter_label">%d/%d</string>
+
+    <string name="transaction_message_label">Add a message (optional)</string>
+    <string name="transaction_message_placeholder">e.g., Thanks for the coffee! ☕</string>
+
+    <string name="illegal_username">Remove</string>
+
+    <string name="hidden_username">Hidden</string>
+    <string name="hidden_content_description">This content may be sensitive or abusive.</string>
+    <string name="illegal_content_description">This content was removed as illegal</string>
 </resources>

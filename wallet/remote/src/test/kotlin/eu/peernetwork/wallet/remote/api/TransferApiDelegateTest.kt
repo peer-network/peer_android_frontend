@@ -27,7 +27,7 @@ internal class TransferApiDelegateTest {
     fun setup() {
         api = TransferApiDelegate(object : RequestClient {
             override fun invoke(): ApolloClient = client
-        })
+        }, url = "http:localhost")
     }
 
     @Test
@@ -43,7 +43,7 @@ internal class TransferApiDelegateTest {
             mockData
         ).build()
 
-        every { mockData.resolveTransfer } returns transfer
+        every { mockData.resolveTransferV2 } returns transfer
         coEvery { client.mutation(any<ResolveTransferMutation>()).execute() } returns mockResponse
 
         val result = api.send(recipient, tokens)
@@ -67,7 +67,7 @@ internal class TransferApiDelegateTest {
             mockData
         ).build()
 
-        every { mockData.resolveTransfer } returns transfer
+        every { mockData.resolveTransferV2 } returns transfer
         coEvery { client.mutation(any<ResolveTransferMutation>()).execute() } returns mockResponse
 
         val result = try {

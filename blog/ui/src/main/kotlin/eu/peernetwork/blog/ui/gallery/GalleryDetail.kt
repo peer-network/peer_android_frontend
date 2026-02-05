@@ -52,7 +52,7 @@ fun GalleryDetail(
                 modifier = Modifier.padding(top = 4.dp),
             ) {
                 DesignRichText(
-                    text = description.normalizeWhitespaces(),
+                    text = description,
                     maxLines = 2,
                     lineHeight = 18.sp,
                     style = MaterialTheme.typography.labelLarge,
