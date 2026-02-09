@@ -109,7 +109,7 @@ private fun RewardLabel(text: String) {
             Spacer(modifier = Modifier.width(2.dp))
             Icon(
                 painter = painterResource(id = eu.peernetwork.app.R.drawable.ic_icon),
-                contentDescription = stringResource(eu.peernetwork.social.ui.R.string.peer_label),
+                contentDescription = stringResource(eu.peernetwork.feature.social.ui.R.string.peer_label),
                 modifier = Modifier.size(12.dp),
                 tint = Color.White
             )
@@ -127,7 +127,7 @@ private fun RewardLabel(text: String) {
                 color = MaterialTheme.colorScheme.outline
             )
             Icon(
-                painter = painterResource(id = eu.peernetwork.blog.ui.R.drawable.ic_gem),
+                painter = painterResource(id = eu.peernetwork.feature.blog.ui.R.drawable.ic_gem),
                 contentDescription = stringResource(R.string.onboarding_pie_chart_gems_label),
                 modifier = Modifier.padding(horizontal = 4.dp)
                     .size(10.dp),
@@ -162,7 +162,7 @@ private fun RewardLabel(
                 color = MaterialTheme.colorScheme.outline
             )
             Icon(
-                painter = painterResource(id = eu.peernetwork.blog.ui.R.drawable.ic_gem),
+                painter = painterResource(id = eu.peernetwork.feature.blog.ui.R.drawable.ic_gem),
                 contentDescription = stringResource(R.string.onboarding_pie_chart_gems_label),
                 modifier = Modifier.padding(horizontal = 4.dp)
                     .size(10.dp),
@@ -183,7 +183,7 @@ private fun RewardLabel(
             Spacer(modifier = Modifier.width(2.dp))
             Icon(
                 painter = painterResource(id = R.drawable.ic_icon),
-                contentDescription = stringResource(eu.peernetwork.social.ui.R.string.peer_label),
+                contentDescription = stringResource(eu.peernetwork.feature.social.ui.R.string.peer_label),
                 modifier = Modifier.size(12.dp),
                 tint = Color.White
             )

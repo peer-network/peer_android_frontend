@@ -17,9 +17,9 @@ import eu.peernetwork.app.ui.version.VersionScreen
 import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.material.DesignRouter
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
+import eu.peernetwork.feature.user.ui.R
 import eu.peernetwork.social.ui.referral.ReferralScreen
 import eu.peernetwork.user.domain.model.Account
-import eu.peernetwork.user.ui.R
 import eu.peernetwork.user.ui.password.update.PasswordUpdateScreen
 import eu.peernetwork.user.ui.account.AccountScreen
 import eu.peernetwork.user.ui.email.EmailScreen

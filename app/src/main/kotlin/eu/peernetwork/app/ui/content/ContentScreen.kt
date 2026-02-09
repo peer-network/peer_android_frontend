@@ -99,7 +99,7 @@ fun ContentScreen(
     DesignTitleBarHost("ContentScreen$postId") {
         titleBar {
             DesignTitle {
-                Text(stringResource(eu.peernetwork.blog.ui.R.string.post_label))
+                Text(stringResource(eu.peernetwork.feature.blog.ui.R.string.post_label))
             }
         }
     }

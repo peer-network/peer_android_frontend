@@ -20,7 +20,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import eu.peernetwork.core.ui.theme.DesignTheme
-import eu.peernetwork.user.ui.R
+import eu.peernetwork.feature.user.ui.R
 
 @Composable
 fun SettingsItem(

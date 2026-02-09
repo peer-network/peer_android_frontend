@@ -28,7 +28,7 @@ import eu.peernetwork.core.ui.design.material.DesignTitle
 import eu.peernetwork.core.ui.design.material.DesignTitleBarHost
 import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.theme.DesignTheme
-import eu.peernetwork.user.ui.R
+import eu.peernetwork.feature.user.ui.R
 
 @Composable
 fun AboutScreen(

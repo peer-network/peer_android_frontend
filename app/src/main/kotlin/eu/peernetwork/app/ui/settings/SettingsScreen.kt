@@ -28,9 +28,9 @@ import eu.peernetwork.core.ui.extension.builder
 import eu.peernetwork.core.ui.extension.navigateIfNecessary
 import eu.peernetwork.core.ui.theme.DesignTheme
 import eu.peernetwork.core.ui.theme.PeerAppRed
+import eu.peernetwork.feature.user.ui.R
 import eu.peernetwork.social.ui.feedback.FeedbackScreen
 import eu.peernetwork.user.domain.model.Account
-import eu.peernetwork.user.ui.R
 import eu.peernetwork.user.ui.deactivate.DeactivateScreen
 import eu.peernetwork.user.ui.logout.LogoutScreen
 import eu.peernetwork.user.ui.user.UserBadge

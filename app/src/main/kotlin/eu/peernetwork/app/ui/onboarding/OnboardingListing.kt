@@ -22,8 +22,8 @@ import androidx.compose.ui.unit.dp
 import eu.peernetwork.app.ui.compose.FeatureLabel
 import eu.peernetwork.app.ui.compose.PricingLabel
 import eu.peernetwork.app.R as AppRes
-import eu.peernetwork.blog.ui.R
 import eu.peernetwork.core.ui.theme.DesignTheme
+import eu.peernetwork.feature.blog.ui.R
 import kotlinx.collections.immutable.persistentListOf
 import kotlin.math.absoluteValue
 

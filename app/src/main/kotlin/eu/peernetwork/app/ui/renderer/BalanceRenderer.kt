@@ -35,7 +35,7 @@ import eu.peernetwork.core.ui.component.UiComponentProvider
 import eu.peernetwork.core.ui.design.luna.DesignSkeleton
 import eu.peernetwork.core.ui.design.luna.DesignStreamState
 import eu.peernetwork.core.ui.theme.PeerAppRed
-import eu.peernetwork.wallet.ui.R
+import eu.peernetwork.feature.wallet.ui.R
 import eu.peernetwork.wallet.ui.balance.BalanceScreen
 import eu.peernetwork.wallet.ui.rate.RateScreen
 import javax.inject.Inject
