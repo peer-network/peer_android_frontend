@@ -52,17 +52,33 @@ The project is highly modularized to ensure separation of concerns and scalabili
 
 ```text
 peer_android_frontend/
-├── app/                  # Main Application module (DI root, manifest)
+├── app/                          # Application module (DI root, manifest)
+│
 ├── core/
-│   ├── common/           # Utils
-│   └── ui/               # Design System and base UI components
-├── social/               # Social features (Feed, Connections)
-│   ├── domain/
-│   ├── data/
-│   └── ui/
-├── user/                 # User management (Auth, Profile)
-├── wallet/               # Token wallet features
-├── messaging/            # Chat features
+│   ├── common/                   # Utils, extensions, logging
+│   └── ui/                       # Design system, base components, theme
+│
+├── feature/
+│   ├── social/                   # Feed, connections, interactions
+│   │   ├── domain/
+│   │   ├── data/
+│   │   └── ui/
+│   │
+│   ├── user/                     # Auth, profile, account
+│   │   ├── domain/
+│   │   ├── data/
+│   │   └── ui/
+│   │
+│   ├── wallet/                   # Tokens, balance, transactions
+│   │   ├── domain/
+│   │   ├── data/
+│   │   └── ui/
+│   │
+│   ├── messaging/                # Chats, threads, messages
+│   │   ├── domain/
+│   │   ├── data/
+│   │   └── ui/
+│
 └── ...
 ```
 

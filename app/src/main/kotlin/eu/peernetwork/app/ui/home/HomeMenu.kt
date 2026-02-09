@@ -11,7 +11,7 @@ sealed class HomeMenu(
     data object Home: HomeMenu(
         icon = R.drawable.ic_home_outline,
         active = R.drawable.ic_home,
-        label = eu.peernetwork.blog.ui.R.string.feed_label,
+        label = eu.peernetwork.feature.blog.ui.R.string.feed_label,
     )
     data object Search: HomeMenu(
         icon = R.drawable.ic_search_outline,

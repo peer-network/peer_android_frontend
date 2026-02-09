@@ -24,8 +24,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import eu.peernetwork.blog.ui.R
 import eu.peernetwork.core.ui.theme.DesignTheme
+import eu.peernetwork.feature.blog.ui.R
 
 @Composable
 fun PricingLabel(

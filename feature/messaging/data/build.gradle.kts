@@ -1,0 +1,12 @@
+
+dependencies {
+    implementation(project(":core:common"))
+
+    implementation(project(":feature:messaging:domain"))
+
+    testImplementation(libs.junit)
+    testImplementation(libs.kotlin.test)
+    testImplementation(libs.coroutines.test)
+    testImplementation(libs.mockk)
+    testImplementation(libs.mockk.jvm)
+}

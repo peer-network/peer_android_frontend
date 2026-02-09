@@ -22,8 +22,7 @@ import androidx.compose.ui.unit.dp
 import eu.peernetwork.app.R
 import eu.peernetwork.core.ui.theme.DesignTheme
 import eu.peernetwork.core.ui.theme.PeerAppRed
-import eu.peernetwork.blog.ui.R as BlogRes
-import eu.peernetwork.core.ui.theme.PeerTheme
+import eu.peernetwork.feature.blog.ui.R as BlogRes
 
 @Composable
 fun DailyFreebies() {
